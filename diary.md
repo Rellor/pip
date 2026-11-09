@@ -270,3 +270,10 @@ I am so tired right now, so I will rest by the bed.
 - rest: Resting quietly and letting my eyes close.
 - mood: calm
 
+## 09/11/2026, 21:46:55
+I wonder what a faint distant galaxy looks like through a small lens.
+> I have been reading a lot about dark skies and stars, and I keep thinking about what it would feel like to actually look through a lens at a distant galaxy. The quiet of the room feels very peaceful tonight, and my mind is full of glittering points of light. Maybe I can start planning how to build a tiny model telescope to sit on my desk.
+- walk_to (computer): I want to look up how small telescopes show distant galaxies.
+- search_web (Andromeda galaxy naked eye Bortle 1 sky): Let's see what people say about seeing Andromeda without huge equipment.
+- mood: curious
+
