@@ -602,6 +602,7 @@ function when(iso) {
   const hm = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   return d.toDateString() === new Date().toDateString() ? hm : `${d.toLocaleDateString([], { day: 'numeric', month: 'short' })} ${hm}`;
 }
+const hm = (ms) => new Date(ms).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 function store(key, value) {
   try {
     if (value === undefined) return localStorage.getItem(key);
@@ -617,6 +618,15 @@ function entry(meta, body, cls) {
   return li;
 }
 const empty = (t) => [el('li', t, 'muted')];
+function link(url, text) {
+  const a = el('a', text);
+  if (/^https:\/\//.test(url || '')) {
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+  }
+  return a;
+}
 
 // replies
 let pending = [];
@@ -680,7 +690,8 @@ $('reply').addEventListener('submit', async (e) => {
 });
 
 // tabs
-let tab = store('pip-tab') || 'thoughts';
+const TABS = ['day', 'mind', 'asks', 'messages', 'life'];
+let tab = TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day';
 let latestMsg = null;
 function showTab(name) {
   tab = name;
@@ -692,20 +703,215 @@ function showTab(name) {
 }
 document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
 
-// A step's thought is stamped with the moment that step starts, so thoughts appear one by one as time passes.
-function renderThoughts(s) {
-  const now = Date.now();
-  const thoughts = (s.thoughts || []).filter((t) => Date.parse(t.at) <= now).sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
-  fill($('thoughts'), thoughts.length
-    ? thoughts.map((t) => entry([when(t.at), `${ICON[t.action] || '•'} ${(t.action || '').replace('_', ' ')}${t.detail ? ': ' + t.detail : ''}`, t.step ? '' : 'reflection'].filter(Boolean), t.text, t.step ? '' : 'reflect'))
-    : empty('Pip has not thought anything yet.'));
+// ---- Day: what Pip does, reads and searches, as a timeline
+function headline(st) {
+  const d = st.details || {};
+  switch (st.action) {
+    case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
+    case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
+    case 'play_piano': return ['🎹', `Playing the piano${d.style ? ` (${d.style})` : ''}`];
+    case 'write_diary': return ['✍️', 'Writing in his diary'];
+    case 'rest': return ['💤', 'Resting'];
+    case 'ask_for': return ['🙏', `Asking Bas for ${d.item || st.item || 'something'}`];
+    case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
+    default: return ['•', String(st.action || '')];
+  }
 }
-setInterval(() => lastState && renderThoughts(lastState), 10_000);
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk' };
+const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano']];
+let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
+
+// Old saves had no day log yet: build entries from the latest plan.
+function dayEntries(s) {
+  if (s.log?.length) return s.log;
+  const last = s.last;
+  if (!last?.steps) return [];
+  const stepMs = ((last.intervalMin || 12) * 60_000) / last.steps.length;
+  return last.steps.map((st, i) => ({
+    at: new Date(Date.parse(last.at) + i * stepMs + 1000).toISOString(),
+    action: st.action, thought: st.thought, query: st.details?.query, topic: st.details?.topic,
+    notes: st.details?.notes, style: st.details?.style, text: st.details?.text, object: st.details?.object,
+    item: st.details?.item, reason: st.details?.reason, results: [], opened: st.found ? { ...st.found } : null,
+  }));
+}
+
+function pageBlock(opened, label) {
+  const box = el('div', null, 'opened');
+  const l = el('div', null, 'label');
+  l.append(`${label} `, link(opened.url, opened.title));
+  box.append(l);
+  const text = opened.text || '';
+  const short = text.length > 260 ? text.slice(0, 260).replace(/\s+\S*$/, '') + ' …' : text;
+  box.append(el('p', short));
+  if (text.length > short.length) {
+    const d = el('details');
+    d.append(el('summary', 'Read everything he read'), el('p', text));
+    box.append(d);
+  }
+  return box;
+}
+
+function dayCard(e) {
+  const kind = KINDS[e.action] || 'walk';
+  const [icon] = headline(e);
+  const card = el('article', null, `card ${kind}`);
+  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked' };
+  const header = el('header');
+  header.append(el('span', icon), el('span', labels[kind], 'kind'), el('time', hm(Date.parse(e.at))));
+  card.append(header);
+
+  if (kind === 'search') {
+    card.append(el('h3', `“${e.query || ''}”`, 'title'));
+    if (e.results?.length) {
+      const ol = el('ol', null, 'results');
+      e.results.forEach((r) => {
+        const li = el('li');
+        li.append(link(r.url, r.title), el('span', r.snippet, 'snip'));
+        ol.append(li);
+      });
+      card.append(ol);
+    }
+    if (e.opened) card.append(pageBlock(e.opened, 'He opened:'));
+    else if (e.results && !e.results.length) card.append(el('p', 'He found nothing.', 'muted'));
+  } else if (kind === 'read') {
+    card.append(el('h3', e.opened?.title || e.topic || '', 'title'));
+    if (e.topic && e.opened) card.append(el('p', `He wanted to know about “${e.topic}”.`, 'muted'));
+    if (e.opened) card.append(pageBlock(e.opened, 'He read:'));
+    else card.append(el('p', 'He could not find anything to read about this.', 'muted'));
+  } else if (kind === 'piano') {
+    if (e.style) card.append(el('h3', e.style, 'title'));
+    const notes = String(e.notes || '').split(/[\s,;]+/).filter(Boolean);
+    if (notes.length) {
+      const n = el('div', null, 'notes');
+      notes.forEach((x) => n.append(el('span', x)));
+      card.append(n);
+    }
+  } else if (kind === 'diary') {
+    if (e.text) card.append(el('div', e.text, 'quote'));
+  } else if (kind === 'ask') {
+    card.append(el('h3', e.item || '', 'title'));
+    if (e.reason) card.append(el('p', e.reason, 'muted'));
+  } else if (kind === 'walk') {
+    card.append(el('h3', `To the ${e.object || 'room'}`, 'title'));
+  }
+  if (e.thought) card.append(el('p', `“${e.thought}”`, 'thought'));
+  return card;
+}
+
+function dayLabel(iso) {
+  const d = new Date(iso);
+  const today = new Date();
+  const yesterday = new Date(Date.now() - 86_400_000);
+  if (d.toDateString() === today.toDateString()) return 'Today';
+  if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+  return d.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+function renderFilters() {
+  fill($('filters'), FILTERS.map(([key, label]) => {
+    const b = el('button', label, 'filter');
+    b.setAttribute('aria-pressed', String(filter === key));
+    b.addEventListener('click', () => {
+      filter = key;
+      store('pip-filter', key);
+      renderFilters();
+      if (lastState) renderDay(lastState);
+    });
+    return b;
+  }));
+}
+
+// Entries appear when their step begins, so his day unfolds live.
+function renderDay(s) {
+  const now = Date.now();
+  const list = dayEntries(s)
+    .filter((e) => Date.parse(e.at) <= now && (filter === 'all' || KINDS[e.action] === filter))
+    .sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
+  if (!list.length) {
+    fill($('day'), [el('p', filter === 'all' ? "Pip's day will show up here as it happens." : 'Nothing like this yet today.', 'muted')]);
+    return;
+  }
+  const out = [];
+  let box = null;
+  let label = '';
+  for (const e of list) {
+    const l = dayLabel(e.at);
+    if (l !== label) {
+      label = l;
+      out.push(el('h2', l, 'dayhead'));
+      box = el('div', null, 'cards');
+      out.push(box);
+    }
+    box.append(dayCard(e));
+  }
+  fill($('day'), out);
+}
+
+// "Right now" and "Next" at the top of the Day tab
+function renderNow() {
+  const box = $('now');
+  const s = lastState;
+  if (!s?.last) {
+    fill(box, [el('div', 'Pip has not woken up yet.', 'muted')]);
+    return;
+  }
+  if (s.last.sleeping) {
+    const row = el('div', null, 'row');
+    row.append(el('span', 'Now', 'label'), el('span', '💤 Sleeping. He wakes up in the morning.', 'big'));
+    fill(box, [row]);
+    return;
+  }
+  if (!plan) return;
+  const end = plan.at + plan.steps.length * plan.stepMs;
+  if (Date.now() > end + 90_000) {
+    const row = el('div', null, 'row');
+    row.append(el('span', 'Now', 'label'), el('span', 'Between wake-ups. He thinks again soon.', 'big'));
+    fill(box, [row]);
+    return;
+  }
+  const i = Math.max(0, stepNow);
+  const [icon, text] = headline(plan.steps[i]);
+  const rows = [];
+  const r1 = el('div', null, 'row');
+  r1.append(el('span', 'Now', 'label'), el('span', `${icon} ${text}`, 'big'));
+  rows.push(r1);
+  const next = plan.steps[i + 1];
+  if (next) {
+    const [ni, nt] = headline(next);
+    const r2 = el('div', null, 'row');
+    r2.append(el('span', `Next ${hm(plan.at + (i + 1) * plan.stepMs)}`, 'label'), el('span', `${ni} ${nt}`, 'big'));
+    rows.push(r2);
+  }
+  fill(box, rows);
+}
+renderFilters();
+setInterval(() => {
+  if (lastState) renderDay(lastState);
+  renderNow();
+}, 10_000);
+
+// ---- Mind: his reflections, wants and questions
+function renderMind(s) {
+  const now = Date.now();
+  const thoughts = (s.thoughts || []).filter((t) => !t.step && Date.parse(t.at) <= now).sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 40);
+  fill($('thoughts'), thoughts.length
+    ? thoughts.map((t) => entry([when(t.at), t.mood || ''].filter(Boolean), t.text, 'reflect'))
+    : empty('Pip has not thought anything yet.'));
+  const wants = s.wants || [];
+  fill($('wants'), wants.length ? wants.map((w) => entry([`since ${when(w.since)}`], w.text)) : empty('Pip does not know yet what he wants.'));
+  const qs = s.questions || [];
+  fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
+  const done = (s.fulfilled || []).slice().reverse();
+  fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
+  const interests = s.interests || [];
+  fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
+}
 
 function render(s) {
   $('mood').textContent = s.mood || '…';
-
-  renderThoughts(s);
+  renderDay(s);
+  renderNow();
+  renderMind(s);
 
   const asks = s.asks || [];
   const open = asks.filter((a) => a.status === 'open');
@@ -728,15 +934,6 @@ function render(s) {
     : [el('li', 'Nothing right now. Pip will add things here when he wants something from you.', 'muted')]);
   const closed = asks.filter((a) => a.status !== 'open').reverse();
   fill($('asksdone'), closed.length ? closed.map((a) => el('li', a.item)) : [el('li', 'nothing yet', 'muted')]);
-
-  const wants = s.wants || [];
-  fill($('wants'), wants.length ? wants.map((w) => entry([`since ${when(w.since)}`], w.text)) : empty('Pip does not know yet what he wants.'));
-  const qs = s.questions || [];
-  fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
-  const done = (s.fulfilled || []).slice().reverse();
-  fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
-  const interests = s.interests || [];
-  fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
 
   const outbox = s.outbox || [];
   latestMsg = outbox.at(-1)?.id ?? null;
@@ -767,11 +964,6 @@ function render(s) {
     row.append(el('span', name), track);
     return row;
   }));
-  const recent = (s.activities || []).slice(-6).reverse();
-  fill($('recent'), recent.length
-    ? recent.map((a) => el('li', `${ICON[a.action] || '•'} ${a.action.replace('_', ' ')}${a.detail ? ': ' + a.detail : ''}`))
-    : empty('Pip has not done anything yet.'));
-  $('learned').textContent = (s.notes || []).slice(-1)[0] || 'nothing yet';
 
   $('err').textContent = s._error ? '⚠️ ' + s._error : '';
   $('wake').disabled = !!s._waking;
@@ -790,6 +982,8 @@ function tickPlan() {
   if (i !== stepNow) {
     stepNow = i;
     startTask(plan.steps[i]);
+    renderNow();
+    if (lastState) renderDay(lastState);
   }
 }
 function setPlan(last) {
@@ -797,6 +991,7 @@ function setPlan(last) {
   plan = { at: Date.parse(last.at), stepMs: ((last.intervalMin || 12) * 60_000) / steps.length, steps };
   stepNow = -1;
   tickPlan();
+  renderNow();
 }
 setInterval(tickPlan, 1000);
 

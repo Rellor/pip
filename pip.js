@@ -50,6 +50,7 @@ const freshState = () => ({
   outbox: [],
   inbox: [],
   asks: [],
+  log: [],
   draft: '',
   last: null,
 });
@@ -267,6 +268,46 @@ function fakeBrain(prompt = '') {
     remember: Math.random() > 0.7 ? 'I liked the soft notes today.' : null,
     tell_bas: prompt.includes('[new]') ? 'Thank you for writing to me, Bas.' : Math.random() > 0.8 ? 'Hello Bas. I made up a tune today.' : null,
   };
+}
+
+// Wikipedia is Pip's library: a search gives the top results and he opens the best one; reading fetches an article.
+const WIKI = 'https://en.wikipedia.org';
+const pageUrl = (title) => `${WIKI}/wiki/${encodeURIComponent(title.replace(/ /g, '_'))}`;
+const plain = (html) => html.replace(/<[^>]+>/g, '').replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, '&');
+function clip(t, n) {
+  const s = String(t || '').replace(/\n{3,}/g, '\n\n').trim();
+  if (s.length <= n) return s;
+  const cut = s.slice(0, n);
+  const end = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('\n'));
+  return (end > n * 0.5 ? cut.slice(0, end + 1) : cut) + ' …';
+}
+async function wikiGet(params) {
+  const res = await fetch(`${WIKI}/w/api.php?format=json&redirects=1&${params}`, {
+    headers: { 'User-Agent': 'PipCharacter/0.1 (personal hobby project)' },
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!res.ok) throw new Error(`Wikipedia answered ${res.status}`);
+  return res.json();
+}
+async function readArticle(title) {
+  const data = await wikiGet(`action=query&prop=extracts&explaintext=1&exsectionformat=plain&titles=${encodeURIComponent(title)}`);
+  const page = Object.values(data.query?.pages ?? {})[0];
+  if (!page || !page.extract) return null;
+  return { title: page.title, url: pageUrl(page.title), text: clip(page.extract, 2400) };
+}
+async function lookUp(query) {
+  const found = await wikiGet(`action=query&list=search&srlimit=3&srsearch=${encodeURIComponent(query)}`);
+  const hits = found.query?.search ?? [];
+  if (!hits.length) return null;
+  return {
+    results: hits.map((h) => ({ title: h.title, snippet: clip(plain(h.snippet), 160), url: pageUrl(h.title) })),
+    opened: await readArticle(hits[0].title),
+  };
+}
+async function readAbout(topic) {
+  const found = await wikiGet(`action=query&list=search&srlimit=1&srsearch=${encodeURIComponent(topic)}`);
+  const hit = found.query?.search?.[0];
+  return hit ? readArticle(hit.title) : null;
 }
 
 async function searchWeb(query) {
@@ -499,12 +540,6 @@ async function wakeUp() {
     unread.length > 0
   );
 
-  // Each step's own thought is stamped with the moment that step begins, so the page can show it live.
-  steps.forEach((st, i) => {
-    if (!st.thought) return;
-    state.thoughts.push({ at: new Date(startedAt + i * stepMs + 1000).toISOString(), text: st.thought, short: '', mood: state.mood, action: st.action, detail: results[i].detail, step: true });
-  });
-  state.thoughts = state.thoughts.slice(-250);
 
   const readAt = new Date().toISOString();
   unread.forEach((m) => {
@@ -513,19 +548,46 @@ async function wakeUp() {
   });
   if (state.memories.length > 24) await consolidate(state, system);
 
-  let searches = 0;
+  // Pip really searches and reads: at most 3 lookups per wake-up.
+  let lookups = 0;
   for (const st of steps) {
-    if (st.action !== 'search_web' || !st.details.query || searches >= 2) continue;
-    searches++;
+    if (lookups >= 3) break;
     try {
-      const f = await searchWeb(String(st.details.query));
-      state.notes.push(f ? `Searched "${st.details.query}" and read about ${f.title}: ${f.text}` : `Searched "${st.details.query}" but found nothing.`);
-      st.found = f ? { title: f.title, text: f.text, url: f.url } : null;
+      if (st.action === 'search_web' && st.details.query) {
+        lookups++;
+        const q = String(st.details.query);
+        st.search = await lookUp(q);
+        const o = st.search?.opened;
+        state.notes.push(o ? `Searched "${q}" and read about ${o.title}: ${clip(o.text, 500)}` : `Searched "${q}" but found nothing.`);
+      }
+      if (st.action === 'read_book' && st.details.topic) {
+        lookups++;
+        const topic = String(st.details.topic);
+        st.read = await readAbout(topic);
+        state.notes.push(st.read ? `Read about ${st.read.title}: ${clip(st.read.text, 500)}` : `Looked for something to read about "${topic}" but found nothing.`);
+      }
     } catch (e) {
-      console.error('⚠️  search:', e.message);
+      console.error('⚠️  lookup:', e.message);
     }
+    st.found = st.search?.opened ?? st.read ?? null;
   }
   state.notes = state.notes.slice(-30);
+
+  // The day log: one entry per step, stamped with when the step starts, so the page can show his day as it happens.
+  state.log = state.log.filter((e) => Date.parse(e.at) <= startedAt);
+  steps.forEach((st, i) => {
+    const d = st.details;
+    const entry = { at: new Date(startedAt + i * stepMs + 1000).toISOString(), action: st.action, thought: st.thought };
+    const page = (p) => (p ? { title: p.title, url: p.url, text: clip(p.text, 1500) } : null);
+    if (st.action === 'search_web') Object.assign(entry, { query: text(d.query, 160), results: st.search?.results ?? [], opened: page(st.search?.opened) });
+    if (st.action === 'read_book') Object.assign(entry, { topic: text(d.topic, 160), opened: page(st.read) });
+    if (st.action === 'play_piano') Object.assign(entry, { notes: text(d.notes, 200), style: text(d.style, 80) });
+    if (st.action === 'write_diary') entry.text = text(d.text, 800);
+    if (st.action === 'walk_to') entry.object = text(d.object, 60);
+    if (st.action === 'ask_for') Object.assign(entry, { item: text(d.item, 140), reason: text(d.reason, 200) });
+    state.log.push(entry);
+  });
+  state.log = state.log.slice(-150);
 
   const brief = (f) => (f ? { title: f.title, text: f.text } : null);
   state.last = {

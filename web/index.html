@@ -6,63 +6,113 @@
 <title>Pip's Room</title>
 <link rel="icon" href="data:,">
 <style>
-  :root { --bg:#f6efe6; --panel:#fffaf3; --ink:#3b2f2a; --muted:#8a7a70; --accent:#e9855b; --line:#eadccd; --chip:#f4e4d3; }
+  :root {
+    --bg:#f6efe6; --panel:#fffaf3; --card:#ffffff; --ink:#3b2f2a; --muted:#7d6e64; --accent:#e9855b; --line:#eadccd; --chip:#f4e4d3;
+    --search:#3a8fd0; --read:#4f9a56; --piano:#d39a2c; --diary:#d4688d; --rest:#7c7cc4; --walk:#9a8c82; --ask:#e9855b;
+  }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#221c19; --panel:#2d2521; --ink:#f3e7dc; --muted:#b3a295; --accent:#f0976f; --line:#43372f; --chip:#3d312a; }
+    :root {
+      --bg:#221c19; --panel:#2d2521; --card:#372d28; --ink:#f3e7dc; --muted:#b9a99c; --accent:#f0976f; --line:#43372f; --chip:#3d312a;
+      --search:#6bb4ee; --read:#86c98c; --piano:#efc063; --diary:#ef8fb0; --rest:#a3a3ec; --walk:#b9ab9f; --ask:#f0976f;
+    }
   }
   * { box-sizing: border-box; }
   html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  #app { display:grid; grid-template-columns:1fr 420px; height:100%; }
+  #app { display:grid; grid-template-columns:1fr minmax(440px, 36%); height:100%; }
   #stage { position:relative; min-height:0; overflow:hidden; }
   #stage canvas { display:block; width:100%; height:100%; }
   #hint { position:absolute; left:16px; bottom:12px; right:16px; color:var(--muted); font-size:13px; pointer-events:none; }
   #panel { background:var(--panel); border-left:1px solid var(--line); min-height:0; display:flex; flex-direction:column; }
-  .head { padding:16px 16px 0; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  h1 { margin:0; font-size:22px; }
+  .head { padding:16px 16px 4px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  h1 { margin:0; font-size:24px; }
   .mood { background:var(--chip); border-radius:999px; padding:2px 12px; font-size:14px; }
   .spacer { flex:1; }
-  .small { font-size:13px; padding:5px 10px; border-radius:10px; }
   .err { color:#c0452f; font-size:14px; padding:6px 16px 0; }
-  #tabs { display:flex; gap:2px; padding:12px 8px 0; border-bottom:1px solid var(--line); }
-  .tab { position:relative; background:none; border:0; border-bottom:2px solid transparent; border-radius:0; padding:8px 12px; color:var(--muted); font-size:15px; }
+
+  button { font:inherit; font-size:15px; padding:9px 14px; border-radius:12px; border:1px solid var(--line); background:var(--chip); color:var(--ink); cursor:pointer; }
+  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button.small { font-size:13px; padding:5px 10px; border-radius:10px; }
+  button:disabled { opacity:.6; cursor:default; }
+
+  #tabs { display:flex; gap:2px; padding:10px 8px 0; border-bottom:1px solid var(--line); overflow-x:auto; }
+  .tab { position:relative; background:none; border:0; border-bottom:3px solid transparent; border-radius:0; padding:8px 12px; color:var(--muted); font-size:16px; white-space:nowrap; }
   .tab[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--accent); font-weight:600; }
   .count { margin-left:6px; background:var(--accent); color:#fff; border-radius:999px; font-size:12px; padding:0 7px; }
   .count:empty { display:none; }
-  .asklist { gap:14px; }
+  .dot { display:none; position:absolute; top:6px; right:2px; width:9px; height:9px; border-radius:50%; background:var(--accent); }
+  .dot.on { display:block; }
+
+  .pane { flex:1; overflow:auto; padding:16px; }
+  .pane[hidden] { display:none; }
+  h2 { margin:22px 0 8px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
+  h2:first-child { margin-top:0; }
+  ul, ol { list-style:none; margin:0; padding:0; }
+  p { margin:0; }
+  .muted { color:var(--muted); }
+  a { color:inherit; }
+
+  /* Day: right now / next */
+  .now { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:14px; }
+  .now .row { display:flex; gap:10px; align-items:baseline; }
+  .now .label { width:92px; flex:none; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  .now .big { font-size:18px; font-weight:600; }
+  .now .row + .row { margin-top:4px; color:var(--muted); }
+  .now .row + .row .big { font-size:15px; font-weight:400; }
+
+  .filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px; }
+  .filter { font-size:14px; padding:5px 12px; border-radius:999px; }
+  .filter[aria-pressed="true"] { background:var(--ink); color:var(--panel); border-color:var(--ink); }
+
+  .dayhead { margin:20px 0 8px; font-size:14px; font-weight:600; color:var(--muted); }
+  .cards { display:flex; flex-direction:column; gap:12px; }
+  .card { --kind:var(--walk); background:var(--card); border:1px solid var(--line); border-left:5px solid var(--kind); border-radius:14px; padding:12px 14px; }
+  .card.search { --kind:var(--search); } .card.read { --kind:var(--read); } .card.piano { --kind:var(--piano); }
+  .card.diary { --kind:var(--diary); } .card.rest { --kind:var(--rest); } .card.ask { --kind:var(--ask); }
+  .card header { display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
+  .card header .kind { color:var(--kind); font-weight:700; }
+  .card header time { margin-left:auto; font-variant-numeric:tabular-nums; }
+  .card .title { margin:6px 0 0; font-size:18px; font-weight:600; line-height:1.3; }
+  .card .thought { margin-top:10px; font-style:italic; }
+  .card .results { margin-top:10px; display:flex; flex-direction:column; gap:6px; font-size:15px; }
+  .card .results li { padding-left:12px; border-left:2px solid var(--line); }
+  .card .results .snip { color:var(--muted); font-size:14px; display:block; }
+  .card .opened { margin-top:10px; padding:10px 12px; background:var(--bg); border-radius:10px; }
+  .card .opened .label { font-size:13px; color:var(--muted); margin-bottom:4px; }
+  .card .opened .label a { font-weight:600; color:var(--ink); }
+  .card .opened p { font-size:15px; }
+  .card details { margin-top:6px; }
+  .card summary { cursor:pointer; font-size:14px; color:var(--kind); font-weight:600; }
+  .card details p { margin-top:6px; white-space:pre-wrap; font-size:15px; }
+  .notes { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .notes span { background:var(--bg); border-radius:8px; padding:2px 9px; font-family:ui-monospace, Menlo, monospace; font-size:14px; }
+  .quote { margin-top:8px; padding:10px 12px; background:var(--bg); border-radius:10px; white-space:pre-wrap; }
+
+  /* feeds and lists */
+  .item { padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:12px; }
+  .item:last-child { border-bottom:0; margin-bottom:0; }
+  .meta { display:flex; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin-bottom:2px; }
+  .item p { white-space:pre-wrap; }
+  .reflect { border-left:3px solid var(--accent); padding-left:12px; }
+  .ask { border-left:3px solid var(--accent); padding-left:10px; }
+  .mine { border-left:3px solid var(--line); padding-left:10px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { background:var(--chip); border-radius:999px; padding:2px 10px; font-size:14px; }
+  .story { white-space:pre-wrap; }
+  .bar { display:grid; grid-template-columns:84px 1fr; align-items:center; gap:8px; font-size:14px; margin:6px 0; }
+  .track { height:8px; background:var(--chip); border-radius:99px; overflow:hidden; }
+  .fill { height:100%; background:var(--accent); border-radius:99px; transition:width .6s; }
+  .asklist { display:flex; flex-direction:column; gap:16px; }
   .asklist li { display:list-item; list-style:disc; margin-left:20px; padding-left:4px; }
   .asklist .what { font-weight:600; }
   .asklist .why { color:var(--muted); font-size:14px; }
   .asklist .buttons { display:flex; gap:8px; margin-top:6px; }
-  .donelist li { color:var(--muted); font-size:14px; text-decoration:line-through; }
-  .dot { display:none; position:absolute; top:6px; right:4px; width:9px; height:9px; border-radius:50%; background:var(--accent); }
-  .dot.on { display:block; }
-  .pane { flex:1; overflow:auto; padding:16px; }
-  .pane[hidden] { display:none; }
-  h2 { margin:18px 0 6px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
-  h2:first-child { margin-top:0; }
-  ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
-  .item { padding-bottom:10px; border-bottom:1px solid var(--line); }
-  .item:last-child { border-bottom:0; }
-  .meta { display:flex; gap:10px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-bottom:2px; }
-  .item p { margin:0; white-space:pre-wrap; }
-  .reflect { border-left:3px solid var(--accent); padding-left:10px; }
-  .mine { border-left:3px solid var(--line); padding-left:10px; }
+  .donelist li { color:var(--muted); font-size:14px; text-decoration:line-through; margin-bottom:4px; }
   #reply { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--line); }
   #reply .row { display:flex; align-items:center; gap:10px; }
   textarea, input[type=password] { font:inherit; font-size:15px; width:100%; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--bg); color:var(--ink); resize:vertical; }
-  .ask { border-left:3px solid var(--accent); padding-left:10px; }
-  .chips { display:flex; flex-wrap:wrap; gap:6px; }
-  .chip { background:var(--chip); border-radius:999px; padding:2px 10px; font-size:14px; }
-  .muted { color:var(--muted); }
-  .story { margin:0; }
-  .bar { display:grid; grid-template-columns:84px 1fr; align-items:center; gap:8px; font-size:14px; margin:4px 0; }
-  .track { height:8px; background:var(--chip); border-radius:99px; overflow:hidden; }
-  .fill { height:100%; background:var(--accent); border-radius:99px; transition:width .6s; }
-  button { font:inherit; font-size:15px; padding:9px 14px; border-radius:12px; border:1px solid var(--line); background:var(--chip); color:var(--ink); cursor:pointer; }
-  button.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
-  button:disabled { opacity:.6; cursor:default; }
+
   @media (max-width:820px) {
-    #app { grid-template-columns:1fr; grid-template-rows:34% 66%; }
+    #app { grid-template-columns:1fr; grid-template-rows:30% 70%; }
     #panel { border-left:0; border-top:1px solid var(--line); }
   }
 </style>
@@ -81,27 +131,33 @@
     </div>
     <div class="err" id="err"></div>
     <nav id="tabs" role="tablist">
-      <button class="tab" role="tab" data-tab="thoughts">Thoughts</button>
+      <button class="tab" role="tab" data-tab="day">Day</button>
+      <button class="tab" role="tab" data-tab="mind">Mind</button>
       <button class="tab" role="tab" data-tab="asks">Asks<span class="count" id="askcount"></span></button>
-      <button class="tab" role="tab" data-tab="wants">Wants</button>
       <button class="tab" role="tab" data-tab="messages">Messages<span class="dot" id="msgdot"></span></button>
       <button class="tab" role="tab" data-tab="life">Life</button>
     </nav>
 
-    <section class="pane" data-pane="thoughts"><ul id="thoughts"></ul></section>
+    <section class="pane" data-pane="day">
+      <div class="now" id="now"></div>
+      <div class="filters" id="filters"></div>
+      <div id="day"></div>
+    </section>
+
+    <section class="pane" data-pane="mind" hidden>
+      <h2>What Pip is thinking about</h2>
+      <ul id="thoughts"></ul>
+      <h2>Pip wants</h2><ul id="wants"></ul>
+      <h2>Pip wonders</h2><ul id="questions"></ul>
+      <h2>Came true</h2><ul id="fulfilled"></ul>
+      <h2>Interests</h2><div class="chips" id="interests"></div>
+    </section>
 
     <section class="pane" data-pane="asks" hidden>
       <h2>Pip would like from you</h2>
       <ul class="asklist" id="asks"></ul>
       <h2>Done</h2>
       <ul class="donelist" id="asksdone"></ul>
-    </section>
-
-    <section class="pane" data-pane="wants" hidden>
-      <h2>Pip wants</h2><ul id="wants"></ul>
-      <h2>Pip wonders</h2><ul id="questions"></ul>
-      <h2>Came true</h2><ul id="fulfilled"></ul>
-      <h2>Interests</h2><div class="chips" id="interests"></div>
     </section>
 
     <section class="pane" data-pane="messages" hidden>
@@ -116,8 +172,6 @@
     <section class="pane" data-pane="life" hidden>
       <h2>Pip's story so far</h2><p class="story" id="story"></p>
       <h2>How Pip feels</h2><div id="bars"></div>
-      <h2>Recently</h2><ul id="recent"></ul>
-      <h2>Last thing learned</h2><div class="muted" id="learned"></div>
     </section>
   </aside>
 </div>
