@@ -16,14 +16,17 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(getComputedStyle(document.body).backgroundColor);
 
 const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 function fitCamera() {
   const w = stage.clientWidth || 1;
   const h = stage.clientHeight || 1;
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
-  const k = Math.max(1, 1.3 / camera.aspect);
-  camera.position.set(9.5 * k, 9 * k, 11 * k);
-  camera.lookAt(0, 1.2, -0.3);
+  if (view.mode === 'overview') {
+    const k = Math.max(1, 1.3 / camera.aspect);
+    camera.position.set(9.5 * k, 9 * k, 11 * k);
+    camera.lookAt(0, 1.2, -0.3);
+  }
   camera.updateProjectionMatrix();
 }
 new ResizeObserver(fitCamera).observe(stage);
@@ -62,6 +65,14 @@ function cyl(parent, [rt, rb, h], color, [x, y, z], opts) {
 box(scene, [10, 0.3, 10], 0xd9b48a, [0, -0.15, 0]);
 box(scene, [10.3, 5, 0.3], 0xf3d9c4, [0.15, 2.5, -5.15]);
 box(scene, [0.3, 5, 10], 0xefcfb6, [-5.15, 2.5, 0]);
+// The front and right walls and the ceiling only appear in walk mode, so the overview stays open.
+const extraWalls = new THREE.Group();
+extraWalls.visible = false;
+box(extraWalls, [10.3, 5, 0.3], 0xefd7c0, [0, 2.5, 5.15]);
+box(extraWalls, [0.3, 5, 10.3], 0xefd7c0, [5.15, 2.5, 0]);
+box(extraWalls, [10.6, 0.3, 10.6], 0xe8c9b0, [0, 5.15, 0]);
+extraWalls.traverse((o) => (o.castShadow = false));
+scene.add(extraWalls);
 const rug = cyl(scene, [2, 2, 0.04], 0xe3a183, [0, 0.02, 0.8]);
 rug.castShadow = false;
 
@@ -120,6 +131,23 @@ const SHAPE_GEO = {
 };
 function buildDecor(d) {
   const g = new THREE.Group();
+  if (d.image) {
+    // A picture from Bas that Pip chose to put up: a frame with the photo in it.
+    const [w, h] = d.size || [0.8, 0.55];
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(w + 0.1, h + 0.1, 0.06), new THREE.MeshStandardMaterial({ color: 0x8d5a3b, roughness: 0.8 }));
+    frame.position.z = 0.04;
+    frame.castShadow = true;
+    g.add(frame);
+    const photo = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: 0x111111 }));
+    photo.position.z = 0.075;
+    g.add(photo);
+    new THREE.TextureLoader().load(d.image, (tex) => {
+      tex.colorSpace = THREE.SRGBColorSpace;
+      photo.material.map = tex;
+      photo.material.color.set(0xffffff);
+      photo.material.needsUpdate = true;
+    });
+  }
   for (const p of d.parts || []) {
     const geo = SHAPE_GEO[p.shape];
     if (!geo) continue;
@@ -136,6 +164,7 @@ function buildDecor(d) {
   g.position.set(...d.pos);
   g.rotation.y = d.rotY || 0;
   g.userData.scale = d.scale || 1;
+  g.userData.info = () => decorInfo(d);
   g.scale.setScalar(0.001);
   return g;
 }
@@ -472,13 +501,15 @@ function planFor(last) {
     case 'rest': return { at: 'bed', anim: 'rest' };
     case 'ask_for': return { at: 'center', anim: 'ask' };
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
+    case 'place_picture':
     case 'decorate': {
       const m = last.made;
       if (!m) return { at: 'center', anim: 'look' };
       const [sx, sz] = m.stand;
       return { at: 'custom', anim: 'make', spot: { p: new V3(sx, 0, sz), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz) }, madeAt: m.pos };
     }
-    case 'remove_decoration': return { at: 'center', anim: 'look' };
+    case 'remove_decoration':
+    case 'take_down_picture': return { at: 'center', anim: 'look' };
     default: return { at: resolveSpot(d.object), anim: 'look' };
   }
 }
@@ -680,6 +711,205 @@ function frame(now, dt) {
   eyes.forEach((e) => (e.scale.y = closed ? 0.1 : 1));
 }
 
+// ---------------------------------------------------------------- free view: walk around and tap things to read about them
+const r1 = (v) => (Math.round(Number(v) * 10) / 10).toString();
+const logOf = (...actions) => (lastState?.log || []).filter((e) => actions.includes(e.action) && Date.parse(e.at) <= Date.now());
+const WALK_BLOCKS = [ // places you cannot walk through: [minX, maxX, minZ, maxZ]
+  [-3.95, -1.25, -5, -3.6], [-2.95, -2.25, -3.5, -2.8], [1.55, 3.65, -5, -4.3], [-5, -3.6, 0.1, 2.3], [2.2, 4.6, 1.3, 4.7], [3.6, 4.6, -4.6, -3.6],
+];
+function blocked(x, z) {
+  if (Math.abs(x) > 4.7 || Math.abs(z) > 4.7) return true;
+  return WALK_BLOCKS.some(([x0, x1, z0, z1]) => x > x0 - 0.28 && x < x1 + 0.28 && z > z0 - 0.28 && z < z1 + 0.28);
+}
+function updateWalk(dt) {
+  if (view.mode !== 'walk') return;
+  const fwd = (view.keys.has('w') || view.keys.has('arrowup') ? 1 : 0) - (view.keys.has('s') || view.keys.has('arrowdown') ? 1 : 0) + view.stick.y;
+  const side = (view.keys.has('d') || view.keys.has('arrowright') ? 1 : 0) - (view.keys.has('a') || view.keys.has('arrowleft') ? 1 : 0) + view.stick.x;
+  const len = Math.hypot(fwd, side);
+  if (len > 0.05) {
+    const speed = 2.4 * dt * Math.min(1, len);
+    const dx = ((-Math.sin(view.yaw) * fwd + Math.cos(view.yaw) * side) / len) * speed;
+    const dz = ((-Math.cos(view.yaw) * fwd - Math.sin(view.yaw) * side) / len) * speed;
+    if (!blocked(view.x + dx, view.z)) view.x += dx;
+    if (!blocked(view.x, view.z + dz)) view.z += dz;
+  }
+  camera.position.set(view.x, 1.55, view.z);
+  camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
+}
+function setMode(mode) {
+  view.mode = mode;
+  document.body.classList.toggle('walking', mode === 'walk');
+  extraWalls.visible = mode === 'walk';
+  $('stick').hidden = mode !== 'walk';
+  if (mode === 'walk') {
+    Object.assign(view, { x: 0, z: 3.4, yaw: 0, pitch: 0 });
+    camera.fov = 70;
+    camera.rotation.order = 'YXZ';
+  } else {
+    camera.fov = 35;
+    view.stick = { x: 0, y: 0 };
+    view.keys.clear();
+    $('knob').style.transform = '';
+  }
+  camera.updateProjectionMatrix();
+  if (mode === 'overview') fitCamera();
+  $('walk').textContent = mode === 'walk' ? '🏠 Back to overview' : '🚶 Walk around';
+  hideInfo();
+}
+$('walk').addEventListener('click', () => setMode(view.mode === 'walk' ? 'overview' : 'walk'));
+
+// Things you can tap: Pip, the photo and Pip's creations carry their own info; furniture is found by where you tapped.
+const REGIONS = [
+  { box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.'] }; } },
+  { box: [-2.95, -2.25, 0, 0.7, -3.5, -2.8], info: () => ({ title: 'The piano stool', lines: ['Pip sits here to play.'] }) },
+  { box: [1.55, 3.65, 0, 3.1, -5, -4.3], info: () => { const last = logOf('read_book').at(-1); return { title: 'The bookshelf', lines: ['Pip goes here to read.', last?.opened ? `He last read about ${last.opened.title}.` : 'He has not read anything here yet.'], links: last?.opened?.url ? [{ text: `Read: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
+  { box: [-5, -3.6, 0, 1.9, 0.1, 2.3], info: () => { const last = logOf('search_web').at(-1); return { title: 'The computer', lines: ['Pip looks things up on the web here.', last ? `His last search was "${last.query}".` : 'He has not searched yet.'], links: last?.opened?.url ? [{ text: `He opened: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
+  { box: [2.2, 4.6, 0, 1.1, 1.3, 4.7], info: () => ({ title: "Pip's bed", lines: ['Pip sleeps here, from 23:00 until 08:00.', 'He also rests here when he is tired.'] }) },
+  { box: [3.6, 4.6, 0, 1.5, -4.6, -3.6], info: () => ({ title: 'A plant', lines: ['A leafy plant in the corner.'] }) },
+  { box: [-0.9, 1.5, 1.7, 4.1, -5.1, -4.8], info: () => ({ title: 'The window', lines: ['Pip looks outside here.', 'The sky follows the real time of day where you are.'] }) },
+  { box: [-2, 2, 0, 0.12, -1.2, 2.8], info: () => ({ title: 'The rug', lines: ['A soft round rug in the middle of the room.'] }) },
+];
+function infoFor(hit) {
+  for (let o = hit.object; o; o = o.parent) {
+    if (o.userData?.info) return typeof o.userData.info === 'function' ? o.userData.info() : o.userData.info;
+  }
+  const { x, y, z } = hit.point;
+  return REGIONS.find(({ box: [x0, x1, y0, y1, z0, z1] }) => x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1)?.info() ?? null;
+}
+pip.group.userData.info = () => {
+  const s = lastState;
+  const [icon, text] = plan && stepNow >= 0 ? headline(plan.steps[stepNow]) : ['•', 'getting ready'];
+  return { title: 'Pip', lines: [`${icon} ${text}`, s?.mood ? `Mood: ${s.mood}` : '', s ? `Fullness ${r1(s.fullness)} · Energy ${r1(s.energy)} · Wonder ${r1(s.wonder)} · Joy ${r1(s.joy)} · Calm ${r1(s.calm)}` : ''].filter(Boolean) };
+};
+wallFrame.userData.info = () => ({
+  title: 'Beneath the Milky Way',
+  image: 'pictures/dark-sky.jpg',
+  lines: ["A photo of the Milky Way over a very dark sky, with two people in silhouette looking up from a railing. It hangs above Pip's piano.", 'Photo: ESO/Luis Calçada/Herbert Zodet'],
+  links: [{ text: 'Photo page on Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Beneath_the_Milky_Way.jpg' }, { text: 'License: CC BY 4.0', url: 'https://creativecommons.org/licenses/by/4.0/' }],
+});
+function decorInfo(d) {
+  const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
+  const lines = d.image
+    ? [`A picture${pic?.caption ? `: "${pic.caption}"` : ''} that Bas gave to Pip. It hangs ${d.label}.`, pic?.notes ? `Pip says: ${pic.notes}` : '']
+    : [`Made by Pip. It is ${d.label}.`, d.why ? `Why: ${d.why}` : '', d.project ? `For his project: ${d.project}` : '', `Made ${when(d.createdAt)}.`];
+  return { title: d.name, lines: lines.filter(Boolean), image: d.image || null };
+}
+
+const infoBox = $('info');
+function showInfo(info) {
+  $('infotitle').textContent = info.title || '';
+  const link = $('infoimglink');
+  link.hidden = !info.image;
+  if (info.image) {
+    link.href = info.image;
+    $('infoimg').src = info.image;
+  }
+  const body = el('div');
+  (info.lines || []).forEach((l, i) => body.append(el('p', l, i && l.startsWith('Photo:') ? 'small' : '')));
+  (info.links || []).forEach((l) => {
+    const p = el('p', null, 'small');
+    p.append(link_(l.url, l.text));
+    body.append(p);
+  });
+  $('infobody').replaceChildren(body);
+  infoBox.hidden = false;
+}
+const link_ = (url, text) => link(url, text);
+function hideInfo() {
+  infoBox.hidden = true;
+}
+$('infoclose').addEventListener('click', hideInfo);
+
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+function pickAt(clientX, clientY) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((clientX - r.left) / r.width) * 2 - 1, -(((clientY - r.top) / r.height) * 2 - 1));
+  ray.setFromCamera(ndc, camera);
+  for (const h of ray.intersectObjects(scene.children, true)) {
+    if (h.object.isSprite || !h.object.visible) continue;
+    const info = infoFor(h);
+    if (info) return info;
+  }
+  return null;
+}
+
+// Looking around (drag) and tapping (a short touch that hardly moves).
+const dom = renderer.domElement;
+dom.style.touchAction = 'none';
+let drag = null;
+dom.addEventListener('pointerdown', (e) => {
+  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), moved: false };
+  dom.setPointerCapture(e.pointerId);
+});
+dom.addEventListener('pointermove', (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.x;
+  const dy = e.clientY - drag.y;
+  drag.x = e.clientX;
+  drag.y = e.clientY;
+  if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 6) drag.moved = true;
+  if (view.mode === 'walk' && drag.moved) {
+    view.yaw -= dx * 0.005;
+    view.pitch = Math.max(-1.2, Math.min(1.2, view.pitch - dy * 0.005));
+  }
+});
+dom.addEventListener('pointerup', (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const tap = !drag.moved && performance.now() - drag.t < 500;
+  drag = null;
+  if (!tap) return;
+  const info = pickAt(e.clientX, e.clientY);
+  if (info) showInfo(info);
+  else hideInfo();
+});
+dom.addEventListener('pointercancel', () => (drag = null));
+
+// The joystick for touch screens.
+const stick = $('stick');
+let stickId = null;
+const moveStick = (e) => {
+  const r = stick.getBoundingClientRect();
+  let dx = e.clientX - (r.left + r.width / 2);
+  let dy = e.clientY - (r.top + r.height / 2);
+  const max = r.width / 2 - 10;
+  const len = Math.hypot(dx, dy);
+  if (len > max) {
+    dx = (dx / len) * max;
+    dy = (dy / len) * max;
+  }
+  $('knob').style.transform = `translate(${dx}px, ${dy}px)`;
+  view.stick = { x: dx / max, y: -dy / max };
+};
+stick.addEventListener('pointerdown', (e) => {
+  stickId = e.pointerId;
+  stick.setPointerCapture(e.pointerId);
+  moveStick(e);
+});
+stick.addEventListener('pointermove', (e) => {
+  if (e.pointerId === stickId) moveStick(e);
+});
+const stopStick = (e) => {
+  if (e.pointerId !== stickId) return;
+  stickId = null;
+  view.stick = { x: 0, y: 0 };
+  $('knob').style.transform = '';
+};
+stick.addEventListener('pointerup', stopStick);
+stick.addEventListener('pointercancel', stopStick);
+
+// Keys for desktop: W A S D or the arrow keys.
+window.addEventListener('keydown', (e) => {
+  if (view.mode !== 'walk' || /input|textarea/i.test(document.activeElement?.tagName || '')) return;
+  const k = e.key.toLowerCase();
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) {
+    view.keys.add(k);
+    e.preventDefault();
+  }
+  if (k === 'escape') setMode('overview');
+});
+window.addEventListener('keyup', (e) => view.keys.delete(e.key.toLowerCase()));
+
 let prev = performance.now();
 function loop(now) {
   const dt = Math.min(0.3, (now - prev) / 1000);
@@ -687,6 +917,7 @@ function loop(now) {
   frame(now, dt);
   updateFloaters(dt, now);
   popDecor(now);
+  updateWalk(dt);
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
@@ -717,11 +948,22 @@ function store(key, value) {
   } catch {}
   return null;
 }
-function entry(meta, body, cls) {
+function entry(meta, body, cls, image) {
   const li = el('li', null, 'item' + (cls ? ' ' + cls : ''));
   const m = el('div', null, 'meta');
   meta.forEach((t) => m.append(el('span', t)));
   li.append(m, el('p', body));
+  if (image) {
+    const a = el('a');
+    a.href = image;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    const img = el('img', null, 'thumb');
+    img.src = image;
+    img.alt = 'picture';
+    a.append(img);
+    li.append(a);
+  }
   return li;
 }
 const empty = (t) => [el('li', t, 'muted')];
@@ -745,7 +987,7 @@ let isStatic = false;
 let fastUntil = 0;
 
 // Sends a message to Pip. Returns true when it was sent.
-async function sendReply(body) {
+async function sendReply(body, image = '') {
   const status = $('replystatus');
   let key = store('pip-key') || '';
   if (isStatic && !key) key = $('replykey').value.trim();
@@ -760,7 +1002,7 @@ async function sendReply(body) {
   $('send').disabled = true;
   status.textContent = 'Sending…';
   try {
-    const res = await fetch('/api/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: body, key }) });
+    const res = await fetch('/api/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: body, key, image }) });
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) {
       store('pip-key', '');
@@ -777,7 +1019,7 @@ async function sendReply(body) {
     }
     if (key) store('pip-key', key);
     $('replykey').hidden = true;
-    pending.push({ id: data.id, at: new Date().toISOString(), text: body });
+    pending.push({ id: data.id, at: new Date().toISOString(), text: body || '(a picture)' });
     store('pip-pending', JSON.stringify(pending));
     status.textContent = 'Sent. Pip reads it when he next wakes up, and answers if he wants to.';
     fastUntil = Date.now() + 3 * 60_000;
@@ -790,11 +1032,68 @@ async function sendReply(body) {
     $('send').disabled = false;
   }
 }
+// The picture is shrunk first (at most 1280 px, JPEG) so it is small enough to send.
+let chosenImage = '';
+async function shrink(file) {
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * k);
+  c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.82));
+  return await new Promise((r) => {
+    const reader = new FileReader();
+    reader.onload = () => r(String(reader.result).split(',')[1]);
+    reader.readAsDataURL(blob);
+  });
+}
+function clearImage() {
+  chosenImage = '';
+  $('replyimg').value = '';
+  $('imgname').textContent = '';
+  $('imgclear').hidden = true;
+}
+$('replyimg').addEventListener('change', async () => {
+  const file = $('replyimg').files[0];
+  if (!file) return;
+  try {
+    chosenImage = await shrink(file);
+    $('imgname').textContent = `📎 ${file.name}`;
+    $('imgclear').hidden = false;
+  } catch {
+    clearImage();
+    $('replystatus').textContent = 'I could not read that picture.';
+  }
+});
+$('imgclear').addEventListener('click', clearImage);
+
 $('reply').addEventListener('submit', async (e) => {
   e.preventDefault();
   const body = $('replytext').value.trim();
-  if (body && (await sendReply(body))) $('replytext').value = '';
+  if (!body && !chosenImage) return;
+  if (await sendReply(body, chosenImage)) {
+    $('replytext').value = '';
+    clearImage();
+  }
 });
+
+// What Bas typed in the ntfy app shows up in this chat too (the website asks ntfy through a small service, with the same key).
+let ntfyMsgs = [];
+let ntfyAt = 0;
+let ntfyOff = false;
+async function refreshNtfy() {
+  const key = store('pip-key');
+  if (ntfyOff || !isStatic || !key || Date.now() - ntfyAt < 20_000) return;
+  ntfyAt = Date.now();
+  try {
+    const res = await fetch('/api/ntfy', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key }) });
+    if (res.status === 501 || res.status === 404) ntfyOff = true;
+    if (!res.ok) return;
+    ntfyMsgs = (await res.json()).messages || [];
+    if (lastState) render(lastState);
+  } catch {}
+}
 
 // tabs
 const TABS = ['day', 'mind', 'asks', 'messages', 'life'];
@@ -805,6 +1104,7 @@ function showTab(name) {
   store('pip-tab', name);
   document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
   document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
+  if (name === 'messages') refreshNtfy(); // look for things typed in the ntfy app as soon as the chat is opened
   if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
   $('msgdot').classList.toggle('on', name !== 'messages' && !!latestMsg && latestMsg !== store('pip-seen'));
 }
@@ -823,11 +1123,13 @@ function headline(st) {
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
+    case 'place_picture': return ['🖼️', 'Putting up a picture'];
+    case 'take_down_picture': return ['🖼️', 'Taking a picture down'];
     case 'remove_decoration': return ['🧹', `Taking ${d.name || st.name || 'something'} out of his room`];
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', remove_decoration: 'make', eat: 'eat' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', remove_decoration: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -906,7 +1208,13 @@ function dayCard(e) {
     if (e.failed) card.append(el('p', 'He was not hungry yet.', 'muted'));
   } else if (kind === 'make') {
     card.append(el('h3', e.name || '', 'title'));
-    if (e.action === 'remove_decoration') card.append(el('p', e.removed ? 'He took it away.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
+    if (e.image) {
+      const img = el('img', null, 'thumb');
+      img.src = e.image;
+      img.alt = 'picture';
+      card.append(img);
+    }
+    if (e.action === 'remove_decoration' || e.action === 'take_down_picture') card.append(el('p', e.removed ? 'He took it away.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
     else card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He made it and put it ${e.place}.`, 'muted'));
     if (e.why && !e.failed) card.append(el('p', e.why));
     if (e.project && !e.failed) card.append(el('p', `For his project: ${e.project}`, 'muted'));
@@ -1077,16 +1385,36 @@ function render(s) {
   }
   const thread = [
     ...outbox.map((m) => ({ at: m.at, kind: m.kind, text: m.text })),
-    ...(s.inbox || []).map((m) => ({ at: m.at, mine: true, read: m.read, readAt: m.readAt, text: m.text })),
+    ...(s.inbox || []).map((m) => ({ at: m.at, mine: true, read: m.read, readAt: m.readAt, text: m.text, via: m.via, image: (s.pictures || []).find((p) => p.id === m.picture)?.image })),
+    ...ntfyMsgs.filter((m) => !gotIds.has(m.id)).map((m) => ({ at: m.at, mine: true, via: 'ntfy', text: m.text })),
     ...pending.map((p) => ({ at: p.at, mine: true, sending: true, text: p.text })),
   ].sort((a, b) => new Date(b.at) - new Date(a.at));
   fill($('messages'), thread.length
     ? thread.map((m) => m.mine
-      ? entry([when(m.at), 'You', m.sending ? 'on its way…' : m.read ? `✓ Pip read it ${when(m.readAt || m.at)}` : 'Pip has not read it yet'], m.text, 'mine')
+      ? entry([when(m.at), m.via === 'ntfy' ? 'You (ntfy)' : 'You', m.sending ? 'on its way…' : m.read ? `✓ Pip read it ${when(m.readAt || m.at)}` : 'Pip has not read it yet'], m.text, 'mine', m.image)
       : entry([when(m.at), m.kind === 'ask' ? '🙏 Pip asks for something' : '✉️ Pip writes to you'], m.text, m.kind === 'ask' ? 'ask' : ''))
     : empty('Nothing yet. Pip writes to you when something really matters to him, and you can write to him too.'));
   showTab(tab);
 
+  const pics = (s.pictures || []).slice().reverse();
+  fill($('pics'), pics.length
+    ? pics.map((p) => {
+      const div = el('div', null, 'pic');
+      const a = el('a');
+      a.href = p.image;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      const img = el('img');
+      img.src = p.image;
+      img.alt = 'picture from Bas';
+      a.append(img);
+      div.append(a);
+      div.append(el('div', p.seen ? (p.notes || 'Pip has looked at it.') : 'Pip has not looked at it yet.', 'note'));
+      const hung = (s.decor || []).find((d) => d.picture === p.id);
+      div.append(el('div', hung ? `🖼️ ${hung.label}` : 'in his album, not put up', 'meta'));
+      return div;
+    })
+    : [el('div', 'Bas has not given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
   const news = s.news?.items || [];
   fill($('newslist'), news.length
     ? news.map((n) => {
@@ -1174,6 +1502,7 @@ async function poll() {
     lastState = s;
     isStatic = !!s._static;
     render(s);
+    refreshNtfy();
     if (s._static) {
       delay = Date.now() < fastUntil ? 10_000 : 60_000;
       $('wake').hidden = true;
@@ -1198,4 +1527,4 @@ $('wake').addEventListener('click', () => {
 
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipDo = (last) => startTask({ at: String(Date.now()), thought: '(test)', details: {}, ...last });
-window.__debug = { pip, getTask: () => task, decorGroups };
+window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt, camera };

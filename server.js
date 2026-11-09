@@ -3,11 +3,12 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { extname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { pictureType } from './inbox.js';
 
 const ROOT = fileURLToPath(new URL('./', import.meta.url));
 const WEB = resolve(ROOT, 'web');
 const PORT = Number(process.env.PORT) || 4321;
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.json': 'application/json', '.jpg': 'image/jpeg' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png' };
 
 let waking = false;
 let lastError = null;
@@ -53,16 +54,22 @@ const server = http.createServer(async (req, res) => {
     let raw = '';
     for await (const chunk of req) {
       raw += chunk;
-      if (raw.length > 5000) return json(res, 413, { error: 'Too long.' });
+      if (raw.length > 3_500_000) return json(res, 413, { error: 'Too big.' });
     }
     let text = '';
+    let picture = null;
     try {
-      text = String(JSON.parse(raw).text ?? '').trim().slice(0, 1000);
+      const body = JSON.parse(raw);
+      text = String(body.text ?? '').trim().slice(0, 1000);
+      if (typeof body.image === 'string' && body.image) picture = Buffer.from(body.image, 'base64');
     } catch {}
-    if (!text) return json(res, 400, { error: 'Write something first.' });
+    const type = picture ? pictureType(new Uint8Array(picture)) : null;
+    if (picture && !type) return json(res, 400, { error: 'That picture is not a small JPEG or PNG.' });
+    if (!text && !picture) return json(res, 400, { error: 'Write something first.' });
     const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
     await mkdir(resolve(ROOT, 'inbox'), { recursive: true });
-    await writeFile(resolve(ROOT, 'inbox', `${id}.json`), JSON.stringify({ id, at: new Date().toISOString(), text }));
+    if (picture) await writeFile(resolve(ROOT, 'inbox', `${id}.${type.ext}`), picture);
+    await writeFile(resolve(ROOT, 'inbox', `${id}.json`), JSON.stringify({ id, at: new Date().toISOString(), text, ...(picture ? { image: `${id}.${type.ext}` } : {}) }));
     wake();
     return json(res, 200, { ok: true, id });
   }

@@ -21,7 +21,18 @@
   #app { display:grid; grid-template-columns:1fr minmax(440px, 36%); height:100%; }
   #stage { position:relative; min-height:0; overflow:hidden; }
   #stage canvas { display:block; width:100%; height:100%; }
-  #credit { position:absolute; right:12px; top:10px; max-width:min(300px, 60%); text-align:right; font-size:11px; line-height:1.35; color:var(--muted); opacity:.85; }
+  .stagebtn { position:absolute; left:12px; top:12px; z-index:3; font-size:14px; padding:8px 12px; border-radius:12px; background:var(--panel); box-shadow:0 2px 10px rgba(0,0,0,.25); }
+  #stage { touch-action:none; user-select:none; -webkit-user-select:none; }
+  #stick { position:absolute; left:18px; bottom:34px; width:116px; height:116px; border-radius:50%; background:rgba(255,255,255,.14); border:2px solid rgba(255,255,255,.35); z-index:3; touch-action:none; }
+  #knob { position:absolute; left:34px; top:34px; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,.7); pointer-events:none; }
+  #info { position:absolute; left:50%; bottom:14px; transform:translateX(-50%); width:min(440px, calc(100% - 24px)); max-height:52%; overflow:auto; z-index:4; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:16px; padding:14px 16px 16px; box-shadow:0 8px 30px rgba(0,0,0,.35); }
+  #info h3 { margin:0 28px 6px 0; font-size:18px; }
+  #info p { margin:6px 0; font-size:15px; }
+  #info .small { color:var(--muted); font-size:13px; }
+  #info img { display:block; width:100%; max-height:240px; object-fit:contain; background:#000; border-radius:10px; margin:8px 0; }
+  #info a { color:var(--accent); }
+  #infoclose { position:absolute; right:8px; top:6px; font-size:22px; line-height:1; padding:4px 10px; background:none; border:0; color:var(--muted); }
+  body.walking #hint { display:none; }
   #hint { position:absolute; left:16px; bottom:12px; right:16px; color:var(--muted); font-size:13px; pointer-events:none; }
   #panel { background:var(--panel); border-left:1px solid var(--line); min-height:0; display:flex; flex-direction:column; }
   .head { padding:16px 16px 4px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
@@ -96,6 +107,12 @@
   .project { border-left:3px solid var(--make); padding-left:12px; }
   .projectdone { opacity:.6; }
   .next { color:var(--muted); font-size:14px; margin-top:2px; }
+  .attach { display:inline-block; cursor:pointer; padding:5px 10px; border-radius:10px; border:1px solid var(--line); background:var(--chip); font-size:13px; }
+  .thumb { display:block; max-width:100%; max-height:220px; border-radius:10px; margin-top:8px; }
+  .pics { display:flex; flex-direction:column; gap:14px; }
+  .pic img { width:100%; max-height:200px; object-fit:cover; border-radius:10px; display:block; }
+  .pic .note { font-size:14px; margin-top:4px; }
+  .pic .meta { margin:4px 0 0; }
   .reflect { border-left:3px solid var(--accent); padding-left:12px; }
   .ask { border-left:3px solid var(--accent); padding-left:10px; }
   .mine { border-left:3px solid var(--line); padding-left:10px; }
@@ -126,7 +143,14 @@
 <div id="app">
   <div id="stage">
     <div id="hint"></div>
-    <div id="credit">Photo on the wall: <a href="https://commons.wikimedia.org/wiki/File:Beneath_the_Milky_Way.jpg" target="_blank" rel="noopener">Beneath the Milky Way</a> by ESO/Luis Calçada/Herbert Zodet, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></div>
+    <button id="walk" class="stagebtn" type="button">🚶 Walk around</button>
+    <div id="stick" hidden><div id="knob"></div></div>
+    <div id="info" hidden role="dialog" aria-label="About this">
+      <button id="infoclose" type="button" aria-label="Close">×</button>
+      <h3 id="infotitle"></h3>
+      <a id="infoimglink" target="_blank" rel="noopener" hidden><img id="infoimg" alt=""></a>
+      <div id="infobody"></div>
+    </div>
   </div>
   <aside id="panel">
     <div class="head">
@@ -172,6 +196,11 @@
       <form id="reply">
         <textarea id="replytext" rows="3" maxlength="1000" placeholder="Write to Pip…"></textarea>
         <input id="replykey" type="password" autocomplete="off" placeholder="Your reply key (only needed once)" hidden>
+        <div class="row">
+          <label class="attach small">📎 Picture<input id="replyimg" type="file" accept="image/*" hidden></label>
+          <span class="muted" id="imgname"></span>
+          <button type="button" class="small" id="imgclear" hidden>Remove</button>
+        </div>
         <div class="row"><button type="submit" class="primary" id="send">Send</button><span class="muted" id="replystatus"></span></div>
       </form>
       <ul id="messages"></ul>
@@ -180,6 +209,7 @@
     <section class="pane" data-pane="life" hidden>
       <h2>Pip's story so far</h2><p class="story" id="story"></p>
       <h2>How Pip feels</h2><div id="bars"></div>
+      <h2>Pictures Pip has</h2><div class="pics" id="pics"></div>
       <h2>The news Pip can see today</h2><ul id="newslist"></ul>
       <h2>What Pip made for his room</h2><ul id="decorlist"></ul>
     </section>

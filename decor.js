@@ -122,7 +122,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   const d = details && typeof details === 'object' ? details : {};
   const name = str(d.name, 60);
   if (!name) return { failed: 'he did not give it a name' };
-  if (decor.filter((x) => now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
+  if (decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
   if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
@@ -175,5 +175,67 @@ export function removeDecor(decor, name) {
   const n = str(name, 60).toLowerCase();
   if (!n) return null;
   const i = decor.findIndex((x) => x.name.toLowerCase() === n) >= 0 ? decor.findIndex((x) => x.name.toLowerCase() === n) : decor.findIndex((x) => x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()));
+  return i >= 0 ? decor.splice(i, 1)[0] : null;
+}
+
+// ---- Pictures from Bas. Pip decides if one goes on a wall or stands on a piece of furniture.
+const PICTURE_MAX = { wall: [0.9, 0.7], surface: [0.45, 0.35] };
+
+export function placePicture(decor, pic, where, atMs, now = Date.now()) {
+  if (!pic || !pic.image) return { failed: 'he does not have that picture' };
+  if (decor.some((x) => x.picture === pic.id)) return { failed: 'that picture is already up' };
+  if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
+  const usable = Object.keys(ZONES).filter((k) => ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface');
+  const want = findZone(where);
+  const first = want && usable.includes(want) ? want : null;
+  const kind = first ? ZONES[first].kind : 'wall';
+  const order = [...(first ? [first] : []), ...usable.filter((k) => k !== first && ZONES[k].kind === kind), ...usable.filter((k) => k !== first && ZONES[k].kind !== kind)];
+  let zone = null;
+  let slot = -1;
+  for (const k of order) {
+    const used = usedSlots(decor, k);
+    const i = ZONES[k].slots.findIndex((_, n) => !used.has(n));
+    if (i >= 0) {
+      zone = k;
+      slot = i;
+      break;
+    }
+  }
+  if (!zone) return { failed: 'there is no free spot left for it' };
+  const Z = ZONES[zone];
+  const [sx, sy, sz] = Z.slots[slot];
+  const [maxW, maxH] = PICTURE_MAX[Z.kind];
+  const aspect = pic.aspect > 0.2 && pic.aspect < 5 ? pic.aspect : 1.5;
+  const w = Math.min(maxW, maxH * aspect);
+  const h = w / aspect;
+  const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
+  const stand = Z.kind === 'wall' ? (Z.side === 'back' ? [sx, -3.7] : [-3.7, sz]) : [clampRoom(sx + Z.off[0]), clampRoom(sz + Z.off[1])];
+  return {
+    entry: {
+      id: `p${now.toString(36)}${decor.length}`,
+      name: str(pic.caption, 60).length <= 40 && str(pic.caption, 60) ? str(pic.caption, 60) : 'a picture from Bas', // a long message is not a good name for a frame
+      why: '',
+      project: '',
+      zone,
+      slot,
+      label: Z.label,
+      kind: Z.kind,
+      pos: [sx, Z.kind === 'surface' ? sy + h / 2 + 0.03 : sy, sz],
+      rotY: Z.rotY,
+      scale: 1,
+      parts: [],
+      image: pic.image,
+      size: [r3(w), r3(h)],
+      picture: pic.id,
+      stand,
+      at: new Date(atMs + 6000).toISOString(),
+      createdAt: new Date(now).toISOString(),
+    },
+  };
+}
+
+// Takes a picture down again (it stays in his album). Returns the removed frame or null.
+export function removePicture(decor, id) {
+  const i = decor.findIndex((x) => x.picture === id);
   return i >= 0 ? decor.splice(i, 1)[0] : null;
 }

@@ -1,6 +1,7 @@
-import { readFile, writeFile, appendFile, readdir, unlink } from 'node:fs/promises';
+import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { freePlaces, makeDecor, removeDecor, MAX_PER_DAY } from './decor.js';
+import { freePlaces, makeDecor, removeDecor, placePicture, removePicture, MAX_PER_DAY } from './decor.js';
+import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
 import { refreshNews, themeMirror } from './news.js';
 import { ensureFeelings, passTime, stepFeelings, felt, eatNow, feelingsText, needsText } from './feelings.js';
 
@@ -42,7 +43,9 @@ const ACTIONS = [
   'decorate(name, where, why, parts)',
   'remove_decoration(name)',
 ];
-const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration'];
+// Only offered once Bas has given him a picture. What he does with it is always his own choice.
+const PICTURE_ACTIONS = ['place_picture(id, where)', 'take_down_picture(id)'];
+const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -66,6 +69,8 @@ const freshState = () => ({
   log: [],
   decor: [],
   projects: [],
+  pictures: [],
+  ntfySince: '',
   draft: '',
   last: null,
 });
@@ -118,8 +123,26 @@ async function loadState() {
   return state;
 }
 
-// Bas's replies arrive as small files in inbox/ (written by the website). They are deleted only after Pip's state is saved.
+// Bas's messages arrive as small files in inbox/ (written by the website), or he types them in the ntfy app.
+// Files are deleted only after Pip's state is saved.
 const INBOX_DIR = 'inbox';
+
+// A picture from Bas: keep a copy in web/gifts and remember it in Pip's album.
+async function keepPicture(state, bytes, caption, at, key) {
+  const type = pictureType(bytes);
+  if (!type) return null;
+  const file = `${key}.${type.ext}`;
+  const known = state.pictures.find((p) => p.image === `gifts/${file}`);
+  if (known) return known;
+  await mkdir('web/gifts', { recursive: true });
+  await writeFile(`web/gifts/${file}`, bytes);
+  const size = pictureSize(bytes);
+  const n = Math.max(0, ...state.pictures.map((p) => Number(String(p.id).replace('pic', '')) || 0)) + 1;
+  const pic = { id: `pic${n}`, image: `gifts/${file}`, mime: type.mime, at, caption: text(caption, 300), seen: false, notes: '', aspect: size ? Math.round((size.w / size.h) * 100) / 100 : 1.5 };
+  state.pictures = [...state.pictures, pic].slice(-30);
+  return pic;
+}
+
 async function loadInbox(state) {
   let files = [];
   try {
@@ -128,22 +151,63 @@ async function loadInbox(state) {
     return { added: 0, names: [] };
   }
   let added = 0;
+  const imageNames = [];
+  const handled = []; // files that are safely in Pip's state. A message that failed stays in inbox/ and is tried again next time.
   for (const name of files) {
     try {
       const m = JSON.parse(await readFile(`${INBOX_DIR}/${name}`, 'utf8'));
       const body = text(m.text, 1000);
       const id = text(m.id, 60) || name;
-      if (body && !state.inbox.some((x) => x.id === id)) {
-        state.inbox.push({ id, at: Number.isNaN(Date.parse(m.at)) ? new Date().toISOString() : m.at, text: body, read: false });
-        added++;
+      const file = typeof m.image === 'string' && /^[\w-]+\.(jpg|png)$/.test(m.image) ? m.image : null;
+      if ((body || file) && !state.inbox.some((x) => x.id === id)) {
+        const at = Number.isNaN(Date.parse(m.at)) ? new Date().toISOString() : m.at;
+        const pic = file ? await keepPicture(state, await readFile(`${INBOX_DIR}/${file}`), body, at, file.replace(/\.\w+$/, '')) : null;
+        if (file) imageNames.push(file);
+        if (body || pic) {
+          state.inbox.push({ id, at, text: body || '(a picture)', read: false, picture: pic?.id ?? null });
+          added++;
+        }
       }
-    } catch {}
+      handled.push(name);
+    } catch (e) {
+      console.error(`⚠️  inbox ${name}: ${e.message}. It stays for the next wake-up.`);
+    }
   }
   state.inbox = state.inbox.slice(-50);
-  return { added, names: files };
+  const keepImages = imageNames.filter((n) => handled.includes(n.replace(/\.\w+$/, '.json')) || handled.some((h) => h.startsWith(n.replace(/\.\w+$/, ''))));
+  return { added, names: [...handled, ...keepImages] };
 }
 async function clearInbox(names) {
   for (const n of names) await unlink(`${INBOX_DIR}/${n}`).catch(() => {});
+}
+
+// Things Bas typed (or attached) in the ntfy app. Pip's own pushes and the website's mirror messages are skipped.
+async function pullNtfy(state) {
+  const topic = process.env.NTFY_TOPIC;
+  if (!topic) return { added: 0 };
+  let added = 0;
+  try {
+    for (const e of await ntfyPoll(topic, state.ntfySince || 'all')) {
+      const id = `ntfy-${e.id}`;
+      if (!isFromBas(e) || state.inbox.some((m) => m.id === id)) {
+        state.ntfySince = e.id;
+        continue;
+      }
+      const at = new Date((Number(e.time) || Date.now() / 1000) * 1000).toISOString();
+      const caption = ntfyText(e);
+      const bytes = await downloadAttachment(e); // a network error here stops the loop; the message is tried again next wake-up
+      const pic = bytes ? await keepPicture(state, bytes, caption, at, `ntfy-${String(e.id).replace(/[^\w-]/g, '')}`) : null;
+      if (caption || pic) {
+        state.inbox.push({ id, at, text: caption || '(a picture)', read: false, via: 'ntfy', picture: pic?.id ?? null });
+        added++;
+      }
+      state.ntfySince = e.id;
+    }
+    state.inbox = state.inbox.slice(-50);
+  } catch (e) {
+    console.error('⚠️  ntfy:', e.message);
+  }
+  return { added };
 }
 
 // Phone push (free ntfy.sh). Only used when NTFY_TOPIC is set.
@@ -244,8 +308,14 @@ ${
     s.draft ? `\nSomething I wanted to say but waited with: "${s.draft}" (say it now if it is still true, or let it go)` : ''
   }
 
-ACTIONS I CAN DO
-${ACTIONS.join(', ')}
+${
+    s.pictures.length
+      ? `PICTURES BAS GAVE ME (each one is a gift. I decide what to do with it: put it on a wall or stand it on a surface with place_picture, keep it in my album, write about it or make something inspired by it, or just look at it. I do not have to put it up)\n${s.pictures
+          .map((p) => `- ${p.id} (${ago(p.at)})${p.caption ? ` Bas wrote: "${p.caption}"` : ''} | ${p.seen ? `I remember: ${p.notes || 'I did not write anything down'}` : 'NEW, shown below'}${s.decor.some((d) => d.picture === p.id) ? ` | it is up: ${s.decor.find((d) => d.picture === p.id).label}` : ''}`)
+          .join('\n')}\n\n`
+      : ''
+  }ACTIONS I CAN DO
+${(s.pictures.length ? [...ACTIONS, ...PICTURE_ACTIONS] : ACTIONS).join(', ')}
 
 FROM CURIOSITY TO DOING
 Looking things up is only the start. When I learn something that excites me, I ask myself: what would I like to DO, GET or MAKE because of this? For example, if I read about galaxies I might want a telescope. Then I can start a project. I can ask Bas for what I need (asks_add, so it shows up in his list: waiting is not asking), build a small version myself (decorate), play a tune about it, write about it in my diary, or go to the window and try it. A plan with only searching and reading is a thin plan. A good plan has at least one step toward a project.
@@ -258,7 +328,7 @@ With decorate I make something and put it in my room. I invent it myself and bui
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...]}, remove_decoration {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...]}, remove_decoration {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -269,11 +339,12 @@ Answer in JSON with these fields:
 "asks_done": exact item text of asks that Bas did or that I no longer need (or []),
 "projects_add": at most 1 new project, a thing I want to DO, GET or MAKE because of what I learned: {"title": "short, like 'Look at galaxies through a telescope'", "why": "one short reason", "next": "my very next step"}. If that step needs something from Bas, I also put it in asks_add. Or [],
 "projects_update": for projects I already have: [{"title": "exact title", "next": "my new next step", "status": "working or done or dropped"}]. Or [],
+"picture_notes": for each NEW picture I just looked at, {"id": "pic1", "about": "what I really see and how it makes me feel, 1 or 2 sentences"}, or [],
 "remember": one thing worth remembering for a long time, or null,
 "tell_bas": a message to Bas in my own words, or null. Rarely. Only if I really want to share something or need something.`;
 }
 
-async function askGemini(system, wakeUp, retry = 2) {
+async function askGemini(system, wakeUp, retry = 2, images = []) {
   if (process.env.PIP_FAKE) return fakeBrain(wakeUp);
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error('No GEMINI_API_KEY. Copy .env.example to .env and fill it in.');
@@ -285,7 +356,7 @@ async function askGemini(system, wakeUp, retry = 2) {
     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: system }] },
-      contents: [{ role: 'user', parts: [{ text: wakeUp }] }],
+      contents: [{ role: 'user', parts: [{ text: wakeUp }, ...images.map(({ mime, data }) => ({ inlineData: { mimeType: mime, data } }))] }],
       generationConfig: { responseMimeType: 'application/json', temperature: 1 },
     }),
     });
@@ -301,7 +372,7 @@ async function askGemini(system, wakeUp, retry = 2) {
   try {
     return JSON.parse(text);
   } catch {
-    if (retry > 0) return askGemini(system, wakeUp, retry - 1);
+    if (retry > 0) return askGemini(system, wakeUp, retry - 1, images);
     throw new Error('Gemini gave an empty or broken answer. Try again.');
   }
 }
@@ -311,10 +382,10 @@ function fakeBrain(prompt = '') {
   const pick = () => ACTION_NAMES[Math.floor(Math.random() * ACTION_NAMES.length)];
   const details = { name: 'fake lamp', where: ['on_piano', 'floor_middle', 'wall_left', 'on_desk'][Math.floor(Math.random() * 4)], why: 'I like how it glows', parts: [{ shape: 'cylinder', size: [0.06, 0.08, 0.25], pos: [0, 0.125, 0], color: '#f3e9d2' }, { shape: 'sphere', size: [0.22], pos: [0, 0.3, 0], color: '#e0584b', glow: true }], notes: 'C E G', style: 'soft', topic: 'rain', query: 'rain sounds', text: 'Hello diary.', item: 'sheet music', reason: 'I want new songs', object: 'piano' };
   return {
-    steps: Array.from({ length: 2 + Math.floor(Math.random() * 3) }, (_, i) => {
+    steps: [...(prompt.match(/pic\d+(?=[^\n]*NEW, shown below)/g) ?? []).map((id) => ({ action: 'place_picture', details: { id, where: 'wall_left' }, thought: '(fake) I want this on my wall.', enjoyment: 9 })), ...Array.from({ length: 2 }, (_, i) => {
       const a = pick();
       return { action: a, details, thought: `(fake) step ${i + 1}: ${a}`, enjoyment: 1 + Math.floor(Math.random() * 10) };
-    }),
+    })],
     thought: `(fake brain) I feel like doing ${action}.`,
     action,
     details: { notes: 'C E G', style: 'soft', topic: 'rain', query: 'rain sounds', text: 'Hello diary.', item: 'sheet music', reason: 'I want new songs', object: 'piano' },
@@ -326,6 +397,8 @@ function fakeBrain(prompt = '') {
     wants_done: [],
     questions_add: Math.random() > 0.7 ? ['why does the rain sound different on the window?'] : [],
     questions_done: [],
+    // test brain: when a new picture arrives, look at it and put it on a wall
+    picture_notes: [...new Set(prompt.match(/pic\d+(?=[^\n]*NEW, shown below)/g) ?? [])].map((id) => ({ id, about: '(fake) a dark sky full of stars.' })),
     asks_add: Math.random() > 0.5 ? [{ item: 'a book about harps', why: 'I want to know what harps sound like' }] : [],
     asks_done: prompt.includes('I did this for you') ? ['a book about harps'] : [],
     remember: Math.random() > 0.7 ? 'I liked the soft notes today.' : null,
@@ -401,6 +474,8 @@ function describe(a) {
     case 'write_diary': return d.text;
     case 'ask_for': return `${d.item}: ${d.reason}`;
     case 'eat': return d.food;
+    case 'place_picture':
+    case 'take_down_picture': return d.id;
     case 'decorate':
     case 'remove_decoration': return d.name;
     default: return '';
@@ -589,6 +664,7 @@ async function wakeUp() {
   const system = await readFile('personality.md', 'utf8');
   const state = await loadState();
   const inbox = await loadInbox(state);
+  inbox.added += (await pullNtfy(state)).added;
   if (isNight() && !process.env.PIP_AWAKE) {
     await goToSleep(state);
     if (inbox.added) {
@@ -606,7 +682,15 @@ async function wakeUp() {
   }
   await refreshNews(state);
   const unread = state.inbox.filter((m) => !m.read);
-  const answer = await askGemini(system, buildWakeUp(state));
+  // Pictures he has not seen yet are shown to him together with the prompt (at most 3 per wake-up).
+  const looking = state.pictures.filter((p) => !p.seen).slice(0, 3);
+  const images = [];
+  for (const p of looking) {
+    try {
+      images.push({ mime: p.mime || 'image/jpeg', data: (await readFile(`web/${p.image}`)).toString('base64') });
+    } catch {}
+  }
+  const answer = await askGemini(system, buildWakeUp(state), 2, images);
   const startedAt = Date.now();
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
   state.thoughts = state.thoughts.filter((t) => Date.parse(t.at) <= startedAt);
@@ -634,6 +718,23 @@ async function wakeUp() {
     if (st.action === 'remove_decoration') {
       const gone = removeDecor(state.decor, st.details.name);
       st.made = gone ? { removed: gone.name } : { failed: 'there is nothing with that name' };
+    }
+  });
+
+  // Pictures: what he saw, and only if he chooses it: putting one up or taking it down.
+  for (const n of Array.isArray(answer.picture_notes) ? answer.picture_notes : []) {
+    const p = state.pictures.find((x) => x.id === n?.id);
+    if (p) p.notes = text(n.about, 300);
+  }
+  looking.forEach((p) => (p.seen = true));
+  steps.forEach((st, i) => {
+    if (st.action === 'place_picture') {
+      st.made = placePicture(state.decor, state.pictures.find((p) => p.id === st.details.id), st.details.where, startedAt + i * stepMs);
+      if (st.made.entry) state.decor.push(st.made.entry);
+    }
+    if (st.action === 'take_down_picture') {
+      const gone = removePicture(state.decor, st.details.id);
+      st.made = gone ? { removed: gone.name } : { failed: 'that picture is not up' };
     }
   });
 
@@ -695,6 +796,8 @@ async function wakeUp() {
     if (st.action === 'write_diary') entry.text = text(d.text, 800);
     if (st.action === 'walk_to') entry.object = text(d.object, 60);
     if (st.action === 'ask_for') Object.assign(entry, { item: text(d.item, 140), reason: text(d.reason, 200) });
+    if (st.action === 'place_picture') Object.assign(entry, { name: st.made?.entry?.name ?? text(d.id, 20), place: st.made?.entry?.label ?? null, image: st.made?.entry?.image ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'take_down_picture') Object.assign(entry, { name: text(d.id, 20), removed: st.made?.removed ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
     if (st.action === 'decorate') Object.assign(entry, { project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), removed: st.made?.removed ?? null, failed: st.made?.failed ?? null });
