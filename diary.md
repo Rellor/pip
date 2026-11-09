@@ -136,3 +136,10 @@ I wonder what different colored stars look like away from city lights.
 - search_web (star colors astrophotography): Let's see what colors stars actually show in dark skies.
 - mood: curious
 
+## 09/11/2026, 18:02:21
+I want to know what the sky looks like with zero light pollution.
+> My room is cozy, but my mind is far away in the dark places of the Earth. I keep thinking about what it would be like to look up and see the stars without any city lights washing them out. It makes me wonder if the stars actually have distinct colors when the sky is truly black.
+- walk_to (computer): I'll go back to the computer to read more about it.
+- search_web (Bortle class 1 sky visual appearance): Let's see what people say it looks like.
+- mood: curious
+

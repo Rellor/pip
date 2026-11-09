@@ -7,7 +7,8 @@
     "stars and the night sky",
     "star colors astrophotography",
     "Bortle scale class 1 dark sky",
-    "last places on Earth with class 1 dark skies"
+    "last places on Earth with class 1 dark skies",
+    "Bortle class 1 sky visual appearance"
   ],
   "ideas": [
     "sound",
@@ -27,7 +28,8 @@
     "listening to how the piano notes fade into the empty room",
     "to see if stars look different colors through a small telescope",
     "finding out which places on Earth still have class 1 skies",
-    "making a small starry lantern for my room"
+    "making a small starry lantern for my room",
+    "making a tiny glowing star jar"
   ],
   "activities": [
     {
@@ -262,6 +264,18 @@
       "action": "search_web",
       "detail": "star colors astrophotography",
       "enjoyment": 9
+    },
+    {
+      "at": "2026-11-09T18:02:21.551Z",
+      "action": "walk_to",
+      "detail": "computer",
+      "enjoyment": 8
+    },
+    {
+      "at": "2026-11-09T18:02:21.551Z",
+      "action": "search_web",
+      "detail": "Bortle class 1 sky visual appearance",
+      "enjoyment": 9
     }
   ],
   "notes": [
@@ -270,7 +284,8 @@
     "Searched \"Bortle scale class 1 dark sky\" and read about Bortle scale: The Bortle dark-sky scale (usually referred to as simply the Bortle scale) is a nine-level numeric scale that measures the night sky's brightness of a particular location. It characterizes the observability of celestial objects, taking into account the interference caused by light pollution. Amateur astronomer John E. …",
     "Read about Night sky: The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\n …",
     "Searched \"last places on Earth with class 1 dark skies\" and read about Falling Skies: Falling Skies is an American post-apocalyptic science fiction television series, created by Robert Rodat and executive produced by Steven Spielberg. The series stars Noah Wyle as Tom Mason, a former history professor who becomes the third-in-command (under Captain Weaver and retired United States Army Colonel Porter) of the Massachusetts Militia Regiment, a paramilitary group of remnant US military personnel, military veterans, civilians and various fighters fleeing Boston, US, following an alie …",
-    "Searched \"star colors astrophotography\" and read about Astrophotography: Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. …"
+    "Searched \"star colors astrophotography\" and read about Astrophotography: Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. …",
+    "Searched \"Bortle class 1 sky visual appearance\" and read about List of galaxies: An estimated 2 trillion+  galaxies occupy the observable universe.\nOn the order of 100,000 galaxies make up the Local Supercluster, and about 51 galaxies are in the Local Group (see list of nearest galaxies for a complete list).\nThe first attempts at systematic catalogues of galaxies were made in the 1960s, with the Catalogue of Galaxies and Clusters of Galaxies listing 29,418 galaxies and galaxy clusters, and with the Morphological Catalogue of Galaxies, a putatively complete list of galaxies w …"
   ],
   "requests": [
     {
@@ -284,6 +299,10 @@
     {
       "text": "to read about places with class 1 dark skies",
       "since": "2026-11-09T17:25:58.746Z"
+    },
+    {
+      "text": "to know how the Milky Way core looks with the naked eye under a class 1 sky",
+      "since": "2026-11-09T18:02:21.552Z"
     }
   ],
   "questions": [
@@ -302,6 +321,10 @@
     {
       "text": "do different stars have different colors when there is no city light to wash them out?",
       "since": "2026-11-09T16:37:26.717Z"
+    },
+    {
+      "text": "can you see the Andromeda galaxy without binoculars in a Bortle 1 sky?",
+      "since": "2026-11-09T18:02:21.552Z"
     }
   ],
   "fulfilled": [
@@ -366,6 +389,10 @@
     {
       "at": "2026-11-09T17:38:06.353Z",
       "text": "I looked up where the darkest skies are and learned about remote places untouched by city lights."
+    },
+    {
+      "at": "2026-11-09T18:02:21.552Z",
+      "text": "I read about Bortle scale class 1 dark skies and wondered about the true color and depth of an unpolluted night sky."
     }
   ],
   "thoughts": [
@@ -502,6 +529,14 @@
       "at": "2026-11-09T17:50:14.054Z",
       "text": "My energy is a bit low, but my curiosity is still awake. I want to know more about star colors in truly dark skies. Reading helps pass the quiet time while the room stays cozy.",
       "short": "I wonder what different colored stars look like away from city lights.",
+      "mood": "curious",
+      "action": "walk_to",
+      "detail": "computer"
+    },
+    {
+      "at": "2026-11-09T18:02:21.552Z",
+      "text": "My room is cozy, but my mind is far away in the dark places of the Earth. I keep thinking about what it would be like to look up and see the stars without any city lights washing them out. It makes me wonder if the stars actually have distinct colors when the sky is truly black.",
+      "short": "I want to know what the sky looks like with zero light pollution.",
       "mood": "curious",
       "action": "walk_to",
       "detail": "computer"
@@ -809,15 +844,49 @@
         "url": "https://en.wikipedia.org/wiki/Astrophotography",
         "text": "Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. Besides being able to record the details of extended objects such as the Moon, Sun, and planets, modern astrophotography has the ability to image objects outside of the visible spectrum of the human eye such as dim stars, nebulae, and galaxies. This is accomplished through long time exposure as both film and digital cameras can accumulate and sum photons over long periods of time or using specialized optical filters which limit the photons to a certain wavelength.\nPhotography using extended exposure-times revolutionized the field of professional astronomical research, recording hundreds of thousands of new stars, and nebulae invisible to the human eye. Specialized and ever-larger optical telescopes were constructed as essentially big cameras to record images on photographic plates.  Astrophotography had an early role in sky surveys and star classification but over time it has used ever more sophisticated image sensors and other equipment and techniques designed for specific fields.\n …"
       }
+    },
+    {
+      "at": "2026-11-09T18:02:22.551Z",
+      "action": "walk_to",
+      "thought": "I'll go back to the computer to read more about it.",
+      "object": "computer"
+    },
+    {
+      "at": "2026-11-09T18:08:22.551Z",
+      "action": "search_web",
+      "thought": "Let's see what people say it looks like.",
+      "query": "Bortle class 1 sky visual appearance",
+      "results": [
+        {
+          "title": "List of galaxies",
+          "snippet": "from the original on 19 December 2015. John E. Bortle (February 2001). \"The Bortle Dark-Sky Scale\". Sky & Telescope. Archived from the original on 23 March",
+          "url": "https://en.wikipedia.org/wiki/List_of_galaxies"
+        },
+        {
+          "title": "Corona Borealis",
+          "snippet": "self-published. Retrieved 24 November 2014. Bortle, John E. (February 2001). \"The Bortle Dark-Sky Scale\". Sky & Telescope. Archived from the original on",
+          "url": "https://en.wikipedia.org/wiki/Corona_Borealis"
+        },
+        {
+          "title": "Astrophotography",
+          "snippet": "Nikon D810A Charge-coupled device Cold camera photography Light pollution Bortle scale List of Hubble anniversary images LRGB (Luminance, Red, Green, and",
+          "url": "https://en.wikipedia.org/wiki/Astrophotography"
+        }
+      ],
+      "opened": {
+        "title": "List of galaxies",
+        "url": "https://en.wikipedia.org/wiki/List_of_galaxies",
+        "text": "An estimated 2 trillion+  galaxies occupy the observable universe.\nOn the order of 100,000 galaxies make up the Local Supercluster, and about 51 galaxies are in the Local Group (see list of nearest galaxies for a complete list).\nThe first attempts at systematic catalogues of galaxies were made in the 1960s, with the Catalogue of Galaxies and Clusters of Galaxies listing 29,418 galaxies and galaxy clusters, and with the Morphological Catalogue of Galaxies, a putatively complete list of galaxies with photographic magnitude above 15, listing 30,642. In the 1980s, the Lyons Groups of Galaxies listed 485 galaxy groups with 3,933 member galaxies. Galaxy Zoo is a project aiming at a more comprehensive list: launched in July 2007, it has classified over one million galaxy images from The Sloan Digital Sky Survey, The Hubble Space Telescope and the Cosmic Assembly Near-Infrared Deep Extragalactic Legacy Survey.\n\nNamed galaxies\n\nThis is a list of galaxies that are well known by something other than an entry in a catalog or list, or a set of coordinates, or a systematic designation.\n\nNaked-eye galaxies\nThis is a list of galaxies that are visible to the naked eye, for at the very least, keen-eyed observers in a very dark-sky environment that is high in altitude, during clear and stable weather.\n\nSagittarius Dwarf Spheroidal Galaxy is not listed, because it is not discernible as being a separate galaxy in the sky.\n\nObservational firsts\n\nPrototypes\n …"
+      }
     }
   ],
   "decor": [],
   "draft": "",
   "last": {
-    "at": "2026-11-09T17:50:14.053Z",
+    "at": "2026-11-09T18:02:21.551Z",
     "intervalMin": 12,
-    "thought": "I wonder what different colored stars look like away from city lights.",
-    "inner": "My energy is a bit low, but my curiosity is still awake. I want to know more about star colors in truly dark skies. Reading helps pass the quiet time while the room stays cozy.",
+    "thought": "I want to know what the sky looks like with zero light pollution.",
+    "inner": "My room is cozy, but my mind is far away in the dark places of the Earth. I keep thinking about what it would be like to look up and see the stars without any city lights washing them out. It makes me wonder if the stars actually have distinct colors when the sky is truly black.",
     "sent": false,
     "steps": [
       {
@@ -826,7 +895,7 @@
           "object": "computer"
         },
         "detail": "computer",
-        "thought": "Walking over to the computer to look something up.",
+        "thought": "I'll go back to the computer to read more about it.",
         "enjoyment": 8,
         "found": null,
         "made": null
@@ -834,14 +903,14 @@
       {
         "action": "search_web",
         "details": {
-          "query": "star colors astrophotography"
+          "query": "Bortle class 1 sky visual appearance"
         },
-        "detail": "star colors astrophotography",
-        "thought": "Let's see what colors stars actually show in dark skies.",
+        "detail": "Bortle class 1 sky visual appearance",
+        "thought": "Let's see what people say it looks like.",
         "enjoyment": 9,
         "found": {
-          "title": "Astrophotography",
-          "text": "Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. Besides being able to record the details of extended objects such as the Moon, Sun, and planets, modern astrophotography has the ability to image objects outside of the visible spectrum of the human eye such as dim stars, nebulae, and galaxies. This is accomplished through long time exposure as both film and digital cameras can accumulate and sum photons over long periods of time or using specialized optical filters which limit the photons to a certain wavelength.\nPhotography using extended exposure-times revolutionized the field of professional astronomical research, recording hundreds of thousands of new stars, and nebulae invisible to the human eye. Specialized and ever-larger optical telescopes were constructed as essentially big cameras to record images on photographic plates.  Astrophotography had an early role in sky surveys and star classification but over time it has used ever more sophisticated image sensors and other equipment and techniques designed for specific fields.\nSince almost all observational astronomy today uses photography, the term \"astrophotography\" usually refers to its use in amateur astronomy, seeking aesthetically pleasing images rather than scientific data. Amateurs use a wide range of special equipment and techniques.\n\nMethods\n\nWith a few exceptions, astronomical photography employs long exposures since both film and digital imaging devices can accumulate light photons over long periods of time. The amount of light hitting the film or detector is also increased by increasing the diameter of the primary optics (the objective) being used. Urban areas produce light pollution so equipment and observatories doing astronomical imaging are often located in remote locations to allow long exposures without the film or detectors being swamped with stray light.\n\nSince the Earth is constantly rotating, telescopes and equipment are rotated in the opposite direction to follow the apparent motion of the stars overhead (called diurnal motion). …"
+          "title": "List of galaxies",
+          "text": "An estimated 2 trillion+  galaxies occupy the observable universe.\nOn the order of 100,000 galaxies make up the Local Supercluster, and about 51 galaxies are in the Local Group (see list of nearest galaxies for a complete list).\nThe first attempts at systematic catalogues of galaxies were made in the 1960s, with the Catalogue of Galaxies and Clusters of Galaxies listing 29,418 galaxies and galaxy clusters, and with the Morphological Catalogue of Galaxies, a putatively complete list of galaxies with photographic magnitude above 15, listing 30,642. In the 1980s, the Lyons Groups of Galaxies listed 485 galaxy groups with 3,933 member galaxies. Galaxy Zoo is a project aiming at a more comprehensive list: launched in July 2007, it has classified over one million galaxy images from The Sloan Digital Sky Survey, The Hubble Space Telescope and the Cosmic Assembly Near-Infrared Deep Extragalactic Legacy Survey.\n\nNamed galaxies\n\nThis is a list of galaxies that are well known by something other than an entry in a catalog or list, or a set of coordinates, or a systematic designation.\n\nNaked-eye galaxies\nThis is a list of galaxies that are visible to the naked eye, for at the very least, keen-eyed observers in a very dark-sky environment that is high in altitude, during clear and stable weather.\n\nSagittarius Dwarf Spheroidal Galaxy is not listed, because it is not discernible as being a separate galaxy in the sky.\n\nObservational firsts\n\nPrototypes\nThis is a list of galaxies that became prototypes for a class of galaxies.\n\nClosest and most distant-known galaxies by type\n\nClosest galaxies\n\nMost distant galaxies\n\nTimeline notes\nMACS0647-JD, discovered in 2012, with z=10.7, does not appear on this list because it has not been confirmed with a spectroscopic redshift.\nUDFy-38135539, discovered in 2009, with z=8.6, does not appear on this list because its claimed redshift is disputed. Follow-up observations have failed to replicate the cited redshift measurement.\nA1689-zD1, discovered in 2008, with z=7.6, does not appear on this list because it has not been confirmed with a spectroscopic redshift.\nAbell 68 c1 and Abell 2219 c1, discovered in 2007, with z=9, do not appear on this list because they have not been confirmed.\nIOK4 and IOK5, discovered in 2007, with z=7, do not appear on this list because they have not been confirmed with a spectroscopic redshift.\n …"
         },
         "made": null
       }
@@ -852,7 +921,7 @@
     },
     "detail": "computer",
     "enjoyment": 8,
-    "new_idea": null,
+    "new_idea": "making a tiny glowing star jar",
     "found": null
   }
 }
