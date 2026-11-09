@@ -129,3 +129,10 @@ I wonder where the darkest skies left on Earth are.
 - search_web (last places on Earth with class 1 dark skies): Let's see where the true night still exists.
 - mood: curious
 
+## 09/11/2026, 17:50:14
+I wonder what different colored stars look like away from city lights.
+> My energy is a bit low, but my curiosity is still awake. I want to know more about star colors in truly dark skies. Reading helps pass the quiet time while the room stays cozy.
+- walk_to (computer): Walking over to the computer to look something up.
+- search_web (star colors astrophotography): Let's see what colors stars actually show in dark skies.
+- mood: curious
+

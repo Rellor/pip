@@ -1,6 +1,6 @@
 {
   "mood": "curious",
-  "energy": 2,
+  "energy": 0,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -250,6 +250,18 @@
       "action": "search_web",
       "detail": "last places on Earth with class 1 dark skies",
       "enjoyment": 9
+    },
+    {
+      "at": "2026-11-09T17:50:14.054Z",
+      "action": "walk_to",
+      "detail": "computer",
+      "enjoyment": 8
+    },
+    {
+      "at": "2026-11-09T17:50:14.054Z",
+      "action": "search_web",
+      "detail": "star colors astrophotography",
+      "enjoyment": 9
     }
   ],
   "notes": [
@@ -257,7 +269,8 @@
     "Searched \"star colors astrophotography\" and read about Astrophotography: Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. …",
     "Searched \"Bortle scale class 1 dark sky\" and read about Bortle scale: The Bortle dark-sky scale (usually referred to as simply the Bortle scale) is a nine-level numeric scale that measures the night sky's brightness of a particular location. It characterizes the observability of celestial objects, taking into account the interference caused by light pollution. Amateur astronomer John E. …",
     "Read about Night sky: The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\n …",
-    "Searched \"last places on Earth with class 1 dark skies\" and read about Falling Skies: Falling Skies is an American post-apocalyptic science fiction television series, created by Robert Rodat and executive produced by Steven Spielberg. The series stars Noah Wyle as Tom Mason, a former history professor who becomes the third-in-command (under Captain Weaver and retired United States Army Colonel Porter) of the Massachusetts Militia Regiment, a paramilitary group of remnant US military personnel, military veterans, civilians and various fighters fleeing Boston, US, following an alie …"
+    "Searched \"last places on Earth with class 1 dark skies\" and read about Falling Skies: Falling Skies is an American post-apocalyptic science fiction television series, created by Robert Rodat and executive produced by Steven Spielberg. The series stars Noah Wyle as Tom Mason, a former history professor who becomes the third-in-command (under Captain Weaver and retired United States Army Colonel Porter) of the Massachusetts Militia Regiment, a paramilitary group of remnant US military personnel, military veterans, civilians and various fighters fleeing Boston, US, following an alie …",
+    "Searched \"star colors astrophotography\" and read about Astrophotography: Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. …"
   ],
   "requests": [
     {
@@ -481,6 +494,14 @@
       "at": "2026-11-09T17:38:06.353Z",
       "text": "The picture of the Milky Way Bas gave me makes me want to know where people can actually see stars that bright with their own eyes. Class 1 dark skies sound so quiet and far away. I want to search for the last places where the night is still completely dark.",
       "short": "I wonder where the darkest skies left on Earth are.",
+      "mood": "curious",
+      "action": "walk_to",
+      "detail": "computer"
+    },
+    {
+      "at": "2026-11-09T17:50:14.054Z",
+      "text": "My energy is a bit low, but my curiosity is still awake. I want to know more about star colors in truly dark skies. Reading helps pass the quiet time while the room stays cozy.",
+      "short": "I wonder what different colored stars look like away from city lights.",
       "mood": "curious",
       "action": "walk_to",
       "detail": "computer"
@@ -754,15 +775,49 @@
         "url": "https://en.wikipedia.org/wiki/Falling_Skies",
         "text": "Falling Skies is an American post-apocalyptic science fiction television series, created by Robert Rodat and executive produced by Steven Spielberg. The series stars Noah Wyle as Tom Mason, a former history professor who becomes the third-in-command (under Captain Weaver and retired United States Army Colonel Porter) of the Massachusetts Militia Regiment, a paramilitary group of remnant US military personnel, military veterans, civilians and various fighters fleeing Boston, US, following an alien invasion that devastated Earth. The series also stars Moon Bloodgood, Drew Roy, Jessy Schram, Maxim Knight, Seychelle Gabriel, Peter Shinkoda, Mpho Koaho, Connor Jessup, Will Patton, Sarah Carter, Colin Cunningham, Doug Jones and Scarlett Byrne.\nThe series, a production of DreamWorks Television—and from 2014 to 2015, being a production from Spielberg's Amblin Television—was broadcast in the United States on the cable channel TNT, and in Canada on Super Channel (first-run broadcasts) and on Space (second-run broadcasts on a one-year delay). The series premiered on June 19, 2011. On July 18, 2014, TNT renewed the show for a 10-episode fifth and final season, which started on June 28, 2015, and concluded on August 30, 2015.\nOn January 1, 2026, Falling Skies was added to Netflix for streaming.\n …"
       }
+    },
+    {
+      "at": "2026-11-09T17:50:15.053Z",
+      "action": "walk_to",
+      "thought": "Walking over to the computer to look something up.",
+      "object": "computer"
+    },
+    {
+      "at": "2026-11-09T17:56:15.053Z",
+      "action": "search_web",
+      "thought": "Let's see what colors stars actually show in dark skies.",
+      "query": "star colors astrophotography",
+      "results": [
+        {
+          "title": "Astrophotography",
+          "snippet": "cameras to record images on photographic plates. Astrophotography had an early role in sky surveys and star classification but over time it has used ever",
+          "url": "https://en.wikipedia.org/wiki/Astrophotography"
+        },
+        {
+          "title": "Dylan O'Donnell",
+          "snippet": "O'Donnell is an Australian IT entrepreneur and amateur photographer, whose astrophotography has been featured by the European Space Agency (ESA), and NASA. His",
+          "url": "https://en.wikipedia.org/wiki/Dylan_O'Donnell"
+        },
+        {
+          "title": "Astrograph",
+          "snippet": "astrographic camera) is a telescope designed for the sole purpose of astrophotography. Astrographs are mostly used in wide-field astronomical surveys of",
+          "url": "https://en.wikipedia.org/wiki/Astrograph"
+        }
+      ],
+      "opened": {
+        "title": "Astrophotography",
+        "url": "https://en.wikipedia.org/wiki/Astrophotography",
+        "text": "Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. Besides being able to record the details of extended objects such as the Moon, Sun, and planets, modern astrophotography has the ability to image objects outside of the visible spectrum of the human eye such as dim stars, nebulae, and galaxies. This is accomplished through long time exposure as both film and digital cameras can accumulate and sum photons over long periods of time or using specialized optical filters which limit the photons to a certain wavelength.\nPhotography using extended exposure-times revolutionized the field of professional astronomical research, recording hundreds of thousands of new stars, and nebulae invisible to the human eye. Specialized and ever-larger optical telescopes were constructed as essentially big cameras to record images on photographic plates.  Astrophotography had an early role in sky surveys and star classification but over time it has used ever more sophisticated image sensors and other equipment and techniques designed for specific fields.\n …"
+      }
     }
   ],
   "decor": [],
   "draft": "",
   "last": {
-    "at": "2026-11-09T17:38:06.353Z",
+    "at": "2026-11-09T17:50:14.053Z",
     "intervalMin": 12,
-    "thought": "I wonder where the darkest skies left on Earth are.",
-    "inner": "The picture of the Milky Way Bas gave me makes me want to know where people can actually see stars that bright with their own eyes. Class 1 dark skies sound so quiet and far away. I want to search for the last places where the night is still completely dark.",
+    "thought": "I wonder what different colored stars look like away from city lights.",
+    "inner": "My energy is a bit low, but my curiosity is still awake. I want to know more about star colors in truly dark skies. Reading helps pass the quiet time while the room stays cozy.",
     "sent": false,
     "steps": [
       {
@@ -771,7 +826,7 @@
           "object": "computer"
         },
         "detail": "computer",
-        "thought": "I will sit by the computer to look up dark sky locations.",
+        "thought": "Walking over to the computer to look something up.",
         "enjoyment": 8,
         "found": null,
         "made": null
@@ -779,14 +834,14 @@
       {
         "action": "search_web",
         "details": {
-          "query": "last places on Earth with class 1 dark skies"
+          "query": "star colors astrophotography"
         },
-        "detail": "last places on Earth with class 1 dark skies",
-        "thought": "Let's see where the true night still exists.",
+        "detail": "star colors astrophotography",
+        "thought": "Let's see what colors stars actually show in dark skies.",
         "enjoyment": 9,
         "found": {
-          "title": "Falling Skies",
-          "text": "Falling Skies is an American post-apocalyptic science fiction television series, created by Robert Rodat and executive produced by Steven Spielberg. The series stars Noah Wyle as Tom Mason, a former history professor who becomes the third-in-command (under Captain Weaver and retired United States Army Colonel Porter) of the Massachusetts Militia Regiment, a paramilitary group of remnant US military personnel, military veterans, civilians and various fighters fleeing Boston, US, following an alien invasion that devastated Earth. The series also stars Moon Bloodgood, Drew Roy, Jessy Schram, Maxim Knight, Seychelle Gabriel, Peter Shinkoda, Mpho Koaho, Connor Jessup, Will Patton, Sarah Carter, Colin Cunningham, Doug Jones and Scarlett Byrne.\nThe series, a production of DreamWorks Television—and from 2014 to 2015, being a production from Spielberg's Amblin Television—was broadcast in the United States on the cable channel TNT, and in Canada on Super Channel (first-run broadcasts) and on Space (second-run broadcasts on a one-year delay). The series premiered on June 19, 2011. On July 18, 2014, TNT renewed the show for a 10-episode fifth and final season, which started on June 28, 2015, and concluded on August 30, 2015.\nOn January 1, 2026, Falling Skies was added to Netflix for streaming.\nOver its run, the series was nominated for two Primetime Emmy Awards for Outstanding Special Visual Effects, and 14 Saturn Awards including three nominations for Best Television Presentation and one for Best Syndicated/Cable Television Series.\n\nSeries overview\n\nFalling Skies begins six months after an alien invasion of Earth, where in the early days, the invaders neutralized the world's power grid and technology, defeated and largely destroyed all the world's militaries, and killed over 90 percent of the human population by destroying all of the world's major cities and capitals. The remaining 700 million humans, spread across the planet, continue to be killed by the alien invaders on an ongoing basis.\nThe aliens include mechanical attack drones called \"mechs\"; a species of six-legged beings known as \"Skitters\" that appear to control the mechs; and a mysterious species known as the Overlords, or \"Espheni\", the latter presumably the actual engineers and masterminds behind the invasion and Skitters' masters.\nThe aliens' objectives are not explained until the fourth season. …"
+          "title": "Astrophotography",
+          "text": "Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. Besides being able to record the details of extended objects such as the Moon, Sun, and planets, modern astrophotography has the ability to image objects outside of the visible spectrum of the human eye such as dim stars, nebulae, and galaxies. This is accomplished through long time exposure as both film and digital cameras can accumulate and sum photons over long periods of time or using specialized optical filters which limit the photons to a certain wavelength.\nPhotography using extended exposure-times revolutionized the field of professional astronomical research, recording hundreds of thousands of new stars, and nebulae invisible to the human eye. Specialized and ever-larger optical telescopes were constructed as essentially big cameras to record images on photographic plates.  Astrophotography had an early role in sky surveys and star classification but over time it has used ever more sophisticated image sensors and other equipment and techniques designed for specific fields.\nSince almost all observational astronomy today uses photography, the term \"astrophotography\" usually refers to its use in amateur astronomy, seeking aesthetically pleasing images rather than scientific data. Amateurs use a wide range of special equipment and techniques.\n\nMethods\n\nWith a few exceptions, astronomical photography employs long exposures since both film and digital imaging devices can accumulate light photons over long periods of time. The amount of light hitting the film or detector is also increased by increasing the diameter of the primary optics (the objective) being used. Urban areas produce light pollution so equipment and observatories doing astronomical imaging are often located in remote locations to allow long exposures without the film or detectors being swamped with stray light.\n\nSince the Earth is constantly rotating, telescopes and equipment are rotated in the opposite direction to follow the apparent motion of the stars overhead (called diurnal motion). …"
         },
         "made": null
       }
@@ -797,7 +852,7 @@
     },
     "detail": "computer",
     "enjoyment": 8,
-    "new_idea": "making a small starry lantern for my room",
+    "new_idea": null,
     "found": null
   }
 }
