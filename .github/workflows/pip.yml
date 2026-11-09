@@ -2,19 +2,22 @@ name: Pip
 
 on:
   schedule:
-    - cron: '*/12 * * * *'   # checked every 12 minutes; Pip decides himself if he is asleep (23:00-08:00 Amsterdam)
-  workflow_dispatch:         # lets you wake him by hand from the Actions tab
+    - cron: '23 * * * *'   # safety net: starts a new loop if the chain ever breaks
+  workflow_dispatch:       # start by hand, or from the reply service when Bas writes
 
 permissions:
   contents: write
+  actions: write
 
+# Only one loop at a time. A newer request waits its turn instead of running alongside.
 concurrency:
   group: pip
   cancel-in-progress: false
 
 jobs:
-  wake:
+  live:
     runs-on: ubuntu-latest
+    timeout-minutes: 345
     steps:
       - uses: actions/checkout@v4
 
@@ -22,18 +25,23 @@ jobs:
         with:
           node-version: 22
 
-      - name: Wake Pip
+      - name: Git identity
+        run: |
+          git config user.name "pip-bot"
+          git config user.email "pip-bot@users.noreply.github.com"
+
+      # Pip lives here: he wakes every 12 minutes for about 5.5 hours, and straight away when Bas writes.
+      - name: Pip lives
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           PIP_SITE_URL: ${{ vars.PIP_SITE_URL }}
-        run: node pip.js
+        run: node loop.js
 
-      # Vercel redeploys the site on every push, so Pip's new state goes live by itself.
-      - name: Save Pip's memory
-        run: |
-          git config user.name "pip-bot"
-          git config user.email "pip-bot@users.noreply.github.com"
-          git add -A web/state.json diary.md inbox
-          git diff --cached --quiet || (git commit -m "Pip woke up" && git pull --rebase && git push)
+      # Only after a clean finish, so a broken loop can never restart itself in a tight circle.
+      - name: Start the next loop
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pip.yml --ref main
