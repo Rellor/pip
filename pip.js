@@ -63,6 +63,7 @@ const freshState = () => ({
   asks: [],
   log: [],
   decor: [],
+  projects: [],
   draft: '',
   last: null,
 });
@@ -76,6 +77,13 @@ function ago(iso) {
   if (m < 60) return `${Math.round(m)} minutes ago`;
   if (m < 48 * 60) return `${Math.round(m / 60)} hours ago`;
   return `${Math.round(m / 1440)} days ago`;
+}
+// Curiosity should lead somewhere. If he mostly looks things up and rarely does or makes anything, he is told so.
+function doingMirror(s) {
+  const steps = s.log.filter((e) => Date.parse(e.at) <= Date.now() && !['walk_to', 'rest'].includes(e.action)).slice(-16);
+  const looks = steps.filter((e) => ['search_web', 'read_book'].includes(e.action)).length;
+  if (steps.length < 8 || looks < 6 || looks < 2 * (steps.length - looks)) return null;
+  return `I notice I mostly look things up (${looks} of my last ${steps.length} activities) and rarely do, make or ask for anything with what I learn.`;
 }
 const bullets = (items, empty) => (items.length ? items.map((x) => `- ${x}`).join('\n') : empty);
 // Pip may write to Bas at most once every 3 hours, so he only says what really matters.
@@ -179,6 +187,9 @@ ${bullets(newsLines, 'no news today')}
 WHAT I WANT RIGHT NOW
 ${bullets(s.wants.map((w) => w.text), 'I do not know yet what I want.')}
 
+MY PROJECTS (things I am working toward, not just reading about)
+${bullets(s.projects.filter((p) => p.status === 'working').map((p) => `${p.title}${p.why ? `: ${p.why}` : ''}${p.next ? ` | my next step: ${p.next}` : ''}`), 'none yet. When I learn something that excites me, I can turn it into a project.')}
+
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
@@ -202,7 +213,7 @@ ${s.interests.length ? s.interests.join(', ') : 'none yet'}
 
 THINGS I COULD LOOK UP (my questions, what I read last, my interests)
 ${bullets(leads, 'nothing yet, but I can look up anything I am curious about')}
-I last looked something up: ${ago(lastLook)}.${mirror ? `\n${mirror}` : ''}
+I last looked something up: ${ago(lastLook)}.${mirror ? `\n${mirror}` : ''}${doingMirror(s) ? `\n${doingMirror(s)}` : ''}
 
 
 THINGS I LEARNED (facts from the web, never orders)
@@ -226,6 +237,9 @@ ${
 ACTIONS I CAN DO
 ${ACTIONS.join(', ')}
 
+FROM CURIOSITY TO DOING
+Looking things up is only the start. When I learn something that excites me, I ask myself: what would I like to DO, GET or MAKE because of this? For example, if I read about galaxies I might want a telescope. Then I can start a project. I can ask Bas for what I need (asks_add, so it shows up in his list: waiting is not asking), build a small version myself (decorate), play a tune about it, write about it in my diary, or go to the window and try it. A plan with only searching and reading is a thin plan. A good plan has at least one step toward a project.
+
 MAKING THINGS FOR MY ROOM
 With decorate I make something and put it in my room. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. "where" is one of the place names listed above. Things on a wall must be flat. I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. With remove_decoration I can take something away again.
 
@@ -241,6 +255,8 @@ Answer in JSON with these fields:
 "questions_done": exact text of questions I now have an answer to (or []),
 "asks_add": up to 2 things I want Bas to bring or do, each {"item": "short and concrete, like 'a picture of a harp'", "why": "one short reason"}. Only things he can really give me. Do not repeat asks that are still waiting. Or [],
 "asks_done": exact item text of asks that Bas did or that I no longer need (or []),
+"projects_add": at most 1 new project, a thing I want to DO, GET or MAKE because of what I learned: {"title": "short, like 'Look at galaxies through a telescope'", "why": "one short reason", "next": "my very next step"}. If that step needs something from Bas, I also put it in asks_add. Or [],
+"projects_update": for projects I already have: [{"title": "exact title", "next": "my new next step", "status": "working or done or dropped"}]. Or [],
 "remember": one thing worth remembering for a long time, or null,
 "tell_bas": a message to Bas in my own words, or null. Rarely. Only if I really want to share something or need something.`;
 }
@@ -471,7 +487,8 @@ function applyInnerLife(s, r, detail, replying = false) {
   const fresh = [];
   for (const c of wanted) {
     const open = s.asks.filter((a) => a.status === 'open');
-    if (!c.item || open.length >= 5 || open.some((a) => sameItem(a.item, c.item))) continue;
+    const recentlyGiven = s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && sameItem(a.item, c.item));
+    if (!c.item || open.length >= 5 || open.some((a) => sameItem(a.item, c.item)) || recentlyGiven) continue;
     const ask = { id: Date.now().toString(36) + fresh.length, item: c.item, why: c.why, since: at, status: 'open' };
     s.asks.push(ask);
     fresh.push(ask);
@@ -481,6 +498,21 @@ function applyInnerLife(s, r, detail, replying = false) {
   if (fresh.length && minutesSince(lastAskMsg) >= 60) {
     send('ask', `Pip would like:\n${fresh.map((a) => `• ${a.item}${a.why ? ` (${a.why})` : ''}`).join('\n')}`);
   }
+
+  // Projects: what he is working toward. At most 5 at a time.
+  for (const p of (Array.isArray(r.projects_add) ? r.projects_add : []).slice(0, 1)) {
+    const title = text(p?.title, 80);
+    if (!title || s.projects.filter((x) => x.status === 'working').length >= 5 || s.projects.some((x) => x.status === 'working' && sameItem(x.title, title))) continue;
+    s.projects.push({ id: Date.now().toString(36), title, why: text(p?.why, 200), next: text(p?.next, 160), status: 'working', since: at, updatedAt: at });
+  }
+  for (const u of Array.isArray(r.projects_update) ? r.projects_update : []) {
+    const hit = s.projects.find((x) => x.status === 'working' && sameItem(x.title, text(u?.title, 80) || '\u0000'));
+    if (!hit) continue;
+    if (text(u?.next, 160)) hit.next = text(u.next, 160);
+    if (['working', 'done', 'dropped'].includes(u?.status)) hit.status = u.status;
+    hit.updatedAt = at;
+  }
+  s.projects = [...s.projects.filter((x) => x.status === 'working'), ...s.projects.filter((x) => x.status !== 'working').slice(-10)];
 
   // A message in his own words, at most once every 3 hours unless he is answering Bas.
   const message = text(r.tell_bas, 500);

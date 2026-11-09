@@ -93,6 +93,9 @@
   .item:last-child { border-bottom:0; margin-bottom:0; }
   .meta { display:flex; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin-bottom:2px; }
   .item p { white-space:pre-wrap; }
+  .project { border-left:3px solid var(--make); padding-left:12px; }
+  .projectdone { opacity:.6; }
+  .next { color:var(--muted); font-size:14px; margin-top:2px; }
   .reflect { border-left:3px solid var(--accent); padding-left:12px; }
   .ask { border-left:3px solid var(--accent); padding-left:10px; }
   .mine { border-left:3px solid var(--line); padding-left:10px; }
@@ -147,6 +150,8 @@
     </section>
 
     <section class="pane" data-pane="mind" hidden>
+      <h2>What Pip is working toward</h2>
+      <ul id="projects"></ul>
       <h2>What Pip is thinking about</h2>
       <ul id="thoughts"></ul>
       <h2>Pip wants</h2><ul id="wants"></ul>

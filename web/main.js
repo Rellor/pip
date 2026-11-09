@@ -991,6 +991,20 @@ setInterval(() => {
 
 // ---- Mind: his reflections, wants and questions
 function renderMind(s) {
+  const projects = s.projects || [];
+  fill($('projects'), projects.length
+    ? projects.map((p) => {
+      const li = el('li', null, 'item' + (p.status === 'working' ? ' project' : ' projectdone'));
+      const m = el('div', null, 'meta');
+      m.append(el('span', p.status === 'working' ? `since ${when(p.since)}` : p.status === 'done' ? '✓ done' : 'dropped'));
+      const body = el('p');
+      body.append(el('strong', p.title));
+      if (p.why) body.append(`\n${p.why}`);
+      li.append(m, body);
+      if (p.next && p.status === 'working') li.append(el('p', `Next: ${p.next}`, 'next'));
+      return li;
+    })
+    : empty('None yet. When Pip learns something that excites him, he can turn it into a project.'));
   const now = Date.now();
   const thoughts = (s.thoughts || []).filter((t) => !t.step && Date.parse(t.at) <= now).sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 40);
   fill($('thoughts'), thoughts.length
