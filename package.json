@@ -1,0 +1,13 @@
+{
+  "name": "pip",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "once": "node --env-file=.env pip.js",
+    "loop": "node --env-file=.env pip.js loop 10",
+    "models": "node --env-file=.env pip.js models",
+    "fake": "PIP_FAKE=1 node pip.js",
+    "world": "node server.js",
+    "world:live": "AUTO_WAKE_MIN=10 node server.js"
+  }
+}
