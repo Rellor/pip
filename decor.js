@@ -154,6 +154,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
       id: `d${now.toString(36)}${decor.length}`,
       name,
       why: str(d.why, 200),
+      project: str(d.project, 80),
       zone,
       slot,
       label: Z.label,

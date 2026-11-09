@@ -453,6 +453,12 @@ function improvise(palette) {
 // Pip keeps doing his chosen activity until the next wake-up, with small breaks in between.
 let task = null;
 
+// A little food symbol for whatever he is eating.
+function foodEmoji(food) {
+  const f = String(food || '').toLowerCase();
+  const map = [[/berr|strawberr/, '🍓'], [/apple/, '🍎'], [/bread|toast|bun/, '🍞'], [/tea|coffee|cocoa/, '☕'], [/soup|stew/, '🍲'], [/cookie|biscuit/, '🍪'], [/cake|pie/, '🍰'], [/cheese/, '🧀'], [/honey/, '🍯'], [/rice|noodle|pasta/, '🍜'], [/fish/, '🐟'], [/carrot/, '🥕'], [/nut|seed/, '🥜'], [/pear/, '🍐'], [/banana/, '🍌'], [/grape/, '🍇'], [/milk/, '🥛']];
+  return map.find(([re]) => re.test(f))?.[1] ?? '🍽️';
+}
 function planFor(last) {
   const d = last.details || {};
   switch (last.action) {
@@ -465,6 +471,7 @@ function planFor(last) {
     case 'write_diary': return { at: 'center', anim: 'write' };
     case 'rest': return { at: 'bed', anim: 'rest' };
     case 'ask_for': return { at: 'center', anim: 'ask' };
+    case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
     case 'decorate': {
       const m = last.made;
       if (!m) return { at: 'center', anim: 'look' };
@@ -568,6 +575,10 @@ function frame(now, dt) {
   }
 
   // --- signs
+  if (engaged && anim === 'eat' && now > nextSign) {
+    nextSign = now + 1100;
+    floatSign(foodEmoji(task.food), '#ffffff', headPos().add(new V3(rand(-0.1, 0.1), -0.2, 0.3)), { life: 1.2, rise: 0.25, size: 0.45 });
+  }
   if (engaged && anim === 'make' && task.madeAt && now > nextSign) {
     nextSign = now + 450;
     floatSign('✨', '#ffd27a', new V3(task.madeAt[0] + rand(-0.4, 0.4), task.madeAt[1] + 0.5 + rand(0, 0.5), task.madeAt[2] + 0.3), { life: 1.4, rise: 0.35, size: 0.4 });
@@ -623,6 +634,10 @@ function frame(now, dt) {
       } else body.rotation.y = Math.sin(t * 0.9) * 0.3;
     } else if (anim === 'look') {
       body.rotation.y = Math.sin(t * 0.8) * 0.3;
+    } else if (anim === 'eat') {
+      la = [-0.12, 0.95 + Math.sin(t * 5) * 0.06, 0.35];
+      ra = [0.12, 0.95 + Math.sin(t * 5 + Math.PI) * 0.06, 0.35];
+      body.rotation.x = 0.08;
     } else if (anim === 'make') {
       la = [-0.4, 0.85 + Math.sin(t * 8) * 0.15, 0.3];
       ra = [0.4, 0.85 + Math.sin(t * 8 + Math.PI) * 0.15, 0.3];
@@ -806,12 +821,13 @@ function headline(st) {
     case 'rest': return ['💤', 'Resting'];
     case 'ask_for': return ['🙏', `Asking Bas for ${d.item || st.item || 'something'}`];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
+    case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
     case 'remove_decoration': return ['🧹', `Taking ${d.name || st.name || 'something'} out of his room`];
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', remove_decoration: 'make' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', remove_decoration: 'make', eat: 'eat' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -849,7 +865,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'walk';
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked', make: 'Worked on his room' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind], 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -885,11 +901,15 @@ function dayCard(e) {
   } else if (kind === 'ask') {
     card.append(el('h3', e.item || '', 'title'));
     if (e.reason) card.append(el('p', e.reason, 'muted'));
+  } else if (kind === 'eat') {
+    card.append(el('h3', e.food || 'a snack', 'title'));
+    if (e.failed) card.append(el('p', 'He was not hungry yet.', 'muted'));
   } else if (kind === 'make') {
     card.append(el('h3', e.name || '', 'title'));
     if (e.action === 'remove_decoration') card.append(el('p', e.removed ? 'He took it away.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
     else card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He made it and put it ${e.place}.`, 'muted'));
     if (e.why && !e.failed) card.append(el('p', e.why));
+    if (e.project && !e.failed) card.append(el('p', `For his project: ${e.project}`, 'muted'));
   } else if (kind === 'walk') {
     card.append(el('h3', `To the ${e.object || 'room'}`, 'title'));
   }
@@ -1086,13 +1106,17 @@ function render(s) {
     : empty('Nothing yet. Pip can make things for his room when he feels like it.'));
   updateDecor(s);
   $('story').textContent = s.story || 'Pip has only just come to life. His story starts here.';
-  fill($('bars'), [['Energy', s.energy], ['Boredom', s.boredom], ['Lonely', s.loneliness]].map(([name, val]) => {
+  const BARS = [['Fullness', s.fullness, '#e0974a', 'hungry → full'], ['Energy', s.energy, '#e2c13c', 'tired → lively'], ['Wonder', s.wonder, '#9b6fd6', 'bored → amazed'], ['Joy', s.joy, '#e8668c', 'low → happy'], ['Calm', s.calm, '#4fa3b8', 'restless → peaceful']];
+  fill($('bars'), BARS.map(([name, val, color, hint]) => {
+    const v = Number.isFinite(Number(val)) ? Number(val) : 5;
     const row = el('div', null, 'bar');
+    row.title = hint;
     const track = el('div', null, 'track');
     const f = el('div', null, 'fill');
-    f.style.width = `${((val ?? 0) / 10) * 100}%`;
+    f.style.width = `${(Math.max(0, Math.min(10, v)) / 10) * 100}%`;
+    f.style.background = color;
     track.append(f);
-    row.append(el('span', name), track);
+    row.append(el('span', name), track, el('span', (Math.round(v * 10) / 10).toString(), 'val'));
     return row;
   }));
 

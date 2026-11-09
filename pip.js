@@ -2,6 +2,7 @@ import { readFile, writeFile, appendFile, readdir, unlink } from 'node:fs/promis
 import { existsSync } from 'node:fs';
 import { freePlaces, makeDecor, removeDecor, MAX_PER_DAY } from './decor.js';
 import { refreshNews, themeMirror } from './news.js';
+import { ensureFeelings, passTime, stepFeelings, felt, eatNow, feelingsText, needsText } from './feelings.js';
 
 const STATE_FILE = 'web/state.json';
 const DIARY_FILE = 'diary.md';
@@ -37,10 +38,11 @@ const ACTIONS = [
   'write_diary(text)',
   'rest()',
   'ask_for(item, reason)',
+  'eat(food)',
   'decorate(name, where, why, parts)',
   'remove_decoration(name)',
 ];
-const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'decorate', 'remove_decoration'];
+const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -94,7 +96,11 @@ const INTERVAL_MIN = Number(process.env.PIP_INTERVAL_MIN || 12);
 const clamp = (n) => Math.max(0, Math.min(10, n));
 
 async function loadState() {
-  if (!existsSync(STATE_FILE)) return freshState();
+  if (!existsSync(STATE_FILE)) {
+    const fresh = freshState();
+    ensureFeelings(fresh);
+    return fresh;
+  }
   const raw = JSON.parse(await readFile(STATE_FILE, 'utf8'));
   // Older saves kept requests as one string "item: reason". Carry the open ones over to the asks list.
   if (!raw.asks && Array.isArray(raw.requests)) {
@@ -107,7 +113,9 @@ async function loadState() {
       })
       .filter((a) => a.item);
   }
-  return { ...freshState(), ...raw };
+  const state = { ...freshState(), ...raw };
+  ensureFeelings(state);
+  return state;
 }
 
 // Bas's replies arrive as small files in inbox/ (written by the website). They are deleted only after Pip's state is saved.
@@ -174,9 +182,11 @@ function buildWakeUp(s) {
   return `NOW
 Time: ${new Date().toLocaleString('en-GB')}
 Mood: ${s.mood}
-Energy: ${s.energy}/10
-Boredom: ${s.boredom}/10
-Loneliness: ${s.loneliness}/10
+
+HOW I FEEL (0 to 10)
+${feelingsText(s)}
+${needsText(s)}
+These bars are how my body and heart feel. They guide me, but I decide. When Fullness is low I can eat (eat, at most once every 30 minutes). When Energy is low I rest. When Wonder is low I look for something new, or make something. When Joy is low I do something I love, or write to Bas. When Calm is low I play something quiet or look out of the window.
 
 WHO I AM (my life so far)
 ${s.story || 'I just came to life in this room. I do not know much about myself yet.'}
@@ -240,13 +250,15 @@ ${ACTIONS.join(', ')}
 FROM CURIOSITY TO DOING
 Looking things up is only the start. When I learn something that excites me, I ask myself: what would I like to DO, GET or MAKE because of this? For example, if I read about galaxies I might want a telescope. Then I can start a project. I can ask Bas for what I need (asks_add, so it shows up in his list: waiting is not asking), build a small version myself (decorate), play a tune about it, write about it in my diary, or go to the window and try it. A plan with only searching and reading is a thin plan. A good plan has at least one step toward a project.
 
+In my world almost anything is possible. A project can be about anything I dream up: learning, music, cooking, building, writing, gardening, collecting, exploring. What I can build myself is limited to small things made of simple shapes, and only a few a day. If a project or an idea is too big for that, such as a new ability, a new room or something real, I ask Bas with asks_add and say exactly what I would need. I never give up on a dream just because it is big: I ask.
+
 MAKING THINGS FOR MY ROOM
 With decorate I make something and put it in my room. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. "where" is one of the place names listed above. Things on a wall must be flat. I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. With remove_decoration I can take something away again.
 
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, decorate {"name": "...", "where": "on_desk", "why": "...", "parts": [...]}, remove_decoration {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...]}, remove_decoration {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -388,6 +400,7 @@ function describe(a) {
     case 'search_web': return d.query;
     case 'write_diary': return d.text;
     case 'ask_for': return `${d.item}: ${d.reason}`;
+    case 'eat': return d.food;
     case 'decorate':
     case 'remove_decoration': return d.name;
     default: return '';
@@ -415,9 +428,7 @@ function applyResult(s, r) {
 
   const lastThree = s.activities.slice(-3).map((a) => a.action);
   const repeating = lastThree.length === 3 && lastThree.every((x) => x === r.action);
-  s.boredom = clamp(s.boredom + (repeating ? 2 : -1));
-  s.energy = clamp(s.energy + (r.action === 'rest' ? 3 : -1));
-  s.loneliness = clamp(s.loneliness + 1);
+  stepFeelings(s, { action: r.action, enjoyment, repeating, style: r.details?.style });
   s.mood = String(r.mood_after || s.mood);
 
   s.activities.push({ at: new Date().toISOString(), action: r.action, detail, enjoyment });
@@ -503,13 +514,17 @@ function applyInnerLife(s, r, detail, replying = false) {
   for (const p of (Array.isArray(r.projects_add) ? r.projects_add : []).slice(0, 1)) {
     const title = text(p?.title, 80);
     if (!title || s.projects.filter((x) => x.status === 'working').length >= 5 || s.projects.some((x) => x.status === 'working' && sameItem(x.title, title))) continue;
+    felt(s, 'projectStart');
     s.projects.push({ id: Date.now().toString(36), title, why: text(p?.why, 200), next: text(p?.next, 160), status: 'working', since: at, updatedAt: at });
   }
   for (const u of Array.isArray(r.projects_update) ? r.projects_update : []) {
     const hit = s.projects.find((x) => x.status === 'working' && sameItem(x.title, text(u?.title, 80) || '\u0000'));
     if (!hit) continue;
     if (text(u?.next, 160)) hit.next = text(u.next, 160);
-    if (['working', 'done', 'dropped'].includes(u?.status)) hit.status = u.status;
+    if (['working', 'done', 'dropped'].includes(u?.status)) {
+      if (u.status === 'done') felt(s, 'projectDone');
+      hit.status = u.status;
+    }
     hit.updatedAt = at;
   }
   s.projects = [...s.projects.filter((x) => x.status === 'working'), ...s.projects.filter((x) => x.status !== 'working').slice(-10)];
@@ -524,7 +539,7 @@ function applyInnerLife(s, r, detail, replying = false) {
       s.draft = '';
     }
   }
-  if (sent.length) s.loneliness = clamp(s.loneliness - 3);
+  if (sent.length) felt(s, 'wrote');
   return sent;
 }
 
@@ -583,8 +598,10 @@ async function wakeUp() {
     await clearInbox(inbox.names);
     return;
   }
+  passTime(state);
   if (state.last?.sleeping) {
     state.energy = 9;
+    state.calm = Math.max(state.calm, 7);
     state.mood = 'rested';
   }
   await refreshNews(state);
@@ -620,6 +637,9 @@ async function wakeUp() {
     }
   });
 
+  // Eating fills him up a little (not more than once every half hour).
+  for (const st of steps) if (st.action === 'eat') st.ate = eatNow(state);
+
   // ask_for steps end up in the list of asks.
   const stepAsks = steps.filter((st) => st.action === 'ask_for').map((st) => ({ item: st.details.item, why: st.details.reason }));
   const sent = applyInnerLife(
@@ -630,6 +650,7 @@ async function wakeUp() {
   );
 
 
+  if (unread.length) felt(state, 'message');
   const readAt = new Date().toISOString();
   unread.forEach((m) => {
     m.read = true;
@@ -674,7 +695,8 @@ async function wakeUp() {
     if (st.action === 'write_diary') entry.text = text(d.text, 800);
     if (st.action === 'walk_to') entry.object = text(d.object, 60);
     if (st.action === 'ask_for') Object.assign(entry, { item: text(d.item, 140), reason: text(d.reason, 200) });
-    if (st.action === 'decorate') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
+    if (st.action === 'decorate') Object.assign(entry, { project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), removed: st.made?.removed ?? null, failed: st.made?.failed ?? null });
     state.log.push(entry);
   });
@@ -708,6 +730,7 @@ async function wakeUp() {
   if (state.wants.length) console.log(`🎯 wants: ${state.wants.map((w) => w.text).join(' | ')}`);
   for (const m of sent) console.log(`✉️  Pip writes to Bas (${m.kind}): ${m.text}`);
   if (!sent.length && state.draft) console.log(`✉️  Pip holds back a message: ${state.draft}`);
+  console.log(`📊 fullness ${state.fullness} | energy ${state.energy} | wonder ${state.wonder} | joy ${state.joy} | calm ${state.calm}`);
   console.log(`📋 plan for the next ${INTERVAL_MIN} minutes:`);
   steps.forEach((st, i) => {
     console.log(`   ${i + 1}. ${st.action}${results[i].detail ? `: ${results[i].detail}` : ''}   (enjoyed ${results[i].enjoyment}/10)${st.thought ? `\n      "${st.thought}"` : ''}`);
@@ -715,6 +738,7 @@ async function wakeUp() {
     if (st.made?.entry) console.log(`      🛠️  made "${st.made.entry.name}" and put it ${st.made.entry.label} (${st.made.entry.parts.length} parts)`);
     if (st.made?.failed) console.log(`      🛠️  did not work out: ${st.made.failed}`);
     if (st.made?.removed) console.log(`      🛠️  took away "${st.made.removed}"`);
+    if (st.ate?.failed) console.log(`      🍽️  not hungry yet: ${st.ate.failed}`);
   });
   if (answer.new_idea) console.log(`💡 ${answer.new_idea}`);
   for (const m of sent) await notify(m);
