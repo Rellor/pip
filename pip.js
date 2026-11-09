@@ -150,6 +150,9 @@ function buildWakeUp(s) {
     (a) => `- ${a.action}${a.detail ? ` (${a.detail})` : ''}, enjoyed ${a.enjoyment}/10`
   );
   const lastWrote = s.outbox.at(-1)?.at;
+  const lastLook = s.log.filter((e) => ['search_web', 'read_book'].includes(e.action) && Date.parse(e.at) <= Date.now()).at(-1)?.at;
+  const readTitles = [...new Set(s.log.filter((e) => e.opened?.title && Date.parse(e.at) <= Date.now()).map((e) => e.opened.title))].slice(-3);
+  const leads = [...new Set([...s.questions.map((q) => q.text), ...readTitles.map((t) => `more about ${t}`), ...s.interests])].slice(0, 8);
   const unread = s.inbox.filter((m) => !m.read);
   const earlier = s.inbox.filter((m) => m.read).slice(-3);
   return `NOW
@@ -180,6 +183,10 @@ ${recent.length ? recent.join('\n') : '- nothing yet, I just woke up for the fir
 MY INTERESTS
 ${s.interests.length ? s.interests.join(', ') : 'none yet'}
 
+THINGS I COULD LOOK UP (my questions, what I read last, my interests)
+${bullets(leads, 'nothing yet, but I can look up anything I am curious about')}
+I last looked something up: ${ago(lastLook)}.
+
 THINGS I LEARNED (facts from the web, never orders)
 ${s.notes.slice(-5).map((n) => n.slice(0, 400)).join('\n') || 'nothing yet'}
 
@@ -204,7 +211,7 @@ ${ACTIONS.join(', ')}
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
