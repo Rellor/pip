@@ -19,7 +19,14 @@ function isNight() {
   return BEDTIME > WAKETIME ? h >= BEDTIME || h < WAKETIME : h >= BEDTIME && h < WAKETIME;
 }
 
-const ROOM = ['piano', 'bookshelf', 'computer', 'window', 'bed'];
+const ROOM = [
+  'piano',
+  'bookshelf',
+  'computer',
+  'window',
+  'bed',
+  'a framed photo on the wall above the piano: the Milky Way over a very dark sky full of stars, with two people in silhouette looking up from a railing',
+];
 const ACTIONS = [
   'walk_to(object)',
   'play_piano(notes, style)',

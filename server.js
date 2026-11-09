@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = fileURLToPath(new URL('./', import.meta.url));
 const WEB = resolve(ROOT, 'web');
 const PORT = Number(process.env.PORT) || 4321;
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.json': 'application/json', '.jpg': 'image/jpeg' };
 
 let waking = false;
 let lastError = null;

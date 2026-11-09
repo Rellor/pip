@@ -91,6 +91,23 @@ if (night) {
   }
 }
 
+// framed photo above the piano (ESO / Luis Calçada / Herbert Zodet, CC BY 4.0: the credit is shown on the page)
+const wallFrame = new THREE.Group();
+wallFrame.position.set(-2.2, 2.75, -4.93);
+scene.add(wallFrame);
+box(wallFrame, [1.7, 1.2, 0.08], 0x8d5a3b, [0, 0, 0]);
+const photoMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+const photo = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.0), photoMat);
+photo.position.z = 0.05;
+wallFrame.add(photo);
+new THREE.TextureLoader().load('pictures/dark-sky.jpg', (tex) => {
+  tex.colorSpace = THREE.SRGBColorSpace;
+  photoMat.map = tex;
+  photoMat.color.set(0xffffff);
+  photoMat.needsUpdate = true;
+  photo.scale.x = tex.image.width / tex.image.height / 1.5;
+});
+
 // piano
 const PIANO = new V3(-2.6, 0, -4.5);
 box(scene, [2.6, 1.3, 0.9], 0x2a2a2e, [PIANO.x, 0.65, PIANO.z]);
@@ -243,8 +260,10 @@ const SPOTS = {
   window: { p: new V3(0.3, 0, -3.9), face: Math.PI },
   plant: { p: new V3(3.7, 0, -3.1), face: Math.PI },
   bed: { p: new V3(3.4, 0, 3.45), face: 0, y: 1.15, rx: -Math.PI / 2 },
+  frame: { p: new V3(-1.5, 0, -3.7), face: Math.PI },
 };
 const SYNONYMS = {
+  frame: ['picture', 'frame', 'photo', 'painting', 'milky way'],
   piano: ['piano', 'keys', 'music'],
   bookshelf: ['book', 'shelf'],
   computer: ['computer', 'desk', 'screen', 'laptop'],
