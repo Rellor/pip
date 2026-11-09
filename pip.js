@@ -6,6 +6,19 @@ const DIARY_FILE = 'diary.md';
 const MODEL = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
 const API = 'https://generativelanguage.googleapis.com/v1beta';
 
+// Pip sleeps from bedtime until wake-up time (local time), so nights cost no API calls or deploys.
+const TZ = process.env.PIP_TZ || 'Europe/Amsterdam';
+const BEDTIME = Number(process.env.PIP_BEDTIME ?? 23);
+const WAKETIME = Number(process.env.PIP_WAKETIME ?? 7);
+function localHour() {
+  const h = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', hour12: false, timeZone: TZ }).format(new Date());
+  return Number(h) % 24;
+}
+function isNight() {
+  const h = localHour();
+  return BEDTIME > WAKETIME ? h >= BEDTIME || h < WAKETIME : h >= BEDTIME && h < WAKETIME;
+}
+
 const ROOM = ['piano', 'bookshelf', 'computer', 'window', 'bed'];
 const ACTIONS = [
   'walk_to(object)',
@@ -180,9 +193,39 @@ function applyResult(s, r) {
   return { r, detail, enjoyment };
 }
 
+async function goToSleep(state) {
+  if (state.last?.sleeping) {
+    console.log('Pip is asleep. Zzz...');
+    return;
+  }
+  const at = new Date().toISOString();
+  state.mood = 'sleepy';
+  state.activities.push({ at, action: 'rest', detail: 'sleeping through the night', enjoyment: 8 });
+  state.activities = state.activities.slice(-50);
+  state.last = {
+    at,
+    thought: 'It is late. Good night...',
+    action: 'rest',
+    details: {},
+    detail: 'sleeping through the night',
+    enjoyment: 8,
+    new_idea: null,
+    found: null,
+    sleeping: true,
+  };
+  await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+  await appendFile(DIARY_FILE, `## ${new Date().toLocaleString('en-GB')}\nGood night. Pip went to sleep.\n\n`);
+  console.log('\n💤 Pip went to sleep.');
+}
+
 async function wakeUp() {
   const system = await readFile('personality.md', 'utf8');
   const state = await loadState();
+  if (isNight() && !process.env.PIP_AWAKE) return goToSleep(state);
+  if (state.last?.sleeping) {
+    state.energy = 9;
+    state.mood = 'rested';
+  }
   const answer = await askGemini(system, buildWakeUp(state));
   const { r, detail, enjoyment } = applyResult(state, answer);
   let found = null;
@@ -248,5 +291,6 @@ try {
   } else await wakeUp();
 } catch (e) {
   console.error('⚠️ ', e.message);
-  process.exit(1);
+  // A rate limit is not a crash: skip this wake-up quietly so GitHub does not send failure emails.
+  process.exit(e.message.startsWith('Rate limit') ? 0 : 1);
 }

@@ -2,7 +2,7 @@ name: Pip
 
 on:
   schedule:
-    - cron: '*/30 * * * *'   # Pip wakes up every 30 minutes
+    - cron: '*/15 * * * *'   # checked every 15 minutes; Pip decides himself if he is asleep (23:00-07:00 Amsterdam)
   workflow_dispatch:         # lets you wake him by hand from the Actions tab
 
 permissions:
