@@ -626,20 +626,19 @@ try {
 let lastState = null;
 let isStatic = false;
 let fastUntil = 0;
-$('reply').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const body = $('replytext').value.trim();
-  if (!body) return;
+
+// Sends a message to Pip. Returns true when it was sent.
+async function sendReply(body) {
   const status = $('replystatus');
   let key = store('pip-key') || '';
+  if (isStatic && !key) key = $('replykey').value.trim();
   if (isStatic && !key) {
-    key = $('replykey').value.trim();
-    if (!key) {
-      $('replykey').hidden = false;
-      $('replykey').focus();
-      status.textContent = 'Enter your reply key once.';
-      return;
-    }
+    showTab('messages');
+    $('replytext').value = body;
+    $('replykey').hidden = false;
+    $('replykey').focus();
+    status.textContent = 'Enter your reply key once, then press Send.';
+    return false;
   }
   $('send').disabled = true;
   status.textContent = 'Sending…';
@@ -650,24 +649,34 @@ $('reply').addEventListener('submit', async (e) => {
       store('pip-key', '');
       $('replykey').value = '';
       $('replykey').hidden = false;
+      showTab('messages');
+      $('replytext').value = body;
       status.textContent = 'That key is not right.';
-    } else if (!res.ok) {
-      status.textContent = data.error || 'Could not send.';
-    } else {
-      if (key) store('pip-key', key);
-      $('replykey').hidden = true;
-      pending.push({ id: data.id, at: new Date().toISOString(), text: body });
-      store('pip-pending', JSON.stringify(pending));
-      $('replytext').value = '';
-      status.textContent = 'Sent. Pip will read it soon.';
-      fastUntil = Date.now() + 3 * 60_000;
-      if (lastState) render(lastState);
+      return false;
     }
+    if (!res.ok) {
+      status.textContent = data.error || 'Could not send.';
+      return false;
+    }
+    if (key) store('pip-key', key);
+    $('replykey').hidden = true;
+    pending.push({ id: data.id, at: new Date().toISOString(), text: body });
+    store('pip-pending', JSON.stringify(pending));
+    status.textContent = 'Sent. Pip will read it soon.';
+    fastUntil = Date.now() + 3 * 60_000;
+    if (lastState) render(lastState);
+    return true;
   } catch {
     status.textContent = 'No connection. Try again.';
+    return false;
   } finally {
     $('send').disabled = false;
   }
+}
+$('reply').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const body = $('replytext').value.trim();
+  if (body && (await sendReply(body))) $('replytext').value = '';
 });
 
 // tabs
@@ -690,6 +699,28 @@ function render(s) {
   fill($('thoughts'), thoughts.length
     ? thoughts.map((t) => entry([when(t.at), `${ICON[t.action] || '•'} ${(t.action || '').replace('_', ' ')}${t.detail ? ': ' + t.detail : ''}`, t.mood || ''].filter(Boolean), t.text))
     : empty('Pip has not thought anything yet.'));
+
+  const asks = s.asks || [];
+  const open = asks.filter((a) => a.status === 'open');
+  $('askcount').textContent = open.length || '';
+  fill($('asks'), open.length
+    ? open.map((a) => {
+      const li = el('li');
+      li.append(el('div', a.item, 'what'));
+      if (a.why) li.append(el('div', a.why, 'why'));
+      li.append(el('div', `asked ${when(a.since)}`, 'meta'));
+      const row = el('div', null, 'buttons');
+      const done = el('button', '✓ I did this', 'small primary');
+      done.addEventListener('click', () => sendReply(`I did this for you: "${a.item}"`));
+      const cant = el('button', "I can't do this", 'small');
+      cant.addEventListener('click', () => sendReply(`I can't do this one: "${a.item}"`));
+      row.append(done, cant);
+      li.append(row);
+      return li;
+    })
+    : [el('li', 'Nothing right now. Pip will add things here when he wants something from you.', 'muted')]);
+  const closed = asks.filter((a) => a.status !== 'open').reverse();
+  fill($('asksdone'), closed.length ? closed.map((a) => el('li', a.item)) : [el('li', 'nothing yet', 'muted')]);
 
   const wants = s.wants || [];
   fill($('wants'), wants.length ? wants.map((w) => entry([`since ${when(w.since)}`], w.text)) : empty('Pip does not know yet what he wants.'));

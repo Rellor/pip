@@ -26,6 +26,14 @@
   #tabs { display:flex; gap:2px; padding:12px 8px 0; border-bottom:1px solid var(--line); }
   .tab { position:relative; background:none; border:0; border-bottom:2px solid transparent; border-radius:0; padding:8px 12px; color:var(--muted); font-size:15px; }
   .tab[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--accent); font-weight:600; }
+  .count { margin-left:6px; background:var(--accent); color:#fff; border-radius:999px; font-size:12px; padding:0 7px; }
+  .count:empty { display:none; }
+  .asklist { gap:14px; }
+  .asklist li { display:list-item; list-style:disc; margin-left:20px; padding-left:4px; }
+  .asklist .what { font-weight:600; }
+  .asklist .why { color:var(--muted); font-size:14px; }
+  .asklist .buttons { display:flex; gap:8px; margin-top:6px; }
+  .donelist li { color:var(--muted); font-size:14px; text-decoration:line-through; }
   .dot { display:none; position:absolute; top:6px; right:4px; width:9px; height:9px; border-radius:50%; background:var(--accent); }
   .dot.on { display:block; }
   .pane { flex:1; overflow:auto; padding:16px; }
@@ -73,12 +81,20 @@
     <div class="err" id="err"></div>
     <nav id="tabs" role="tablist">
       <button class="tab" role="tab" data-tab="thoughts">Thoughts</button>
+      <button class="tab" role="tab" data-tab="asks">Asks<span class="count" id="askcount"></span></button>
       <button class="tab" role="tab" data-tab="wants">Wants</button>
       <button class="tab" role="tab" data-tab="messages">Messages<span class="dot" id="msgdot"></span></button>
       <button class="tab" role="tab" data-tab="life">Life</button>
     </nav>
 
     <section class="pane" data-pane="thoughts"><ul id="thoughts"></ul></section>
+
+    <section class="pane" data-pane="asks" hidden>
+      <h2>Pip would like from you</h2>
+      <ul class="asklist" id="asks"></ul>
+      <h2>Done</h2>
+      <ul class="donelist" id="asksdone"></ul>
+    </section>
 
     <section class="pane" data-pane="wants" hidden>
       <h2>Pip wants</h2><ul id="wants"></ul>
