@@ -1053,6 +1053,19 @@ function render(s) {
     : empty('Nothing yet. Pip writes to you when something really matters to him, and you can write to him too.'));
   showTab(tab);
 
+  const news = s.news?.items || [];
+  fill($('newslist'), news.length
+    ? news.map((n) => {
+      const li = el('li', null, 'item');
+      const m = el('div', null, 'meta');
+      m.append(el('span', n.kind));
+      const p = el('p');
+      p.append(`${n.text} `);
+      if (n.url) p.append(link(n.url, n.topic ? `(${n.topic})` : '(read)'));
+      li.append(m, p);
+      return li;
+    })
+    : empty('No news yet today.'));
   const made = (s.decor || []).filter((d) => Date.parse(d.at) <= Date.now()).slice().reverse();
   fill($('decorlist'), made.length
     ? made.map((d) => entry([d.label, `made ${when(d.createdAt)}`], `${d.name}${d.why ? ' — ' + d.why : ''}`))

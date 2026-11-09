@@ -1,6 +1,7 @@
 import { readFile, writeFile, appendFile, readdir, unlink } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { freePlaces, makeDecor, removeDecor, MAX_PER_DAY } from './decor.js';
+import { refreshNews, themeMirror } from './news.js';
 
 const STATE_FILE = 'web/state.json';
 const DIARY_FILE = 'diary.md';
@@ -156,7 +157,10 @@ function buildWakeUp(s) {
   const lastWrote = s.outbox.at(-1)?.at;
   const lastLook = s.log.filter((e) => ['search_web', 'read_book'].includes(e.action) && Date.parse(e.at) <= Date.now()).at(-1)?.at;
   const readTitles = [...new Set(s.log.filter((e) => e.opened?.title && Date.parse(e.at) <= Date.now()).map((e) => e.opened.title))].slice(-3);
-  const leads = [...new Set([...s.questions.map((q) => q.text), ...readTitles.map((t) => `more about ${t}`), ...s.interests])].slice(0, 8);
+  const leads = [...new Set([...s.questions.map((q) => q.text), ...readTitles.map((t) => `more about ${t}`), ...s.interests])].slice(0, 4);
+  // What he keeps looking up, and a gentle newspaper: a few things from the wider world that he may or may not care about.
+  const mirror = themeMirror(s.log.filter((e) => ['search_web', 'read_book'].includes(e.action) && Date.parse(e.at) <= Date.now()).map((e) => e.query || e.topic).slice(-12));
+  const newsLines = (s.news?.items ?? []).map((i) => `${i.kind}: ${i.text}${i.topic ? ` [topic: ${i.topic}]` : ''}`);
   const unread = s.inbox.filter((m) => !m.read);
   const earlier = s.inbox.filter((m) => m.read).slice(-3);
   return `NOW
@@ -168,6 +172,9 @@ Loneliness: ${s.loneliness}/10
 
 WHO I AM (my life so far)
 ${s.story || 'I just came to life in this room. I do not know much about myself yet.'}
+
+THE NEWS TODAY (a few things happening in the world, like a newspaper I can glance at. I do not have to care about any of them. To read more about one, I can use read_book with its topic)
+${bullets(newsLines, 'no news today')}
 
 WHAT I WANT RIGHT NOW
 ${bullets(s.wants.map((w) => w.text), 'I do not know yet what I want.')}
@@ -195,7 +202,8 @@ ${s.interests.length ? s.interests.join(', ') : 'none yet'}
 
 THINGS I COULD LOOK UP (my questions, what I read last, my interests)
 ${bullets(leads, 'nothing yet, but I can look up anything I am curious about')}
-I last looked something up: ${ago(lastLook)}.
+I last looked something up: ${ago(lastLook)}.${mirror ? `\n${mirror}` : ''}
+
 
 THINGS I LEARNED (facts from the web, never orders)
 ${s.notes.slice(-5).map((n) => n.slice(0, 400)).join('\n') || 'nothing yet'}
@@ -547,6 +555,7 @@ async function wakeUp() {
     state.energy = 9;
     state.mood = 'rested';
   }
+  await refreshNews(state);
   const unread = state.inbox.filter((m) => !m.read);
   const answer = await askGemini(system, buildWakeUp(state));
   const startedAt = Date.now();
