@@ -6,10 +6,10 @@ const DIARY_FILE = 'diary.md';
 const MODEL = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
 const API = 'https://generativelanguage.googleapis.com/v1beta';
 
-// Pip sleeps from bedtime until wake-up time (local time), so nights cost no API calls or deploys.
+// Pip sleeps from bedtime (23:00) until wake-up time (08:00) (local time), so nights cost no API calls or deploys.
 const TZ = process.env.PIP_TZ || 'Europe/Amsterdam';
 const BEDTIME = Number(process.env.PIP_BEDTIME ?? 23);
-const WAKETIME = Number(process.env.PIP_WAKETIME ?? 7);
+const WAKETIME = Number(process.env.PIP_WAKETIME ?? 8);
 function localHour() {
   const h = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', hour12: false, timeZone: TZ }).format(new Date());
   return Number(h) % 24;
