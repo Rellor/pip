@@ -194,6 +194,97 @@ function popDecor(now) {
   }
 }
 
+// The chest (always there) and the workbench (only once Bas has given him one).
+const chestGroup = new THREE.Group();
+chestGroup.position.set(-4.1, 0, 3.9);
+scene.add(chestGroup);
+box(chestGroup, [1.0, 0.45, 0.6], 0x8d5a3b, [0, 0.225, 0]);
+box(chestGroup, [1.04, 0.06, 0.64], 0xd9a441, [0, 0.1, 0]);
+const chestLid = new THREE.Group();
+chestLid.position.set(0, 0.45, -0.3);
+chestGroup.add(chestLid);
+box(chestLid, [1.04, 0.14, 0.64], 0xa06a3f, [0, 0.07, 0.3]);
+box(chestLid, [0.12, 0.12, 0.05], 0xd9a441, [0, 0.0, 0.62]);
+
+const benchGroup = new THREE.Group();
+benchGroup.position.set(4.3, 0, -2.95);
+benchGroup.visible = false;
+scene.add(benchGroup);
+box(benchGroup, [0.8, 0.08, 1.4], 0xb98a62, [0, 0.9, 0]);
+[[-0.32, -0.6], [0.32, -0.6], [-0.32, 0.6], [0.32, 0.6]].forEach(([x, z]) => box(benchGroup, [0.08, 0.9, 0.08], 0x8d5a3b, [x, 0.45, z]));
+box(benchGroup, [0.7, 0.05, 1.25], 0x9a6f4b, [0, 0.3, 0]);
+box(benchGroup, [0.04, 0.04, 0.3], 0x7a5230, [0.2, 0.96, 0.5]); // hammer
+box(benchGroup, [0.1, 0.07, 0.07], 0x777777, [0.2, 0.99, 0.65]);
+box(benchGroup, [0.01, 0.07, 0.5], 0xaaaaaa, [-0.25, 0.97, 0.35]); // saw
+box(benchGroup, [0.05, 0.05, 0.12], 0x7a5230, [-0.25, 0.97, 0.66]);
+box(benchGroup, [0.16, 0.12, 0.2], 0x444444, [0.28, 0.98, -0.62]); // vise
+const benchModel = new THREE.Group(); // what he is building appears here, part by part
+benchModel.position.set(0, 0.94, 0);
+benchGroup.add(benchModel);
+let benchId = null;
+let benchParts = [];
+function setBenchModel(b) {
+  benchModel.clear();
+  benchParts = [];
+  benchId = b?.id ?? null;
+  if (!b) return;
+  benchModel.scale.setScalar(b.benchScale || 1);
+  for (const p of b.parts || []) {
+    const make = SHAPE_GEO[p.shape];
+    if (!make) continue;
+    const geo = make(p.size);
+    const solid = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: p.color, roughness: 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0 }));
+    const ghost = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.28 })); // the plan, as an outline
+    for (const m of [solid, ghost]) {
+      m.position.set(...p.pos);
+      m.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
+    }
+    solid.castShadow = true;
+    benchModel.add(ghost, solid);
+    benchParts.push({ solid, ghost });
+  }
+}
+// How far along it is: from the plan and the clock, so you see it grow while he works.
+function benchProgress(b) {
+  let p = b.done;
+  if (plan) {
+    const mine = plan.steps.map((st, i) => ({ m: st.made?.build, i })).filter((x) => x.m?.id === b.id);
+    if (mine.length) {
+      p = mine[0].m.from;
+      for (const { m, i } of mine) if (m.to > m.from) p += Math.max(0, Math.min(1, (Date.now() - (plan.at + i * plan.stepMs)) / plan.stepMs));
+    }
+  }
+  return Math.max(0, Math.min(1, p / b.sessions));
+}
+function benchShows(b) {
+  if (b.finishedAt && Date.parse(b.finishedAt) <= Date.now()) return false; // finished: it is in the room now
+  const first = plan ? plan.steps.findIndex((st) => st.made?.build?.id === b.id && st.made.build.start) : -1;
+  return first < 0 || Date.now() >= plan.at + first * plan.stepMs; // a new build appears when he starts it
+}
+function updateBench(now) {
+  const has = !!lastState?.tools?.workbench;
+  if (has && !benchGroup.visible) {
+    benchGroup.visible = true;
+    benchGroup.userData.born = now;
+  }
+  if (!has) {
+    benchGroup.visible = false;
+    return;
+  }
+  const k = Math.min(1, (now - (benchGroup.userData.born ?? now - 1000)) / 700);
+  benchGroup.scale.setScalar(Math.max(0.001, k));
+  const b = (lastState.builds || []).find(benchShows) ?? null;
+  if ((b?.id ?? null) !== benchId) setBenchModel(b);
+  if (!b) return;
+  const f = benchProgress(b) * benchParts.length;
+  benchParts.forEach((pp, i) => {
+    const g = Math.max(0, Math.min(1, f - i));
+    pp.solid.visible = g > 0;
+    pp.solid.scale.setScalar(Math.max(0.01, g));
+    pp.ghost.visible = g < 1;
+  });
+}
+
 // piano
 const PIANO = new V3(-2.6, 0, -4.5);
 box(scene, [2.6, 1.3, 0.9], 0x2a2a2e, [PIANO.x, 0.65, PIANO.z]);
@@ -347,6 +438,8 @@ const SPOTS = {
   plant: { p: new V3(3.7, 0, -3.1), face: Math.PI },
   bed: { p: new V3(3.4, 0, 3.45), face: 0, y: 1.15, rx: -Math.PI / 2 },
   frame: { p: new V3(-1.5, 0, -3.7), face: Math.PI },
+  bench: { p: new V3(3.35, 0, -2.95), face: Math.PI / 2 },
+  chest: { p: new V3(-4.1, 0, 4.65), face: Math.PI },
 };
 const SYNONYMS = {
   frame: ['picture', 'frame', 'photo', 'painting', 'milky way'],
@@ -501,6 +594,10 @@ function planFor(last) {
     case 'rest': return { at: 'bed', anim: 'rest' };
     case 'ask_for': return { at: 'center', anim: 'ask' };
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
+    case 'start_build':
+    case 'work_on': return lastState?.tools?.workbench && last.made?.build ? { at: 'bench', anim: 'build' } : { at: 'center', anim: 'look' };
+    case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
+    case 'take_out':
     case 'place_picture':
     case 'decorate': {
       const m = last.made;
@@ -508,7 +605,6 @@ function planFor(last) {
       const [sx, sz] = m.stand;
       return { at: 'custom', anim: 'make', spot: { p: new V3(sx, 0, sz), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz) }, madeAt: m.pos };
     }
-    case 'remove_decoration':
     case 'take_down_picture': return { at: 'center', anim: 'look' };
     default: return { at: resolveSpot(d.object), anim: 'look' };
   }
@@ -606,6 +702,27 @@ function frame(now, dt) {
   }
 
   // --- signs
+  // building: sparks and a hammer sign over the bench; a soft tap on every swing
+  if (engaged && anim === 'build' && now > nextSign) {
+    nextSign = now + 380;
+    floatSign('✨', '#ffd27a', new V3(4.0 + rand(-0.3, 0.3), 1.2 + rand(0, 0.3), -2.95 + rand(-0.4, 0.4)), { life: 0.9, rise: 0.5, size: 0.35 });
+    if (Math.sin(now / 1000 * 9) > 0.9 && audio && audio.state === 'running') {
+      const o = audio.createOscillator();
+      const g2 = audio.createGain();
+      o.type = 'square';
+      o.frequency.value = 170;
+      g2.gain.setValueAtTime(0.06, audio.currentTime);
+      g2.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.07);
+      o.connect(g2).connect(audio.destination);
+      o.start();
+      o.stop(audio.currentTime + 0.08);
+    }
+  }
+  if (engaged && anim === 'stash' && now > nextSign) {
+    nextSign = now + 1200;
+    floatSign('📦', '#ffffff', new V3(-4.1, 1.1, 3.9), { life: 1.3, rise: 0.3, size: 0.45 });
+  }
+  chestLid.rotation.x = lerp(chestLid.rotation.x, engaged && anim === 'stash' ? -1.1 : 0, dt * 6);
   if (engaged && anim === 'eat' && now > nextSign) {
     nextSign = now + 1100;
     floatSign(foodEmoji(task.food), '#ffffff', headPos().add(new V3(rand(-0.1, 0.1), -0.2, 0.3)), { life: 1.2, rise: 0.25, size: 0.45 });
@@ -665,6 +782,14 @@ function frame(now, dt) {
       } else body.rotation.y = Math.sin(t * 0.9) * 0.3;
     } else if (anim === 'look') {
       body.rotation.y = Math.sin(t * 0.8) * 0.3;
+    } else if (anim === 'build') {
+      la = [-0.3, 0.6, 0.4];
+      ra = [0.35, 0.75 + Math.max(0, Math.sin(t * 9)) * 0.45, 0.4];
+      body.rotation.x = 0.12;
+    } else if (anim === 'stash') {
+      la = [-0.3, 0.35 + Math.sin(t * 3) * 0.1, 0.4];
+      ra = [0.3, 0.35 + Math.sin(t * 3 + 1) * 0.1, 0.4];
+      body.rotation.x = 0.25;
     } else if (anim === 'eat') {
       la = [-0.12, 0.95 + Math.sin(t * 5) * 0.06, 0.35];
       ra = [0.12, 0.95 + Math.sin(t * 5 + Math.PI) * 0.06, 0.35];
@@ -715,7 +840,7 @@ function frame(now, dt) {
 const r1 = (v) => (Math.round(Number(v) * 10) / 10).toString();
 const logOf = (...actions) => (lastState?.log || []).filter((e) => actions.includes(e.action) && Date.parse(e.at) <= Date.now());
 const WALK_BLOCKS = [ // places you cannot walk through: [minX, maxX, minZ, maxZ]
-  [-3.95, -1.25, -5, -3.6], [-2.95, -2.25, -3.5, -2.8], [1.55, 3.65, -5, -4.3], [-5, -3.6, 0.1, 2.3], [2.2, 4.6, 1.3, 4.7], [3.6, 4.6, -4.6, -3.6],
+  [-3.95, -1.25, -5, -3.6], [-2.95, -2.25, -3.5, -2.8], [1.55, 3.65, -5, -4.3], [-5, -3.6, 0.1, 2.3], [2.2, 4.6, 1.3, 4.7], [3.6, 4.6, -4.6, -3.6], [-4.6, -3.6, 3.6, 4.2], [3.9, 4.7, -3.6, -2.3],
 ];
 function blocked(x, z) {
   if (Math.abs(x) > 4.7 || Math.abs(z) > 4.7) return true;
@@ -787,6 +912,14 @@ wallFrame.userData.info = () => ({
   lines: ["A photo of the Milky Way over a very dark sky, with two people in silhouette looking up from a railing. It hangs above Pip's piano.", 'Photo: ESO/Luis Calçada/Herbert Zodet'],
   links: [{ text: 'Photo page on Wikimedia Commons', url: 'https://commons.wikimedia.org/wiki/File:Beneath_the_Milky_Way.jpg' }, { text: 'License: CC BY 4.0', url: 'https://creativecommons.org/licenses/by/4.0/' }],
 });
+chestGroup.userData.info = () => {
+  const items = lastState?.stored || [];
+  return { title: "Pip's chest", lines: items.length ? ['Things Pip put away. Nothing is lost, and he can take them out again:', ...items.map((x) => `• ${x.name}`)] : ['An empty chest. Pip puts things here when he does not want them in his room for a while.'] };
+};
+benchGroup.userData.info = () => {
+  const b = (lastState?.builds || []).find(benchShows);
+  return { title: "Pip's workbench", lines: ['Pip builds bigger projects here, a little at a time.', b ? `Right now: ${b.name}, session ${b.done} of ${b.sessions}.` : 'Nothing is on the bench right now.'] };
+};
 function decorInfo(d) {
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
   const lines = d.image
@@ -917,6 +1050,7 @@ function loop(now) {
   frame(now, dt);
   updateFloaters(dt, now);
   popDecor(now);
+  updateBench(now);
   updateWalk(dt);
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
@@ -1125,11 +1259,14 @@ function headline(st) {
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
     case 'place_picture': return ['🖼️', 'Putting up a picture'];
     case 'take_down_picture': return ['🖼️', 'Taking a picture down'];
-    case 'remove_decoration': return ['🧹', `Taking ${d.name || st.name || 'something'} out of his room`];
+    case 'remove_decoration': return ['📦', `Putting ${d.name || st.name || 'something'} in his chest`];
+    case 'take_out': return ['📦', `Taking ${d.name || st.name || 'something'} out of the chest`];
+    case 'start_build': return ['🔨', `Starting to build ${d.name || st.name || 'something'}`];
+    case 'work_on': return ['🔨', `Working on ${d.name || st.name || 'his build'}`];
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', remove_decoration: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', remove_decoration: 'make', take_out: 'make', start_build: 'make', work_on: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -1214,8 +1351,28 @@ function dayCard(e) {
       img.alt = 'picture';
       card.append(img);
     }
-    if (e.action === 'remove_decoration' || e.action === 'take_down_picture') card.append(el('p', e.removed ? 'He took it away.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
-    else card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He made it and put it ${e.place}.`, 'muted'));
+    if (e.action === 'start_build') {
+      card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew up the plan and started building it at his workbench. It will take ${e.sessions} sessions.`, 'muted'));
+    } else if (e.action === 'work_on') {
+      if (e.failed) card.append(el('p', `It did not work out: ${e.failed}.`, 'muted'));
+      else {
+        card.append(el('p', e.finished ? `Session ${e.to} of ${e.total}. It is finished! He put it ${e.place}.` : `Session ${e.to} of ${e.total} at the workbench.`, 'muted'));
+        const bar = el('div', null, 'track');
+        const fillBar = el('div', null, 'fill');
+        fillBar.style.width = `${((e.to || 0) / (e.total || 1)) * 100}%`;
+        fillBar.style.background = 'var(--make)';
+        bar.append(fillBar);
+        card.append(bar);
+      }
+    } else if (e.action === 'remove_decoration') {
+      card.append(el('p', e.stored ? 'He put it away in his chest. It is not lost.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
+    } else if (e.action === 'take_out') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He took it out of his chest and put it ${e.place}.`, 'muted'));
+    } else if (e.action === 'take_down_picture') {
+      card.append(el('p', e.removed ? 'He took it down. It stays in his album.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
+    } else {
+      card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He made it and put it ${e.place}.`, 'muted'));
+    }
     if (e.why && !e.failed) card.append(el('p', e.why));
     if (e.project && !e.failed) card.append(el('p', `For his project: ${e.project}`, 'muted'));
   } else if (kind === 'walk') {
@@ -1415,6 +1572,14 @@ function render(s) {
       return div;
     })
     : [el('div', 'Bas has not given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
+  const onBench = (s.builds || []).filter((b) => !b.finishedAt || Date.parse(b.finishedAt) > Date.now());
+  fill($('benchlist'), onBench.length
+    ? onBench.map((b) => entry([`session ${b.done} of ${b.sessions}`, b.where ? `for: ${b.where}` : ''].filter(Boolean), `${b.name}${b.why ? ' — ' + b.why : ''}`))
+    : empty(s.tools?.workbench ? 'Nothing on the bench right now.' : 'Pip does not have a workbench yet. He can ask Bas for one.'));
+  const inChest = s.stored || [];
+  fill($('chestlist'), inChest.length
+    ? inChest.map((x) => entry([`put away ${when(x.storedAt)}`, `it was ${x.label}`], x.name))
+    : empty('The chest is empty.'));
   const news = s.news?.items || [];
   fill($('newslist'), news.length
     ? news.map((n) => {

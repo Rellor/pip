@@ -117,18 +117,12 @@ function findZone(where) {
   return words.find(([k]) => w.includes(k))?.[1] ?? null;
 }
 
-// Pip's new object, or the reason it did not work out. Does not change `decor`.
-export function makeDecor(decor, details, atMs, now = Date.now()) {
-  const d = details && typeof details === 'object' ? details : {};
-  const name = str(d.name, 60);
-  if (!name) return { failed: 'he did not give it a name' };
-  if (decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
+// Puts a finished design into the room: his spot first, then another of the same kind, then anywhere with room.
+// `spec` is { name, why, project, where, parts } with clean parts. Does not change `decor`.
+function placeParts(decor, spec, atMs, now) {
   if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
-  const parts = cleanParts(d.parts);
-  if (!parts) return { failed: 'the shapes did not work out' };
-
-  // His spot first, then another of the same kind, then anywhere with room.
-  const want = findZone(d.where);
+  const parts = spec.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] })); // fit() moves things, so work on a copy
+  const want = findZone(spec.where);
   const keys = Object.keys(ZONES);
   const order = [...(want ? [want] : []), ...keys.filter((k) => k !== want && want && ZONES[k].kind === ZONES[want].kind), ...keys];
   let zone = null;
@@ -152,9 +146,9 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   return {
     entry: {
       id: `d${now.toString(36)}${decor.length}`,
-      name,
-      why: str(d.why, 200),
-      project: str(d.project, 80),
+      name: spec.name,
+      why: spec.why,
+      project: spec.project,
       zone,
       slot,
       label: Z.label,
@@ -168,6 +162,114 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
       createdAt: new Date(now).toISOString(),
     },
   };
+}
+
+// Pip's new object, made in one go, or the reason it did not work out. Does not change `decor`.
+export function makeDecor(decor, details, atMs, now = Date.now()) {
+  const d = details && typeof details === 'object' ? details : {};
+  const name = str(d.name, 60);
+  if (!name) return { failed: 'he did not give it a name' };
+  if (decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
+  if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
+  const parts = cleanParts(d.parts);
+  if (!parts) return { failed: 'the shapes did not work out' };
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts }, atMs, now);
+}
+
+// ---- Builds: bigger projects that take several sessions at the workbench.
+// The whole design is made up front. Each session at the bench builds a few more of its parts (bottom first),
+// and when the last session is done it is put in the room like anything else.
+export const MAX_BUILDS = 2;
+
+const sizeOf = (parts) => {
+  const min = [Infinity, Infinity, Infinity];
+  const max = [-Infinity, -Infinity, -Infinity];
+  for (const p of parts) {
+    let e = halfSize(p);
+    if (p.rot.some((r) => r)) e = e.map(() => Math.max(...e));
+    for (let i = 0; i < 3; i++) {
+      min[i] = Math.min(min[i], p.pos[i] - e[i]);
+      max[i] = Math.max(max[i], p.pos[i] + e[i]);
+    }
+  }
+  return [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
+};
+
+export const activeBuilds = (builds) => builds.filter((b) => !b.finishedAt);
+
+export function startBuild(builds, decor, details, now = Date.now()) {
+  const d = details && typeof details === 'object' ? details : {};
+  const name = str(d.name, 60);
+  if (!name) return { failed: 'he did not give it a name' };
+  if (activeBuilds(builds).length >= MAX_BUILDS) return { failed: `he already has ${MAX_BUILDS} things on his workbench` };
+  const startedToday = decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length + activeBuilds(builds).filter((b) => now - Date.parse(b.startedAt) < 86_400_000).length;
+  if (startedToday >= MAX_PER_DAY) return { failed: 'he has already started enough for today' };
+  const parts = cleanParts(d.parts);
+  if (!parts) return { failed: 'the shapes did not work out' };
+  fit(parts, 'floor'); // centres it, with its bottom at zero
+  parts.sort((a, b) => a.pos[1] - b.pos[1]); // built from the bottom up
+  const [w, h, depth] = sizeOf(parts);
+  return {
+    entry: {
+      id: `b${now.toString(36)}${builds.length}`,
+      name,
+      why: str(d.why, 200),
+      project: str(d.project, 80),
+      where: str(d.where, 80),
+      parts,
+      sessions: Math.round(num(d.sessions, 2, 6, 3)),
+      done: 0,
+      benchScale: r3(Math.min(1, 0.8 / w, 0.9 / h, 0.6 / depth)), // so it fits on top of the workbench
+      startedAt: new Date(now).toISOString(),
+    },
+  };
+}
+
+// One session of work. Returns the build and how far it was before and after, or null.
+export function workOn(builds, name) {
+  const n = str(name, 60).toLowerCase();
+  const list = activeBuilds(builds);
+  const b = list.find((x) => x.name.toLowerCase() === n) ?? list.find((x) => n && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  if (!b) return null;
+  const from = b.done;
+  b.done = Math.min(b.sessions, b.done + 1);
+  return { build: b, from, to: b.done };
+}
+
+// The last session is done: put the finished thing in the room. It appears when the step ends.
+export function finishBuild(decor, build, stepEndMs, now = Date.now()) {
+  const r = placeParts(decor, { name: build.name, why: build.why, project: build.project, where: build.where, parts: build.parts }, stepEndMs - 6000, now);
+  if (r.entry) r.entry.createdAt = build.startedAt; // counts once toward the day it was started
+  return r;
+}
+
+// ---- The chest: things he does not want in the room right now are kept, not deleted.
+export const MAX_STORED = 20;
+
+export function storeAway(decor, stored, name, now = Date.now()) {
+  const n = str(name, 60).toLowerCase();
+  const mine = (x) => !x.image;
+  let i = n ? decor.findIndex((x) => mine(x) && x.name.toLowerCase() === n) : -1;
+  if (i < 0 && n) i = decor.findIndex((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  if (i < 0) return { failed: 'there is nothing with that name in his room' };
+  if (stored.length >= MAX_STORED) return { failed: 'his chest is full' };
+  const [e] = decor.splice(i, 1);
+  stored.push({ ...e, storedAt: new Date(now).toISOString() });
+  return { stored: e.name };
+}
+
+export function takeOut(decor, stored, name, where, atMs, now = Date.now()) {
+  const n = str(name, 60).toLowerCase();
+  let i = n ? stored.findIndex((x) => x.name.toLowerCase() === n) : -1;
+  if (i < 0 && n) i = stored.findIndex((x) => x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()));
+  if (i < 0) return { failed: 'there is nothing with that name in his chest' };
+  const e = stored[i];
+  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.parts }, atMs, now);
+  if (r.entry) {
+    r.entry.createdAt = e.createdAt; // it is still the thing he made back then
+    stored.splice(i, 1);
+  }
+  return r;
 }
 
 // Pip takes something away. Returns the removed object, or null.
