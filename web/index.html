@@ -8,12 +8,12 @@
 <style>
   :root {
     --bg:#f6efe6; --panel:#fffaf3; --card:#ffffff; --ink:#3b2f2a; --muted:#7d6e64; --accent:#e9855b; --line:#eadccd; --chip:#f4e4d3;
-    --search:#3a8fd0; --read:#4f9a56; --piano:#d39a2c; --diary:#d4688d; --rest:#7c7cc4; --walk:#9a8c82; --ask:#e9855b;
+    --make:#8a5fd0; --search:#3a8fd0; --read:#4f9a56; --piano:#d39a2c; --diary:#d4688d; --rest:#7c7cc4; --walk:#9a8c82; --ask:#e9855b;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg:#221c19; --panel:#2d2521; --card:#372d28; --ink:#f3e7dc; --muted:#b9a99c; --accent:#f0976f; --line:#43372f; --chip:#3d312a;
-      --search:#6bb4ee; --read:#86c98c; --piano:#efc063; --diary:#ef8fb0; --rest:#a3a3ec; --walk:#b9ab9f; --ask:#f0976f;
+      --make:#b99af0; --search:#6bb4ee; --read:#86c98c; --piano:#efc063; --diary:#ef8fb0; --rest:#a3a3ec; --walk:#b9ab9f; --ask:#f0976f;
     }
   }
   * { box-sizing: border-box; }
@@ -68,7 +68,7 @@
   .cards { display:flex; flex-direction:column; gap:12px; }
   .card { --kind:var(--walk); background:var(--card); border:1px solid var(--line); border-left:5px solid var(--kind); border-radius:14px; padding:12px 14px; }
   .card.search { --kind:var(--search); } .card.read { --kind:var(--read); } .card.piano { --kind:var(--piano); }
-  .card.diary { --kind:var(--diary); } .card.rest { --kind:var(--rest); } .card.ask { --kind:var(--ask); }
+  .card.diary { --kind:var(--diary); } .card.make { --kind:var(--make); } .card.rest { --kind:var(--rest); } .card.ask { --kind:var(--ask); }
   .card header { display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
   .card header .kind { color:var(--kind); font-weight:700; }
   .card header time { margin-left:auto; font-variant-numeric:tabular-nums; }
@@ -174,6 +174,7 @@
     <section class="pane" data-pane="life" hidden>
       <h2>Pip's story so far</h2><p class="story" id="story"></p>
       <h2>How Pip feels</h2><div id="bars"></div>
+      <h2>What Pip made for his room</h2><ul id="decorlist"></ul>
     </section>
   </aside>
 </div>

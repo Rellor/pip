@@ -108,6 +108,63 @@ new THREE.TextureLoader().load('pictures/dark-sky.jpg', (tex) => {
   photo.scale.x = tex.image.width / tex.image.height / 1.5;
 });
 
+// Things Pip made for his room: plain data from state.json, drawn from a few simple shapes.
+const decorGroups = new Map();
+const SHAPE_GEO = {
+  box: (s) => new THREE.BoxGeometry(...s),
+  sphere: (s) => new THREE.SphereGeometry(s[0], 20, 14),
+  cylinder: (s) => new THREE.CylinderGeometry(s[0], s[1], s[2], 20),
+  cone: (s) => new THREE.ConeGeometry(s[0], s[1], 20),
+  torus: (s) => new THREE.TorusGeometry(s[0], s[1], 10, 24),
+  capsule: (s) => new THREE.CapsuleGeometry(s[0], s[1], 6, 12),
+};
+function buildDecor(d) {
+  const g = new THREE.Group();
+  for (const p of d.parts || []) {
+    const geo = SHAPE_GEO[p.shape];
+    if (!geo) continue;
+    const mesh = new THREE.Mesh(
+      geo(p.size),
+      new THREE.MeshStandardMaterial({ color: p.color, roughness: 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0 })
+    );
+    mesh.position.set(...p.pos);
+    mesh.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    g.add(mesh);
+  }
+  g.position.set(...d.pos);
+  g.rotation.y = d.rotY || 0;
+  g.userData.scale = d.scale || 1;
+  g.scale.setScalar(0.001);
+  return g;
+}
+// A thing appears when Pip has walked to its spot (its time in state.json), and pops in.
+function updateDecor(s) {
+  const list = (s?.decor || []).filter((d) => Date.parse(d.at) <= Date.now());
+  const ids = new Set(list.map((d) => d.id));
+  for (const [id, g] of decorGroups) {
+    if (!ids.has(id)) {
+      scene.remove(g);
+      decorGroups.delete(id);
+    }
+  }
+  for (const d of list) {
+    if (decorGroups.has(d.id)) continue;
+    const g = buildDecor(d);
+    g.userData.born = performance.now() - Math.min(Date.now() - Date.parse(d.at), 5000); // old things are simply there
+    scene.add(g);
+    decorGroups.set(d.id, g);
+  }
+}
+function popDecor(now) {
+  for (const g of decorGroups.values()) {
+    const k = Math.min(1, (now - g.userData.born) / 700);
+    const ease = 1 + 2.2 * Math.pow(k - 1, 3) + 1.2 * Math.pow(k - 1, 2); // small overshoot, then settles
+    g.scale.setScalar(Math.max(0.001, g.userData.scale * (k >= 1 ? 1 : ease)));
+  }
+}
+
 // piano
 const PIANO = new V3(-2.6, 0, -4.5);
 box(scene, [2.6, 1.3, 0.9], 0x2a2a2e, [PIANO.x, 0.65, PIANO.z]);
@@ -408,12 +465,19 @@ function planFor(last) {
     case 'write_diary': return { at: 'center', anim: 'write' };
     case 'rest': return { at: 'bed', anim: 'rest' };
     case 'ask_for': return { at: 'center', anim: 'ask' };
+    case 'decorate': {
+      const m = last.made;
+      if (!m) return { at: 'center', anim: 'look' };
+      const [sx, sz] = m.stand;
+      return { at: 'custom', anim: 'make', spot: { p: new V3(sx, 0, sz), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz) }, madeAt: m.pos };
+    }
+    case 'remove_decoration': return { at: 'center', anim: 'look' };
     default: return { at: resolveSpot(d.object), anim: 'look' };
   }
 }
 function startTask(last) {
   const plan = planFor(last);
-  task = { ...plan, spot: SPOTS[plan.at], last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
+  task = { ...plan, spot: plan.spot || SPOTS[plan.at], last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
 }
 function startPhrase(notes, step, now) {
   task.phrase = { notes, step, t0: now, lastIdx: -1 };
@@ -504,6 +568,10 @@ function frame(now, dt) {
   }
 
   // --- signs
+  if (engaged && anim === 'make' && task.madeAt && now > nextSign) {
+    nextSign = now + 450;
+    floatSign('✨', '#ffd27a', new V3(task.madeAt[0] + rand(-0.4, 0.4), task.madeAt[1] + 0.5 + rand(0, 0.5), task.madeAt[2] + 0.3), { life: 1.4, rise: 0.35, size: 0.4 });
+  }
   if (engaged && anim === 'rest' && now > nextSign) {
     nextSign = now + 1600;
     floatSign('z', '#bcd8ff', headPos(), { life: 2.6, rise: 0.35, size: 0.5 });
@@ -555,6 +623,10 @@ function frame(now, dt) {
       } else body.rotation.y = Math.sin(t * 0.9) * 0.3;
     } else if (anim === 'look') {
       body.rotation.y = Math.sin(t * 0.8) * 0.3;
+    } else if (anim === 'make') {
+      la = [-0.4, 0.85 + Math.sin(t * 8) * 0.15, 0.3];
+      ra = [0.4, 0.85 + Math.sin(t * 8 + Math.PI) * 0.15, 0.3];
+      body.rotation.z = Math.sin(t * 4) * 0.05;
     }
   }
   arms[0].position.set(...la);
@@ -599,6 +671,7 @@ function loop(now) {
   prev = now;
   frame(now, dt);
   updateFloaters(dt, now);
+  popDecor(now);
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
@@ -733,11 +806,13 @@ function headline(st) {
     case 'rest': return ['💤', 'Resting'];
     case 'ask_for': return ['🙏', `Asking Bas for ${d.item || st.item || 'something'}`];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
+    case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
+    case 'remove_decoration': return ['🧹', `Taking ${d.name || st.name || 'something'} out of his room`];
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk' };
-const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano']];
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', remove_decoration: 'make' };
+const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
 // Old saves had no day log yet: build entries from the latest plan.
@@ -774,7 +849,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'walk';
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked', make: 'Worked on his room' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind], 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -810,6 +885,11 @@ function dayCard(e) {
   } else if (kind === 'ask') {
     card.append(el('h3', e.item || '', 'title'));
     if (e.reason) card.append(el('p', e.reason, 'muted'));
+  } else if (kind === 'make') {
+    card.append(el('h3', e.name || '', 'title'));
+    if (e.action === 'remove_decoration') card.append(el('p', e.removed ? 'He took it away.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
+    else card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He made it and put it ${e.place}.`, 'muted'));
+    if (e.why && !e.failed) card.append(el('p', e.why));
   } else if (kind === 'walk') {
     card.append(el('h3', `To the ${e.object || 'room'}`, 'title'));
   }
@@ -973,6 +1053,11 @@ function render(s) {
     : empty('Nothing yet. Pip writes to you when something really matters to him, and you can write to him too.'));
   showTab(tab);
 
+  const made = (s.decor || []).filter((d) => Date.parse(d.at) <= Date.now()).slice().reverse();
+  fill($('decorlist'), made.length
+    ? made.map((d) => entry([d.label, `made ${when(d.createdAt)}`], `${d.name}${d.why ? ' — ' + d.why : ''}`))
+    : empty('Nothing yet. Pip can make things for his room when he feels like it.'));
+  updateDecor(s);
   $('story').textContent = s.story || 'Pip has only just come to life. His story starts here.';
   fill($('bars'), [['Energy', s.energy], ['Boredom', s.boredom], ['Lonely', s.loneliness]].map(([name, val]) => {
     const row = el('div', null, 'bar');
@@ -1012,7 +1097,10 @@ function setPlan(last) {
   tickPlan();
   renderNow();
 }
-setInterval(tickPlan, 1000);
+setInterval(() => {
+  tickPlan();
+  updateDecor(lastState);
+}, 1000);
 
 let seenAt = null;
 let waking = false;
@@ -1059,4 +1147,4 @@ $('wake').addEventListener('click', () => {
 
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipDo = (last) => startTask({ at: String(Date.now()), thought: '(test)', details: {}, ...last });
-window.__debug = { pip, getTask: () => task };
+window.__debug = { pip, getTask: () => task, decorGroups };

@@ -1,5 +1,6 @@
 import { readFile, writeFile, appendFile, readdir, unlink } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
+import { freePlaces, makeDecor, removeDecor, MAX_PER_DAY } from './decor.js';
 
 const STATE_FILE = 'web/state.json';
 const DIARY_FILE = 'diary.md';
@@ -35,8 +36,10 @@ const ACTIONS = [
   'write_diary(text)',
   'rest()',
   'ask_for(item, reason)',
+  'decorate(name, where, why, parts)',
+  'remove_decoration(name)',
 ];
-const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for'];
+const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'decorate', 'remove_decoration'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -58,6 +61,7 @@ const freshState = () => ({
   inbox: [],
   asks: [],
   log: [],
+  decor: [],
   draft: '',
   last: null,
 });
@@ -177,6 +181,12 @@ ${bullets(s.memories.slice(-8).map((m) => m.text), 'nothing yet')}
 ROOM
 ${ROOM.join(', ')}
 
+THINGS I MADE FOR MY ROOM
+${bullets(s.decor.map((d) => `${d.name} (${d.label})${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}
+PLACES I CAN PUT THINGS
+${freePlaces(s.decor).filter((z) => z.free > 0).map((z) => `- ${z.zone} (${z.free} free): ${z.label}`).join('\n') || 'none, my room is full'}
+I made ${s.decor.filter((d) => Date.now() - Date.parse(d.createdAt) < 86_400_000).length} things in the last 24 hours (at most ${MAX_PER_DAY} a day).
+
 LAST 5 THINGS I DID
 ${recent.length ? recent.join('\n') : '- nothing yet, I just woke up for the first time'}
 
@@ -208,10 +218,13 @@ ${
 ACTIONS I CAN DO
 ${ACTIONS.join(', ')}
 
+MAKING THINGS FOR MY ROOM
+With decorate I make something and put it in my room. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. "where" is one of the place names listed above. Things on a wall must be flat. I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. With remove_decoration I can take something away again.
+
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, decorate {"name": "...", "where": "on_desk", "why": "...", "parts": [...]}, remove_decoration {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -260,7 +273,7 @@ async function askGemini(system, wakeUp, retry = 2) {
 function fakeBrain(prompt = '') {
   const action = ACTION_NAMES[Math.floor(Math.random() * ACTION_NAMES.length)];
   const pick = () => ACTION_NAMES[Math.floor(Math.random() * ACTION_NAMES.length)];
-  const details = { notes: 'C E G', style: 'soft', topic: 'rain', query: 'rain sounds', text: 'Hello diary.', item: 'sheet music', reason: 'I want new songs', object: 'piano' };
+  const details = { name: 'fake lamp', where: ['on_piano', 'floor_middle', 'wall_left', 'on_desk'][Math.floor(Math.random() * 4)], why: 'I like how it glows', parts: [{ shape: 'cylinder', size: [0.06, 0.08, 0.25], pos: [0, 0.125, 0], color: '#f3e9d2' }, { shape: 'sphere', size: [0.22], pos: [0, 0.3, 0], color: '#e0584b', glow: true }], notes: 'C E G', style: 'soft', topic: 'rain', query: 'rain sounds', text: 'Hello diary.', item: 'sheet music', reason: 'I want new songs', object: 'piano' };
   return {
     steps: Array.from({ length: 2 + Math.floor(Math.random() * 3) }, (_, i) => {
       const a = pick();
@@ -351,6 +364,8 @@ function describe(a) {
     case 'search_web': return d.query;
     case 'write_diary': return d.text;
     case 'ask_for': return `${d.item}: ${d.reason}`;
+    case 'decorate':
+    case 'remove_decoration': return d.name;
     default: return '';
   }
 }
@@ -537,6 +552,7 @@ async function wakeUp() {
   const startedAt = Date.now();
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
   state.thoughts = state.thoughts.filter((t) => Date.parse(t.at) <= startedAt);
+  state.decor = state.decor.filter((d) => Date.parse(d.at) <= startedAt);
   const steps = normalizeSteps(answer);
   const stepMs = (INTERVAL_MIN * 60_000) / steps.length;
 
@@ -544,6 +560,24 @@ async function wakeUp() {
   const results = steps.map((st, i) =>
     applyResult(state, { ...st, mood_after: i === steps.length - 1 ? answer.mood_after : undefined, new_idea: i === 0 ? answer.new_idea : null })
   );
+
+  // Making and removing things for his room. At most one new thing per wake-up.
+  let madeOne = false;
+  steps.forEach((st, i) => {
+    if (st.action === 'decorate') {
+      if (madeOne) {
+        st.made = { failed: 'one new thing per wake-up is enough' };
+        return;
+      }
+      madeOne = true;
+      st.made = makeDecor(state.decor, st.details, startedAt + i * stepMs);
+      if (st.made.entry) state.decor.push(st.made.entry);
+    }
+    if (st.action === 'remove_decoration') {
+      const gone = removeDecor(state.decor, st.details.name);
+      st.made = gone ? { removed: gone.name } : { failed: 'there is nothing with that name' };
+    }
+  });
 
   // ask_for steps end up in the list of asks.
   const stepAsks = steps.filter((st) => st.action === 'ask_for').map((st) => ({ item: st.details.item, why: st.details.reason }));
@@ -599,6 +633,8 @@ async function wakeUp() {
     if (st.action === 'write_diary') entry.text = text(d.text, 800);
     if (st.action === 'walk_to') entry.object = text(d.object, 60);
     if (st.action === 'ask_for') Object.assign(entry, { item: text(d.item, 140), reason: text(d.reason, 200) });
+    if (st.action === 'decorate') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), removed: st.made?.removed ?? null, failed: st.made?.failed ?? null });
     state.log.push(entry);
   });
   state.log = state.log.slice(-150);
@@ -610,7 +646,7 @@ async function wakeUp() {
     thought: text(answer.thought, 200),
     inner: text(answer.inner, 600),
     sent: sent.length > 0,
-    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, enjoyment: results[i].enjoyment, found: brief(st.found) })),
+    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : null })),
     action: steps[0].action,
     details: steps[0].details,
     detail: results[0].detail,
@@ -635,6 +671,9 @@ async function wakeUp() {
   steps.forEach((st, i) => {
     console.log(`   ${i + 1}. ${st.action}${results[i].detail ? `: ${results[i].detail}` : ''}   (enjoyed ${results[i].enjoyment}/10)${st.thought ? `\n      "${st.thought}"` : ''}`);
     if (st.found) console.log(`      🌐 ${st.found.title}`);
+    if (st.made?.entry) console.log(`      🛠️  made "${st.made.entry.name}" and put it ${st.made.entry.label} (${st.made.entry.parts.length} parts)`);
+    if (st.made?.failed) console.log(`      🛠️  did not work out: ${st.made.failed}`);
+    if (st.made?.removed) console.log(`      🛠️  took away "${st.made.removed}"`);
   });
   if (answer.new_idea) console.log(`💡 ${answer.new_idea}`);
   for (const m of sent) await notify(m);
