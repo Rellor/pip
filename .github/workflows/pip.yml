@@ -26,6 +26,8 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          PIP_SITE_URL: ${{ vars.PIP_SITE_URL }}
         run: node pip.js
 
       # Vercel redeploys the site on every push, so Pip's new state goes live by itself.
@@ -33,5 +35,5 @@ jobs:
         run: |
           git config user.name "pip-bot"
           git config user.email "pip-bot@users.noreply.github.com"
-          git add web/state.json diary.md
-          git diff --cached --quiet || (git commit -m "Pip woke up" && git push)
+          git add -A web/state.json diary.md inbox
+          git diff --cached --quiet || (git commit -m "Pip woke up" && git pull --rebase && git push)

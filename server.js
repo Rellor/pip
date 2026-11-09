@@ -1,5 +1,5 @@
 import http from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { extname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,7 +16,7 @@ function wake() {
   if (waking) return;
   waking = true;
   lastError = null;
-  const child = spawn(process.execPath, ['--env-file=.env', 'pip.js'], { cwd: ROOT });
+  const child = spawn(process.execPath, ['--env-file-if-exists=.env', 'pip.js'], { cwd: ROOT });
   let out = '';
   child.stdout.on('data', (d) => (out += d));
   child.stderr.on('data', (d) => (out += d));
@@ -47,6 +47,24 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === '/api/wake' && req.method === 'POST') {
     wake();
     return json(res, 202, { ok: true });
+  }
+  if (url.pathname === '/api/reply' && req.method === 'POST') {
+    // Local version of the reply service: same inbox file, no key needed on your own Mac.
+    let raw = '';
+    for await (const chunk of req) {
+      raw += chunk;
+      if (raw.length > 5000) return json(res, 413, { error: 'Too long.' });
+    }
+    let text = '';
+    try {
+      text = String(JSON.parse(raw).text ?? '').trim().slice(0, 1000);
+    } catch {}
+    if (!text) return json(res, 400, { error: 'Write something first.' });
+    const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    await mkdir(resolve(ROOT, 'inbox'), { recursive: true });
+    await writeFile(resolve(ROOT, 'inbox', `${id}.json`), JSON.stringify({ id, at: new Date().toISOString(), text }));
+    wake();
+    return json(res, 200, { ok: true, id });
   }
   const file = resolve(WEB, '.' + (url.pathname === '/' ? '/index.html' : url.pathname));
   if (!file.startsWith(WEB + sep)) return json(res, 403, { error: 'no' });

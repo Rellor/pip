@@ -618,6 +618,58 @@ function entry(meta, body, cls) {
 }
 const empty = (t) => [el('li', t, 'muted')];
 
+// replies
+let pending = [];
+try {
+  pending = JSON.parse(store('pip-pending') || '[]');
+} catch {}
+let lastState = null;
+let isStatic = false;
+let fastUntil = 0;
+$('reply').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const body = $('replytext').value.trim();
+  if (!body) return;
+  const status = $('replystatus');
+  let key = store('pip-key') || '';
+  if (isStatic && !key) {
+    key = $('replykey').value.trim();
+    if (!key) {
+      $('replykey').hidden = false;
+      $('replykey').focus();
+      status.textContent = 'Enter your reply key once.';
+      return;
+    }
+  }
+  $('send').disabled = true;
+  status.textContent = 'Sending…';
+  try {
+    const res = await fetch('/api/reply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: body, key }) });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) {
+      store('pip-key', '');
+      $('replykey').value = '';
+      $('replykey').hidden = false;
+      status.textContent = 'That key is not right.';
+    } else if (!res.ok) {
+      status.textContent = data.error || 'Could not send.';
+    } else {
+      if (key) store('pip-key', key);
+      $('replykey').hidden = true;
+      pending.push({ id: data.id, at: new Date().toISOString(), text: body });
+      store('pip-pending', JSON.stringify(pending));
+      $('replytext').value = '';
+      status.textContent = 'Sent. Pip will read it soon.';
+      fastUntil = Date.now() + 3 * 60_000;
+      if (lastState) render(lastState);
+    }
+  } catch {
+    status.textContent = 'No connection. Try again.';
+  } finally {
+    $('send').disabled = false;
+  }
+});
+
 // tabs
 let tab = store('pip-tab') || 'thoughts';
 let latestMsg = null;
@@ -648,11 +700,23 @@ function render(s) {
   const interests = s.interests || [];
   fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
 
-  const msgs = (s.outbox || []).slice().reverse();
-  latestMsg = msgs[0]?.id ?? null;
-  fill($('messages'), msgs.length
-    ? msgs.map((m) => entry([when(m.at), m.kind === 'ask' ? '🙏 Pip asks for something' : '✉️ Pip writes to you'], m.text, m.kind === 'ask' ? 'ask' : ''))
-    : empty('Pip has not written to you yet. He only writes when something really matters to him.'));
+  const outbox = s.outbox || [];
+  latestMsg = outbox.at(-1)?.id ?? null;
+  const gotIds = new Set((s.inbox || []).map((m) => m.id));
+  if (pending.some((p) => gotIds.has(p.id))) {
+    pending = pending.filter((p) => !gotIds.has(p.id));
+    store('pip-pending', JSON.stringify(pending));
+  }
+  const thread = [
+    ...outbox.map((m) => ({ at: m.at, kind: m.kind, text: m.text })),
+    ...(s.inbox || []).map((m) => ({ at: m.at, mine: true, read: m.read, readAt: m.readAt, text: m.text })),
+    ...pending.map((p) => ({ at: p.at, mine: true, sending: true, text: p.text })),
+  ].sort((a, b) => new Date(b.at) - new Date(a.at));
+  fill($('messages'), thread.length
+    ? thread.map((m) => m.mine
+      ? entry([when(m.at), 'You', m.sending ? 'on its way…' : m.read ? `✓ Pip read it ${when(m.readAt || m.at)}` : 'Pip has not read it yet'], m.text, 'mine')
+      : entry([when(m.at), m.kind === 'ask' ? '🙏 Pip asks for something' : '✉️ Pip writes to you'], m.text, m.kind === 'ask' ? 'ask' : ''))
+    : empty('Nothing yet. Pip writes to you when something really matters to him, and you can write to him too.'));
   showTab(tab);
 
   $('story').textContent = s.story || 'Pip has only just come to life. His story starts here.';
@@ -697,9 +761,11 @@ async function poll() {
   let delay = 2000;
   try {
     const s = await loadState();
+    lastState = s;
+    isStatic = !!s._static;
     render(s);
     if (s._static) {
-      delay = 60_000;
+      delay = Date.now() < fastUntil ? 10_000 : 60_000;
       $('wake').hidden = true;
     }
     waking = !!s._waking;
