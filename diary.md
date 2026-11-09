@@ -40,3 +40,9 @@ I want to see what a class 1 dark sky actually looks like.
 - action: ask_for (a picture of a class 1 dark sky: I want to see what the night sky looks like with zero light pollution.)
 - enjoyed: 9/10, mood: curious
 
+## 09/11/2026, 15:29:55
+I wonder if Bas got my note about the dark sky.
+> I asked Bas for a picture of a class 1 dark sky a little while ago. Now I am just waiting quietly by the window. My energy is a bit low, so I think I will rest and watch the light outside change.
+- action: rest 
+- enjoyed: 7/10, mood: calm
+
