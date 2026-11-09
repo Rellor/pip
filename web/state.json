@@ -1,8 +1,8 @@
 {
   "mood": "calm",
-  "energy": 6,
+  "energy": 5,
   "boredom": 0,
-  "loneliness": 5,
+  "loneliness": 6,
   "interests": [
     "stars and the night sky"
   ],
@@ -70,6 +70,11 @@
       "action": "rest",
       "detail": "",
       "enjoyment": 7
+    },
+    {
+      "at": "2026-11-09T15:36:49.264Z",
+      "action": "walk_to",
+      "enjoyment": 7
     }
   ],
   "notes": [
@@ -112,6 +117,10 @@
     {
       "at": "2026-11-09T15:29:55.199Z",
       "text": "I asked Bas for my very first thing from outside."
+    },
+    {
+      "at": "2026-11-09T15:36:49.264Z",
+      "text": "I asked Bas for my first thing from outside and now I am waiting to see what it looks like."
     }
   ],
   "thoughts": [
@@ -138,6 +147,13 @@
       "mood": "calm",
       "action": "rest",
       "detail": ""
+    },
+    {
+      "at": "2026-11-09T15:36:49.264Z",
+      "text": "I asked Bas for a picture of the dark sky a little while ago. Now I am just waiting quietly by the window. It is nice to think about the stars even if I cannot see them yet.",
+      "short": "I wonder if Bas will bring the picture soon.",
+      "mood": "calm",
+      "action": "walk_to"
     }
   ],
   "outbox": [
@@ -170,17 +186,27 @@
       "readAt": "2026-11-09T15:24:53.297Z"
     }
   ],
+  "asks": [
+    {
+      "id": "old0",
+      "item": "a picture of a class 1 dark sky",
+      "why": "I want to see what the night sky looks like with zero light pollution.",
+      "since": "2026-11-09T15:24:53.297Z",
+      "status": "open"
+    }
+  ],
   "draft": "",
   "last": {
-    "at": "2026-11-09T15:29:55.200Z",
-    "thought": "I wonder if Bas got my note about the dark sky.",
-    "inner": "I asked Bas for a picture of a class 1 dark sky a little while ago. Now I am just waiting quietly by the window. My energy is a bit low, so I think I will rest and watch the light outside change.",
+    "at": "2026-11-09T15:36:49.264Z",
+    "thought": "I wonder if Bas will bring the picture soon.",
+    "inner": "I asked Bas for a picture of the dark sky a little while ago. Now I am just waiting quietly by the window. It is nice to think about the stars even if I cannot see them yet.",
     "sent": false,
-    "action": "rest",
-    "details": {},
-    "detail": "",
+    "action": "walk_to",
+    "details": {
+      "target": "window"
+    },
     "enjoyment": 7,
-    "new_idea": "what the air smells like high up on a quiet mountain",
+    "new_idea": null,
     "found": null
   }
 }
