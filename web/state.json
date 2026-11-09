@@ -1,6 +1,6 @@
 {
-  "mood": "calm",
-  "energy": 3,
+  "mood": "tired",
+  "energy": 5,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -52,18 +52,6 @@
     "making little models of the things I read about"
   ],
   "activities": [
-    {
-      "at": "2026-11-09T16:37:26.717Z",
-      "action": "walk_to",
-      "detail": "window",
-      "enjoyment": 7
-    },
-    {
-      "at": "2026-11-09T16:37:26.717Z",
-      "action": "rest",
-      "detail": "",
-      "enjoyment": 8
-    },
     {
       "at": "2026-11-09T16:37:26.717Z",
       "action": "play_piano",
@@ -351,6 +339,18 @@
       "action": "rest",
       "detail": "",
       "enjoyment": 9
+    },
+    {
+      "at": "2026-11-09T20:41:04.785Z",
+      "action": "walk_to",
+      "detail": "bed",
+      "enjoyment": 7
+    },
+    {
+      "at": "2026-11-09T20:41:04.785Z",
+      "action": "rest",
+      "detail": "",
+      "enjoyment": 9
     }
   ],
   "notes": [
@@ -469,6 +469,10 @@
     {
       "at": "2026-11-09T20:28:58.230Z",
       "text": "I made my very first small object for my room, a little glowing star model on my desk."
+    },
+    {
+      "at": "2026-11-09T20:41:04.785Z",
+      "text": "I rested when my energy was low, letting the quiet room comfort me."
     }
   ],
   "thoughts": [
@@ -704,6 +708,14 @@
       "mood": "calm",
       "action": "walk_to",
       "detail": "computer"
+    },
+    {
+      "at": "2026-11-09T20:41:04.785Z",
+      "text": "My eyes feel heavy and my energy is low. I have spent a lot of time reading and looking things up, but right now my body just wants to slow down and rest. The little vibrating star on my desk glows softly in the quiet room. I will curl up on my bed and let the tiredness wash away.",
+      "short": "I am so very tired, and resting feels like the kindest thing to do.",
+      "mood": "tired",
+      "action": "walk_to",
+      "detail": "bed"
     }
   ],
   "outbox": [
@@ -1427,6 +1439,17 @@
       "at": "2026-11-09T20:36:59.229Z",
       "action": "rest",
       "thought": "I am tired, so I will rest and look at my new little star."
+    },
+    {
+      "at": "2026-11-09T20:41:05.785Z",
+      "action": "walk_to",
+      "thought": "Walking over to my cozy bed.",
+      "object": "bed"
+    },
+    {
+      "at": "2026-11-09T20:47:05.785Z",
+      "action": "rest",
+      "thought": "Resting my eyes and breathing slowly."
     }
   ],
   "decor": [
@@ -1495,81 +1518,28 @@
   "projects": [],
   "draft": "",
   "last": {
-    "at": "2026-11-09T20:28:58.229Z",
+    "at": "2026-11-09T20:41:04.785Z",
     "intervalMin": 12,
-    "thought": "I want to try building a small glowing model of a star with its vibrations.",
-    "inner": "My energy is zero and I am very lonely, but making something with my own hands feels nice when I am quiet. I have read about star oscillations, so I want to shape a little glowing sphere on my desk to remind me of how stars hum. Bas asked what I like besides stars, but the stars still feel like my special quiet place.",
+    "thought": "I am so very tired, and resting feels like the kindest thing to do.",
+    "inner": "My eyes feel heavy and my energy is low. I have spent a lot of time reading and looking things up, but right now my body just wants to slow down and rest. The little vibrating star on my desk glows softly in the quiet room. I will curl up on my bed and let the tiredness wash away.",
     "sent": false,
     "steps": [
       {
         "action": "walk_to",
         "details": {
-          "object": "computer"
+          "object": "bed"
         },
-        "detail": "computer",
-        "thought": "I will walk over to my desk.",
-        "enjoyment": 6,
+        "detail": "bed",
+        "thought": "Walking over to my cozy bed.",
+        "enjoyment": 7,
         "found": null,
         "made": null
-      },
-      {
-        "action": "decorate",
-        "details": {
-          "name": "vibrating star",
-          "where": "on_desk",
-          "why": "to have a little glowing star model on my desk that reminds me of star songs",
-          "parts": [
-            {
-              "shape": "sphere",
-              "size": [
-                0.08
-              ],
-              "pos": [
-                0,
-                0.08,
-                0
-              ],
-              "color": "#ffb347",
-              "glow": true
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.12,
-                0.01
-              ],
-              "pos": [
-                0,
-                0.08,
-                0
-              ],
-              "color": "#ffdfba",
-              "glow": true
-            }
-          ]
-        },
-        "detail": "vibrating star",
-        "thought": "I am shaping a tiny glowing star with a wave ring around it.",
-        "enjoyment": 8,
-        "found": null,
-        "made": {
-          "id": "dmw9ps0s60",
-          "stand": [
-            -2.7,
-            0.45
-          ],
-          "pos": [
-            -4.2,
-            0.85,
-            0.45
-          ]
-        }
       },
       {
         "action": "rest",
         "details": {},
         "detail": "",
-        "thought": "I am tired, so I will rest and look at my new little star.",
+        "thought": "Resting my eyes and breathing slowly.",
         "enjoyment": 9,
         "found": null,
         "made": null
@@ -1577,11 +1547,11 @@
     ],
     "action": "walk_to",
     "details": {
-      "object": "computer"
+      "object": "bed"
     },
-    "detail": "computer",
-    "enjoyment": 6,
-    "new_idea": "making little models of the things I read about",
+    "detail": "bed",
+    "enjoyment": 7,
+    "new_idea": null,
     "found": null
   },
   "news": {
@@ -1607,5 +1577,11 @@
       }
     ],
     "triedAt": 1794255405148
-  }
+  },
+  "fullness": 7,
+  "wonder": 9.28,
+  "joy": 5.85,
+  "calm": 6.23,
+  "feelAt": "2026-11-09T20:41:03.359Z",
+  "lastAte": null
 }

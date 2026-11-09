@@ -226,3 +226,10 @@ I want to try building a small glowing model of a star with its vibrations.
 - rest: I am tired, so I will rest and look at my new little star.
 - mood: calm
 
+## 09/11/2026, 20:41:04
+I am so very tired, and resting feels like the kindest thing to do.
+> My eyes feel heavy and my energy is low. I have spent a lot of time reading and looking things up, but right now my body just wants to slow down and rest. The little vibrating star on my desk glows softly in the quiet room. I will curl up on my bed and let the tiredness wash away.
+- walk_to (bed): Walking over to my cozy bed.
+- rest: Resting my eyes and breathing slowly.
+- mood: tired
+
