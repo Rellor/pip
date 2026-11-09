@@ -1,6 +1,6 @@
 import { timingSafeEqual, randomBytes } from 'node:crypto';
 
-// Receives Bas's reply from the app and saves it in the repo (inbox/), then wakes Pip.
+// Receives Bas's reply from the app and saves it in the repo (inbox/). It does not wake Pip: he reads it at his next own wake-up.
 // Needs these Vercel environment variables: PIP_REPLY_KEY (long secret) and GITHUB_TOKEN (fine-grained, this repo only).
 const REPO = process.env.GITHUB_REPO || 'Rellor/pip';
 const BRANCH = process.env.GITHUB_BRANCH || 'main';
@@ -52,7 +52,5 @@ export default async function handler(req, res) {
   });
   if (!put.ok) return res.status(502).json({ error: `Could not save the message (GitHub said ${put.status}).` });
 
-  // The message is already safe in the repo. Waking Pip right away is a bonus, so a failure here is fine.
-  await gh('/actions/workflows/pip.yml/dispatches', { method: 'POST', body: JSON.stringify({ ref: BRANCH }) }).catch(() => {});
   return res.status(200).json({ ok: true, id });
 }

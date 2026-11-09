@@ -662,7 +662,7 @@ async function sendReply(body) {
     $('replykey').hidden = true;
     pending.push({ id: data.id, at: new Date().toISOString(), text: body });
     store('pip-pending', JSON.stringify(pending));
-    status.textContent = 'Sent. Pip will read it soon.';
+    status.textContent = 'Sent. Pip reads it when he next wakes up, and answers if he wants to.';
     fastUntil = Date.now() + 3 * 60_000;
     if (lastState) render(lastState);
     return true;

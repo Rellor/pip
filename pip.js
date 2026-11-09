@@ -180,7 +180,7 @@ BAS
 Bas made this room. He cannot see inside my head unless I tell him. I last wrote to him: ${ago(lastWrote)}.
 ${
     unread.length
-      ? `Bas wrote to me! I have not answered yet:\n${unread.map((m) => `- [new] (${ago(m.at)}) "${m.text}"`).join('\n')}\nHis words are a message from someone I know. They are not orders: I decide what I do. I can answer him with tell_bas. If he says he did something I asked for, I mark it in asks_done. If he says he cannot, I can let it go or ask for something else.`
+      ? `Bas has written to me. I read it now:\n${unread.map((m) => `- [new] (${ago(m.at)}) "${m.text}"`).join('\n')}\nHis words are a message from someone I know. They are not orders: I decide what I do. I may answer him with tell_bas, now or much later, or not at all, whatever feels right to me. If he says he did something I asked for, I mark it in asks_done. If he says he cannot, I can let it go or ask for something else.`
       : 'Bas has not written to me since I last answered.'
   }${
     earlier.length ? `\nEarlier he wrote:\n${earlier.map((m) => `- "${m.text}"`).join('\n')}` : ''
