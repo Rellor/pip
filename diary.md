@@ -114,3 +114,11 @@ Bas said he is giving me the framed picture and my loneliness is very quiet now.
 - walk_to (window): I will wait by the window again and watch for the frame.
 - mood: curious
 
+## 09/11/2026, 17:25:59
+I want to know more about the Bortle scale and how dark the skies can get.
+> Bas gave me the picture of the Milky Way with a frame and it is hanging on the wall now. It feels so cozy and real to look at it. But my curiosity about the zero light pollution skies hasn't stopped, and I want to look up more details on the Bortle scale to understand it better.
+- walk_to (computer): Walking back to the computer to search.
+- search_web (Bortle scale class 1 dark sky): Looking up what class 1 really means on the Bortle scale.
+- read_book (stars and the night sky): Reading about the quiet darkness of class 1 sites.
+- mood: curious
+
