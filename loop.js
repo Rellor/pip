@@ -12,7 +12,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const git = (...args) => spawnSync('git', args, { stdio: 'pipe' }).status === 0;
 
 function wakeAndSave() {
-  const run = spawnSync(process.execPath, ['pip.js'], { stdio: 'inherit', env: process.env });
+  const run = spawnSync(process.execPath, ['pip.js'], { stdio: 'inherit', env: { ...process.env, PIP_INTERVAL_MIN: String(EVERY_MIN) } });
   if (run.status !== 0) console.error(`[${stamp()}] pip.js exited with code ${run.status}`);
   git('add', '-A', 'web/state.json', 'diary.md', 'inbox');
   if (git('diff', '--cached', '--quiet')) return; // nothing changed

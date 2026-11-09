@@ -67,6 +67,8 @@ function ago(iso) {
 const bullets = (items, empty) => (items.length ? items.map((x) => `- ${x}`).join('\n') : empty);
 // Pip may write to Bas at most once every 3 hours, so he only says what really matters.
 const MIN_GAP_MINUTES = 180;
+// One wake-up is one plan for this many minutes. The loop passes in its real interval.
+const INTERVAL_MIN = Number(process.env.PIP_INTERVAL_MIN || 12);
 
 const clamp = (n) => Math.max(0, Math.min(10, n));
 
@@ -194,9 +196,7 @@ ${ACTIONS.join(', ')}
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"action": one of ${ACTION_NAMES.join(', ')},
-"details": object with the action's arguments,
-"enjoyment": 1-10, how much I expect to enjoy it,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -244,7 +244,13 @@ async function askGemini(system, wakeUp, retry = 2) {
 
 function fakeBrain(prompt = '') {
   const action = ACTION_NAMES[Math.floor(Math.random() * ACTION_NAMES.length)];
+  const pick = () => ACTION_NAMES[Math.floor(Math.random() * ACTION_NAMES.length)];
+  const details = { notes: 'C E G', style: 'soft', topic: 'rain', query: 'rain sounds', text: 'Hello diary.', item: 'sheet music', reason: 'I want new songs', object: 'piano' };
   return {
+    steps: Array.from({ length: 2 + Math.floor(Math.random() * 3) }, (_, i) => {
+      const a = pick();
+      return { action: a, details, thought: `(fake) step ${i + 1}: ${a}`, enjoyment: 1 + Math.floor(Math.random() * 10) };
+    }),
     thought: `(fake brain) I feel like doing ${action}.`,
     action,
     details: { notes: 'C E G', style: 'soft', topic: 'rain', query: 'rain sounds', text: 'Hello diary.', item: 'sheet music', reason: 'I want new songs', object: 'piano' },
@@ -294,6 +300,20 @@ function describe(a) {
   }
 }
 
+// A wake-up is a plan of 1-4 steps. Older answers with a single action still work.
+function normalizeSteps(a) {
+  let raw = (Array.isArray(a.steps) ? a.steps : []).filter((x) => x && typeof x === 'object' && ACTION_NAMES.includes(x.action)).slice(0, 4);
+  if (!raw.length) {
+    raw = [{ action: ACTION_NAMES.includes(a.action) ? a.action : 'rest', details: a.details, thought: a.thought, enjoyment: a.enjoyment }];
+  }
+  return raw.map((x) => ({
+    action: x.action,
+    details: x.details && typeof x.details === 'object' ? x.details : {},
+    thought: text(x.thought, 200),
+    enjoyment: x.enjoyment,
+  }));
+}
+
 function applyResult(s, r) {
   if (!ACTION_NAMES.includes(r.action)) r = { ...r, action: 'rest', details: {} };
   const detail = describe(r);
@@ -339,7 +359,7 @@ function applyInnerLife(s, r, detail, replying = false) {
   const inner = text(r.inner, 600) || text(r.thought, 300);
   if (inner) {
     s.thoughts.push({ at, text: inner, short: text(r.thought, 200), mood: s.mood, action: r.action, detail });
-    s.thoughts = s.thoughts.slice(-150);
+    s.thoughts = s.thoughts.slice(-250);
   }
   for (const t of strings(r.wants_done)) {
     const hit = take(s.wants, t);
@@ -365,7 +385,7 @@ function applyInnerLife(s, r, detail, replying = false) {
     const hit = s.asks.find((a) => a.status === 'open' && sameItem(a.item, t));
     if (hit) Object.assign(hit, { status: 'done', doneAt: at });
   }
-  const wanted = (Array.isArray(r.asks_add) ? r.asks_add : []).slice(0, 2).map((a) => ({ item: text(a?.item ?? a, 140), why: text(a?.why, 200) }));
+  const wanted = (Array.isArray(r.asks_add) ? r.asks_add : []).slice(0, 3).map((a) => ({ item: text(a?.item ?? a, 140), why: text(a?.why, 200) }));
   if (r.action === 'ask_for') {
     const d = r.details || {};
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
@@ -459,57 +479,88 @@ async function wakeUp() {
   }
   const unread = state.inbox.filter((m) => !m.read);
   const answer = await askGemini(system, buildWakeUp(state));
-  const { r, detail, enjoyment } = applyResult(state, answer);
-  const sent = applyInnerLife(state, r, detail, unread.length > 0);
+  const startedAt = Date.now();
+  // A new plan replaces the old one: thoughts of steps that never happened are dropped.
+  state.thoughts = state.thoughts.filter((t) => Date.parse(t.at) <= startedAt);
+  const steps = normalizeSteps(answer);
+  const stepMs = (INTERVAL_MIN * 60_000) / steps.length;
+
+  // Every step changes his state, like a single action did before.
+  const results = steps.map((st, i) =>
+    applyResult(state, { ...st, mood_after: i === steps.length - 1 ? answer.mood_after : undefined, new_idea: i === 0 ? answer.new_idea : null })
+  );
+
+  // ask_for steps end up in the list of asks.
+  const stepAsks = steps.filter((st) => st.action === 'ask_for').map((st) => ({ item: st.details.item, why: st.details.reason }));
+  const sent = applyInnerLife(
+    state,
+    { ...answer, action: steps[0].action, details: steps[0].details, asks_add: [...(Array.isArray(answer.asks_add) ? answer.asks_add : []), ...stepAsks] },
+    results[0].detail,
+    unread.length > 0
+  );
+
+  // Each step's own thought is stamped with the moment that step begins, so the page can show it live.
+  steps.forEach((st, i) => {
+    if (!st.thought) return;
+    state.thoughts.push({ at: new Date(startedAt + i * stepMs + 1000).toISOString(), text: st.thought, short: '', mood: state.mood, action: st.action, detail: results[i].detail, step: true });
+  });
+  state.thoughts = state.thoughts.slice(-250);
+
   const readAt = new Date().toISOString();
   unread.forEach((m) => {
     m.read = true;
     m.readAt = readAt;
   });
   if (state.memories.length > 24) await consolidate(state, system);
-  let found = null;
-  if (r.action === 'search_web' && r.details?.query) {
+
+  let searches = 0;
+  for (const st of steps) {
+    if (st.action !== 'search_web' || !st.details.query || searches >= 2) continue;
+    searches++;
     try {
-      found = await searchWeb(String(r.details.query));
-      state.notes.push(
-        found
-          ? `Searched "${r.details.query}" and read about ${found.title}: ${found.text}`
-          : `Searched "${r.details.query}" but found nothing.`
-      );
-      state.notes = state.notes.slice(-30);
+      const f = await searchWeb(String(st.details.query));
+      state.notes.push(f ? `Searched "${st.details.query}" and read about ${f.title}: ${f.text}` : `Searched "${st.details.query}" but found nothing.`);
+      st.found = f ? { title: f.title, text: f.text, url: f.url } : null;
     } catch (e) {
       console.error('⚠️  search:', e.message);
     }
   }
+  state.notes = state.notes.slice(-30);
+
+  const brief = (f) => (f ? { title: f.title, text: f.text } : null);
   state.last = {
-    at: new Date().toISOString(),
-    thought: r.thought,
-    inner: text(r.inner, 600),
+    at: new Date(startedAt).toISOString(),
+    intervalMin: INTERVAL_MIN,
+    thought: text(answer.thought, 200),
+    inner: text(answer.inner, 600),
     sent: sent.length > 0,
-    action: r.action,
-    details: r.details && typeof r.details === 'object' ? r.details : {},
-    detail,
-    enjoyment,
-    new_idea: r.new_idea ?? null,
-    found: found ? { title: found.title, text: found.text } : null,
+    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, enjoyment: results[i].enjoyment, found: brief(st.found) })),
+    action: steps[0].action,
+    details: steps[0].details,
+    detail: results[0].detail,
+    enjoyment: results[0].enjoyment,
+    new_idea: answer.new_idea ?? null,
+    found: brief(steps[0].found),
   };
   await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
   await clearInbox(inbox.names);
+  const planLines = steps.map((st, i) => `- ${st.action}${results[i].detail ? ` (${results[i].detail})` : ''}${st.thought ? `: ${st.thought}` : ''}`).join('\n');
   await appendFile(
     DIARY_FILE,
-    `## ${new Date().toLocaleString('en-GB')}\n${r.thought}\n${text(r.inner, 600) ? `> ${text(r.inner, 600)}\n` : ''}- action: ${r.action} ${detail ? `(${detail})` : ''}\n- enjoyed: ${enjoyment}/10, mood: ${state.mood}\n\n`
+    `## ${new Date().toLocaleString('en-GB')}\n${text(answer.thought, 200)}\n${text(answer.inner, 600) ? `> ${text(answer.inner, 600)}\n` : ''}${planLines}\n- mood: ${state.mood}\n\n`
   );
-  console.log(`\n💭 ${r.thought}`);
-  if (r.inner) console.log(`   ${text(r.inner, 600)}`);
+  console.log(`\n💭 ${text(answer.thought, 200)}`);
+  if (answer.inner) console.log(`   ${text(answer.inner, 600)}`);
   if (unread.length) console.log(`📨 Pip read ${unread.length} message(s) from Bas`);
   if (state.wants.length) console.log(`🎯 wants: ${state.wants.map((w) => w.text).join(' | ')}`);
   for (const m of sent) console.log(`✉️  Pip writes to Bas (${m.kind}): ${m.text}`);
   if (!sent.length && state.draft) console.log(`✉️  Pip holds back a message: ${state.draft}`);
-  console.log(`▶  ${r.action}${detail ? `: ${detail}` : ''}   (enjoyed ${enjoyment}/10, mood: ${state.mood})`);
-  if (r.new_idea) console.log(`💡 ${r.new_idea}`);
-  if (r.action === 'search_web') {
-    console.log(found ? `🌐 ${found.title}: ${found.text}\n   ${found.url ?? ''}` : '🌐 nothing found');
-  }
+  console.log(`📋 plan for the next ${INTERVAL_MIN} minutes:`);
+  steps.forEach((st, i) => {
+    console.log(`   ${i + 1}. ${st.action}${results[i].detail ? `: ${results[i].detail}` : ''}   (enjoyed ${results[i].enjoyment}/10)${st.thought ? `\n      "${st.thought}"` : ''}`);
+    if (st.found) console.log(`      🌐 ${st.found.title}`);
+  });
+  if (answer.new_idea) console.log(`💡 ${answer.new_idea}`);
   for (const m of sent) await notify(m);
 }
 

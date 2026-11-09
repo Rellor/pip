@@ -692,13 +692,20 @@ function showTab(name) {
 }
 document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
 
+// A step's thought is stamped with the moment that step starts, so thoughts appear one by one as time passes.
+function renderThoughts(s) {
+  const now = Date.now();
+  const thoughts = (s.thoughts || []).filter((t) => Date.parse(t.at) <= now).sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
+  fill($('thoughts'), thoughts.length
+    ? thoughts.map((t) => entry([when(t.at), `${ICON[t.action] || '•'} ${(t.action || '').replace('_', ' ')}${t.detail ? ': ' + t.detail : ''}`, t.step ? '' : 'reflection'].filter(Boolean), t.text, t.step ? '' : 'reflect'))
+    : empty('Pip has not thought anything yet.'));
+}
+setInterval(() => lastState && renderThoughts(lastState), 10_000);
+
 function render(s) {
   $('mood').textContent = s.mood || '…';
 
-  const thoughts = (s.thoughts || []).slice().reverse();
-  fill($('thoughts'), thoughts.length
-    ? thoughts.map((t) => entry([when(t.at), `${ICON[t.action] || '•'} ${(t.action || '').replace('_', ' ')}${t.detail ? ': ' + t.detail : ''}`, t.mood || ''].filter(Boolean), t.text))
-    : empty('Pip has not thought anything yet.'));
+  renderThoughts(s);
 
   const asks = s.asks || [];
   const open = asks.filter((a) => a.status === 'open');
@@ -774,6 +781,25 @@ function render(s) {
     : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
 }
 
+// Pip's plan: a few steps, spread over the time until his next wake-up. The page works out which step is happening now.
+let plan = null;
+let stepNow = -1;
+function tickPlan() {
+  if (!plan) return;
+  const i = Math.max(0, Math.min(plan.steps.length - 1, Math.floor((Date.now() - plan.at) / plan.stepMs)));
+  if (i !== stepNow) {
+    stepNow = i;
+    startTask(plan.steps[i]);
+  }
+}
+function setPlan(last) {
+  const steps = Array.isArray(last.steps) && last.steps.length ? last.steps : [last];
+  plan = { at: Date.parse(last.at), stepMs: ((last.intervalMin || 12) * 60_000) / steps.length, steps };
+  stepNow = -1;
+  tickPlan();
+}
+setInterval(tickPlan, 1000);
+
 let seenAt = null;
 let waking = false;
 
@@ -802,7 +828,7 @@ async function poll() {
     waking = !!s._waking;
     if (s.last && s.last.at !== seenAt) {
       seenAt = s.last.at;
-      startTask(s.last);
+      setPlan(s.last);
     }
   } catch {
     $('err').textContent = "⚠️ Pip's data is not available yet.";
