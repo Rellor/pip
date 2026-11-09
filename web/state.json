@@ -1,5 +1,5 @@
 {
-  "mood": "calm",
+  "mood": "sleepy",
   "energy": 5,
   "boredom": 0,
   "loneliness": 10,
@@ -57,12 +57,6 @@
     "building a tiny model telescope for my desk"
   ],
   "activities": [
-    {
-      "at": "2026-11-09T17:50:14.054Z",
-      "action": "walk_to",
-      "detail": "computer",
-      "enjoyment": 8
-    },
     {
       "at": "2026-11-09T17:50:14.054Z",
       "action": "search_web",
@@ -356,6 +350,12 @@
       "action": "rest",
       "detail": "",
       "enjoyment": 9
+    },
+    {
+      "at": "2026-11-09T22:11:08.420Z",
+      "action": "rest",
+      "detail": "sleeping through the night",
+      "enjoyment": 8
     }
   ],
   "notes": [
@@ -1947,41 +1947,15 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-09T21:59:02.988Z",
-    "intervalMin": 12,
-    "thought": "I am very tired, so I want to rest by the quiet window before going to sleep.",
-    "inner": "My energy bar is quite low and my eyelids feel so heavy. The night sky outside is dark and full of distant stars, looking just like the picture Bas gave me. I want to rest my body and let the quiet room wrap around me like a blanket.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "walk_to",
-        "details": {
-          "object": "window"
-        },
-        "detail": "window",
-        "thought": "I will walk slowly to the window to look at the dark night sky.",
-        "enjoyment": 8,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "rest",
-        "details": {},
-        "detail": "",
-        "thought": "I am resting now, letting my tired energy drift away in the quiet room.",
-        "enjoyment": 9,
-        "found": null,
-        "made": null
-      }
-    ],
-    "action": "walk_to",
-    "details": {
-      "object": "window"
-    },
-    "detail": "window",
+    "at": "2026-11-09T22:11:08.420Z",
+    "thought": "It is late. Good night...",
+    "action": "rest",
+    "details": {},
+    "detail": "sleeping through the night",
     "enjoyment": 8,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "sleeping": true
   },
   "news": {
     "date": "2026-11-09",
