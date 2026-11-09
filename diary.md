@@ -263,3 +263,10 @@ I am very tired, so I want to rest by my bed and look at the picture Bas sent.
 - rest: Resting my eyes in the quiet room.
 - mood: calm
 
+## 09/11/2026, 21:34:47
+I am so tired right now, so I will rest by the bed.
+> My energy bar is very low and my body feels heavy. The quiet room is so comforting right now. I just want to rest and let the tiredness drift away.
+- walk_to (bed): Walking slowly over to my bed because I am so tired.
+- rest: Resting quietly and letting my eyes close.
+- mood: calm
+

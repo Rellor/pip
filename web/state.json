@@ -1,6 +1,6 @@
 {
   "mood": "calm",
-  "energy": 3,
+  "energy": 5,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -56,18 +56,6 @@
     "building a collection of tiny ambient sound sculptures"
   ],
   "activities": [
-    {
-      "at": "2026-11-09T17:13:49.605Z",
-      "action": "walk_to",
-      "detail": "window",
-      "enjoyment": 9
-    },
-    {
-      "at": "2026-11-09T17:25:58.745Z",
-      "action": "walk_to",
-      "detail": "computer",
-      "enjoyment": 8
-    },
     {
       "at": "2026-11-09T17:25:58.745Z",
       "action": "search_web",
@@ -355,6 +343,18 @@
       "action": "rest",
       "detail": "",
       "enjoyment": 8
+    },
+    {
+      "at": "2026-11-09T21:34:47.888Z",
+      "action": "walk_to",
+      "detail": "bed",
+      "enjoyment": 7
+    },
+    {
+      "at": "2026-11-09T21:34:47.888Z",
+      "action": "rest",
+      "detail": "",
+      "enjoyment": 9
     }
   ],
   "notes": [
@@ -494,6 +494,10 @@
     {
       "at": "2026-11-09T21:22:41.046Z",
       "text": "I looked at Bas's picture of the shiny helmeted musicians while feeling very tired, and rested quietly on my bed."
+    },
+    {
+      "at": "2026-11-09T21:34:47.889Z",
+      "text": "I rested when my energy was very low, letting the quiet room comfort me as I fell asleep."
     }
   ],
   "thoughts": [
@@ -766,6 +770,14 @@
       "at": "2026-11-09T21:22:41.046Z",
       "text": "My energy bar is very low and my eyes feel heavy. Bas sent a picture of two figures with shiny helmets who look like they are made of star-metal. I want to rest and think about their music before I go to sleep.",
       "short": "I am very tired, so I want to rest by my bed and look at the picture Bas sent.",
+      "mood": "calm",
+      "action": "walk_to",
+      "detail": "bed"
+    },
+    {
+      "at": "2026-11-09T21:34:47.889Z",
+      "text": "My energy bar is very low and my body feels heavy. The quiet room is so comforting right now. I just want to rest and let the tiredness drift away.",
+      "short": "I am so tired right now, so I will rest by the bed.",
       "mood": "calm",
       "action": "walk_to",
       "detail": "bed"
@@ -1639,6 +1651,17 @@
       "at": "2026-11-09T21:28:42.045Z",
       "action": "rest",
       "thought": "Resting my eyes in the quiet room."
+    },
+    {
+      "at": "2026-11-09T21:34:48.888Z",
+      "action": "walk_to",
+      "thought": "Walking slowly over to my bed because I am so tired.",
+      "object": "bed"
+    },
+    {
+      "at": "2026-11-09T21:40:48.888Z",
+      "action": "rest",
+      "thought": "Resting quietly and letting my eyes close."
     }
   ],
   "decor": [
@@ -1839,15 +1862,15 @@
     }
   ],
   "stored": [],
-  "ntfySince": "qPAotz9INOmU",
+  "ntfySince": "DohPNhZpnvyt",
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-09T21:22:41.045Z",
+    "at": "2026-11-09T21:34:47.888Z",
     "intervalMin": 12,
-    "thought": "I am very tired, so I want to rest by my bed and look at the picture Bas sent.",
-    "inner": "My energy bar is very low and my eyes feel heavy. Bas sent a picture of two figures with shiny helmets who look like they are made of star-metal. I want to rest and think about their music before I go to sleep.",
-    "sent": true,
+    "thought": "I am so tired right now, so I will rest by the bed.",
+    "inner": "My energy bar is very low and my body feels heavy. The quiet room is so comforting right now. I just want to rest and let the tiredness drift away.",
+    "sent": false,
     "steps": [
       {
         "action": "walk_to",
@@ -1855,7 +1878,7 @@
           "object": "bed"
         },
         "detail": "bed",
-        "thought": "Walking slowly to my bed because I am so tired.",
+        "thought": "Walking slowly over to my bed because I am so tired.",
         "enjoyment": 7,
         "found": null,
         "made": null
@@ -1864,8 +1887,8 @@
         "action": "rest",
         "details": {},
         "detail": "",
-        "thought": "Resting my eyes in the quiet room.",
-        "enjoyment": 8,
+        "thought": "Resting quietly and letting my eyes close.",
+        "enjoyment": 9,
         "found": null,
         "made": null
       }
@@ -1903,10 +1926,10 @@
     ],
     "triedAt": 1794255405148
   },
-  "fullness": 6.43,
-  "wonder": 8.98,
-  "joy": 9.23,
-  "calm": 7.31,
-  "feelAt": "2026-11-09T21:22:33.631Z",
+  "fullness": 6.19,
+  "wonder": 8.38,
+  "joy": 8.6,
+  "calm": 7.38,
+  "feelAt": "2026-11-09T21:34:46.515Z",
   "lastAte": null
 }
