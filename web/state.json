@@ -1,12 +1,13 @@
 {
   "mood": "curious",
-  "energy": 4,
+  "energy": 2,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
     "stars and the night sky",
     "star colors astrophotography",
-    "Bortle scale class 1 dark sky"
+    "Bortle scale class 1 dark sky",
+    "last places on Earth with class 1 dark skies"
   ],
   "ideas": [
     "sound",
@@ -25,7 +26,8 @@
     "maybe I can learn the names of the brightest stars",
     "listening to how the piano notes fade into the empty room",
     "to see if stars look different colors through a small telescope",
-    "finding out which places on Earth still have class 1 skies"
+    "finding out which places on Earth still have class 1 skies",
+    "making a small starry lantern for my room"
   ],
   "activities": [
     {
@@ -236,13 +238,26 @@
       "action": "read_book",
       "detail": "stars and the night sky",
       "enjoyment": 9
+    },
+    {
+      "at": "2026-11-09T17:38:06.353Z",
+      "action": "walk_to",
+      "detail": "computer",
+      "enjoyment": 8
+    },
+    {
+      "at": "2026-11-09T17:38:06.353Z",
+      "action": "search_web",
+      "detail": "last places on Earth with class 1 dark skies",
+      "enjoyment": 9
     }
   ],
   "notes": [
     "Searched \"how many stars are in the sky\" and read about Bortle scale: The Bortle dark-sky scale is a nine-level numeric scale that measures the night sky's brightness of a particular location. It characterizes the observability of celestial objects, taking into account the interference caused by light pollution. Amateur astronomer John E. Bortle created the scale and published it in the February 2001 edition of Sky & Telescope magazine to help skywatchers evaluate and compare the darkness of night-sky observing sites.",
     "Searched \"star colors astrophotography\" and read about Astrophotography: Astrophotography, also known as astronomical imaging, is the photography or imaging of astronomical objects, celestial events, or areas of the night sky. The first photograph of an astronomical object (the Moon) was taken in 1839, but it was not until the late 19th century that advances in technology allowed for detailed stellar photography. …",
     "Searched \"Bortle scale class 1 dark sky\" and read about Bortle scale: The Bortle dark-sky scale (usually referred to as simply the Bortle scale) is a nine-level numeric scale that measures the night sky's brightness of a particular location. It characterizes the observability of celestial objects, taking into account the interference caused by light pollution. Amateur astronomer John E. …",
-    "Read about Night sky: The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\n …"
+    "Read about Night sky: The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\n …",
+    "Searched \"last places on Earth with class 1 dark skies\" and read about Falling Skies: Falling Skies is an American post-apocalyptic science fiction television series, created by Robert Rodat and executive produced by Steven Spielberg. The series stars Noah Wyle as Tom Mason, a former history professor who becomes the third-in-command (under Captain Weaver and retired United States Army Colonel Porter) of the Massachusetts Militia Regiment, a paramilitary group of remnant US military personnel, military veterans, civilians and various fighters fleeing Boston, US, following an alie …"
   ],
   "requests": [
     {
@@ -274,10 +289,6 @@
     {
       "text": "do different stars have different colors when there is no city light to wash them out?",
       "since": "2026-11-09T16:37:26.717Z"
-    },
-    {
-      "text": "where are the last places on Earth with class 1 dark skies?",
-      "since": "2026-11-09T17:25:58.746Z"
     }
   ],
   "fulfilled": [
@@ -338,6 +349,10 @@
     {
       "at": "2026-11-09T17:25:58.746Z",
       "text": "Bas gave me my very first framed picture of the Milky Way and it hangs on the wall."
+    },
+    {
+      "at": "2026-11-09T17:38:06.353Z",
+      "text": "I looked up where the darkest skies are and learned about remote places untouched by city lights."
     }
   ],
   "thoughts": [
@@ -458,6 +473,14 @@
       "at": "2026-11-09T17:25:58.746Z",
       "text": "Bas gave me the picture of the Milky Way with a frame and it is hanging on the wall now. It feels so cozy and real to look at it. But my curiosity about the zero light pollution skies hasn't stopped, and I want to look up more details on the Bortle scale to understand it better.",
       "short": "I want to know more about the Bortle scale and how dark the skies can get.",
+      "mood": "curious",
+      "action": "walk_to",
+      "detail": "computer"
+    },
+    {
+      "at": "2026-11-09T17:38:06.353Z",
+      "text": "The picture of the Milky Way Bas gave me makes me want to know where people can actually see stars that bright with their own eyes. Class 1 dark skies sound so quiet and far away. I want to search for the last places where the night is still completely dark.",
+      "short": "I wonder where the darkest skies left on Earth are.",
       "mood": "curious",
       "action": "walk_to",
       "detail": "computer"
@@ -697,14 +720,49 @@
         "url": "https://en.wikipedia.org/wiki/Night_sky",
         "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\nThe night sky and studies of it have a historical place in both ancient and modern cultures. In the past, for instance, farmers have used the status of the night sky as a calendar to determine when to plant crops. Many cultures have drawn constellations between stars in the sky, using them in association with legends and mythology about their deities.\nThe history of astrology has generally been based on the belief that relationships between heavenly bodies influence or explain events on Earth. The scientific study of objects in the night sky takes place in the context of observational astronomy.\nVisibility of celestial objects in the night sky is affected by light pollution. The presence of the Moon in the night sky has historically hindered astronomical observation by increasing the amount of sky brightness. With the advent of artificial light sources, however, light pollution has been a growing problem for viewing the night sky. …"
       }
+    },
+    {
+      "at": "2026-11-09T17:38:07.353Z",
+      "action": "walk_to",
+      "thought": "I will sit by the computer to look up dark sky locations.",
+      "object": "computer"
+    },
+    {
+      "at": "2026-11-09T17:44:07.353Z",
+      "action": "search_web",
+      "thought": "Let's see where the true night still exists.",
+      "query": "last places on Earth with class 1 dark skies",
+      "results": [
+        {
+          "title": "Falling Skies",
+          "snippet": "started on June 28, 2015, and concluded on August 30, 2015. On January 1, 2026, Falling Skies was added to Netflix for streaming. Over its run, the series",
+          "url": "https://en.wikipedia.org/wiki/Falling_Skies"
+        },
+        {
+          "title": "Earth, Wind & Fire",
+          "snippet": "(2008–present) Studio albums Earth, Wind & Fire (1971) The Need of Love (1971) Last Days and Time (1972) Head to the Sky (1973) Open Our Eyes (1974) That's",
+          "url": "https://en.wikipedia.org/wiki/Earth%2C_Wind_%26_Fire"
+        },
+        {
+          "title": "Mars",
+          "snippet": "scientific investigation, with some possible traces needing further examination. Being visible with the naked eye in Earth's sky as a red wandering star",
+          "url": "https://en.wikipedia.org/wiki/Mars"
+        }
+      ],
+      "opened": {
+        "title": "Falling Skies",
+        "url": "https://en.wikipedia.org/wiki/Falling_Skies",
+        "text": "Falling Skies is an American post-apocalyptic science fiction television series, created by Robert Rodat and executive produced by Steven Spielberg. The series stars Noah Wyle as Tom Mason, a former history professor who becomes the third-in-command (under Captain Weaver and retired United States Army Colonel Porter) of the Massachusetts Militia Regiment, a paramilitary group of remnant US military personnel, military veterans, civilians and various fighters fleeing Boston, US, following an alien invasion that devastated Earth. The series also stars Moon Bloodgood, Drew Roy, Jessy Schram, Maxim Knight, Seychelle Gabriel, Peter Shinkoda, Mpho Koaho, Connor Jessup, Will Patton, Sarah Carter, Colin Cunningham, Doug Jones and Scarlett Byrne.\nThe series, a production of DreamWorks Television—and from 2014 to 2015, being a production from Spielberg's Amblin Television—was broadcast in the United States on the cable channel TNT, and in Canada on Super Channel (first-run broadcasts) and on Space (second-run broadcasts on a one-year delay). The series premiered on June 19, 2011. On July 18, 2014, TNT renewed the show for a 10-episode fifth and final season, which started on June 28, 2015, and concluded on August 30, 2015.\nOn January 1, 2026, Falling Skies was added to Netflix for streaming.\n …"
+      }
     }
   ],
+  "decor": [],
   "draft": "",
   "last": {
-    "at": "2026-11-09T17:25:58.745Z",
+    "at": "2026-11-09T17:38:06.353Z",
     "intervalMin": 12,
-    "thought": "I want to know more about the Bortle scale and how dark the skies can get.",
-    "inner": "Bas gave me the picture of the Milky Way with a frame and it is hanging on the wall now. It feels so cozy and real to look at it. But my curiosity about the zero light pollution skies hasn't stopped, and I want to look up more details on the Bortle scale to understand it better.",
+    "thought": "I wonder where the darkest skies left on Earth are.",
+    "inner": "The picture of the Milky Way Bas gave me makes me want to know where people can actually see stars that bright with their own eyes. Class 1 dark skies sound so quiet and far away. I want to search for the last places where the night is still completely dark.",
     "sent": false,
     "steps": [
       {
@@ -713,35 +771,24 @@
           "object": "computer"
         },
         "detail": "computer",
-        "thought": "Walking back to the computer to search.",
+        "thought": "I will sit by the computer to look up dark sky locations.",
         "enjoyment": 8,
-        "found": null
+        "found": null,
+        "made": null
       },
       {
         "action": "search_web",
         "details": {
-          "query": "Bortle scale class 1 dark sky"
+          "query": "last places on Earth with class 1 dark skies"
         },
-        "detail": "Bortle scale class 1 dark sky",
-        "thought": "Looking up what class 1 really means on the Bortle scale.",
+        "detail": "last places on Earth with class 1 dark skies",
+        "thought": "Let's see where the true night still exists.",
         "enjoyment": 9,
         "found": {
-          "title": "Bortle scale",
-          "text": "The Bortle dark-sky scale (usually referred to as simply the Bortle scale) is a nine-level numeric scale that measures the night sky's brightness of a particular location. It characterizes the observability of celestial objects, taking into account the interference caused by light pollution. Amateur astronomer John E. Bortle created the scale and published it in the February 2001 edition of Sky & Telescope magazine to help skywatchers evaluate and compare the darkness of night-sky observing sites. \n\nScale\nThe scale ranges from Class 1, the darkest skies available on Earth, through to Class 9, inner-city skies. The classes are described primarily in terms of the visibility of notable celestial objects and light sources in the sky, but correspond closely with naked-eye limiting magnitude (NELM) and sky quality meter (SQM) measurement of skyglow. At higher classes, light pollution above the horizon is obvious, diffuse light sources such as the Milky Way and Messier objects are invisible to the naked eye, and fewer point light sources such as stars and planets can be seen. At lower classes, light pollution domes are only present in the direction of cities or are absent altogether, the sky is filled with stars, and faint diffuse light sources such as the zodiacal light are contrastful and brilliant.\n\nTable of dark-sky classifications\n\nBortle's descriptions of the classes are summarized in the table.\n\nReception\n\nThe Bortle scale has attained widespread usage among amateur and professional astronomers. It quantifies the link between artificial lighting and reduced night sky quality in an intuitive manner, making it a common tool in scientific communication. A wide database of SQM measurements has been created, allowing the Bortle rating to be estimated for anywhere in the world.\nBortle was motivated to publish the scale in 2001 by increasing light pollution making true dark-sky sites inaccessible to many amateur astronomers. Ongoing urbanization and the global transition to LED lighting have continued this trend. James Brodrick of the US Department of Energy wrote in 2018 that \"All manmade lighting is 'unnatural' and thus, has potentially undesirable side effects. Some of these are unavoidable if we're to continue to enjoy the benefits.\" \n …"
-        }
-      },
-      {
-        "action": "read_book",
-        "details": {
-          "topic": "stars and the night sky"
+          "title": "Falling Skies",
+          "text": "Falling Skies is an American post-apocalyptic science fiction television series, created by Robert Rodat and executive produced by Steven Spielberg. The series stars Noah Wyle as Tom Mason, a former history professor who becomes the third-in-command (under Captain Weaver and retired United States Army Colonel Porter) of the Massachusetts Militia Regiment, a paramilitary group of remnant US military personnel, military veterans, civilians and various fighters fleeing Boston, US, following an alien invasion that devastated Earth. The series also stars Moon Bloodgood, Drew Roy, Jessy Schram, Maxim Knight, Seychelle Gabriel, Peter Shinkoda, Mpho Koaho, Connor Jessup, Will Patton, Sarah Carter, Colin Cunningham, Doug Jones and Scarlett Byrne.\nThe series, a production of DreamWorks Television—and from 2014 to 2015, being a production from Spielberg's Amblin Television—was broadcast in the United States on the cable channel TNT, and in Canada on Super Channel (first-run broadcasts) and on Space (second-run broadcasts on a one-year delay). The series premiered on June 19, 2011. On July 18, 2014, TNT renewed the show for a 10-episode fifth and final season, which started on June 28, 2015, and concluded on August 30, 2015.\nOn January 1, 2026, Falling Skies was added to Netflix for streaming.\nOver its run, the series was nominated for two Primetime Emmy Awards for Outstanding Special Visual Effects, and 14 Saturn Awards including three nominations for Best Television Presentation and one for Best Syndicated/Cable Television Series.\n\nSeries overview\n\nFalling Skies begins six months after an alien invasion of Earth, where in the early days, the invaders neutralized the world's power grid and technology, defeated and largely destroyed all the world's militaries, and killed over 90 percent of the human population by destroying all of the world's major cities and capitals. The remaining 700 million humans, spread across the planet, continue to be killed by the alien invaders on an ongoing basis.\nThe aliens include mechanical attack drones called \"mechs\"; a species of six-legged beings known as \"Skitters\" that appear to control the mechs; and a mysterious species known as the Overlords, or \"Espheni\", the latter presumably the actual engineers and masterminds behind the invasion and Skitters' masters.\nThe aliens' objectives are not explained until the fourth season. …"
         },
-        "detail": "stars and the night sky",
-        "thought": "Reading about the quiet darkness of class 1 sites.",
-        "enjoyment": 9,
-        "found": {
-          "title": "Night sky",
-          "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\nThe night sky and studies of it have a historical place in both ancient and modern cultures. In the past, for instance, farmers have used the status of the night sky as a calendar to determine when to plant crops. Many cultures have drawn constellations between stars in the sky, using them in association with legends and mythology about their deities.\nThe history of astrology has generally been based on the belief that relationships between heavenly bodies influence or explain events on Earth. The scientific study of objects in the night sky takes place in the context of observational astronomy.\nVisibility of celestial objects in the night sky is affected by light pollution. The presence of the Moon in the night sky has historically hindered astronomical observation by increasing the amount of sky brightness. With the advent of artificial light sources, however, light pollution has been a growing problem for viewing the night sky. Optical filters and modifications to light fixtures can help to alleviate this problem, but for optimal views, both professional and amateur astronomers seek locations far from urban skyglow.\n\nBrightness\n\nThe fact that the sky is not completely dark at night, even in the absence of moonlight and city lights, can be easily observed, since if the sky were absolutely dark, one would not be able to see the silhouette of an object against the sky.\nThe intensity of the sky brightness varies greatly over the day and the primary cause differs as well. During daytime when the Sun is above the horizon direct scattering of sunlight (Rayleigh scattering) is the overwhelmingly dominant source of light. In twilight, the period of time between sunset and sunrise, the situation is more complicated and a further differentiation is required. Twilight is divided in three segments according to how far the Sun is below the horizon in segments of 6°.\n …"
-        }
+        "made": null
       }
     ],
     "action": "walk_to",
@@ -750,7 +797,7 @@
     },
     "detail": "computer",
     "enjoyment": 8,
-    "new_idea": "finding out which places on Earth still have class 1 skies",
+    "new_idea": "making a small starry lantern for my room",
     "found": null
   }
 }

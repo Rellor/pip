@@ -122,3 +122,10 @@ I want to know more about the Bortle scale and how dark the skies can get.
 - read_book (stars and the night sky): Reading about the quiet darkness of class 1 sites.
 - mood: curious
 
+## 09/11/2026, 17:38:06
+I wonder where the darkest skies left on Earth are.
+> The picture of the Milky Way Bas gave me makes me want to know where people can actually see stars that bright with their own eyes. Class 1 dark skies sound so quiet and far away. I want to search for the last places where the night is still completely dark.
+- walk_to (computer): I will sit by the computer to look up dark sky locations.
+- search_web (last places on Earth with class 1 dark skies): Let's see where the true night still exists.
+- mood: curious
+
