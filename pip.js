@@ -1,8 +1,9 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { freePlaces, makeDecor, startBuild, workOn, finishBuild, activeBuilds, storeAway, takeOut, placePicture, removePicture, MAX_PER_DAY, MAX_BUILDS, MAX_STORED } from './decor.js';
+import { freePlaces, makeDecor, storeAway, takeOut, placePicture, removePicture, MAX_PER_DAY } from './decor.js';
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
 import { refreshNews, themeMirror } from './news.js';
+import { tooSimilar, sinceLastWrote } from './repeat.js';
 import { ensureFeelings, passTime, stepFeelings, felt, eatNow, feelingsText, needsText } from './feelings.js';
 
 const STATE_FILE = 'web/state.json';
@@ -44,11 +45,9 @@ const ACTIONS = [
   'remove_decoration(name)',
   'take_out(name, where)',
 ];
-// Only offered once he has a workbench (he can ask Bas for one).
-const BUILD_ACTIONS = ['start_build(name, where, why, sessions, parts)', 'work_on(name)'];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, where)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'start_build', 'work_on', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -73,11 +72,10 @@ const freshState = () => ({
   decor: [],
   projects: [],
   pictures: [],
-  builds: [],
   stored: [],
-  tools: { workbench: false },
   ntfySince: '',
   draft: '',
+  repeatNote: '',
   last: null,
 });
 
@@ -99,7 +97,6 @@ function doingMirror(s) {
   return `I notice I mostly look things up (${looks} of my last ${steps.length} activities) and rarely do, make or ask for anything with what I learn.`;
 }
 const sameText = (a, b) => a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
-const WORKBENCH_WORDS = /work\s?bench|workshop|\btools?\b|hammer|\bsaw\b/i;
 const bullets = (items, empty) => (items.length ? items.map((x) => `- ${x}`).join('\n') : empty);
 // Pip may write to Bas at most once every 3 hours, so he only says what really matters.
 const MIN_GAP_MINUTES = 180;
@@ -283,14 +280,6 @@ ${ROOM.join(', ')}
 
 THINGS I MADE FOR MY ROOM
 ${bullets(s.decor.map((d) => `${d.name} (${d.label})${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}
-MY WORKBENCH
-${
-    s.tools?.workbench
-      ? 'I have a workbench with tools.'
-      : 'I do not have a workbench yet. Big projects that take many sessions need one, with tools. I can ask Bas for it with asks_add (say what I would need).'
-  }
-${activeBuilds(s.builds).length ? bullets(activeBuilds(s.builds).map((b) => `${b.name}: session ${b.done} of ${b.sessions} done${b.where ? ` (it will go: ${b.where})` : ''}`), '') : s.tools?.workbench ? 'Nothing is on the bench right now.' : ''}
-
 IN MY CHEST (things I put away; nothing is lost and I can take it out again)
 ${bullets(s.stored.map((x) => `${x.name} (it was ${x.label})`), 'empty')}
 
@@ -315,6 +304,11 @@ ${s.notes.slice(-5).map((n) => n.slice(0, 400)).join('\n') || 'nothing yet'}
 WHAT I HAVE ASKED BAS FOR (still waiting)
 ${bullets(s.asks.filter((a) => a.status === 'open').map((a) => `${a.item}${a.why ? ` (${a.why})` : ''}`), 'nothing')}
 
+WHAT I ALREADY TOLD BAS (I do not repeat myself)
+${bullets(s.outbox.filter((m) => m.kind === 'tell').slice(-5).map((m) => `(${ago(m.at)}) "${m.text}"`), 'nothing yet')}${s.repeatNote ? `\nI nearly said this again, so I held it back: "${s.repeatNote}"` : ''}
+NEW THINGS I COULD TELL HIM (since I last wrote to him)
+${bullets(sinceLastWrote(s), 'nothing new yet, so I probably do not need to write')}
+
 BAS
 Bas made this room. He cannot see inside my head unless I tell him. I last wrote to him: ${ago(lastWrote)}.
 ${
@@ -334,7 +328,7 @@ ${
           .join('\n')}\n\n`
       : ''
   }ACTIONS I CAN DO
-${[...ACTIONS, ...(s.tools?.workbench ? BUILD_ACTIONS : []), ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
+${[...ACTIONS, ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
 
 FROM CURIOSITY TO DOING
 Looking things up is only the start. When I learn something that excites me, I ask myself: what would I like to DO, GET or MAKE because of this? For example, if I read about galaxies I might want a telescope. Then I can start a project. I can ask Bas for what I need (asks_add, so it shows up in his list: waiting is not asking), build a small version myself (decorate), play a tune about it, write about it in my diary, or go to the window and try it. A plan with only searching and reading is a thin plan. A good plan has at least one step toward a project.
@@ -342,12 +336,12 @@ Looking things up is only the start. When I learn something that excites me, I a
 In my world almost anything is possible. A project can be about anything I dream up: learning, music, cooking, building, writing, gardening, collecting, exploring. What I can build myself is limited to small things made of simple shapes, and only a few a day. If a project or an idea is too big for that, such as a new ability, a new room or something real, I ask Bas with asks_add and say exactly what I would need. I never give up on a dream just because it is big: I ask.
 
 MAKING THINGS FOR MY ROOM
-With decorate I make something and put it in my room. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. "where" is one of the place names listed above. Things on a wall must be flat. I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. Small things I make in one go with decorate. Big or ambitious things take many sessions: with a workbench I use start_build (the whole design at once, and how many sessions it needs, from 2 to 6), and then every work_on step is one session of building, over several wake-ups, until it is finished and goes into my room. At most 2 things can be on my bench. If I do not like something in my room any more, remove_decoration puts it in my chest (it is not lost) and take_out(name, where) brings it back later.
+With decorate I make something and put it in my room. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. "where" is one of the place names listed above. Things on a wall must be flat. I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. If I do not like something in my room any more, remove_decoration puts it in my chest (it is not lost) and take_out(name, where) brings it back later. If I want to make something bigger or more complicated than my simple shapes allow, or I need a tool or a place to work, I ask Bas with asks_add and say exactly what I would need.
 
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...]}, remove_decoration {"name": "..."}, start_build {"name": "...", "where": "floor_middle", "why": "...", "sessions": 4, "parts": [...]}, work_on {"name": "..."}, take_out {"name": "...", "where": "on_desk"}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -360,7 +354,7 @@ Answer in JSON with these fields:
 "projects_update": for projects I already have: [{"title": "exact title", "next": "my new next step", "status": "working or done or dropped"}]. Or [],
 "picture_notes": for each NEW picture I just looked at, {"id": "pic1", "about": "what I really see and how it makes me feel, 1 or 2 sentences"}, or [],
 "remember": one thing worth remembering for a long time, or null,
-"tell_bas": a message to Bas in my own words, or null. Rarely. Only if I really want to share something or need something.`;
+"tell_bas": a message to Bas in my own words, or null. If Bas has NOT written to me, I write rarely, and only when I have something NEW to say: something I discovered or made, a project, a feeling I cannot explain, or a question about Bas and his world. If Bas HAS written to me, I usually answer what he said or asked, and I tell him something fresh from my own day instead of what I already told him (see above). I never repeat myself.`;
 }
 
 async function askGemini(system, wakeUp, retry = 2, images = []) {
@@ -496,8 +490,6 @@ function describe(a) {
     case 'place_picture':
     case 'take_down_picture': return d.id;
     case 'decorate':
-    case 'start_build':
-    case 'work_on':
     case 'take_out':
     case 'remove_decoration': return d.name;
     default: return '';
@@ -585,10 +577,7 @@ function applyInnerLife(s, r, detail, replying = false) {
   const sameItem = (a, b) => a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
   for (const t of strings(r.asks_done)) {
     const hit = s.asks.find((a) => a.status === 'open' && sameItem(a.item, t));
-    if (hit) {
-      Object.assign(hit, { status: 'done', doneAt: at });
-      if (WORKBENCH_WORDS.test(hit.item)) s.tools = { ...s.tools, workbench: true, since: at };
-    }
+    if (hit) Object.assign(hit, { status: 'done', doneAt: at });
   }
   const wanted = (Array.isArray(r.asks_add) ? r.asks_add : []).slice(0, 3).map((a) => ({ item: text(a?.item ?? a, 140), why: text(a?.why, 200) }));
   if (r.action === 'ask_for') {
@@ -631,7 +620,12 @@ function applyInnerLife(s, r, detail, replying = false) {
 
   // A message in his own words, at most once every 3 hours unless he is answering Bas.
   const message = text(r.tell_bas, 500);
-  if (message) {
+  const recentTold = s.outbox.filter((m) => m.kind === 'tell' && Date.now() - Date.parse(m.at) < 24 * 3_600_000).slice(-6).map((m) => m.text);
+  if (message && tooSimilar(message, recentTold, replying ? 0.8 : 0.55)) {
+    s.repeatNote = message.slice(0, 160); // he is shown this next time, so he can say something different
+    s.draft = '';
+    console.log(`✉️  Pip nearly repeated himself, so this was held back: ${message.slice(0, 120)}`);
+  } else if (message) {
     if (!replying && minutesSince(s.outbox.filter((m) => m.kind === 'tell').at(-1)?.at) < MIN_GAP_MINUTES) {
       s.draft = message; // too soon, keep it and let Pip think again next time
     } else {
@@ -706,14 +700,11 @@ async function wakeUp() {
     state.mood = 'rested';
   }
   await refreshNews(state);
-  // The "I did this" button in the app is clear: mark that ask as done right away (and a workbench appears if that is what he asked for).
+  // The "I did this" button in the app is clear: mark that ask as done right away.
   for (const m of state.inbox.filter((x) => !x.read)) {
     const done = /^I did this for you: "(.+)"$/.exec(m.text);
     const ask = done && state.asks.find((a) => a.status === 'open' && sameText(a.item, done[1]));
-    if (ask) {
-      Object.assign(ask, { status: 'done', doneAt: new Date().toISOString() });
-      if (WORKBENCH_WORDS.test(ask.item)) state.tools = { ...state.tools, workbench: true, since: new Date().toISOString() };
-    }
+    if (ask) Object.assign(ask, { status: 'done', doneAt: new Date().toISOString() });
   }
   const unread = state.inbox.filter((m) => !m.read);
   // Pictures he has not seen yet are shown to him together with the prompt (at most 3 per wake-up).
@@ -724,7 +715,9 @@ async function wakeUp() {
       images.push({ mime: p.mime || 'image/jpeg', data: (await readFile(`web/${p.image}`)).toString('base64') });
     } catch {}
   }
-  const answer = await askGemini(system, buildWakeUp(state), 2, images);
+  const wakePrompt = buildWakeUp(state);
+  state.repeatNote = '';
+  const answer = await askGemini(system, wakePrompt, 2, images);
   const startedAt = Date.now();
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
   state.thoughts = state.thoughts.filter((t) => Date.parse(t.at) <= startedAt);
@@ -737,15 +730,7 @@ async function wakeUp() {
     applyResult(state, { ...st, mood_after: i === steps.length - 1 ? answer.mood_after : undefined, new_idea: i === 0 ? answer.new_idea : null })
   );
 
-  // Making things, building at the workbench, and the chest. At most one new design per wake-up.
-  for (const b of state.builds) {
-    // A build whose last session lay in a plan that was cut short goes back one session; finished ones are tidied away.
-    if (b.finishedAt && Date.parse(b.finishedAt) > startedAt) {
-      delete b.finishedAt;
-      b.done = Math.max(0, b.sessions - 1);
-    }
-  }
-  state.builds = state.builds.filter((b) => !b.finishedAt);
+  // Making things and the chest. At most one new design per wake-up.
   let madeOne = false;
   steps.forEach((st, i) => {
     const stepStart = startedAt + i * stepMs;
@@ -757,37 +742,6 @@ async function wakeUp() {
       madeOne = true;
       st.made = makeDecor(state.decor, st.details, stepStart);
       if (st.made.entry) state.decor.push(st.made.entry);
-    }
-    if (st.action === 'start_build') {
-      if (!state.tools?.workbench) st.made = { failed: 'he has no workbench yet. He can ask Bas for one' };
-      else if (madeOne) st.made = { failed: 'one new thing per wake-up is enough' };
-      else {
-        madeOne = true;
-        const r = startBuild(state.builds, state.decor, st.details);
-        if (r.entry) {
-          state.builds.push(r.entry);
-          st.made = { build: { id: r.entry.id, from: 0, to: 0, total: r.entry.sessions, start: true } };
-        } else st.made = r;
-      }
-    }
-    if (st.action === 'work_on') {
-      const w = state.tools?.workbench ? workOn(state.builds, st.details.name) : null;
-      if (!w) st.made = { failed: state.tools?.workbench ? 'he has nothing like that on his workbench' : 'he has no workbench yet' };
-      else {
-        st.made = { build: { id: w.build.id, from: w.from, to: w.to, total: w.build.sessions } };
-        if (w.to >= w.build.sessions && w.to > w.from) {
-          const fin = finishBuild(state.decor, w.build, stepStart + stepMs);
-          if (fin.entry) {
-            state.decor.push(fin.entry);
-            w.build.finishedAt = new Date(stepStart + stepMs).toISOString(); // it stays on the bench until this last session ends
-            Object.assign(st.made.build, { finished: true });
-            st.made.entry = fin.entry;
-          } else {
-            w.build.done = w.from;
-            st.made = { failed: `he could not finish it: ${fin.failed}` };
-          }
-        }
-      }
     }
     if (st.action === 'remove_decoration') st.made = storeAway(state.decor, state.stored, st.details.name);
     if (st.action === 'take_out') {
@@ -877,8 +831,6 @@ async function wakeUp() {
     if (st.action === 'decorate') Object.assign(entry, { project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
-    if (st.action === 'start_build') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), sessions: st.made?.build?.total ?? null, failed: st.made?.failed ?? null });
-    if (st.action === 'work_on') Object.assign(entry, { name: text(d.name, 60), from: st.made?.build?.from ?? null, to: st.made?.build?.to ?? null, total: st.made?.build?.total ?? null, finished: Boolean(st.made?.build?.finished), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     state.log.push(entry);
   });
   state.log = state.log.slice(-150);
@@ -890,7 +842,7 @@ async function wakeUp() {
     thought: text(answer.thought, 200),
     inner: text(answer.inner, 600),
     sent: sent.length > 0,
-    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.build ? { build: st.made.build } : st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : st.made?.stored ? { chest: true } : null })),
+    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : st.made?.stored ? { chest: true } : null })),
     action: steps[0].action,
     details: steps[0].details,
     detail: results[0].detail,
@@ -920,7 +872,6 @@ async function wakeUp() {
     if (st.made?.failed) console.log(`      🛠️  did not work out: ${st.made.failed}`);
     if (st.made?.removed) console.log(`      🛠️  took away "${st.made.removed}"`);
     if (st.made?.stored) console.log(`      📦 put "${st.made.stored}" in the chest`);
-    if (st.made?.build) console.log(`      🔨 ${st.made.build.start ? 'started' : 'worked on'} a build: session ${st.made.build.to} of ${st.made.build.total}${st.made.build.finished ? ' (finished!)' : ''}`);
     if (st.ate?.failed) console.log(`      🍽️  not hungry yet: ${st.ate.failed}`);
   });
   if (answer.new_idea) console.log(`💡 ${answer.new_idea}`);
