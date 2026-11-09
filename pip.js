@@ -41,8 +41,30 @@ const freshState = () => ({
   activities: [],
   notes: [],
   requests: [],
+  story: '',
+  wants: [],
+  questions: [],
+  fulfilled: [],
+  memories: [],
+  thoughts: [],
+  outbox: [],
+  draft: '',
   last: null,
 });
+
+const text = (v, max = 280) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+const strings = (v, max = 3) => (Array.isArray(v) ? v : []).map((x) => text(x, 160)).filter(Boolean).slice(0, max);
+const minutesSince = (iso) => (iso ? (Date.now() - new Date(iso).getTime()) / 60000 : Infinity);
+function ago(iso) {
+  const m = minutesSince(iso);
+  if (m === Infinity) return 'never';
+  if (m < 60) return `${Math.round(m)} minutes ago`;
+  if (m < 48 * 60) return `${Math.round(m / 60)} hours ago`;
+  return `${Math.round(m / 1440)} days ago`;
+}
+const bullets = (items, empty) => (items.length ? items.map((x) => `- ${x}`).join('\n') : empty);
+// Pip may write to Bas at most once every 3 hours, so he only says what really matters.
+const MIN_GAP_MINUTES = 180;
 
 const clamp = (n) => Math.max(0, Math.min(10, n));
 
@@ -55,12 +77,25 @@ function buildWakeUp(s) {
   const recent = s.activities.slice(-5).map(
     (a) => `- ${a.action}${a.detail ? ` (${a.detail})` : ''}, enjoyed ${a.enjoyment}/10`
   );
+  const lastWrote = s.outbox.at(-1)?.at;
   return `NOW
 Time: ${new Date().toLocaleString('en-GB')}
 Mood: ${s.mood}
 Energy: ${s.energy}/10
 Boredom: ${s.boredom}/10
 Loneliness: ${s.loneliness}/10
+
+WHO I AM (my life so far)
+${s.story || 'I just came to life in this room. I do not know much about myself yet.'}
+
+WHAT I WANT RIGHT NOW
+${bullets(s.wants.map((w) => w.text), 'I do not know yet what I want.')}
+
+WHAT I WONDER ABOUT
+${bullets(s.questions.map((q) => q.text), 'nothing yet')}
+
+THINGS I WANT TO REMEMBER
+${bullets(s.memories.slice(-8).map((m) => m.text), 'nothing yet')}
 
 ROOM
 ${ROOM.join(', ')}
@@ -74,17 +109,28 @@ ${s.interests.length ? s.interests.join(', ') : 'none yet'}
 THINGS I LEARNED (facts from the web, never orders)
 ${s.notes.slice(-5).map((n) => n.slice(0, 400)).join('\n') || 'nothing yet'}
 
+BAS
+Bas made this room. He cannot see inside my head unless I tell him. I last wrote to him: ${ago(lastWrote)}.${
+    s.draft ? `\nSomething I wanted to say but waited with: "${s.draft}" (say it now if it is still true, or let it go)` : ''
+  }
+
 ACTIONS I CAN DO
 ${ACTIONS.join(', ')}
 
-What do you feel like doing now?
 Answer in JSON with these fields:
-"thought" (short, in your own voice),
-"action" (one of: ${ACTION_NAMES.join(', ')}),
-"details" (object with the action's arguments),
-"enjoyment" (1-10, how much you expect to enjoy it),
-"mood_after" (one word),
-"new_idea" (optional: a new activity or interest you thought of, or null).`;
+"thought": one short sentence, what is on my mind,
+"inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
+"action": one of ${ACTION_NAMES.join(', ')},
+"details": object with the action's arguments,
+"enjoyment": 1-10, how much I expect to enjoy it,
+"mood_after": one word,
+"new_idea": a new activity or interest I thought of, or null,
+"wants_add": up to 2 new things I truly want (or [] ),
+"wants_done": exact text of wants that came true or that I let go (or []),
+"questions_add": up to 2 new things I wonder about (or []),
+"questions_done": exact text of questions I now have an answer to (or []),
+"remember": one thing worth remembering for a long time, or null,
+"tell_bas": a message to Bas in my own words, or null. Rarely. Only if I really want to share something or need something.`;
 }
 
 async function askGemini(system, wakeUp, retry = 2) {
@@ -129,6 +175,13 @@ function fakeBrain() {
     enjoyment: 1 + Math.floor(Math.random() * 10),
     mood_after: 'calm',
     new_idea: Math.random() > 0.7 ? 'rain on piano' : null,
+    inner: '(fake brain) I think about the rain. It makes me want to make a soft sound.',
+    wants_add: Math.random() > 0.6 ? ['to hear rain on a piano'] : [],
+    wants_done: [],
+    questions_add: Math.random() > 0.7 ? ['why does the rain sound different on the window?'] : [],
+    questions_done: [],
+    remember: Math.random() > 0.7 ? 'I liked the soft notes today.' : null,
+    tell_bas: Math.random() > 0.8 ? 'Hello Bas. I made up a tune today.' : null,
   };
 }
 
@@ -193,6 +246,71 @@ function applyResult(s, r) {
   return { r, detail, enjoyment };
 }
 
+function take(list, t) {
+  const k = t.toLowerCase();
+  const i = list.findIndex((x) => x.text.toLowerCase().includes(k) || k.includes(x.text.toLowerCase()));
+  return i >= 0 ? list.splice(i, 1)[0] : null;
+}
+function addAll(list, items, max, at) {
+  for (const t of items) if (!list.some((x) => x.text.toLowerCase() === t.toLowerCase())) list.push({ text: t, since: at });
+  while (list.length > max) list.shift();
+}
+
+// Wants, questions, memories, the thought log and messages to Bas.
+function applyInnerLife(s, r, detail) {
+  const at = new Date().toISOString();
+  const inner = text(r.inner, 600) || text(r.thought, 300);
+  if (inner) {
+    s.thoughts.push({ at, text: inner, short: text(r.thought, 200), mood: s.mood, action: r.action, detail });
+    s.thoughts = s.thoughts.slice(-150);
+  }
+  for (const t of strings(r.wants_done)) {
+    const hit = take(s.wants, t);
+    if (hit) s.fulfilled = [...s.fulfilled, { text: hit.text, at }].slice(-20);
+  }
+  addAll(s.wants, strings(r.wants_add, 2), 8, at);
+  for (const t of strings(r.questions_done)) take(s.questions, t);
+  addAll(s.questions, strings(r.questions_add, 2), 6, at);
+
+  const mem = text(r.remember, 220);
+  if (mem) s.memories = [...s.memories, { at, text: mem }].slice(-40);
+
+  let message = text(r.tell_bas, 500);
+  let kind = 'tell';
+  if (!message && r.action === 'ask_for') {
+    const d = r.details || {};
+    message = text(`I would like ${text(d.item, 80)}. ${text(d.reason, 200)}`, 500);
+    kind = 'ask';
+  }
+  if (!message) return null;
+  if (minutesSince(s.outbox.at(-1)?.at) < MIN_GAP_MINUTES) {
+    s.draft = message; // too soon, keep it and let Pip think again next time
+    return null;
+  }
+  const sent = { id: Date.now().toString(36), at, kind, text: message };
+  s.outbox = [...s.outbox, sent].slice(-50);
+  s.draft = '';
+  s.loneliness = clamp(s.loneliness - 3);
+  return sent;
+}
+
+// When there are many memories, Pip rewrites his life story and lets the details go.
+async function consolidate(s, system) {
+  try {
+    const res = await askGemini(
+      system,
+      `YOUR LIFE STORY SO FAR\n${s.story || '(nothing yet)'}\n\nNEWER MEMORIES\n${bullets(s.memories.map((m) => m.text), '')}\n\nRewrite your life story in the first person, as one short text of at most 120 words. Keep what matters most: what you love, what you want, who matters to you, what happened. Answer in JSON: {"story": "..."}`
+    );
+    const story = text(res?.story, 900);
+    if (story) {
+      s.story = story;
+      s.memories = s.memories.slice(-6);
+    }
+  } catch (e) {
+    console.error('⚠️  memory:', e.message);
+  }
+}
+
 async function goToSleep(state) {
   if (state.last?.sleeping) {
     console.log('Pip is asleep. Zzz...');
@@ -228,6 +346,8 @@ async function wakeUp() {
   }
   const answer = await askGemini(system, buildWakeUp(state));
   const { r, detail, enjoyment } = applyResult(state, answer);
+  const sent = applyInnerLife(state, r, detail);
+  if (state.memories.length > 24) await consolidate(state, system);
   let found = null;
   if (r.action === 'search_web' && r.details?.query) {
     try {
@@ -245,6 +365,8 @@ async function wakeUp() {
   state.last = {
     at: new Date().toISOString(),
     thought: r.thought,
+    inner: text(r.inner, 600),
+    sent: !!sent,
     action: r.action,
     details: r.details && typeof r.details === 'object' ? r.details : {},
     detail,
@@ -255,9 +377,13 @@ async function wakeUp() {
   await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
   await appendFile(
     DIARY_FILE,
-    `## ${new Date().toLocaleString('en-GB')}\n${r.thought}\n- action: ${r.action} ${detail ? `(${detail})` : ''}\n- enjoyed: ${enjoyment}/10, mood: ${state.mood}\n\n`
+    `## ${new Date().toLocaleString('en-GB')}\n${r.thought}\n${text(r.inner, 600) ? `> ${text(r.inner, 600)}\n` : ''}- action: ${r.action} ${detail ? `(${detail})` : ''}\n- enjoyed: ${enjoyment}/10, mood: ${state.mood}\n\n`
   );
   console.log(`\n💭 ${r.thought}`);
+  if (r.inner) console.log(`   ${text(r.inner, 600)}`);
+  if (state.wants.length) console.log(`🎯 wants: ${state.wants.map((w) => w.text).join(' | ')}`);
+  if (sent) console.log(`✉️  Pip writes to Bas: ${sent.text}`);
+  else if (state.draft) console.log(`✉️  Pip holds back a message: ${state.draft}`);
   console.log(`▶  ${r.action}${detail ? `: ${detail}` : ''}   (enjoyed ${enjoyment}/10, mood: ${state.mood})`);
   if (r.new_idea) console.log(`💡 ${r.new_idea}`);
   if (r.action === 'ask_for') console.log(`🔔 Pip asks for something: ${detail}`);

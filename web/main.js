@@ -597,8 +597,65 @@ function el(tag, text, cls) {
 function fill(node, children) {
   node.replaceChildren(...children);
 }
+function when(iso) {
+  const d = new Date(iso);
+  const hm = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  return d.toDateString() === new Date().toDateString() ? hm : `${d.toLocaleDateString([], { day: 'numeric', month: 'short' })} ${hm}`;
+}
+function store(key, value) {
+  try {
+    if (value === undefined) return localStorage.getItem(key);
+    localStorage.setItem(key, value);
+  } catch {}
+  return null;
+}
+function entry(meta, body, cls) {
+  const li = el('li', null, 'item' + (cls ? ' ' + cls : ''));
+  const m = el('div', null, 'meta');
+  meta.forEach((t) => m.append(el('span', t)));
+  li.append(m, el('p', body));
+  return li;
+}
+const empty = (t) => [el('li', t, 'muted')];
+
+// tabs
+let tab = store('pip-tab') || 'thoughts';
+let latestMsg = null;
+function showTab(name) {
+  tab = name;
+  store('pip-tab', name);
+  document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+  document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
+  if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
+  $('msgdot').classList.toggle('on', name !== 'messages' && !!latestMsg && latestMsg !== store('pip-seen'));
+}
+document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
+
 function render(s) {
   $('mood').textContent = s.mood || '…';
+
+  const thoughts = (s.thoughts || []).slice().reverse();
+  fill($('thoughts'), thoughts.length
+    ? thoughts.map((t) => entry([when(t.at), `${ICON[t.action] || '•'} ${(t.action || '').replace('_', ' ')}${t.detail ? ': ' + t.detail : ''}`, t.mood || ''].filter(Boolean), t.text))
+    : empty('Pip has not thought anything yet.'));
+
+  const wants = s.wants || [];
+  fill($('wants'), wants.length ? wants.map((w) => entry([`since ${when(w.since)}`], w.text)) : empty('Pip does not know yet what he wants.'));
+  const qs = s.questions || [];
+  fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
+  const done = (s.fulfilled || []).slice().reverse();
+  fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
+  const interests = s.interests || [];
+  fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
+
+  const msgs = (s.outbox || []).slice().reverse();
+  latestMsg = msgs[0]?.id ?? null;
+  fill($('messages'), msgs.length
+    ? msgs.map((m) => entry([when(m.at), m.kind === 'ask' ? '🙏 Pip asks for something' : '✉️ Pip writes to you'], m.text, m.kind === 'ask' ? 'ask' : ''))
+    : empty('Pip has not written to you yet. He only writes when something really matters to him.'));
+  showTab(tab);
+
+  $('story').textContent = s.story || 'Pip has only just come to life. His story starts here.';
   fill($('bars'), [['Energy', s.energy], ['Boredom', s.boredom], ['Lonely', s.loneliness]].map(([name, val]) => {
     const row = el('div', null, 'bar');
     const track = el('div', null, 'track');
@@ -608,16 +665,12 @@ function render(s) {
     row.append(el('span', name), track);
     return row;
   }));
-  const interests = s.interests || [];
-  fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
-  const open = (s.requests || []).filter((r) => r.status === 'open').slice(-5);
-  fill($('requests'), open.length ? open.map((r) => el('li', '🙏 ' + r.detail)) : [el('li', 'nothing right now', 'muted')]);
   const recent = (s.activities || []).slice(-6).reverse();
   fill($('recent'), recent.length
     ? recent.map((a) => el('li', `${ICON[a.action] || '•'} ${a.action.replace('_', ' ')}${a.detail ? ': ' + a.detail : ''}`))
-    : [el('li', 'Pip has not done anything yet.', 'muted')]);
-  const note = (s.notes || []).slice(-1)[0];
-  $('learned').textContent = note || 'nothing yet';
+    : empty('Pip has not done anything yet.'));
+  $('learned').textContent = (s.notes || []).slice(-1)[0] || 'nothing yet';
+
   $('err').textContent = s._error ? '⚠️ ' + s._error : '';
   $('wake').disabled = !!s._waking;
   $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
