@@ -28,7 +28,8 @@ function fitCamera() {
 }
 new ResizeObserver(fitCamera).observe(stage);
 
-scene.add(new THREE.HemisphereLight(0xfff3e6, 0xc9a98d, 0.9));
+const hemi = new THREE.HemisphereLight(0xfff3e6, 0xc9a98d, 0.9);
+scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffe9d2, 1.3);
 sun.position.set(6, 11, 7);
 sun.castShadow = true;
@@ -67,6 +68,11 @@ rug.castShadow = false;
 // window (sky depends on the real time of day)
 const hour = new Date().getHours();
 const night = hour < 7 || hour >= 20;
+if (night) {
+  hemi.intensity = 0.45;
+  sun.intensity = 0.35;
+  lamp.intensity = 18;
+}
 box(scene, [2.4, 2.2, 0.1], 0xffffff, [0.3, 2.9, -4.98]);
 box(scene, [2, 1.8, 0.05], night ? 0x1d2a4a : 0x9ad0f5, [0.3, 2.9, -4.93], {
   emissive: night ? 0x0b1226 : 0x6fb4e6,
@@ -118,7 +124,31 @@ box(scene, [1.3, 0.1, 2], 0xb98a62, [-4.3, 0.8, 1.2]);
 box(scene, [0.1, 0.8, 1.9], 0x9a6f4b, [-3.75, 0.4, 1.2]);
 box(scene, [0.1, 0.8, 1.9], 0x9a6f4b, [-4.85, 0.4, 1.2]);
 box(scene, [0.1, 0.8, 1.1], 0x222222, [-4.55, 1.3, 1.2]);
-box(scene, [0.02, 0.65, 0.95], 0x8fd3ff, [-4.49, 1.3, 1.2], { emissive: 0x4aa8e0, emissiveIntensity: 0.9 });
+const screenCanvas = document.createElement('canvas');
+screenCanvas.width = 128;
+screenCanvas.height = 160;
+const sctx = screenCanvas.getContext('2d');
+const screenTex = new THREE.CanvasTexture(screenCanvas);
+let screenScroll = 0;
+function drawScreen(typing) {
+  if (typing) screenScroll += 1;
+  sctx.fillStyle = '#0f2a3d';
+  sctx.fillRect(0, 0, 128, 160);
+  for (let i = -1; i < 13; i++) {
+    const row = i + screenScroll;
+    const w = 20 + ((row * 37) % 80);
+    sctx.fillStyle = row % 5 === 0 ? '#ffd27a' : '#8fd3ff';
+    sctx.fillRect(10 + ((row * 13) % 3) * 6, 10 + i * 12 + (typing ? 0 : 0), w, 5);
+  }
+  if (Math.floor(performance.now() / 500) % 2) {
+    sctx.fillStyle = '#ffffff';
+    sctx.fillRect(10, 148, 8, 6);
+  }
+  screenTex.needsUpdate = true;
+}
+drawScreen(false);
+const screenMesh = box(scene, [0.02, 0.65, 0.95], 0x8fd3ff, [-4.49, 1.3, 1.2]);
+screenMesh.material = new THREE.MeshBasicMaterial({ map: screenTex });
 box(scene, [0.1, 0.3, 0.2], 0x222222, [-4.55, 0.95, 1.2]);
 box(scene, [0.4, 0.04, 0.8], 0x444444, [-4.0, 0.87, 1.2]);
 
@@ -192,8 +222,14 @@ function makePip() {
   book.position.set(0, 0.55, 0.55);
   book.visible = false;
   group.add(book);
+  const pageHinge = new THREE.Group();
+  pageHinge.position.set(0, 0.03, 0);
+  const page = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.012, 0.23), mat(0xfff6e0));
+  page.position.set(0.08, 0, 0);
+  pageHinge.add(page);
+  book.add(pageHinge);
 
-  return { group, body, eyes, arms, feet, book };
+  return { group, body, eyes, arms, feet, book, pageHinge };
 }
 const pip = makePip();
 scene.add(pip.group);
@@ -271,36 +307,103 @@ $('sound').addEventListener('click', () => {
   });
 });
 
-// ---------------------------------------------------------------- what Pip does
-let task = null;
-let bubbleUntil = 0;
-const bubble = $('bubble');
-function say(text, secs = 9) {
-  bubble.textContent = text;
-  bubble.style.opacity = 1;
-  bubbleUntil = performance.now() + secs * 1000;
+// ---------------------------------------------------------------- floating signs (symbols, no words)
+const glyphCache = {};
+function glyph(ch, color) {
+  const key = ch + color;
+  if (!glyphCache[key]) {
+    const c = document.createElement('canvas');
+    c.width = c.height = 64;
+    const x = c.getContext('2d');
+    x.font = 'bold 46px system-ui, sans-serif';
+    x.textAlign = 'center';
+    x.textBaseline = 'middle';
+    x.fillStyle = color;
+    x.fillText(ch, 32, 34);
+    glyphCache[key] = new THREE.CanvasTexture(c);
+  }
+  return glyphCache[key];
 }
+const floaters = [];
+const tmpV = new V3();
+function headPos() {
+  pip.eyes[0].getWorldPosition(tmpV);
+  return tmpV.clone().add(new V3(0, 0.55, 0));
+}
+function floatSign(ch, color, pos, { life = 2.2, rise = 0.5, size = 0.45 } = {}) {
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glyph(ch, color), transparent: true, depthTest: false }));
+  sp.position.copy(pos);
+  sp.scale.setScalar(size);
+  scene.add(sp);
+  floaters.push({ sp, born: performance.now(), life: life * 1000, rise, drift: (Math.random() - 0.5) * 0.25 });
+}
+function updateFloaters(dt, now) {
+  for (let i = floaters.length - 1; i >= 0; i--) {
+    const f = floaters[i];
+    const a = (now - f.born) / f.life;
+    if (a >= 1) {
+      scene.remove(f.sp);
+      f.sp.material.dispose();
+      floaters.splice(i, 1);
+    } else {
+      f.sp.position.y += f.rise * dt;
+      f.sp.position.x += f.drift * dt;
+      f.sp.material.opacity = 1 - a * a;
+    }
+  }
+}
+
+// ---------------------------------------------------------------- piano phrases
+const FREQ = (letter, oct) => 440 * 2 ** (oct - 4 + (SEMI[letter] - 9) / 12);
+const SCALE = [['C', 4], ['D', 4], ['E', 4], ['G', 4], ['A', 4], ['C', 5], ['D', 5], ['E', 5]].map(([letter, oct]) => ({
+  letter,
+  freq: FREQ(letter, oct),
+}));
+const rand = (a, b) => a + Math.random() * (b - a);
+// A short made-up tune that wanders up and down inside the notes Pip chose.
+function improvise(palette) {
+  const pool = (palette.length >= 3 ? palette : SCALE).slice().sort((a, b) => a.freq - b.freq);
+  let i = Math.floor(Math.random() * pool.length);
+  const out = [];
+  const len = 3 + Math.floor(Math.random() * 5);
+  for (let n = 0; n < len; n++) {
+    out.push(pool[i]);
+    i = Math.max(0, Math.min(pool.length - 1, i + [-2, -1, -1, 1, 1, 2][Math.floor(Math.random() * 6)]));
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------- what Pip does
+// Pip keeps doing his chosen activity until the next wake-up, with small breaks in between.
+let task = null;
 
 function planFor(last) {
   const d = last.details || {};
   switch (last.action) {
     case 'play_piano': {
       const notes = parseNotes(d.notes);
-      const step = stepFor(d.style);
-      return { at: 'piano', anim: 'play', notes, step, dur: notes.length * step * 1000 + 1500 };
+      return { at: 'piano', anim: 'play', notes, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
     }
-    case 'read_book': return { at: 'bookshelf', anim: 'read', dur: 7000 };
-    case 'search_web': return { at: 'computer', anim: 'search', dur: 7000 };
-    case 'write_diary': return { at: 'center', anim: 'write', dur: 7000 };
-    case 'rest': return { at: 'bed', anim: 'rest', dur: Infinity };
-    case 'ask_for': return { at: 'center', anim: 'ask', dur: 6000 };
-    default: return { at: resolveSpot(d.object), anim: 'look', dur: 5000 };
+    case 'read_book': return { at: 'bookshelf', anim: 'read' };
+    case 'search_web': return { at: 'computer', anim: 'search' };
+    case 'write_diary': return { at: 'center', anim: 'write' };
+    case 'rest': return { at: 'bed', anim: 'rest' };
+    case 'ask_for': return { at: 'center', anim: 'ask' };
+    default: return { at: resolveSpot(d.object), anim: 'look' };
   }
 }
 function startTask(last) {
   const plan = planFor(last);
-  task = { ...plan, spot: SPOTS[plan.at], phase: 'walk', t0: 0, last };
-  say(last.thought || '…', 10);
+  task = { ...plan, spot: SPOTS[plan.at], last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
+}
+function startPhrase(notes, step, now) {
+  task.phrase = { notes, step, t0: now, lastIdx: -1 };
+  playNotes(notes, step);
+}
+function startBreak() {
+  const options = ['window', 'plant', 'center', 'bookshelf', 'computer'].filter((n) => n !== task.at);
+  task.detour = { spot: SPOTS[options[Math.floor(Math.random() * options.length)]], until: 0 };
+  task.phrase = null;
 }
 
 function turnTo(angle, t) {
@@ -312,44 +415,92 @@ function turnTo(angle, t) {
 
 let blinkAt = 3;
 let blinkEnd = 0;
+let nextSign = 0;
+let pageStart = 0;
+let nextPage = 0;
+let screenNext = 0;
+
 function frame(now, dt) {
   const t = now / 1000;
   const g = pip.group;
-  const { body, eyes, arms, feet, book } = pip;
+  const { body, eyes, arms, feet, book, pageHinge } = pip;
 
-  // phase changes
-  if (task?.phase === 'walk') {
-    const to = task.spot.p.clone().sub(g.position);
+  // --- where is Pip and what is he doing right now?
+  let walking = false;
+  let engaged = false;
+  let anim = 'idle';
+  if (task) {
+    const spot = task.detour ? task.detour.spot : task.spot;
+    const to = spot.p.clone().sub(g.position);
     to.y = 0;
     const dist = to.length();
-    g.rotation.x = lerp(g.rotation.x, 0, dt * 8);
-    g.position.y = lerp(g.position.y, 0, dt * 8);
-    if (dist < 0.06) {
-      task.phase = 'do';
-      task.t0 = now;
-      if (task.anim === 'play') playNotes(task.notes, task.step);
-      if (task.anim === 'search' && task.last.found) say(`📖 ${task.last.found.title}`, 12);
-      if (task.anim === 'ask') say('❗ ' + (task.last.detail || 'I need something'), 12);
-      if (task.anim === 'rest') say('Zzz…', 30);
-    } else {
+    if (dist > 0.06) {
+      walking = true;
+      g.rotation.x = lerp(g.rotation.x, 0, dt * 8);
+      g.position.y = lerp(g.position.y, 0, dt * 8);
       g.position.addScaledVector(to.normalize(), Math.min(dist, 2.2 * dt));
       turnTo(Math.atan2(to.x, to.z), dt * 10);
+    } else {
+      turnTo(spot.face, dt * 6);
+      g.position.y = lerp(g.position.y, spot.y || 0, dt * 6);
+      g.rotation.x = lerp(g.rotation.x, spot.rx || 0, dt * 6);
+      if (task.detour) {
+        anim = 'look';
+        if (!task.detour.until) task.detour.until = now + rand(5000, 10000);
+        else if (now > task.detour.until) {
+          task.detour = null;
+          task.nextPhraseAt = now + 1500;
+          task.nextBreak = now + rand(60_000, 110_000);
+        }
+      } else {
+        if (!task.arrived) {
+          task.arrived = true;
+          if (task.anim === 'play') startPhrase(task.notes, task.step, now);
+          if (task.anim === 'ask') task.askUntil = now + 9000;
+          task.nextBreak = task.anim === 'rest' ? Infinity : now + rand(40_000, 80_000);
+        }
+        anim = task.anim;
+        engaged = true;
+        if (now > task.nextBreak) startBreak();
+      }
     }
-  } else if (task) {
-    turnTo(task.spot.face, dt * 6);
-    g.position.y = lerp(g.position.y, task.spot.y || 0, dt * 6);
-    g.rotation.x = lerp(g.rotation.x, task.spot.rx || 0, dt * 6);
-    if (task.phase === 'do' && now - task.t0 > task.dur) task.phase = 'stay';
   }
 
-  // body pose
-  const walking = task?.phase === 'walk' && task.spot.p.distanceTo(g.position) > 0.06;
-  const active = task?.phase === 'do';
-  const anim = task?.anim;
-  const sleeping = anim === 'rest' && !walking;
+  // --- piano: play the planned tune, then keep improvising
+  let phraseIdx = -1;
+  if (engaged && anim === 'play') {
+    if (task.phrase) {
+      phraseIdx = Math.floor((now - task.phrase.t0) / (task.phrase.step * 1000));
+      if (phraseIdx >= task.phrase.notes.length) {
+        task.phrase = null;
+        task.nextPhraseAt = now + rand(2500, 7000);
+        phraseIdx = -1;
+      } else if (phraseIdx !== task.phrase.lastIdx) {
+        task.phrase.lastIdx = phraseIdx;
+        floatSign('♪', '#ffd27a', headPos().add(new V3(rand(-0.4, 0.4), 0.15, 0)), { life: 2, rise: 0.5 });
+      }
+    } else if (now >= task.nextPhraseAt) {
+      startPhrase(improvise(task.palette), rand(0.35, 0.7), now);
+    }
+  }
+
+  // --- signs
+  if (engaged && anim === 'rest' && now > nextSign) {
+    nextSign = now + 1600;
+    floatSign('z', '#bcd8ff', headPos(), { life: 2.6, rise: 0.35, size: 0.5 });
+  }
+  const asking = engaged && anim === 'ask' && now < task.askUntil;
+  if (asking && now > nextSign) {
+    nextSign = now + 1100;
+    floatSign('!', '#ff8a5c', headPos(), { life: 1.4, rise: 0.3, size: 0.6 });
+  }
+
+  // --- pose
+  const sleeping = engaged && anim === 'rest';
   body.position.set(0, 0, 0);
   body.rotation.set(0, 0, 0);
-  book.visible = false;
+  const reading = engaged && (anim === 'read' || anim === 'write');
+  book.visible = reading;
   const base = (s) => [s * 0.5, 0.55, 0.1];
   let la = base(-1);
   let ra = base(1);
@@ -366,23 +517,25 @@ function frame(now, dt) {
   } else {
     body.position.y = Math.sin(t * 2) * 0.012;
     if (anim === 'play') {
-      la = [-0.3, 0.55, 0.4 + (active ? Math.max(0, Math.sin(t * 9)) * 0.03 : 0)];
-      ra = [0.3, 0.55, 0.4 + (active ? Math.max(0, Math.sin(t * 9 + Math.PI)) * 0.03 : 0)];
-      if (active) body.rotation.z = Math.sin(t * 2.5) * 0.06;
+      const playing = phraseIdx >= 0;
+      la = [-0.3, 0.55, 0.4 + (playing ? Math.max(0, Math.sin(t * 9)) * 0.03 : 0)];
+      ra = [0.3, 0.55, 0.4 + (playing ? Math.max(0, Math.sin(t * 9 + Math.PI)) * 0.03 : 0)];
+      if (playing) body.rotation.z = Math.sin(t * 2.5) * 0.06;
+      else body.rotation.y = Math.sin(t * 0.7) * 0.12;
     } else if (anim === 'read' || anim === 'write') {
       la = [-0.28, 0.5, 0.4];
-      ra = [0.28, 0.5, 0.4];
-      book.visible = true;
+      ra = [0.28 + (anim === 'write' ? Math.sin(t * 6) * 0.05 : 0), 0.5, 0.4];
       body.rotation.x = 0.1;
-      if (anim === 'write' && active) ra = [0.28 + Math.sin(t * 6) * 0.05, 0.5, 0.4];
     } else if (anim === 'search') {
-      la = [-0.32, 0.5 + (active ? Math.sin(t * 14) * 0.03 : 0), 0.4];
-      ra = [0.32, 0.5 + (active ? Math.sin(t * 14 + 2) * 0.03 : 0), 0.4];
-    } else if (anim === 'ask' && active) {
-      body.position.y = Math.abs(Math.sin(t * 5)) * 0.25;
-      ra = [0.5 + Math.sin(t * 10) * 0.1, 1.0, 0.1];
+      la = [-0.32, 0.5 + Math.sin(t * 14) * 0.03, 0.4];
+      ra = [0.32, 0.5 + Math.sin(t * 14 + 2) * 0.03, 0.4];
+    } else if (anim === 'ask') {
+      if (asking) {
+        body.position.y = Math.abs(Math.sin(t * 5)) * 0.25;
+        ra = [0.5 + Math.sin(t * 10) * 0.1, 1.0, 0.1];
+      } else body.rotation.y = Math.sin(t * 0.9) * 0.3;
     } else if (anim === 'look') {
-      body.rotation.y = Math.sin(t * 0.8) * 0.25;
+      body.rotation.y = Math.sin(t * 0.8) * 0.3;
     }
   }
   arms[0].position.set(...la);
@@ -390,15 +543,29 @@ function frame(now, dt) {
   feet[0].position.set(...fl);
   feet[1].position.set(...fr);
 
-  // keys
-  Object.values(keys).forEach((k) => (k.position.y = 0.93));
-  if (anim === 'play' && active) {
-    const idx = Math.floor((now - task.t0) / (task.step * 1000));
-    const n = task.notes[idx];
-    if (n) keys[n.letter].position.y = 0.9;
+  // --- page turns while reading or writing
+  if (reading) {
+    if (!pageStart && now > nextPage) pageStart = now;
+    if (pageStart) {
+      const p = (now - pageStart) / 700;
+      if (p >= 1) {
+        pageStart = 0;
+        nextPage = now + rand(4000, 9000);
+        pageHinge.rotation.z = 0;
+      } else pageHinge.rotation.z = p * Math.PI;
+    }
   }
 
-  // blink
+  // --- piano keys and the computer screen
+  Object.values(keys).forEach((k) => (k.position.y = 0.93));
+  if (phraseIdx >= 0) keys[task.phrase.notes[phraseIdx].letter].position.y = 0.9;
+  const typing = engaged && anim === 'search';
+  if (now > screenNext) {
+    drawScreen(typing);
+    screenNext = now + (typing ? 120 : 1500);
+  }
+
+  // --- blink
   if (t > blinkAt) {
     blinkEnd = t + 0.13;
     blinkAt = t + 3 + Math.random() * 3;
@@ -407,25 +574,12 @@ function frame(now, dt) {
   eyes.forEach((e) => (e.scale.y = closed ? 0.1 : 1));
 }
 
-function placeBubble(now) {
-  if (now > bubbleUntil) bubble.style.opacity = 0;
-  const w = stage.clientWidth;
-  const v = new V3();
-  pip.group.getWorldPosition(v);
-  v.y += pip.group.rotation.x ? 1.2 : 1.9;
-  v.project(camera);
-  const x = Math.max(130, Math.min(w - 130, (v.x * 0.5 + 0.5) * w));
-  const y = Math.max(bubble.offsetHeight + 12, (-v.y * 0.5 + 0.5) * stage.clientHeight);
-  bubble.style.left = x + 'px';
-  bubble.style.top = y + 'px';
-}
-
 let prev = performance.now();
 function loop(now) {
   const dt = Math.min(0.3, (now - prev) / 1000);
   prev = now;
   frame(now, dt);
-  placeBubble(now);
+  updateFloaters(dt, now);
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
@@ -495,7 +649,6 @@ async function poll() {
       delay = 60_000;
       $('wake').hidden = true;
     }
-    if (s._waking && !waking) say('💭 …', 6);
     waking = !!s._waking;
     if (s.last && s.last.at !== seenAt) {
       seenAt = s.last.at;
@@ -512,7 +665,6 @@ poll();
 $('wake').addEventListener('click', () => {
   $('wake').disabled = true;
   fetch('/api/wake', { method: 'POST' });
-  say('💭 …', 6);
 });
 
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
