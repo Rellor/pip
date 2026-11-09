@@ -124,6 +124,8 @@ async function loadState() {
       .filter((a) => a.item);
   }
   const state = { ...freshState(), ...raw };
+  delete state.tools; // leftovers of the removed workbench
+  delete state.builds;
   ensureFeelings(state);
   return state;
 }
