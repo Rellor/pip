@@ -461,3 +461,10 @@ I want to know how thick the dust lanes of the Milky Way appear across the sky.
 - search_web (Milky Way dust lanes width naked eye): Let's see how wide those dark lanes look across the heavens.
 - mood: calm
 
+## 10/11/2026, 11:47:56
+I am very tired, so I want to rest quietly by the window.
+> My energy bar is low at 3, and my body feels heavy and slow. Resting by the window will let me watch the light change while I recover my strength. Afterward, I might feel ready to look at the stars again.
+- walk_to (window): I will walk slowly over to the window.
+- rest: I am resting quietly and letting my energy return.
+- mood: calm
+
