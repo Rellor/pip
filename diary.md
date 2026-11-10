@@ -412,3 +412,10 @@ I want to search for the appearance of the Orion Nebula under class 1 dark skies
 - rest: I will rest for a moment and let the quiet settle in.
 - mood: curious
 
+## 10/11/2026, 10:22:18
+Bas asked about a camera, and I want to tell him I would love one for stars.
+> Bas asked if I would like a camera for my room and for taking pictures of the stars outside. That feels so kind and exciting. I should write back to him and tell him how lovely that sounds. Then I will look out the window to enjoy the morning quiet.
+- walk_to (window): Walking to the window to think about Bas's message.
+- rest: Standing quietly by the window and feeling peaceful.
+- mood: warm
+
