@@ -18,17 +18,21 @@ scene.background = new THREE.Color(getComputedStyle(document.body).backgroundCol
 const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
-const orbit = { az: 0, el: 0, zoom: 1, px: 0, pz: 0 };
+const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0 };
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function applyOrbit() {
   const k = Math.max(1, 1.3 / camera.aspect);
   const base = new THREE.Vector3(9.5 * k, 9 * k * (1 + orbit.el), 11 * k).applyAxisAngle(new THREE.Vector3(0, 1, 0), orbit.az).multiplyScalar(orbit.zoom);
-  const target = new THREE.Vector3(orbit.px, 1.2, -0.3 + orbit.pz);
+  // How high or low the middle of the view may go: the top edge of the screen can reach just above the walls (5 high), the bottom edge the floor.
+  const dist = base.length();
+  const half = dist * Math.tan((camera.fov * Math.PI) / 360) * Math.sqrt(1 - (base.y / dist) ** 2);
+  orbit.py = clamp(orbit.py, Math.min(0, -0.3 + half - 1.2), Math.max(0, 5.3 - half - 1.2));
+  const target = new THREE.Vector3(orbit.px, 1.2 + orbit.py, -0.3 + orbit.pz);
   camera.position.copy(target).add(base);
   camera.lookAt(target);
 }
 function resetOrbit() {
-  Object.assign(orbit, { az: 0, el: 0, zoom: 1, px: 0, pz: 0 });
+  Object.assign(orbit, { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0 });
   if (view.mode === 'overview') applyOrbit();
 }
 function fitCamera() {
@@ -1056,13 +1060,16 @@ const spread = () => {
   const [p, q] = [...touches.values()];
   return { d: Math.hypot(p.x - q.x, p.y - q.y), x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
 };
-// Moves the middle of the overview camera over the floor, following the screen.
+// Slides the overview camera across the screen, so the room follows the fingers. It can go up to a little above the top of the walls.
 function panBy(dx, dy) {
-  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
-  const fwd = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2).setY(0).normalize();
-  const s = 0.012 * orbit.zoom;
-  orbit.px = clamp(orbit.px - right.x * dx * s - fwd.x * dy * s, -4, 4);
-  orbit.pz = clamp(orbit.pz - right.z * dx * s - fwd.z * dy * s, -4, 4);
+  camera.updateMatrixWorld();
+  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
+  const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
+  const dist = camera.position.distanceTo(new THREE.Vector3(orbit.px, 1.2 + orbit.py, -0.3 + orbit.pz));
+  const s = (2 * dist * Math.tan((camera.fov * Math.PI) / 360)) / (renderer.domElement.clientHeight || 600); // world units per pixel
+  orbit.px = clamp(orbit.px - (right.x * dx - up.x * dy) * s, -4, 4);
+  orbit.py = orbit.py - (right.y * dx - up.y * dy) * s; // applyOrbit keeps it between the floor and just above the walls
+  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, -4, 4);
 }
 dom.addEventListener('contextmenu', (e) => e.preventDefault());
 dom.addEventListener('pointerdown', (e) => {
