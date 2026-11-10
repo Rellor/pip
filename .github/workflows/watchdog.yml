@@ -41,7 +41,7 @@ jobs:
           git config user.name "pip-bot"
           git config user.email "pip-bot@users.noreply.github.com"
           git add web/health.json
-          git diff --cached --quiet || { git commit -m "Health check"; git pull --rebase -q; git push -q; }
+          git diff --cached --quiet || { git commit -m "Health check [skip ci]"; git pull --rebase -q; git push -q; }
 
       # Stuck: stop the old loop and start a fresh one, but at most once every 30 minutes.
       - name: Restart the loop
@@ -56,4 +56,4 @@ jobs:
           gh workflow run pip.yml --ref main
           node -e "const f='web/health.json',h=JSON.parse(require('fs').readFileSync(f,'utf8'));h.healedAt=new Date().toISOString();require('fs').writeFileSync(f,JSON.stringify(h)+'\n')"
           git add web/health.json
-          git commit -m "Health: restarted the loop" && git pull --rebase -q && git push -q
+          git commit -m "Health: restarted the loop [skip ci]" && git pull --rebase -q && git push -q

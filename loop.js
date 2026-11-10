@@ -17,7 +17,7 @@ function wakeAndSave() {
   // One path at a time: a folder that does not exist yet must never stop the others from being saved.
   for (const path of ['web/state.json', 'web/gifts', 'web/made', 'web/photos', 'diary.md', 'inbox', 'tasks']) git('add', '-A', path);
   if (git('diff', '--cached', '--quiet')) return; // nothing changed
-  git('commit', '-q', '-m', 'Pip woke up');
+  git('commit', '-q', '-m', 'Pip woke up [skip ci]'); // [skip ci]: no Vercel deployment, they are limited per day
   for (let i = 0; i < 3; i++) {
     if (git('pull', '--rebase', '--autostash', '-q') && git('push', '-q')) return;
     git('rebase', '--abort');

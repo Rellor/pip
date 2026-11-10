@@ -43,7 +43,7 @@ export default async function handler(req, res) {
       'User-Agent': 'pip-task',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ message: 'Bas asked Pip to do something', branch: BRANCH, content: Buffer.from(JSON.stringify(file)).toString('base64') }),
+    body: JSON.stringify({ message: 'Someone asked Pip to do something [skip ci]', branch: BRANCH, content: Buffer.from(JSON.stringify(file)).toString('base64') }),
   });
   if (!put.ok) return res.status(502).json({ error: `Could not save it (GitHub said ${put.status}).` });
   return res.status(200).json({ ok: true, id });

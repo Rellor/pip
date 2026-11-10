@@ -59,14 +59,14 @@ export default async function handler(req, res) {
   if (picture) {
     const img = await gh(`/contents/inbox/${id}.${type.ext}`, {
       method: 'PUT',
-      body: JSON.stringify({ message: 'Bas gave Pip a picture', branch: BRANCH, content: picture.toString('base64') }),
+      body: JSON.stringify({ message: 'Someone gave Pip a picture [skip ci]', branch: BRANCH, content: picture.toString('base64') }),
     });
     if (!img.ok) return res.status(502).json({ error: `Could not save the picture (GitHub said ${img.status}).` });
   }
   const file = { id, at: new Date().toISOString(), text, ...(picture ? { image: `${id}.${type.ext}` } : {}) };
   const put = await gh(`/contents/inbox/${id}.json`, {
     method: 'PUT',
-    body: JSON.stringify({ message: 'Bas wrote to Pip', branch: BRANCH, content: Buffer.from(JSON.stringify(file)).toString('base64') }),
+    body: JSON.stringify({ message: 'Someone wrote to Pip [skip ci]', branch: BRANCH, content: Buffer.from(JSON.stringify(file)).toString('base64') }),
   });
   if (!put.ok) return res.status(502).json({ error: `Could not save the message (GitHub said ${put.status}).` });
 
