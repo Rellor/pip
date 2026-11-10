@@ -1744,7 +1744,7 @@ function headlineBase(st) {
     case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
-    case 'do': return ['✨', d.what || st.what || 'Doing something of his own'];
+    case 'do': return [d.emoji || st.emoji || '✨', d.what || st.what || 'Doing something of his own'];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
@@ -1800,12 +1800,12 @@ function pageBlock(opened, label) {
 }
 
 function dayCard(e) {
-  const kind = KINDS[e.action] || 'walk';
+  const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
   const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something of his own', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture' };
   const header = el('header');
-  header.append(el('span', icon), el('span', labels[kind], 'kind'), el('time', hm(Date.parse(e.at))));
+  header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
 
   if (kind === 'search') {
@@ -1915,6 +1915,12 @@ function dayCard(e) {
     if (e.file && !e.failed) card.append(appButton({ name: e.name, file: e.file }));
   } else if (kind === 'walk') {
     card.append(el('h3', `To the ${e.object || 'room'}`, 'title'));
+  } else {
+    const SKIP = new Set(['at', 'action', 'thought', 'enjoyment', 'emoji', 'failed']);
+    const parts = Object.entries(e).filter(([k, v]) => !SKIP.has(k) && typeof v === 'string' && v.trim());
+    const [, main] = parts.find(([k]) => ['what', 'name', 'title', 'dish', 'target', 'query', 'item', 'object', 'text'].includes(k)) ?? parts[0] ?? [0, ''];
+    if (main) card.append(el('h3', main.slice(0, 160), 'title'));
+    for (const [, v] of parts.filter(([, v]) => v !== main).slice(0, 2)) card.append(el('p', v.slice(0, 200), 'muted'));
   }
   if (e.thought) card.append(el('p', `“${e.thought}”`, 'thought'));
   return card;

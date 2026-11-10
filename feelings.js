@@ -31,6 +31,7 @@ export function passTime(s, now = Date.now()) {
   const gone = (now - Date.parse(s.feelAt || now)) / 60_000;
   const minutes = Number.isFinite(gone) ? Math.min(180, Math.max(0, gone)) : 0;
   s.fullness = clamp(s.fullness - minutes / 50);
+  s.energy = clamp(s.energy + minutes * 0.12); // he slowly gets his energy back between wake-ups too, so he is not always tired
   s.wonder = clamp(s.wonder + (4 - s.wonder) * 0.12); // wonder needs new things to stay up
   s.joy = clamp(s.joy + (5 - s.joy) * 0.15); // joy and calm settle back toward the middle
   s.calm = clamp(s.calm + (5 - s.calm) * 0.12);
@@ -42,7 +43,7 @@ export function passTime(s, now = Date.now()) {
 // while making something fills him: curiosity is the start, doing is what satisfies.
 export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fresh = false, style = '', looks = 0, bar = '' }) {
   const rested = s.energy >= 8; // before this step changes it
-  s.energy = s.energy + (action === 'rest' ? 3 : action === 'walk_to' ? 0 : -1); // walking costs no energy
+  s.energy = s.energy + (action === 'rest' ? 3 : action === 'walk_to' ? 0 : -0.5); // walking costs no energy
   s.joy = s.joy + (Number(enjoyment) - 8) / 6; // he rates most things 8 to 10, so only the best lifts joy and the rest lowers it a little
   switch (action) {
     case 'search_web':
