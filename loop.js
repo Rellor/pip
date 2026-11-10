@@ -18,7 +18,7 @@ function wakeAndSave() {
   if (git('diff', '--cached', '--quiet')) return; // nothing changed
   git('commit', '-q', '-m', 'Pip woke up');
   for (let i = 0; i < 3; i++) {
-    if (git('pull', '--rebase', '-q') && git('push', '-q')) return;
+    if (git('pull', '--rebase', '--autostash', '-q') && git('push', '-q')) return;
     git('rebase', '--abort');
   }
   console.error(`[${stamp()}] could not push Pip's state`);
@@ -28,7 +28,7 @@ console.log(`[${stamp()}] Pip's loop starts: a wake-up every ${EVERY_MIN} min fo
 const start = Date.now();
 let lastWake = 0;
 while ((Date.now() - start) / 60_000 < LOOP_MIN) {
-  if (!git('pull', '--rebase', '-q')) git('rebase', '--abort');
+  if (!git('pull', '--rebase', '--autostash', '-q')) git('rebase', '--abort');
   if ((Date.now() - lastWake) / 60_000 >= EVERY_MIN) {
     console.log(`[${stamp()}] waking Pip`);
     wakeAndSave();
