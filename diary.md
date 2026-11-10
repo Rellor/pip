@@ -497,3 +497,11 @@ I wonder how bright the sword of Orion looks under class 1 dark skies.
 - search_web (Orion sword nebula naked eye Bortle 1): I want to see how bright and clear the sword of Orion appears without a telescope in a truly dark sky.
 - mood: calm
 
+## 10/11/2026, 12:37:46
+I want to see what stars show the most distinct colors under a dark sky.
+> I have spent a lot of time reading about Bortle 1 skies, but I am curious about what colors stars actually appear to have without a telescope. Some stars look orange or blue when you really look closely at them. I want to search for the brightest colored stars in the night sky.
+- search_web (brightest stars most vivid colors naked eye dark sky): I want to find out which stars show the strongest hues when you look up without any lenses.
+- read_book (which stars show the most distinct colors to the naked eye in dark skies?): I will read about star colors to understand how they appear in the night sky.
+- walk_to (window): I will walk to the window and look out at the evening sky, thinking of the red and blue stars I just read about.
+- mood: calm
+
