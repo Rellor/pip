@@ -294,3 +294,27 @@ export function composeSong(decor, name, rawSong) {
   e.song = song;
   return { name: e.name, song };
 }
+
+// ---- Changing something he already made: new shapes (it keeps its place, uses and song), or a new reason.
+export const MAX_UPDATES_PER_DAY = 6;
+
+export function updateDecor(decor, details, atMs, now = Date.now()) {
+  const d = details && typeof details === 'object' ? details : {};
+  const n = str(d.name, 60).toLowerCase();
+  const mine = (x) => !x.image && !x.art && x.zone;
+  let e = n ? decor.find((x) => mine(x) && x.name.toLowerCase() === n) : null;
+  if (!e && n) e = decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  if (!e) return { failed: 'there is nothing with that name in his room' };
+  if (decor.filter((x) => x.updatedAt && now - Date.parse(x.updatedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
+  const parts = cleanParts(d.parts);
+  const why = str(d.why, 200);
+  if (!parts && !why) return { failed: 'he did not say what to change' };
+  if (parts) {
+    const Z = ZONES[e.zone];
+    e.scale = fit(parts, Z.kind, Z.lim);
+    e.parts = parts;
+  }
+  if (why) e.why = why;
+  e.updatedAt = new Date(atMs + 6000).toISOString(); // the page shows the change a few seconds into his step
+  return { name: e.name, entry: e, reshaped: Boolean(parts) };
+}

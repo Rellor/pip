@@ -211,8 +211,15 @@ function updateDecor(s) {
     }
   }
   for (const d of list) {
-    if (decorGroups.has(d.id)) continue;
+    const have = decorGroups.get(d.id);
+    // Pip changed it: the old one goes and the new shape pops in at the same place.
+    if (have && d.updatedAt && have.userData.rev !== d.updatedAt && Date.parse(d.updatedAt) <= Date.now()) {
+      scene.remove(have);
+      decorGroups.delete(d.id);
+    } else if (have) continue;
     const g = buildDecor(d);
+    g.userData.rev = d.updatedAt || null;
+    if (d.updatedAt && Date.parse(d.updatedAt) > Date.now()) g.userData.rev = null;
     g.userData.born = performance.now() - Math.min(Date.now() - Date.parse(d.at), 5000); // old things are simply there
     scene.add(g);
     decorGroups.set(d.id, g);
@@ -224,6 +231,42 @@ function popDecor(now) {
     const k = Math.min(1, (now - g.userData.born) / 700);
     const ease = 1 + 2.2 * Math.pow(k - 1, 3) + 1.2 * Math.pow(k - 1, 2); // small overshoot, then settles
     g.scale.setScalar(Math.max(0.001, g.userData.scale * (k >= 1 ? 1 : ease)));
+  }
+}
+
+// Clothes Pip made: a few shapes on a spot of his body. They move with him.
+const clothesGroups = new Map();
+function buildClothes(c) {
+  const g = new THREE.Group();
+  for (const p of c.parts || []) {
+    const geo = SHAPE_GEO[p.shape];
+    if (!geo) continue;
+    const mesh = new THREE.Mesh(geo(p.size), new THREE.MeshStandardMaterial({ color: p.color, roughness: 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0 }));
+    mesh.position.set(...p.pos);
+    mesh.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
+    mesh.castShadow = true;
+    g.add(mesh);
+  }
+  g.position.set(...c.at);
+  g.scale.setScalar(c.scale || 1);
+  return g;
+}
+function syncClothes(s) {
+  const worn = (s?.wardrobe || []).filter((c) => c.worn && Date.parse(c.wornAt) <= Date.now());
+  const rev = (c) => `${c.madeAt}|${c.wornAt}`;
+  for (const [id, g] of clothesGroups) {
+    const c = worn.find((x) => x.id === id);
+    if (!c || g.userData.rev !== rev(c)) {
+      pip.body.remove(g);
+      clothesGroups.delete(id);
+    }
+  }
+  for (const c of worn) {
+    if (clothesGroups.has(c.id)) continue;
+    const g = buildClothes(c);
+    g.userData.rev = rev(c);
+    pip.body.add(g);
+    clothesGroups.set(c.id, g);
   }
 }
 
@@ -810,8 +853,13 @@ function planFor(last) {
       const [sx, sz] = m.stand;
       return { at: 'custom', anim: 'look', spot: { p: new V3(sx, 0, sz), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz) } };
     }
-    case 'make_app': return { at: 'computer', anim: 'search' };
+    case 'make_app':
+    case 'update_app': return { at: 'computer', anim: 'search' };
+    case 'make_clothes':
+    case 'wear':
+    case 'take_off': return { at: 'center', anim: 'look' };
     case 'take_out':
+    case 'change_thing':
     case 'place_picture':
     case 'draw':
     case 'decorate': {
@@ -1102,7 +1150,8 @@ function infoFor(hit) {
 pip.group.userData.info = () => {
   const s = lastState;
   const [icon, text] = plan && stepNow >= 0 ? headline(plan.steps[stepNow]) : ['•', 'getting ready'];
-  return { title: 'Pip', lines: [`${icon} ${text}`, s?.mood ? `Mood: ${s.mood}` : '', s ? `Fullness ${r1(s.fullness)} · Energy ${r1(s.energy)} · Wonder ${r1(s.wonder)} · Joy ${r1(s.joy)} · Calm ${r1(s.calm)}` : ''].filter(Boolean) };
+  const wearing = (s?.wardrobe || []).filter((c) => c.worn).map((c) => c.name);
+  return { title: 'Pip', lines: [`${icon} ${text}`, s?.mood ? `Mood: ${s.mood}` : '', wearing.length ? `Wearing: ${wearing.join(', ')}` : '', s ? `Fullness ${r1(s.fullness)} · Energy ${r1(s.energy)} · Wonder ${r1(s.wonder)} · Joy ${r1(s.joy)} · Calm ${r1(s.calm)}` : ''].filter(Boolean) };
 };
 wallFrame.userData.info = () => ({
   title: 'Beneath the Milky Way',
@@ -1559,6 +1608,7 @@ function showTab(name) {
 document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
 
 // ---- Day: what Pip does, reads and searches, as a timeline
+const SLOT_WORDS = { head: 'his head', face: 'his face', neck: 'around his middle', body: 'his body', back: 'his back' };
 function headline(st) {
   const d = st.details || {};
   switch (st.action) {
@@ -1576,6 +1626,11 @@ function headline(st) {
     case 'compose': return ['🎵', `Composing a song for ${d.name || st.name || 'something'}`];
     case 'draw': return ['🎨', `Drawing ${d.name || st.name || 'something'}`];
     case 'make_app': return ['💻', `Writing the app ${d.name || st.name || ''}`];
+    case 'change_thing': return ['🔁', `Changing ${d.name || st.name || 'something'}`];
+    case 'update_app': return ['💻', `Updating the app ${d.name || st.name || ''}`];
+    case 'make_clothes': return ['👕', `Making ${d.name || st.name || 'clothes'}`];
+    case 'wear': return ['👕', `Putting on ${d.name || st.name || 'something'}`];
+    case 'take_off': return ['👕', `Taking off ${d.name || st.name || 'something'}`];
     case 'place_picture': return ['🖼️', 'Putting up a picture'];
     case 'take_down_picture': return ['🖼️', 'Taking a picture down'];
     case 'remove_decoration': return ['📦', `Putting ${d.name || st.name || 'something'} in his chest`];
@@ -1583,7 +1638,7 @@ function headline(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -1687,6 +1742,16 @@ function dayCard(e) {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He gave it a song.', 'muted'));
     } else if (e.action === 'draw') {
       card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew it and put it ${e.place}.`, 'muted'));
+    } else if (e.action === 'change_thing') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
+    } else if (e.action === 'update_app') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He made a new version of the app.', 'muted'));
+    } else if (e.action === 'make_clothes') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He made clothes for ${SLOT_WORDS[e.slot] || 'himself'}.`, 'muted'));
+    } else if (e.action === 'wear') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He put it on.', 'muted'));
+    } else if (e.action === 'take_off') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He took it off.', 'muted'));
     } else if (e.action === 'make_app') {
       card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : 'He wrote a small app on his computer. It opens in a locked box.', 'muted'));
     } else if (e.action === 'remove_decoration') {
@@ -1994,6 +2059,7 @@ function setPlan(last) {
 setInterval(() => {
   tickPlan();
   updateDecor(lastState);
+  syncClothes(lastState);
 }, 1000);
 
 let seenAt = null;

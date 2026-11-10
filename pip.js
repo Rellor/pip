@@ -1,8 +1,10 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { freePlaces, makeDecor, storeAway, takeOut, composeSong, placePicture, removePicture, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, placePicture, removePicture, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
+import { makeClothes, wear, takeOff, wornNow, SLOTS, MAX_CLOTHES_PER_DAY } from './clothes.js';
+const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
 import { refreshNews, themeMirror } from './news.js';
 import { tooSimilar, sinceLastWrote } from './repeat.js';
@@ -52,10 +54,15 @@ const ACTIONS = [
   'make_app(name, why, html)',
   'use(name, label)',
   'add_use(name, use)',
+  'change_thing(name, parts, why)',
+  'update_app(name, html)',
+  'make_clothes(name, slot, why, parts)',
+  'wear(name)',
+  'take_off(name)',
 ];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, where)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -81,6 +88,7 @@ const freshState = () => ({
   projects: [],
   pictures: [],
   stored: [],
+  wardrobe: [],
   art: [],
   apps: [],
   ntfySince: '',
@@ -134,6 +142,7 @@ async function loadState() {
       .filter((a) => a.item);
   }
   const state = { ...freshState(), ...raw };
+  state.wardrobe ??= [];
   delete state.tools; // leftovers of the removed workbench
   delete state.builds;
   ensureFeelings(state);
@@ -298,6 +307,8 @@ APPS I MADE ON MY COMPUTER
 ${bullets(s.apps.map((a) => `${a.name}${a.why ? `: ${a.why}` : ''}`), 'nothing yet')}
 IN MY CHEST (things I put away; nothing is lost and I can take it out again)
 ${bullets(s.stored.map((x) => `${x.name} (it was ${x.label})`), 'empty')}
+MY CLOTHES
+${bullets((s.wardrobe ?? []).map((c) => `${c.name} (${c.slot})${c.worn ? ' [I am wearing it]' : ''}`), 'none yet')}
 
 ${s.decor.filter((d) => !d.image && !d.uses?.length).length ? `I MADE THESE BUT HAVE NOT DECIDED WHAT THEY ARE FOR. A thing without a use is only decoration, so one of my steps today gives one of them a use with add_use: ${s.decor.filter((d) => !d.image && !d.uses?.length).map((d) => d.name).join(', ')}\n\n` : ''}PLACES I CAN PUT THINGS
 ${freePlaces(s.decor).filter((z) => z.free > 0).map((z) => `- ${z.zone} (${z.free} free): ${z.label}`).join('\n') || 'none, my room is full'}
@@ -360,12 +371,12 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - If I need a bigger room, more rooms, something even bigger than the sizes above, or something too complicated for all of this, I ask Bas with asks_add and say exactly what I need and why.
 
 MAKING THINGS FOR MY ROOM
-With decorate I make something and put it in my room. Before I design it I decide what it is FOR, because things in my room can be used: every thing I make has at least one use, so I always fill in "uses" in decorate. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. "where" is one of the place names listed above. Things on a wall must be flat. I am free to make big things, furniture, or something to look through, not only small decorations: it is my room. Things that belong together go together: a telescope to look at the stars goes at the window (where: window). I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. If I do not like something in my room any more, remove_decoration puts it in my chest (it is not lost) and take_out(name, where) brings it back later. If I want something bigger than the sizes above (even a bigger room) or more complicated than my simple shapes allow, or I need a tool or a place to work, I ask Bas with asks_add and say exactly what I would need.
+With decorate I make something and put it in my room. Before I design it I decide what it is FOR, because things in my room can be used: every thing I make has at least one use, so I always fill in "uses" in decorate. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. "where" is one of the place names listed above. Things on a wall must be flat. I am free to make big things, furniture, or something to look through, not only small decorations: it is my room. Things that belong together go together: a telescope to look at the stars goes at the window (where: window). I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. If I do not like something in my room any more, remove_decoration puts it in my chest (it is not lost) and take_out(name, where) brings it back later. If I want something bigger than the sizes above (even a bigger room) or more complicated than my simple shapes allow, or I need a tool or a place to work, I ask Bas with asks_add and say exactly what I would need. If I want, I can change something I already made: change_thing gives it new shapes (it keeps its place, its uses and its song) or a new reason, up to 6 changes a day, and update_app replaces one of my apps with a new version of its page, up to 4 a day. I can also make clothes and wear them, if I want to: make_clothes {name, slot, why, parts} with slot one of head, face, neck, body or back, and the same shapes as above. My body is a round ball about 1 wide and 1.1 tall with my belly in the middle. For clothes, pos is measured from the middle of the spot on my body (a hat from its bottom) and z points to my front; it is shrunk if it is too big for the spot. It goes on me right away unless I add "wear": false. wear {name} puts something on that I made before, take_off {name} takes it off, and making clothes with the same name again makes them new. At most 3 new clothes a day and 12 in all.
 
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"Milky Way\" or \"Bortle scale\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -528,6 +539,11 @@ function describe(a) {
     case 'draw':
     case 'make_app':
     case 'take_out':
+    case 'change_thing':
+    case 'update_app':
+    case 'make_clothes':
+    case 'wear':
+    case 'take_off':
     case 'remove_decoration': return d.name;
     default: return '';
   }
@@ -816,6 +832,10 @@ async function wakeUp() {
         }
       }
     }
+    if (st.action === 'change_thing') st.made = updateDecor(state.decor, st.details, stepStart);
+    if (st.action === 'make_clothes') st.made = makeClothes(state.wardrobe, st.details, stepStart);
+    if (st.action === 'wear') st.made = wear(state.wardrobe, st.details.name, stepStart);
+    if (st.action === 'take_off') st.made = takeOff(state.wardrobe, st.details.name);
     if (st.action === 'remove_decoration') st.made = storeAway(state.decor, state.stored, st.details.name);
     if (st.action === 'take_out') {
       st.made = takeOut(state.decor, state.stored, st.details.name, st.details.where, stepStart);
@@ -850,6 +870,7 @@ async function wakeUp() {
   const dayMs = 86_400_000;
   let drew = false;
   let wroteApp = false;
+  let updatedApp = false;
   for (const [i, st] of steps.entries()) {
     const d = st.details;
     const name = text(d.name, 60);
@@ -874,6 +895,23 @@ async function wakeUp() {
           state.decor.push(placed.entry);
           st.made = placed;
         } else st.made = { drawn: name, failed: `it is in his album, but ${placed.failed}` };
+      }
+    }
+    if (st.action === 'update_app') {
+      const html = cleanApp(d.html);
+      const n = text(d.name, 60).toLowerCase();
+      const app = n ? state.apps.find((a) => a.name.toLowerCase() === n) ?? state.apps.find((a) => a.name.toLowerCase().includes(n) || n.includes(a.name.toLowerCase())) : null;
+      const today = state.apps.filter((a) => a.updatedAt && Date.now() - Date.parse(a.updatedAt) < dayMs).length;
+      if (!app) st.made = { failed: 'there is no app with that name on his computer' };
+      else if (updatedApp) st.made = { failed: 'one app change per wake-up is enough' };
+      else if (today >= MAX_APP_UPDATES_PER_DAY) st.made = { failed: 'he has already changed enough apps for today' };
+      else if (!html) st.made = { failed: 'the new app did not work out (too big, or not a web page)' };
+      else {
+        updatedApp = true;
+        await writeFile(`web/${app.file}`, html);
+        app.updatedAt = new Date().toISOString();
+        if (text(d.why, 200)) app.why = text(d.why, 200);
+        st.made = { app: { id: app.id, file: app.file, name: app.name }, changed: true };
       }
     }
     if (st.action === 'make_app') {
@@ -963,6 +1001,9 @@ async function wakeUp() {
     if (st.action === 'add_use') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), label: st.made?.use?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
     if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), reshaped: st.made?.reshaped ?? false, failed: st.made?.failed ?? null });
+    if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     state.log.push(entry);
@@ -1002,7 +1043,7 @@ async function wakeUp() {
   steps.forEach((st, i) => {
     console.log(`   ${i + 1}. ${st.action}${results[i].detail ? `: ${results[i].detail}` : ''}   (enjoyed ${results[i].enjoyment}/10)${st.thought ? `\n      "${st.thought}"` : ''}`);
     if (st.found) console.log(`      🌐 ${st.found.title}`);
-    if (st.made?.entry) console.log(`      🛠️  made "${st.made.entry.name}" and put it ${st.made.entry.label} (${st.made.entry.parts.length} parts)`);
+    if (st.made?.entry && ['decorate', 'take_out'].includes(st.action)) console.log(`      🛠️  made "${st.made.entry.name}" and put it ${st.made.entry.label} (${st.made.entry.parts.length} parts)`);
     if (st.made?.failed) console.log(`      🛠️  did not work out: ${st.made.failed}`);
     if (st.made?.removed) console.log(`      🛠️  took away "${st.made.removed}"`);
     if (st.made?.entry?.uses?.length) console.log(`      🔧 it can: ${st.made.entry.uses.map((u) => u.label).join(' | ')}`);
@@ -1011,7 +1052,12 @@ async function wakeUp() {
     if (st.made?.song) console.log(`      🎵 gave "${st.made.name}" a song (${st.made.song.notes.length} notes, ${st.made.song.timbre})`);
     if (st.made?.entry?.song) console.log(`      🎵 it plays a song (${st.made.entry.song.notes.length} notes, ${st.made.entry.song.timbre})`);
     if (st.made?.entry?.image && st.action === 'draw') console.log(`      🎨 drew "${st.made.entry.name}" and put it ${st.made.entry.label}`);
-    if (st.made?.app) console.log(`      💻 wrote the app "${st.made.app.name}"`);
+    if (st.made?.app && st.action === 'make_app') console.log(`      💻 wrote the app "${st.made.app.name}"`);
+    if (st.action === 'change_thing' && st.made?.entry) console.log(`      🔁 changed "${st.made.name}"${st.made.reshaped ? ' (new shape)' : ''}`);
+    if (st.action === 'update_app' && st.made?.changed) console.log(`      💻 updated the app "${st.made.app.name}"`);
+    if (st.action === 'make_clothes' && st.made?.entry) console.log(`      👕 made "${st.made.entry.name}" (${st.made.entry.slot}, ${st.made.entry.parts.length} parts)${st.made.entry.worn ? ' and put it on' : ''}`);
+    if (st.action === 'wear' && st.made?.name) console.log(`      👕 put on "${st.made.name}"`);
+    if (st.action === 'take_off' && st.made?.name) console.log(`      👕 took off "${st.made.name}"`);
     if (st.made?.stored) console.log(`      📦 put "${st.made.stored}" in the chest`);
     if (st.ate?.failed) console.log(`      🍽️  not hungry yet: ${st.ate.failed}`);
   });
