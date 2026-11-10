@@ -1251,7 +1251,7 @@ function decorInfo(d) {
   if (d.art) return { title: d.name, image: d.image, lines: [`A drawing by Pip. It hangs ${d.label}.`, d.why ? `Why: ${d.why}` : ''].filter(Boolean) };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
   const lines = d.image
-    ? [`A picture${pic?.caption ? `: "${pic.caption}"` : ''} that Bas gave to Pip. It hangs ${d.label}.`, pic?.notes ? `Pip says: ${pic.notes}` : '']
+    ? [`A picture${pic?.caption ? `: "${pic.caption}"` : ''} that someone gave to Pip. It hangs ${d.label}.`, pic?.notes ? `Pip says: ${pic.notes}` : '']
     : [`Made by Pip. It is ${d.label}.`, d.why ? `Why: ${d.why}` : '', d.project ? `For his project: ${d.project}` : '', `Made ${when(d.createdAt)}.`];
   const actions = (d.uses || []).map((u) => ({ text: u.label, run: () => showUse(d, u) }));
   if (d.song) actions.push({ text: '▶ Hear it', run: () => playSong(d.song) });
@@ -1744,7 +1744,7 @@ function headlineBase(st) {
     case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
-    case 'do': return [d.emoji || st.emoji || '✨', d.what || st.what || 'Doing something of his own'];
+    case 'do': return [d.emoji || st.emoji || '✨', d.what || st.what || 'Doing something'];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
@@ -1803,7 +1803,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something of his own', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -2163,7 +2163,7 @@ function render(s) {
       a.rel = 'noopener';
       const img = el('img');
       img.src = p.image;
-      img.alt = 'picture from Bas';
+      img.alt = 'picture from a visitor';
       a.append(img);
       div.append(a);
       div.append(el('div', p.seen ? (p.notes || 'Pip has looked at it.') : 'Pip has not looked at it yet.', 'note'));
@@ -2171,8 +2171,12 @@ function render(s) {
       div.append(el('div', hung ? `🖼️ ${hung.label}` : 'in his album, not put up', 'meta'));
       return div;
     })
-    : [el('div', 'Bas has not given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
+    : [el('div', 'Nobody has given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
   const pantry = (s.pantry || []).filter((p) => p.qty > 0).sort((a, b) => (a.kind === 'dish' ? 0 : 1) - (b.kind === 'dish' ? 0 : 1));
+  $('selfnote').textContent = s.self || 'Pip has not written about himself yet.';
+  fill($('favlist'), (s.favorites || []).length ? s.favorites.map((f) => el('li', `❤️ ${f.kind ? `${f.kind}: ` : ''}${f.what}`)) : empty('No favorites yet.'));
+  fill($('ritlist'), (s.rituals || []).length ? s.rituals.map((r) => el('li', `🔁 ${r.text}${r.when ? ` (${r.when})` : ''}`)) : empty('No rituals yet.'));
+  fill($('dreamlist'), (s.dreams || []).length ? [...s.dreams].reverse().slice(0, 8).map((d) => el('li', `🌙 ${new Date(d.at).toLocaleDateString([], { day: "numeric", month: "short" })}: ${d.text}`)) : empty('No dreams yet.'));
   fill($('pantrylist'), pantry.length ? pantry.map((p) => el('li', `${p.kind === 'dish' ? '🍲' : foodEmoji(p.name)} ${p.name} ×${p.qty}`)) : empty('The pantry is empty.'));
   const inChest = s.stored || [];
   fill($('chestlist'), inChest.length

@@ -143,7 +143,7 @@ export function eatNow(s, now = Date.now(), gain = EAT_GAIN) {
 
 // The bars that are very low, and what would help.
 export function needsText(s) {
-  const help = { fullness: 'to eat', energy: 'to rest', wonder: 'to find or make something new', joy: 'to do something I love or write to Bas', calm: 'some quiet, like soft piano or the window' };
+  const help = { fullness: 'to eat', energy: 'to rest', wonder: 'to find or make something new', joy: 'to do something I love or write to someone', calm: 'some quiet, like soft piano or the window' };
   const low = BARS.filter((b) => s[b] <= 3).sort((a, b) => s[a] - s[b]);
   return low.length ? `Right now I need: ${low.map((b) => help[b]).join('; ')}.` : '';
 }
