@@ -1610,6 +1610,10 @@ document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () 
 // ---- Day: what Pip does, reads and searches, as a timeline
 const SLOT_WORDS = { head: 'his head', face: 'his face', neck: 'around his middle', body: 'his body', back: 'his back' };
 function headline(st) {
+  const [icon, line] = headlineBase(st);
+  return [icon, st.working_on ? `${line} · ${st.working_on}` : line];
+}
+function headlineBase(st) {
   const d = st.details || {};
   switch (st.action) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
@@ -1617,7 +1621,7 @@ function headline(st) {
     case 'play_piano': return ['🎹', `Playing the piano${d.style ? ` (${d.style})` : ''}`];
     case 'write_diary': return ['✍️', 'Writing in his diary'];
     case 'rest': return ['💤', 'Resting'];
-    case 'ask_for': return ['🙏', `Asking Bas for ${d.item || st.item || 'something'}`];
+    case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];

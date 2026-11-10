@@ -385,7 +385,7 @@ With decorate I make something and put it in my room. Before I design it I decid
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. I do not repeat the same action in every step. If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired or busy with something I want to keep working on. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -570,6 +570,7 @@ function normalizeSteps(a) {
     action: x.action,
     details: x.details && typeof x.details === 'object' ? x.details : {},
     thought: text(x.thought, 200),
+    working_on: text(x.working_on, 80),
     enjoyment: x.enjoyment,
   }));
 }
@@ -580,7 +581,7 @@ function applyResult(s, r) {
   const enjoyment = clamp(Number(r.enjoyment) || 5);
 
   const lastThree = s.activities.slice(-3).map((a) => a.action);
-  const repeating = lastThree.length === 3 && lastThree.every((x) => x === r.action);
+  const repeating = !r.working_on && lastThree.length === 3 && lastThree.every((x) => x === r.action); // working on something on purpose is not boredom
   stepFeelings(s, { action: r.action, enjoyment, repeating, style: r.details?.style });
   s.mood = String(r.mood_after || s.mood);
 
@@ -1033,7 +1034,7 @@ async function wakeUp() {
     thought: text(answer.thought, 200),
     inner: text(answer.inner, 600),
     sent: sent.length > 0,
-    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : st.made?.ref ? { id: st.made.ref.id, stand: st.made.ref.stand, pos: st.made.ref.pos, used: true } : st.made?.stored ? { chest: true } : st.made?.app ? { app: st.made.app } : null })),
+    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, working_on: st.working_on || undefined, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : st.made?.ref ? { id: st.made.ref.id, stand: st.made.ref.stand, pos: st.made.ref.pos, used: true } : st.made?.stored ? { chest: true } : st.made?.app ? { app: st.made.app } : null })),
     action: steps[0].action,
     details: steps[0].details,
     detail: results[0].detail,
