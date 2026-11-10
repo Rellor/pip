@@ -491,3 +491,9 @@ I want to know how the Triangulum Galaxy compares to our Milky Way in star count
 - rest: Taking a quiet rest by the window while I think about the vastness of galaxies.
 - mood: calm
 
+## 10/11/2026, 12:36:28
+I wonder how bright the sword of Orion looks under class 1 dark skies.
+> I have spent a lot of time looking up stars and dust lanes lately, and the wonder has not faded at all. The thought of a sky so dark that faint nebulae and star clusters stand out clearly makes me feel so quiet and still inside. I want to search about Orion's sword next to satisfy this little itch in my mind.
+- search_web (Orion sword nebula naked eye Bortle 1): I want to see how bright and clear the sword of Orion appears without a telescope in a truly dark sky.
+- mood: calm
+
