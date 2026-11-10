@@ -9,9 +9,9 @@ import { storedUses } from './uses.js';
 const SHAPES = { box: 3, sphere: 1, cylinder: 3, cone: 2, torus: 2, capsule: 2 }; // how many numbers each shape needs
 // Biggest size by kind. Spots with less room (next to a wall, on a small table) have their own smaller `lim`.
 const LIMITS = {
-  floor: { w: 2.0, h: 2.6, d: 2.0 },
+  floor: { w: 2.6, h: 3.2, d: 2.4 },
   surface: { w: 1.0, h: 0.9, d: 1.0 }, // on top of furniture
-  wall: { w: 1.6, h: 1.3, d: 0.4 }, // flat things on a wall
+  wall: { w: 2.0, h: 1.6, d: 0.4 }, // flat things on a wall
 };
 export const MAX_PER_DAY = 6;
 const MAX_PARTS = 40;
