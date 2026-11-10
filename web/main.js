@@ -1529,12 +1529,18 @@ async function loadState() {
     const r = await fetch('/api/state', { cache: 'no-store' });
     if (r.ok && (r.headers.get('content-type') || '').includes('json')) return await r.json();
   } catch {}
-  const r = await fetch('state.json', { cache: 'no-store' });
+  const r = await fetch(`state.json?t=${Date.now()}`, { cache: 'no-store' }); // the number defeats any cache on the way
   if (!r.ok) throw new Error('no state');
   return { ...(await r.json()), _static: true };
 }
 
+let pollTimer = null;
 async function poll() {
+  if (document.hidden) {
+    // Nobody is looking: do not use the battery. The page refreshes the moment you come back.
+    pollTimer = setTimeout(poll, 30_000);
+    return;
+  }
   let delay = 2000;
   try {
     const s = await loadState();
@@ -1555,9 +1561,32 @@ async function poll() {
     $('err').textContent = "⚠️ Pip's data is not available yet.";
     delay = 10_000;
   }
-  setTimeout(poll, delay);
+  pollTimer = setTimeout(poll, delay);
 }
 poll();
+
+// Phones freeze a page in the background, and bring the old picture back when you return. Refresh at once instead of waiting for the timer.
+let hiddenAt = 0;
+function refreshNow() {
+  clearTimeout(pollTimer);
+  poll();
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    hiddenAt = Date.now();
+    return;
+  }
+  const away = hiddenAt ? Date.now() - hiddenAt : 0;
+  hiddenAt = 0;
+  // After a long break the page itself can be an old version, so load it again (unless you are in the middle of something).
+  const busy = $('replytext').value.trim() || $('replykey').value || chosenImage || $('send').disabled || view.mode === 'walk';
+  if (away > 5 * 60_000 && !busy) location.reload();
+  else refreshNow();
+});
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) location.reload(); // the browser put the whole page back from memory
+});
+window.addEventListener('online', refreshNow);
 
 $('wake').addEventListener('click', () => {
   $('wake').disabled = true;
