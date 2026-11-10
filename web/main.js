@@ -609,7 +609,14 @@ function planFor(last) {
     case 'ask_for': return { at: 'center', anim: 'ask' };
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
     case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
-    case 'compose': return { at: 'center', anim: 'write' };
+    case 'compose':
+    case 'add_use': return { at: 'center', anim: 'write' };
+    case 'use': {
+      const m = last.made;
+      if (!m?.stand) return { at: 'center', anim: 'look' };
+      const [sx, sz] = m.stand;
+      return { at: 'custom', anim: 'look', spot: { p: new V3(sx, 0, sz), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz) } };
+    }
     case 'make_app': return { at: 'computer', anim: 'search' };
     case 'take_out':
     case 'place_picture':
@@ -911,13 +918,28 @@ chestGroup.userData.info = () => {
   const items = lastState?.stored || [];
   return { title: "Pip's chest", lines: items.length ? ['Things Pip put away. Nothing is lost, and he can take them out again:', ...items.map((x) => `• ${x.name}`)] : ['An empty chest. Pip puts things here when he does not want them in his room for a while.'] };
 };
+function appById(id) {
+  return (lastState?.apps || []).find((a) => a.id === id);
+}
+// What happens when a use is pressed: its text, what you see, a song, an app.
+function showUse(d, use) {
+  const actions = [];
+  if (use.song) actions.push({ text: '▶ Hear it', run: () => playSong(use.song) });
+  const app = use.app ? appById(use.app) : null;
+  if (app) actions.push({ text: `▶ Open ${app.name}`, run: () => openApp(app) });
+  actions.push({ text: '← Back', run: () => showInfo(decorInfo(d)) });
+  showInfo({ title: `${d.name}: ${use.label}`, lines: [use.text || ''].filter(Boolean), image: use.view || null, actions });
+}
 function decorInfo(d) {
   if (d.art) return { title: d.name, image: d.image, lines: [`A drawing by Pip. It hangs ${d.label}.`, d.why ? `Why: ${d.why}` : ''].filter(Boolean) };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
   const lines = d.image
     ? [`A picture${pic?.caption ? `: "${pic.caption}"` : ''} that Bas gave to Pip. It hangs ${d.label}.`, pic?.notes ? `Pip says: ${pic.notes}` : '']
     : [`Made by Pip. It is ${d.label}.`, d.why ? `Why: ${d.why}` : '', d.project ? `For his project: ${d.project}` : '', `Made ${when(d.createdAt)}.`];
-  return { title: d.name, lines: lines.filter(Boolean), image: d.image || null, actions: d.song ? [{ text: '▶ Hear it', run: () => playSong(d.song) }] : [] };
+  const actions = (d.uses || []).map((u) => ({ text: u.label, run: () => showUse(d, u) }));
+  if (d.song) actions.push({ text: '▶ Hear it', run: () => playSong(d.song) });
+  if (!d.image && !(d.uses || []).length) lines.push('Pip has not decided yet what it is for.');
+  return { title: d.name, lines: lines.filter(Boolean), image: d.image || null, actions };
 }
 
 const infoBox = $('info');
@@ -1253,6 +1275,8 @@ function headline(st) {
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
+    case 'use': return ['✨', `Using ${d.name || st.name || 'something'}${d.label || st.label ? `: ${d.label || st.label}` : ''}`];
+    case 'add_use': return ['🔧', `Deciding what ${d.name || st.name || 'it'} is for`];
     case 'compose': return ['🎵', `Composing a song for ${d.name || st.name || 'something'}`];
     case 'draw': return ['🎨', `Drawing ${d.name || st.name || 'something'}`];
     case 'make_app': return ['💻', `Writing the app ${d.name || st.name || ''}`];
@@ -1263,7 +1287,7 @@ function headline(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', compose: 'make', draw: 'make', make_app: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -1341,14 +1365,29 @@ function dayCard(e) {
     card.append(el('h3', e.food || 'a snack', 'title'));
     if (e.failed) card.append(el('p', 'He was not hungry yet.', 'muted'));
   } else if (kind === 'make') {
-    card.append(el('h3', e.name || '', 'title'));
+    card.append(el('h3', e.action === 'use' && e.label ? `${e.name}: ${e.label}` : e.name || '', 'title'));
     if (e.image) {
       const img = el('img', null, 'thumb');
       img.src = e.image;
       img.alt = 'picture';
       card.append(img);
     }
-    if (e.action === 'compose') {
+    if (e.action === 'use') {
+      if (e.failed) card.append(el('p', `That did not work out: ${e.failed}.`, 'muted'));
+      else {
+        if (e.text) card.append(el('div', e.text, 'quote'));
+        if (e.view) {
+          const img = el('img', null, 'thumb');
+          img.src = e.view;
+          img.alt = 'what he saw';
+          card.append(img);
+        }
+        const app = e.app ? appById(e.app) : null;
+        if (app) card.append(appButton(app));
+      }
+    } else if (e.action === 'add_use') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He decided what it is for: ${e.label}.`, 'muted'));
+    } else if (e.action === 'compose') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He gave it a song.', 'muted'));
     } else if (e.action === 'draw') {
       card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew it and put it ${e.place}.`, 'muted'));
@@ -1365,6 +1404,7 @@ function dayCard(e) {
     }
     if (e.why && !e.failed) card.append(el('p', e.why));
     if (e.project && !e.failed) card.append(el('p', `For his project: ${e.project}`, 'muted'));
+    if (e.uses?.length && !e.failed) card.append(el('p', `It can: ${e.uses.join(' · ')}`, 'muted'));
     if (e.song && !e.failed) card.append(songButton(e.song));
     if (e.file && !e.failed) card.append(appButton({ name: e.name, file: e.file }));
   } else if (kind === 'walk') {
@@ -1609,7 +1649,7 @@ function render(s) {
     : empty('No news yet today.'));
   const made = (s.decor || []).filter((d) => Date.parse(d.at) <= Date.now()).slice().reverse();
   fill($('decorlist'), made.length
-    ? made.map((d) => entry([d.label, `made ${when(d.createdAt)}`], `${d.name}${d.why ? ' — ' + d.why : ''}`))
+    ? made.map((d) => entry([d.label, `made ${when(d.createdAt)}`, d.image ? '' : d.uses?.length ? `can: ${d.uses.map((u) => u.label).join(', ')}` : 'no use yet'].filter(Boolean), `${d.name}${d.why ? ' — ' + d.why : ''}`))
     : empty('Nothing yet. Pip can make things for his room when he feels like it.'));
   updateDecor(s);
   $('story').textContent = s.story || 'Pip has only just come to life. His story starts here.';

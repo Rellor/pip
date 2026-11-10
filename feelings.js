@@ -74,6 +74,11 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, styl
   for (const b of BARS) s[b] = clamp(s[b]);
 }
 
+// A thing he uses can lift one bar a little.
+export function nudge(s, bar, amount) {
+  if (BARS.includes(bar)) s[bar] = clamp(s[bar] + amount);
+}
+
 // Things that happen to him.
 const EVENTS = {
   message: { joy: 1.5, calm: 0.3 }, // Bas wrote

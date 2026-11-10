@@ -1,4 +1,5 @@
 import { cleanSong } from './songs.js';
+import { storedUses } from './uses.js';
 
 // Pip's decorations.
 // He designs objects from a few simple shapes. His design is plain data, never code, and everything is checked and
@@ -153,6 +154,7 @@ function placeParts(decor, spec, atMs, now) {
       why: spec.why,
       project: spec.project,
       song: spec.song ?? null,
+      uses: storedUses(spec.uses),
       zone,
       slot,
       label: Z.label,
@@ -177,7 +179,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song) }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -201,7 +203,7 @@ export function takeOut(decor, stored, name, where, atMs, now = Date.now()) {
   if (i < 0 && n) i = stored.findIndex((x) => x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()));
   if (i < 0) return { failed: 'there is nothing with that name in his chest' };
   const e = stored[i];
-  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.parts, song: e.song }, atMs, now);
+  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.parts, song: e.song, uses: e.uses }, atMs, now);
   if (r.entry) {
     r.entry.createdAt = e.createdAt; // it is still the thing he made back then
     stored.splice(i, 1);

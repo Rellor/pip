@@ -10,10 +10,10 @@ const SAFE_VALUE = /^[\w\s#.,;:%()\-+°'/]*$/; // no < > & " or backslashes
 export const MAX_ART_PER_DAY = 3;
 
 // Returns { svg, aspect } or null.
-export function cleanSvg(raw) {
+export function cleanSvg(raw, maxChars = MAX_CHARS) {
   if (typeof raw !== 'string') return null;
   let src = raw.trim();
-  if (src.length < 20 || src.length > MAX_CHARS) return null;
+  if (src.length < 20 || src.length > Math.min(maxChars, MAX_CHARS)) return null;
   src = src.replace(/<\?xml[^>]*\?>/gi, '').replace(/<!DOCTYPE[^>]*>/gi, '').replace(/<!--[\s\S]*?-->/g, '').trim();
   // whole blocks that must never survive
   const BLOCKS = 'script|style|foreignObject|iframe|object|embed|filter|mask|pattern|symbol|marker|title|desc|metadata';
