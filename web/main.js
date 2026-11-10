@@ -141,7 +141,7 @@ function buildDecor(d) {
     const photo = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: 0x111111 }));
     photo.position.z = 0.075;
     g.add(photo);
-    new THREE.TextureLoader().load(d.image, (tex) => {
+    new THREE.TextureLoader().setCrossOrigin('anonymous').load(d.image, (tex) => {
       tex.colorSpace = THREE.SRGBColorSpace;
       photo.material.map = tex;
       photo.material.color.set(0xffffff);
@@ -1703,13 +1703,31 @@ setInterval(() => {
 let seenAt = null;
 let waking = false;
 
-// Local: the server gives live state. Online: fall back to the state.json file next to the page.
+// Local: the server gives live state. Online: Pip's saved files are read straight from GitHub,
+// so his wake-ups never need a new deploy. If GitHub cannot be reached, the copy next to the page is used.
+const RAW = 'https://raw.githubusercontent.com/Rellor/pip/main/web/';
+const isLocal = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+
+// His pictures, drawings and apps are saved as files in the same place as his state.
+function fromGithub(v) {
+  if (typeof v === 'string') return /^(gifts|made)\/[\w.-]+$/.test(v) ? RAW + v : v;
+  if (Array.isArray(v)) return v.map(fromGithub);
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fromGithub(x)]));
+  return v;
+}
+
 async function loadState() {
   try {
     const r = await fetch('/api/state', { cache: 'no-store' });
     if (r.ok && (r.headers.get('content-type') || '').includes('json')) return await r.json();
   } catch {}
-  const r = await fetch(`state.json?t=${Date.now()}`, { cache: 'no-store' }); // the number defeats any cache on the way
+  if (!isLocal) {
+    try {
+      const r = await fetch(`${RAW}state.json?t=${Math.floor(Date.now() / 60_000)}`, { cache: 'no-store' }); // a new number each minute
+      if (r.ok) return { ...fromGithub(await r.json()), _static: true };
+    } catch {}
+  }
+  const r = await fetch(`state.json?t=${Date.now()}`, { cache: 'no-store' });
   if (!r.ok) throw new Error('no state');
   return { ...(await r.json()), _static: true };
 }
