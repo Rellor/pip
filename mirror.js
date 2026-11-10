@@ -18,5 +18,5 @@ export function topicMirror(log) {
   const hits = recent.filter((e) => words(textOf(e)).some((w) => top.includes(w)));
   if (hits.length < recent.length * 0.55) return '';
   const others = recent.filter((e) => !hits.includes(e)).map((e) => textOf(e).slice(0, 50)).slice(-4);
-  return `Of my last ${recent.length} searches, readings and things I made, ${hits.length} used the words ${top.map((w) => `"${w}"`).join(', ')}. ${others.length ? `The other things I looked at were: ${others.join('; ')}. ` : 'Nothing else came up. '}This is only something I notice about myself. What I do with it is my own choice.`;
+  return `Of my last ${recent.length} searches, readings and things I made, ${hits.length} used the words ${top.map((w) => `"${w}"`).join(', ')}. ${others.length ? `The other things I looked at were: ${others.join('; ')}. ` : 'Nothing else came up. '}It is fine to love something and to do a lot with it. I only want to see how much of my time it takes. What I do with it is my own choice.`;
 }
