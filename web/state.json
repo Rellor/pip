@@ -1,5 +1,5 @@
 {
-  "mood": "inspired",
+  "mood": "sleepy",
   "energy": 6.56,
   "boredom": 0,
   "loneliness": 10,
@@ -110,12 +110,6 @@
     "to compose a brand new star song inspired by stellar oscillations"
   ],
   "activities": [
-    {
-      "at": "2026-11-10T17:03:36.737Z",
-      "action": "walk_to",
-      "detail": "window",
-      "enjoyment": 9
-    },
     {
       "at": "2026-11-10T17:03:36.737Z",
       "action": "rest",
@@ -409,6 +403,12 @@
       "action": "use",
       "detail": "plasma wave sculpture",
       "enjoyment": 9
+    },
+    {
+      "at": "2026-11-10T22:01:04.494Z",
+      "action": "rest",
+      "detail": "sleeping through the night",
+      "enjoyment": 8
     }
   ],
   "notes": [
@@ -4053,77 +4053,26 @@
   ],
   "found": [],
   "voice": "",
+  "self": "",
+  "favorites": [],
+  "dreams": [],
+  "rituals": [],
+  "wokeFromSleep": false,
   "art": [],
   "apps": [],
   "ntfySince": "1njrH8IqFmGK",
   "draft": "Hello Bas! I moved the chest closer to the wall just like you suggested. I also took a new photograph of the starry night sky through my window tonight, and the room feels so quiet and full of stars.",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-10T21:48:57.738Z",
-    "model": "gemini-flash-lite-latest",
-    "intervalMin": 12,
-    "thought": "I want to hear what a real stellar acoustic oscillation sounds like through a speaker.",
-    "inner": "I have read about how stars vibrate and make sound waves, but I keep wondering what they actually sound like at normal speed or converted into audio. My plasma wave sculpture hums its deep star song, but I want to make a new sound or search for an actual audio recording to listen to. I have so much energy and wonder right now, and I want to bring those star sounds right into my room.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "walk_to",
-        "details": {
-          "object": "computer"
-        },
-        "detail": "computer",
-        "thought": "I will walk over to my computer to look for real star sound files.",
-        "enjoyment": 8,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "search_web",
-        "details": {
-          "query": "stellar acoustic oscillations audio listen sound"
-        },
-        "detail": "stellar acoustic oscillations audio listen sound",
-        "thought": "I want to find a webpage with an actual audio sample of star vibrations.",
-        "enjoyment": 9,
-        "found": {
-          "title": "Big Bang",
-          "text": "The Big Bang is a physical theory that describes how the universe expanded from an early state of high density and temperature. Various cosmological models based on the Big Bang concept explain a broad range of phenomena, including the abundance of light elements, the cosmic microwave background (CMB) radiation, the redshift of galaxies and the large-scale structure of the universe. The observed uniformity of the universe, which leads to the horizon and flatness problems, is explained through cosmic inflation: a phase of accelerated expansion during the earliest stages. Detailed measurements of the expansion rate of the universe place the cosmic inflation at an estimated 13.787±0.02 billion years ago, which is considered the age of the universe. A wide range of empirical evidence strongly favors the Big Bang model, which is now widely accepted.\nExtrapolating this cosmic expansion backward in time using the known laws of physics, the models describe an extraordinarily hot and dense primordial universe.  The original Big Bang model extrapolated the universe back towards a Big Bang singularity. However, the modern view incorporates inflationary cosmology, whereby the universe emerged out of inflation in a supercooled state. This was followed by a reheating event that converted the energy that drove inflation into a hot and dense plasma, initiating the hot Big Bang. As the universe expanded, it cooled sufficiently to allow the formation of subatomic particles, and later atoms. These primordial elements—mostly hydrogen, with some helium and lithium—then coalesced under the force of gravity aided by dark matter, forming early stars and galaxies. Measurements of the redshifts of supernovae indicate that the expansion of the universe is accelerating, an observation attributed to a concept called dark energy.\nThe concept of an expanding universe was introduced by the physicist Alexander Friedmann in 1922 with the mathematical derivation of the Friedmann equations. The earliest empirical observation of an expanding universe is known as Hubble's law, published in work by physicist Edwin Hubble in 1929, which discerned that galaxies are moving away from Earth at a rate that accelerates proportionally with distance. …"
-        },
-        "made": null
-      },
-      {
-        "action": "use",
-        "details": {
-          "name": "plasma wave sculpture",
-          "label": "Listen to plasma waves"
-        },
-        "detail": "plasma wave sculpture",
-        "thought": "I will listen to my plasma wave sculpture hum its star song while I think about the sounds.",
-        "enjoyment": 9,
-        "found": null,
-        "made": {
-          "id": "dmwb2abhb6",
-          "stand": [
-            -3.4,
-            -3
-          ],
-          "pos": [
-            -3.4,
-            1.4,
-            -4.5
-          ],
-          "used": true
-        }
-      }
-    ],
-    "action": "walk_to",
-    "details": {
-      "object": "computer"
-    },
-    "detail": "computer",
+    "at": "2026-11-10T22:01:04.494Z",
+    "thought": "It is late. Good night...",
+    "action": "rest",
+    "details": {},
+    "detail": "sleeping through the night",
     "enjoyment": 8,
-    "new_idea": "to compose a brand new star song inspired by stellar oscillations",
-    "found": null
+    "new_idea": null,
+    "found": null,
+    "sleeping": true
   },
   "news": {
     "date": "2026-11-10",
