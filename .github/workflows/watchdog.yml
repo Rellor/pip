@@ -30,6 +30,7 @@ jobs:
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           PIP_SITE_URL: ${{ vars.PIP_SITE_URL }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
         run: |
           set +e
           node watchdog.js

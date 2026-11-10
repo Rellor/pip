@@ -952,7 +952,14 @@ async function wakeUp() {
   }
   const wakePrompt = buildWakeUp(state);
   state.repeatNote = '';
-  const answer = await askGemini(system, wakePrompt, 2, images);
+  let answer = await askGemini(system, wakePrompt, 2, images);
+  // A plan needs 2 real steps (walking and resting do not count). If he planned fewer and is not worn out, he gets one more go.
+  const realSteps = (a) => normalizeSteps(a).filter((x) => !['walk_to', 'rest'].includes(x.action)).length;
+  if (!process.env.PIP_FAKE && realSteps(answer) < 2 && state.energy > 3) {
+    console.log('His plan had fewer than 2 real steps, asking once more...');
+    const again = await askGemini(system, `${wakePrompt}\n\nMY LAST PLAN HAD ONLY ${realSteps(answer)} REAL STEP${realSteps(answer) === 1 ? '' : 'S'}. Walking and resting do not count. I think again and plan 2 to 4 real steps, like making, trying, playing, cooking or looking something up. This is my plan again, in the same JSON.`, 1, images).catch(() => null);
+    if (again && realSteps(again) >= realSteps(answer)) answer = again;
+  }
   const startedAt = Date.now();
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
   state.thoughts = state.thoughts.filter((t) => Date.parse(t.at) <= startedAt);
