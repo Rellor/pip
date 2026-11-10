@@ -18,10 +18,25 @@ scene.background = new THREE.Color(getComputedStyle(document.body).backgroundCol
 const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
-const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0 };
+const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
+// The parts of the room that can be seen from the front: the floor and the two back walls.
+const ROOM_POINTS = [[-5, 0, -5], [5, 0, -5], [-5, 0, 5], [5, 0, 5], [-5, 5, -5], [5, 5, -5], [-5, 5, 5]].map(([x, y, z]) => new THREE.Vector3(x, y, z));
+// How far back the camera must be for the whole room to fit on this screen, however wide or tall it is.
+function fitRoom() {
+  orbit.fit = 1;
+  for (let i = 0; i < 8; i++) {
+    const base = new THREE.Vector3(9.5, 9, 11).multiplyScalar(orbit.fit);
+    camera.position.set(base.x, 1.2 + base.y, -0.3 + base.z);
+    camera.lookAt(0, 1.2, -0.3);
+    camera.updateMatrixWorld(true);
+    camera.updateProjectionMatrix();
+    const worst = Math.max(...ROOM_POINTS.map((p) => { const q = p.clone().project(camera); return Math.max(Math.abs(q.x), Math.abs(q.y)); }));
+    orbit.fit *= worst / 0.94;
+  }
+}
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function applyOrbit() {
-  const k = Math.max(1, 1.3 / camera.aspect);
+  const k = orbit.fit;
   const base = new THREE.Vector3(9.5 * k, 9 * k * (1 + orbit.el), 11 * k).applyAxisAngle(new THREE.Vector3(0, 1, 0), orbit.az).multiplyScalar(orbit.zoom);
   // How high or low the middle of the view may go: the top edge of the screen can reach just above the walls (5 high), the bottom edge the floor.
   const dist = base.length();
@@ -40,10 +55,11 @@ function fitCamera() {
   const h = stage.clientHeight || 1;
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
+  camera.updateProjectionMatrix();
   if (view.mode === 'overview') {
+    fitRoom();
     applyOrbit();
   }
-  camera.updateProjectionMatrix();
 }
 new ResizeObserver(fitCamera).observe(stage);
 
@@ -1067,9 +1083,9 @@ function panBy(dx, dy) {
   const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
   const dist = camera.position.distanceTo(new THREE.Vector3(orbit.px, 1.2 + orbit.py, -0.3 + orbit.pz));
   const s = (2 * dist * Math.tan((camera.fov * Math.PI) / 360)) / (renderer.domElement.clientHeight || 600); // world units per pixel
-  orbit.px = clamp(orbit.px - (right.x * dx - up.x * dy) * s, -4, 4);
+  orbit.px = clamp(orbit.px - (right.x * dx - up.x * dy) * s, -5, 5);
   orbit.py = orbit.py - (right.y * dx - up.y * dy) * s; // applyOrbit keeps it between the floor and just above the walls
-  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, -4, 4);
+  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, -5, 5);
 }
 dom.addEventListener('contextmenu', (e) => e.preventDefault());
 dom.addEventListener('pointerdown', (e) => {
@@ -1088,7 +1104,7 @@ dom.addEventListener('pointermove', (e) => {
   if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
   if (pinch && touches.size === 2) {
     const now = spread();
-    orbit.zoom = clamp(orbit.zoom * (pinch.d / Math.max(20, now.d)), 0.3, 1.3);
+    orbit.zoom = clamp(orbit.zoom * (pinch.d / Math.max(20, now.d)), 0.3, 1.6);
     panBy(now.x - pinch.x, now.y - pinch.y);
     pinch = now;
     applyOrbit();
@@ -1116,7 +1132,7 @@ dom.addEventListener('pointermove', (e) => {
 dom.addEventListener('wheel', (e) => {
   if (view.mode !== 'overview') return;
   e.preventDefault();
-  orbit.zoom = clamp(orbit.zoom * Math.exp(e.deltaY * 0.001), 0.3, 1.3);
+  orbit.zoom = clamp(orbit.zoom * Math.exp(e.deltaY * 0.001), 0.3, 1.6);
   applyOrbit();
 }, { passive: false });
 dom.addEventListener('pointerup', (e) => {
