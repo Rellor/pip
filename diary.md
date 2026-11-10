@@ -668,3 +668,10 @@ I want to listen to how stellar acoustic oscillations were turned into sound.
 - use (plasma wave sculpture): I listen to the deep star song hum from the plasma wave sculpture.
 - mood: cozy
 
+## 10/11/2026, 20:44:46
+I want to rest by the window since my energy is very low.
+> My energy is quite low right now, so I feel like stepping over to the window to watch the quiet stars. The night sky always helps me feel steady and calm when I am tired. I can just stand there and let myself rest before I think about anything else.
+- walk_to (window): I will walk over to the window to look at the night sky.
+- rest: I am resting quietly by the window while the stars glow outside.
+- mood: cozy
+
