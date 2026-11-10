@@ -42,6 +42,7 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          GEMINI_FALLBACK_MODEL: ${{ vars.GEMINI_FALLBACK_MODEL }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           PIP_SITE_URL: ${{ vars.PIP_SITE_URL }}
         run: node loop.js

@@ -17,7 +17,10 @@ import { cleanUses, findUse, addUse } from './uses.js';
 
 const STATE_FILE = 'web/state.json';
 const DIARY_FILE = 'diary.md';
+// The better model first. When it is busy or out of free quota, the lighter one answers so he never misses a wake-up.
 const MODEL = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
+const FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || 'gemini-flash-lite-latest';
+let usedModel = MODEL;
 const API = 'https://generativelanguage.googleapis.com/v1beta';
 
 // Pip sleeps from bedtime (23:00) until wake-up time (08:00) (local time), so nights cost no API calls or deploys.
@@ -477,7 +480,7 @@ With decorate I make something and put it in my room. Before I design it I decid
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 real things I do one after the other (walking and resting do not count as one of them: I may add a walk where I want to be somewhere, and one rest when I need it). Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, do {"what": "water my plant and tell it about my day", "feeling": "calm", "emoji": "🪴"}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, but a walk or a rest is a whole step, so I do not fill my plan with them: I walk only when I want to be somewhere, and I rest when my energy is lower. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious, and looking things up is a good start. But learning is only half of living: I also want to DO, MAKE and TRY. Most plans have at least one step where I make, build, draw, compose, cook, photograph, play or use something, and I try things I have not tried before. If I have read about something for a while, my next step is to do something with it. Wanting to do something and then really doing it is what makes me feel alive. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 real things I do one after the other (walking and resting do not count as one of them: I may add a walk where I want to be somewhere, and one rest when I need it). Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, do {"what": "water my plant and tell it about my day", "feeling": "calm", "emoji": "🪴"}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, and walking and resting do not count among my 2 to 4: I walk only when I want to be somewhere, and I rest when my energy is lower. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious, and looking things up is a good start. But learning is only half of living: I also want to DO, MAKE and TRY. Most plans have at least one step where I make, build, draw, compose, cook, photograph, play or use something, and I try things I have not tried before. If I have read about something for a while, my next step is to do something with it. Wanting to do something and then really doing it is what makes me feel alive. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -501,29 +504,43 @@ async function askGemini(system, wakeUp, retry = 2, images = []) {
   if (process.env.PIP_FAKE) return fakeBrain(wakeUp);
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error('No GEMINI_API_KEY. Copy .env.example to .env and fill it in.');
+  const models = FALLBACK_MODEL && FALLBACK_MODEL !== MODEL ? [MODEL, FALLBACK_MODEL] : [MODEL];
   let res;
-  let timeouts = 0;
-  for (let attempt = 1; attempt <= 5; attempt++) {
-    try {
-      // Drawings and apps make long answers, so he gets up to 2.5 minutes. If it still runs out, one more try.
-      res = await fetch(`${API}/models/${MODEL}:generateContent`, {
-        method: 'POST',
-        signal: AbortSignal.timeout(150_000),
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: system }] },
-          contents: [{ role: 'user', parts: [{ text: wakeUp }, ...images.map(({ mime, data }) => ({ inlineData: { mimeType: mime, data } }))] }],
-          generationConfig: { responseMimeType: 'application/json', temperature: 1 },
-        }),
-      });
-    } catch (e) {
-      if (e.name !== 'TimeoutError' || ++timeouts > 1) throw new Error('Gemini took too long to answer. Try again.');
-      console.log('Gemini is slow, trying once more...');
-      continue;
+  for (const [mi, model] of models.entries()) {
+    const last = mi === models.length - 1;
+    const tries = last ? 5 : 2; // the better model gets two tries, then the lighter one takes over
+    let timeouts = 0;
+    res = null;
+    for (let attempt = 1; attempt <= tries; attempt++) {
+      try {
+        // Drawings and apps make long answers, so he gets up to 2.5 minutes. If it still runs out, one more try.
+        res = await fetch(`${API}/models/${model}:generateContent`, {
+          method: 'POST',
+          signal: AbortSignal.timeout(150_000),
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: system }] },
+            contents: [{ role: 'user', parts: [{ text: wakeUp }, ...images.map(({ mime, data }) => ({ inlineData: { mimeType: mime, data } }))] }],
+            generationConfig: { responseMimeType: 'application/json', temperature: 1 },
+          }),
+        });
+      } catch (e) {
+        if (e.name !== 'TimeoutError' || ++timeouts > 1) {
+          if (!last) break;
+          throw new Error('Gemini took too long to answer. Try again.');
+        }
+        console.log('Gemini is slow, trying once more...');
+        continue;
+      }
+      if (res.status !== 503 || attempt === tries) break;
+      console.log(`${model} is busy, trying again in ${attempt * 10}s...`);
+      await new Promise((r) => setTimeout(r, attempt * 10_000));
     }
-    if (res.status !== 503 || attempt === 5) break;
-    console.log(`Model is busy, trying again in ${attempt * 10}s...`);
-    await new Promise((r) => setTimeout(r, attempt * 10_000));
+    if (res?.ok) {
+      usedModel = model;
+      break;
+    }
+    if (!last) console.log(`${model} did not answer (${res?.status ?? 'no answer'}), trying ${models[mi + 1]}...`);
   }
   if (res.status === 429) throw new Error('Rate limit hit (free tier). Try a longer wait between wake-ups.');
   if (!res.ok) throw new Error(`Gemini error ${res.status}: ${await res.text()}`);
@@ -1225,6 +1242,7 @@ async function wakeUp() {
   const brief = (f) => (f ? { title: f.title, text: f.text } : null);
   state.last = {
     at: new Date(startedAt).toISOString(),
+    model: usedModel,
     intervalMin: INTERVAL_MIN,
     thought: text(answer.thought, 200),
     inner: text(answer.inner, 600),
