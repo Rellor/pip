@@ -915,6 +915,7 @@ function planFor(last) {
     case 'rest': return { at: 'bed', anim: 'rest' };
     case 'ask_for': return { at: 'center', anim: 'ask' };
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
+    case 'do': return { at: 'center', anim: 'look' };
     case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
     case 'compose':
     case 'add_use': return { at: 'center', anim: 'write' };
@@ -1743,6 +1744,7 @@ function headlineBase(st) {
     case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
+    case 'do': return ['✨', d.what || st.what || 'Doing something of his own'];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
@@ -1763,7 +1765,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -1801,7 +1803,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'walk';
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked Bas for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something of his own', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind], 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -1837,6 +1839,24 @@ function dayCard(e) {
   } else if (kind === 'ask') {
     card.append(el('h3', e.item || '', 'title'));
     if (e.reason) card.append(el('p', e.reason, 'muted'));
+  } else if (kind === 'do') {
+    card.append(el('h3', e.what || '', 'title'));
+  } else if (kind === 'cook') {
+    card.append(el('h3', e.dish || 'a meal', 'title'));
+    if (e.ingredients?.length) card.append(el('p', e.ingredients.join(', '), 'muted'));
+    if (e.failed) card.append(el('p', 'It did not work out: ' + e.failed, 'muted'));
+  } else if (kind === 'photo' || kind === 'find') {
+    card.append(el('h3', kind === 'photo' ? `A photo of ${e.target || 'something'}` : e.title || `“${e.query || ''}”`, 'title'));
+    const src = kind === 'photo' ? e.image : e.picture;
+    if (src) {
+      const img = el('img', null, 'thumb');
+      img.src = src;
+      img.referrerPolicy = 'no-referrer';
+      img.alt = e.caption || '';
+      card.append(img);
+    }
+    if (e.caption) card.append(el('p', e.caption, 'muted'));
+    if (e.failed) card.append(el('p', 'It did not work out: ' + e.failed, 'muted'));
   } else if (kind === 'eat') {
     card.append(el('h3', e.food || 'a snack', 'title'));
     if (e.failed) card.append(el('p', 'He was not hungry yet.', 'muted'));
@@ -1964,7 +1984,7 @@ function renderNow() {
     return;
   }
   if (!plan) return;
-  const end = plan.at + plan.steps.length * plan.stepMs;
+  const end = plan.at + plan.total;
   if (Date.now() > end + 90_000) {
     const row = el('div', null, 'row');
     row.append(el('span', 'Now', 'label'), el('span', 'Between wake-ups. He thinks again soon.', 'big'));
@@ -1981,7 +2001,7 @@ function renderNow() {
   if (next) {
     const [ni, nt] = headline(next);
     const r2 = el('div', null, 'row');
-    r2.append(el('span', `Next ${hm(plan.at + (i + 1) * plan.stepMs)}`, 'label'), el('span', `${ni} ${nt}`, 'big'));
+    r2.append(el('span', `Next ${hm(plan.at + plan.starts[i + 1])}`, 'label'), el('span', `${ni} ${nt}`, 'big'));
     rows.push(r2);
   }
   fill(box, rows);
@@ -2225,7 +2245,11 @@ let plan = null;
 let stepNow = -1;
 function tickPlan() {
   if (!plan) return;
-  const i = Math.max(0, Math.min(plan.steps.length - 1, Math.floor((Date.now() - plan.at) / plan.stepMs)));
+  const gone = Date.now() - plan.at;
+  let i = plan.steps.length - 1;
+  for (let k = 0; k < plan.steps.length; k++) {
+    if (gone < plan.starts[k] + plan.lengths[k]) { i = k; break; }
+  }
   if (i !== stepNow) {
     stepNow = i;
     startTask(plan.steps[i]);
@@ -2235,7 +2259,12 @@ function tickPlan() {
 }
 function setPlan(last) {
   const steps = Array.isArray(last.steps) && last.steps.length ? last.steps : [last];
-  plan = { at: Date.parse(last.at), stepMs: ((last.intervalMin || 12) * 60_000) / steps.length, steps };
+  const weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1)); // a walk is short, so it does not eat the plan
+  const sum = weights.reduce((a, b) => a + b, 0);
+  const total = (last.intervalMin || 12) * 60_000;
+  const lengths = weights.map((w) => (w / sum) * total);
+  const starts = lengths.map((_, k) => lengths.slice(0, k).reduce((a, b) => a + b, 0));
+  plan = { at: Date.parse(last.at), total, lengths, starts, steps };
   stepNow = -1;
   tickPlan();
   renderNow();
