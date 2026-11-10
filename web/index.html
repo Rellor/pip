@@ -57,6 +57,13 @@
   .dot { display:none; position:absolute; top:6px; right:2px; width:9px; height:9px; border-radius:50%; background:var(--accent); }
   .dot.on { display:block; }
 
+  @media (max-width:600px) {
+    #tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:0; padding:6px 6px 0; overflow:visible; }
+    .tab { padding:9px 2px; font-size:14px; text-align:center; border-bottom-width:3px; }
+    .count { margin-left:3px; padding:0 5px; font-size:11px; }
+    .dot { right:6px; }
+  }
+
   .pane { flex:1; overflow:auto; padding:16px; }
   .pane[hidden] { display:none; }
   h2 { margin:22px 0 8px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }

@@ -38,25 +38,45 @@ export function passTime(s, now = Date.now()) {
 }
 
 // Every step of his plan.
-export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fresh = false, style = '' }) {
+// looks = how many of his last few steps were lookups (search or read). Lookups feed wonder less and less when they pile up,
+// while making something fills him: curiosity is the start, doing is what satisfies.
+export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fresh = false, style = '', looks = 0 }) {
+  const rested = s.energy >= 8; // before this step changes it
   s.energy = s.energy + (action === 'rest' ? 3 : -1);
   s.joy = s.joy + (Number(enjoyment) - 8) / 6; // he rates most things 8 to 10, so only the best lifts joy and the rest lowers it a little
   switch (action) {
     case 'search_web':
     case 'read_book':
-      s.wonder += 1.2;
+      s.wonder += 1.2 / (1 + Math.max(0, looks) * 0.5);
       s.fullness += 0.05;
       break;
     case 'decorate':
       s.wonder += 1;
-      s.fullness += 0.2;
+      s.fullness += 0.6;
+      s.joy += 0.4;
+      break;
+    case 'draw':
+    case 'compose':
+    case 'make_app':
+    case 'make_clothes':
+    case 'change_thing':
+    case 'update_app':
+      s.wonder += 0.8;
+      s.fullness += 0.5;
+      s.joy += 0.5;
+      break;
+    case 'use':
+    case 'add_use':
+      s.wonder += 0.3;
+      s.joy += 0.2;
       break;
     case 'play_piano':
       s.calm += /slow|soft|gentle|calm|sad|sleep|dream|quiet/i.test(style) ? 0.6 : 0.3;
       s.joy += 0.3;
       break;
     case 'rest':
-      s.calm += 0.8;
+      s.calm += rested ? 0.2 : 0.8; // resting while full of energy settles little
+      if (rested) s.joy -= 0.3;
       break;
     case 'write_diary':
       s.calm += 0.3;

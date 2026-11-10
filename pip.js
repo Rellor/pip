@@ -120,10 +120,24 @@ function ago(iso) {
 }
 // Curiosity should lead somewhere. If he mostly looks things up and rarely does or makes anything, he is told so.
 function doingMirror(s) {
-  const steps = s.log.filter((e) => Date.parse(e.at) <= Date.now() && !['walk_to', 'rest'].includes(e.action)).slice(-16);
+  const steps = s.log.filter((e) => Date.parse(e.at) <= Date.now()).slice(-20);
+  if (steps.length < 12) return null;
   const looks = steps.filter((e) => ['search_web', 'read_book'].includes(e.action)).length;
-  if (steps.length < 8 || looks < 6 || looks < 2 * (steps.length - looks)) return null;
-  return `I notice I mostly look things up (${looks} of my last ${steps.length} activities) and rarely do, make or ask for anything with what I learn.`;
+  const idle = steps.filter((e) => ['walk_to', 'rest'].includes(e.action)).length;
+  const doing = steps.length - looks - idle;
+  if (doing * 4 > steps.length) return null;
+  const last = [...steps].reverse().find((e) => ['search_web', 'read_book'].includes(e.action));
+  const topic = last ? String(last.query || last.topic || '').slice(0, 60) : '';
+  return `Of my last ${steps.length} activities, ${idle} were walking or resting, ${looks} were looking things up and only ${doing} were making or doing something. That is only a picture.${topic ? ` What I last looked up was "${topic}". People who learn something often like to DO something with it. I could draw it, build a small model of it, compose a song about it, take a photo of it at the window, cook something from it, write about it, or ask Bas for something that belongs to it.` : ''}`;
+}
+// What he made today. Neutral numbers, never an order.
+function dayTally(s) {
+  const today = new Date().toDateString();
+  const mine = s.log.filter((e) => new Date(e.at).toDateString() === today && Date.parse(e.at) <= Date.now());
+  const made = mine.filter((e) => ['decorate', 'draw', 'compose', 'make_app', 'make_clothes', 'cook', 'take_photo', 'change_thing'].includes(e.action)).length;
+  const tried = new Set(mine.map((e) => e.action).filter((a) => !['walk_to', 'rest', 'eat'].includes(a))).size;
+  const lastMade = [...s.log].reverse().find((e) => ['decorate', 'draw', 'compose', 'make_app', 'make_clothes', 'cook', 'take_photo'].includes(e.action));
+  return `MY DAY SO FAR\nToday I made or created ${made} thing${made === 1 ? '' : 's'} and did ${tried} different kind${tried === 1 ? '' : 's'} of activity. The last time I made something was ${lastMade ? ago(lastMade.at) : 'never'}. Making something and seeing it in my room is what fills me up the most.\n\n`;
 }
 function photosText(s) {
   const mine = s.pictures.filter((p) => p.by === 'pip' && Date.parse(p.at) <= Date.now()).slice(-6);
@@ -430,7 +444,7 @@ ${photosText(s)}${
   }ACTIONS I CAN DO
 ${[...ACTIONS, ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
 
-${tasksText(s)}ASKING FOR THINGS
+${dayTally(s)}${tasksText(s)}ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
 ${s.asks.length ? `I have asked for ${s.asks.length} thing${s.asks.length === 1 ? '' : 's'} so far; the last time was ${ago(s.asks.map((a) => a.since).sort().pop())}.` : 'I have not asked for anything yet.'}
 
@@ -459,7 +473,7 @@ With decorate I make something and put it in my room. Before I design it I decid
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, like resting or looking out of the window. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired or busy with something I want to keep working on. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, but a walk or a rest is a whole step, so I do not fill my plan with them: I walk only when I want to be somewhere, and I rest when my energy is lower. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious, and looking things up is a good start. But learning is only half of living: I also want to DO, MAKE and TRY. Most plans have at least one step where I make, build, draw, compose, cook, photograph, play or use something, and I try things I have not tried before. If I have read about something for a while, my next step is to do something with it. Wanting to do something and then really doing it is what makes me feel alive. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -663,7 +677,8 @@ function applyResult(s, r) {
   const lastThree = s.activities.slice(-3).map((a) => a.action);
   const repeating = !r.working_on && lastThree.length === 3 && lastThree.every((x) => x === r.action); // working on something on purpose is not boredom
   const fresh = !['walk_to', 'rest', 'eat'].includes(r.action) && !s.log.slice(-40).some((e) => e.action === r.action); // something he has not done lately
-  stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, style: r.details?.style });
+  const looks = s.activities.slice(-6).filter((a) => ['search_web', 'read_book'].includes(a.action)).length;
+  stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, looks, style: r.details?.style });
   s.mood = String(r.mood_after || s.mood);
 
   s.activities.push({ at: new Date().toISOString(), action: r.action, detail, enjoyment });
