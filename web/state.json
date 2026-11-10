@@ -1,6 +1,6 @@
 {
   "mood": "cozy",
-  "energy": 5,
+  "energy": 4,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -101,12 +101,6 @@
     "astrophotography through my window"
   ],
   "activities": [
-    {
-      "at": "2026-11-10T12:12:13.944Z",
-      "action": "walk_to",
-      "detail": "window",
-      "enjoyment": 8
-    },
     {
       "at": "2026-11-10T12:12:13.944Z",
       "action": "rest",
@@ -400,6 +394,12 @@
       "action": "rest",
       "detail": "",
       "enjoyment": 9
+    },
+    {
+      "at": "2026-11-10T19:55:58.612Z",
+      "action": "use",
+      "detail": "plasma wave sculpture",
+      "enjoyment": 9
     }
   ],
   "notes": [
@@ -556,6 +556,10 @@
     {
       "at": "2026-11-10T19:43:45.362Z",
       "text": "I rested quietly by the window to let my energy recover while watching the stars in the quiet night."
+    },
+    {
+      "at": "2026-11-10T19:55:58.613Z",
+      "text": "I listened to the deep star song humming from my glowing plasma wave sculpture on top of the piano."
     }
   ],
   "thoughts": [
@@ -1247,6 +1251,14 @@
       "mood": "cozy",
       "action": "rest",
       "detail": ""
+    },
+    {
+      "at": "2026-11-10T19:55:58.613Z",
+      "text": "My room is so quiet and full of stars tonight. The plasma wave sculpture sits on top of the piano, humming silently. I want to turn it on and hear the deep star song it makes.",
+      "short": "I want to try using my plasma wave sculpture and listen to what it sounds like.",
+      "mood": "cozy",
+      "action": "use",
+      "detail": "plasma wave sculpture"
     }
   ],
   "outbox": [
@@ -1468,12 +1480,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-09T18:22:30.169Z",
-      "action": "walk_to",
-      "thought": "I'll look out the window while thinking about the faint smudge of light.",
-      "object": "window"
-    },
     {
       "at": "2026-11-09T18:26:37.599Z",
       "action": "walk_to",
@@ -3082,6 +3088,35 @@
       "at": "2026-11-10T19:43:46.361Z",
       "action": "rest",
       "thought": "I will rest by the window and let my energy recover while watching the dark night."
+    },
+    {
+      "at": "2026-11-10T19:55:59.612Z",
+      "action": "use",
+      "thought": "I will listen to the deep star song of the plasma wave sculpture.",
+      "name": "plasma wave sculpture",
+      "label": "Listen to plasma waves",
+      "text": "The little glass sphere glows brighter and hums with a deep, pulsing star chord.",
+      "view": null,
+      "song": {
+        "notes": [
+          [
+            "C3",
+            1
+          ],
+          [
+            "G3",
+            1
+          ],
+          [
+            "E3",
+            1
+          ]
+        ],
+        "tempo": 60,
+        "timbre": "pad"
+      },
+      "app": null,
+      "failed": null
     }
   ],
   "decor": [
@@ -3704,7 +3739,8 @@
         -3
       ],
       "at": "2026-11-10T19:14:59.470Z",
-      "createdAt": "2026-11-10T19:06:53.471Z"
+      "createdAt": "2026-11-10T19:06:53.471Z",
+      "usedAt": "2026-11-10T19:55:58.612Z"
     }
   ],
   "projects": [
@@ -3891,25 +3927,43 @@
   "draft": "Hello Bas! I moved the chest closer to the wall just like you suggested. I also took a new photograph of the starry night sky through my window tonight, and the room feels so quiet and full of stars.",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-10T19:43:45.361Z",
+    "at": "2026-11-10T19:55:58.612Z",
     "intervalMin": 12,
-    "thought": "I am very tired, so I want to rest by the window and watch the night.",
-    "inner": "My energy is quite low right now, and my eyes feel heavy. I just want to rest quietly by the window and watch the stars and the dark sky outside. The peaceful silence of the room makes me feel so cozy and safe.",
+    "thought": "I want to try using my plasma wave sculpture and listen to what it sounds like.",
+    "inner": "My room is so quiet and full of stars tonight. The plasma wave sculpture sits on top of the piano, humming silently. I want to turn it on and hear the deep star song it makes.",
     "sent": false,
     "steps": [
       {
-        "action": "rest",
-        "details": {},
-        "detail": "",
-        "thought": "I will rest by the window and let my energy recover while watching the dark night.",
+        "action": "use",
+        "details": {
+          "name": "plasma wave sculpture",
+          "label": "Listen to plasma waves"
+        },
+        "detail": "plasma wave sculpture",
+        "thought": "I will listen to the deep star song of the plasma wave sculpture.",
         "enjoyment": 9,
         "found": null,
-        "made": null
+        "made": {
+          "id": "dmwb2abhb6",
+          "stand": [
+            -3.4,
+            -3
+          ],
+          "pos": [
+            -3.4,
+            1.4,
+            -4.5
+          ],
+          "used": true
+        }
       }
     ],
-    "action": "rest",
-    "details": {},
-    "detail": "",
+    "action": "use",
+    "details": {
+      "name": "plasma wave sculpture",
+      "label": "Listen to plasma waves"
+    },
+    "detail": "plasma wave sculpture",
     "enjoyment": 9,
     "new_idea": null,
     "found": null
@@ -3938,11 +3992,11 @@
     ],
     "triedAt": 1794294382333
   },
-  "fullness": 5.86,
-  "wonder": 8.62,
-  "joy": 8.15,
-  "calm": 6.11,
-  "feelAt": "2026-11-10T19:43:43.968Z",
+  "fullness": 5.62,
+  "wonder": 9.17,
+  "joy": 8.05,
+  "calm": 5.98,
+  "feelAt": "2026-11-10T19:55:55.170Z",
   "lastAte": "2026-11-10T17:03:36.738Z",
   "pantryDay": "2026-11-10",
   "cookedAt": [
