@@ -29,6 +29,10 @@
   #info[hidden] { display:none; }
   #infocard { position:relative; width:min(460px, 100%); max-height:calc(100dvh - 32px); overflow:auto; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:16px; padding:16px 18px 18px; box-shadow:0 8px 30px rgba(0,0,0,.4); }
   #resetview { left:auto; right:12px; }
+  #camctl { position:absolute; right:12px; bottom:12px; z-index:3; display:grid; grid-template-columns:repeat(4, 44px); gap:6px; }
+  #camctl button { width:44px; height:44px; font-size:20px; line-height:1; padding:0; border-radius:12px; background:var(--panel); color:var(--ink); border:1px solid var(--line); box-shadow:0 2px 8px rgba(0,0,0,.25); touch-action:manipulation; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+  #camctl button:active { background:var(--chip); }
+  #camctl[hidden] { display:none; }
   #info h3 { margin:0 28px 6px 0; font-size:18px; }
   #info p { margin:6px 0; font-size:15px; }
   #info .small { color:var(--muted); font-size:13px; }
@@ -36,7 +40,7 @@
   #info a { color:var(--accent); }
   #infoclose { position:absolute; right:8px; top:6px; font-size:22px; line-height:1; padding:4px 10px; background:none; border:0; color:var(--muted); }
   body.walking #hint { display:none; }
-  #hint { position:absolute; left:16px; bottom:12px; right:16px; color:var(--muted); font-size:13px; pointer-events:none; }
+  #hint { position:absolute; left:16px; bottom:12px; right:220px; color:var(--muted); font-size:13px; pointer-events:none; }
   #panel { background:var(--panel); border-left:1px solid var(--line); min-height:0; display:flex; flex-direction:column; }
   .head { padding:16px 16px 4px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   h1 { margin:0; font-size:24px; }
@@ -153,6 +157,16 @@
     <div id="hint"></div>
     <button id="walk" class="stagebtn" type="button">🚶 Walk around</button>
     <div id="stick" hidden><div id="knob"></div></div>
+    <div id="camctl" role="group" aria-label="Move the camera">
+      <button type="button" data-cam="turn-left" aria-label="Turn left">↺</button>
+      <button type="button" data-cam="turn-right" aria-label="Turn right">↻</button>
+      <button type="button" data-cam="zoom-in" aria-label="Zoom in">＋</button>
+      <button type="button" data-cam="zoom-out" aria-label="Zoom out">－</button>
+      <button type="button" data-cam="move-left" aria-label="Move left">◀</button>
+      <button type="button" data-cam="move-up" aria-label="Move forward">▲</button>
+      <button type="button" data-cam="move-down" aria-label="Move back">▼</button>
+      <button type="button" data-cam="move-right" aria-label="Move right">▶</button>
+    </div>
     <button id="resetview" class="stagebtn" type="button" aria-label="Reset the view">⟲ View</button>
     <div id="info" hidden role="dialog" aria-modal="true" aria-label="About this">
       <div id="infocard">
