@@ -8,7 +8,7 @@ import { pictureType } from './inbox.js';
 const ROOT = fileURLToPath(new URL('./', import.meta.url));
 const WEB = resolve(ROOT, 'web');
 const PORT = Number(process.env.PORT) || 4321;
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml' };
 
 let waking = false;
 let lastError = null;

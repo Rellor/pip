@@ -113,6 +113,11 @@
   .pic img { width:100%; max-height:200px; object-fit:cover; border-radius:10px; display:block; }
   .pic .note { font-size:14px; margin-top:4px; }
   .pic .meta { margin:4px 0 0; }
+  #appview { position:fixed; inset:0; z-index:50; background:var(--bg); display:flex; flex-direction:column; }
+  #appview[hidden] { display:none; }
+  .appbar { display:flex; align-items:center; gap:12px; padding:10px 14px; background:var(--panel); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  .appbar .muted { font-size:13px; flex:1; }
+  #appframe { flex:1; width:100%; border:0; background:#fff; }
   .reflect { border-left:3px solid var(--accent); padding-left:12px; }
   .ask { border-left:3px solid var(--accent); padding-left:10px; }
   .mine { border-left:3px solid var(--line); padding-left:10px; }
@@ -209,12 +214,19 @@
     <section class="pane" data-pane="life" hidden>
       <h2>Pip's story so far</h2><p class="story" id="story"></p>
       <h2>How Pip feels</h2><div id="bars"></div>
+      <h2>Pip's drawings</h2><div class="pics" id="drawlist"></div>
+      <h2>Apps on his computer</h2><ul id="applist"></ul>
       <h2>Pictures Pip has</h2><div class="pics" id="pics"></div>
       <h2>In his chest</h2><ul id="chestlist"></ul>
       <h2>The news Pip can see today</h2><ul id="newslist"></ul>
       <h2>What Pip made for his room</h2><ul id="decorlist"></ul>
     </section>
   </aside>
+</div>
+
+<div id="appview" hidden>
+  <div class="appbar"><strong id="apptitle"></strong><span class="muted">Made by Pip. It runs in a locked box: no internet, nothing is saved.</span><button id="appclose" class="small" type="button">Close</button></div>
+  <iframe id="appframe" sandbox="allow-scripts" referrerpolicy="no-referrer" title="An app made by Pip"></iframe>
 </div>
 
 <script type="importmap">

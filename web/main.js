@@ -184,6 +184,7 @@ function updateDecor(s) {
     g.userData.born = performance.now() - Math.min(Date.now() - Date.parse(d.at), 5000); // old things are simply there
     scene.add(g);
     decorGroups.set(d.id, g);
+    if (d.song && audio?.state === 'running' && Date.now() - Date.parse(d.at) < 8000) playSong(d.song);
   }
 }
 function popDecor(now) {
@@ -424,6 +425,99 @@ $('sound').addEventListener('click', () => {
     $('sound').textContent = on ? '🔊 Sound on' : '🔇 Sound off';
   });
 });
+// ---- songs: what Pip makes can play a tune (a short list of notes, a tempo and a sound)
+async function ensureAudio() {
+  if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+  if (audio.state !== 'running') await audio.resume();
+  $('sound').textContent = '🔊 Sound on';
+}
+function noteFreq(name) {
+  const m = /^([A-G])([#b]?)(\d)$/.exec(name);
+  if (!m) return null;
+  const semi = SEMI[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
+  return 440 * 2 ** (Number(m[3]) - 4 + (semi - 9) / 12);
+}
+const VOICES = {
+  piano: { parts: [[1, 'triangle', 0.35], [2, 'sine', 0.12]], attack: 0.015, release: 1.4 },
+  musicbox: { parts: [[1, 'sine', 0.28], [3, 'sine', 0.1], [6, 'sine', 0.04]], attack: 0.005, release: 0.9 },
+  bell: { parts: [[1, 'sine', 0.28], [2.76, 'sine', 0.14], [5.4, 'sine', 0.05]], attack: 0.005, release: 2.2 },
+  soft: { parts: [[1, 'sine', 0.22], [2, 'sine', 0.05]], attack: 0.22, release: 1.3 },
+};
+function voice(freq, t, hold, timbre) {
+  const v = VOICES[timbre] || VOICES.piano;
+  for (const [mult, type, vol] of v.parts) {
+    const o = audio.createOscillator();
+    const g = audio.createGain();
+    o.type = type;
+    o.frequency.value = freq * mult;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + v.attack);
+    g.gain.setValueAtTime(vol, t + Math.max(v.attack, hold));
+    g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(v.attack, hold) + v.release);
+    o.connect(g).connect(audio.destination);
+    o.start(t);
+    o.stop(t + Math.max(v.attack, hold) + v.release + 0.1);
+  }
+}
+// Plays a song. Returns how many seconds it lasts.
+async function playSong(song) {
+  if (!song?.notes?.length) return 0;
+  await ensureAudio();
+  const beat = 60 / (song.tempo || 90);
+  const start = audio.currentTime + 0.1;
+  let t = start;
+  for (const [n, beats] of song.notes) {
+    const f = n ? noteFreq(n) : null;
+    if (f) voice(f, t, beat * beats * 0.9, song.timbre);
+    t += beat * beats;
+  }
+  return t - start;
+}
+function songButton(song) {
+  const b = el('button', '▶ Hear it', 'small');
+  b.addEventListener('click', async () => {
+    b.disabled = true;
+    const secs = await playSong(song);
+    b.textContent = '♪ playing…';
+    setTimeout(() => {
+      b.textContent = '▶ Hear it again';
+      b.disabled = false;
+    }, Math.min(secs, 90) * 1000);
+  });
+  return b;
+}
+
+// ---- apps Pip writes: they run only when opened, in a locked box (no internet, no saving, no way out)
+const APP_CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'";
+async function openApp(app) {
+  try {
+    const res = await fetch(`${app.file}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('missing');
+    const html = await res.text();
+    $('appframe').srcdoc = `<!doctype html><meta http-equiv="Content-Security-Policy" content="${APP_CSP}">${html}`;
+    $('apptitle').textContent = app.name;
+    $('appview').hidden = false;
+  } catch {
+    $('replystatus').textContent = 'I could not open that app.';
+  }
+}
+function closeApp() {
+  $('appview').hidden = true;
+  $('appframe').srcdoc = '';
+}
+function appButton(app) {
+  const b = el('button', '▶ Open the app', 'small');
+  b.addEventListener('click', () => openApp(app));
+  return b;
+}
+window.addEventListener('message', (e) => {
+  if (e.source === $('appframe').contentWindow && e.data && e.data.__pipTest) window.__appReport = e.data; // only used by tests
+});
+$('appclose').addEventListener('click', closeApp);
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !$('appview').hidden) closeApp();
+});
+
 
 // ---------------------------------------------------------------- floating signs (symbols, no words)
 const glyphCache = {};
@@ -515,8 +609,11 @@ function planFor(last) {
     case 'ask_for': return { at: 'center', anim: 'ask' };
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
     case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
+    case 'compose': return { at: 'center', anim: 'write' };
+    case 'make_app': return { at: 'computer', anim: 'search' };
     case 'take_out':
     case 'place_picture':
+    case 'draw':
     case 'decorate': {
       const m = last.made;
       if (!m) return { at: 'center', anim: 'look' };
@@ -786,7 +883,7 @@ const REGIONS = [
   { box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.'] }; } },
   { box: [-2.95, -2.25, 0, 0.7, -3.5, -2.8], info: () => ({ title: 'The piano stool', lines: ['Pip sits here to play.'] }) },
   { box: [1.55, 3.65, 0, 3.1, -5, -4.3], info: () => { const last = logOf('read_book').at(-1); return { title: 'The bookshelf', lines: ['Pip goes here to read.', last?.opened ? `He last read about ${last.opened.title}.` : 'He has not read anything here yet.'], links: last?.opened?.url ? [{ text: `Read: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
-  { box: [-5, -3.6, 0, 1.9, 0.1, 2.3], info: () => { const last = logOf('search_web').at(-1); return { title: 'The computer', lines: ['Pip looks things up on the web here.', last ? `His last search was "${last.query}".` : 'He has not searched yet.'], links: last?.opened?.url ? [{ text: `He opened: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
+  { box: [-5, -3.6, 0, 1.9, 0.1, 2.3], info: () => { const last = logOf('search_web').at(-1); const apps = lastState?.apps || []; return { title: 'The computer', lines: ['Pip looks things up on the web here.', last ? `His last search was "${last.query}".` : 'He has not searched yet.', apps.length ? `He has written ${apps.length} app${apps.length === 1 ? '' : 's'}:` : ''].filter(Boolean), links: last?.opened?.url ? [{ text: `He opened: ${last.opened.title}`, url: last.opened.url }] : [], actions: apps.slice(-5).map((a) => ({ text: `▶ Open ${a.name}`, run: () => openApp(a) })) }; } },
   { box: [2.2, 4.6, 0, 1.1, 1.3, 4.7], info: () => ({ title: "Pip's bed", lines: ['Pip sleeps here, from 23:00 until 08:00.', 'He also rests here when he is tired.'] }) },
   { box: [3.6, 4.6, 0, 1.5, -4.6, -3.6], info: () => ({ title: 'A plant', lines: ['A leafy plant in the corner.'] }) },
   { box: [-0.9, 1.5, 1.7, 4.1, -5.1, -4.8], info: () => ({ title: 'The window', lines: ['Pip looks outside here.', 'The sky follows the real time of day where you are.'] }) },
@@ -815,11 +912,12 @@ chestGroup.userData.info = () => {
   return { title: "Pip's chest", lines: items.length ? ['Things Pip put away. Nothing is lost, and he can take them out again:', ...items.map((x) => `• ${x.name}`)] : ['An empty chest. Pip puts things here when he does not want them in his room for a while.'] };
 };
 function decorInfo(d) {
+  if (d.art) return { title: d.name, image: d.image, lines: [`A drawing by Pip. It hangs ${d.label}.`, d.why ? `Why: ${d.why}` : ''].filter(Boolean) };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
   const lines = d.image
     ? [`A picture${pic?.caption ? `: "${pic.caption}"` : ''} that Bas gave to Pip. It hangs ${d.label}.`, pic?.notes ? `Pip says: ${pic.notes}` : '']
     : [`Made by Pip. It is ${d.label}.`, d.why ? `Why: ${d.why}` : '', d.project ? `For his project: ${d.project}` : '', `Made ${when(d.createdAt)}.`];
-  return { title: d.name, lines: lines.filter(Boolean), image: d.image || null };
+  return { title: d.name, lines: lines.filter(Boolean), image: d.image || null, actions: d.song ? [{ text: '▶ Hear it', run: () => playSong(d.song) }] : [] };
 }
 
 const infoBox = $('info');
@@ -837,6 +935,11 @@ function showInfo(info) {
     const p = el('p', null, 'small');
     p.append(link_(l.url, l.text));
     body.append(p);
+  });
+  (info.actions || []).forEach((a) => {
+    const b = el('button', a.text, 'small');
+    b.addEventListener('click', a.run);
+    body.append(b);
   });
   $('infobody').replaceChildren(body);
   infoBox.hidden = false;
@@ -1150,6 +1253,9 @@ function headline(st) {
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
     case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
+    case 'compose': return ['🎵', `Composing a song for ${d.name || st.name || 'something'}`];
+    case 'draw': return ['🎨', `Drawing ${d.name || st.name || 'something'}`];
+    case 'make_app': return ['💻', `Writing the app ${d.name || st.name || ''}`];
     case 'place_picture': return ['🖼️', 'Putting up a picture'];
     case 'take_down_picture': return ['🖼️', 'Taking a picture down'];
     case 'remove_decoration': return ['📦', `Putting ${d.name || st.name || 'something'} in his chest`];
@@ -1157,7 +1263,7 @@ function headline(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', compose: 'make', draw: 'make', make_app: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -1242,7 +1348,13 @@ function dayCard(e) {
       img.alt = 'picture';
       card.append(img);
     }
-    if (e.action === 'remove_decoration') {
+    if (e.action === 'compose') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He gave it a song.', 'muted'));
+    } else if (e.action === 'draw') {
+      card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew it and put it ${e.place}.`, 'muted'));
+    } else if (e.action === 'make_app') {
+      card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : 'He wrote a small app on his computer. It opens in a locked box.', 'muted'));
+    } else if (e.action === 'remove_decoration') {
       card.append(el('p', e.stored ? 'He put it away in his chest. It is not lost.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
     } else if (e.action === 'take_out') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He took it out of his chest and put it ${e.place}.`, 'muted'));
@@ -1253,6 +1365,8 @@ function dayCard(e) {
     }
     if (e.why && !e.failed) card.append(el('p', e.why));
     if (e.project && !e.failed) card.append(el('p', `For his project: ${e.project}`, 'muted'));
+    if (e.song && !e.failed) card.append(songButton(e.song));
+    if (e.file && !e.failed) card.append(appButton({ name: e.name, file: e.file }));
   } else if (kind === 'walk') {
     card.append(el('h3', `To the ${e.object || 'room'}`, 'title'));
   }
@@ -1454,6 +1568,32 @@ function render(s) {
   fill($('chestlist'), inChest.length
     ? inChest.map((x) => entry([`put away ${when(x.storedAt)}`, `it was ${x.label}`], x.name))
     : empty('The chest is empty.'));
+  const drawings = (s.art || []).slice().reverse();
+  fill($('drawlist'), drawings.length
+    ? drawings.map((a) => {
+      const div = el('div', null, 'pic');
+      const link2 = el('a');
+      link2.href = a.file;
+      link2.target = '_blank';
+      link2.rel = 'noopener';
+      const img = el('img');
+      img.src = a.file;
+      img.alt = a.name;
+      link2.append(img);
+      div.append(link2, el('div', a.name + (a.why ? ` — ${a.why}` : ''), 'note'));
+      const up = (s.decor || []).find((d) => d.art === a.id);
+      div.append(el('div', up ? `🖼️ ${up.label}` : 'in his album, not up', 'meta'));
+      return div;
+    })
+    : [el('div', 'Pip has not drawn anything yet.', 'muted')]);
+  const apps = (s.apps || []).slice().reverse();
+  fill($('applist'), apps.length
+    ? apps.map((a) => {
+      const li = entry([when(a.createdAt)], `${a.name}${a.why ? ' — ' + a.why : ''}`);
+      li.append(appButton(a));
+      return li;
+    })
+    : empty('Pip has not written any apps yet.'));
   const news = s.news?.items || [];
   fill($('newslist'), news.length
     ? news.map((n) => {
@@ -1595,4 +1735,4 @@ $('wake').addEventListener('click', () => {
 
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipDo = (last) => startTask({ at: String(Date.now()), thought: '(test)', details: {}, ...last });
-window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt, camera };
+window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt, camera, openApp, playSong, getAudio: () => audio };

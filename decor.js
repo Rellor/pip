@@ -1,30 +1,33 @@
+import { cleanSong } from './songs.js';
+
 // Pip's decorations.
 // He designs objects from a few simple shapes. His design is plain data, never code, and everything is checked and
 // limited here. He places things in named spots; this file works out the exact position, so nothing overlaps or
 // ends up outside the room.
 
 const SHAPES = { box: 3, sphere: 1, cylinder: 3, cone: 2, torus: 2, capsule: 2 }; // how many numbers each shape needs
+// Biggest size by kind. Spots with less room (next to a wall, on a small table) have their own smaller `lim`.
 const LIMITS = {
-  floor: { w: 1.3, h: 1.8, d: 1.3 },
-  surface: { w: 0.8, h: 0.7, d: 0.8 }, // on top of furniture
-  wall: { w: 1.2, h: 1.0, d: 0.25 }, // flat things on a wall
+  floor: { w: 2.0, h: 2.6, d: 2.0 },
+  surface: { w: 1.0, h: 0.9, d: 1.0 }, // on top of furniture
+  wall: { w: 1.6, h: 1.3, d: 0.4 }, // flat things on a wall
 };
-export const MAX_PER_DAY = 4;
-const MAX_PARTS = 14;
-const MAX_DECOR = 24;
+export const MAX_PER_DAY = 6;
+const MAX_PARTS = 40;
+const MAX_DECOR = 30;
 
 // Spots: [x, y, z] in the room. For wall spots y is the height of the middle of the object.
 // "off" is where Pip stands relative to the spot, rotY turns the object to face into the room.
 export const ZONES = {
-  floor_under_window: { label: 'on the floor under the window', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [[-1.0, 0, -4.4], [1.0, 0, -4.4]] },
-  floor_left_wall: { label: 'on the floor by the left wall', kind: 'floor', rotY: 0.8, off: [1.2, 0], slots: [[-4.5, 0, -2.9], [-4.5, 0, -1.4]] },
+  floor_under_window: { label: 'on the floor under the window', kind: 'floor', lim: { d: 1.2 }, rotY: 0, off: [0, 1.1], slots: [[-1.0, 0, -4.4], [1.0, 0, -4.4]] },
+  floor_left_wall: { label: 'on the floor by the left wall', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: 0.8, off: [1.2, 0], slots: [[-4.5, 0, -2.9], [-4.5, 0, -1.4]] },
   floor_middle: { label: 'on the floor in the middle of the room', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [[-1.8, 0, 0.4], [1.8, 0, 0.0], [0.2, 0, -1.2]] },
   floor_front: { label: 'on the floor near the front of the room', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [[-2.6, 0, 3.2], [-0.6, 0, 3.8], [1.2, 0, 3.4]] },
-  floor_right: { label: 'on the floor on the right side of the room', kind: 'floor', rotY: -0.6, off: [-1.2, 0], slots: [[4.4, 0, -1.6], [4.4, 0, -0.2]] },
-  on_piano: { label: 'on top of the piano', kind: 'surface', rotY: 0, off: [0, 1.5], slots: [[-3.4, 1.4, -4.5], [-1.9, 1.4, -4.5]] },
-  on_bookshelf: { label: 'on top of the bookshelf', kind: 'surface', rotY: 0, off: [0, 1.4], slots: [[2.0, 3.0, -4.65], [3.2, 3.0, -4.65]] },
-  on_desk: { label: 'on the desk', kind: 'surface', rotY: 1.2, off: [1.5, 0], slots: [[-4.2, 0.85, 0.45], [-4.2, 0.85, 1.95]] },
-  on_bed: { label: 'on the bed', kind: 'surface', rotY: 0, off: [-1.5, 0], slots: [[3.1, 0.7, 4.0], [3.9, 0.7, 3.4]] },
+  floor_right: { label: 'on the floor on the right side of the room', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: -0.6, off: [-1.2, 0], slots: [[4.4, 0, -1.6], [4.4, 0, -0.2]] },
+  on_piano: { label: 'on top of the piano', kind: 'surface', lim: { w: 1.1, d: 0.8 }, rotY: 0, off: [0, 1.5], slots: [[-3.4, 1.4, -4.5], [-1.9, 1.4, -4.5]] },
+  on_bookshelf: { label: 'on top of the bookshelf', kind: 'surface', lim: { w: 1.0, d: 0.55 }, rotY: 0, off: [0, 1.4], slots: [[2.0, 3.0, -4.65], [3.2, 3.0, -4.65]] },
+  on_desk: { label: 'on the desk', kind: 'surface', lim: { w: 1.0, d: 1.3 }, rotY: 1.2, off: [1.5, 0], slots: [[-4.2, 0.85, 0.45], [-4.2, 0.85, 1.95]] },
+  on_bed: { label: 'on the bed', kind: 'surface', lim: { w: 0.9, d: 0.9 }, rotY: 0, off: [-1.5, 0], slots: [[3.1, 0.7, 4.0], [3.9, 0.7, 3.4]] },
   wall_back: { label: 'on the back wall (left of the photo, above it, or above the bookshelf)', kind: 'wall', rotY: 0, side: 'back', slots: [[-4.2, 2.9, -4.97], [-2.2, 4.2, -4.97], [2.6, 3.9, -4.97]] },
   wall_left: { label: 'on the left wall', kind: 'wall', rotY: Math.PI / 2, side: 'left', slots: [[-4.97, 2.7, -3.0], [-4.97, 2.7, -1.2], [-4.97, 3.2, 1.2]] },
 };
@@ -76,7 +79,7 @@ function halfSize(p) {
 }
 
 // Moves the parts so the object sits on its surface (or hangs flat on a wall) and works out how much to shrink it.
-function fit(parts, kind) {
+function fit(parts, kind, lim = {}) {
   const min = [Infinity, Infinity, Infinity];
   const max = [-Infinity, -Infinity, -Infinity];
   for (const p of parts) {
@@ -88,13 +91,13 @@ function fit(parts, kind) {
     }
   }
   const [w, h, d] = [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
-  const L = LIMITS[kind];
+  const L = { ...LIMITS[kind], ...lim };
   const scale = Math.min(1, L.w / w, L.h / h, L.d / d);
   const cx = (min[0] + max[0]) / 2;
   const cy = kind === 'wall' ? (min[1] + max[1]) / 2 : min[1]; // wall things: middle at the spot; others: bottom on the surface
   const cz = kind === 'wall' ? min[2] : (min[2] + max[2]) / 2; // wall things: back against the wall
   for (const p of parts) p.pos = [r3(p.pos[0] - cx), r3(p.pos[1] - cy), r3(p.pos[2] - cz)];
-  return r3(scale);
+  return Math.floor(scale * 1000) / 1000; // rounded down, so a limit is never exceeded by a hair
 }
 
 const usedSlots = (decor, zone) => new Set(decor.filter((d) => d.zone === zone).map((d) => d.slot));
@@ -140,7 +143,7 @@ function placeParts(decor, spec, atMs, now) {
 
   const Z = ZONES[zone];
   const [sx, sy, sz] = Z.slots[slot];
-  const scale = fit(parts, Z.kind);
+  const scale = fit(parts, Z.kind, Z.lim);
   const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
   const stand = Z.kind === 'wall' ? (Z.side === 'back' ? [sx, -3.7] : [-3.7, sz]) : [clampRoom(sx + Z.off[0]), clampRoom(sz + Z.off[1])];
   return {
@@ -149,6 +152,7 @@ function placeParts(decor, spec, atMs, now) {
       name: spec.name,
       why: spec.why,
       project: spec.project,
+      song: spec.song ?? null,
       zone,
       slot,
       label: Z.label,
@@ -173,7 +177,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song) }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -197,7 +201,7 @@ export function takeOut(decor, stored, name, where, atMs, now = Date.now()) {
   if (i < 0 && n) i = stored.findIndex((x) => x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()));
   if (i < 0) return { failed: 'there is nothing with that name in his chest' };
   const e = stored[i];
-  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.parts }, atMs, now);
+  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.parts, song: e.song }, atMs, now);
   if (r.entry) {
     r.entry.createdAt = e.createdAt; // it is still the thing he made back then
     stored.splice(i, 1);
@@ -215,8 +219,9 @@ export function removeDecor(decor, name) {
 
 // ---- Pictures from Bas. Pip decides if one goes on a wall or stands on a piece of furniture.
 const PICTURE_MAX = { wall: [0.9, 0.7], surface: [0.45, 0.35] };
+export const ART_MAX = { wall: [1.5, 1.2], surface: [0.5, 0.4] }; // Pip's own drawings may be bigger
 
-export function placePicture(decor, pic, where, atMs, now = Date.now()) {
+export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PICTURE_MAX) {
   if (!pic || !pic.image) return { failed: 'he does not have that picture' };
   if (decor.some((x) => x.picture === pic.id)) return { failed: 'that picture is already up' };
   if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
@@ -239,7 +244,7 @@ export function placePicture(decor, pic, where, atMs, now = Date.now()) {
   if (!zone) return { failed: 'there is no free spot left for it' };
   const Z = ZONES[zone];
   const [sx, sy, sz] = Z.slots[slot];
-  const [maxW, maxH] = PICTURE_MAX[Z.kind];
+  const [maxW, maxH] = max[Z.kind];
   const aspect = pic.aspect > 0.2 && pic.aspect < 5 ? pic.aspect : 1.5;
   const w = Math.min(maxW, maxH * aspect);
   const h = w / aspect;
@@ -273,4 +278,17 @@ export function placePicture(decor, pic, where, atMs, now = Date.now()) {
 export function removePicture(decor, id) {
   const i = decor.findIndex((x) => x.picture === id);
   return i >= 0 ? decor.splice(i, 1)[0] : null;
+}
+
+// Gives a thing he already made a song (or a new one). Returns { name } or { failed }.
+export function composeSong(decor, name, rawSong) {
+  const song = cleanSong(rawSong);
+  if (!song) return { failed: 'the notes did not work out' };
+  const n = str(name, 60).toLowerCase();
+  const mine = (x) => !x.image;
+  let e = n ? decor.find((x) => mine(x) && x.name.toLowerCase() === n) : null;
+  if (!e && n) e = decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  if (!e) return { failed: 'there is nothing with that name in his room' };
+  e.song = song;
+  return { name: e.name, song };
 }
