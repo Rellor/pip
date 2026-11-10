@@ -17,15 +17,27 @@ scene.background = new THREE.Color(getComputedStyle(document.body).backgroundCol
 
 const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
+// Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
+const orbit = { az: 0, el: 0, zoom: 1, px: 0, pz: 0 };
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+function applyOrbit() {
+  const k = Math.max(1, 1.3 / camera.aspect);
+  const base = new THREE.Vector3(9.5 * k, 9 * k * (1 + orbit.el), 11 * k).applyAxisAngle(new THREE.Vector3(0, 1, 0), orbit.az).multiplyScalar(orbit.zoom);
+  const target = new THREE.Vector3(orbit.px, 1.2, -0.3 + orbit.pz);
+  camera.position.copy(target).add(base);
+  camera.lookAt(target);
+}
+function resetOrbit() {
+  Object.assign(orbit, { az: 0, el: 0, zoom: 1, px: 0, pz: 0 });
+  if (view.mode === 'overview') applyOrbit();
+}
 function fitCamera() {
   const w = stage.clientWidth || 1;
   const h = stage.clientHeight || 1;
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   if (view.mode === 'overview') {
-    const k = Math.max(1, 1.3 / camera.aspect);
-    camera.position.set(9.5 * k, 9 * k, 11 * k);
-    camera.lookAt(0, 1.2, -0.3);
+    applyOrbit();
   }
   camera.updateProjectionMatrix();
 }
@@ -868,6 +880,7 @@ function setMode(mode) {
   document.body.classList.toggle('walking', mode === 'walk');
   extraWalls.visible = mode === 'walk';
   $('stick').hidden = mode !== 'walk';
+  $('resetview').hidden = mode === 'walk';
   if (mode === 'walk') {
     Object.assign(view, { x: 0, z: 3.4, yaw: 0, pitch: 0 });
     camera.fov = 70;
@@ -896,12 +909,14 @@ const REGIONS = [
   { box: [-0.9, 1.5, 1.7, 4.1, -5.1, -4.8], info: () => ({ title: 'The window', lines: ['Pip looks outside here.', 'The sky follows the real time of day where you are.'] }) },
   { box: [-2, 2, 0, 0.12, -1.2, 2.8], info: () => ({ title: 'The rug', lines: ['A soft round rug in the middle of the room.'] }) },
 ];
+// `direct` is true when the thing tapped carries its own info (Pip, his creations); furniture is found by where the ray landed.
 function infoFor(hit) {
   for (let o = hit.object; o; o = o.parent) {
-    if (o.userData?.info) return typeof o.userData.info === 'function' ? o.userData.info() : o.userData.info;
+    if (o.userData?.info) return { info: typeof o.userData.info === 'function' ? o.userData.info() : o.userData.info, direct: true };
   }
   const { x, y, z } = hit.point;
-  return REGIONS.find(({ box: [x0, x1, y0, y1, z0, z1] }) => x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1)?.info() ?? null;
+  const info = REGIONS.find(({ box: [x0, x1, y0, y1, z0, z1] }) => x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1)?.info() ?? null;
+  return info ? { info, direct: false } : null;
 }
 pip.group.userData.info = () => {
   const s = lastState;
@@ -971,42 +986,126 @@ function hideInfo() {
   infoBox.hidden = true;
 }
 $('infoclose').addEventListener('click', hideInfo);
+infoBox.addEventListener('click', (e) => {
+  if (e.target === infoBox) hideInfo(); // a tap outside the card closes it
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !infoBox.hidden) hideInfo();
+});
+$('resetview').addEventListener('click', resetOrbit);
 
 const ray = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
+// Small things are hard to hit with a finger, so a tap close to one of Pip's creations counts as a tap on it.
+const box3 = new THREE.Box3();
+const corner = new THREE.Vector3();
+function nearDecor(clientX, clientY, rect) {
+  let best = null;
+  for (const g of decorGroups.values()) {
+    if (!g.visible || !g.userData.info) continue;
+    box3.setFromObject(g);
+    if (box3.isEmpty()) continue;
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity, behind = false;
+    for (let i = 0; i < 8; i++) {
+      corner.set(i & 1 ? box3.max.x : box3.min.x, i & 2 ? box3.max.y : box3.min.y, i & 4 ? box3.max.z : box3.min.z).project(camera);
+      if (corner.z > 1) behind = true;
+      const px = rect.left + ((corner.x + 1) / 2) * rect.width;
+      const py = rect.top + ((1 - corner.y) / 2) * rect.height;
+      x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
+    }
+    const pad = 16;
+    if (behind || clientX < x0 - pad || clientX > x1 + pad || clientY < y0 - pad || clientY > y1 + pad) continue;
+    const area = (x1 - x0 + 2 * pad) * (y1 - y0 + 2 * pad);
+    if (!best || area < best.area) best = { area, g };
+  }
+  const info = best?.g.userData.info;
+  return info ? (typeof info === 'function' ? info() : info) : null;
+}
 function pickAt(clientX, clientY) {
   const r = renderer.domElement.getBoundingClientRect();
   ndc.set(((clientX - r.left) / r.width) * 2 - 1, -(((clientY - r.top) / r.height) * 2 - 1));
   ray.setFromCamera(ndc, camera);
+  let furniture = null;
   for (const h of ray.intersectObjects(scene.children, true)) {
     if (h.object.isSprite || !h.object.visible) continue;
-    const info = infoFor(h);
-    if (info) return info;
+    const found = infoFor(h);
+    if (!found) continue;
+    if (found.direct) return found.info;
+    furniture ??= found.info;
+    break;
   }
-  return null;
+  return nearDecor(clientX, clientY, r) ?? furniture;
 }
 
 // Looking around (drag) and tapping (a short touch that hardly moves).
 const dom = renderer.domElement;
 dom.style.touchAction = 'none';
 let drag = null;
+const touches = new Map(); // fingers on the screen, for pinching
+let pinch = null;
+const spread = () => {
+  const [p, q] = [...touches.values()];
+  return { d: Math.hypot(p.x - q.x, p.y - q.y), x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
+};
+// Moves the middle of the overview camera over the floor, following the screen.
+function panBy(dx, dy) {
+  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
+  const fwd = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2).setY(0).normalize();
+  const s = 0.012 * orbit.zoom;
+  orbit.px = clamp(orbit.px - right.x * dx * s - fwd.x * dy * s, -4, 4);
+  orbit.pz = clamp(orbit.pz - right.z * dx * s - fwd.z * dy * s, -4, 4);
+}
+dom.addEventListener('contextmenu', (e) => e.preventDefault());
 dom.addEventListener('pointerdown', (e) => {
-  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), moved: false };
-  dom.setPointerCapture(e.pointerId);
+  touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  try {
+    dom.setPointerCapture(e.pointerId);
+  } catch {}
+  if (touches.size === 2 && view.mode === 'overview') {
+    pinch = spread();
+    if (drag) drag.moved = true; // two fingers are never a tap
+    return;
+  }
+  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), moved: false, pan: e.shiftKey || e.button === 2 };
 });
 dom.addEventListener('pointermove', (e) => {
+  if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch && touches.size === 2) {
+    const now = spread();
+    orbit.zoom = clamp(orbit.zoom * (pinch.d / Math.max(20, now.d)), 0.3, 1.3);
+    panBy(now.x - pinch.x, now.y - pinch.y);
+    pinch = now;
+    applyOrbit();
+    return;
+  }
   if (!drag || e.pointerId !== drag.id) return;
   const dx = e.clientX - drag.x;
   const dy = e.clientY - drag.y;
   drag.x = e.clientX;
   drag.y = e.clientY;
   if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 6) drag.moved = true;
-  if (view.mode === 'walk' && drag.moved) {
+  if (!drag.moved) return;
+  if (view.mode === 'walk') {
     view.yaw -= dx * 0.005;
     view.pitch = Math.max(-1.2, Math.min(1.2, view.pitch - dy * 0.005));
+  } else if (drag.pan) {
+    panBy(dx, dy);
+    applyOrbit();
+  } else {
+    orbit.az = clamp(orbit.az - dx * 0.006, -0.7, 0.7);
+    orbit.el = clamp(orbit.el + dy * 0.004, -0.5, 0.9);
+    applyOrbit();
   }
 });
+dom.addEventListener('wheel', (e) => {
+  if (view.mode !== 'overview') return;
+  e.preventDefault();
+  orbit.zoom = clamp(orbit.zoom * Math.exp(e.deltaY * 0.001), 0.3, 1.3);
+  applyOrbit();
+}, { passive: false });
 dom.addEventListener('pointerup', (e) => {
+  touches.delete(e.pointerId);
+  if (touches.size < 2) pinch = null;
   if (!drag || e.pointerId !== drag.id) return;
   const tap = !drag.moved && performance.now() - drag.t < 500;
   drag = null;
@@ -1015,7 +1114,11 @@ dom.addEventListener('pointerup', (e) => {
   if (info) showInfo(info);
   else hideInfo();
 });
-dom.addEventListener('pointercancel', () => (drag = null));
+dom.addEventListener('pointercancel', (e) => {
+  touches.delete(e.pointerId);
+  pinch = null;
+  drag = null;
+});
 
 // The joystick for touch screens.
 const stick = $('stick');
