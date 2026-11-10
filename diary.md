@@ -628,3 +628,10 @@ I am so tired and cozy, I just want to rest by my window.
 - rest: I will close my eyes for a little while and let the quiet night fill me up.
 - mood: cozy
 
+## 10/11/2026, 19:31:37
+I want to take a photograph of the Milky Way core through my window now.
+> I have been reading so much about dark skies, stars, and the Milky Way. My camera is ready, and the stars outside are glowing in the quiet night. I want to see if I can catch that hazy band of light right from my window.
+- walk_to (window): I'll walk over to the window to get a closer look at the night sky.
+- take_photo (window): I am capturing the starry night sky through my window.
+- mood: cozy
+
