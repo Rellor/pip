@@ -14,7 +14,8 @@ const git = (...args) => spawnSync('git', args, { stdio: 'pipe' }).status === 0;
 function wakeAndSave() {
   const run = spawnSync(process.execPath, ['pip.js'], { stdio: 'inherit', env: { ...process.env, PIP_INTERVAL_MIN: String(EVERY_MIN) } });
   if (run.status !== 0) console.error(`[${stamp()}] pip.js exited with code ${run.status}`);
-  git('add', '-A', 'web/state.json', 'web/gifts', 'web/made', 'web/photos', 'diary.md', 'inbox', 'tasks');
+  // One path at a time: a folder that does not exist yet must never stop the others from being saved.
+  for (const path of ['web/state.json', 'web/gifts', 'web/made', 'web/photos', 'diary.md', 'inbox', 'tasks']) git('add', '-A', path);
   if (git('diff', '--cached', '--quiet')) return; // nothing changed
   git('commit', '-q', '-m', 'Pip woke up');
   for (let i = 0; i < 3; i++) {
