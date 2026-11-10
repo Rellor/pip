@@ -899,7 +899,7 @@ let task = null;
 // A little food symbol for whatever he is eating.
 function foodEmoji(food) {
   const f = String(food || '').toLowerCase();
-  const map = [[/berr|strawberr/, '🍓'], [/apple/, '🍎'], [/bread|toast|bun/, '🍞'], [/tea|coffee|cocoa/, '☕'], [/soup|stew/, '🍲'], [/cookie|biscuit/, '🍪'], [/cake|pie/, '🍰'], [/cheese/, '🧀'], [/honey/, '🍯'], [/rice|noodle|pasta/, '🍜'], [/fish/, '🐟'], [/carrot/, '🥕'], [/nut|seed/, '🥜'], [/pear/, '🍐'], [/banana/, '🍌'], [/grape/, '🍇'], [/milk/, '🥛']];
+  const map = [[/berr|strawberr/, '🍓'], [/apple/, '🍎'], [/bread|toast|bun/, '🍞'], [/tea|coffee|cocoa/, '☕'], [/soup|stew/, '🍲'], [/cookie|biscuit/, '🍪'], [/cake|pie/, '🍰'], [/cheese/, '🧀'], [/honey/, '🍯'], [/rice|noodle|pasta/, '🍜'], [/fish/, '🐟'], [/carrot/, '🥕'], [/egg/, '🥚'], [/potato/, '🥔'], [/onion|garlic/, '🧅'], [/tomato/, '🍅'], [/mushroom/, '🍄'], [/butter/, '🧈'], [/flour|wheat|oat|grain/, '🌾'], [/sugar|salt|spice|herb|pepper/, '🧂'], [/corn/, '🌽'], [/lemon|orange/, '🍋'], [/bean|pea/, '🫘'], [/nut|seed/, '🥜'], [/pear/, '🍐'], [/banana/, '🍌'], [/grape/, '🍇'], [/milk/, '🥛']];
   return map.find(([re]) => re.test(f))?.[1] ?? '🍽️';
 }
 function planFor(last) {
@@ -2147,7 +2147,7 @@ function render(s) {
     })
     : [el('div', 'Bas has not given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
   const pantry = (s.pantry || []).filter((p) => p.qty > 0).sort((a, b) => (a.kind === 'dish' ? 0 : 1) - (b.kind === 'dish' ? 0 : 1));
-  fill($('pantrylist'), pantry.length ? pantry.map((p) => el('li', `${p.kind === 'dish' ? '🍲' : '🥕'} ${p.name} ×${p.qty}`)) : empty('The pantry is empty.'));
+  fill($('pantrylist'), pantry.length ? pantry.map((p) => el('li', `${p.kind === 'dish' ? '🍲' : foodEmoji(p.name)} ${p.name} ×${p.qty}`)) : empty('The pantry is empty.'));
   const inChest = s.stored || [];
   fill($('chestlist'), inChest.length
     ? inChest.map((x) => entry([`put away ${when(x.storedAt)}`, `it was ${x.label}`], x.name))
