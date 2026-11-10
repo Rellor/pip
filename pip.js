@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, placePicture, removePicture, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
+import { topicMirror } from './mirror.js';
 import { makeClothes, wear, takeOff, wornNow, SLOTS, MAX_CLOTHES_PER_DAY } from './clothes.js';
 const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
@@ -293,7 +294,7 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map((p) => `${p.title
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-THINGS I WANT TO REMEMBER
+${topicMirror(s.log) ? `WHAT I NOTICE ABOUT MYSELF\n${topicMirror(s.log)}\n\n` : ''}THINGS I WANT TO REMEMBER
 ${bullets(s.memories.slice(-8).map((m) => m.text), 'nothing yet')}
 
 ROOM
