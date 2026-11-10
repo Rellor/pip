@@ -175,6 +175,7 @@
       <button class="tab" role="tab" data-tab="day">Day</button>
       <button class="tab" role="tab" data-tab="mind">Mind</button>
       <button class="tab" role="tab" data-tab="asks">Asks<span class="count" id="askcount"></span></button>
+      <button class="tab" role="tab" data-tab="tasks">Tasks<span class="count" id="taskcount"></span></button>
       <button class="tab" role="tab" data-tab="messages">Messages<span class="dot" id="msgdot"></span></button>
       <button class="tab" role="tab" data-tab="life">Life</button>
     </nav>
@@ -203,6 +204,17 @@
       <ul class="donelist" id="asksdone"></ul>
     </section>
 
+    <section class="pane" data-pane="tasks" hidden>
+      <h2>Things you ask Pip to do</h2>
+      <p class="muted">Pip decides himself: he can say yes or no. If he says yes, he will do it.</p>
+      <form id="taskform">
+        <textarea id="tasktext" rows="2" maxlength="300" placeholder="For example: build yourself a kitchen"></textarea>
+        <input id="taskkey" type="password" autocomplete="off" placeholder="Your reply key (only needed once)" hidden>
+        <div class="row"><button type="submit" class="primary" id="tasksend">Ask Pip</button><span class="muted" id="taskstatus"></span></div>
+      </form>
+      <ul id="tasklist"></ul>
+    </section>
+
     <section class="pane" data-pane="messages" hidden>
       <form id="reply">
         <textarea id="replytext" rows="3" maxlength="1000" placeholder="Write to Pip…"></textarea>
@@ -223,6 +235,7 @@
       <h2>Pip's drawings</h2><div class="pics" id="drawlist"></div>
       <h2>Apps on his computer</h2><ul id="applist"></ul>
       <h2>Pictures Pip has</h2><div class="pics" id="pics"></div>
+      <h2>Pip's pantry</h2><ul id="pantrylist"></ul>
       <h2>In his chest</h2><ul id="chestlist"></ul>
       <h2>The news Pip can see today</h2><ul id="newslist"></ul>
       <h2>What Pip made for his room</h2><ul id="decorlist"></ul>

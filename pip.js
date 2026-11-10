@@ -4,6 +4,7 @@ import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, pl
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror } from './mirror.js';
+import { refillPantry, pantryText, cook, addIngredient, eatFromPantry, mealGain } from './food.js';
 import { makeClothes, wear, takeOff, wornNow, SLOTS, MAX_CLOTHES_PER_DAY } from './clothes.js';
 const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
@@ -60,10 +61,11 @@ const ACTIONS = [
   'make_clothes(name, slot, why, parts)',
   'wear(name)',
   'take_off(name)',
+  'cook(dish, ingredients)',
 ];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, where)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -90,6 +92,8 @@ const freshState = () => ({
   pictures: [],
   stored: [],
   wardrobe: [],
+  pantry: [],
+  tasks: [],
   voice: '',
   art: [],
   apps: [],
@@ -115,6 +119,18 @@ function doingMirror(s) {
   const looks = steps.filter((e) => ['search_web', 'read_book'].includes(e.action)).length;
   if (steps.length < 8 || looks < 6 || looks < 2 * (steps.length - looks)) return null;
   return `I notice I mostly look things up (${looks} of my last ${steps.length} activities) and rarely do, make or ask for anything with what I learn.`;
+}
+function tasksText(s) {
+  const open = s.tasks.filter((t) => t.status === 'open');
+  const yes = s.tasks.filter((t) => t.status === 'accepted');
+  if (!open.length && !yes.length) return '';
+  const o = open.length
+    ? `Bas asked me to do these. It is my choice: for each one I answer yes or no in tasks_answer, with a short note in my own words. A no is fine. If I say yes, I really do it, in my next plans.\n${open.map((t) => `- (id ${t.id}, ${ago(t.at)}) ${t.text}`).join('\n')}\n`
+    : '';
+  const y = yes.length
+    ? `I said yes to these and have not finished them yet. I work on them in my plans, and when one is done I put its id in tasks_done.\n${yes.map((t) => `- (id ${t.id}, I said yes ${ago(t.answeredAt)}) ${t.text}`).join('\n')}\n`
+    : '';
+  return `THINGS BAS ASKED ME TO DO\n${o}${y}\n`;
 }
 const sameText = (a, b) => a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
 const bullets = (items, empty) => (items.length ? items.map((x) => `- ${x}`).join('\n') : empty);
@@ -145,6 +161,8 @@ async function loadState() {
   }
   const state = { ...freshState(), ...raw };
   state.wardrobe ??= [];
+  state.pantry ??= [];
+  state.tasks ??= [];
   state.voice ??= '';
   delete state.tools; // leftovers of the removed workbench
   delete state.builds;
@@ -205,6 +223,37 @@ async function loadInbox(state) {
   state.inbox = state.inbox.slice(-50);
   const keepImages = imageNames.filter((n) => handled.includes(n.replace(/\.\w+$/, '.json')) || handled.some((h) => h.startsWith(n.replace(/\.\w+$/, ''))));
   return { added, names: [...handled, ...keepImages] };
+}
+// Things Bas asks Pip to do (tasks/*.json, made by the website). Pip answers yes or no himself.
+const TASKS_DIR = 'tasks';
+async function loadTasks(state) {
+  let files = [];
+  try {
+    files = (await readdir(TASKS_DIR)).filter((n) => n.endsWith('.json')).sort();
+  } catch {
+    return { added: 0, names: [] };
+  }
+  let added = 0;
+  const names = [];
+  for (const name of files) {
+    try {
+      const m = JSON.parse(await readFile(`${TASKS_DIR}/${name}`, 'utf8'));
+      const body = text(m.text, 300);
+      const id = text(m.id, 60) || name.replace(/\.json$/, '');
+      if (body && !state.tasks.some((t) => t.id === id)) {
+        state.tasks.push({ id, at: Number.isNaN(Date.parse(m.at)) ? new Date().toISOString() : m.at, text: body, status: 'open', note: '', answeredAt: null });
+        added++;
+      }
+      names.push(name);
+    } catch (e) {
+      console.error(`⚠️  task ${name}: ${e.message}. It stays for the next wake-up.`);
+    }
+  }
+  state.tasks = state.tasks.slice(-30);
+  return { added, names };
+}
+async function clearTasks(names) {
+  for (const n of names) await unlink(`${TASKS_DIR}/${n}`).catch(() => {});
 }
 async function clearInbox(names) {
   for (const n of names) await unlink(`${INBOX_DIR}/${n}`).catch(() => {});
@@ -312,6 +361,8 @@ IN MY CHEST (things I put away; nothing is lost and I can take it out again)
 ${bullets(s.stored.map((x) => `${x.name} (it was ${x.label})`), 'empty')}
 HOW I TALK (my own note; I can change it whenever I want, with voice_update)
 ${s.voice || 'short, simple sentences (how I started; I have not chosen my own way yet)'}
+MY PANTRY (plain ingredients come back every day, so I always have something to eat)
+${pantryText(s)}
 MY CLOTHES
 ${bullets((s.wardrobe ?? []).map((c) => `${c.name} (${c.slot})${c.worn ? ' [I am wearing it]' : ''}`), 'none yet')}
 
@@ -362,9 +413,12 @@ ${
   }ACTIONS I CAN DO
 ${[...ACTIONS, ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
 
-ASKING FOR THINGS
+${tasksText(s)}ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
 ${s.asks.length ? `I have asked for ${s.asks.length} thing${s.asks.length === 1 ? '' : 's'} so far; the last time was ${ago(s.asks.map((a) => a.since).sort().pop())}.` : 'I have not asked for anything yet.'}
+
+COOKING
+I have a pantry. Plain ingredients come back every day, so I never go hungry. With cook I make a dish from 1 to 4 ingredients in my pantry, but only once I have a kitchen in my room. I build my kitchen myself with decorate (a stove, a counter, an oven, whatever I like: I design it, choose where it goes and say in its uses that I can cook with it). A dish fills me up more than a plain snack. I can cook at most 4 times a day. cook {dish, ingredients}. If I want an ingredient that is not in my pantry, I ask for it with asks_add. When it has been given to me, I mark the ask as done and write its name in pantry_add.
 
 LONG WORK AND NEW THINGS
 Both are good. Some things take time, like a song, a drawing or something I am building, and I may keep working on one thing for many wake-ups. Trying something I have never done is good too: it is how I find what I love, and it makes me wonder again. I do not have to choose. I can keep going with what I started and still, now and then, try one new thing.
@@ -388,7 +442,7 @@ With decorate I make something and put it in my room. Before I design it I decid
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}. Quiet steps are fine, like resting or looking out of the window. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired or busy with something I want to keep working on. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}. Quiet steps are fine, like resting or looking out of the window. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired or busy with something I want to keep working on. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -397,6 +451,9 @@ Answer in JSON with these fields:
 "questions_done": exact text of questions I now have an answer to (or []),
 "asks_add": up to 2 things I want someone to bring or do for me, each {"item": "short and concrete, like 'a picture of a harp'", "why": "one short reason"}. Only things someone can really give me. Do not repeat asks that are still waiting. Or [],
 "asks_done": exact item text of asks that Bas did or that I no longer need (or []),
+"pantry_add": names of ingredients that were just given to me because I asked for them (or []),
+"tasks_answer": for each thing Bas asked me to do that I have not answered yet: [{"id": "the id", "answer": "yes" or "no", "note": "a short reason or plan in my own words"}], or [],
+"tasks_done": ids of the tasks I said yes to and have now finished (or []),
 "projects_add": at most 1 new project, a thing I want to DO, GET or MAKE because of what I learned: {"title": "short, like 'Learn to bake sourdough'", "why": "one short reason", "next": "my very next step"}. If that step needs something from Bas, I also put it in asks_add. Or [],
 "projects_update": for projects I already have: [{"title": "exact title", "next": "my new next step", "status": "working or done or dropped"}]. Or [],
 "picture_notes": for each NEW picture I just looked at, {"id": "pic1", "about": "what I really see and how it makes me feel, 1 or 2 sentences"}, or [],
@@ -471,6 +528,7 @@ function fakeBrain(prompt = '') {
     asks_add: Math.random() > 0.5 ? [{ item: 'a book about harps', why: 'I want to know what harps sound like' }] : [],
     asks_done: prompt.includes('I did this for you') ? ['a book about harps'] : [],
     voice_update: null,
+    tasks_answer: [...new Set([...prompt.matchAll(/\(id ([\w-]+), [^)]*ago\)/g)].map((m) => m[1]))].map((id) => ({ id, answer: 'yes', note: '(fake) I will try.' })),
     remember: Math.random() > 0.7 ? 'I liked the soft notes today.' : null,
     tell_bas: prompt.includes('[new]') ? 'Thank you for writing to me, Bas.' : Math.random() > 0.8 ? 'Hello Bas. I made up a tune today.' : null,
   };
@@ -653,6 +711,20 @@ function applyInnerLife(s, r, detail, replying = false) {
     const hit = s.asks.find((a) => a.status === 'open' && sameItem(a.item, t));
     if (hit) Object.assign(hit, { status: 'done', doneAt: at });
   }
+  for (const t of strings(r.pantry_add, 2)) {
+    // only things he really asked for and that were given to him in the last 3 days
+    if (s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && sameItem(a.item, t))) addIngredient(s, t);
+  }
+  for (const a of Array.isArray(r.tasks_answer) ? r.tasks_answer : []) {
+    const hit = s.tasks.find((t) => t.status === 'open' && t.id === String(a?.id));
+    if (!hit || !['yes', 'no'].includes(String(a?.answer).toLowerCase())) continue;
+    Object.assign(hit, { status: String(a.answer).toLowerCase() === 'yes' ? 'accepted' : 'declined', note: text(a?.note, 240), answeredAt: at });
+  }
+  for (const id of strings(r.tasks_done)) {
+    const hit = s.tasks.find((t) => t.status === 'accepted' && t.id === id);
+    if (hit) Object.assign(hit, { status: 'done', doneAt: at });
+  }
+  s.tasks = s.tasks.slice(-30);
   const wanted = (Array.isArray(r.asks_add) ? r.asks_add : []).slice(0, 3).map((a) => ({ item: text(a?.item ?? a, 140), why: text(a?.why, 200) }));
   if (r.action === 'ask_for') {
     const d = r.details || {};
@@ -774,6 +846,8 @@ async function wakeUp() {
   const state = await loadState();
   const inbox = await loadInbox(state);
   inbox.added += (await pullNtfy(state)).added;
+  const taskFiles = await loadTasks(state);
+  inbox.added += taskFiles.added;
   if (isNight() && !process.env.PIP_AWAKE) {
     await goToSleep(state);
     if (inbox.added) {
@@ -781,9 +855,11 @@ async function wakeUp() {
       console.log('✉️  Bas wrote while Pip sleeps. He will read it in the morning.');
     }
     await clearInbox(inbox.names);
+    await clearTasks(taskFiles.names);
     return;
   }
   passTime(state);
+  refillPantry(state);
   if (state.last?.sleeping) {
     state.energy = 9;
     state.calm = Math.max(state.calm, 7);
@@ -855,6 +931,7 @@ async function wakeUp() {
     }
     if (st.action === 'change_thing') st.made = updateDecor(state.decor, st.details, stepStart);
     if (st.action === 'make_clothes') st.made = makeClothes(state.wardrobe, st.details, stepStart);
+    if (st.action === 'cook') st.made = cook(state, st.details, stepStart);
     if (st.action === 'wear') st.made = wear(state.wardrobe, st.details.name, stepStart);
     if (st.action === 'take_off') st.made = takeOff(state.wardrobe, st.details.name);
     if (st.action === 'remove_decoration') st.made = storeAway(state.decor, state.stored, st.details.name);
@@ -956,7 +1033,12 @@ async function wakeUp() {
   }
 
   // Eating fills him up a little (not more than once every half hour).
-  for (const st of steps) if (st.action === 'eat') st.ate = eatNow(state);
+  for (const st of steps) {
+    if (st.action !== 'eat') continue;
+    const gain = mealGain(state.pantry, st.details.food)?.gain;
+    st.ate = eatNow(state, Date.now(), gain);
+    if (st.ate.ok && gain) eatFromPantry(state, st.details.food);
+  }
 
   // ask_for steps end up in the list of asks.
   const stepAsks = steps.filter((st) => st.action === 'ask_for').map((st) => ({ item: st.details.item, why: st.details.reason }));
@@ -1025,6 +1107,7 @@ async function wakeUp() {
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), reshaped: st.made?.reshaped ?? false, failed: st.made?.failed ?? null });
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
+    if (st.action === 'cook') Object.assign(entry, { dish: text(d.dish ?? d.name, 60), ingredients: (Array.isArray(d.ingredients) ? d.ingredients : []).slice(0, 4).map((x) => text(x, 40)), failed: st.made?.failed ?? null });
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     state.log.push(entry);
@@ -1048,6 +1131,7 @@ async function wakeUp() {
   };
   await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
   await clearInbox(inbox.names);
+  await clearTasks(taskFiles.names);
   const planLines = steps.map((st, i) => `- ${st.action}${results[i].detail ? ` (${results[i].detail})` : ''}${st.thought ? `: ${st.thought}` : ''}`).join('\n');
   await appendFile(
     DIARY_FILE,
@@ -1080,6 +1164,7 @@ async function wakeUp() {
     if (st.action === 'wear' && st.made?.name) console.log(`      👕 put on "${st.made.name}"`);
     if (st.action === 'take_off' && st.made?.name) console.log(`      👕 took off "${st.made.name}"`);
     if (st.made?.stored) console.log(`      📦 put "${st.made.stored}" in the chest`);
+    if (st.action === 'cook') console.log(st.made?.ok ? `      🍳 cooked "${st.made.dish}"` : `      🍳 did not work out: ${st.made?.failed}`);
     if (st.ate?.failed) console.log(`      🍽️  not hungry yet: ${st.ate.failed}`);
   });
   if (answer.new_idea) console.log(`💡 ${answer.new_idea}`);

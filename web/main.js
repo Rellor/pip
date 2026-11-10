@@ -1483,6 +1483,53 @@ let lastState = null;
 let isStatic = false;
 let fastUntil = 0;
 
+// Things Bas asks Pip to do. Pip answers yes or no himself.
+let pendingTasks = [];
+try {
+  pendingTasks = JSON.parse(store('pip-task-pending') || '[]');
+} catch {}
+$('taskform').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const status = $('taskstatus');
+  const body = $('tasktext').value.trim();
+  if (!body) return;
+  const key = store('pip-key') || $('taskkey').value.trim();
+  if (!key) {
+    $('taskkey').hidden = false;
+    $('taskkey').focus();
+    status.textContent = 'Enter your reply key once, then press Ask Pip.';
+    return;
+  }
+  $('tasksend').disabled = true;
+  status.textContent = 'Sending…';
+  try {
+    const res = await fetch('/api/task', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: body, key }) });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) {
+      store('pip-key', '');
+      $('taskkey').value = '';
+      $('taskkey').hidden = false;
+      status.textContent = 'That key is not right.';
+      return;
+    }
+    if (!res.ok) {
+      status.textContent = data.error || 'Could not send.';
+      return;
+    }
+    store('pip-key', key);
+    $('taskkey').hidden = true;
+    $('tasktext').value = '';
+    pendingTasks.push({ id: data.id, at: new Date().toISOString(), text: body });
+    store('pip-task-pending', JSON.stringify(pendingTasks));
+    status.textContent = 'Sent. Pip answers when he next wakes up.';
+    if (lastState) render(lastState);
+  } catch {
+    status.textContent = 'No connection. Try again.';
+  } finally {
+    $('tasksend').disabled = false;
+  }
+});
+
 // Sends a message to Pip. Returns true when it was sent.
 async function sendReply(body, image = '') {
   const status = $('replystatus');
@@ -1593,7 +1640,7 @@ async function refreshNtfy() {
 }
 
 // tabs
-const TABS = ['day', 'mind', 'asks', 'messages', 'life'];
+const TABS = ['day', 'mind', 'asks', 'tasks', 'messages', 'life'];
 let tab = TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day';
 let latestMsg = null;
 function showTab(name) {
@@ -1621,6 +1668,7 @@ function headlineBase(st) {
     case 'play_piano': return ['🎹', `Playing the piano${d.style ? ` (${d.style})` : ''}`];
     case 'write_diary': return ['✍️', 'Writing in his diary'];
     case 'rest': return ['💤', 'Resting'];
+    case 'cook': return ['🍳', `Cooking ${d.dish || st.dish || 'something'}`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
@@ -1927,6 +1975,22 @@ function render(s) {
       return li;
     })
     : [el('li', 'Nothing right now. Pip will add things here when he wants something from you.', 'muted')]);
+  const tasks = s.tasks || [];
+  const knownTasks = new Set(tasks.map((t) => t.id));
+  if (pendingTasks.some((p) => knownTasks.has(p.id))) {
+    pendingTasks = pendingTasks.filter((p) => !knownTasks.has(p.id));
+    store('pip-task-pending', JSON.stringify(pendingTasks));
+  }
+  $('taskcount').textContent = tasks.filter((t) => t.status === 'open' || t.status === 'accepted').length || '';
+  const taskLabel = { sending: 'on its way…', open: 'waiting for Pip to answer', accepted: '✅ Pip said yes', declined: '🙅 Pip said no', done: '🎉 done' };
+  const taskRows = [...pendingTasks.map((p) => ({ ...p, status: 'sending' })), ...tasks.slice().reverse()];
+  fill($('tasklist'), taskRows.length
+    ? taskRows.map((t) => {
+      const li = entry([when(t.at), taskLabel[t.status] || t.status], t.text, t.status === 'declined' ? '' : 'mine');
+      if (t.note) li.append(el('p', `Pip: ${t.note}`, 'muted'));
+      return li;
+    })
+    : empty('Nothing yet. Ask Pip to do something, for example to build a kitchen.'));
   const closed = asks.filter((a) => a.status !== 'open').reverse();
   fill($('asksdone'), closed.length ? closed.map((a) => el('li', a.item)) : [el('li', 'nothing yet', 'muted')]);
 
@@ -1969,6 +2033,8 @@ function render(s) {
       return div;
     })
     : [el('div', 'Bas has not given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
+  const pantry = (s.pantry || []).filter((p) => p.qty > 0).sort((a, b) => (a.kind === 'dish' ? 0 : 1) - (b.kind === 'dish' ? 0 : 1));
+  fill($('pantrylist'), pantry.length ? pantry.map((p) => el('li', `${p.kind === 'dish' ? '🍲' : '🥕'} ${p.name} ×${p.qty}`)) : empty('The pantry is empty.'));
   const inChest = s.stored || [];
   fill($('chestlist'), inChest.length
     ? inChest.map((x) => entry([`put away ${when(x.storedAt)}`, `it was ${x.label}`], x.name))

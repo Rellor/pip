@@ -68,6 +68,10 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'ask_for':
       s.calm -= 0.2;
       break;
+    case 'cook':
+      s.wonder += 0.6;
+      s.calm += 0.2;
+      break;
   }
   if (repeating) s.wonder -= 1.5;
   if (fresh) {
@@ -95,9 +99,9 @@ export function felt(s, event) {
 }
 
 // Eating fills him up a little. Not more than once every half hour.
-export function eatNow(s, now = Date.now()) {
+export function eatNow(s, now = Date.now(), gain = EAT_GAIN) {
   if (s.lastAte && (now - Date.parse(s.lastAte)) / 60_000 < EAT_GAP_MINUTES) return { failed: 'he ate a short while ago' };
-  s.fullness = clamp(s.fullness + EAT_GAIN);
+  s.fullness = clamp(s.fullness + gain);
   s.joy = clamp(s.joy + 0.5);
   s.calm = clamp(s.calm + 0.3);
   s.lastAte = new Date(now).toISOString();
