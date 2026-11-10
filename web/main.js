@@ -123,16 +123,86 @@ box(scene, [2, 1.8, 0.05], night ? 0x1d2a4a : 0x9ad0f5, [0.3, 2.9, -4.93], {
 });
 box(scene, [0.06, 1.8, 0.07], 0xffffff, [0.3, 2.9, -4.9]);
 box(scene, [2, 0.06, 0.07], 0xffffff, [0.3, 2.9, -4.9]);
-if (night) {
-  const moon = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 12), new THREE.MeshBasicMaterial({ color: 0xfff1b8 }));
-  moon.position.set(0.9, 3.5, -4.88);
-  scene.add(moon);
-  for (let i = 0; i < 9; i++) {
-    const star = new THREE.Mesh(new THREE.SphereGeometry(0.03, 6, 6), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    star.position.set(-0.5 + ((i * 37) % 17) / 10, 2.3 + ((i * 53) % 13) / 10, -4.88);
-    scene.add(star);
+// What is outside: a small painted view that follows the real time of day. Pip's photos of "the window" show this.
+function paintOutside(date = new Date()) {
+  const W = 500;
+  const H = 450;
+  const c = document.createElement('canvas');
+  c.width = W;
+  c.height = H;
+  const g = c.getContext('2d');
+  const h = date.getHours() + date.getMinutes() / 60;
+  const dark = h < 7 || h >= 20;
+  const glow = !dark && (h < 8.5 || h >= 18);
+  const sky = g.createLinearGradient(0, 0, 0, H);
+  const stops = dark ? ['#0b1226', '#26345c'] : glow ? ['#e58f6a', '#f6d8a8'] : ['#6fb8ee', '#d3ebfb'];
+  sky.addColorStop(0, stops[0]);
+  sky.addColorStop(1, stops[1]);
+  g.fillStyle = sky;
+  g.fillRect(0, 0, W, H);
+  if (dark) {
+    for (let k = 0; k < 40; k++) {
+      g.fillStyle = `rgba(255,255,255,${0.4 + ((k * 31) % 6) / 10})`;
+      g.fillRect(((k * 97) % W), ((k * 53) % 240), 2 + (k % 3 === 0 ? 1 : 0), 2 + (k % 3 === 0 ? 1 : 0));
+    }
+    g.fillStyle = '#fff1b8';
+    g.beginPath();
+    g.arc(W * 0.74, H * 0.22, 26, 0, Math.PI * 2);
+    g.fill();
+  } else {
+    const t = clamp((h - 7) / 13, 0, 1);
+    const sx = W * (0.1 + 0.8 * t);
+    const sy = H * 0.5 - Math.sin(Math.PI * t) * H * 0.38;
+    const halo = g.createRadialGradient(sx, sy, 6, sx, sy, 70);
+    halo.addColorStop(0, 'rgba(255,244,190,0.9)');
+    halo.addColorStop(1, 'rgba(255,244,190,0)');
+    g.fillStyle = halo;
+    g.fillRect(sx - 80, sy - 80, 160, 160);
+    g.fillStyle = '#fff4b8';
+    g.beginPath();
+    g.arc(sx, sy, 22, 0, Math.PI * 2);
+    g.fill();
+    g.fillStyle = glow ? 'rgba(255,235,220,0.8)' : 'rgba(255,255,255,0.92)';
+    for (const [cx, cy, s] of [[110, 90, 1], [330, 60, 1.3], [400, 150, 0.8]]) {
+      for (const [dx, dy, r] of [[0, 0, 26], [28, 6, 22], [-28, 8, 20], [8, -12, 20]]) {
+        g.beginPath();
+        g.ellipse(cx + dx * s, cy + dy * s, r * s * 1.25, r * s * 0.8, 0, 0, Math.PI * 2);
+        g.fill();
+      }
+    }
   }
+  const hill = (base, amp, phase, color) => {
+    g.fillStyle = color;
+    g.beginPath();
+    g.moveTo(0, H);
+    for (let x = 0; x <= W; x += 10) g.lineTo(x, base + Math.sin(x / 70 + phase) * amp + Math.sin(x / 31 + phase * 2) * amp * 0.3);
+    g.lineTo(W, H);
+    g.fill();
+  };
+  hill(300, 24, 0.5, dark ? '#16273a' : glow ? '#9bb08a' : '#9ccfae');
+  hill(350, 18, 2.4, dark ? '#101d2b' : glow ? '#7d9c6e' : '#76bb8b');
+  for (const [tx, ty] of [[90, 372], [170, 384], [380, 366], [440, 380]]) {
+    g.fillStyle = dark ? '#0b1620' : '#5a3b24';
+    g.fillRect(tx - 3, ty, 6, 22);
+    g.fillStyle = dark ? '#0d2218' : '#3f8f58';
+    g.beginPath();
+    g.moveTo(tx, ty - 46);
+    g.lineTo(tx - 20, ty + 4);
+    g.lineTo(tx + 20, ty + 4);
+    g.fill();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
 }
+const outside = new THREE.Mesh(new THREE.PlaneGeometry(2, 1.8), new THREE.MeshBasicMaterial({ map: paintOutside(), toneMapped: false }));
+outside.position.set(0.3, 2.9, -4.895);
+scene.add(outside);
+setInterval(() => {
+  outside.material.map.dispose();
+  outside.material.map = paintOutside();
+  outside.material.needsUpdate = true;
+}, 5 * 60_000);
 
 // framed photo above the piano (ESO / Luis Calçada / Herbert Zodet, CC BY 4.0: the credit is shown on the page)
 const wallFrame = new THREE.Group();
@@ -197,6 +267,7 @@ function buildDecor(d) {
   g.rotation.y = d.rotY || 0;
   g.userData.scale = d.scale || 1;
   g.userData.info = () => decorInfo(d);
+  g.userData.name = d.name;
   g.scale.setScalar(0.001);
   return g;
 }
@@ -1640,7 +1711,7 @@ async function refreshNtfy() {
 }
 
 // tabs
-const TABS = ['day', 'mind', 'asks', 'tasks', 'messages', 'life'];
+const TABS = ['day', 'mind', 'asks', 'tasks', 'photos', 'found', 'messages', 'life'];
 let tab = TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day';
 let latestMsg = null;
 function showTab(name) {
@@ -1669,6 +1740,8 @@ function headlineBase(st) {
     case 'write_diary': return ['✍️', 'Writing in his diary'];
     case 'rest': return ['💤', 'Resting'];
     case 'cook': return ['🍳', `Cooking ${d.dish || st.dish || 'something'}`];
+    case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
+    case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
@@ -2014,7 +2087,47 @@ function render(s) {
     : empty('Nothing yet. Pip writes to you when something really matters to him, and you can write to him too.'));
   showTab(tab);
 
-  const pics = (s.pictures || []).slice().reverse();
+  const taken = (s.pictures || []).filter((p) => p.by === 'pip' && Date.parse(p.at) <= Date.now()).slice().reverse();
+  fill($('photolist'), taken.length
+    ? taken.map((p) => {
+      const div = el('div', null, 'pic');
+      const a = el('a');
+      a.href = p.image;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      const img = el('img');
+      img.src = p.image;
+      img.alt = p.caption || 'a photo by Pip';
+      img.loading = 'lazy';
+      a.append(img);
+      div.append(a, el('div', p.caption || '', 'note'));
+      const hung = (s.decor || []).find((d) => d.picture === p.id);
+      div.append(el('div', `${p.target ? `of ${p.target} · ` : ''}${when(p.at)}${hung ? ` · 🖼️ ${hung.label}` : ''}`, 'meta'));
+      return div;
+    })
+    : [el('div', 'No photos yet. Pip takes one when he wants to.', 'muted')]);
+  const foundPics = (s.found || []).filter((f) => Date.parse(f.at) <= Date.now()).slice().reverse();
+  fill($('foundlist'), foundPics.length
+    ? foundPics.map((f) => {
+      const div = el('div', null, 'pic');
+      const a = el('a');
+      if (/^https:\/\//.test(f.page || '')) {
+        a.href = f.page;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      }
+      const img = el('img');
+      img.src = f.image;
+      img.alt = f.title || 'a picture Pip found';
+      img.loading = 'lazy';
+      img.referrerPolicy = 'no-referrer';
+      a.append(img);
+      div.append(a, el('div', f.caption || f.title || '', 'note'));
+      div.append(el('div', `${f.credit ? `${f.credit} · ` : ''}${f.license || ''} · ${when(f.at)}`, 'meta'));
+      return div;
+    })
+    : [el('div', 'Nothing yet. Pip looks for a picture when he wants to see something.', 'muted')]);
+  const pics = (s.pictures || []).filter((p) => p.by !== 'pip').slice().reverse();
   fill($('pics'), pics.length
     ? pics.map((p) => {
       const div = el('div', null, 'pic');
@@ -2142,7 +2255,7 @@ const isLocal = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 
 // His pictures, drawings and apps are saved as files in the same place as his state.
 function fromGithub(v) {
-  if (typeof v === 'string') return /^(gifts|made)\/[\w.-]+$/.test(v) ? RAW + v : v;
+  if (typeof v === 'string') return /^(gifts|made|photos)\/[\w.-]+$/.test(v) ? RAW + v : v;
   if (Array.isArray(v)) return v.map(fromGithub);
   if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, fromGithub(x)]));
   return v;
@@ -2193,7 +2306,69 @@ async function poll() {
   }
   pollTimer = setTimeout(poll, delay);
 }
-poll();
+const PHOTO = new URLSearchParams(location.search).get('photo');
+// Photo mode: the camera Pip uses. A script opens the page like this, we draw one picture from Pip's eye and hand it back.
+async function takeSnapshot() {
+  try {
+    const spec = JSON.parse(PHOTO);
+    const s = await (await fetch(`state.json?t=${Date.now()}`, { cache: 'no-store' })).json();
+    view.mode = 'photo';
+    document.body.classList.add('photomode');
+    lastState = s;
+    updateDecor(s);
+    syncClothes(s);
+    for (const g of decorGroups.values()) {
+      g.userData.born -= 5000;
+      g.scale.setScalar(g.userData.scale);
+    }
+    await new Promise((r) => setTimeout(r, 1500)); // textures and pictures load
+    const shot = photoCamera(String(spec.target || 'room'));
+    renderer.setSize(960, 720, false);
+    camera.aspect = 960 / 720;
+    camera.fov = shot.fov;
+    camera.updateProjectionMatrix();
+    camera.position.copy(shot.from);
+    camera.lookAt(shot.to);
+    camera.updateMatrixWorld(true);
+    renderer.render(scene, camera);
+    window.__photo = renderer.domElement.toDataURL('image/jpeg', 0.88);
+  } catch (e) {
+    window.__photo = `error: ${e.message}`;
+  }
+}
+// Where the camera stands and looks, for what Pip wants to photograph.
+function photoCamera(target) {
+  const t = target.toLowerCase();
+  const V = (x, y, z) => new V3(x, y, z);
+  if (/window|sky|outside|star|cloud|sun|moon/.test(t)) return { from: V(0.3, 2.9, -2.4), to: V(0.3, 2.9, -5), fov: 46 };
+  if (/selfie|myself|\bme\b|\bpip\b/.test(t)) return { from: V(0.5, 1.25, 4.4), to: V(0, 0.75, 1.6), fov: 46 };
+  const front = (center, size) => {
+    const dir = V(0 - center.x, 0, 4.6 - center.z).normalize();
+    const dist = Math.max(1.9, size * 2.3);
+    const from = center.clone().addScaledVector(dir, dist);
+    from.y = center.y + 0.5;
+    from.x = clamp(from.x, -4.6, 4.6);
+    from.z = clamp(from.z, -4.6, 4.8);
+    return { from, to: center, fov: 50 };
+  };
+  for (const g of decorGroups.values()) {
+    const name = String(g.userData.name || '').toLowerCase();
+    if (name && (t.includes(name) || name.includes(t))) {
+      const box = new THREE.Box3().setFromObject(g);
+      return front(box.getCenter(new V3()), box.getSize(new V3()).length());
+    }
+  }
+  const key = resolveSpot(t);
+  if (key !== 'center' && SPOTS[key]) {
+    const sp = SPOTS[key];
+    const forward = V(Math.sin(sp.face), 0, Math.cos(sp.face));
+    const center = sp.y ? sp.p.clone().setY(0.7) : sp.p.clone().addScaledVector(forward, 1.1).setY(1.1);
+    return front(center, key === 'bed' ? 3 : 1.8);
+  }
+  return { from: V(4.4, 3.0, 4.3), to: V(-0.5, 1.2, -0.8), fov: 62 };
+}
+
+PHOTO ? takeSnapshot() : poll();
 
 // Phones freeze a page in the background, and bring the old picture back when you return. Refresh at once instead of waiting for the timer.
 let hiddenAt = 0;

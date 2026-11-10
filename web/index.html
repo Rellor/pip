@@ -176,6 +176,8 @@
       <button class="tab" role="tab" data-tab="mind">Mind</button>
       <button class="tab" role="tab" data-tab="asks">Asks<span class="count" id="askcount"></span></button>
       <button class="tab" role="tab" data-tab="tasks">Tasks<span class="count" id="taskcount"></span></button>
+      <button class="tab" role="tab" data-tab="photos">Photos</button>
+      <button class="tab" role="tab" data-tab="found">Found</button>
       <button class="tab" role="tab" data-tab="messages">Messages<span class="dot" id="msgdot"></span></button>
       <button class="tab" role="tab" data-tab="life">Life</button>
     </nav>
@@ -213,6 +215,18 @@
         <div class="row"><button type="submit" class="primary" id="tasksend">Ask Pip</button><span class="muted" id="taskstatus"></span></div>
       </form>
       <ul id="tasklist"></ul>
+    </section>
+
+    <section class="pane" data-pane="photos" hidden>
+      <h2>Pictures taken by Pip</h2>
+      <p class="muted">Pip chooses what to photograph: the window, his room, something he made, or himself.</p>
+      <div class="pics" id="photolist"></div>
+    </section>
+
+    <section class="pane" data-pane="found" hidden>
+      <h2>Pictures Pip found online</h2>
+      <p class="muted">Free pictures from Wikimedia Commons. Pip picks what to look for. Tap one to see where it came from.</p>
+      <div class="pics" id="foundlist"></div>
     </section>
 
     <section class="pane" data-pane="messages" hidden>

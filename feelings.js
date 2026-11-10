@@ -68,6 +68,13 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'ask_for':
       s.calm -= 0.2;
       break;
+    case 'take_photo':
+      s.wonder += 0.6;
+      s.joy += 0.2;
+      break;
+    case 'find_picture':
+      s.wonder += 0.9;
+      break;
     case 'cook':
       s.wonder += 0.6;
       s.calm += 0.2;

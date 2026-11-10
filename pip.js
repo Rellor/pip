@@ -4,6 +4,8 @@ import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, pl
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror } from './mirror.js';
+import { takePhoto } from './photo.js';
+import { findPicture } from './found.js';
 import { refillPantry, pantryText, cook, addIngredient, eatFromPantry, mealGain } from './food.js';
 import { makeClothes, wear, takeOff, wornNow, SLOTS, MAX_CLOTHES_PER_DAY } from './clothes.js';
 const MAX_APP_UPDATES_PER_DAY = 4;
@@ -62,10 +64,12 @@ const ACTIONS = [
   'wear(name)',
   'take_off(name)',
   'cook(dish, ingredients)',
+  'take_photo(target, caption)',
+  'find_picture(query, caption)',
 ];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, where)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -94,6 +98,7 @@ const freshState = () => ({
   wardrobe: [],
   pantry: [],
   tasks: [],
+  found: [],
   voice: '',
   art: [],
   apps: [],
@@ -119,6 +124,11 @@ function doingMirror(s) {
   const looks = steps.filter((e) => ['search_web', 'read_book'].includes(e.action)).length;
   if (steps.length < 8 || looks < 6 || looks < 2 * (steps.length - looks)) return null;
   return `I notice I mostly look things up (${looks} of my last ${steps.length} activities) and rarely do, make or ask for anything with what I learn.`;
+}
+function photosText(s) {
+  const mine = s.pictures.filter((p) => p.by === 'pip' && Date.parse(p.at) <= Date.now()).slice(-6);
+  const found = (s.found ?? []).slice(-6);
+  return `${mine.length ? `MY PHOTOS (I took them with my camera. I can put one on a wall or a surface with place_picture, using its id)\n${mine.map((p) => `- ${p.id} (${ago(p.at)}) of ${p.target}: ${p.caption}${s.decor.some((d) => d.picture === p.id) ? ` | it is up: ${s.decor.find((d) => d.picture === p.id).label}` : ''}`).join('\n')}\n\n` : ''}${found.length ? `PICTURES I FOUND ONLINE (kept in my collection)\n${found.map((f) => `- ${f.title} (I looked for "${f.query}", ${ago(f.at)})`).join('\n')}\n\n` : ''}`;
 }
 function tasksText(s) {
   const open = s.tasks.filter((t) => t.status === 'open');
@@ -163,6 +173,7 @@ async function loadState() {
   state.wardrobe ??= [];
   state.pantry ??= [];
   state.tasks ??= [];
+  state.found ??= [];
   state.voice ??= '';
   delete state.tools; // leftovers of the removed workbench
   delete state.builds;
@@ -175,6 +186,11 @@ async function loadState() {
 const INBOX_DIR = 'inbox';
 
 // A picture from Bas: keep a copy in web/gifts and remember it in Pip's album.
+// Bas's gifts and Pip's own photos are kept apart, so photos never push a gift out.
+function trimPictures(list) {
+  const keep = new Set([...list.filter((p) => p.by !== 'pip').slice(-20), ...list.filter((p) => p.by === 'pip').slice(-20)]);
+  return list.filter((p) => keep.has(p));
+}
 async function keepPicture(state, bytes, caption, at, key) {
   const type = pictureType(bytes);
   if (!type) return null;
@@ -186,7 +202,7 @@ async function keepPicture(state, bytes, caption, at, key) {
   const size = pictureSize(bytes);
   const n = Math.max(0, ...state.pictures.map((p) => Number(String(p.id).replace('pic', '')) || 0)) + 1;
   const pic = { id: `pic${n}`, image: `gifts/${file}`, mime: type.mime, at, caption: text(caption, 300), seen: false, notes: '', aspect: size ? Math.round((size.w / size.h) * 100) / 100 : 1.5 };
-  state.pictures = [...state.pictures, pic].slice(-30);
+  state.pictures = trimPictures([...state.pictures, pic]);
   return pic;
 }
 
@@ -404,9 +420,10 @@ ${
     s.draft ? `\nSomething I wanted to say but waited with: "${s.draft}" (say it now if it is still true, or let it go)` : ''
   }
 
-${
-    s.pictures.length
+${photosText(s)}${
+    s.pictures.some((p) => p.by !== 'pip')
       ? `PICTURES BAS GAVE ME (each one is a gift. I decide what to do with it: put it on a wall or stand it on a surface with place_picture, keep it in my album, write about it or make something inspired by it, or just look at it. I do not have to put it up)\n${s.pictures
+          .filter((p) => p.by !== 'pip')
           .map((p) => `- ${p.id} (${ago(p.at)})${p.caption ? ` Bas wrote: "${p.caption}"` : ''} | ${p.seen ? `I remember: ${p.notes || 'I did not write anything down'}` : 'NEW, shown below'}${s.decor.some((d) => d.picture === p.id) ? ` | it is up: ${s.decor.find((d) => d.picture === p.id).label}` : ''}`)
           .join('\n')}\n\n`
       : ''
@@ -417,7 +434,7 @@ ${tasksText(s)}ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
 ${s.asks.length ? `I have asked for ${s.asks.length} thing${s.asks.length === 1 ? '' : 's'} so far; the last time was ${ago(s.asks.map((a) => a.since).sort().pop())}.` : 'I have not asked for anything yet.'}
 
-COOKING
+CAMERA AND PICTURES\nI have a camera. With take_photo {target, caption} I take a picture of what I want: \"window\" (the view outside; it follows the real time of day), \"room\", \"myself\" (a selfie), a place like piano, bookshelf, computer, plant, bed, frame or chest, or the name of something I made. It is a picture of my little world. I take at most 4 a day, and anyone can see my photos on the Photos page. I can put one on a wall with place_picture. With find_picture {query, caption} I look for a free picture online (from Wikimedia Commons) and keep it in my collection, at most 6 a day. A good query is a few keywords, like \"aurora borealis\". I use them when I really want a picture, not out of habit.\n\nCOOKING
 I have a pantry. Plain ingredients come back every day, so I never go hungry. With cook I make a dish from 1 to 4 ingredients in my pantry, but only once I have a kitchen in my room. I build my kitchen myself with decorate (a stove, a counter, an oven, whatever I like: I design it, choose where it goes and say in its uses that I can cook with it). A dish fills me up more than a plain snack. I can cook at most 4 times a day. cook {dish, ingredients}. If I want an ingredient that is not in my pantry, I ask for it with asks_add. When it has been given to me, I mark the ask as done and write its name in pantry_add.
 
 LONG WORK AND NEW THINGS
@@ -442,7 +459,7 @@ With decorate I make something and put it in my room. Before I design it I decid
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}. Quiet steps are fine, like resting or looking out of the window. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired or busy with something I want to keep working on. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 things I do one after the other. Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, like resting or looking out of the window. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious: when I wait for Bas or have nothing pressing, I look something up. Most plans have at least one search_web or read_book step, unless I am really tired or busy with something I want to keep working on. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -602,6 +619,8 @@ function describe(a) {
     case 'write_diary': return d.text;
     case 'ask_for': return `${d.item}: ${d.reason}`;
     case 'eat': return d.food;
+    case 'take_photo': return d.target;
+    case 'find_picture': return d.query;
     case 'place_picture':
     case 'take_down_picture': return d.id;
     case 'decorate':
@@ -1032,6 +1051,56 @@ async function wakeUp() {
     }
   }
 
+  // Camera and pictures from the internet. A photo is drawn by the website itself in a hidden browser (photo.js), so it needs the room as it is now.
+  const MAX_PHOTOS = 4;
+  const MAX_FOUND = 6;
+  let shotsToday = state.pictures.filter((p) => p.by === 'pip' && Date.now() - Date.parse(p.at) < 86_400_000).length;
+  let foundToday = state.found.filter((f) => Date.now() - Date.parse(f.at) < 86_400_000).length;
+  for (const [i, st] of steps.entries()) {
+    const d = st.details;
+    const when = new Date(startedAt + i * stepMs).toISOString();
+    if (st.action === 'take_photo') {
+      const target = text(d.target, 60) || 'room';
+      if (shotsToday >= MAX_PHOTOS) {
+        st.made = { failed: `I already took ${MAX_PHOTOS} photos today` };
+        continue;
+      }
+      const shot = await takePhoto(target, when, state);
+      if (!shot.bytes) {
+        st.made = { failed: shot.failed };
+        continue;
+      }
+      const file = `ph${Date.now().toString(36)}${i}.jpg`;
+      await mkdir('web/photos', { recursive: true });
+      await writeFile(`web/photos/${file}`, shot.bytes);
+      const n = Math.max(0, ...state.pictures.map((p) => Number(String(p.id).replace('pic', '')) || 0)) + 1;
+      const caption = text(d.caption, 300);
+      const pic = { id: `pic${n}`, image: `photos/${file}`, mime: 'image/jpeg', at: when, by: 'pip', target, caption, seen: true, notes: caption, aspect: 1.33 };
+      state.pictures = trimPictures([...state.pictures, pic]);
+      shotsToday++;
+      st.made = { picture: pic };
+    }
+    if (st.action === 'find_picture') {
+      if (foundToday >= MAX_FOUND) {
+        st.made = { failed: `I already found ${MAX_FOUND} pictures today` };
+        continue;
+      }
+      const query = text(d.query, 80);
+      let hit = null;
+      try {
+        hit = await findPicture(query, state.found);
+      } catch {}
+      if (!hit) {
+        st.made = { failed: 'I could not find a good picture of that' };
+        continue;
+      }
+      const entry = { id: `f${Date.now().toString(36)}${i}`, query, ...hit, at: when, caption: text(d.caption, 200) };
+      state.found = [...state.found, entry].slice(-40);
+      foundToday++;
+      st.made = { found: entry };
+    }
+  }
+
   // Eating fills him up a little (not more than once every half hour).
   for (const st of steps) {
     if (st.action !== 'eat') continue;
@@ -1108,6 +1177,8 @@ async function wakeUp() {
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'cook') Object.assign(entry, { dish: text(d.dish ?? d.name, 60), ingredients: (Array.isArray(d.ingredients) ? d.ingredients : []).slice(0, 4).map((x) => text(x, 40)), failed: st.made?.failed ?? null });
+    if (st.action === 'take_photo') Object.assign(entry, { target: text(d.target, 60), caption: text(d.caption, 300), image: st.made?.picture?.image ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'find_picture') Object.assign(entry, { query: text(d.query, 80), caption: text(d.caption, 200), picture: st.made?.found?.image ?? null, title: st.made?.found?.title ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     state.log.push(entry);
@@ -1165,6 +1236,8 @@ async function wakeUp() {
     if (st.action === 'take_off' && st.made?.name) console.log(`      👕 took off "${st.made.name}"`);
     if (st.made?.stored) console.log(`      📦 put "${st.made.stored}" in the chest`);
     if (st.action === 'cook') console.log(st.made?.ok ? `      🍳 cooked "${st.made.dish}"` : `      🍳 did not work out: ${st.made?.failed}`);
+    if (st.action === 'take_photo') console.log(st.made?.picture ? `      📷 took a photo of ${st.made.picture.target}` : `      📷 did not work out: ${st.made?.failed}`);
+    if (st.action === 'find_picture') console.log(st.made?.found ? `      🔎 found "${st.made.found.title}" (${st.made.found.license})` : `      🔎 did not work out: ${st.made?.failed}`);
     if (st.ate?.failed) console.log(`      🍽️  not hungry yet: ${st.ate.failed}`);
   });
   if (answer.new_idea) console.log(`💡 ${answer.new_idea}`);

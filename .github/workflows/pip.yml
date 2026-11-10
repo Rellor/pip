@@ -30,6 +30,13 @@ jobs:
           git config user.name "pip-bot"
           git config user.email "pip-bot@users.noreply.github.com"
 
+      # Pip's camera is a hidden browser that draws his room. If this step fails, Pip just cannot take photos.
+      - name: Camera
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+        continue-on-error: true
+
       # Pip lives here: he wakes every 12 minutes for about 5.5 hours, and straight away when Bas writes.
       - name: Pip lives
         env:
