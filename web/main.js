@@ -451,16 +451,41 @@ function playNotes(notes, step) {
   });
 }
 $('sound').addEventListener('click', () => {
+  unlockAudio();
   if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
   const on = audio.state !== 'running';
   (on ? audio.resume() : audio.suspend()).then(() => {
     $('sound').textContent = on ? '🔊 Sound on' : '🔇 Sound off';
   });
 });
-// ---- songs: what Pip makes can play a tune (a short list of notes, a tempo and a sound)
+// ---- songs and sounds: what Pip makes can play a tune and a background sound (a short list of notes, a tempo, a voice, rain...)
+// Everything goes through one master volume and a limiter, so a phone speaker is loud enough and never crackles.
+let master = null;
+let unlocked = false;
+// An iPhone on silent mode mutes web sound unless the page says it is "playback". A silent clip does the same on older ones.
+const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+function unlockAudio() {
+  if (unlocked) return;
+  unlocked = true;
+  try {
+    if (navigator.audioSession) navigator.audioSession.type = 'playback';
+  } catch {}
+  try {
+    const a = new Audio(SILENT_WAV);
+    a.loop = true;
+    a.play().then(() => setTimeout(() => a.pause(), 300)).catch(() => {});
+  } catch {}
+}
 async function ensureAudio() {
+  unlockAudio();
   if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
   if (audio.state !== 'running') await audio.resume();
+  if (!master) {
+    const comp = audio.createDynamicsCompressor();
+    master = audio.createGain();
+    master.gain.value = 1.3;
+    master.connect(comp).connect(audio.destination);
+  }
   $('sound').textContent = '🔊 Sound on';
 }
 function noteFreq(name) {
@@ -471,39 +496,175 @@ function noteFreq(name) {
 }
 const VOICES = {
   piano: { parts: [[1, 'triangle', 0.35], [2, 'sine', 0.12]], attack: 0.015, release: 1.4 },
-  musicbox: { parts: [[1, 'sine', 0.28], [3, 'sine', 0.1], [6, 'sine', 0.04]], attack: 0.005, release: 0.9 },
+  musicbox: { parts: [[1, 'sine', 0.3], [3, 'sine', 0.12], [6, 'sine', 0.05]], attack: 0.005, release: 0.9 },
   bell: { parts: [[1, 'sine', 0.28], [2.76, 'sine', 0.14], [5.4, 'sine', 0.05]], attack: 0.005, release: 2.2 },
   soft: { parts: [[1, 'sine', 0.22], [2, 'sine', 0.05]], attack: 0.22, release: 1.3 },
+  pluck: { parts: [[1, 'sawtooth', 0.12], [2, 'triangle', 0.14]], attack: 0.004, release: 0.5, hold: 0.12 },
+  flute: { parts: [[1, 'sine', 0.3], [2, 'sine', 0.06], [3, 'sine', 0.02]], attack: 0.09, release: 0.35, vibrato: 5.5 },
+  pad: { parts: [[1, 'sawtooth', 0.07], [1.005, 'sawtooth', 0.07], [0.5, 'sine', 0.12]], attack: 0.5, release: 1.8 },
+  marimba: { parts: [[1, 'sine', 0.34], [4, 'sine', 0.1]], attack: 0.003, release: 0.45, hold: 0.1 },
 };
 function voice(freq, t, hold, timbre) {
   const v = VOICES[timbre] || VOICES.piano;
+  const len = v.hold ?? Math.max(v.attack, hold);
   for (const [mult, type, vol] of v.parts) {
     const o = audio.createOscillator();
     const g = audio.createGain();
     o.type = type;
     o.frequency.value = freq * mult;
+    if (v.vibrato) {
+      const lfo = audio.createOscillator();
+      const depth = audio.createGain();
+      lfo.frequency.value = v.vibrato;
+      depth.gain.value = freq * mult * 0.008;
+      lfo.connect(depth).connect(o.frequency);
+      lfo.start(t);
+      lfo.stop(t + len + v.release + 0.1);
+    }
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(vol, t + v.attack);
-    g.gain.setValueAtTime(vol, t + Math.max(v.attack, hold));
-    g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(v.attack, hold) + v.release);
-    o.connect(g).connect(audio.destination);
+    g.gain.setValueAtTime(vol, t + Math.max(v.attack, len));
+    g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(v.attack, len) + v.release);
+    o.connect(g).connect(master);
     o.start(t);
-    o.stop(t + Math.max(v.attack, hold) + v.release + 0.1);
+    o.stop(t + Math.max(v.attack, len) + v.release + 0.1);
   }
 }
-// Plays a song. Returns how many seconds it lasts.
+let noiseBuffer = null;
+function noise(kind) {
+  if (!noiseBuffer) {
+    noiseBuffer = audio.createBuffer(1, audio.sampleRate * 4, audio.sampleRate);
+    const d = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  const src = audio.createBufferSource();
+  src.buffer = noiseBuffer;
+  src.loop = true;
+  return src;
+}
+// Drums are short bursts of tone and noise.
+function drum(kind, t) {
+  if (kind === 'kick') {
+    const o = audio.createOscillator();
+    const g = audio.createGain();
+    o.frequency.setValueAtTime(150, t);
+    o.frequency.exponentialRampToValueAtTime(45, t + 0.25);
+    g.gain.setValueAtTime(0.9, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.connect(g).connect(master);
+    o.start(t);
+    o.stop(t + 0.35);
+    return;
+  }
+  const src = noise();
+  const f = audio.createBiquadFilter();
+  const g = audio.createGain();
+  f.type = kind === 'hat' ? 'highpass' : 'bandpass';
+  f.frequency.value = kind === 'hat' ? 7000 : 1800;
+  g.gain.setValueAtTime(kind === 'hat' ? 0.25 : 0.6, t);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + (kind === 'hat' ? 0.06 : 0.18));
+  src.connect(f).connect(g).connect(master);
+  src.start(t);
+  src.stop(t + 0.25);
+}
+// A background sound that lasts `secs` seconds: rain, wind, waves, fire, crickets or a low hum.
+function ambience(kind, t, secs) {
+  const out = audio.createGain();
+  out.gain.setValueAtTime(0.0001, t);
+  out.gain.exponentialRampToValueAtTime(1, t + Math.min(1.5, secs / 4));
+  out.gain.setValueAtTime(1, t + Math.max(0.1, secs - 1.5));
+  out.gain.exponentialRampToValueAtTime(0.0001, t + secs);
+  out.connect(master);
+  const stopAt = t + secs + 0.2;
+  const slow = (freq, depth, param) => {
+    const lfo = audio.createOscillator();
+    const d = audio.createGain();
+    lfo.frequency.value = freq;
+    d.gain.value = depth;
+    lfo.connect(d).connect(param);
+    lfo.start(t);
+    lfo.stop(stopAt);
+  };
+  const layer = (type, freq, q, vol) => {
+    const src = noise();
+    const f = audio.createBiquadFilter();
+    const g = audio.createGain();
+    f.type = type;
+    f.frequency.value = freq;
+    f.Q.value = q;
+    g.gain.value = vol;
+    src.connect(f).connect(g).connect(out);
+    src.start(t);
+    src.stop(stopAt);
+    return { f, g };
+  };
+  if (kind === 'rain') {
+    layer('highpass', 1200, 0.5, 0.22);
+    layer('bandpass', 5000, 0.8, 0.18);
+  } else if (kind === 'wind') {
+    const { f, g } = layer('bandpass', 500, 1.2, 0.5);
+    slow(0.11, 300, f.frequency);
+    slow(0.17, 0.25, g.gain);
+  } else if (kind === 'waves') {
+    const { g } = layer('lowpass', 700, 0.7, 0.35);
+    slow(0.13, 0.3, g.gain);
+  } else if (kind === 'fire') {
+    layer('lowpass', 400, 0.7, 0.4);
+    for (let x = t + 0.2; x < t + secs; x += 0.05 + Math.random() * 0.4) {
+      const src = noise();
+      const f = audio.createBiquadFilter();
+      const g = audio.createGain();
+      f.type = 'highpass';
+      f.frequency.value = 2000 + Math.random() * 3000;
+      g.gain.setValueAtTime(0.25 + Math.random() * 0.3, x);
+      g.gain.exponentialRampToValueAtTime(0.0001, x + 0.03 + Math.random() * 0.05);
+      src.connect(f).connect(g).connect(out);
+      src.start(x);
+      src.stop(x + 0.12);
+    }
+  } else if (kind === 'crickets') {
+    const o = audio.createOscillator();
+    const g = audio.createGain();
+    o.frequency.value = 4300;
+    g.gain.value = 0;
+    slow(14, 0.05, g.gain); // the chirp
+    const gate = audio.createGain();
+    gate.gain.value = 0.5;
+    slow(1.3, 0.5, gate.gain); // chirps come in bursts
+    o.connect(g).connect(gate).connect(out);
+    o.start(t);
+    o.stop(stopAt);
+  } else if (kind === 'hum') {
+    for (const [freq, vol] of [[110, 0.14], [165, 0.07], [220, 0.04]]) {
+      const o = audio.createOscillator();
+      const g = audio.createGain();
+      o.frequency.value = freq;
+      g.gain.value = vol;
+      slow(0.2, vol * 0.4, g.gain);
+      o.connect(g).connect(out);
+      o.start(t);
+      o.stop(stopAt);
+    }
+  }
+}
+// Plays a song or sound. Returns how many seconds it lasts.
 async function playSong(song) {
-  if (!song?.notes?.length) return 0;
+  if (!song || (!song.notes?.length && !song.ambience)) return 0;
   await ensureAudio();
   const beat = 60 / (song.tempo || 90);
   const start = audio.currentTime + 0.1;
   let t = start;
-  for (const [n, beats] of song.notes) {
-    const f = n ? noteFreq(n) : null;
-    if (f) voice(f, t, beat * beats * 0.9, song.timbre);
+  for (const [n, beats] of song.notes || []) {
+    if (n === 'kick' || n === 'snare' || n === 'hat') drum(n, t);
+    else {
+      const f = n ? noteFreq(n) : null;
+      if (f) voice(f, t, beat * beats * 0.9, song.timbre);
+    }
     t += beat * beats;
   }
-  return t - start;
+  const secs = Math.max(t - start, song.ambience ? song.seconds || 20 : 0);
+  if (song.ambience) ambience(song.ambience, start, secs);
+  return secs;
 }
 function songButton(song) {
   const b = el('button', '▶ Hear it', 'small');
@@ -1928,4 +2089,4 @@ $('wake').addEventListener('click', () => {
 
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipDo = (last) => startTask({ at: String(Date.now()), thought: '(test)', details: {}, ...last });
-window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt, camera, openApp, playSong, getAudio: () => audio };
+window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt, camera, openApp, playSong, getAudio: () => audio, getMaster: () => master };
