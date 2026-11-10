@@ -2211,7 +2211,8 @@ function render(s) {
     return row;
   }));
 
-  $('err').textContent = s._error ? '⚠️ ' + s._error : '';
+  const quiet = s.last && !s._waking ? Math.round((Date.now() - Date.parse(s.last.at)) / 60000) : 0;
+  $('err').textContent = s._error ? '⚠️ ' + s._error : quiet >= 30 ? `⚠️ Pip has not woken up for ${quiet >= 120 ? Math.round(quiet / 60) + ' hours' : quiet + ' minutes'}. He may be stuck. A restart is tried automatically.` : '';
   $('wake').disabled = !!s._waking;
   $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
   $('hint').textContent = !s.last

@@ -2,5 +2,5 @@
   "framework": null,
   "buildCommand": "",
   "outputDirectory": "web",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- web ':!web/state.json' ':!web/gifts' ':!web/made' ':!web/photos' api vercel.json"
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- web ':!web/state.json' ':!web/gifts' ':!web/made' ':!web/photos' ':!web/health.json' api vercel.json"
 }

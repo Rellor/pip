@@ -1,0 +1,58 @@
+name: Watchdog
+
+# Checks every 10 minutes that Pip is still waking up. If not, it warns (phone push + warning on the page)
+# and restarts the loop. Pip's own loop is a different workflow, so this still works when that one is stuck.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: watchdog
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check
+        id: check
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          PIP_SITE_URL: ${{ vars.PIP_SITE_URL }}
+        run: |
+          set +e
+          node watchdog.js
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Save health
+        run: |
+          git config user.name "pip-bot"
+          git config user.email "pip-bot@users.noreply.github.com"
+          git add web/health.json
+          git diff --cached --quiet || { git commit -m "Health check"; git pull --rebase -q; git push -q; }
+
+      # Stuck: stop the old loop and start a fresh one, but at most once every 30 minutes.
+      - name: Restart the loop
+        if: steps.check.outputs.code == '2'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          last=$(node -e "try{console.log(JSON.parse(require('fs').readFileSync('web/health.json','utf8')).healedAt||'')}catch{}")
+          if [ -n "$last" ] && [ $(( $(date +%s) - $(date -d "$last" +%s) )) -lt 1800 ]; then echo "restarted recently, waiting"; exit 0; fi
+          for id in $(gh run list --workflow pip.yml --status in_progress --json databaseId -q '.[].databaseId'; gh run list --workflow pip.yml --status queued --json databaseId -q '.[].databaseId'); do gh run cancel "$id" || true; done
+          sleep 20
+          gh workflow run pip.yml --ref main
+          node -e "const f='web/health.json',h=JSON.parse(require('fs').readFileSync(f,'utf8'));h.healedAt=new Date().toISOString();require('fs').writeFileSync(f,JSON.stringify(h)+'\n')"
+          git add web/health.json
+          git commit -m "Health: restarted the loop" && git pull --rebase -q && git push -q
