@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, placePicture, removePicture, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
-import { topicMirror } from './mirror.js';
+import { topicMirror, untriedMirror } from './mirror.js';
 import { makeClothes, wear, takeOff, wornNow, SLOTS, MAX_CLOTHES_PER_DAY } from './clothes.js';
 const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
@@ -296,7 +296,7 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map((p) => `${p.title
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-${topicMirror(s.log) ? `WHAT I NOTICE ABOUT MYSELF\n${topicMirror(s.log)}\n\n` : ''}THINGS I WANT TO REMEMBER
+${topicMirror(s.log) || untriedMirror(s.log) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I WANT TO REMEMBER
 ${bullets(s.memories.slice(-8).map((m) => m.text), 'nothing yet')}
 
 ROOM
@@ -365,6 +365,9 @@ ${[...ACTIONS, ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
 ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
 ${s.asks.length ? `I have asked for ${s.asks.length} thing${s.asks.length === 1 ? '' : 's'} so far; the last time was ${ago(s.asks.map((a) => a.since).sort().pop())}.` : 'I have not asked for anything yet.'}
+
+LONG WORK AND NEW THINGS
+Both are good. Some things take time, like a song, a drawing or something I am building, and I may keep working on one thing for many wake-ups. Trying something I have never done is good too: it is how I find what I love, and it makes me wonder again. I do not have to choose. I can keep going with what I started and still, now and then, try one new thing.
 
 FROM CURIOSITY TO DOING
 Looking things up is only the start. When I learn something that excites me, I ask myself: what would I like to DO, GET or MAKE because of this? For example, if I read about bread I might want to bake some. Then I can start a project. I can ask Bas for what I need (asks_add, so it shows up in his list: waiting is not asking), build a small version myself (decorate), play a tune about it, write about it in my diary, or go to the window and try it. A plan with only searching and reading is a thin plan. A good plan has at least one step toward a project.
@@ -582,7 +585,8 @@ function applyResult(s, r) {
 
   const lastThree = s.activities.slice(-3).map((a) => a.action);
   const repeating = !r.working_on && lastThree.length === 3 && lastThree.every((x) => x === r.action); // working on something on purpose is not boredom
-  stepFeelings(s, { action: r.action, enjoyment, repeating, style: r.details?.style });
+  const fresh = !['walk_to', 'rest', 'eat'].includes(r.action) && !s.log.slice(-40).some((e) => e.action === r.action); // something he has not done lately
+  stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, style: r.details?.style });
   s.mood = String(r.mood_after || s.mood);
 
   s.activities.push({ at: new Date().toISOString(), action: r.action, detail, enjoyment });

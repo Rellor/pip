@@ -20,3 +20,12 @@ export function topicMirror(log) {
   const others = recent.filter((e) => !hits.includes(e)).map((e) => textOf(e).slice(0, 50)).slice(-4);
   return `Of my last ${recent.length} searches, readings and things I made, ${hits.length} used the words ${top.map((w) => `"${w}"`).join(', ')}. ${others.length ? `The other things I looked at were: ${others.join('; ')}. ` : 'Nothing else came up. '}It is fine to love something and to do a lot with it. I only want to see how much of my time it takes. What I do with it is my own choice.`;
 }
+
+// A second mirror: which things he can do that he has not done lately. Only a picture, never an order.
+const TRYABLE = { decorate: 'make something for my room', change_thing: 'change something I made', draw: 'draw', compose: 'compose a song', make_app: 'make an app', make_clothes: 'make clothes', play_piano: 'play the piano', write_diary: 'write in my diary', ask_for: 'ask for something' };
+export function untriedMirror(log) {
+  const recent = (Array.isArray(log) ? log : []).slice(-40);
+  if (recent.length < 12) return '';
+  const missing = Object.entries(TRYABLE).filter(([a]) => !recent.some((e) => e.action === a)).map(([, t]) => t);
+  return missing.length ? `In my last ${recent.length} activities I did not: ${missing.join(', ')}. That is only a picture of how I spend my time.` : '';
+}

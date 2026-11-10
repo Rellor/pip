@@ -38,7 +38,7 @@ export function passTime(s, now = Date.now()) {
 }
 
 // Every step of his plan.
-export function stepFeelings(s, { action, enjoyment = 5, repeating = false, style = '' }) {
+export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fresh = false, style = '' }) {
   s.energy = s.energy + (action === 'rest' ? 3 : -1);
   s.joy = s.joy + (Number(enjoyment) - 8) / 6; // he rates most things 8 to 10, so only the best lifts joy and the rest lowers it a little
   switch (action) {
@@ -70,6 +70,10 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, styl
       break;
   }
   if (repeating) s.wonder -= 1.5;
+  if (fresh) {
+    s.wonder += 0.8; // trying something he has not done lately
+    s.joy += 0.2;
+  }
   if (s.energy <= 2) s.calm -= 0.5;
   for (const b of BARS) s[b] = clamp(s[b]);
 }
