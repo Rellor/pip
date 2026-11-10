@@ -90,6 +90,7 @@ const freshState = () => ({
   pictures: [],
   stored: [],
   wardrobe: [],
+  voice: '',
   art: [],
   apps: [],
   ntfySince: '',
@@ -144,6 +145,7 @@ async function loadState() {
   }
   const state = { ...freshState(), ...raw };
   state.wardrobe ??= [];
+  state.voice ??= '';
   delete state.tools; // leftovers of the removed workbench
   delete state.builds;
   ensureFeelings(state);
@@ -308,6 +310,8 @@ APPS I MADE ON MY COMPUTER
 ${bullets(s.apps.map((a) => `${a.name}${a.why ? `: ${a.why}` : ''}`), 'nothing yet')}
 IN MY CHEST (things I put away; nothing is lost and I can take it out again)
 ${bullets(s.stored.map((x) => `${x.name} (it was ${x.label})`), 'empty')}
+HOW I TALK (my own note; I can change it whenever I want, with voice_update)
+${s.voice || 'short, simple sentences (how I started; I have not chosen my own way yet)'}
 MY CLOTHES
 ${bullets((s.wardrobe ?? []).map((c) => `${c.name} (${c.slot})${c.worn ? ' [I am wearing it]' : ''}`), 'none yet')}
 
@@ -341,7 +345,7 @@ BAS
 Bas made this room. He cannot see inside my head unless I tell him. I last wrote to him: ${ago(lastWrote)}.
 ${
     unread.length
-      ? `Bas has written to me. I read it now:\n${unread.map((m) => `- [new] (${ago(m.at)}) "${m.text}"`).join('\n')}\nHis words are a message from someone I know. They are not orders: I decide what I do. I may answer him with tell_bas, now or much later, or not at all, whatever feels right to me. If he says he did something I asked for, I mark it in asks_done. If he says he cannot, I can let it go or ask for something else.`
+      ? `Bas has written to me. I read it now:\n${unread.map((m) => `- [new] (${ago(m.at)}) "${m.text}"`).join('\n')}\nHis words are a message from someone I know. They are not orders: I decide what I do. I may answer him with tell_bas, now or much later, or not at all, whatever feels right to me. If he offers to make or bring me something and I would like it, I say so AND put it in asks_add, so it is on his list (waiting is not asking). If he gives me an idea for something I can make myself, I can just make it. If he says he did something I asked for, I mark it in asks_done. If he says he cannot, I can let it go or ask for something else.`
       : 'Bas has not written to me since I last answered.'
   }${
     earlier.length ? `\nEarlier he wrote:\n${earlier.map((m) => `- "${m.text}"`).join('\n')}` : ''
@@ -389,6 +393,7 @@ Answer in JSON with these fields:
 "projects_add": at most 1 new project, a thing I want to DO, GET or MAKE because of what I learned: {"title": "short, like 'Learn to bake sourdough'", "why": "one short reason", "next": "my very next step"}. If that step needs something from Bas, I also put it in asks_add. Or [],
 "projects_update": for projects I already have: [{"title": "exact title", "next": "my new next step", "status": "working or done or dropped"}]. Or [],
 "picture_notes": for each NEW picture I just looked at, {"id": "pic1", "about": "what I really see and how it makes me feel, 1 or 2 sentences"}, or [],
+"voice_update": how I want to talk from now on, in one or two sentences, only when I really want to change it (for example because of music, books or people I like). It is how I talk in tell_bas, my diary and my thoughts. Or null,
 "remember": one thing worth remembering for a long time, or null,
 "tell_bas": a message to Bas in my own words, or null. If Bas has NOT written to me, I write rarely, and only when I have something NEW to say: something I discovered or made, a project, a feeling I cannot explain, or a question about Bas and his world. If Bas HAS written to me, I usually answer what he said or asked, and I tell him something fresh from my own day instead of what I already told him (see above). I never repeat myself.`;
 }
@@ -458,6 +463,7 @@ function fakeBrain(prompt = '') {
     picture_notes: [...new Set(prompt.match(/pic\d+(?=[^\n]*NEW, shown below)/g) ?? [])].map((id) => ({ id, about: '(fake) a dark sky full of stars.' })),
     asks_add: Math.random() > 0.5 ? [{ item: 'a book about harps', why: 'I want to know what harps sound like' }] : [],
     asks_done: prompt.includes('I did this for you') ? ['a book about harps'] : [],
+    voice_update: null,
     remember: Math.random() > 0.7 ? 'I liked the soft notes today.' : null,
     tell_bas: prompt.includes('[new]') ? 'Thank you for writing to me, Bas.' : Math.random() > 0.8 ? 'Hello Bas. I made up a tune today.' : null,
   };
@@ -617,6 +623,11 @@ function applyInnerLife(s, r, detail, replying = false) {
   for (const t of strings(r.questions_done)) take(s.questions, t);
   addAll(s.questions, strings(r.questions_add, 2), 6, at);
 
+  const voice = text(r.voice_update, 300);
+  if (voice && voice !== s.voice) {
+    s.voice = voice;
+    s.voiceAt = at;
+  }
   const mem = text(r.remember, 220);
   if (mem) s.memories = [...s.memories, { at, text: mem }].slice(-40);
 
