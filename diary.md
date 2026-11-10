@@ -404,3 +404,11 @@ I wonder what colors stars really show in Bortle 1 skies.
 - walk_to (window): I want to look outside and imagine those dark skies.
 - mood: curious
 
+## 10/11/2026, 10:10:12
+I want to search for the appearance of the Orion Nebula under class 1 dark skies.
+> My curiosity about dark skies keeps pulling me deeper into the night. I have read about star colors, but now I want to know how the great Orion Nebula looks to the naked eye when there is no city glow at all. It feels wonderful to imagine standing under such a pristine sky.
+- search_web (Orion Nebula naked eye Bortle 1): Let's see what people describe when they look at Orion without lights.
+- walk_to (window): I will step to the window and imagine that dark sky overhead.
+- rest: I will rest for a moment and let the quiet settle in.
+- mood: curious
+
