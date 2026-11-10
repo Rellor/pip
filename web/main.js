@@ -17,7 +17,7 @@ scene.background = new THREE.Color(getComputedStyle(document.body).backgroundCol
 
 const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
-// Overview camera, moved with the buttons on the screen.
+// Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
 const orbit = { az: 0, el: 0, zoom: 1, px: 0, pz: 0 };
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function applyOrbit() {
@@ -881,7 +881,6 @@ function setMode(mode) {
   extraWalls.visible = mode === 'walk';
   $('stick').hidden = mode !== 'walk';
   $('resetview').hidden = mode === 'walk';
-  $('camctl').hidden = mode === 'walk';
   if (mode === 'walk') {
     Object.assign(view, { x: 0, z: 3.4, yaw: 0, pitch: 0 });
     camera.fov = 70;
@@ -1051,26 +1050,71 @@ function pickAt(clientX, clientY) {
 const dom = renderer.domElement;
 dom.style.touchAction = 'none';
 let drag = null;
+const touches = new Map(); // fingers on the screen, for pinching
+let pinch = null;
+const spread = () => {
+  const [p, q] = [...touches.values()];
+  return { d: Math.hypot(p.x - q.x, p.y - q.y), x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
+};
+// Moves the middle of the overview camera over the floor, following the screen.
+function panBy(dx, dy) {
+  const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
+  const fwd = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2).setY(0).normalize();
+  const s = 0.012 * orbit.zoom;
+  orbit.px = clamp(orbit.px - right.x * dx * s - fwd.x * dy * s, -4, 4);
+  orbit.pz = clamp(orbit.pz - right.z * dx * s - fwd.z * dy * s, -4, 4);
+}
 dom.addEventListener('contextmenu', (e) => e.preventDefault());
 dom.addEventListener('pointerdown', (e) => {
-  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), moved: false };
+  touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
   try {
     dom.setPointerCapture(e.pointerId);
   } catch {}
+  if (touches.size === 2 && view.mode === 'overview') {
+    pinch = spread();
+    if (drag) drag.moved = true; // two fingers are never a tap
+    return;
+  }
+  drag = { id: e.pointerId, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t: performance.now(), moved: false, pan: e.shiftKey || e.button === 2 };
 });
 dom.addEventListener('pointermove', (e) => {
+  if (touches.has(e.pointerId)) touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pinch && touches.size === 2) {
+    const now = spread();
+    orbit.zoom = clamp(orbit.zoom * (pinch.d / Math.max(20, now.d)), 0.3, 1.3);
+    panBy(now.x - pinch.x, now.y - pinch.y);
+    pinch = now;
+    applyOrbit();
+    return;
+  }
   if (!drag || e.pointerId !== drag.id) return;
   const dx = e.clientX - drag.x;
   const dy = e.clientY - drag.y;
   drag.x = e.clientX;
   drag.y = e.clientY;
   if (Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 6) drag.moved = true;
-  if (view.mode === 'walk' && drag.moved) {
+  if (!drag.moved) return;
+  if (view.mode === 'walk') {
     view.yaw -= dx * 0.005;
     view.pitch = Math.max(-1.2, Math.min(1.2, view.pitch - dy * 0.005));
+  } else if (drag.pan) {
+    panBy(dx, dy);
+    applyOrbit();
+  } else {
+    orbit.az = clamp(orbit.az - dx * 0.006, -0.7, 0.7);
+    orbit.el = clamp(orbit.el + dy * 0.004, -0.5, 0.9);
+    applyOrbit();
   }
 });
+dom.addEventListener('wheel', (e) => {
+  if (view.mode !== 'overview') return;
+  e.preventDefault();
+  orbit.zoom = clamp(orbit.zoom * Math.exp(e.deltaY * 0.001), 0.3, 1.3);
+  applyOrbit();
+}, { passive: false });
 dom.addEventListener('pointerup', (e) => {
+  touches.delete(e.pointerId);
+  if (touches.size < 2) pinch = null;
   if (!drag || e.pointerId !== drag.id) return;
   const tap = !drag.moved && performance.now() - drag.t < 500;
   drag = null;
@@ -1079,41 +1123,10 @@ dom.addEventListener('pointerup', (e) => {
   if (info) showInfo(info);
   else hideInfo();
 });
-dom.addEventListener('pointercancel', () => (drag = null));
-
-// Camera buttons for the overview, like a security camera: turn, zoom and move. Hold a button to keep going.
-const held = new Set();
-let heldAt = 0;
-function runCamera(now) {
-  const dt = Math.min(0.1, (now - heldAt) / 1000 || 0);
-  heldAt = now;
-  if (held.size && view.mode === 'overview') {
-    const dir = (neg, pos) => (held.has(pos) ? 1 : 0) - (held.has(neg) ? 1 : 0);
-    orbit.az = clamp(orbit.az + dir('turn-left', 'turn-right') * dt * 0.8, -0.7, 0.7);
-    orbit.zoom = clamp(orbit.zoom * Math.exp(dir('zoom-in', 'zoom-out') * dt * 1.2), 0.3, 1.3);
-    const r = dir('move-left', 'move-right');
-    const f = dir('move-down', 'move-up');
-    if (r || f) {
-      camera.updateMatrixWorld();
-      const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
-      const fwd = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2).setY(0).normalize().negate();
-      const speed = dt * 3 * orbit.zoom;
-      orbit.px = clamp(orbit.px + (right.x * r + fwd.x * f) * speed, -4, 4);
-      orbit.pz = clamp(orbit.pz + (right.z * r + fwd.z * f) * speed, -4, 4);
-    }
-    applyOrbit();
-  }
-  requestAnimationFrame(runCamera);
-}
-requestAnimationFrame(runCamera);
-document.querySelectorAll('#camctl button[data-cam]').forEach((b) => {
-  const go = (e) => {
-    e.preventDefault();
-    held.add(b.dataset.cam);
-  };
-  const stop = () => held.delete(b.dataset.cam);
-  b.addEventListener('pointerdown', go);
-  ['pointerup', 'pointerleave', 'pointercancel'].forEach((t) => b.addEventListener(t, stop));
+dom.addEventListener('pointercancel', (e) => {
+  touches.delete(e.pointerId);
+  pinch = null;
+  drag = null;
 });
 
 // The joystick for touch screens.
