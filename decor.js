@@ -1,6 +1,7 @@
 import { cleanSong } from './songs.js';
 import { storedUses } from './uses.js';
 import { toolKind } from './tools.js';
+import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pivotOf } from './web/furniture.js';
 
 // Pip's decorations.
 // He designs objects from a few simple shapes. His design is plain data, never code, and everything is checked and
@@ -465,6 +466,7 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
 
   const mine = (x) => !x.image && !x.art && x.zone;
   let e = decor.find((x) => mine(x) && x.name.toLowerCase() === n) ?? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  if (!e && furnitureKey(n)) return moveFurniture(decor, furnNow, furnitureKey(n), d, atMs, now);
   if (!e) return { failed: 'there is nothing with that name in his room' };
   if (want && ZONES[want].kind !== e.kind) return { failed: `it cannot go there: it is a ${e.kind} thing` };
   const keep = (r) => {
@@ -571,14 +573,12 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
 }
 
 // ---- Free floor space: Pip puts things where he wants. They only have to fit: not into furniture, not into each other, not through a wall.
-export const FIXED = [
-  { n: 'the piano', x0: -3.95, x1: -1.25, z0: -5, z1: -3.55 },
-  { n: 'the piano stool', x0: -2.95, x1: -2.25, z0: -3.5, z1: -2.8 },
-  { n: 'the bookshelf', x0: 1.55, x1: 3.65, z0: -5, z1: -4.3 },
-  { n: 'the desk', x0: -5, x1: -3.6, z0: 0.1, z1: 2.3 },
-  { n: 'the bed', x0: 2.2, x1: 4.6, z0: 1.3, z1: 4.7 },
-  { n: 'the plant', x0: 3.6, x1: 4.6, z0: -4.6, z1: -3.6 },
-];
+let furnNow = null;
+export const setFurniture = (f) => {
+  furnNow = f ?? null;
+};
+// The furniture where it stands now (the rug is walked over, so it is not in the way).
+export const fixedRects = (skipKey = null) => MOVABLE.filter((k) => k !== skipKey && !FURNITURE[k].flat).flatMap((k) => furnRects(furnNow, k).map((r) => ({ n: r.n, x0: r.x0, x1: r.x1, z0: r.z0, z1: r.z1 })));
 const EDGE = 4.95;
 let chestNow = null;
 export const setChest = (c) => {
@@ -601,8 +601,8 @@ export function rectAt([hw, hd], x, z, rotY) {
   const [a, b] = turned ? [hd, hw] : [hw, hd];
   return { x0: x - a, x1: x + a, z0: z - b, z1: z + b };
 }
-export function obstacles(decor, skip = null, withChest = true) {
-  const list = [...FIXED, ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
+export function obstacles(decor, skip = null, withChest = true, skipKey = null) {
+  const list = [...fixedRects(skipKey), ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
   if (withChest) {
     const c = chestNow ?? CHEST_HOME;
     list.push({ n: 'the chest', ...rectAt([0.5, 0.3], c.x, c.z, c.rotY) });
@@ -719,17 +719,18 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
 
 // A picture of the room in text, so he can see what stands where. Every character is half a metre.
 export function roomMap(decor) {
-  const symbols = { 'the piano': 'P', 'the piano stool': 'o', 'the bookshelf': 'B', 'the desk': 'D', 'the bed': 'E', 'the plant': 'L', 'the chest': 'C' };
+  const symbols = { 'the piano': 'P', 'the piano stool': 'o', 'the bookshelf': 'B', 'the desk and screen': 'D', 'the bed': 'E', 'the plant': 'L', 'the chest': 'C' };
   const mine = decor.filter((o) => o.kind === 'floor' && !o.image && o.pos);
   const marks = '123456789abcdefghijklmnopqrstuvwxyz';
   const obs = obstacles(decor, null, true);
+  const nFixed = fixedRects().length;
   const legend = [];
   mine.forEach((o, i) => {
     const sym = marks[i] ?? '#';
     symbols[o.name + '#' + i] = sym;
     legend.push(`${sym} = ${o.name}`);
   });
-  const named = obs.map((o, i) => ({ ...o, sym: i < FIXED.length ? symbols[o.n] : o.n === 'the chest' ? 'C' : symbols[`${o.n}#${i - FIXED.length}`] ?? '#' }));
+  const named = obs.map((o, i) => ({ ...o, sym: i < nFixed ? symbols[o.n] : o.n === 'the chest' ? 'C' : symbols[`${o.n}#${i - nFixed}`] ?? '#' }));
   const rows = [];
   for (let z = -4.75; z < 5; z += 0.5) {
     let row = '';
@@ -741,8 +742,8 @@ export function roomMap(decor) {
 // How full his room is.
 export function crowding(decor) {
   const cap = capOf(decor);
-  const used = obstacles(decor, null, true).slice(FIXED.length).reduce((a, o) => a + (o.x1 - o.x0) * (o.z1 - o.z0), 0);
-  const fixed = FIXED.reduce((a, o) => a + (o.x1 - o.x0) * (o.z1 - o.z0), 0);
+  const used = obstacles(decor, null, true).slice(fixedRects().length).reduce((a, o) => a + (o.x1 - o.x0) * (o.z1 - o.z0), 0);
+  const fixed = fixedRects().reduce((a, o) => a + (o.x1 - o.x0) * (o.z1 - o.z0), 0);
   const free = Math.max(0, 1 - used / (9.9 * 9.9 - fixed));
   return { count: decor.length, cap, free: Math.round(free * 100) };
 }
@@ -752,11 +753,8 @@ const WALL_FIXED = {
   back: [
     { n: 'the window', a0: -0.95, a1: 1.55, y0: 1.7, y1: 4.1 },
     { n: 'the framed photo', a0: -3.1, a1: -1.3, y0: 2.1, y1: 3.4 },
-    { n: 'the piano', a0: -3.95, a1: -1.25, y0: 0, y1: 1.5 },
-    { n: 'the bookshelf', a0: 1.55, a1: 3.65, y0: 0, y1: 3.1 },
-    { n: 'the plant', a0: 3.6, a1: 4.6, y0: 0, y1: 1.6 },
   ],
-  left: [{ n: 'the desk and screen', a0: 0.1, a1: 2.3, y0: 0, y1: 1.95 }],
+  left: [],
 };
 const WALL_TOP = 4.8;
 function halfWall(parts, scale = 1) {
@@ -771,6 +769,13 @@ function halfWall(parts, scale = 1) {
 }
 function wallObstacles(decor, side, skip = null) {
   const list = [...(WALL_FIXED[side] ?? [])];
+  for (const k of MOVABLE) { // furniture standing against this wall
+    if (FURNITURE[k].flat) continue;
+    for (const r of furnRects(furnNow, k)) {
+      if (side === 'back' && r.z0 <= -4.7) list.push({ n: r.n, a0: r.x0, a1: r.x1, y0: 0, y1: r.h });
+      if (side === 'left' && r.x0 <= -4.7) list.push({ n: r.n, a0: r.z0, a1: r.z1, y0: 0, y1: r.h });
+    }
+  }
   for (const o of decor) {
     if (o === skip || !o.pos) continue;
     if (o.kind === 'wall') {
@@ -842,18 +847,21 @@ function placeWall(decor, spec, parts, side, want, atMs, now, moving = false) {
   };
 }
 
-const SURFACES = {
-  desk: { n: 'the desk', x0: -4.95, x1: -3.65, z0: 0.2, z1: 2.2, y: 0.85, rotY: Math.PI / 2, off: [1.5, 0] },
-  piano: { n: 'the piano', x0: -3.95, x1: -1.25, z0: -5, z1: -4.05, y: 1.4, rotY: 0, off: [0, 1.5] },
-  bookshelf: { n: 'the bookshelf', x0: 1.6, x1: 3.6, z0: -4.95, z1: -4.4, y: 3.0, rotY: 0, off: [0, 1.4] },
-  bed: { n: 'the bed', x0: 2.5, x1: 4.5, z0: 2.4, z1: 4.7, y: 0.7, rotY: 0, off: [-1.5, 0] },
-};
+// The top of a piece of furniture, where it stands now.
+function surfaceOf(key) {
+  const f = FURNITURE[key];
+  if (!f.top) return null;
+  const pl = placeOf(furnNow, key);
+  const r = worldRect(key, pl, { n: f.n, x: f.top.x, z: f.top.z, h: 0 });
+  const [ox, oz] = turn(f.top.off, pl.rot);
+  return { n: f.n, x0: r.x0, x1: r.x1, z0: r.z0, z1: r.z1, y: f.top.y, rotY: f.top.face + pl.rot, off: [ox, oz] };
+}
 const ZONE_BASE = { on_desk: 'desk', on_piano: 'piano', on_bookshelf: 'bookshelf', on_bed: 'bed' };
 const baseKeyOf = (o) => o.base ?? ZONE_BASE[o.zone];
 
 // What he can put things on: the furniture, or a thing he made on the floor (a shelf, a closet, a table).
 function baseByKey(decor, key) {
-  if (SURFACES[key]) return { key, ...SURFACES[key] };
+  if (FURNITURE[key]) return surfaceOf(key) ? { key, ...surfaceOf(key) } : null;
   const o = decor.find((x) => x.id === key && x.kind === 'floor' && x.pos);
   if (!o) return null;
   const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
@@ -897,7 +905,7 @@ function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   }
   if (!found) return { failed: `there is no room left on ${base.n} for something about ${r3(hw * 2)} x ${r3(hd * 2)} m. He can use another surface, make it smaller, or build a shelf` };
   const [x, z] = found.map(r3);
-  const stand = base.stand ? [r3(x + (base.stand[0] - base.from[0])), r3(z + (base.stand[1] - base.from[2]))] : [r3(x + SURFACES[base.key].off[0]), r3(z + SURFACES[base.key].off[1])];
+  const stand = base.stand ? [r3(x + (base.stand[0] - base.from[0])), r3(z + (base.stand[1] - base.from[2]))] : [r3(x + base.off[0]), r3(z + base.off[1])];
   const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
   return {
     moved,
@@ -948,4 +956,84 @@ function placeWhere(decor, spec, parts, want, atMs, now) {
   }
   const anchor = x !== null && z !== null ? [x, z] : want && ZONES[want].kind === 'floor' && ZONES[want].slots[0] ? [ZONES[want].slots[0][0], ZONES[want].slots[0][2]] : [0, 0];
   return placeFloor(decor, spec, parts, x !== null && z !== null ? { x, z } : null, anchor, atMs, now);
+}
+
+// ---- Moving the furniture. The piece keeps its back against a wall when it is put next to one. Things standing on it go along.
+const FURN_WORDS = { piano: /piano|stool/, bookshelf: /book ?shelf|bookcase/, desk: /desk|computer/, bed: /\bbed\b/, plant: /plant/, rug: /\brug\b|carpet/ };
+export const furnitureKey = (name) => MOVABLE.find((k) => FURN_WORDS[k].test(String(name).toLowerCase())) ?? null;
+const DIRS = { left: [-1, 0], right: [1, 0], back: [0, -1], front: [0, 1] };
+const QUARTERS = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
+
+export function moveFurniture(decor, furn, key, details, atMs, now = Date.now()) {
+  const d = details && typeof details === 'object' ? details : {};
+  const cur = placeOf(furn, key);
+  const x = num2(d.x) ?? cur.x + (Math.min(2, Math.max(-2, Number(d.dx) || 0)));
+  const z = num2(d.z) ?? cur.z + (Math.min(2, Math.max(-2, Number(d.dz) || 0)));
+  if (num2(d.x) === null && num2(d.z) === null && !d.dx && !d.dz) return { failed: 'he did not say where to move it' };
+  const moves = (furn?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000);
+  const recent = moves.length + decor.filter((o) => o.movedAt && now - Date.parse(o.movedAt) < 86_400_000).length + (chestNow?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length;
+  if (recent >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
+  const f = FURNITURE[key];
+  const obs = obstacles(decor, null, true, key);
+  const rectsAt = (place) => f.rects.map((r) => worldRect(key, place, r));
+  const union = (rs) => ({ x0: Math.min(...rs.map((r) => r.x0)), x1: Math.max(...rs.map((r) => r.x1)), z0: Math.min(...rs.map((r) => r.z0)), z1: Math.max(...rs.map((r) => r.z1)) });
+  const settle = (px, pz) => {
+    let place = { x: Math.min(EDGE, Math.max(-EDGE, px)), z: Math.min(EDGE, Math.max(-EDGE, pz)), rot: cur.rot };
+    if (f.flat) return place;
+    let u = union(rectsAt(place));
+    const gaps = { left: u.x0 + 5, right: 5 - u.x1, back: u.z0 + 5, front: 5 - u.z1 };
+    const [wall, gap] = Object.entries(gaps).sort((a, b) => a[1] - b[1])[0];
+    if (gap <= 0.9) { // next to a wall: back to the wall, flush
+      const want = DIRS[wall];
+      place.rot = QUARTERS.find((q) => { const [a, b] = turn(f.back, q); return Math.abs(a - want[0]) < 0.01 && Math.abs(b - want[1]) < 0.01; }) ?? cur.rot;
+      u = union(rectsAt(place));
+      const g2 = { left: u.x0 + 5, right: 5 - u.x1, back: u.z0 + 5, front: 5 - u.z1 }[wall];
+      if (g2 > 0) {
+        const s = g2 - 0.04;
+        if (wall === 'left') place.x -= s;
+        if (wall === 'right') place.x += s;
+        if (wall === 'back') place.z -= s;
+        if (wall === 'front') place.z += s;
+      }
+    }
+    return { x: r3(place.x), z: r3(place.z), rot: place.rot };
+  };
+  const hits = (place) => (f.flat ? null : rectsAt(place).map((r) => blocker(r, obs)).find(Boolean) ?? null);
+  let place = settle(x, z);
+  let hit = hits(place);
+  let moved = false;
+  if (hit) {
+    const grid = [];
+    for (let gx = -4.9; gx <= 4.91; gx += 0.25) for (let gz = -4.9; gz <= 4.91; gz += 0.25) grid.push([gx, gz, Math.hypot(gx - x, gz - z)]);
+    grid.sort((a, b) => a[2] - b[2]);
+    for (const [gx, gz, dist] of grid) {
+      if (dist > 1.2) break;
+      const p = settle(gx, gz);
+      if (!hits(p)) {
+        place = p;
+        hit = null;
+        moved = true;
+        break;
+      }
+    }
+  }
+  if (hit) return { failed: `${f.n} does not fit there (it would touch ${hit}), and there is no free place close by` };
+  // things on top go along
+  const at = new Date(atMs + 6000).toISOString();
+  const remap = ([px, pz]) => {
+    const [lx, lz] = turn([px - cur.x, pz - cur.z], -cur.rot);
+    const [ox, oz] = pivotOf(key);
+    return worldPoint(key, place, [lx + ox, lz + oz]);
+  };
+  for (const o of decor) {
+    if (o.kind !== 'surface' || baseKeyOf(o) !== key) continue;
+    const [nx, nz] = remap([o.pos[0], o.pos[2]]);
+    const [sx, sz] = remap(o.stand);
+    o.pos = [nx, o.pos[1], nz];
+    o.stand = [sx, sz];
+    o.rotY = (o.rotY || 0) + place.rot - cur.rot;
+    o.label = `on ${f.n} (x ${nx}, z ${nz})`;
+    o.updatedAt = at;
+  }
+  return { name: f.n.replace(/^the /, ''), label: `at x ${place.x}, z ${place.z}`, furniture: { key, place: { ...place, at }, moves: [...moves, new Date(now).toISOString()] }, moved };
 }

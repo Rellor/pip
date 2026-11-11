@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { awakeMinutes } from './sleep.js';
+import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -14,6 +15,9 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 stage.prepend(renderer.domElement);
 
 const scene = new THREE.Scene();
+// Furniture that can be moved: each piece is a group, put where the saved state says.
+const G = Object.fromEntries(MOVABLE.map((k) => [k, new THREE.Group()]));
+Object.values(G).forEach((g) => scene.add(g));
 scene.background = new THREE.Color(getComputedStyle(document.body).backgroundColor);
 
 const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
@@ -106,7 +110,7 @@ box(extraWalls, [0.3, 5, 10.3], 0xefd7c0, [5.15, 2.5, 0]);
 box(extraWalls, [10.6, 0.3, 10.6], 0xe8c9b0, [0, 5.15, 0]);
 extraWalls.traverse((o) => (o.castShadow = false));
 scene.add(extraWalls);
-const rug = cyl(scene, [2, 2, 0.04], 0xe3a183, [0, 0.02, 0.8]);
+const rug = cyl(G.rug, [2, 2, 0.04], 0xe3a183, [0, 0.02, 0.8]);
 rug.castShadow = false;
 
 // window (sky depends on the real time of day)
@@ -278,7 +282,30 @@ function buildDecor(d) {
   return g;
 }
 // A thing appears when Pip has walked to its spot (its time in state.json), and pops in.
+const SPOT_OF = { piano: 'piano', bookshelf: 'bookshelf', desk: 'computer', bed: 'bed', plant: 'plant' };
+function applyFurniture(s) {
+  for (const key of MOVABLE) {
+    const pl = placeOf(s?.furniture, key);
+    const [px, pz] = pivotOf(key);
+    const [rx, rz] = turn([px, pz], pl.rot);
+    G[key].rotation.y = pl.rot;
+    G[key].position.set(pl.x - rx, 0, pl.z - rz);
+    const sp = FURNITURE[key].spot;
+    if (sp && SPOT_OF[key]) {
+      const [wx, wz] = worldPoint(key, pl, sp.p);
+      SPOTS[SPOT_OF[key]] = { ...SPOTS[SPOT_OF[key]], p: new V3(wx, 0, wz), face: sp.face + pl.rot };
+    }
+  }
+  for (const r of REGIONS) {
+    if (!r.furn) continue;
+    const pl = placeOf(s?.furniture, r.furn);
+    const [x0, x1, y0, y1, z0, z1] = r.box;
+    const c = [worldPoint(r.furn, pl, [x0, z0]), worldPoint(r.furn, pl, [x1, z1])];
+    r.live = [Math.min(c[0][0], c[1][0]), Math.max(c[0][0], c[1][0]), y0, y1, Math.min(c[0][1], c[1][1]), Math.max(c[0][1], c[1][1])];
+  }
+}
 function updateDecor(s) {
+  applyFurniture(s);
   const c = s?.chest; // Pip moved his chest
   if (c && Date.parse(c.at) <= Date.now()) {
     chestGroup.position.set(c.x, 0, c.z);
@@ -367,21 +394,21 @@ box(chestLid, [0.12, 0.12, 0.05], 0xd9a441, [0, 0.0, 0.62]);
 
 // piano
 const PIANO = new V3(-2.6, 0, -4.5);
-box(scene, [2.6, 1.3, 0.9], 0x2a2a2e, [PIANO.x, 0.65, PIANO.z]);
-box(scene, [2.7, 0.1, 1], 0x1d1d20, [PIANO.x, 1.35, PIANO.z]);
-box(scene, [2.4, 0.1, 0.5], 0x1d1d20, [PIANO.x, 0.85, PIANO.z + 0.65]);
+box(G.piano, [2.6, 1.3, 0.9], 0x2a2a2e, [PIANO.x, 0.65, PIANO.z]);
+box(G.piano, [2.7, 0.1, 1], 0x1d1d20, [PIANO.x, 1.35, PIANO.z]);
+box(G.piano, [2.4, 0.1, 0.5], 0x1d1d20, [PIANO.x, 0.85, PIANO.z + 0.65]);
 const keys = {};
 'CDEFGAB'.split('').forEach((n, i) => {
-  keys[n] = box(scene, [0.29, 0.08, 0.4], 0xfdfdf8, [PIANO.x + (i - 3) * 0.32, 0.93, PIANO.z + 0.72]);
+  keys[n] = box(G.piano, [0.29, 0.08, 0.4], 0xfdfdf8, [PIANO.x + (i - 3) * 0.32, 0.93, PIANO.z + 0.72]);
 });
-[0, 1, 3, 4, 5].forEach((i) => box(scene, [0.15, 0.08, 0.24], 0x111111, [PIANO.x + (i - 3) * 0.32 + 0.16, 1.0, PIANO.z + 0.65]));
-cyl(scene, [0.06, 0.06, 0.5], 0x6b4a33, [PIANO.x, 0.28, -3.15]);
-cyl(scene, [0.38, 0.38, 0.12], 0xc9604a, [PIANO.x, 0.55, -3.15]);
+[0, 1, 3, 4, 5].forEach((i) => box(G.piano, [0.15, 0.08, 0.24], 0x111111, [PIANO.x + (i - 3) * 0.32 + 0.16, 1.0, PIANO.z + 0.65]));
+cyl(G.piano, [0.06, 0.06, 0.5], 0x6b4a33, [PIANO.x, 0.28, -3.15]);
+cyl(G.piano, [0.38, 0.38, 0.12], 0xc9604a, [PIANO.x, 0.55, -3.15]);
 
 // bookshelf
 const shelf = new THREE.Group();
 shelf.position.set(2.6, 0, -4.65);
-scene.add(shelf);
+G.bookshelf.add(shelf);
 box(shelf, [2, 3, 0.6], 0x8d5a3b, [0, 1.5, 0]);
 [0.75, 1.5, 2.25].forEach((y) => box(shelf, [1.8, 0.06, 0.55], 0x6e4529, [0, y, 0.03]));
 const bookColors = [0xd96c5b, 0x6fa8dc, 0xf0c05a, 0x7bb87f, 0xb48ac9, 0xf08fb0];
@@ -394,10 +421,10 @@ const bookColors = [0xd96c5b, 0x6fa8dc, 0xf0c05a, 0x7bb87f, 0xb48ac9, 0xf08fb0];
 });
 
 // computer desk
-box(scene, [1.3, 0.1, 2], 0xb98a62, [-4.3, 0.8, 1.2]);
-box(scene, [0.1, 0.8, 1.9], 0x9a6f4b, [-3.75, 0.4, 1.2]);
-box(scene, [0.1, 0.8, 1.9], 0x9a6f4b, [-4.85, 0.4, 1.2]);
-box(scene, [0.1, 0.8, 1.1], 0x222222, [-4.55, 1.3, 1.2]);
+box(G.desk, [1.3, 0.1, 2], 0xb98a62, [-4.3, 0.8, 1.2]);
+box(G.desk, [0.1, 0.8, 1.9], 0x9a6f4b, [-3.75, 0.4, 1.2]);
+box(G.desk, [0.1, 0.8, 1.9], 0x9a6f4b, [-4.85, 0.4, 1.2]);
+box(G.desk, [0.1, 0.8, 1.1], 0x222222, [-4.55, 1.3, 1.2]);
 const screenCanvas = document.createElement('canvas');
 screenCanvas.width = 128;
 screenCanvas.height = 160;
@@ -421,29 +448,29 @@ function drawScreen(typing) {
   screenTex.needsUpdate = true;
 }
 drawScreen(false);
-const screenMesh = box(scene, [0.02, 0.65, 0.95], 0x8fd3ff, [-4.49, 1.3, 1.2]);
+const screenMesh = box(G.desk, [0.02, 0.65, 0.95], 0x8fd3ff, [-4.49, 1.3, 1.2]);
 screenMesh.material = new THREE.MeshBasicMaterial({ map: screenTex });
-box(scene, [0.1, 0.3, 0.2], 0x222222, [-4.55, 0.95, 1.2]);
-box(scene, [0.4, 0.04, 0.8], 0x444444, [-4.0, 0.87, 1.2]);
+box(G.desk, [0.1, 0.3, 0.2], 0x222222, [-4.55, 0.95, 1.2]);
+box(G.desk, [0.4, 0.04, 0.8], 0x444444, [-4.0, 0.87, 1.2]);
 // photo printer on the desk (faces into the room); its little light blinks while he prints
-box(scene, [0.26, 0.1, 0.3], 0xe9e4da, [-3.84, 0.92, 0.5]);
-box(scene, [0.22, 0.03, 0.24], 0xcfc8ba, [-3.85, 0.985, 0.5]);
-box(scene, [0.012, 0.016, 0.18], 0x2a2a2a, [-3.708, 0.93, 0.5]);
-const printLight = box(scene, [0.03, 0.012, 0.03], 0x2f6b3a, [-3.76, 1.004, 0.38]);
+box(G.desk, [0.26, 0.1, 0.3], 0xe9e4da, [-3.84, 0.92, 0.5]);
+box(G.desk, [0.22, 0.03, 0.24], 0xcfc8ba, [-3.85, 0.985, 0.5]);
+box(G.desk, [0.012, 0.016, 0.18], 0x2a2a2a, [-3.708, 0.93, 0.5]);
+const printLight = box(G.desk, [0.03, 0.012, 0.03], 0x2f6b3a, [-3.76, 1.004, 0.38]);
 printLight.material = new THREE.MeshBasicMaterial({ color: 0x2f6b3a });
 
 // bed
-box(scene, [2.2, 0.4, 3.2], 0x8d5a3b, [3.4, 0.2, 3]);
-box(scene, [2, 0.3, 3], 0xcfe3f3, [3.4, 0.55, 3]);
-box(scene, [1.4, 0.2, 0.6], 0xffffff, [3.4, 0.8, 1.85]);
+box(G.bed, [2.2, 0.4, 3.2], 0x8d5a3b, [3.4, 0.2, 3]);
+box(G.bed, [2, 0.3, 3], 0xcfe3f3, [3.4, 0.55, 3]);
+box(G.bed, [1.4, 0.2, 0.6], 0xffffff, [3.4, 0.8, 1.85]);
 
 // plant
-cyl(scene, [0.3, 0.22, 0.4], 0xc9604a, [4.1, 0.2, -4.1]);
+cyl(G.plant, [0.3, 0.22, 0.4], 0xc9604a, [4.1, 0.2, -4.1]);
 [[0, 0.75, 0, 0.42], [0.18, 1.05, 0.05, 0.3], [-0.15, 1.0, -0.05, 0.28]].forEach(([x, y, z, r]) => {
   const leaf = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), mat(0x6fae6f));
   leaf.position.set(4.1 + x, y, -4.1 + z);
   leaf.castShadow = true;
-  scene.add(leaf);
+  G.plant.add(leaf);
 });
 
 // ---------------------------------------------------------------- Pip
@@ -1268,14 +1295,14 @@ $('walk').addEventListener('click', () => setMode(view.mode === 'walk' ? 'overvi
 
 // Things you can tap: Pip, the photo and Pip's creations carry their own info; furniture is found by where you tapped.
 const REGIONS = [
-  { box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.'] }; } },
-  { box: [-2.95, -2.25, 0, 0.7, -3.5, -2.8], info: () => ({ title: 'The piano stool', lines: ['Pip sits here to play.'] }) },
-  { box: [1.55, 3.65, 0, 3.1, -5, -4.3], info: () => { const last = logOf('read_book').at(-1); return { title: 'The bookshelf', lines: ['Pip goes here to read.', last?.opened ? `He last read about ${last.opened.title}.` : 'He has not read anything here yet.'], links: last?.opened?.url ? [{ text: `Read: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
-  { box: [-5, -3.6, 0, 1.9, 0.1, 2.3], info: () => { const last = logOf('search_web').at(-1); const apps = lastState?.apps || []; return { title: 'The computer', lines: ['Pip looks things up on the web here.', last ? `His last search was "${last.query}".` : 'He has not searched yet.', apps.length ? `He has written ${apps.length} app${apps.length === 1 ? '' : 's'}:` : ''].filter(Boolean), links: last?.opened?.url ? [{ text: `He opened: ${last.opened.title}`, url: last.opened.url }] : [], actions: apps.slice(-5).map((a) => ({ text: `▶ Open ${a.name}`, run: () => openApp(a) })) }; } },
-  { box: [2.2, 4.6, 0, 1.1, 1.3, 4.7], info: () => ({ title: "Pip's bed", lines: ['Pip sleeps here, from 23:00 until 08:00.', 'He also rests here when he is tired.'] }) },
-  { box: [3.6, 4.6, 0, 1.5, -4.6, -3.6], info: () => ({ title: 'A plant', lines: ['A leafy plant in the corner.'] }) },
+  { furn: 'piano', box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.'] }; } },
+  { furn: 'piano', box: [-2.95, -2.25, 0, 0.7, -3.5, -2.8], info: () => ({ title: 'The piano stool', lines: ['Pip sits here to play.'] }) },
+  { furn: 'bookshelf', box: [1.55, 3.65, 0, 3.1, -5, -4.3], info: () => { const last = logOf('read_book').at(-1); return { title: 'The bookshelf', lines: ['Pip goes here to read.', last?.opened ? `He last read about ${last.opened.title}.` : 'He has not read anything here yet.'], links: last?.opened?.url ? [{ text: `Read: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
+  { furn: 'desk', box: [-5, -3.6, 0, 1.9, 0.1, 2.3], info: () => { const last = logOf('search_web').at(-1); const apps = lastState?.apps || []; return { title: 'The computer', lines: ['Pip looks things up on the web here.', last ? `His last search was "${last.query}".` : 'He has not searched yet.', apps.length ? `He has written ${apps.length} app${apps.length === 1 ? '' : 's'}:` : ''].filter(Boolean), links: last?.opened?.url ? [{ text: `He opened: ${last.opened.title}`, url: last.opened.url }] : [], actions: apps.slice(-5).map((a) => ({ text: `▶ Open ${a.name}`, run: () => openApp(a) })) }; } },
+  { furn: 'bed', box: [2.2, 4.6, 0, 1.1, 1.3, 4.7], info: () => ({ title: "Pip's bed", lines: ['Pip sleeps here, from 23:00 until 08:00.', 'He also rests here when he is tired.'] }) },
+  { furn: 'plant', box: [3.6, 4.6, 0, 1.5, -4.6, -3.6], info: () => ({ title: 'A plant', lines: ['A leafy plant in the corner.'] }) },
   { box: [-0.9, 1.5, 1.7, 4.1, -5.1, -4.8], info: () => ({ title: 'The window', lines: ['Pip looks outside here.', 'The sky follows the real time of day where you are.'] }) },
-  { box: [-2, 2, 0, 0.12, -1.2, 2.8], info: () => ({ title: 'The rug', lines: ['A soft round rug in the middle of the room.'] }) },
+  { furn: 'rug', box: [-2, 2, 0, 0.12, -1.2, 2.8], info: () => ({ title: 'The rug', lines: ['A soft round rug in the middle of the room.'] }) },
 ];
 // `direct` is true when the thing tapped carries its own info (Pip, his creations); furniture is found by where the ray landed.
 function infoFor(hit) {
@@ -1283,7 +1310,7 @@ function infoFor(hit) {
     if (o.userData?.info) return { info: typeof o.userData.info === 'function' ? o.userData.info() : o.userData.info, direct: true };
   }
   const { x, y, z } = hit.point;
-  const info = REGIONS.find(({ box: [x0, x1, y0, y1, z0, z1] }) => x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1)?.info() ?? null;
+  const info = REGIONS.find(({ live, box }) => { const [x0, x1, y0, y1, z0, z1] = live ?? box; return x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1; })?.info() ?? null;
   return info ? { info, direct: false } : null;
 }
 pip.group.userData.info = () => {
