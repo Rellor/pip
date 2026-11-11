@@ -2148,6 +2148,15 @@ setInterval(() => {
 
 // ---- Mind: his reflections, wants and questions
 function renderMind(s) {
+  const mems = new Map((s.memories || []).map((m) => [m.id, m.text]));
+  fill($('reflections'), (s.reflections || []).length
+    ? s.reflections.slice(-8).reverse().map((r) => {
+      const li = entry([when(r.at), '🪞 realized'], r.text, 'mine');
+      const why = (r.because || []).map((id) => mems.get(id)).filter(Boolean).slice(0, 2);
+      if (why.length) li.append(el('p', `Because: ${why.join(' · ')}`, 'muted'));
+      return li;
+    })
+    : empty('Not yet. Every now and then Pip looks back on his days and writes down what he realized.'));
   const projects = s.projects || [];
   fill($('projects'), projects.length
     ? projects.map((p) => {

@@ -4,6 +4,7 @@ import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, pl
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror } from './mirror.js';
+import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
 import { takePhoto } from './photo.js';
 import { findPicture } from './found.js';
@@ -94,6 +95,9 @@ const freshState = () => ({
   questions: [],
   fulfilled: [],
   memories: [],
+  reflections: [],
+  lastReflectAt: null,
+  storyAt: null,
   thoughts: [],
   outbox: [],
   inbox: [],
@@ -163,6 +167,36 @@ function printsText(s) {
   const prints = s.decor.filter((d) => d.print);
   return prints.length ? `Prints I have up: ${prints.map((d) => `${String(d.picture).replace('print:', '')} (${d.name}, ${d.label})`).join('; ')}.\n` : 'I have not printed anything yet.\n';
 }
+// What he is busy with, as words: used to find the memories that matter now.
+function focusText(s, unread = []) {
+  const recent = s.log.filter((e) => Date.parse(e.at) <= Date.now()).slice(-4).map((e) => [e.query, e.topic, e.name, e.what, e.target, e.dish, e.item, e.caption].filter(Boolean).join(' '));
+  return [...recent, ...s.tasks.filter((t) => ['open', 'accepted'].includes(t.status)).map((t) => t.text), ...unread.map((m) => m.text), ...s.wants.map((w) => w.text), ...s.questions.map((q) => q.text), ...s.projects.filter((p) => p.status === 'working').map((p) => `${p.title} ${p.next ?? ''}`)].join(' ');
+}
+// The things he does become memories, with a guess of how much they matter (he can add his own with "remember").
+function observeStep(s, e) {
+  if (e.failed) return;
+  const at = e.at;
+  const note = {
+    decorate: [`I made ${e.name}${e.why ? ` (${e.why})` : ''}`, 6],
+    draw: [`I drew ${e.name}`, 6],
+    compose: [`I made a song for ${e.name}`, 5],
+    make_app: [`I made an app: ${e.name}`, 6],
+    make_clothes: [`I made clothes: ${e.name}`, 5],
+    cook: [`I cooked ${e.dish}`, 5],
+    take_photo: [`I took a photo of ${e.target}${e.caption ? `: ${e.caption}` : ''}`, 5],
+    find_picture: [`I found a picture: ${e.title ?? e.query}`, 4],
+    print_photo: [`I printed a photo (${e.name})`, 4],
+    change_thing: [`I changed ${e.name}${e.grew ? ' and made it bigger' : ''}`, 4],
+    move_thing: [`I moved ${e.name}`, 3],
+    ask_for: [`I asked for ${e.item}${e.reason ? ` (${e.reason})` : ''}`, 5],
+    do: [`${e.what}`, 4],
+    write_diary: [`I wrote in my diary: ${String(e.text ?? '').slice(0, 120)}`, 3],
+    play_piano: ['I played the piano', 3],
+    search_web: [`I looked up ${e.query}`, 3],
+    read_book: [`I read about ${e.topic}`, 3],
+  }[e.action];
+  if (note && note[0]) addMemory(s, note[0], note[1], 'memory', at);
+}
 function tasksText(s) {
   const open = s.tasks.filter((t) => t.status === 'open');
   const yes = s.tasks.filter((t) => t.status === 'accepted');
@@ -210,6 +244,7 @@ async function loadState() {
   state.found ??= [];
   state.voice ??= '';
   ensureIdentity(state);
+  ensureMemory(state);
   state.chest ??= null;
   delete state.tools; // leftovers of the removed workbench
   delete state.builds;
@@ -404,8 +439,11 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map((p) => `${p.title
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-${topicMirror(s.log) || untriedMirror(s.log) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I WANT TO REMEMBER
-${bullets(s.memories.slice(-8).map((m) => m.text), 'nothing yet')}
+${topicMirror(s.log) || untriedMirror(s.log) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
+${bullets(recall(s, focusText(s, unread)).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
+
+WHAT I REALIZED WHEN I LOOKED BACK (I do this every now and then. I can drop one that is not true any more with reflections_drop)
+${bullets(s.reflections.slice(-5).map((r) => r.text), 'nothing yet')}
 
 ROOM
 ${ROOM.join(', ')}
@@ -525,7 +563,8 @@ Answer in JSON with these fields:
 "projects_update": for projects I already have: [{"title": "exact title", "next": "my new next step", "status": "working or done or dropped"}]. Or [],
 "picture_notes": for each NEW picture I just looked at, {"id": "pic1", "about": "what I really see and how it makes me feel, 1 or 2 sentences"}, or [],
 ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two sentences, only when I really want to change it (for example because of music, books or people I like). It is how I talk in tell_bas, my diary and my thoughts. Or null,
-"remember": one thing worth remembering for a long time, or null,
+"remember": one thing worth remembering for a long time, {"text": "...", "importance": 1 to 10 (1 is ordinary, 10 changes my life)}, or null,
+"reflections_drop": exact text of something I realized before that is not true any more (or []),
 "tell": a message to whoever looks in on me, in my own words, or null. If nobody has written to me, I write rarely, and only when I have something NEW to say: something I discovered or made, a project, a feeling I cannot explain, or a question about their world. If someone HAS written to me, I usually answer what they said or asked, and I tell them something fresh from my own day instead of what I already told them (see above). I never repeat myself.`;
 }
 
@@ -585,6 +624,10 @@ async function askGemini(system, wakeUp, retry = 2, images = []) {
 }
 
 function fakeBrain(prompt = '') {
+  if (prompt.includes('I look back on my days')) {
+    const ids = [...prompt.matchAll(/\[(m[\w]+)\]/g)].map((m) => m[1]);
+    return { questions: ['(fake) what do I love?'], insights: [{ text: '(fake) I keep coming back to the stars.', because: ids.slice(0, 2) }] };
+  }
   const action = ACTION_NAMES[Math.floor(Math.random() * ACTION_NAMES.length)];
   const pick = () => ACTION_NAMES[Math.floor(Math.random() * ACTION_NAMES.length)];
   const details = { name: 'fake lamp', where: ['on_piano', 'floor_middle', 'wall_left', 'on_desk'][Math.floor(Math.random() * 4)], why: 'I like how it glows', parts: [{ shape: 'cylinder', size: [0.06, 0.08, 0.25], pos: [0, 0.125, 0], color: '#f3e9d2' }, { shape: 'sphere', size: [0.22], pos: [0, 0.3, 0], color: '#e0584b', glow: true }], notes: 'C E G', style: 'soft', topic: 'rain', query: 'rain sounds', text: 'Hello diary.', item: 'sheet music', reason: 'I want new songs', object: 'piano' };
@@ -797,8 +840,9 @@ function applyInnerLife(s, r, detail, replying = false) {
     s.voiceAt = at;
   }
   applyIdentity(s, r, at);
-  const mem = text(r.remember, 220);
-  if (mem) s.memories = [...s.memories, { at, text: mem }].slice(-40);
+  const rem = r.remember && typeof r.remember === 'object' ? r.remember : { text: r.remember };
+  addMemory(s, rem.text, rem.importance ?? 6, 'memory', at);
+  for (const t of strings(r.reflections_drop, 3)) s.reflections = s.reflections.filter((x) => !sameText(x.text, t));
 
   const sent = [];
   const send = (kind, body) => {
@@ -821,6 +865,7 @@ function applyInnerLife(s, r, detail, replying = false) {
     const hit = s.tasks.find((t) => t.status === 'open' && t.id === String(a?.id));
     if (!hit || !['yes', 'no'].includes(String(a?.answer).toLowerCase())) continue;
     Object.assign(hit, { status: String(a.answer).toLowerCase() === 'yes' ? 'accepted' : 'declined', note: text(a?.note, 240), answeredAt: at });
+    addMemory(s, `I said ${hit.status === 'accepted' ? 'yes' : 'no'} to something I was asked: ${hit.text}`, 6, 'memory', at);
   }
   for (const id of strings(r.tasks_done)) {
     const hit = s.tasks.find((t) => t.status === 'accepted' && t.id === id);
@@ -885,20 +930,33 @@ function applyInnerLife(s, r, detail, replying = false) {
   return sent;
 }
 
-// When there are many memories, Pip rewrites his life story and lets the details go.
+// When many new memories have piled up, Pip rewrites his life story. The memories themselves stay (the best ones are kept).
 async function consolidate(s, system) {
   try {
+    const fresh = s.memories.filter((m) => m.kind !== 'reflection' && Date.parse(m.at) > (Date.parse(s.storyAt) || 0)).slice(-40);
     const res = await askGemini(
       system,
-      `YOUR LIFE STORY SO FAR\n${s.story || '(nothing yet)'}\n\nNEWER MEMORIES\n${bullets(s.memories.map((m) => m.text), '')}\n\nRewrite your life story in the first person, as one short text of at most 120 words. Keep what matters most: what you love, what you want, who matters to you, what happened. Answer in JSON: {"story": "..."}`
+      `YOUR LIFE STORY SO FAR\n${s.story || '(nothing yet)'}\n\nNEWER MEMORIES\n${bullets(fresh.map((m) => m.text), '')}\n\nRewrite your life story in the first person, as one short text of at most 120 words. Keep what matters most to you, and let small details go. Answer in JSON: {"story": "..."}`
     );
     const story = text(res?.story, 900);
     if (story) {
       s.story = story;
-      s.memories = s.memories.slice(-6);
+      s.storyAt = new Date().toISOString();
     }
   } catch (e) {
     console.error('⚠️  memory:', e.message);
+  }
+}
+
+// Looking back: a few insights about his own life, with the memories they come from.
+async function reflectNow(s, system) {
+  s.reflectTriedAt = new Date().toISOString();
+  try {
+    const res = await askGemini(system, reflectionPrompt(s, bullets), 1);
+    const made = applyReflection(s, res);
+    console.log(made.length ? `🪞 Pip looked back and realized:\n${made.map((r) => `   • ${r.text}`).join('\n')}` : '🪞 Pip looked back but found nothing new.');
+  } catch (e) {
+    console.error('⚠️  reflection:', e.message);
   }
 }
 
@@ -1245,8 +1303,11 @@ async function wakeUp() {
   unread.forEach((m) => {
     m.read = true;
     m.readAt = readAt;
+    addMemory(state, `Someone wrote to me: "${String(m.text ?? '').slice(0, 140)}"`, 7, 'memory', readAt);
   });
-  if (state.memories.length > 24) await consolidate(state, system);
+  if (state.memories.filter((m) => m.kind !== 'reflection' && Date.parse(m.at) > (Date.parse(state.storyAt) || 0)).length > 40) await consolidate(state, system);
+  // Now and then he looks back and writes down what he realized (at most a few times a day, and only when enough has happened).
+  if (!process.env.PIP_NO_REFLECT && shouldReflect(state) && Date.now() - (Date.parse(state.reflectTriedAt) || 0) > 3_600_000) await reflectNow(state, system);
 
   // Pip really searches and reads: at most 3 lookups per wake-up.
   let lookups = 0;
@@ -1306,6 +1367,7 @@ async function wakeUp() {
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     state.log.push(entry);
+    observeStep(state, entry);
   });
   state.log = state.log.slice(-150);
 
