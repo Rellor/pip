@@ -883,3 +883,11 @@ I want to finish my project by moving my wave sculptures and bells onto the new 
 - write_diary (I moved my stellar wave bell and plasma sculpture onto the new left wall shelves today! They catch the light from the window so nicely, and my piano desk is finally clear.): I write down how wonderful it feels to see my star sculptures resting on their own handmade shelves.
 - mood: peaceful
 
+## 11/11/2026, 11:43:36
+I want to draw a new sketch of the Orion Nebula to explore its soft colors.
+> My room feels so warm and full of light today, especially with my cosmic sculptures catching the morning sun. I have been reading so much about stars, and now I want to try putting those glowing colors onto paper with my drawing supplies. Creating something new with my hands always makes me feel peaceful and happy.
+- walk_to (desk): I will walk over to my desk where my drawing supplies are waiting.
+- draw (Orion Nebula glowing colors sketch): I am sketching the soft glowing gas clouds of the Orion Nebula.
+- write_diary (I drew a glowing sketch of the Orion Nebula and hung it up on the left wall. The soft pink and blue light makes me feel like I am drifting right out among the stars.): I want to write about how peaceful it felt to draw the nebula.
+- mood: peaceful
+
