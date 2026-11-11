@@ -278,6 +278,12 @@ function buildDecor(d) {
 }
 // A thing appears when Pip has walked to its spot (its time in state.json), and pops in.
 function updateDecor(s) {
+  const c = s?.chest; // Pip moved his chest
+  if (c && Date.parse(c.at) <= Date.now()) {
+    chestGroup.position.set(c.x, 0, c.z);
+    chestGroup.rotation.y = c.rotY;
+    SPOTS.chest = { p: new V3(c.x + Math.sin(c.rotY) * 0.75, 0, c.z + Math.cos(c.rotY) * 0.75), face: Math.PI + c.rotY };
+  }
   const list = (s?.decor || []).filter((d) => Date.parse(d.at) <= Date.now());
   const ids = new Set(list.map((d) => d.id));
   for (const [id, g] of decorGroups) {
@@ -974,6 +980,7 @@ function planFor(last) {
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
     case 'do': return { at: 'center', anim: 'look' };
     case 'print_photo': return { at: 'computer', anim: 'look' };
+    case 'move_thing': return { at: 'center', anim: 'look' };
     case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
     case 'compose':
     case 'add_use': return { at: 'center', anim: 'write' };
@@ -1805,6 +1812,7 @@ function headlineBase(st) {
     case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
+    case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
     case 'print_photo': return ['🖨️', `Printing a photo (${d.id || st.name || 'a picture'})`];
     case 'take_down_print': return ['🖨️', 'Taking a print off the wall'];
     case 'do': return [d.emoji || st.emoji || '✨', d.what || st.what || 'Doing something'];
@@ -1828,7 +1836,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -1961,7 +1969,9 @@ function dayCard(e) {
     } else if (e.action === 'draw') {
       card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew it and put it ${e.place}.`, 'muted'));
     } else if (e.action === 'change_thing') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
+    } else if (e.action === 'move_thing') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He moved it${e.place ? ` (${e.place})` : ''}.`, 'muted'));
     } else if (e.action === 'update_app') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He made a new version of the app.', 'muted'));
     } else if (e.action === 'make_clothes') {

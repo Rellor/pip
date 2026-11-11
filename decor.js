@@ -368,13 +368,82 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   if (decor.filter((x) => x.updatedAt && now - Date.parse(x.updatedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
   const parts = cleanParts(d.parts);
   const why = str(d.why, 200);
-  if (!parts && !why) return { failed: 'he did not say what to change' };
-  if (parts) {
+  const grow = Number(d.bigger ?? d.scale);
+  const factor = !parts && Number.isFinite(grow) && grow > 0 ? Math.min(2, Math.max(0.5, grow)) : null; // "make it bigger" without drawing it again
+  if (!parts && !why && !factor) return { failed: 'he did not say what to change' };
+  let limited = false;
+  if (parts || factor) {
     const Z = ZONES[e.zone];
-    e.scale = fit(parts, Z.kind, Z.lim);
-    e.parts = parts;
+    const next = parts ?? e.parts.map((p) => ({ ...p, size: p.size.map((v) => r3(v * factor)), pos: p.pos.map((v) => r3(v * factor)), rot: [...p.rot] }));
+    e.scale = fit(next, Z.kind, Z.lim);
+    e.parts = next;
+    limited = e.scale < 1 && (Boolean(factor) && factor > 1);
   }
   if (why) e.why = why;
   e.updatedAt = new Date(atMs + 6000).toISOString(); // the page shows the change a few seconds into his step
-  return { name: e.name, entry: e, reshaped: Boolean(parts) };
+  return { name: e.name, entry: e, reshaped: Boolean(parts || factor), grew: factor, limited, label: ZONES[e.zone].label };
+}
+
+// ---- Moving things. His chest is a piece of furniture he can move too (decor never overlaps it by much, but it is not checked).
+export const CHEST_HOME = { x: -4.1, z: 3.9, rotY: 0 };
+export const MAX_MOVES_PER_DAY = 8;
+const CHEST_BOUNDS = { x: [-4.45, 4.45], z: [-4.4, 4.45] };
+const clampTo = ([lo, hi], v) => r3(Math.min(hi, Math.max(lo, v)));
+
+// details: { name, where, dx, dz }. `chest` is state.chest (or null). Returns { name, entry } for a thing, { name, chest } for the chest, or { failed }.
+export function moveThing(decor, chest, details, atMs, now = Date.now()) {
+  const d = details && typeof details === 'object' ? details : {};
+  const n = str(d.name, 60).toLowerCase();
+  if (!n) return { failed: 'he did not say what to move' };
+  const dx = Math.min(2, Math.max(-2, Number(d.dx) || 0));
+  const dz = Math.min(2, Math.max(-2, Number(d.dz) || 0));
+  const want = findZone(d.where);
+  if (!want && !dx && !dz) return { failed: 'he did not say where to move it' };
+  if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
+  const at = new Date(atMs + 6000).toISOString();
+  const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
+
+  if (/chest/.test(n)) {
+    const cur = chest ?? CHEST_HOME;
+    let { x, z, rotY } = cur;
+    if (want && ZONES[want].kind === 'floor') {
+      const used = usedSlots(decor, want);
+      const i = ZONES[want].slots.findIndex((_, k) => !used.has(k));
+      if (i < 0) return { failed: 'there is no free place there for the chest' };
+      [x, , z] = ZONES[want].slots[i];
+      rotY = ZONES[want].rotY;
+    } else if (want) return { failed: 'the chest can only stand on the floor' };
+    x = clampTo(CHEST_BOUNDS.x, x + dx);
+    z = clampTo(CHEST_BOUNDS.z, z + dz);
+    if (floorBlocked(x, z, null)) return { failed: 'something is already standing there' };
+    const moves = [...(chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000), new Date(now).toISOString()];
+    return { name: 'chest', chest: { x, z, rotY, at, moves } };
+  }
+
+  const mine = (x) => !x.image && !x.art && x.zone;
+  let e = decor.find((x) => mine(x) && x.name.toLowerCase() === n) ?? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  if (!e) return { failed: 'there is nothing with that name in his room' };
+  if (want && ZONES[want].kind !== e.kind) return { failed: `it cannot go there: it is a ${e.kind} thing` };
+  const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
+  if (want && want !== e.zone) {
+    const used = usedSlots(decor, want);
+    const i = ZONES[want].slots.findIndex((_, k) => !used.has(k));
+    if (i < 0) return { failed: 'there is no free spot there' };
+    const Z = ZONES[want];
+    const parts = e.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] }));
+    e.scale = fit(parts, Z.kind, Z.lim);
+    e.parts = parts;
+    const [sx, sy, sz] = Z.slots[i];
+    Object.assign(e, { zone: want, slot: i, label: Z.label, pos: [sx, sy, sz], rotY: Z.rotY, stand: Z.kind === 'wall' ? (Z.side === 'back' ? [sx, -3.7] : [-3.7, sz]) : [clampRoom(sx + Z.off[0]), clampRoom(sz + Z.off[1])] });
+  }
+  if ((dx || dz) && e.kind === 'floor') {
+    const nx = clampRoom(e.pos[0] + dx);
+    const nz = clampRoom(e.pos[2] + dz);
+    if (floorBlocked(nx, nz, e)) return { failed: 'something is already standing there' };
+    e.pos = [nx, e.pos[1], nz];
+    e.stand = [clampRoom(nx + (ZONES[e.zone]?.off?.[0] ?? 0)), clampRoom(nz + (ZONES[e.zone]?.off?.[1] ?? 1.1))];
+  } else if (dx || dz) return { failed: 'only things on the floor can be moved a little' };
+  e.movedAt = at;
+  e.updatedAt = at;
+  return { name: e.name, entry: e, label: e.label };
 }
