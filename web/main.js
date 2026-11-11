@@ -236,12 +236,17 @@ function buildDecor(d) {
   if (d.image) {
     // A picture from Bas that Pip chose to put up: a frame with the photo in it.
     const [w, h] = d.size || [0.8, 0.55];
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(w + 0.1, h + 0.1, 0.06), new THREE.MeshStandardMaterial({ color: 0x8d5a3b, roughness: 0.8 }));
-    frame.position.z = 0.04;
+    const print = Boolean(d.print); // a small paper print: white border, thicker at the bottom, almost flat
+    const frame = new THREE.Mesh(
+      new THREE.BoxGeometry(print ? w + 0.04 : w + 0.1, print ? h + 0.07 : h + 0.1, print ? 0.012 : 0.06),
+      new THREE.MeshStandardMaterial({ color: print ? 0xf6f3ea : 0x8d5a3b, roughness: 0.8 })
+    );
+    frame.position.z = print ? 0.01 : 0.04;
+    if (print) frame.position.y = -0.015;
     frame.castShadow = true;
     g.add(frame);
     const photo = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: 0x111111 }));
-    photo.position.z = 0.075;
+    photo.position.z = print ? 0.02 : 0.075;
     g.add(photo);
     new THREE.TextureLoader().setCrossOrigin('anonymous').load(d.image, (tex) => {
       tex.colorSpace = THREE.SRGBColorSpace;
@@ -413,6 +418,12 @@ const screenMesh = box(scene, [0.02, 0.65, 0.95], 0x8fd3ff, [-4.49, 1.3, 1.2]);
 screenMesh.material = new THREE.MeshBasicMaterial({ map: screenTex });
 box(scene, [0.1, 0.3, 0.2], 0x222222, [-4.55, 0.95, 1.2]);
 box(scene, [0.4, 0.04, 0.8], 0x444444, [-4.0, 0.87, 1.2]);
+// photo printer on the desk (faces into the room); its little light blinks while he prints
+box(scene, [0.26, 0.1, 0.3], 0xe9e4da, [-3.84, 0.92, 0.5]);
+box(scene, [0.22, 0.03, 0.24], 0xcfc8ba, [-3.85, 0.985, 0.5]);
+box(scene, [0.012, 0.016, 0.18], 0x2a2a2a, [-3.708, 0.93, 0.5]);
+const printLight = box(scene, [0.03, 0.012, 0.03], 0x2f6b3a, [-3.76, 1.004, 0.38]);
+printLight.material = new THREE.MeshBasicMaterial({ color: 0x2f6b3a });
 
 // bed
 box(scene, [2.2, 0.4, 3.2], 0x8d5a3b, [3.4, 0.2, 3]);
@@ -762,6 +773,52 @@ function ambience(kind, t, secs) {
   }
 }
 // Plays a song or sound. Returns how many seconds it lasts.
+// The photo printer: a short beep, a buzzing print head that stutters like paper being fed, and a click when the print is done.
+// Only plays when the viewer has turned the sound on.
+function printerSound() {
+  if (!audio || audio.state !== 'running' || !master) return;
+  const t = audio.currentTime + 0.05;
+  const len = 3.6;
+  const beep = audio.createOscillator();
+  const beepGain = audio.createGain();
+  beep.type = 'square';
+  beep.frequency.value = 1320;
+  beepGain.gain.setValueAtTime(0.0001, t);
+  beepGain.gain.linearRampToValueAtTime(0.05, t + 0.01);
+  beepGain.gain.linearRampToValueAtTime(0.0001, t + 0.09);
+  beep.connect(beepGain).connect(master);
+  beep.start(t);
+  beep.stop(t + 0.1);
+  const buf = audio.createBuffer(1, Math.floor(audio.sampleRate * len), audio.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+  const noise = audio.createBufferSource();
+  noise.buffer = buf;
+  const band = audio.createBiquadFilter();
+  band.type = 'bandpass';
+  band.Q.value = 4;
+  band.frequency.setValueAtTime(900, t + 0.2);
+  band.frequency.linearRampToValueAtTime(2400, t + len - 0.3); // the head moves across the paper
+  const gate = audio.createGain();
+  gate.gain.value = 0;
+  for (let s = t + 0.25; s < t + len - 0.3; s += 0.07) {
+    gate.gain.setValueAtTime(0.16, s);
+    gate.gain.setValueAtTime(0.03, s + 0.035);
+  }
+  gate.gain.setValueAtTime(0, t + len - 0.25);
+  noise.connect(band).connect(gate).connect(master);
+  noise.start(t);
+  const click = audio.createOscillator();
+  const clickGain = audio.createGain();
+  click.type = 'triangle';
+  click.frequency.value = 260;
+  clickGain.gain.setValueAtTime(0.0001, t + len - 0.2);
+  clickGain.gain.linearRampToValueAtTime(0.12, t + len - 0.19);
+  clickGain.gain.exponentialRampToValueAtTime(0.0001, t + len - 0.06);
+  click.connect(clickGain).connect(master);
+  click.start(t + len - 0.2);
+  click.stop(t + len);
+}
 async function playSong(song) {
   if (!song || (!song.notes?.length && !song.ambience)) return 0;
   await ensureAudio();
@@ -916,6 +973,7 @@ function planFor(last) {
     case 'ask_for': return { at: 'center', anim: 'ask' };
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
     case 'do': return { at: 'center', anim: 'look' };
+    case 'print_photo': return { at: 'computer', anim: 'look' };
     case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
     case 'compose':
     case 'add_use': return { at: 'center', anim: 'write' };
@@ -1249,9 +1307,10 @@ function showUse(d, use) {
 }
 function decorInfo(d) {
   if (d.art) return { title: d.name, image: d.image, lines: [`A drawing by Pip. It hangs ${d.label}.`, d.why ? `Why: ${d.why}` : ''].filter(Boolean) };
+  if (d.print) return { title: d.name, image: d.image, lines: [`A small print from Pip's photo printer. It is pinned ${d.label}.`] };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
   const lines = d.image
-    ? [`A picture${pic?.caption ? `: "${pic.caption}"` : ''} that someone gave to Pip. It hangs ${d.label}.`, pic?.notes ? `Pip says: ${pic.notes}` : '']
+    ? [pic?.by === 'pip' ? `A photo Pip took${pic.caption ? `: "${pic.caption}"` : ''}. It hangs ${d.label}.` : `A picture${pic?.caption ? `: "${pic.caption}"` : ''} that someone gave to Pip. It hangs ${d.label}.`, pic?.notes ? `Pip says: ${pic.notes}` : '']
     : [`Made by Pip. It is ${d.label}.`, d.why ? `Why: ${d.why}` : '', d.project ? `For his project: ${d.project}` : '', `Made ${when(d.createdAt)}.`];
   const actions = (d.uses || []).map((u) => ({ text: u.label, run: () => showUse(d, u) }));
   if (d.song) actions.push({ text: '▶ Hear it', run: () => playSong(d.song) });
@@ -1486,6 +1545,8 @@ function loop(now) {
   frame(now, dt);
   updateFloaters(dt, now);
   popDecor(now);
+  const printing = plan && stepNow >= 0 && plan.steps[stepNow]?.action === 'print_photo';
+  printLight.material.color.set(printing && Math.floor(now / 250) % 2 ? 0x6dff8a : 0x2f6b3a);
   updateWalk(dt);
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
@@ -1744,6 +1805,8 @@ function headlineBase(st) {
     case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
+    case 'print_photo': return ['🖨️', `Printing a photo (${d.id || st.name || 'a picture'})`];
+    case 'take_down_print': return ['🖨️', 'Taking a print off the wall'];
     case 'do': return [d.emoji || st.emoji || '✨', d.what || st.what || 'Doing something'];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
@@ -1765,7 +1828,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -1803,7 +1866,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -1845,6 +1908,16 @@ function dayCard(e) {
     card.append(el('h3', e.dish || 'a meal', 'title'));
     if (e.ingredients?.length) card.append(el('p', e.ingredients.join(', '), 'muted'));
     if (e.failed) card.append(el('p', 'It did not work out: ' + e.failed, 'muted'));
+  } else if (kind === 'print') {
+    card.append(el('h3', e.name || 'a photo', 'title'));
+    if (e.image) {
+      const img = el('img', null, 'thumb');
+      img.src = e.image;
+      img.referrerPolicy = 'no-referrer';
+      img.alt = e.name || '';
+      card.append(img);
+    }
+    card.append(el('p', e.failed ? 'It did not work out: ' + e.failed : e.place ? `Pinned ${e.place}.` : '', 'muted'));
   } else if (kind === 'photo' || kind === 'find') {
     card.append(el('h3', kind === 'photo' ? `A photo of ${e.target || 'something'}` : e.title || `“${e.query || ''}”`, 'title'));
     const src = kind === 'photo' ? e.image : e.picture;
@@ -2263,6 +2336,7 @@ function tickPlan() {
   if (i !== stepNow) {
     stepNow = i;
     startTask(plan.steps[i]);
+    if (plan.steps[i]?.action === 'print_photo' && Date.now() - plan.at - plan.starts[i] < 5000) printerSound(); // only when the print just started
     renderNow();
     if (lastState) renderDay(lastState);
   }

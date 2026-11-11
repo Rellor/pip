@@ -30,6 +30,7 @@ export const ZONES = {
   on_desk: { label: 'on the desk', kind: 'surface', lim: { w: 1.0, d: 1.3 }, rotY: 1.2, off: [1.5, 0], slots: [[-4.2, 0.85, 0.45], [-4.2, 0.85, 1.95]] },
   on_bed: { label: 'on the bed', kind: 'surface', lim: { w: 0.9, d: 0.9 }, rotY: 0, off: [-1.5, 0], slots: [[3.1, 0.7, 4.0], [3.9, 0.7, 3.4]] },
   wall_back: { label: 'on the back wall (left of the photo, above it, or above the bookshelf)', kind: 'wall', rotY: 0, side: 'back', slots: [[-4.2, 2.9, -4.97], [-2.2, 4.2, -4.97], [2.6, 3.9, -4.97]] },
+  wall_desk: { label: 'on the photo wall above the desk', kind: 'wall', prints: true, rotY: Math.PI / 2, side: 'left', slots: [[-4.97, 2.35, 0.45], [-4.97, 2.35, 0.95], [-4.97, 2.35, 1.45], [-4.97, 2.35, 1.95], [-4.97, 2.85, 0.45], [-4.97, 2.85, 0.95], [-4.97, 2.85, 1.45], [-4.97, 2.85, 1.95]] }, // only for the small prints from his photo printer
   wall_left: { label: 'on the left wall', kind: 'wall', rotY: Math.PI / 2, side: 'left', slots: [[-4.97, 2.7, -3.0], [-4.97, 2.7, -1.2], [-4.97, 3.2, 1.2]] },
 };
 
@@ -104,7 +105,7 @@ function fit(parts, kind, lim = {}) {
 const usedSlots = (decor, zone) => new Set(decor.filter((d) => d.zone === zone).map((d) => d.slot));
 
 export function freePlaces(decor) {
-  return Object.entries(ZONES).map(([zone, z]) => ({ zone, label: z.label, free: z.slots.length - usedSlots(decor, zone).size }));
+  return Object.entries(ZONES).filter(([, z]) => !z.prints).map(([zone, z]) => ({ zone, label: z.label, free: z.slots.length - usedSlots(decor, zone).size }));
 }
 
 // "on the piano", "piano" or "on_piano" all find the same spot.
@@ -114,7 +115,7 @@ function findZone(where) {
   for (const [key, z] of Object.entries(ZONES)) if (w === key.replace(/_/g, ' ') || w === z.label) return key;
   const words = [
     ['piano', 'on_piano'], ['bookshelf', 'on_bookshelf'], ['shelf', 'on_bookshelf'], ['desk', 'on_desk'], ['computer', 'on_desk'], ['bed', 'on_bed'],
-    ['left wall', 'wall_left'], ['back wall', 'wall_back'], ['wall', 'wall_back'], ['window', 'floor_under_window'],
+    ['photo wall', 'wall_desk'], ['printer', 'wall_desk'], ['left wall', 'wall_left'], ['back wall', 'wall_back'], ['wall', 'wall_back'], ['window', 'floor_under_window'],
     ['middle', 'floor_middle'], ['rug', 'floor_middle'], ['center', 'floor_middle'], ['centre', 'floor_middle'],
     ['front', 'floor_front'], ['right', 'floor_right'], ['corner', 'floor_left_wall'],
   ];
@@ -127,7 +128,7 @@ function placeParts(decor, spec, atMs, now) {
   if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
   const parts = spec.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] })); // fit() moves things, so work on a copy
   const want = findZone(spec.where);
-  const keys = Object.keys(ZONES);
+  const keys = Object.keys(ZONES).filter((k) => !ZONES[k].prints);
   const order = [...(want ? [want] : []), ...keys.filter((k) => k !== want && want && ZONES[k].kind === ZONES[want].kind), ...keys];
   let zone = null;
   let slot = -1;
@@ -227,7 +228,7 @@ export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PI
   if (!pic || !pic.image) return { failed: 'he does not have that picture' };
   if (decor.some((x) => x.picture === pic.id)) return { failed: 'that picture is already up' };
   if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
-  const usable = Object.keys(ZONES).filter((k) => ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface');
+  const usable = Object.keys(ZONES).filter((k) => !ZONES[k].prints && (ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface'));
   const want = findZone(where);
   const first = want && usable.includes(want) ? want : null;
   const kind = first ? ZONES[first].kind : 'wall';
@@ -255,7 +256,7 @@ export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PI
   return {
     entry: {
       id: `p${now.toString(36)}${decor.length}`,
-      name: str(pic.caption, 60).length <= 40 && str(pic.caption, 60) ? str(pic.caption, 60) : 'a picture from Bas', // a long message is not a good name for a frame
+      name: str(pic.caption, 60).length <= 40 && str(pic.caption, 60) ? str(pic.caption, 60) : 'a picture', // a long message is not a good name for a frame
       why: '',
       project: '',
       zone,
@@ -269,6 +270,65 @@ export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PI
       image: pic.image,
       size: [r3(w), r3(h)],
       picture: pic.id,
+      stand,
+      at: new Date(atMs + 6000).toISOString(),
+      createdAt: new Date(now).toISOString(),
+    },
+  };
+}
+
+// A small paper print from his photo printer. It goes on the photo wall above his desk (8 places), or a small spot he names.
+export const PRINT_MAX = { wall: [0.42, 0.42], surface: [0.3, 0.3] };
+export const MAX_PRINTS = 8;
+export function printPhoto(decor, pic, where, atMs, now = Date.now()) {
+  if (!pic || !pic.image) return { failed: 'I do not have that picture' };
+  const key = `print:${pic.id}`;
+  if (decor.some((x) => x.picture === key)) return { failed: 'I already printed that one and it is still up' };
+  if (decor.length >= MAX_DECOR) return { failed: 'my room is full' };
+  const usable = Object.keys(ZONES).filter((k) => ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface');
+  const want = findZone(where);
+  // By default a print goes on the photo wall. A spot he names comes first; when the wall is full and he named nothing, he takes one down first.
+  const named = want && want !== 'wall_desk' && usable.includes(want) ? want : null;
+  const order = named ? [named, 'wall_desk'] : ['wall_desk'];
+  let zone = null;
+  let slot = -1;
+  for (const k of order) {
+    const used = usedSlots(decor, k);
+    const i = ZONES[k].slots.findIndex((_, n) => !used.has(n));
+    if (i >= 0) {
+      zone = k;
+      slot = i;
+      break;
+    }
+  }
+  if (!zone) return { failed: 'my photo wall is full: I can take a print down first (take_down_picture with its id)' };
+  const Z = ZONES[zone];
+  const [sx, sy, sz] = Z.slots[slot];
+  const [maxW, maxH] = PRINT_MAX[Z.kind];
+  const aspect = pic.aspect > 0.2 && pic.aspect < 5 ? pic.aspect : 1.33;
+  const w = Math.min(maxW, maxH * aspect);
+  const h = w / aspect;
+  const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
+  const stand = Z.kind === 'wall' ? (Z.side === 'back' ? [sx, -3.7] : [-3.7, sz]) : [clampRoom(sx + Z.off[0]), clampRoom(sz + Z.off[1])];
+  const cap = str(pic.caption, 60);
+  return {
+    entry: {
+      id: `p${now.toString(36)}${decor.length}`,
+      name: cap && cap.length <= 40 ? cap : 'a small print',
+      why: '',
+      project: '',
+      zone,
+      slot,
+      label: Z.label,
+      kind: Z.kind,
+      pos: [sx, Z.kind === 'surface' ? sy + h / 2 + 0.03 : sy, sz],
+      rotY: Z.rotY,
+      scale: 1,
+      parts: [],
+      image: pic.image,
+      size: [r3(w), r3(h)],
+      picture: key,
+      print: true,
       stand,
       at: new Date(atMs + 6000).toISOString(),
       createdAt: new Date(now).toISOString(),

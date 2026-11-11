@@ -101,6 +101,10 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'find_picture':
       s.wonder += 0.9;
       break;
+    case 'print_photo':
+      s.wonder += 0.4;
+      s.joy += 0.3;
+      break;
     case 'cook':
       s.wonder += 0.6;
       s.calm += 0.2;
