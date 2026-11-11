@@ -5,6 +5,7 @@ import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, clean
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror } from './mirror.js';
+import { ensureMoves, makeMove, findMove, movesText } from './moves.js';
 import { ensureTools, NEEDS, toolsText, missingTool, addTool, toolKind, toolLabel, fits, craftTool, MAX_TOOLS } from './tools.js';
 import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
@@ -50,7 +51,8 @@ const ROOM = [
 ];
 const ACTIONS = [
   'walk_to(object)',
-  'do(what, feeling)',
+  'do(what, feeling, move)',
+  'make_move(name, why, duration, frames)',
   'print_photo(id, where)',
   'take_down_print(id)',
   'play_piano(notes, style)',
@@ -83,7 +85,7 @@ const ACTIONS = [
 ];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, where)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'do', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -253,6 +255,7 @@ async function loadState() {
   ensureIdentity(state);
   ensureMemory(state);
   ensureTools(state);
+  ensureMoves(state);
   squareUp(state);
   state.sleep = { bed: BEDTIME, wake: WAKETIME, tz: TZ }; // the page and the watchdog use this so the night is not counted as stuck
   setChest(state.chest ?? null);
@@ -528,7 +531,7 @@ ${photosText(s)}${
   }ACTIONS I CAN DO
 ${[...ACTIONS, ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
 
-${dayTally(s)}${toolsText(s)}
+${dayTally(s)}${toolsText(s)}${movesText(s)}
 ${tasksText(s)}ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
 ${s.asks.length ? `I have asked for ${s.asks.length} thing${s.asks.length === 1 ? '' : 's'} so far; the last time was ${ago(s.asks.map((a) => a.since).sort().pop())}.` : 'I have not asked for anything yet.'}
@@ -766,6 +769,7 @@ function describe(a) {
     case 'take_tool':
     case 'move_thing':
     case 'extend_thing':
+    case 'make_move':
     case 'change_thing':
     case 'update_app':
     case 'make_clothes':
@@ -1194,6 +1198,7 @@ async function wakeUp() {
       const need = missingTool(state, 'make_clothes');
       st.made = need ? { failed: need } : makeClothes(state.wardrobe, st.details, stepStart);
     }
+    if (st.action === 'make_move') st.made = makeMove(state, st.details, stepStart);
     if (st.action === 'cook') st.made = cook(state, st.details, stepStart);
     if (st.action === 'wear') st.made = wear(state.wardrobe, st.details.name, stepStart);
     if (st.action === 'take_off') st.made = takeOff(state.wardrobe, st.details.name);
@@ -1449,7 +1454,8 @@ async function wakeUp() {
     if (st.action === 'use') Object.assign(entry, { name: st.made?.used?.name ?? text(d.name, 60), label: st.made?.used?.label ?? text(d.label, 30), text: st.made?.used?.text ?? '', view: st.made?.used?.view ?? null, song: st.made?.used?.song ?? null, app: st.made?.used?.app ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'add_use') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), label: st.made?.use?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
-    if (st.action === 'do') Object.assign(entry, { emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
+    if (st.action === 'make_move') Object.assign(entry, { name: st.made?.move?.name ?? text(d.name, 40), why: text(d.why, 200), frames: st.made?.move?.frames?.length ?? 0, failed: st.made?.failed ?? null });
+    if (st.action === 'do') Object.assign(entry, { move: findMove(state, d.move)?.name ?? null, emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
     if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, failed: st.made?.failed ?? null });
     if (st.action === 'move_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), place: st.made?.label ?? (st.made?.chest ? 'in a new place' : null), failed: st.made?.failed ?? null });

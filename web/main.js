@@ -1006,7 +1006,11 @@ function planFor(last) {
     case 'rest': return { at: 'bed', anim: 'rest' };
     case 'ask_for': return { at: 'center', anim: 'ask' };
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
-    case 'do': return { at: 'center', anim: 'look' };
+    case 'do': {
+      const mv = d.move ? (lastState?.moves || []).find((m) => m.name.toLowerCase() === String(d.move).toLowerCase()) : null;
+      return mv ? { at: 'center', anim: 'move', move: mv } : { at: 'center', anim: 'look' };
+    }
+    case 'make_move': return { at: 'center', anim: 'look' };
     case 'print_photo': return { at: 'computer', anim: 'look' };
     case 'move_thing':
     case 'extend_thing': return { at: 'center', anim: 'look' };
@@ -1037,6 +1041,23 @@ function planFor(last) {
     case 'take_down_picture': return { at: 'center', anim: 'look' };
     default: return { at: resolveSpot(d.object), anim: 'look' };
   }
+}
+// A move is a few poses over time (see moves.js). Between two poses it eases; the last one leads back to the first.
+let preview = null;
+const ease = (x) => x * x * (3 - 2 * x);
+function movePose(mv, ms) {
+  const keys = ['hop', 'lean', 'turn', 'tilt', 'armL', 'armR', 'spread', 'footL', 'footR'];
+  const f = [...mv.frames];
+  const first = f[0];
+  if (first.at > 0) f.unshift({ ...first, at: 0 });
+  f.push({ ...f[0], at: 1 });
+  const x = ((ms / 1000) / (mv.duration || 2)) % 1;
+  let i = 0;
+  while (i < f.length - 2 && x >= f[i + 1].at) i++;
+  const a = f[i];
+  const b = f[i + 1];
+  const k = b.at > a.at ? ease(Math.min(1, Math.max(0, (x - a.at) / (b.at - a.at)))) : 1;
+  return Object.fromEntries(keys.map((key) => [key, (a[key] || 0) + ((b[key] || 0) - (a[key] || 0)) * k]));
 }
 function startTask(last) {
   const plan = planFor(last);
@@ -1101,6 +1122,7 @@ function frame(now, dt) {
       } else {
         if (!task.arrived) {
           task.arrived = true;
+          task.arrivedAt = now;
           if (task.anim === 'play') startPhrase(task.notes, task.step, now);
           if (task.anim === 'ask') task.askUntil = now + 9000;
           task.nextBreak = task.anim === 'rest' ? Infinity : now + rand(40_000, 80_000);
@@ -1160,6 +1182,9 @@ function frame(now, dt) {
   body.rotation.set(0, 0, 0);
   const reading = engaged && (anim === 'read' || anim === 'write');
   book.visible = reading;
+  const pv = preview && now < preview.until && !walking ? preview : null; // a move shown from the Life tab
+  const mv = pv ? pv.move : engaged && anim === 'move' && task.move ? task.move : null;
+  const mvStart = pv ? pv.start : task?.arrivedAt || now;
   const base = (s) => [s * 0.5, 0.55, 0.1];
   let la = base(-1);
   let ra = base(1);
@@ -1175,7 +1200,15 @@ function frame(now, dt) {
     ra = [0.5, 0.55, s * 0.15];
   } else {
     body.position.y = Math.sin(t * 2) * 0.012;
-    if (anim === 'play') {
+    if (mv) {
+      const p = movePose(mv, now - mvStart);
+      body.position.y = p.hop;
+      body.rotation.set(p.lean, p.turn, p.tilt);
+      la = [-(0.5 + p.spread * 0.45), 0.55 + p.armL * 0.75, 0.1 + p.armL * 0.1];
+      ra = [0.5 + p.spread * 0.45, 0.55 + p.armR * 0.75, 0.1 + p.armR * 0.1];
+      fl = [-0.22, 0.1 + p.footL * 0.25, p.footL * 0.1];
+      fr = [0.22, 0.1 + p.footR * 0.25, p.footR * 0.1];
+    } else if (anim === 'play') {
       const playing = phraseIdx >= 0;
       la = [-0.3, 0.55, 0.4 + (playing ? Math.max(0, Math.sin(t * 9)) * 0.03 : 0)];
       ra = [0.3, 0.55, 0.4 + (playing ? Math.max(0, Math.sin(t * 9 + Math.PI)) * 0.03 : 0)];
@@ -1893,6 +1926,7 @@ function headlineBase(st) {
     case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
     case 'print_photo': return ['🖨️', `Printing a photo (${d.id || st.name || 'a picture'})`];
     case 'take_down_print': return ['🖨️', 'Taking a print off the wall'];
+    case 'make_move': return ['🕺', `Designing the move “${d.name || st.name || '…'}”`];
     case 'do': return [d.emoji || st.emoji || '✨', d.what || st.what || 'Doing something'];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
@@ -1914,7 +1948,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_tool: 'make', take_tool: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -2407,6 +2441,15 @@ function render(s) {
     ...(bag.length ? bag.map((x) => el('li', `🎒 ${x.name}${x.why ? ` — ${x.why}` : ''}`)) : [el('li', 'His inventory is empty. Without a tool he cannot do some things, like drawing.', 'muted')]),
     ...away.map((x) => el('li', `📦 ${x}. Not in his inventory, so he cannot use it.`, 'muted')),
   ]);
+  fill($('movelist'), (s.moves || []).length ? s.moves.map((m) => {
+    const li = el('li', `🕺 ${m.name}${m.why ? ` — ${m.why}` : ''} `);
+    const b = el('button', '▶ Show', 'small');
+    b.addEventListener('click', () => {
+      preview = { move: m, start: performance.now(), until: performance.now() + Math.max(3000, (m.duration || 2) * 2000) };
+    });
+    li.append(b);
+    return li;
+  }) : empty('No moves yet.'));
   $('selfnote').textContent = s.self || 'Pip has not written about himself yet.';
   fill($('favlist'), (s.favorites || []).length ? s.favorites.map((f) => el('li', `❤️ ${f.kind ? `${f.kind}: ` : ''}${f.what}`)) : empty('No favorites yet.'));
   fill($('ritlist'), (s.rituals || []).length ? s.rituals.map((r) => el('li', `🔁 ${r.text}${r.when ? ` (${r.when})` : ''}`)) : empty('No rituals yet.'));

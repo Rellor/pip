@@ -60,6 +60,7 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'compose':
     case 'make_app':
     case 'make_clothes':
+    case 'make_move':
     case 'change_thing':
     case 'update_app':
       s.wonder += 0.8;
