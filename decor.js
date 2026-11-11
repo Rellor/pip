@@ -227,12 +227,18 @@ export function removeDecor(decor, name) {
 const PICTURE_MAX = { wall: [0.9, 0.7], surface: [0.45, 0.35] };
 export const ART_MAX = { wall: [1.5, 1.2], surface: [0.5, 0.4] }; // Pip's own drawings may be bigger
 
-export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PICTURE_MAX) {
+export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PICTURE_MAX, spot = null) {
   if (!pic || !pic.image) return { failed: 'he does not have that picture' };
   if (decor.some((x) => x.picture === pic.id)) return { failed: 'that picture is already up' };
   if (decor.length >= capOf(decor)) return { failed: FULL };
   const usable = Object.keys(ZONES).filter((k) => !ZONES[k].prints && (ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface'));
   const want = findZone(where);
+  const cap0 = str(pic.caption, 60);
+  const entryOf = (h) => ({ id: `p${now.toString(36)}${decor.length}`, name: cap0 && cap0.length <= 40 ? cap0 : 'a picture', why: '', project: '', scale: 1, parts: [], image: pic.image, picture: pic.id, ...h, at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString() });
+  if (spot && (spot.wall || num2(spot.along) !== null || num2(spot.height) !== null)) { // he chose where
+    const h = hangAt(decor, pic, sideOf(spot.wall) ?? (want ? ZONES[want].side : null) ?? 'back', num2(spot.along), num2(spot.height), max, now);
+    return h.failed ? h : { entry: entryOf(h.place), warn: h.warn, moved: h.moved };
+  }
   if (!want || ZONES[want].kind === 'wall') { // a wall: hang it where a person would
     const h = hangPicture(decor, pic, want ? ZONES[want].side : null, max, atMs, now);
     if (!h) return { failed: 'there is no room left on the walls for it. He can take something down first' };
@@ -482,6 +488,13 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     return { name: 'chest', chest: { x, z, rotY, at, moves } };
   }
 
+  const pic = decor.find((x) => x.image && x.kind === 'wall' && x.zone !== 'wall_desk' && x.pos && (x.name.toLowerCase() === n || x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  if (pic && (d.wall || num2(d.along) !== null || num2(d.height) !== null)) { // a picture: where on the wall
+    const h = hangAt(decor, { aspect: pic.size[0] / pic.size[1] }, sideOf(d.wall) ?? pic.side ?? 'back', num2(d.along) ?? (pic.side === 'left' ? pic.pos[2] : pic.pos[0]), num2(d.height) ?? pic.pos[1], { wall: [pic.size[0], pic.size[1]] }, now, pic);
+    if (h.failed) return h;
+    Object.assign(pic, { ...h.place, size: pic.size, movedAt: at, updatedAt: at });
+    return { name: pic.name, entry: pic, label: pic.label, warn: h.warn };
+  }
   const mine = (x) => !x.image && !x.art && x.zone;
   let e = decor.find((x) => mine(x) && x.name.toLowerCase() === n) ?? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (!e && furnitureKey(n)) return moveFurniture(decor, furnNow, furnitureKey(n), d, atMs, now);
@@ -812,6 +825,9 @@ const WALL_FIXED = {
   left: [{ n: 'the photo wall above the desk', a0: 0.2, a1: 2.2, y0: 2.1, y1: 3.1 }], // where his prints go
 };
 const WALL_TOP = 4.8;
+const FURN_CLEAR = 0.5; // room above a shelf, a desk, a piano: things stand on it
+// Hung so close above something that things stand on that they would be in the way: the name of it, or null.
+const tightAbove = (r, obs) => obs.find((o) => o.clear && r.a0 < o.a1 + 0.1 && r.a1 + 0.1 > o.a0 && r.y0 < o.y1 + o.clear && r.y1 > o.y0)?.n ?? null;
 function halfWall(parts, scale = 1) {
   let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
   for (const p of parts) {
@@ -827,8 +843,8 @@ function wallObstacles(decor, side, skip = null) {
   for (const k of MOVABLE) { // furniture standing against this wall
     if (FURNITURE[k].flat) continue;
     for (const r of furnRects(furnNow, k)) {
-      if (side === 'back' && r.z0 <= -4.7) list.push({ n: r.n, a0: r.x0, a1: r.x1, y0: 0, y1: r.h, furn: true });
-      if (side === 'left' && r.x0 <= -4.7) list.push({ n: r.n, a0: r.z0, a1: r.z1, y0: 0, y1: r.h, furn: true });
+      if (side === 'back' && r.z0 <= -4.7) list.push({ n: r.n, a0: r.x0, a1: r.x1, y0: 0, y1: r.h, furn: true, clear: FURN_CLEAR });
+      if (side === 'left' && r.x0 <= -4.7) list.push({ n: r.n, a0: r.z0, a1: r.z1, y0: 0, y1: r.h, furn: true, clear: FURN_CLEAR });
     }
   }
   for (const o of decor) {
@@ -838,12 +854,12 @@ function wallObstacles(decor, side, skip = null) {
       if (s !== side) continue;
       const [hw, hh] = o.parts?.length ? halfWall(o.parts, o.scale || 1) : o.image ? [(o.size?.[0] ?? 1) / 2, (o.size?.[1] ?? 0.8) / 2] : [0.3, 0.3];
       const a = side === 'back' ? o.pos[0] : o.pos[2];
-      list.push({ n: o.name, a0: a - hw, a1: a + hw, y0: o.pos[1] - hh, y1: o.pos[1] + hh, hung: !!o.image && o.zone !== 'wall_desk' });
+      list.push({ n: o.name, a0: a - hw, a1: a + hw, y0: o.pos[1] - hh, y1: o.pos[1] + hh, hung: !!o.image && o.zone !== 'wall_desk', clear: !o.image && STORAGE_WORDS.test(o.name) ? FURN_CLEAR : 0 });
     } else if (o.kind === 'floor' && !o.image) {
       const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
       const h = sizeOf(o)?.[1] ?? 1;
-      if (side === 'back' && r.z0 <= -4.7) list.push({ n: o.name, a0: r.x0, a1: r.x1, y0: 0, y1: h });
-      if (side === 'left' && r.x0 <= -4.7) list.push({ n: o.name, a0: r.z0, a1: r.z1, y0: 0, y1: h });
+      if (side === 'back' && r.z0 <= -4.7) list.push({ n: o.name, a0: r.x0, a1: r.x1, y0: 0, y1: h, clear: STORAGE_WORDS.test(o.name) ? FURN_CLEAR : 0 });
+      if (side === 'left' && r.x0 <= -4.7) list.push({ n: o.name, a0: r.z0, a1: r.z1, y0: 0, y1: h, clear: STORAGE_WORDS.test(o.name) ? FURN_CLEAR : 0 });
     }
   }
   return list;
@@ -1019,7 +1035,7 @@ const HANG_Y = 2.7;
 const HANG_GAP = 0.3;
 function hangSpot(decor, side, hw, hh) {
   const obs = wallObstacles(decor, side);
-  const ok = (a, y) => !wallBlocker({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs, 0.15);
+  const ok = (a, y) => { const r = { a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }; return !wallBlocker(r, obs, 0.15) && !tightAbove(r, obs); };
   const hung = obs.filter((o) => o.hung).sort((p, q) => p.a0 - q.a0);
   const cands = [];
   if (hung.length) {
@@ -1030,7 +1046,7 @@ function hangSpot(decor, side, hw, hh) {
     near.sort((p, q) => Math.abs(p[0] - mid) - Math.abs(q[0] - mid));
     cands.push(...near);
   }
-  for (const o of obs.filter((x) => x.furn)) cands.push([(o.a0 + o.a1) / 2, Math.max(HANG_Y, o.y1 + 0.35 + hh)]); // above the desk, the bed, the bookshelf
+  for (const o of obs.filter((x) => x.furn)) cands.push([(o.a0 + o.a1) / 2, Math.max(HANG_Y, o.y1 + FURN_CLEAR + 0.1 + hh)]); // above the desk, the bed, the bookshelf
   for (let k = 0; k <= 38; k++) cands.push([k % 2 ? -Math.ceil(k / 2) * 0.25 : (k / 2) * 0.25, HANG_Y]); // otherwise around the middle of the wall
   const c = cands.find(([a, y]) => ok(a, y));
   return c ? [r3(c[0]), r3(c[1])] : null;
@@ -1058,6 +1074,44 @@ export function hangPicture(decor, pic, side, max, atMs, now = Date.now(), skip 
   }
   return null;
 }
+
+// He chose where: honoured, unless it touches something. Close above a shelf or desk is allowed, but he is told.
+export function hangAt(decor, pic, side, along, height, max, now = Date.now(), skip = null) {
+  const aspect = pic.aspect > 0.2 && pic.aspect < 5 ? pic.aspect : 1.5;
+  const [maxW, maxH] = max.wall;
+  const w = Math.min(maxW, maxH * aspect);
+  const h = w / aspect;
+  const sd = side === 'left' || side === 'back' ? side : 'back';
+  const obs = wallObstacles(decor.filter((o) => o !== skip), sd);
+  const hw = w / 2;
+  const hh = h / 2;
+  const ta = Math.min(4.9 - hw, Math.max(-4.9 + hw, along ?? 0));
+  const th = Math.min(WALL_TOP - hh, Math.max(0.3 + hh, height ?? HANG_Y));
+  const free = (a, y) => !wallBlocker({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs, 0.05);
+  let found = free(ta, th) ? [ta, th] : null;
+  if (!found) {
+    const grid = [];
+    for (let a = -4.9 + hw; a <= 4.91 - hw; a += 0.1) for (let y = 0.3 + hh; y <= WALL_TOP - hh; y += 0.1) grid.push([a, y, Math.hypot(a - ta, y - th)]);
+    grid.sort((p, q) => p[2] - q[2]);
+    found = grid.find(([a, y, dist]) => dist <= 1.2 && free(a, y))?.slice(0, 2) ?? null;
+  }
+  if (!found) return { failed: `there is no free place on the ${sd} wall near there for something ${r3(w)} x ${r3(h)} m (it would touch ${wallBlocker({ a0: ta - hw, a1: ta + hw, y0: th - hh, y1: th + hh }, obs, 0.05) ?? 'something'})` };
+  const [a, y] = found.map(r3);
+  const near = tightAbove({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs);
+  return {
+    warn: near ? `it hangs close above ${near}: things standing on it would be in front of it` : null,
+    moved: Math.hypot(a - ta, y - th) > 0.05,
+    place: {
+      zone: 'wall_free', slot: null, free: true, side: sd, kind: 'wall',
+      label: `on the ${sd} wall (${sd === 'back' ? 'x' : 'z'} ${a}, height ${y})`,
+      pos: sd === 'back' ? [a, y, -4.97] : [-4.97, y, a],
+      rotY: sd === 'back' ? 0 : Math.PI / 2,
+      size: [r3(w), r3(h)],
+      stand: sd === 'back' ? [Math.min(4.5, Math.max(-4.5, a)), -3.7] : [-3.7, Math.min(4.5, Math.max(-4.5, a))],
+    },
+  };
+}
+
 // Pictures that were put up one by one in slots hang at all kinds of heights. Hang them again, once, in order.
 export function rehangPictures(s, now = new Date().toISOString()) {
   if (s.hungV === 2) return false;
