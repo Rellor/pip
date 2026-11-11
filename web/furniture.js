@@ -79,3 +79,22 @@ export function worldRect(key, place, r) {
   return { n: r.n, x0: Math.min(a[0], b[0]), x1: Math.max(a[0], b[0]), z0: Math.min(a[1], b[1]), z1: Math.max(a[1], b[1]), h: r.h };
 }
 export const furnRects = (furn, key) => FURNITURE[key].rects.map((r) => worldRect(key, placeOf(furn, key), r));
+
+// The front of a thing: the side that faces out, like a person's face. In its own frame (before it is turned).
+// Furniture: the opposite of its back. Everything else: the way it was made (+z). Someone can show Pip a different front (fronts[key] = [x, z]).
+const quarter = ([x, z]) => (Math.abs(x) >= Math.abs(z) ? [Math.sign(x) || 0, 0] : [0, Math.sign(z) || 0]);
+export const frontLocal = (key, fronts) => {
+  const f = fronts?.[key];
+  if (Array.isArray(f) && f.length === 2 && f.every(Number.isFinite)) return quarter(f);
+  const b = FURNITURE[key]?.back;
+  return b ? [-b[0], -b[1]] : [0, 1];
+};
+// Where the front points in the room now, as one of the four sides of the room.
+export const frontWorld = (key, rot, fronts) => quarter(turn(frontLocal(key, fronts), rot || 0));
+export const SIDE_VECTORS = { left: [-1, 0], right: [1, 0], back: [0, -1], front: [0, 1] };
+export const sideOfVector = ([x, z]) => Object.entries(SIDE_VECTORS).find(([, v]) => v[0] === (Math.round(x) || 0) && v[1] === (Math.round(z) || 0))?.[0] ?? 'front';
+// Seen from the thing itself (as if it were a person standing there, looking the way its front points): which side of the room is its front, back, left or right.
+export function ownSides(front) {
+  const [fx, fz] = front;
+  return { front: sideOfVector([fx, fz]), back: sideOfVector([-fx, -fz]), left: sideOfVector([fz, -fx]), right: sideOfVector([-fz, fx]) };
+}

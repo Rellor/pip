@@ -1,7 +1,7 @@
 import { cleanSong } from './songs.js';
 import { storedUses } from './uses.js';
 import { toolKind } from './tools.js';
-import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pivotOf } from './web/furniture.js';
+import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pivotOf, frontWorld, ownSides, SIDE_VECTORS, sideOfVector } from './web/furniture.js';
 
 // Pip's decorations.
 // He designs objects from a few simple shapes. His design is plain data, never code, and everything is checked and
@@ -619,6 +619,10 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
 
 // ---- Free floor space: Pip puts things where he wants. They only have to fit: not into furniture, not into each other, not through a wall.
 let furnNow = null;
+let frontsNow = null; // fronts someone showed him
+export const setFronts = (f) => { frontsNow = f ?? null; };
+// Which way a thing faces in the room, as a side of the room.
+export const facingOf = (key, rot) => sideOfVector(frontWorld(key, rot, frontsNow));
 export const setFurniture = (f) => {
   furnNow = f ?? null;
 };
@@ -810,8 +814,8 @@ export function wallNotes(decor) {
 // Where there is room beside each big thing (a strip 0.8 m wide), so he can see the space and not guess.
 export function freeSides(decor) {
   const things = [
-    ...MOVABLE.filter((k) => !FURNITURE[k].flat).map((k) => { const rs = furnRects(furnNow, k); return { n: FURNITURE[k].n, key: k, x0: Math.min(...rs.map((r) => r.x0)), x1: Math.max(...rs.map((r) => r.x1)), z0: Math.min(...rs.map((r) => r.z0)), z1: Math.max(...rs.map((r) => r.z1)) }; }),
-    ...decor.filter((o) => o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) })),
+    ...MOVABLE.filter((k) => !FURNITURE[k].flat).map((k) => { const rs = furnRects(furnNow, k); return { n: FURNITURE[k].n, key: k, facing: facingOf(k, placeOf(furnNow, k).rot), shown: !!frontsNow?.[k], x0: Math.min(...rs.map((r) => r.x0)), x1: Math.max(...rs.map((r) => r.x1)), z0: Math.min(...rs.map((r) => r.z0)), z1: Math.max(...rs.map((r) => r.z1)) }; }),
+    ...decor.filter((o) => o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, facing: facingOf(o.id, o.rotY), shown: !!frontsNow?.[o.id], ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) })),
   ];
   return things.map((t) => {
     const obs = obstacles(decor, null, true, t.key ?? null).filter((o) => o.n !== t.n);
@@ -826,7 +830,7 @@ export function freeSides(decor) {
         else free.push(side);
       }
     }
-    return `${t.n.replace(/^the /, '')} ${r3(t.x1 - t.x0)}x${r3(t.z1 - t.z0)} at ${r3((t.x0 + t.x1) / 2)},${r3((t.z0 + t.z1) / 2)}: free ${free.join('/') || 'nowhere'}${tight.length ? `; blocked ${tight.join(', ')}` : ''}`;
+    return `${t.n.replace(/^the /, '')} ${r3(t.x1 - t.x0)}x${r3(t.z1 - t.z0)} at ${r3((t.x0 + t.x1) / 2)},${r3((t.z0 + t.z1) / 2)}, front faces ${t.facing}${t.shown ? ' (shown to me)' : ''}: free ${free.join('/') || 'nowhere'}${tight.length ? `; blocked ${tight.join(', ')}` : ''}`;
   });
 }
 // How full his room is.
@@ -1162,11 +1166,16 @@ const QUARTERS = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
 function nextToSpot(decor, d, skipKey, w, h, skipEntry = null) {
   const name = str(d.next_to, 60).toLowerCase();
   let a = null;
+  let face = [0, 1]; // the way the front of the thing it goes next to points
   const fk = furnitureKey(name);
+  if (fk && fk !== skipKey && !FURNITURE[fk].flat) face = frontWorld(fk, placeOf(furnNow, fk).rot, frontsNow);
   if (fk && fk !== skipKey && !FURNITURE[fk].flat) a = furnRects(furnNow, fk).reduce((u, r) => ({ x0: Math.min(u.x0, r.x0), x1: Math.max(u.x1, r.x1), z0: Math.min(u.z0, r.z0), z1: Math.max(u.z1, r.z1) }), { x0: 9, x1: -9, z0: 9, z1: -9 });
   else {
     const o = decor.find((x) => x !== skipEntry && x.kind === 'floor' && !x.image && !x.art && x.pos && (x.name.toLowerCase() === name || x.name.toLowerCase().includes(name) || name.includes(x.name.toLowerCase())));
-    if (o) a = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
+    if (o) {
+      a = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
+      face = frontWorld(o.id, o.rotY, frontsNow);
+    }
   }
   if (!a) return { failed: `there is nothing standing on the floor called "${name}" to put it next to (furniture or things he made on the floor)` };
   const gap = 0.12;
@@ -1176,11 +1185,17 @@ function nextToSpot(decor, d, skipKey, w, h, skipEntry = null) {
     back: [(a.x0 + a.x1) / 2, a.z0 - gap - h / 2],
     front: [(a.x0 + a.x1) / 2, a.z1 + gap + h / 2],
   };
-  const side = Object.hasOwn(spots, String(d.side).toLowerCase()) ? String(d.side).toLowerCase() : null;
+  // side: a side of the thing itself (its front, back, left or right, as if it were a person looking the way its front points), or of the room (toward the left wall...).
+  const word = String(d.side ?? '').toLowerCase();
+  const sides = ownSides(face);
+  const roomWord = /wall|room|window/.test(word) ? (/left/.test(word) ? 'left' : /right/.test(word) ? 'right' : /back|window/.test(word) ? 'back' : 'front') : null;
+  const own = ['front', 'back', 'left', 'right'].find((k) => new RegExp(`\\b${k}\\b`).test(word));
+  const side = roomWord ?? (own ? sides[own] : null);
+  const ownName = (k) => Object.entries(sides).find(([, v]) => v === k)?.[0] ?? k;
   const from = d.from ?? [0, 0];
   const order = side ? [side] : Object.keys(spots).sort((p, q) => Math.hypot(spots[p][0] - from[0], spots[p][1] - from[1]) - Math.hypot(spots[q][0] - from[0], spots[q][1] - from[1]));
   const all = [...order, ...Object.keys(spots).filter((k) => !order.includes(k)).sort((p, q) => Math.hypot(spots[p][0] - from[0], spots[p][1] - from[1]) - Math.hypot(spots[q][0] - from[0], spots[q][1] - from[1]))];
-  return { x: r3(spots[order[0]][0]), z: r3(spots[order[0]][1]), alts: all.map((k) => [r3(spots[k][0]), r3(spots[k][1]), k]) };
+  return { x: r3(spots[order[0]][0]), z: r3(spots[order[0]][1]), alts: all.map((k) => [r3(spots[k][0]), r3(spots[k][1]), k, ownName(k)]) };
 }
 
 const f0rects = (key, place) => {
@@ -1199,9 +1214,9 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
     if (t.failed) return t;
     const off = [(me.x0 + me.x1) / 2 - cur.x, (me.z0 + me.z1) / 2 - cur.z]; // place is the pivot, not the center
     let last = null;
-    for (const [ax, az, k] of t.alts) {
+    for (const [ax, az, k, own] of t.alts) {
       const r = moveFurniture(decor, furn, key, { x: ax - off[0], z: az - off[1] }, atMs, now);
-      if (!r.failed) return { ...r, label: `${r.label} (${k} of ${furnitureKey(d.next_to) ? FURNITURE[furnitureKey(d.next_to)].n : d.next_to})` };
+      if (!r.failed) return { ...r, label: `${r.label} (on the ${own} of ${furnitureKey(d.next_to) ? FURNITURE[furnitureKey(d.next_to)].n : d.next_to}, toward the ${k} of the room)` };
       last ??= r;
     }
     return { failed: `${last.failed}. Every side of ${d.next_to} is taken or too tight` };

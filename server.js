@@ -49,6 +49,21 @@ const server = http.createServer(async (req, res) => {
     wake();
     return json(res, 202, { ok: true });
   }
+  if (url.pathname === '/api/front' && req.method === 'POST') {
+    // Local version of the front service: no key needed on your own Mac.
+    let raw = '';
+    for await (const chunk of req) raw += chunk;
+    let body = {};
+    try {
+      body = JSON.parse(raw);
+    } catch {}
+    if (body.check) return json(res, 200, { ok: true });
+    const local = Array.isArray(body.local) ? body.local.map(Number) : [];
+    if (typeof body.target !== 'string' || !/^[\w-]{1,60}$/.test(body.target) || local.length !== 2) return json(res, 400, { error: 'Which thing, and which side?' });
+    await mkdir(resolve(ROOT, 'fronts'), { recursive: true });
+    await writeFile(resolve(ROOT, 'fronts', `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}.json`), JSON.stringify({ target: body.target, local, at: new Date().toISOString() }));
+    return json(res, 200, { ok: true });
+  }
   if (url.pathname === '/api/reply' && req.method === 'POST') {
     // Local version of the reply service: same inbox file, no key needed on your own Mac.
     let raw = '';

@@ -210,6 +210,7 @@
       <button class="tab" role="tab" data-tab="found">Found</button>
       <button class="tab" role="tab" data-tab="messages">Messages<span class="dot" id="msgdot"></span></button>
       <button class="tab" role="tab" data-tab="life">Life</button>
+      <button class="tab" role="tab" data-tab="settings">⚙ Settings</button>
     </nav>
 
     <section class="pane" data-pane="day">
@@ -272,6 +273,20 @@
         <div class="row"><button type="submit" class="primary" id="send">Send</button><span class="muted" id="replystatus"></span></div>
       </form>
       <ul id="messages"></ul>
+    </section>
+
+    <section class="pane" data-pane="settings" hidden>
+      <h2>Settings</h2>
+      <p class="muted">For whoever looks after Pip. It needs the reply key.</p>
+      <div id="setlock">
+        <input id="setkey" type="password" autocomplete="off" placeholder="Your reply key">
+        <button type="button" class="small" id="setunlock">Unlock</button>
+      </div>
+      <p class="muted" id="setstatus"></p>
+      <div id="setpanel" hidden>
+        <label><input type="checkbox" id="teachfront"> Teach Pip the front of things</label>
+        <p class="muted">When this is on, tap a piece of furniture, his chest or something he made. A card asks which side of the room its front faces. Pip learns it at his next wake-up. Turn it off to look around as usual.</p>
+      </div>
     </section>
 
     <section class="pane" data-pane="life" hidden>

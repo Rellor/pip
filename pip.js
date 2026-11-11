@@ -1,7 +1,7 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
-import { wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror, themeFatigue } from './mirror.js';
@@ -363,6 +363,33 @@ async function loadTasks(state) {
   state.tasks = state.tasks.slice(-30);
   return { added, names };
 }
+// Someone showed him which side is the front of a thing (fronts/*.json from the website). Saved as fronts[thing] = [x, z], the front in the thing's own frame.
+const FRONTS_DIR = 'fronts';
+async function loadFronts(state) {
+  let files = [];
+  try {
+    files = (await readdir(FRONTS_DIR)).filter((n) => n.endsWith('.json')).sort();
+  } catch {
+    return { names: [] };
+  }
+  state.fronts ??= {};
+  for (const name of files) {
+    try {
+      const m = JSON.parse(await readFile(`${FRONTS_DIR}/${name}`, 'utf8'));
+      const t = text(m.target, 60);
+      const l = Array.isArray(m.local) ? m.local.map(Number) : [];
+      const known = t === 'chest' || MOVABLE.includes(t) || state.decor.some((d) => d.id === t);
+      if (known && l.length === 2 && l.every((v) => [-1, 0, 1].includes(v)) && Math.abs(l[0]) + Math.abs(l[1]) === 1) state.fronts[t] = l;
+    } catch (e) {
+      console.error(`⚠️  front ${name}: ${e.message}`);
+    }
+  }
+  for (const k of Object.keys(state.fronts)) if (!(k === 'chest' || MOVABLE.includes(k) || state.decor.some((d) => d.id === k))) delete state.fronts[k];
+  return { names: files };
+}
+async function clearFronts(names) {
+  for (const n of names) await unlink(`${FRONTS_DIR}/${n}`).catch(() => {});
+}
 async function clearTasks(names) {
   for (const n of names) await unlink(`${TASKS_DIR}/${n}`).catch(() => {});
 }
@@ -522,7 +549,7 @@ ${bullets(s.reflections.slice(-5).map((r) => r.text), 'nothing yet')}
 
 ROOM
 ${ROOM.join(', ')}
-THE LAYOUT OF MY ROOM: it is square, x goes from -5 (left wall) to 5 (right wall), z from -5 (back wall, with the window) to 5 (front). The window and the framed photo are fixed on the back wall. All the other furniture I can move myself with move_thing {name, x, z} (x and z are the middle of it) or, easier, {name, next_to: "desk", side: "left"} to stand it beside another piece (side is left, right, front or back of that piece, seen from the room; leave it out and the closest side is used), if I want my room different: ${MOVABLE.map((k) => { const r = furnRects(s.furniture, k)[0]; return `the ${k} is at x ${Math.round(((r.x0 + r.x1) / 2) * 10) / 10}, z ${Math.round(((r.z0 + r.z1) / 2) * 10) / 10}`; }).join('; ')}. Furniture put next to a wall turns its back to it. Things standing on it go along. Things stand square to the walls, never diagonal, and I leave walking space in the middle.
+THE LAYOUT OF MY ROOM: it is square, x goes from -5 (left wall) to 5 (right wall), z from -5 (back wall, with the window) to 5 (front). The window and the framed photo are fixed on the back wall. All the other furniture I can move myself with move_thing {name, x, z} (x and z are the middle of it) or, easier, {name, next_to: "desk", side: "left"} to stand it beside another piece (side is left, right, front or back of that piece, seen from the room; leave it out and the closest side is used), if I want my room different: ${MOVABLE.map((k) => { const r = furnRects(s.furniture, k)[0]; return `the ${k} is at x ${Math.round(((r.x0 + r.x1) / 2) * 10) / 10}, z ${Math.round(((r.z0 + r.z1) / 2) * 10) / 10}`; }).join('; ')}. Every thing has a FRONT, the side that faces out like a person's face, and it is listed below as "front faces ..." (a side of the room). Someone may have shown me the front of a thing; that is marked "shown to me". The sides of a thing are its own: its left is on the left of someone standing where it stands and looking the way its front faces, so its left and the room's left are often different. With next_to I can say "side": "front", "back", "left" or "right" (its own sides), or "toward the left wall" (a side of the room). Furniture put next to a wall turns its back to it. Things standing on it go along. Things stand square to the walls, never diagonal, and I leave walking space in the middle.
 
 THINGS I MADE FOR MY ROOM
 ${bullets(s.decor.filter((d) => !d.art).map((d) => d.image ? `${d.name} (${d.label})` : `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}, not in my inventory]` : ''}${sizeOf(d) ? ` [${sizeOf(d).join('x')} m]` : ''}${d.song ? ' [song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [no sound yet: compose can give it one]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why.length > 70 ? `${d.why.slice(0, 68)}…` : d.why}` : ''}`), 'nothing yet, my room is plain')}
@@ -1084,6 +1111,8 @@ async function wakeUp() {
   inbox.added += (await pullNtfy(state)).added;
   const taskFiles = await loadTasks(state);
   inbox.added += taskFiles.added;
+  const frontFiles = await loadFronts(state);
+  setFronts(state.fronts);
   if (isNight() && !process.env.PIP_AWAKE) {
     await goToSleep(state);
     if (inbox.added) {
@@ -1092,6 +1121,7 @@ async function wakeUp() {
     }
     await clearInbox(inbox.names);
     await clearTasks(taskFiles.names);
+    await clearFronts(frontFiles.names);
     return;
   }
   passTime(state);
@@ -1523,6 +1553,7 @@ async function wakeUp() {
   await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
   await clearInbox(inbox.names);
   await clearTasks(taskFiles.names);
+  await clearFronts(frontFiles.names);
   const planLines = steps.map((st, i) => `- ${st.action}${results[i].detail ? ` (${results[i].detail})` : ''}${st.thought ? `: ${st.thought}` : ''}`).join('\n');
   await appendFile(
     DIARY_FILE,

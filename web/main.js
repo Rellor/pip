@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { awakeMinutes } from './sleep.js';
-import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint } from './furniture.js';
+import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -1623,6 +1623,8 @@ dom.addEventListener('pointerup', (e) => {
   const tap = !drag.moved && performance.now() - drag.t < 500;
   drag = null;
   if (!tap) return;
+  const front = teachOn() ? frontTargetAt(e.clientX, e.clientY) : null;
+  if (front) return showFrontCard(front);
   const info = pickAt(e.clientX, e.clientY);
   if (info) showInfo(info);
   else hideInfo();
@@ -1632,6 +1634,81 @@ dom.addEventListener('pointercancel', (e) => {
   pinch = null;
   drag = null;
 });
+
+// ---------------------------------------------------------------- teaching Pip the front of things (settings, needs the key)
+const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+let teachUnlocked = localHost; // on your own Mac there is no key
+const teachOn = () => teachUnlocked && store('pip-teach') === '1';
+const SIDE_NAMES = { back: 'the back wall (the window)', left: 'the left wall', right: 'the right wall', front: 'the front of the room' };
+function frontTargetAt(clientX, clientY) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((clientX - r.left) / r.width) * 2 - 1, -(((clientY - r.top) / r.height) * 2 - 1));
+  ray.setFromCamera(ndc, camera);
+  for (const h of ray.intersectObjects(scene.children, true)) {
+    if (h.object.isSprite || !h.object.visible) continue;
+    for (let o = h.object; o; o = o.parent) {
+      if (o === chestGroup) return { key: 'chest', name: "Pip's chest", rot: chestGroup.rotation.y };
+      const fk = MOVABLE.find((k) => G[k] === o);
+      if (fk) return { key: fk, name: FURNITURE[fk].n.replace(/^the /, ''), rot: o.rotation.y };
+      for (const [id, g] of decorGroups) if (g === o) {
+        const d = (lastState?.decor || []).find((x) => x.id === id);
+        return d && d.kind === 'floor' && !d.image ? { key: id, name: d.name, rot: g.rotation.y } : null;
+      }
+    }
+  }
+  return null;
+}
+function showFrontCard(t) {
+  const now = sideOfVector(frontWorld(t.key, t.rot, lastState?.fronts));
+  const shown = !!lastState?.fronts?.[t.key];
+  showInfo({
+    title: `Front of ${t.name}`,
+    lines: [`Pip thinks the front faces ${SIDE_NAMES[now]}${shown ? ' (you showed him)' : ''}.`, 'Which side of the room does the front really face?'],
+    actions: Object.keys(SIDE_VECTORS).map((side) => ({ text: `${{ back: '↑', left: '←', right: '→', front: '↓' }[side]} ${SIDE_NAMES[side]}`, run: () => saveFront(t, side) })),
+  });
+}
+async function saveFront(t, side) {
+  const [lx, lz] = turn(SIDE_VECTORS[side], -t.rot).map((v) => Math.round(v) || 0); // the front in the thing's own frame
+  try {
+    if (!localHost) {
+      const res = await fetch('/api/front', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: store('pip-key'), target: t.key, local: [lx, lz] }) });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Could not save it.');
+    } else {
+      const res = await fetch('/api/front', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ target: t.key, local: [lx, lz] }) });
+      if (!res.ok) throw new Error('Could not save it.');
+    }
+    if (lastState) lastState.fronts = { ...(lastState.fronts || {}), [t.key]: [lx, lz] };
+    showInfo({ title: `Front of ${t.name}`, lines: [`Saved: the front faces ${SIDE_NAMES[side]}. Pip learns it at his next wake-up.`], actions: [{ text: 'Done', run: hideInfo }] });
+  } catch (e) {
+    showInfo({ title: `Front of ${t.name}`, lines: [`⚠️ ${e.message}`], actions: [{ text: 'Close', run: hideInfo }] });
+  }
+}
+async function unlockSettings(key) {
+  const status = $('setstatus');
+  try {
+    const res = await fetch('/api/front', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key, check: true }) });
+    if (!res.ok) throw new Error(res.status === 401 ? 'That key is not right.' : 'The settings are not available yet.');
+    store('pip-key', key);
+    teachUnlocked = true;
+    status.textContent = '';
+    $('setlock').hidden = true;
+    $('setpanel').hidden = false;
+    $('teachfront').checked = store('pip-teach') === '1';
+  } catch (e) {
+    teachUnlocked = false;
+    status.textContent = e.message;
+  }
+}
+$('setunlock').addEventListener('click', () => unlockSettings($('setkey').value.trim()));
+$('setkey').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') unlockSettings($('setkey').value.trim());
+});
+$('teachfront').addEventListener('change', (e) => store('pip-teach', e.target.checked ? '1' : '0'));
+if (localHost) {
+  $('setlock').hidden = true;
+  $('setpanel').hidden = false;
+  $('teachfront').checked = store('pip-teach') === '1';
+} else if (store('pip-key')) unlockSettings(store('pip-key')); // a saved key is checked again, so a changed key locks it
 
 // The joystick for touch screens.
 const stick = $('stick');
