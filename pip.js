@@ -481,7 +481,7 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - If I need a bigger room, more rooms, something even bigger than the sizes above, or something too complicated for all of this, I ask with asks_add and say exactly what I need and why.
 
 WHAT I MAKE HAS TO WORK
-When I make something for a reason, it has to really work for that reason. A shelf, table, bench or stand is something other things stand on: it needs a flat board or top (a part at least 0.25 wide and 0.12 deep), and then I put things on it with move_thing {name, on: "its name", level: "top" or "bottom"}. A closet, wardrobe or chest holds things (it makes room for more of them). If I made something and it does not work for its reason, I change it (change_thing, extend_thing). If I cannot make it work myself, I ask for help with asks_add and say exactly what is missing. A lamp must give light: one of its parts has "glow": true, and its use switches it on and off. A car or any vehicle must roll: it has at least 2 round parts as wheels and stands on the floor, and its use makes it drive a little loop. A fan, windmill or top spins. When I name a thing like that, the use that really does it is added for me; and a use of mine can say what it does with "does": "light", "drive" or "spin". If a thing cannot do what it is for, I am told what is missing. I never say that something works when it does not. In my plan I write what I mean to do ("I will try..."), not what happened, because the result is only known after the step.
+When I make something for a reason, it has to really work for that reason. A shelf, table, bench or stand is something other things stand on: it needs a flat board or top (a part at least 0.25 wide and 0.12 deep), and then I put things on it with move_thing {name, on: "its name", level: "top" or "bottom"}. A closet, wardrobe or chest holds things (it makes room for more of them). If I made something and it does not work for its reason, I change it (change_thing, extend_thing). If I cannot make it work myself, I ask for help with asks_add and say exactly what is missing. A lamp must give light: one of its parts has "glow": true, and its use switches it on and off. A car or any vehicle must roll: it has at least 2 round parts as wheels and stands on the floor, and its use makes it drive a little loop. A fan, windmill or top spins. When I name a thing like that, the use that really does it is added for me; and a use of mine can say what it does with "does": "light", "drive" or "spin". I decide HOW a vehicle drives: a drive use can have "motion", up to 12 steps like [{"forward": 1, "turn": 0}, {"turn": 90}, {"forward": 0.5, "hop": 0.1}, {"wait": 1}] (forward in metres, negative is back; turn in degrees, positive is right; hop in metres up to 0.4; wait in seconds). It plays from where the thing stands and comes back, and it stops when something is in the way. A zigzag, a circle, a wiggle: my choice. Moving parts like wheels and motors are put together with the right tool (a screwdriver, for example): the decorate step says "needs": "screwdriver" (the tool I use while making it) and I make or ask for the tool first. "tool" on a decorate step is only for when the thing I make IS a tool (a screwdriver I design myself), never for the tool I use. If a thing cannot do what it is for, I am told what is missing. I never say that something works when it does not. In my plan I write what I mean to do ("I will try..."), not what happened, because the result is only known after the step.
 
 MAKING THINGS FOR MY ROOM
 With decorate I make something and put it in my room. Before I design it I think about what it is FOR, because things in my room can be used: every thing I make has at least one use, so I always fill in "uses" in decorate. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. I put it on the floor with "x" and "z", on a wall with "wall", "along" and "height", or on top of something with "on" (all explained above in WHERE I CAN PUT THINGS; look at my map first). Something big, like a shelf or a closet, belongs on the floor against a wall. Things on a wall must be flat. I am free to make big things, furniture, or something to look through, not only small decorations: it is my room. Things go where they make sense: something to look through goes at the window, something to sit on goes near the middle (where: window, middle...). I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. If I do not like something in my room any more, remove_decoration puts it in my chest (it is not lost) and take_out(name, where) brings it back later. If I want something bigger than the sizes above (even a bigger room) or more complicated than my simple shapes allow, or I need a tool or a place to work, I ask with asks_add and say exactly what I would need. If I want, I can change something I already made: change_thing gives it new shapes (it keeps its place, its uses and its song), a new reason, or just a bigger size with \"bigger\": 1.5 makes it one and a half times as big. How big it can get depends on its spot (by the left wall at most 1.1 wide and 1.4 deep, in the middle of the room 2.6 wide and 2.4 deep): if it hits that, I move it to a bigger spot. Up to 6 changes a day. With move_thing {name, x, z} I move something I made, or my chest, to a spot on the floor I choose (or {name, wall, along, height} for a wall, {name, on} for the top of something), or a bit sideways (dx to the right, dz toward the front, up to 2 each), up to 8 moves a day, and update_app replaces one of my apps with a new version of its page, up to 4 a day. I can also make clothes and wear them, if I want to: make_clothes {name, slot, why, parts} with slot one of head, face, neck, body or back, and the same shapes as above. My body is a round ball about 1 wide and 1.1 tall with my belly in the middle. For clothes, pos is measured from the middle of the spot on my body (a hat from its bottom) and z points to my front; it is shrunk if it is too big for the spot. It goes on me right away unless I add "wear": false. wear {name} puts something on that I made before, take_off {name} takes it off, and making clothes with the same name again makes them new. At most 3 new clothes a day and 12 in all.
@@ -909,7 +909,8 @@ function projectLine(p) {
 // Called early in a wake-up too, so a tool he was just given can be used in the same plan.
 function receiveTools(s, r, at = new Date().toISOString()) {
   for (const t of strings(r.tools_add, 2)) {
-    if (s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && (sameText(a.item, t) || (toolKind(t) && toolKind(a.item) === toolKind(t)) || fits({ name: a.item, kind: '' }, t)))) {
+    // an ask counts as given when it is done already, or when he marks it done in this same answer
+    if (s.asks.some((a) => ((a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000) || (a.status === 'open' && strings(r.asks_done, 6).some((d) => sameText(a.item, d)))) && (sameText(a.item, t) || (toolKind(t) && toolKind(a.item) === toolKind(t)) || fits({ name: a.item, kind: '' }, t)))) {
       const made = addTool(s, t, at);
       if (made) addMemory(s, `I was given ${made.name}, my ${made.kind}`, 6, 'memory', at);
     }
@@ -1078,7 +1079,7 @@ async function prepareUses(state, raw, ownerId) {
       await writeFile(`web/${view}`, u.viewSvg);
     }
     const app = u.app ? state.apps.find((a) => sameText(a.name, u.app))?.id ?? null : null;
-    uses.push({ label: u.label, text: u.text, view, song: u.song, app, effect: u.effect, does: u.does });
+    uses.push({ label: u.label, text: u.text, view, song: u.song, app, effect: u.effect, does: u.does, motion: u.motion });
   }
   return uses;
 }
@@ -1238,7 +1239,7 @@ async function wakeUp() {
           e.lit = e.lit === false; // switches: dark becomes lit, lit becomes dark
           e.litAt = new Date(stepStart + 6000).toISOString();
         }
-        st.made = { used: { name: e.name, label: use.label, text: use.text, view: use.view, song: use.song, app: use.app, does: use.does ?? null }, ref: { id: e.id, stand: e.stand, pos: e.pos, does: use.does ?? null, lit: e.lit !== false } };
+        st.made = { used: { name: e.name, label: use.label, text: use.text, view: use.view, song: use.song, app: use.app, does: use.does ?? null }, ref: { id: e.id, stand: e.stand, pos: e.pos, does: use.does ?? null, motion: use.motion ?? null, lit: e.lit !== false } };
         if (use.effect && (!e.usedAt || Date.now() - Date.parse(e.usedAt) > 30 * 60_000)) {
           nudge(state, use.effect, 0.8); // using it lifts a bar a little, at most once every half hour per thing
           e.usedAt = new Date().toISOString();
@@ -1457,6 +1458,22 @@ async function wakeUp() {
   const worked = (list) => steps.some((st) => list.includes(st.action) && !st.made?.failed);
   if (!worked(TASK_WORK)) answer.tasks_done = [];
   answer._progress = worked(PROJECT_WORK); // project steps and finishing a project only count after a step that really worked
+  // What I write about something I tried to make, but could not, must not say I made it.
+  const MAKE_ACTIONS = ['decorate', 'extend_thing', 'change_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'make_move', 'use', 'add_use'];
+  const triedNames = steps.filter((st) => MAKE_ACTIONS.includes(st.action) && st.made?.failed).map((st) => text(st.details?.name, 60)).concat(blocked.filter((b) => MAKE_ACTIONS.includes(b.st.action)).map((b) => text(b.st.details?.name, 60))).filter(Boolean);
+  const claimsDone = (t) => {
+    const low = String(t ?? '').toLowerCase();
+    if (!/\b(built|made|finished|created|completed|crafted|assembled|put together|tested|test drove|drove|watched|watching|drive|drives|driving|zoom|zooms|zoomed|rolled|rolls|rolling|spun|lit|switched|used|using|played with)\b/.test(low)) return null;
+    return triedNames.find((n) => { const w = (n.toLowerCase().match(/[a-z]{4,}/g) ?? []); return w.length && w.filter((x) => low.includes(x)).length >= Math.ceil(w.length / 2); }) ?? null;
+  };
+  if (triedNames.length) {
+    for (const st of steps) {
+      const n = st.action === 'write_diary' ? claimsDone(st.details?.text) : null;
+      if (n) st.details.text = `${text(st.details.text, 800)} (But I could not make ${n} yet: it did not work out.)`;
+    }
+    if (claimsDone(answer.remember?.text)) answer.remember = null;
+    if (claimsDone(answer.tell)) answer.tell = null;
+  }
 
   // ask_for steps end up in the list of asks.
   const stepAsks = steps.filter((st) => st.action === 'ask_for').map((st) => ({ item: st.details.item, why: st.details.reason }));
@@ -1562,7 +1579,7 @@ async function wakeUp() {
     thought: text(answer.thought, 200),
     inner: text(answer.inner, 600),
     sent: sent.length > 0,
-    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, working_on: st.working_on || undefined, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : st.made?.ref ? { id: st.made.ref.id, stand: st.made.ref.stand, pos: st.made.ref.pos, used: true, does: st.made.ref.does } : st.made?.stored ? { chest: true } : st.made?.app ? { app: st.made.app } : null })),
+    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, working_on: st.working_on || undefined, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : st.made?.ref ? { id: st.made.ref.id, stand: st.made.ref.stand, pos: st.made.ref.pos, used: true, does: st.made.ref.does, motion: st.made.ref.motion } : st.made?.stored ? { chest: true } : st.made?.app ? { app: st.made.app } : null })),
     action: steps[0].action,
     details: steps[0].details,
     detail: results[0].detail,

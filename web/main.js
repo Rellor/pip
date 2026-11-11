@@ -382,25 +382,61 @@ const floorBlocked = (x, z, skipId) => {
   }
   return (lastState?.decor || []).some((o) => o.id !== skipId && o.kind === 'floor' && !o.image && o.pos && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.55);
 };
-function runBehavior(id, does) {
+const DEFAULT_MOTION = [{ forward: 1.0 }, { turn: 90, forward: 0.9 }, { turn: 90, forward: 1.0 }, { turn: 120, forward: 0.8 }];
+// The steps of a drive as little legs: turn on the spot, roll forward or back, hop, wait. It stops at the first thing in the way, then comes back.
+function planDrive(g, id, motion) {
+  const start = g.position.clone();
+  const rot0 = g.rotation.y;
+  let h = rot0;
+  const p = start.clone();
+  const legs = [];
+  let bumped = false;
+  for (const m of motion) {
+    if (m.turn) {
+      h += (m.turn * Math.PI) / 180;
+      legs.push({ kind: 'turn', face: h });
+    }
+    if (m.forward) {
+      const dir = Math.sign(m.forward);
+      let ok = 0;
+      for (let k = 1; k <= 8; k++) {
+        const f = (m.forward * k) / 8;
+        if (floorBlocked(p.x + Math.sin(h) * f, p.z + Math.cos(h) * f, id)) {
+          bumped = true;
+          break;
+        }
+        ok = f;
+      }
+      if (Math.abs(ok) > 0.05) {
+        p.x += Math.sin(h) * ok;
+        p.z += Math.cos(h) * ok;
+        legs.push({ kind: 'move', to: p.clone(), face: h, back: dir < 0 });
+      }
+    }
+    if (m.hop) legs.push({ kind: 'hop', h: m.hop, t: 0.35 });
+    if (m.wait) legs.push({ kind: 'wait', t: m.wait });
+    if (bumped) {
+      legs.push({ kind: 'wait', t: 0.4 });
+      break;
+    }
+  }
+  if (p.distanceTo(start) > 0.05) {
+    legs.push({ kind: 'turn', face: Math.atan2(start.x - p.x, start.z - p.z) });
+    legs.push({ kind: 'move', to: start.clone(), face: Math.atan2(start.x - p.x, start.z - p.z), back: false });
+  }
+  legs.push({ kind: 'turn', face: rot0 });
+  return legs;
+}
+function runBehavior(id, does, motion) {
   const g = decorGroups.get(id);
   if (!g || behaviors.has(id)) return;
   const now = performance.now();
   if (does === 'light') return setLit(g, !g.userData.lit);
   if (does === 'spin') return behaviors.set(id, { does, t0: now, until: now + 3500, y0: g.rotation.y });
   if (does === 'drive') {
-    const p0 = g.position.clone();
-    const pts = [p0.clone()];
-    const tryPt = (dx, dz) => {
-      const x = p0.x + dx;
-      const z = p0.z + dz;
-      if (!floorBlocked(x, z, id)) pts.push(new THREE.Vector3(x, p0.y, z));
-    };
-    [[1.1, 0], [1.1, 1.0], [0, 1.0], [-0.9, 0.6], [-0.9, -0.5], [0.5, -0.8]].forEach(([dx, dz]) => tryPt(dx, dz));
-    if (pts.length < 3) [[-1.1, 0], [-1.1, -1.0], [0, -1.0]].forEach(([dx, dz]) => tryPt(dx, dz));
-    pts.push(p0.clone());
-    if (pts.length < 3) return;
-    behaviors.set(id, { does, pts, i: 1, y0: g.rotation.y, face: g.rotation.y });
+    const legs = planDrive(g, id, motion?.length ? motion : DEFAULT_MOTION);
+    if (legs.length < 2) return;
+    behaviors.set(id, { does, legs, i: 0, y0: g.rotation.y, y: g.position.y, t: 0 });
   }
 }
 function updateBehaviors(now, dt) {
@@ -416,26 +452,45 @@ function updateBehaviors(now, dt) {
         g.rotation.y = b.y0;
         behaviors.delete(id);
       }
-    } else if (b.does === 'drive') {
-      const to = b.pts[b.i];
-      const dx = to.x - g.position.x;
-      const dz = to.z - g.position.z;
-      const dist = Math.hypot(dx, dz);
-      if (dist < 0.05) {
-        b.i++;
-        if (b.i >= b.pts.length) {
-          g.rotation.y = b.y0;
-          behaviors.delete(id);
-        }
-        continue;
-      }
-      const want = Math.atan2(dx, dz);
-      let diff = want - g.rotation.y;
+      continue;
+    }
+    const leg = b.legs[b.i];
+    if (!leg) {
+      g.position.y = b.y;
+      behaviors.delete(id);
+      continue;
+    }
+    const next = () => {
+      b.i++;
+      b.t = 0;
+    };
+    if (leg.kind === 'turn' || leg.kind === 'move') {
+      let diff = leg.face - g.rotation.y;
       diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-      g.rotation.y += diff * Math.min(1, dt * 8);
-      const step = Math.min(dist, dt * 1.0);
-      g.position.x += (dx / dist) * step * Math.max(0.2, 1 - Math.abs(diff)); // it slows down in a turn
-      g.position.z += (dz / dist) * step * Math.max(0.2, 1 - Math.abs(diff));
+      g.rotation.y += Math.sign(diff) * Math.min(Math.abs(diff), dt * 4.5);
+      if (leg.kind === 'turn') {
+        if (Math.abs(diff) < 0.03) next();
+      } else {
+        const dx = leg.to.x - g.position.x;
+        const dz = leg.to.z - g.position.z;
+        const dist = Math.hypot(dx, dz);
+        if (dist < 0.04) next();
+        else {
+          const step = Math.min(dist, dt * 1.0);
+          g.position.x += (dx / dist) * step;
+          g.position.z += (dz / dist) * step;
+        }
+      }
+    } else if (leg.kind === 'hop') {
+      b.t += dt;
+      g.position.y = b.y + Math.sin(Math.min(1, b.t / leg.t) * Math.PI) * leg.h;
+      if (b.t >= leg.t) {
+        g.position.y = b.y;
+        next();
+      }
+    } else if (leg.kind === 'wait') {
+      b.t += dt;
+      if (b.t >= leg.t) next();
     }
   }
 }
@@ -1235,7 +1290,7 @@ function moveSound(kind) {
 }
 function startTask(last) {
   const plan = planFor(last);
-  if (last.action === 'use' && last.made?.id && ['drive', 'spin'].includes(last.made.does)) setTimeout(() => runBehavior(last.made.id, last.made.does), 2500); // when he has walked up to it
+  if (last.action === 'use' && last.made?.id && ['drive', 'spin'].includes(last.made.does)) setTimeout(() => runBehavior(last.made.id, last.made.does, last.made.motion), 2500); // when he has walked up to it
   task = { ...plan, spot: plan.spot || SPOTS[plan.at], last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
 }
 function startPhrase(notes, step, now) {
@@ -1546,7 +1601,7 @@ function appById(id) {
 // What happens when a use is pressed: its text, what you see, a song, an app.
 function showUse(d, use) {
   const actions = [];
-  if (use.does) runBehavior(d.id, use.does);
+  if (use.does) runBehavior(d.id, use.does, use.motion);
   if (use.song) actions.push({ text: '▶ Hear it', run: () => playSong(use.song) });
   const app = use.app ? appById(use.app) : null;
   if (app) actions.push({ text: `▶ Open ${app.name}`, run: () => openApp(app) });
@@ -3085,6 +3140,8 @@ $('wake').addEventListener('click', () => {
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipGroup = (id) => decorGroups.get(id); // for testing
 window.pipStep = (n, dt = 0.05) => { for (let i = 0; i < n; i++) updateBehaviors(performance.now() + i * dt * 1000, dt); }; // for testing without a visible page
-window.pipRun = (id, does) => { runBehavior(id, does); return behaviors.get(id) ? { pts: behaviors.get(id).pts?.length ?? 0 } : null; };
+window.pipRun = (id, does, motion) => { runBehavior(id, does, motion); return behaviors.get(id) ? { legs: behaviors.get(id).legs?.length ?? 0 } : null; };
+window.pipBeh = behaviors;
+window.pipFrame = (cam) => { if (cam) { camera.position.set(...cam.p); camera.lookAt(...cam.t); } renderer.render(scene, camera); }; // for testing: draw one frame by hand
 window.pipDo = (last) => startTask({ at: String(Date.now()), thought: '(test)', details: {}, ...last });
 window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt, camera, openApp, playSong, getAudio: () => audio, getMaster: () => master };
