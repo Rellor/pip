@@ -73,7 +73,7 @@ const ACTIONS = [
   'use(name, label)',
   'add_use(name, use)',
   'change_thing(name, parts, why, bigger)',
-  'move_thing(name, where, dx, dz)',
+  'move_thing(name, where, dx, dz, next_to, side)',
   'extend_thing(name, parts)',
   'update_app(name, html)',
   'make_clothes(name, slot, why, parts)',
@@ -461,7 +461,7 @@ ${bullets(s.reflections.slice(-5).map((r) => r.text), 'nothing yet')}
 
 ROOM
 ${ROOM.join(', ')}
-THE LAYOUT OF MY ROOM: it is square, x goes from -5 (left wall) to 5 (right wall), z from -5 (back wall, with the window) to 5 (front). The window and the framed photo are fixed on the back wall. All the other furniture I can move myself with move_thing {name, x, z} (x and z are the middle of it), if I want my room different: ${MOVABLE.map((k) => { const r = furnRects(s.furniture, k)[0]; return `the ${k} is at x ${Math.round(((r.x0 + r.x1) / 2) * 10) / 10}, z ${Math.round(((r.z0 + r.z1) / 2) * 10) / 10}`; }).join('; ')}. Furniture put next to a wall turns its back to it. Things standing on it go along. Things stand square to the walls, never diagonal, and I leave walking space in the middle.
+THE LAYOUT OF MY ROOM: it is square, x goes from -5 (left wall) to 5 (right wall), z from -5 (back wall, with the window) to 5 (front). The window and the framed photo are fixed on the back wall. All the other furniture I can move myself with move_thing {name, x, z} (x and z are the middle of it) or, easier, {name, next_to: "desk", side: "left"} to stand it beside another piece (side is left, right, front or back of that piece, seen from the room; leave it out and the closest side is used), if I want my room different: ${MOVABLE.map((k) => { const r = furnRects(s.furniture, k)[0]; return `the ${k} is at x ${Math.round(((r.x0 + r.x1) / 2) * 10) / 10}, z ${Math.round(((r.z0 + r.z1) / 2) * 10) / 10}`; }).join('; ')}. Furniture put next to a wall turns its back to it. Things standing on it go along. Things stand square to the walls, never diagonal, and I leave walking space in the middle.
 
 THINGS I MADE FOR MY ROOM
 ${bullets(s.decor.filter((d) => !d.art).map((d) => `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}, standing here, so not in my inventory]` : ''}${d.parts?.length ? ` [${d.parts.length} parts, about ${(sizeOf(d) ?? []).join(' x ')} m]` : ''}${d.song ? ' [it has a song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [it makes no sound yet: I can give it one with compose]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}

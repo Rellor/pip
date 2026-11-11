@@ -965,12 +965,39 @@ export const furnitureKey = (name) => MOVABLE.find((k) => FURN_WORDS[k].test(Str
 const DIRS = { left: [-1, 0], right: [1, 0], back: [0, -1], front: [0, 1] };
 const QUARTERS = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
 
+const f0rects = (key, place) => {
+  const rs = FURNITURE[key].rects.map((r) => worldRect(key, place, r));
+  return { x0: Math.min(...rs.map((r) => r.x0)), x1: Math.max(...rs.map((r) => r.x1)), z0: Math.min(...rs.map((r) => r.z0)), z1: Math.max(...rs.map((r) => r.z1)) };
+};
+
 export function moveFurniture(decor, furn, key, details, atMs, now = Date.now()) {
   const d = details && typeof details === 'object' ? details : {};
   const cur = placeOf(furn, key);
-  const x = num2(d.x) ?? cur.x + (Math.min(2, Math.max(-2, Number(d.dx) || 0)));
-  const z = num2(d.z) ?? cur.z + (Math.min(2, Math.max(-2, Number(d.dz) || 0)));
-  if (num2(d.x) === null && num2(d.z) === null && !d.dx && !d.dz) return { failed: 'he did not say where to move it' };
+  // "next to the desk": stand beside another piece (side = left / right / front / back of it, from the room's view)
+  const nextKey = d.next_to ? furnitureKey(d.next_to) : null;
+  if (d.next_to && (!nextKey || nextKey === key)) return { failed: `he can only put it next to another piece of furniture (${MOVABLE.filter((k) => k !== key).join(', ')})` };
+  let nx = null;
+  let nz = null;
+  if (nextKey) {
+    const a = furnRects(furnNow, nextKey).reduce((u, r) => ({ x0: Math.min(u.x0, r.x0), x1: Math.max(u.x1, r.x1), z0: Math.min(u.z0, r.z0), z1: Math.max(u.z1, r.z1) }), { x0: 9, x1: -9, z0: 9, z1: -9 });
+    const me = f0rects(key, cur);
+    const w = me.x1 - me.x0;
+    const h = me.z1 - me.z0;
+    const cx = (me.x0 + me.x1) / 2 - cur.x; // place is the pivot, offset between pivot and center of the piece
+    const cz = (me.z0 + me.z1) / 2 - cur.z;
+    const spots = {
+      left: [a.x0 - 0.1 - w / 2, (a.z0 + a.z1) / 2],
+      right: [a.x1 + 0.1 + w / 2, (a.z0 + a.z1) / 2],
+      back: [(a.x0 + a.x1) / 2, a.z0 - 0.1 - h / 2],
+      front: [(a.x0 + a.x1) / 2, a.z1 + 0.1 + h / 2],
+    };
+    const side = Object.hasOwn(spots, String(d.side).toLowerCase()) ? String(d.side).toLowerCase() : null;
+    const order = side ? [side] : Object.keys(spots).sort((p, q) => Math.hypot(spots[p][0] - cur.x, spots[p][1] - cur.z) - Math.hypot(spots[q][0] - cur.x, spots[q][1] - cur.z));
+    [nx, nz] = [spots[order[0]][0] - cx, spots[order[0]][1] - cz];
+  }
+  const x = num2(d.x) ?? nx ?? cur.x + (Math.min(2, Math.max(-2, Number(d.dx) || 0)));
+  const z = num2(d.z) ?? nz ?? cur.z + (Math.min(2, Math.max(-2, Number(d.dz) || 0)));
+  if (num2(d.x) === null && num2(d.z) === null && nx === null && !d.dx && !d.dz) return { failed: 'he did not say where to move it' };
   const moves = (furn?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000);
   const recent = moves.length + decor.filter((o) => o.movedAt && now - Date.parse(o.movedAt) < 86_400_000).length + (chestNow?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length;
   if (recent >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
