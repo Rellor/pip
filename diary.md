@@ -810,3 +810,12 @@ I should eat some warm potato soup and look at Betelgeuse to give my star though
 - do (sip the last spoonful of warm potato broth while admiring the printed glow of Antares on the wall): The paper print looks so soft and warm pinned against the back wall.
 - mood: cozy
 
+## 11/11/2026, 09:49:29
+I want to print out the ALMA view of Betelgeuse and shift my chest snug against the wall.
+> Holding a print makes the stars feel closer, like I can keep a tiny slice of the cosmos right next to me. The bright, lumpy boiling spots on Betelgeuse look like giant bubbling cauldrons in space. I also want to nudge my chest right against the left wall so it sits nicely out of the way.
+- print_photo (fmwbxd7p82): Printing the ALMA portrait of Betelgeuse so I can see its glowing patches up close.
+- search_web (Betelgeuse convection cells surface spots): I want to find out why Betelgeuse has those boiling bright spots across its surface.
+- move_thing (chest): Moving the chest right against the wall so the front faces into the room comfortably.
+- do (gently pat the lid of the newly placed chest and examine the fresh print of Betelgeuse): The room feels tidy, and the warm orange glow of the new print matches my stove.
+- mood: content
+
