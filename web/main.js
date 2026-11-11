@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { awakeMinutes } from './sleep.js';
-import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS } from './furniture.js';
+import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -272,10 +272,12 @@ function buildDecor(d) {
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     g.add(mesh);
+    if (p.glow) (g.userData.glow ??= []).push({ mat: mesh.material, at: mesh.position, color: p.color });
   }
   g.position.set(...d.pos);
   g.rotation.y = d.rotY || 0;
   g.userData.scale = d.scale || 1;
+  g.userData.id = d.id;
   g.userData.info = () => decorInfo(d);
   g.userData.name = d.name;
   g.scale.setScalar(0.001);
@@ -330,8 +332,13 @@ function updateDecor(s) {
     if (have && d.updatedAt && have.userData.rev !== d.updatedAt && Date.parse(d.updatedAt) <= Date.now()) {
       scene.remove(have);
       decorGroups.delete(d.id);
-    } else if (have) continue;
+    } else if (have) {
+      setLit(have, litOf(d)); // a lamp Pip switched
+      continue;
+    }
     const g = buildDecor(d);
+    g.userData.lit = true;
+    setLit(g, litOf(d));
     g.userData.rev = d.updatedAt || null;
     if (d.updatedAt && Date.parse(d.updatedAt) > Date.now()) g.userData.rev = null;
     g.userData.born = performance.now() - Math.min(Date.now() - Date.parse(d.at), 5000); // old things are simply there
@@ -348,6 +355,89 @@ function scheduleDue(s) {
   const times = [...(s?.decor || []).flatMap((d) => [d.at, d.updatedAt]), s?.chest?.at, ...Object.values(s?.furniture || {}).map((f) => f?.at)].map((t) => Date.parse(t)).filter((t) => t > now);
   if (!times.length) return;
   dueTimer = setTimeout(() => lastState && updateDecor(lastState), Math.min(...times) - now + 300);
+}
+// ---- What things DO when they are used (light, drive, spin). The data says what it does; the page plays it.
+// A lamp is lit unless Pip switched it off. Before his switch is due (litAt) it still shows the old state.
+const litOf = (d) => (d.litAt && Date.parse(d.litAt) > Date.now() ? d.lit === false : d.lit !== false);
+function setLit(g, on) {
+  const list = g.userData.glow;
+  if (!list || g.userData.lit === on) return;
+  g.userData.lit = on;
+  for (const x of list) x.mat.emissiveIntensity = on ? 0.9 : 0;
+  if (!g.userData.lamp) {
+    const l = new THREE.PointLight(new THREE.Color(list[0].color), 0, 3);
+    l.position.copy(list[0].at);
+    g.add(l);
+    g.userData.lamp = l;
+  }
+  g.userData.lamp.intensity = on ? 1.6 : 0;
+}
+const behaviors = new Map(); // thing id -> what it is doing now
+const floorBlocked = (x, z, skipId) => {
+  if (Math.abs(x) > 4.55 || Math.abs(z) > 4.55) return true;
+  const furn = shownFurniture(lastState?.furniture);
+  for (const k of MOVABLE) {
+    if (FURNITURE[k].flat) continue;
+    for (const r of furnRects(furn, k)) if (x > r.x0 - 0.25 && x < r.x1 + 0.25 && z > r.z0 - 0.25 && z < r.z1 + 0.25) return true;
+  }
+  return (lastState?.decor || []).some((o) => o.id !== skipId && o.kind === 'floor' && !o.image && o.pos && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.55);
+};
+function runBehavior(id, does) {
+  const g = decorGroups.get(id);
+  if (!g || behaviors.has(id)) return;
+  const now = performance.now();
+  if (does === 'light') return setLit(g, !g.userData.lit);
+  if (does === 'spin') return behaviors.set(id, { does, t0: now, until: now + 3500, y0: g.rotation.y });
+  if (does === 'drive') {
+    const p0 = g.position.clone();
+    const pts = [p0.clone()];
+    const tryPt = (dx, dz) => {
+      const x = p0.x + dx;
+      const z = p0.z + dz;
+      if (!floorBlocked(x, z, id)) pts.push(new THREE.Vector3(x, p0.y, z));
+    };
+    [[1.1, 0], [1.1, 1.0], [0, 1.0], [-0.9, 0.6], [-0.9, -0.5], [0.5, -0.8]].forEach(([dx, dz]) => tryPt(dx, dz));
+    if (pts.length < 3) [[-1.1, 0], [-1.1, -1.0], [0, -1.0]].forEach(([dx, dz]) => tryPt(dx, dz));
+    pts.push(p0.clone());
+    if (pts.length < 3) return;
+    behaviors.set(id, { does, pts, i: 1, y0: g.rotation.y, face: g.rotation.y });
+  }
+}
+function updateBehaviors(now, dt) {
+  for (const [id, b] of behaviors) {
+    const g = decorGroups.get(id);
+    if (!g) {
+      behaviors.delete(id);
+      continue;
+    }
+    if (b.does === 'spin') {
+      g.rotation.y = b.y0 + ((now - b.t0) / 1000) * 5;
+      if (now > b.until) {
+        g.rotation.y = b.y0;
+        behaviors.delete(id);
+      }
+    } else if (b.does === 'drive') {
+      const to = b.pts[b.i];
+      const dx = to.x - g.position.x;
+      const dz = to.z - g.position.z;
+      const dist = Math.hypot(dx, dz);
+      if (dist < 0.05) {
+        b.i++;
+        if (b.i >= b.pts.length) {
+          g.rotation.y = b.y0;
+          behaviors.delete(id);
+        }
+        continue;
+      }
+      const want = Math.atan2(dx, dz);
+      let diff = want - g.rotation.y;
+      diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+      g.rotation.y += diff * Math.min(1, dt * 8);
+      const step = Math.min(dist, dt * 1.0);
+      g.position.x += (dx / dist) * step * Math.max(0.2, 1 - Math.abs(diff)); // it slows down in a turn
+      g.position.z += (dz / dist) * step * Math.max(0.2, 1 - Math.abs(diff));
+    }
+  }
 }
 function popDecor(now) {
   for (const g of decorGroups.values()) {
@@ -1145,6 +1235,7 @@ function moveSound(kind) {
 }
 function startTask(last) {
   const plan = planFor(last);
+  if (last.action === 'use' && last.made?.id && ['drive', 'spin'].includes(last.made.does)) setTimeout(() => runBehavior(last.made.id, last.made.does), 2500); // when he has walked up to it
   task = { ...plan, spot: plan.spot || SPOTS[plan.at], last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
 }
 function startPhrase(notes, step, now) {
@@ -1455,6 +1546,7 @@ function appById(id) {
 // What happens when a use is pressed: its text, what you see, a song, an app.
 function showUse(d, use) {
   const actions = [];
+  if (use.does) runBehavior(d.id, use.does);
   if (use.song) actions.push({ text: '▶ Hear it', run: () => playSong(use.song) });
   const app = use.app ? appById(use.app) : null;
   if (app) actions.push({ text: `▶ Open ${app.name}`, run: () => openApp(app) });
@@ -1795,6 +1887,7 @@ function loop(now) {
   frame(now, dt);
   updateFloaters(dt, now);
   popDecor(now);
+  updateBehaviors(now, dt);
   const printing = plan && stepNow >= 0 && plan.steps[stepNow]?.action === 'print_photo';
   printLight.material.color.set(printing && Math.floor(now / 250) % 2 ? 0x6dff8a : 0x2f6b3a);
   updateWalk(dt);
@@ -2990,5 +3083,8 @@ $('wake').addEventListener('click', () => {
 });
 
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
+window.pipGroup = (id) => decorGroups.get(id); // for testing
+window.pipStep = (n, dt = 0.05) => { for (let i = 0; i < n; i++) updateBehaviors(performance.now() + i * dt * 1000, dt); }; // for testing without a visible page
+window.pipRun = (id, does) => { runBehavior(id, does); return behaviors.get(id) ? { pts: behaviors.get(id).pts?.length ?? 0 } : null; };
 window.pipDo = (last) => startTask({ at: String(Date.now()), thought: '(test)', details: {}, ...last });
 window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt, camera, openApp, playSong, getAudio: () => audio, getMaster: () => master };

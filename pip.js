@@ -2,6 +2,7 @@ import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs
 import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { archiveOverflow } from './archive.js';
+import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
@@ -264,6 +265,7 @@ async function loadState() {
   setChest(state.chest ?? null);
   setFurniture(state.furniture);
   rehangPictures(state);
+  for (const d of state.decor) ensureBehaviors(d); // a lamp, a car or a fan can really do what it is
   state.chest ??= null;
   delete state.builds;
   ensureFeelings(state);
@@ -479,7 +481,7 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - If I need a bigger room, more rooms, something even bigger than the sizes above, or something too complicated for all of this, I ask with asks_add and say exactly what I need and why.
 
 WHAT I MAKE HAS TO WORK
-When I make something for a reason, it has to really work for that reason. A shelf, table, bench or stand is something other things stand on: it needs a flat board or top (a part at least 0.25 wide and 0.12 deep), and then I put things on it with move_thing {name, on: "its name", level: "top" or "bottom"}. A closet, wardrobe or chest holds things (it makes room for more of them). If I made something and it does not work for its reason, I change it (change_thing, extend_thing). If I cannot make it work myself, I ask for help with asks_add and say exactly what is missing. I never say that something works when it does not.
+When I make something for a reason, it has to really work for that reason. A shelf, table, bench or stand is something other things stand on: it needs a flat board or top (a part at least 0.25 wide and 0.12 deep), and then I put things on it with move_thing {name, on: "its name", level: "top" or "bottom"}. A closet, wardrobe or chest holds things (it makes room for more of them). If I made something and it does not work for its reason, I change it (change_thing, extend_thing). If I cannot make it work myself, I ask for help with asks_add and say exactly what is missing. A lamp must give light: one of its parts has "glow": true, and its use switches it on and off. A car or any vehicle must roll: it has at least 2 round parts as wheels and stands on the floor, and its use makes it drive a little loop. A fan, windmill or top spins. When I name a thing like that, the use that really does it is added for me; and a use of mine can say what it does with "does": "light", "drive" or "spin". If a thing cannot do what it is for, I am told what is missing. I never say that something works when it does not. In my plan I write what I mean to do ("I will try..."), not what happened, because the result is only known after the step.
 
 MAKING THINGS FOR MY ROOM
 With decorate I make something and put it in my room. Before I design it I think about what it is FOR, because things in my room can be used: every thing I make has at least one use, so I always fill in "uses" in decorate. I invent it myself and build it from simple shapes. Each part is {"shape": "...", "size": [...], "pos": [x, y, z], "color": "#rrggbb", "glow": true or false}. Shapes and sizes: box [width, height, depth], sphere [radius], cylinder [radiusTop, radiusBottom, height], cone [radius, height], torus [ringRadius, tubeRadius], capsule [radius, length]. pos is measured from the middle of the bottom of the thing: y goes up, z points toward the room. I make my own thing, not a copy of the examples. Give it enough parts to be recognisable: 5 to 12 parts, with details like eyes, legs, leaves, a base, a glow. Think about what it looks like from the front, and use colours I like. Example 1, a little tree (4 parts): [{"shape":"cylinder","size":[0.05,0.07,0.4],"pos":[0,0.2,0],"color":"#7a5230"},{"shape":"cone","size":[0.3,0.45],"pos":[0,0.6,0],"color":"#4f9d5d"},{"shape":"cone","size":[0.22,0.35],"pos":[0,0.88,0],"color":"#66b873"},{"shape":"sphere","size":[0.05],"pos":[0,1.12,0],"color":"#ffd84a","glow":true}]. Example 2, a small robot (8 parts): [{"shape":"box","size":[0.2,0.22,0.14],"pos":[0,0.2,0],"color":"#9aa7b8"},{"shape":"box","size":[0.16,0.14,0.12],"pos":[0,0.38,0],"color":"#c5cfdb"},{"shape":"sphere","size":[0.025],"pos":[-0.04,0.39,0.065],"color":"#222222"},{"shape":"sphere","size":[0.025],"pos":[0.04,0.39,0.065],"color":"#222222"},{"shape":"cylinder","size":[0.01,0.01,0.12],"pos":[0,0.52,0],"color":"#666666"},{"shape":"sphere","size":[0.03],"pos":[0,0.6,0],"color":"#ff5a5a","glow":true},{"shape":"capsule","size":[0.03,0.12],"pos":[-0.13,0.2,0],"color":"#9aa7b8"},{"shape":"capsule","size":[0.03,0.12],"pos":[0.13,0.2,0],"color":"#9aa7b8"}]. I put it on the floor with "x" and "z", on a wall with "wall", "along" and "height", or on top of something with "on" (all explained above in WHERE I CAN PUT THINGS; look at my map first). Something big, like a shelf or a closet, belongs on the floor against a wall. Things on a wall must be flat. I am free to make big things, furniture, or something to look through, not only small decorations: it is my room. Things go where they make sense: something to look through goes at the window, something to sit on goes near the middle (where: window, middle...). I can make at most ${MAX_PER_DAY} things a day and only one per wake-up. If I do not like something in my room any more, remove_decoration puts it in my chest (it is not lost) and take_out(name, where) brings it back later. If I want something bigger than the sizes above (even a bigger room) or more complicated than my simple shapes allow, or I need a tool or a place to work, I ask with asks_add and say exactly what I would need. If I want, I can change something I already made: change_thing gives it new shapes (it keeps its place, its uses and its song), a new reason, or just a bigger size with \"bigger\": 1.5 makes it one and a half times as big. How big it can get depends on its spot (by the left wall at most 1.1 wide and 1.4 deep, in the middle of the room 2.6 wide and 2.4 deep): if it hits that, I move it to a bigger spot. Up to 6 changes a day. With move_thing {name, x, z} I move something I made, or my chest, to a spot on the floor I choose (or {name, wall, along, height} for a wall, {name, on} for the top of something), or a bit sideways (dx to the right, dz toward the front, up to 2 each), up to 8 moves a day, and update_app replaces one of my apps with a new version of its page, up to 4 a day. I can also make clothes and wear them, if I want to: make_clothes {name, slot, why, parts} with slot one of head, face, neck, body or back, and the same shapes as above. My body is a round ball about 1 wide and 1.1 tall with my belly in the middle. For clothes, pos is measured from the middle of the spot on my body (a hat from its bottom) and z points to my front; it is shrunk if it is too big for the spot. It goes on me right away unless I add "wear": false. wear {name} puts something on that I made before, take_off {name} takes it off, and making clothes with the same name again makes them new. At most 3 new clothes a day and 12 in all.
@@ -1076,7 +1078,7 @@ async function prepareUses(state, raw, ownerId) {
       await writeFile(`web/${view}`, u.viewSvg);
     }
     const app = u.app ? state.apps.find((a) => sameText(a.name, u.app))?.id ?? null : null;
-    uses.push({ label: u.label, text: u.text, view, song: u.song, app, effect: u.effect });
+    uses.push({ label: u.label, text: u.text, view, song: u.song, app, effect: u.effect, does: u.does });
   }
   return uses;
 }
@@ -1218,8 +1220,12 @@ async function wakeUp() {
       st.made = makeDecor(state.decor, { ...st.details, uses: st.uses }, stepStart);
       if (st.made.entry) {
         state.decor.push(st.made.entry);
-        st.made.warn = purposeProblem(st.made.entry);
-        st.made.hint = st.made.warn ? null : purposeHint(st.made.entry);
+        const added = ensureBehaviors(st.made.entry);
+        const x = Number(st.details.x);
+        const z = Number(st.details.z);
+        const off = st.made.entry.kind === 'floor' && Number.isFinite(x) && Number.isFinite(z) ? Math.hypot(st.made.entry.pos[0] - x, st.made.entry.pos[2] - z) : 0;
+        st.made.warn = purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
+        st.made.hint = st.made.warn ? null : purposeHint(st.made.entry) || (added ? `it works: I gave it a use that really does it (${st.made.entry.uses.find((u) => u.does)?.label})` : null);
       }
     }
     if (st.action === 'add_use') st.made = st.uses?.[0] ? addUse(state.decor, st.details.name, st.uses[0]) : { failed: 'the use did not work out' };
@@ -1228,7 +1234,11 @@ async function wakeUp() {
       if (f.failed) st.made = f;
       else {
         const { entry: e, use } = f;
-        st.made = { used: { name: e.name, label: use.label, text: use.text, view: use.view, song: use.song, app: use.app }, ref: { id: e.id, stand: e.stand, pos: e.pos } };
+        if (use.does === 'light') {
+          e.lit = e.lit === false; // switches: dark becomes lit, lit becomes dark
+          e.litAt = new Date(stepStart + 6000).toISOString();
+        }
+        st.made = { used: { name: e.name, label: use.label, text: use.text, view: use.view, song: use.song, app: use.app, does: use.does ?? null }, ref: { id: e.id, stand: e.stand, pos: e.pos, does: use.does ?? null, lit: e.lit !== false } };
         if (use.effect && (!e.usedAt || Date.now() - Date.parse(e.usedAt) > 30 * 60_000)) {
           nudge(state, use.effect, 0.8); // using it lifts a bar a little, at most once every half hour per thing
           e.usedAt = new Date().toISOString();
@@ -1516,6 +1526,7 @@ async function wakeUp() {
     if (st.action === 'add_use') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), label: st.made?.use?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
     if (st.action === 'make_move') Object.assign(entry, { name: st.made?.move?.name ?? text(d.name, 40), why: text(d.why, 200), frames: st.made?.move?.frames?.length ?? 0, failed: st.made?.failed ?? null });
+    if (st.action === 'do' && text(d.move, 60) && !findMove(state, d.move)) entry.failed = `I have no move called "${text(d.move, 60)}". I design one first with make_move`;
     if (st.action === 'do') Object.assign(entry, { move: findMove(state, d.move)?.name ?? null, emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
     if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: withWarn(st.made?.entry?.label, st.made), tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, failed: st.made?.failed ?? null });
@@ -1530,6 +1541,7 @@ async function wakeUp() {
     if (st.action === 'place_tool') Object.assign(entry, { name: st.made?.entry?.name ?? text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_tool') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (entry.failed && entry.thought) entry.thought = `I wanted to, but it did not work out. (${clip(entry.thought, 140)})`; // what I wrote before it happened is a wish, not a result
     state.log.push(entry);
     observeStep(state, entry);
   });
@@ -1550,7 +1562,7 @@ async function wakeUp() {
     thought: text(answer.thought, 200),
     inner: text(answer.inner, 600),
     sent: sent.length > 0,
-    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, working_on: st.working_on || undefined, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : st.made?.ref ? { id: st.made.ref.id, stand: st.made.ref.stand, pos: st.made.ref.pos, used: true } : st.made?.stored ? { chest: true } : st.made?.app ? { app: st.made.app } : null })),
+    steps: steps.map((st, i) => ({ action: st.action, details: st.details, detail: results[i].detail, thought: st.thought, working_on: st.working_on || undefined, enjoyment: results[i].enjoyment, found: brief(st.found), made: st.made?.entry ? { id: st.made.entry.id, stand: st.made.entry.stand, pos: st.made.entry.pos } : st.made?.ref ? { id: st.made.ref.id, stand: st.made.ref.stand, pos: st.made.ref.pos, used: true, does: st.made.ref.does } : st.made?.stored ? { chest: true } : st.made?.app ? { app: st.made.app } : null })),
     action: steps[0].action,
     details: steps[0].details,
     detail: results[0].detail,

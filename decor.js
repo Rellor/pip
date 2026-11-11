@@ -1,6 +1,7 @@
 import { cleanSong } from './songs.js';
 import { storedUses } from './uses.js';
 import { toolKind } from './tools.js';
+import { behaviorProblem } from './behaviors.js';
 import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pivotOf, frontWorld, ownSides, SIDE_VECTORS, sideOfVector } from './web/furniture.js';
 
 // Pip's decorations.
@@ -50,6 +51,7 @@ const num = (v, lo, hi, fallback) => {
   return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : fallback;
 };
 const r3 = (n) => Math.round(n * 1000) / 1000;
+const rid = () => Math.random().toString(36).slice(2, 4); // two more characters, so two things made in the same moment never share an id
 const str = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const triple = (v, lo, hi) => {
   const a = (Array.isArray(v) ? v : []).slice(0, 3).map((x) => num(x, lo, hi, 0));
@@ -234,7 +236,7 @@ export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PI
   const usable = Object.keys(ZONES).filter((k) => !ZONES[k].prints && (ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface'));
   const want = findZone(where);
   const cap0 = str(pic.caption, 60);
-  const entryOf = (h) => ({ id: `p${now.toString(36)}${decor.length}`, name: cap0 && cap0.length <= 40 ? cap0 : 'a picture', why: '', project: '', scale: 1, parts: [], image: pic.image, picture: pic.id, ...h, at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString() });
+  const entryOf = (h) => ({ id: `p${now.toString(36)}${decor.length}${rid()}`, name: cap0 && cap0.length <= 40 ? cap0 : 'a picture', why: '', project: '', scale: 1, parts: [], image: pic.image, picture: pic.id, ...h, at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString() });
   if (spot && (spot.wall || num2(spot.along) !== null || num2(spot.height) !== null)) { // he chose where
     const h = hangAt(decor, pic, sideOf(spot.wall) ?? (want ? ZONES[want].side : null) ?? 'back', num2(spot.along), num2(spot.height), max, now);
     return h.failed ? h : { entry: entryOf(h.place), warn: h.warn, moved: h.moved };
@@ -243,7 +245,7 @@ export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PI
     const h = hangPicture(decor, pic, want ? ZONES[want].side : null, max, atMs, now);
     if (!h) return { failed: 'there is no room left on the walls for it. He can take something down first' };
     const cap = str(pic.caption, 60);
-    return { entry: { id: `p${now.toString(36)}${decor.length}`, name: cap && cap.length <= 40 ? cap : 'a picture', why: '', project: '', scale: 1, parts: [], image: pic.image, picture: pic.id, ...h, at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString() } };
+    return { entry: { id: `p${now.toString(36)}${decor.length}${rid()}`, name: cap && cap.length <= 40 ? cap : 'a picture', why: '', project: '', scale: 1, parts: [], image: pic.image, picture: pic.id, ...h, at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString() } };
   }
   const first = want && usable.includes(want) ? want : null;
   const kind = first ? ZONES[first].kind : 'wall';
@@ -270,7 +272,7 @@ export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PI
   const stand = Z.kind === 'wall' ? (Z.side === 'back' ? [sx, -3.7] : [-3.7, sz]) : [clampRoom(sx + Z.off[0]), clampRoom(sz + Z.off[1])];
   return {
     entry: {
-      id: `p${now.toString(36)}${decor.length}`,
+      id: `p${now.toString(36)}${decor.length}${rid()}`,
       name: str(pic.caption, 60).length <= 40 && str(pic.caption, 60) ? str(pic.caption, 60) : 'a picture', // a long message is not a good name for a frame
       why: '',
       project: '',
@@ -328,7 +330,7 @@ export function printPhoto(decor, pic, where, atMs, now = Date.now()) {
   const cap = str(pic.caption, 60);
   return {
     entry: {
-      id: `p${now.toString(36)}${decor.length}`,
+      id: `p${now.toString(36)}${decor.length}${rid()}`,
       name: cap && cap.length <= 40 ? cap : 'a small print',
       why: '',
       project: '',
@@ -411,10 +413,10 @@ export const MAX_MOVES_PER_DAY = 8;
 const CHEST_BOUNDS = { x: [-4.45, 4.45], z: [-4.4, 4.45] };
 // Things stand square to the walls, never diagonal. Next to a wall they face into the room.
 export function wallFacing(x, z) {
-  if (x <= -3.9) return Math.PI / 2;
-  if (x >= 3.9) return -Math.PI / 2;
-  if (z >= 3.9) return Math.PI;
-  return 0;
+  // the same rule as when he moves something: next to a wall (within 1.6 m) it faces into the room from that wall
+  const dist = { left: x + 5, right: 5 - x, back: z + 5, front: 5 - z };
+  const [wall, d] = Object.entries(dist).sort((a, b) => a[1] - b[1])[0];
+  return d <= 1.6 ? { left: Math.PI / 2, right: -Math.PI / 2, back: 0, front: Math.PI }[wall] : 0;
 }
 // Older saves have things at an angle: turn them square to the wall. Returns true when something changed.
 export function squareUp(s, now = new Date().toISOString()) {
@@ -470,7 +472,8 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
       if (hit) return { failed: `the chest does not fit there (it would touch ${hit})` };
       ({ x, z, rotY } = f);
       const moves = [...(chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000), new Date(now).toISOString()];
-      return { name: 'chest', chest: { x, z, rotY, at, moves } };
+      const off = Math.hypot(x - Number(d.x), z - Number(d.z));
+      return { name: 'chest', chest: { x, z, rotY, at, moves }, warn: off > 0.5 ? `it stands at x ${x}, z ${z}, ${r3(off)} m from where I asked (it goes against a wall or inside the room)` : null };
     }
     if (want && ZONES[want].kind === 'floor') {
       const used = usedSlots(decor, want);
@@ -557,7 +560,8 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     }
     e.movedAt = at;
     e.updatedAt = at;
-    return { name: e.name, entry: e, label: e.label };
+    const offF = target ? Math.hypot(e.pos[0] - target.x, e.pos[2] - target.z) : 0;
+    return { name: e.name, entry: e, label: e.label, warn: offF > 0.5 ? `it stands ${r3(offF)} m from where I asked (x ${r3(target.x)}, z ${r3(target.z)}), because there was no room exactly there` : null };
   }
   const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
   if (want && want === e.zone && !dx && !dz && !hasXZ) return { failed: 'it is already there' };
@@ -757,7 +761,7 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
   return {
     moved,
     entry: {
-      id: `d${now.toString(36)}${decor.length}`,
+      id: `d${now.toString(36)}${decor.length}${rid()}`,
       name: spec.name,
       why: spec.why,
       project: spec.project,
@@ -910,6 +914,7 @@ function wallBlocker(r, obs, gap = 0.1) {
 }
 function placeWall(decor, spec, parts, side, want, atMs, now, moving = false) {
   const scale = fit(parts, 'wall', {});
+  if (scale < 0.55) return { failed: `${spec.name} is too big and deep for a wall: it would have to shrink to ${Math.round(scale * 100)}% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor` };
   const [hw, hh] = halfWall(parts, scale);
   const obs = wallObstacles(decor, side);
   const [ta, th] = want ?? [side === 'back' ? 0 : 0, 2.6];
@@ -934,7 +939,7 @@ function placeWall(decor, spec, parts, side, want, atMs, now, moving = false) {
   return {
     moved,
     entry: {
-      id: `d${now.toString(36)}${decor.length}`,
+      id: `d${now.toString(36)}${decor.length}${rid()}`,
       name: spec.name,
       why: spec.why,
       project: spec.project,
@@ -993,6 +998,8 @@ function wallLevels(o) {
 }
 // null when a thing works for what it is meant for, otherwise what is missing.
 export function purposeProblem(o) {
+  const b = behaviorProblem(o);
+  if (b) return b;
   if (!holdsThings(o) || !o.pos) return null;
   if (o.kind === 'wall') return wallLevels(o).length ? null : `${o.name} is meant to hold things, but it has no flat board or top wide enough for things to stand on (it needs a part at least 0.25 wide and 0.12 deep)`;
   const [w, , d] = sizeOf(o) ?? [0, 0, 0];
@@ -1068,7 +1075,7 @@ function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   return {
     moved,
     entry: {
-      id: `d${now.toString(36)}${decor.length}`,
+      id: `d${now.toString(36)}${decor.length}${rid()}`,
       name: spec.name,
       why: spec.why,
       project: spec.project,
@@ -1350,5 +1357,7 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
     o.label = `on ${f.n} (x ${nx}, z ${nz})`;
     o.updatedAt = at;
   }
-  return { name: f.n.replace(/^the /, ''), label: `at x ${place.x}, z ${place.z}`, furniture: { key, place: { ...place, at, from: { x: cur.x, z: cur.z, rot: cur.rot } }, moves: [...moves, new Date(now).toISOString()] }, moved };
+  const off = Math.hypot(place.x - x, place.z - z);
+  const warn = !d.next_to && off > 0.5 ? `it stands at x ${place.x}, z ${place.z}, ${r3(off)} m from where I asked, because ${moved ? 'there was no room exactly there' : 'a piece next to a wall goes flush against it'}` : null;
+  return { name: f.n.replace(/^the /, ''), warn, label: `at x ${place.x}, z ${place.z}`, furniture: { key, place: { ...place, at, from: { x: cur.x, z: cur.z, rot: cur.rot } }, moves: [...moves, new Date(now).toISOString()] }, moved };
 }

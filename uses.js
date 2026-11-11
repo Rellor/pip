@@ -7,6 +7,7 @@ import { cleanSvg } from './art.js';
 
 export const MAX_USES = 3;
 export const EFFECTS = ['wonder', 'joy', 'calm', 'fullness'];
+export const DOES = ['light', 'drive', 'spin']; // what the website plays when it is used
 export const VIEW_MAX_CHARS = 6_000;
 
 const str = (v, max) => (typeof v === 'string' ? v.replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max) : '');
@@ -22,8 +23,9 @@ export function cleanUses(raw) {
     const view = u.view ? cleanSvg(u.view, VIEW_MAX_CHARS) : null;
     const song = cleanSong(u.song);
     const app = str(u.app, 60) || null;
-    if (!text && !view && !song && !app) continue; // a button that does nothing is not a use
-    out.push({ label, text, viewSvg: view?.svg ?? null, song, app, effect: EFFECTS.includes(u.effect) ? u.effect : null });
+    const does = DOES.includes(u.does) ? u.does : null;
+    if (!text && !view && !song && !app && !does) continue; // a button that does nothing is not a use
+    out.push({ label, text, viewSvg: view?.svg ?? null, song, app, effect: EFFECTS.includes(u.effect) ? u.effect : null, does });
   }
   return out;
 }
@@ -42,6 +44,7 @@ export function storedUses(raw) {
       song: cleanSong(u.song),
       app: typeof u.app === 'string' && /^app[\w-]+$/.test(u.app) ? u.app : null,
       effect: EFFECTS.includes(u.effect) ? u.effect : null,
+      does: DOES.includes(u.does) ? u.does : null,
     });
   }
   return out;
