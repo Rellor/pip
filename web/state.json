@@ -1386,6 +1386,13 @@
       "importance": 9,
       "kind": "memory",
       "id": "mmwcbibnksh"
+    },
+    {
+      "at": "2026-11-11T16:13:10.818Z",
+      "text": "My bread project is finished: I baked the loaf at 14:37 and ate slices of it. The cooking limit for today is used up, so I cannot bake again until tomorrow. I do something else now.",
+      "importance": 7,
+      "kind": "memory",
+      "id": "mmwcbirz6br"
     }
   ],
   "reflections": [
@@ -5447,7 +5454,7 @@
       "id": "mwc5yrch",
       "title": "Bake a fresh loaf of bread",
       "why": "to bring the warm, comforting smell of baking into my room after all my stargazing",
-      "next": "enjoy a warm slice with butter",
+      "next": "",
       "steps": [
         {
           "text": "mix flour, water, and yeast in my cozy kitchen stove",
@@ -5459,16 +5466,16 @@
         },
         {
           "text": "bake the loaf in the oven",
-          "done": false
+          "done": true
         },
         {
           "text": "enjoy a warm slice with butter",
-          "done": false
+          "done": true
         }
       ],
-      "status": "working",
+      "status": "done",
       "since": "2026-11-11T13:37:38.801Z",
-      "updatedAt": "2026-11-11T16:03:15.925Z"
+      "updatedAt": "2026-11-11T16:13:10.817Z"
     },
     {
       "id": "mwbz5o97",
