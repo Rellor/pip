@@ -589,7 +589,7 @@ function parseNotes(input) {
   const text = Array.isArray(input) ? input.join(' ') : String(input ?? '');
   const notes = [];
   for (const tok of text.split(/[\s,;|/-]+/)) {
-    const m = /^([A-G])([#b]?)(\d)?$/.exec(tok);
+    const m = /^([A-G])([#b]?)(\d)?(?::[\d.]+)?$/.exec(tok);
     if (!m) continue;
     const semi = SEMI[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
     const oct = m[3] ? Number(m[3]) : 4;
@@ -602,6 +602,22 @@ function stepFor(style) {
   if (/slow|sad|soft|gentle|calm|sleep|dream/.test(s)) return 0.75;
   if (/fast|happy|quick|bright|fun|dance/.test(s)) return 0.28;
   return 0.48;
+}
+// What Pip played on the piano ("C4 E4:2 - G4", the style) as a song the player can hear again: :n is how many beats, - is a rest.
+function pianoSong(notesText, style) {
+  const notes = [];
+  for (const tok of String(Array.isArray(notesText) ? notesText.join(' ') : notesText ?? '').split(/[\s,;|/]+/).filter(Boolean).slice(0, 80)) {
+    if (/^-+$/.test(tok)) {
+      notes.push([null, 1]);
+      continue;
+    }
+    const m = /^([A-G])([#b]?)(\d)?(?::([\d.]+))?$/.exec(tok);
+    if (!m) continue;
+    notes.push([`${m[1]}${m[2]}${m[3] ?? 4}`, Math.min(4, Math.max(0.25, Number(m[4]) || 1))]);
+  }
+  if (!notes.some(([n]) => n)) return null;
+  const st = String(style || '').toLowerCase();
+  return { notes, tempo: /slow|sad|soft|gentle|calm|sleep|dream|quiet/.test(st) ? 62 : /fast|happy|quick|bright|fun|dance/.test(st) ? 130 : 92, timbre: 'piano' };
 }
 function playNotes(notes, step) {
   if (!audio) return;
@@ -1398,7 +1414,7 @@ $('walk').addEventListener('click', () => setMode(view.mode === 'walk' ? 'overvi
 
 // Things you can tap: Pip, the photo and Pip's creations carry their own info; furniture is found by where you tapped.
 const REGIONS = [
-  { furn: 'piano', box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.'] }; } },
+  { furn: 'piano', box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); const songs = n.slice(-5).reverse().map((x) => ({ x, song: pianoSong(x.notes, x.style) })).filter((x) => x.song); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.', songs.length ? 'Hear what he played:' : ''].filter(Boolean), actions: songs.map(({ x, song }) => ({ text: `▶ ${hm(Date.parse(x.at))}${x.style ? ` ${x.style}` : ''}`, run: () => playSong(song) })) }; } },
   { furn: 'piano', box: [-2.95, -2.25, 0, 0.7, -3.5, -2.8], info: () => ({ title: 'The piano stool', lines: ['Pip sits here to play.'] }) },
   { furn: 'bookshelf', box: [1.55, 3.65, 0, 3.1, -5, -4.3], info: () => { const last = logOf('read_book').at(-1); return { title: 'The bookshelf', lines: ['Pip goes here to read.', last?.opened ? `He last read about ${last.opened.title}.` : 'He has not read anything here yet.'], links: last?.opened?.url ? [{ text: `Read: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
   { furn: 'desk', box: [-5, -3.6, 0, 1.9, 0.1, 2.3], info: () => { const last = logOf('search_web').at(-1); const apps = lastState?.apps || []; return { title: 'The computer', lines: ['Pip looks things up on the web here.', last ? `His last search was "${last.query}".` : 'He has not searched yet.', apps.length ? `He has written ${apps.length} app${apps.length === 1 ? '' : 's'}:` : ''].filter(Boolean), links: last?.opened?.url ? [{ text: `He opened: ${last.opened.title}`, url: last.opened.url }] : [], actions: apps.slice(-5).map((a) => ({ text: `▶ Open ${a.name}`, run: () => openApp(a) })) }; } },
@@ -2060,6 +2076,7 @@ function showTab(name) {
   store('pip-tab', name);
   document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
   document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
+  if (name === 'day') loadOlder();
   if (name === 'messages') refreshNtfy(); // look for things typed in the ntfy app as soon as the chat is opened
   if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
   $('msgdot').classList.toggle('on', name !== 'messages' && !!latestMsg && latestMsg !== store('pip-seen'));
@@ -2180,6 +2197,12 @@ function dayCard(e) {
       const n = el('div', null, 'notes');
       notes.forEach((x) => n.append(el('span', x)));
       card.append(n);
+      const song = pianoSong(e.notes, e.style);
+      if (song) {
+        const b = el('button', '▶ Listen', 'small');
+        b.addEventListener('click', () => playSong(song));
+        card.append(b);
+      }
     }
   } else if (kind === 'diary') {
     if (e.text) card.append(el('div', e.text, 'quote'));
@@ -2335,6 +2358,47 @@ function renderDay(s) {
   }
   fill($('day'), out);
 }
+
+// Older days: what fell out of his state is kept in web/archive/<day>.json. It is only read here, never by Pip.
+var olderDays = null;
+async function loadOlder() {
+  await Promise.resolve(); // the page is still starting up when the Day tab opens first
+  if (olderDays) return;
+  const base = localHost ? 'archive/' : `${RAW}archive/`;
+  try {
+    const r = await fetch(`${base}index.json?t=${Math.floor(Date.now() / 60_000)}`, { cache: 'no-store' });
+    olderDays = r.ok ? await r.json() : [];
+  } catch {
+    olderDays = [];
+  }
+  if (!olderDays.length) {
+    fill($('olderlist'), [el('p', 'Nothing here yet. When his day gets old, it is saved here.', 'muted')]);
+    return;
+  }
+  fill($('olderlist'), olderDays.map((d) => {
+    const wrap = el('div', null, 'olderday');
+    const b = el('button', `${d.day} · ${d.log} things he did`, 'filter');
+    const body = el('div', null, 'cards');
+    body.hidden = true;
+    let loaded = false;
+    b.addEventListener('click', async () => {
+      body.hidden = !body.hidden;
+      if (body.hidden || loaded) return;
+      loaded = true;
+      try {
+        const r = await fetch(`${base}${d.day}.json`, { cache: 'no-store' });
+        const data = fromGithub(await r.json());
+        const cards = (data.log || []).slice().reverse().map((e) => dayCard(e));
+        body.replaceChildren(...(cards.length ? cards : [el('p', 'Nothing saved for this day.', 'muted')]));
+      } catch {
+        body.replaceChildren(el('p', 'Could not load this day.', 'muted'));
+      }
+    });
+    wrap.append(b, body);
+    return wrap;
+  }));
+}
+$('oldernote').addEventListener('click', loadOlder);
 
 // "Right now" and "Next" at the top of the Day tab
 function renderNow() {
@@ -2615,6 +2679,17 @@ function render(s) {
     ...(bag.length ? bag.map((x) => el('li', `🎒 ${x.name}${x.why ? ` — ${x.why}` : ''}`)) : [el('li', 'His inventory is empty. Without a tool he cannot do some things, like drawing.', 'muted')]),
     ...away.map((x) => el('li', `📦 ${x}. Not in his inventory, so he cannot use it.`, 'muted')),
   ]);
+  const pieces = (s.log || []).filter((e) => e.action === 'play_piano' && !e.failed && Date.parse(e.at) <= Date.now()).slice(-15).reverse();
+  fill($('pianolist'), pieces.length ? pieces.map((e) => {
+    const song = pianoSong(e.notes, e.style);
+    const li = el('li', `🎹 ${when(e.at)}${e.style ? ` — ${e.style}` : ''} `);
+    if (song) {
+      const b = el('button', '▶ Listen', 'small');
+      b.addEventListener('click', () => playSong(song));
+      li.append(b);
+    }
+    return li;
+  }) : empty('He has not played the piano yet.'));
   fill($('movelist'), (s.moves || []).length ? s.moves.map((m) => {
     const li = el('li', `🕺 ${m.name}${m.why ? ` — ${m.why}` : ''} `);
     const b = el('button', '▶ Show', 'small');

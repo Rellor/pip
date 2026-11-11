@@ -1,6 +1,7 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
+import { archiveOverflow } from './archive.js';
 import { setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
@@ -919,8 +920,7 @@ function applyInnerLife(s, r, detail, replying = false) {
   const at = new Date().toISOString();
   const inner = text(r.inner, 600) || text(r.thought, 300);
   if (inner) {
-    s.thoughts.push({ at, text: inner, short: text(r.thought, 200), mood: s.mood, action: r.action, detail });
-    s.thoughts = s.thoughts.slice(-250);
+    s.thoughts.push({ at, text: inner, short: text(r.thought, 200), mood: s.mood, action: r.action, detail }); // the oldest go to the archive at the end of the wake-up
   }
   for (const t of strings(r.wants_done)) {
     const hit = take(s.wants, t);
@@ -1531,7 +1531,8 @@ async function wakeUp() {
     state.log.push(entry);
     addMemory(state, `I could not ${b.st.action.replace(/_/g, ' ')}: ${b.why}`, 4, 'memory', entry.at);
   }
-  state.log = state.log.slice(-150);
+  const archived = await archiveOverflow(state, { tz: TZ }); // what is too old for his state goes to web/archive, where only the website reads it
+  if (archived) console.log(`🗄️  ${archived} old entries moved to the archive`);
 
   const brief = (f) => (f ? { title: f.title, text: f.text } : null);
   state.last = {
