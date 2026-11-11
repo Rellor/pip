@@ -214,6 +214,36 @@ export function takeOut(decor, stored, name, where, atMs, now = Date.now()) {
   return r;
 }
 
+// ---- Tools: they live in his inventory. He can stand one in his room, and take it back.
+const PLAIN_TOOL = [{ shape: 'box', size: [0.22, 0.1, 0.16], pos: [0, 0.05, 0], color: '#c9a46a', rot: [0, 0, 0] }];
+export function placeTool(decor, tools, name, where, atMs, now = Date.now()) {
+  const n = str(name, 60).toLowerCase();
+  const i = n ? tools.findIndex((x) => x.name.toLowerCase() === n || x.kind === n || x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())) : -1;
+  if (i < 0) return { failed: 'there is no tool with that name in his inventory' };
+  const t = tools[i];
+  const parts = Array.isArray(t.parts) && t.parts.length ? t.parts : PLAIN_TOOL;
+  const r = placeParts(decor, { name: t.name, why: t.why || '', project: '', where, parts, song: null, uses: [], tool: t.kind }, atMs, now);
+  if (r.entry) tools.splice(i, 1);
+  return r;
+}
+
+export function takeTool(decor, stored, tools, name, maxTools, now = Date.now()) {
+  const n = str(name, 60).toLowerCase();
+  if (!n) return { failed: 'he did not say which tool' };
+  const match = (x) => x.tool && (x.name.toLowerCase() === n || x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()) || x.tool === n);
+  if (tools.length >= maxTools) return { failed: 'his inventory is full' };
+  let from = decor;
+  let i = decor.findIndex(match);
+  if (i < 0) {
+    from = stored;
+    i = stored.findIndex(match);
+  }
+  if (i < 0) return { failed: 'there is no tool with that name in his room or chest' };
+  const [e] = from.splice(i, 1);
+  tools.push({ id: `t${now.toString(36)}${tools.length}`, name: e.name, kind: e.tool, source: 'made', why: e.why || '', parts: e.parts ?? null, at: new Date(now).toISOString() });
+  return { name: e.name, kind: e.tool };
+}
+
 // Pip takes something away. Returns the removed object, or null.
 export function removeDecor(decor, name) {
   const n = str(name, 60).toLowerCase();

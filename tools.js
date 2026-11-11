@@ -24,21 +24,23 @@ export function ensureTools(s) {
   s.tools = (Array.isArray(s.tools) ? s.tools : []).filter((t) => t && TOOL_KINDS[t.kind]);
 }
 
-// Every tool he has: in his inventory, standing in his room, or kept in his chest.
+export const MAX_TOOLS = 12;
+
+// Every tool of his. Only the ones in his inventory can be used. One he put in his room or chest must be taken back first.
 export function toolList(s) {
   return [
-    ...s.tools.map((t) => ({ kind: t.kind, name: t.name, where: 'in his inventory' })),
-    ...s.decor.filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his room' })),
-    ...(s.stored ?? []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his chest' })),
+    ...s.tools.map((t) => ({ kind: t.kind, name: t.name, where: 'in his inventory', usable: true })),
+    ...s.decor.filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his room', usable: false })),
+    ...(s.stored ?? []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his chest', usable: false })),
   ];
 }
-export const hasTool = (s, kind) => toolList(s).some((t) => t.kind === kind);
+export const hasTool = (s, kind) => s.tools.some((t) => t.kind === kind);
 
 // null when he can do it, otherwise why not.
 export function missingTool(s, action) {
   const kind = NEEDS[action];
   if (!kind || hasTool(s, kind)) return null;
-  return `I need ${kind} for that (${TOOL_KINDS[kind].hint}). I can make some with decorate and "tool": "${kind}", or ask for them`;
+  return `I need ${kind} for that (${TOOL_KINDS[kind].hint}). I can make some with decorate and "tool": "${kind}", or ask for them. It has to be in my inventory${toolList(s).some((x) => x.kind === kind) ? ' (mine is not: I take it back with take_tool)' : ''}`;
 }
 
 // Something he asked for was given to him. Returns the new inventory tool or null.
@@ -54,10 +56,21 @@ export function toolsText(s) {
   const have = toolList(s);
   const lines = Object.entries(TOOL_KINDS).map(([kind, k]) => {
     const mine = have.filter((t) => t.kind === kind);
-    return `- ${kind} (${k.hint}), needed for ${k.for}: ${mine.length ? `I have it (${mine.map((t) => `${t.name}, ${t.where}`).join('; ')})` : 'I do not have it yet'}`;
+    return `- ${kind} (${k.hint}), needed for ${k.for}: ${mine.length ? mine.map((t) => `${t.name} (${t.where}${t.usable ? '' : ', I cannot use it there: take_tool brings it back'})`).join('; ') : 'I do not have it yet'}`;
   });
   return `MY TOOLS (to do some things I need the right tool, like a person needs pencils to draw)
 ${lines.join('\n')}
-I can make a tool myself with decorate: I design it, and add "tool": "<kind>" so it counts (it can stand in my room, or sit in my chest). Or I can ask for it with asks_add. When it has been given to me I mark the ask as done and write its name in tools_add, and it goes in my inventory. Without the tool a step with that action does not work out.
+MY INVENTORY holds my tools (at most ${MAX_TOOLS}). I can only use a tool that is in my inventory. I can make a tool myself with decorate: I design it and add "tool": "<kind>", and it goes straight into my inventory. Or I can ask for it with asks_add. When it has been given to me I mark the ask as done and write its name in tools_add, and it goes in my inventory. If I want a tool to stand in my room I use place_tool {name, where}, and then it is not in my inventory: take_tool {name} takes it back. Without the tool in my inventory a step with that action does not work out.
 `;
+}
+
+// A tool he makes goes straight into his inventory. Returns { tool } or { failed }.
+export function craftTool(s, d, kind, parts, at = new Date().toISOString()) {
+  const name = clip(d.name, 40);
+  if (!name) return { failed: 'he did not give it a name' };
+  if (s.tools.length >= MAX_TOOLS) return { failed: 'his inventory is full' };
+  if (hasTool(s, kind)) return { failed: `he already has ${kind} in his inventory` };
+  const t = { id: `t${Date.now().toString(36)}${s.tools.length}`, name, kind, source: 'made', why: clip(d.why, 200), parts: parts ?? null, at };
+  s.tools.push(t);
+  return { tool: t };
 }

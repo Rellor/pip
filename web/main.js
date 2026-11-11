@@ -1858,6 +1858,8 @@ function headlineBase(st) {
     case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
+    case 'place_tool': return ['🧰', `Putting ${d.name || st.name || 'a tool'} in the room`];
+    case 'take_tool': return ['🎒', `Putting ${d.name || st.name || 'a tool'} in his inventory`];
     case 'extend_thing': return ['🧱', `Adding to ${d.name || st.name || 'something'}`];
     case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
     case 'print_photo': return ['🖨️', `Printing a photo (${d.id || st.name || 'a picture'})`];
@@ -1883,7 +1885,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_tool: 'make', take_tool: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -2374,7 +2376,8 @@ function render(s) {
   const owned = [...(s.tools || []).map((x) => ({ ...x, where: 'in his inventory' })), ...(s.decor || []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his room' })), ...(s.stored || []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his chest' }))];
   fill($('toollist'), Object.entries(TOOL_FOR).map(([kind, use]) => {
     const mine = owned.filter((x) => x.kind === kind);
-    return el('li', mine.length ? `🧰 ${kind} — ${mine.map((x) => `${x.name} (${x.where})`).join(', ')}` : `🔒 ${kind}: he does not have it yet. Needed for ${use}.`, mine.length ? '' : 'muted');
+    const usable = mine.some((x) => x.where === 'in his inventory');
+    return el('li', usable ? `🎒 ${kind} — ${mine.filter((x) => x.where === 'in his inventory').map((x) => x.name).join(', ')}` : mine.length ? `📦 ${kind} — ${mine.map((x) => `${x.name} (${x.where})`).join(', ')}. Not in his inventory, so he cannot use it.` : `🔒 ${kind}: he does not have it yet. Needed for ${use}.`, usable ? '' : 'muted');
   }));
   $('selfnote').textContent = s.self || 'Pip has not written about himself yet.';
   fill($('favlist'), (s.favorites || []).length ? s.favorites.map((f) => el('li', `❤️ ${f.kind ? `${f.kind}: ` : ''}${f.what}`)) : empty('No favorites yet.'));

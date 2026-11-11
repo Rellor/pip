@@ -1,10 +1,10 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror } from './mirror.js';
-import { ensureTools, toolsText, missingTool, addTool, toolKind } from './tools.js';
+import { ensureTools, toolsText, missingTool, addTool, toolKind, craftTool, MAX_TOOLS } from './tools.js';
 import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
 import { takePhoto } from './photo.js';
@@ -62,6 +62,8 @@ const ACTIONS = [
   'decorate(name, where, why, parts)',
   'remove_decoration(name)',
   'take_out(name, where)',
+  'place_tool(name, where)',
+  'take_tool(name)',
   'compose(name, song)',
   'draw(name, where, why, svg)',
   'make_app(name, why, html)',
@@ -80,7 +82,7 @@ const ACTIONS = [
 ];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, where)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'do', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -453,7 +455,7 @@ ROOM
 ${ROOM.join(', ')}
 
 THINGS I MADE FOR MY ROOM
-${bullets(s.decor.filter((d) => !d.art).map((d) => `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}]` : ''}${d.parts?.length ? ` [${d.parts.length} parts, about ${(sizeOf(d) ?? []).join(' x ')} m]` : ''}${d.song ? ' [it has a song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [it makes no sound yet: I can give it one with compose]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}
+${bullets(s.decor.filter((d) => !d.art).map((d) => `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}, standing here, so not in my inventory]` : ''}${d.parts?.length ? ` [${d.parts.length} parts, about ${(sizeOf(d) ?? []).join(' x ')} m]` : ''}${d.song ? ' [it has a song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [it makes no sound yet: I can give it one with compose]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}
 THINGS I DREW (a drawing can be put up again with place_picture, or taken down with take_down_picture, using its id)
 ${bullets(s.art.map((a) => `${a.id}: ${a.name}${s.decor.some((d) => d.art === a.id) ? ` (up: ${s.decor.find((d) => d.art === a.id).label})` : ' (in my album)'}`), 'nothing yet')}
 APPS I MADE ON MY COMPUTER
@@ -750,6 +752,8 @@ function describe(a) {
     case 'draw':
     case 'make_app':
     case 'take_out':
+    case 'place_tool':
+    case 'take_tool':
     case 'move_thing':
     case 'extend_thing':
     case 'change_thing':
@@ -1123,6 +1127,12 @@ async function wakeUp() {
         return;
       }
       madeOne = true;
+      const kind = toolKind(st.details.tool);
+      if (kind) {
+        const parts = cleanParts(st.details.parts);
+        st.made = craftTool(state, st.details, kind, parts);
+        return;
+      }
       st.made = makeDecor(state.decor, { ...st.details, uses: st.uses }, stepStart);
       if (st.made.entry) state.decor.push(st.made.entry);
     }
@@ -1156,6 +1166,11 @@ async function wakeUp() {
     if (st.action === 'wear') st.made = wear(state.wardrobe, st.details.name, stepStart);
     if (st.action === 'take_off') st.made = takeOff(state.wardrobe, st.details.name);
     if (st.action === 'remove_decoration') st.made = storeAway(state.decor, state.stored, st.details.name);
+    if (st.action === 'place_tool') {
+      st.made = placeTool(state.decor, state.tools, st.details.name, st.details.where, stepStart);
+      if (st.made.entry) state.decor.push(st.made.entry);
+    }
+    if (st.action === 'take_tool') st.made = takeTool(state.decor, state.stored, state.tools, st.details.name, MAX_TOOLS);
     if (st.action === 'take_out') {
       st.made = takeOut(state.decor, state.stored, st.details.name, st.details.where, stepStart);
       if (st.made.entry) state.decor.push(st.made.entry);
@@ -1403,7 +1418,7 @@ async function wakeUp() {
     if (st.action === 'add_use') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), label: st.made?.use?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
     if (st.action === 'do') Object.assign(entry, { emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
-    if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, failed: st.made?.failed ?? null });
     if (st.action === 'move_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), place: st.made?.label ?? (st.made?.chest ? 'in a new place' : null), failed: st.made?.failed ?? null });
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, failed: st.made?.failed ?? null });
@@ -1413,6 +1428,8 @@ async function wakeUp() {
     if (st.action === 'take_photo') Object.assign(entry, { target: text(d.target, 60), caption: text(d.caption, 300), image: st.made?.picture?.image ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'find_picture') Object.assign(entry, { query: text(d.query, 80), caption: text(d.caption, 200), picture: st.made?.found?.image ?? null, title: st.made?.found?.title ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'place_tool') Object.assign(entry, { name: st.made?.entry?.name ?? text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'take_tool') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     state.log.push(entry);
     observeStep(state, entry);
