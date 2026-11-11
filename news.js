@@ -32,27 +32,34 @@ export const isHeavy = (text) => HEAVY.test(text);
 // Picks up to 3 gentle items from the feed: a headline, a "did you know", and something from history.
 export function pickNews(feed, dayNumber = Math.floor(Date.now() / 86_400_000)) {
   const items = [];
-  const news = list(feed?.news).map((n) => ({ text: plain(n?.story), links: list(n?.links) })).filter((n) => n.text && !isHeavy(n.text));
-  if (news[0]) items.push({ kind: 'In the news', text: clip(news[0].text, 220), topic: topicOf(news[0].links), url: urlOf(news[0].links) });
+  const seen = new Set();
+  const add = (kind, text, links, max = 220) => {
+    const topic = topicOf(links);
+    if (!text || (topic && seen.has(topic))) return;
+    if (topic) seen.add(topic);
+    items.push({ kind, text: clip(text, max), topic, url: urlOf(links) });
+  };
+  // A few of each, from different places in the feed, so the day covers different subjects.
+  const spread = (arr, n) => (arr.length <= n ? arr : Array.from({ length: n }, (_, i) => arr[(dayNumber + Math.floor((i * arr.length) / n)) % arr.length]));
 
-  const dyk = list(feed?.dyk).map((d) => ({ text: plain(d?.text || d?.html), links: list(d?.links).length ? list(d.links) : htmlLinks(d?.html) })).filter((d) => d.text && !isHeavy(d.text));
-  if (dyk.length) {
-    const d = dyk[dayNumber % dyk.length];
-    items.push({ kind: 'Did you know', text: clip(d.text.replace(/^\.\.\.\s*/, ''), 220), topic: topicOf(d.links), url: urlOf(d.links) });
-  }
+  const news = list(feed?.news).map((n) => ({ text: plain(n?.story), links: list(n?.links) })).filter((n) => n.text && !isHeavy(n.text));
+  spread(news, 2).forEach((n) => add('In the news', n.text, n.links));
+
+  const dyk = list(feed?.dyk).map((d) => ({ text: plain(d?.text || d?.html).replace(/^\.\.\.\s*/, ''), links: list(d?.links).length ? list(d.links) : htmlLinks(d?.html) })).filter((d) => d.text && !isHeavy(d.text));
+  spread(dyk, 3).forEach((d) => add('Did you know', d.text, d.links));
 
   const past = list(feed?.onthisday).map((e) => ({ text: `${e?.year}: ${plain(e?.text)}`, links: list(e?.pages) })).filter((e) => !isHeavy(e.text));
-  if (past.length) {
-    const e = past[dayNumber % past.length];
-    items.push({ kind: 'On this day', text: clip(e.text, 220), topic: topicOf(e.links), url: urlOf(e.links) });
-  }
+  spread(past, 2).forEach((e) => add('On this day', e.text, e.links));
 
-  if (items.length < 3 && feed?.tfa?.title) {
+  if (feed?.tfa?.title) {
     const t = feed.tfa;
     const text = plain(t.extract);
-    if (text && !isHeavy(text)) items.push({ kind: 'Featured article', text: clip(text, 220), topic: String(t.title).replace(/_/g, ' '), url: t.content_urls?.desktop?.page || '' });
+    if (text && !isHeavy(text)) add('Featured article', text, [{ title: String(t.title).replace(/_/g, ' '), content_urls: t.content_urls }]);
   }
-  return items.slice(0, 3);
+  const pic = feed?.image;
+  const picText = plain(pic?.description?.text);
+  if (pic?.title && picText && !isHeavy(picText)) add('Picture of the day', picText, [{ title: String(pic.title).replace(/^File:/, '').replace(/\.\w+$/, '').replace(/_/g, ' '), content_urls: { desktop: { page: pic.file_page || '' } } }]);
+  return items.slice(0, 8);
 }
 
 export async function fetchNews(now = new Date()) {
@@ -69,12 +76,12 @@ export async function fetchNews(now = new Date()) {
 export async function refreshNews(state, now = new Date()) {
   const today = now.toISOString().slice(0, 10);
   const news = state.news || { date: '', items: [], triedAt: 0 };
-  if (news.date === today && news.items.length) return;
+  if (news.date === today && news.items.length && news.v === 2) return;
   if (now.getTime() - (news.triedAt || 0) < 3_600_000) return;
   news.triedAt = now.getTime();
   try {
     const items = await fetchNews(now);
-    if (items.length) Object.assign(news, { date: today, items });
+    if (items.length) Object.assign(news, { date: today, items, v: 2 });
   } catch (e) {
     console.error('⚠️  news:', e.message);
   }

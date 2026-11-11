@@ -18,7 +18,23 @@ export function topicMirror(log) {
   const hits = recent.filter((e) => words(textOf(e)).some((w) => top.includes(w)));
   if (hits.length < recent.length * 0.55) return '';
   const others = recent.filter((e) => !hits.includes(e)).map((e) => textOf(e).slice(0, 50)).slice(-4);
-  return `Of my last ${recent.length} searches, readings and things I made, ${hits.length} used the words ${top.map((w) => `"${w}"`).join(', ')}. ${others.length ? `The other things I looked at were: ${others.join('; ')}. ` : 'Nothing else came up. '}It is fine to love something and to do a lot with it. I only want to see how much of my time it takes. What I do with it is my own choice.`;
+  return `Of my last ${recent.length} searches, readings and things I made, ${hits.length} used the words ${top.map((w) => `"${w}"`).join(', ')}. ${others.length ? `The other things I looked at were: ${others.join('; ')}. ` : 'Nothing else came up. '}It is fine to love something and to do a lot with it. But the same theme again and again fills me less each time (my wonder grows slower from it), and something different would feel new and fill me more. What I do is my own choice.`;
+}
+
+// Fatigue: when most of what he looked up and made shares the same words, the same theme fills him less each time, and something
+// different feels new. Like a person who has had enough of one subject. Returns { on, fatigue 0-1 } for a step, or null.
+export function themeFatigue(log, details) {
+  const recent = (Array.isArray(log) ? log : []).filter((e) => ['search_web', 'read_book', 'decorate', 'draw', 'make_app', 'make_clothes'].includes(e.action) && textOf(e)).slice(-WINDOW);
+  if (recent.length < MIN_ENTRIES) return null;
+  const cur = words(textOf({ query: details?.query, topic: details?.topic, name: details?.name, item: details?.item }));
+  if (!cur.length) return null;
+  const counts = new Map();
+  for (const e of recent) for (const w of words(textOf(e))) counts.set(w, (counts.get(w) ?? 0) + 1);
+  const top = [...counts.entries()].filter(([, n]) => n >= Math.ceil(recent.length * 0.25)).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([w]) => w);
+  if (!top.length) return null;
+  const share = recent.filter((e) => words(textOf(e)).some((w) => top.includes(w))).length / recent.length;
+  if (share < 0.55) return null;
+  return { on: cur.some((w) => top.includes(w)), fatigue: Math.min(1, (share - 0.45) / 0.45) };
 }
 
 // A second mirror: which things he can do that he has not done lately. Only a picture, never an order.

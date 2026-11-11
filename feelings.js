@@ -41,8 +41,9 @@ export function passTime(s, now = Date.now()) {
 // Every step of his plan.
 // looks = how many of his last few steps were lookups (search or read). Lookups feed wonder less and less when they pile up,
 // while making something fills him: curiosity is the start, doing is what satisfies.
-export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fresh = false, style = '', looks = 0, bar = '' }) {
+export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fresh = false, style = '', looks = 0, bar = '', theme = null }) {
   const rested = s.energy >= 8; // before this step changes it
+  const wonder0 = s.wonder;
   s.energy = s.energy + (action === 'rest' ? 3 : action === 'walk_to' ? 0 : -0.5); // walking costs no energy
   s.joy = s.joy + (Number(enjoyment) - 8) / 6; // he rates most things 8 to 10, so only the best lifts joy and the rest lowers it a little
   switch (action) {
@@ -110,6 +111,13 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
       s.wonder += 0.6;
       s.calm += 0.2;
       break;
+  }
+  if (theme?.fatigue) {
+    if (theme.on) s.wonder = wonder0 + Math.min(0, s.wonder - wonder0) + Math.max(0, s.wonder - wonder0) * (1 - 0.6 * theme.fatigue); // the same theme fills him less
+    else {
+      s.wonder += 0.7 * theme.fatigue; // something different feels new
+      s.joy += 0.2;
+    }
   }
   if (repeating) s.wonder -= 1.5;
   if (fresh) {

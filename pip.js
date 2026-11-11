@@ -4,7 +4,7 @@ import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
-import { topicMirror, untriedMirror } from './mirror.js';
+import { topicMirror, untriedMirror, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesText } from './moves.js';
 import { ensureTools, NEEDS, toolsText, missingTool, addTool, toolKind, toolLabel, fits, craftTool, MAX_TOOLS } from './tools.js';
 import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
@@ -818,7 +818,7 @@ function applyResult(s, r) {
   const repeating = !r.working_on && lastThree.length === 3 && lastThree.every((x) => x === r.action); // working on something on purpose is not boredom
   const fresh = !['walk_to', 'rest', 'eat'].includes(r.action) && !s.log.slice(-40).some((e) => e.action === r.action); // something he has not done lately
   const looks = s.activities.slice(-6).filter((a) => ['search_web', 'read_book'].includes(a.action)).length;
-  stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, looks, style: r.details?.style, bar: r.details?.feeling });
+  stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, looks, style: r.details?.style, bar: r.details?.feeling, theme: themeFatigue(s.log, r.details) });
   s.mood = String(r.mood_after || s.mood);
 
   s.activities.push({ at: new Date().toISOString(), action: r.action, detail, enjoyment });
