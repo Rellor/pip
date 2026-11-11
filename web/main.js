@@ -1289,7 +1289,8 @@ pip.group.userData.info = () => {
   const s = lastState;
   const [icon, text] = plan && stepNow >= 0 ? headline(plan.steps[stepNow]) : ['•', 'getting ready'];
   const wearing = (s?.wardrobe || []).filter((c) => c.worn).map((c) => c.name);
-  return { title: 'Pip', lines: [`${icon} ${text}`, s?.mood ? `Mood: ${s.mood}` : '', wearing.length ? `Wearing: ${wearing.join(', ')}` : '', s ? `Fullness ${r1(s.fullness)} · Energy ${r1(s.energy)} · Wonder ${r1(s.wonder)} · Joy ${r1(s.joy)} · Calm ${r1(s.calm)}` : ''].filter(Boolean) };
+  const bag = (s?.tools || []).map((x) => `• ${x.name}${x.why ? ` — ${x.why}` : ''}`);
+  return { title: 'Pip', lines: [`${icon} ${text}`, s?.mood ? `Mood: ${s.mood}` : '', wearing.length ? `Wearing: ${wearing.join(', ')}` : '', bag.length ? `🎒 In his inventory:\n${bag.join('\n')}` : '🎒 His inventory is empty.', s ? `Fullness ${r1(s.fullness)} · Energy ${r1(s.energy)} · Wonder ${r1(s.wonder)} · Joy ${r1(s.joy)} · Calm ${r1(s.calm)}` : ''].filter(Boolean) };
 };
 wallFrame.userData.info = () => ({
   title: 'Beneath the Milky Way',
@@ -2372,13 +2373,12 @@ function render(s) {
     })
     : [el('div', 'Nobody has given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
   const pantry = (s.pantry || []).filter((p) => p.qty > 0).sort((a, b) => (a.kind === 'dish' ? 0 : 1) - (b.kind === 'dish' ? 0 : 1));
-  const TOOL_FOR = { 'drawing supplies': 'drawing', 'sewing kit': 'making clothes', toolbox: 'building big things step by step' };
-  const owned = [...(s.tools || []).map((x) => ({ ...x, where: 'in his inventory' })), ...(s.decor || []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his room' })), ...(s.stored || []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his chest' }))];
-  fill($('toollist'), Object.entries(TOOL_FOR).map(([kind, use]) => {
-    const mine = owned.filter((x) => x.kind === kind);
-    const usable = mine.some((x) => x.where === 'in his inventory');
-    return el('li', usable ? `🎒 ${kind} — ${mine.filter((x) => x.where === 'in his inventory').map((x) => x.name).join(', ')}` : mine.length ? `📦 ${kind} — ${mine.map((x) => `${x.name} (${x.where})`).join(', ')}. Not in his inventory, so he cannot use it.` : `🔒 ${kind}: he does not have it yet. Needed for ${use}.`, usable ? '' : 'muted');
-  }));
+  const bag = s.tools || [];
+  const away = [...(s.decor || []).filter((d) => d.tool).map((d) => `${d.name} (in his room)`), ...(s.stored || []).filter((d) => d.tool).map((d) => `${d.name} (in his chest)`)];
+  fill($('toollist'), [
+    ...(bag.length ? bag.map((x) => el('li', `🎒 ${x.name}${x.why ? ` — ${x.why}` : ''}`)) : [el('li', 'His inventory is empty. Without a tool he cannot do some things, like drawing.', 'muted')]),
+    ...away.map((x) => el('li', `📦 ${x}. Not in his inventory, so he cannot use it.`, 'muted')),
+  ]);
   $('selfnote').textContent = s.self || 'Pip has not written about himself yet.';
   fill($('favlist'), (s.favorites || []).length ? s.favorites.map((f) => el('li', `❤️ ${f.kind ? `${f.kind}: ` : ''}${f.what}`)) : empty('No favorites yet.'));
   fill($('ritlist'), (s.rituals || []).length ? s.rituals.map((r) => el('li', `🔁 ${r.text}${r.when ? ` (${r.when})` : ''}`)) : empty('No rituals yet.'));

@@ -1,6 +1,7 @@
 // Tools: to do some things Pip needs the right tool, like a person needs pencils to draw.
-// He can make a tool himself (decorate with "tool": "<kind>"), ask for it, or be given it. A tool can stand in his room
-// (or in his chest) or stay in his inventory. To add a new kind of tool or a new thing that needs one, add a line here.
+// A tool is any thing he names: pencils, a hammer, a telescope. He can make it himself (decorate with "tool": "its name"),
+// ask for it, or be given it. It must be in his inventory to be used. A step can say what it needs ("needs": "a ladder").
+// TOOL_KINDS / NEEDS are only the fixed rules for a few actions; for everything else Pip himself says what a step needs.
 
 export const TOOL_KINDS = {
   'drawing supplies': { words: /pencil|marker|crayon|paint|brush|\bpens?\b|drawing|sketch|paper|art suppl|\bink\b|easel/i, hint: 'pencils, markers, paint, paper', for: 'drawing with draw' },
@@ -20,8 +21,29 @@ export function toolKind(name) {
   return Object.entries(TOOL_KINDS).find(([, k]) => k.words.test(n))?.[0] ?? null;
 }
 
+// What a tool is called: its known kind ("drawing supplies") or, for anything else, its own name.
+export function toolLabel(v) {
+  const n = clip(typeof v === 'string' ? v : '', 40).toLowerCase();
+  if (!n || ['no', 'none', 'false', 'null', 'n/a'].includes(n)) return null;
+  return toolKind(n) ?? n;
+}
+
 export function ensureTools(s) {
-  s.tools = (Array.isArray(s.tools) ? s.tools : []).filter((t) => t && TOOL_KINDS[t.kind]);
+  s.tools = (Array.isArray(s.tools) ? s.tools : []).filter((t) => t && typeof t.name === 'string' && t.name).map((t) => ({ ...t, kind: t.kind || toolLabel(t.name) || t.name.toLowerCase() }));
+}
+
+const stem = (w) => w.replace(/(es|s)$/, '');
+const words = (x) => (String(x).toLowerCase().match(/[a-z]{4,}/g) ?? []).map(stem).filter((w) => !['some', 'with', 'from', 'that', 'this', 'for', 'tool', 'tools', 'kit', 'supplies'].includes(w));
+// Does this inventory item fit what a step needs? "pencils" fits "a cup of pencils", "drawing supplies" fits "markers".
+export function fits(item, needs) {
+  const a = `${item.name} ${item.kind}`.toLowerCase();
+  const n = clip(needs, 60).toLowerCase();
+  if (!n) return true;
+  if (a.includes(n) || n.includes(item.name.toLowerCase())) return true;
+  const k = toolKind(n);
+  if (k && (item.kind === k || toolKind(item.name) === k)) return true;
+  const have = new Set(words(a));
+  return words(n).some((w) => have.has(w));
 }
 
 export const MAX_TOOLS = 12;
@@ -34,7 +56,7 @@ export function toolList(s) {
     ...(s.stored ?? []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his chest', usable: false })),
   ];
 }
-export const hasTool = (s, kind) => s.tools.some((t) => t.kind === kind);
+export const hasTool = (s, kind) => s.tools.some((t) => t.kind === kind || toolKind(t.name) === kind);
 
 // null when he can do it, otherwise why not.
 export function missingTool(s, action) {
@@ -45,22 +67,21 @@ export function missingTool(s, action) {
 
 // Something he asked for was given to him. Returns the new inventory tool or null.
 export function addTool(s, name, at = new Date().toISOString()) {
-  const kind = toolKind(name);
-  if (!kind || hasTool(s, kind)) return null;
+  const kind = toolLabel(name);
+  if (!kind || s.tools.length >= MAX_TOOLS || s.tools.some((x) => fits(x, name))) return null;
   const t = { id: `t${Date.now().toString(36)}${s.tools.length}`, name: clip(name, 40) || kind, kind, source: 'given', at };
   s.tools.push(t);
   return t;
 }
 
 export function toolsText(s) {
-  const have = toolList(s);
-  const lines = Object.entries(TOOL_KINDS).map(([kind, k]) => {
-    const mine = have.filter((t) => t.kind === kind);
-    return `- ${kind} (${k.hint}), needed for ${k.for}: ${mine.length ? mine.map((t) => `${t.name} (${t.where}${t.usable ? '' : ', I cannot use it there: take_tool brings it back'})`).join('; ') : 'I do not have it yet'}`;
-  });
-  return `MY TOOLS (to do some things I need the right tool, like a person needs pencils to draw)
-${lines.join('\n')}
-MY INVENTORY holds my tools (at most ${MAX_TOOLS}). I can only use a tool that is in my inventory. I can make a tool myself with decorate: I design it and add "tool": "<kind>", and it goes straight into my inventory. Or I can ask for it with asks_add. When it has been given to me I mark the ask as done and write its name in tools_add, and it goes in my inventory. If I want a tool to stand in my room I use place_tool {name, where}, and then it is not in my inventory: take_tool {name} takes it back. Without the tool in my inventory a step with that action does not work out.
+  const mine = toolList(s);
+  const inv = mine.filter((x) => x.usable);
+  const away = mine.filter((x) => !x.usable);
+  const fixed = Object.entries(TOOL_KINDS).map(([kind, k]) => `${k.for} needs ${kind} (${k.hint})`).join('; ');
+  return `MY INVENTORY (what I can use; at most ${MAX_TOOLS} tools)
+${inv.length ? inv.map((x) => `- ${x.name}`).join('\n') : '- nothing yet'}
+${away.length ? `Tools I put away (I cannot use them there, take_tool brings them back): ${away.map((x) => `${x.name} (${x.where})`).join(', ')}\n` : ''}Like a person I think about what I need: ${fixed}. For any other step that needs a tool (a hammer to build, a ladder to reach something high, a telescope to look at stars), I add "needs": "the tool" to that step. If it is not in my inventory, the step does not work out. I can make a tool myself with decorate and "tool": "its name" (I design it and it goes straight into my inventory), or ask for it with asks_add. When it has been given to me I mark the ask as done and write its name in tools_add, and it goes in my inventory. place_tool {name, where} puts a tool in my room (then it is not in my inventory), take_tool {name} takes it back.
 `;
 }
 
@@ -69,7 +90,7 @@ export function craftTool(s, d, kind, parts, at = new Date().toISOString()) {
   const name = clip(d.name, 40);
   if (!name) return { failed: 'he did not give it a name' };
   if (s.tools.length >= MAX_TOOLS) return { failed: 'his inventory is full' };
-  if (hasTool(s, kind)) return { failed: `he already has ${kind} in his inventory` };
+  if (s.tools.some((x) => x.kind === kind)) return { failed: `he already has ${kind} in his inventory` };
   const t = { id: `t${Date.now().toString(36)}${s.tools.length}`, name, kind, source: 'made', why: clip(d.why, 200), parts: parts ?? null, at };
   s.tools.push(t);
   return { tool: t };
