@@ -306,6 +306,7 @@ function applyFurniture(s) {
 }
 function updateDecor(s) {
   applyFurniture(s);
+  scheduleDue(s);
   const c = s?.chest; // Pip moved his chest
   if (c && Date.parse(c.at) <= Date.now()) {
     chestGroup.position.set(c.x, 0, c.z);
@@ -335,6 +336,15 @@ function updateDecor(s) {
     decorGroups.set(d.id, g);
     if (d.song && audio?.state === 'running' && Date.now() - Date.parse(d.at) < 8000) playSong(d.song);
   }
+}
+// Things Pip placed count from a moment in the near future (so they appear when he walks there). Show them exactly then, not at the next refresh.
+let dueTimer = null;
+function scheduleDue(s) {
+  clearTimeout(dueTimer);
+  const now = Date.now();
+  const times = [...(s?.decor || []).flatMap((d) => [d.at, d.updatedAt]), s?.chest?.at, ...Object.values(s?.furniture || {}).map((f) => f?.at)].map((t) => Date.parse(t)).filter((t) => t > now);
+  if (!times.length) return;
+  dueTimer = setTimeout(() => lastState && updateDecor(lastState), Math.min(...times) - now + 300);
 }
 function popDecor(now) {
   for (const g of decorGroups.values()) {
@@ -2637,13 +2647,15 @@ function fromGithub(v) {
 }
 
 async function loadState() {
-  try {
-    const r = await fetch('/api/state', { cache: 'no-store' });
-    if (r.ok && (r.headers.get('content-type') || '').includes('json')) return await r.json();
-  } catch {}
+  if (isLocal) { // only the local server has /api/state; the live site reads the saved file
+    try {
+      const r = await fetch('/api/state', { cache: 'no-store' });
+      if (r.ok && (r.headers.get('content-type') || '').includes('json')) return await r.json();
+    } catch {}
+  }
   if (!isLocal) {
     try {
-      const r = await fetch(`${RAW}state.json?t=${Math.floor(Date.now() / 60_000)}`, { cache: 'no-store' }); // a new number each minute
+      const r = await fetch(`${RAW}state.json?t=${Math.floor(Date.now() / 20_000)}`, { cache: 'no-store' }); // a new number every 20 seconds
       if (r.ok) return { ...fromGithub(await r.json()), _static: true };
     } catch {}
   }
@@ -2667,7 +2679,7 @@ async function poll() {
     render(s);
     refreshNtfy();
     if (s._static) {
-      delay = Date.now() < fastUntil ? 10_000 : 60_000;
+      delay = Date.now() < fastUntil ? 10_000 : 30_000;
       $('wake').hidden = true;
     }
     waking = !!s._waking;
