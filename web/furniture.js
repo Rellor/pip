@@ -93,8 +93,8 @@ export const frontLocal = (key, fronts) => {
 export const frontWorld = (key, rot, fronts) => quarter(turn(frontLocal(key, fronts), rot || 0));
 export const SIDE_VECTORS = { left: [-1, 0], right: [1, 0], back: [0, -1], front: [0, 1] };
 export const sideOfVector = ([x, z]) => Object.entries(SIDE_VECTORS).find(([, v]) => v[0] === (Math.round(x) || 0) && v[1] === (Math.round(z) || 0))?.[0] ?? 'front';
-// Seen from the thing itself (as if it were a person standing there, looking the way its front points): which side of the room is its front, back, left or right.
+// Its sides the way people say them: left and right as seen by someone standing in front of it and looking at it, like the left of a TV. Returns which side of the room each is.
 export function ownSides(front) {
   const [fx, fz] = front;
-  return { front: sideOfVector([fx, fz]), back: sideOfVector([-fx, -fz]), left: sideOfVector([fz, -fx]), right: sideOfVector([-fz, fx]) };
+  return { front: sideOfVector([fx, fz]), back: sideOfVector([-fx, -fz]), left: sideOfVector([-fz, fx]), right: sideOfVector([fz, -fx]) };
 }
