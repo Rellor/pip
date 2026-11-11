@@ -1221,6 +1221,26 @@ function planFor(last) {
 // A move is a few poses over time (see moves.js). Between two poses it eases; the last one leads back to the first.
 let preview = null;
 const ease = (x) => x * x * (3 - 2 * x);
+// Little things he does by himself when a step is quick and he is just standing there (not sleeping): free, no tokens, played by the page.
+// They use the same pose data as the moves Pip designs.
+const IDLES = [
+  { id: 'idle-look', duration: 4.5, frames: [{ at: 0 }, { at: 0.2, turn: -0.9 }, { at: 0.45, turn: -0.9 }, { at: 0.65, turn: 0.9 }, { at: 0.85, turn: 0.9 }, { at: 1 }] },
+  { id: 'idle-stretch', duration: 3.2, frames: [{ at: 0 }, { at: 0.3, armL: 1, armR: 1, lean: -0.2, spread: 0.2, eyes: 0.8 }, { at: 0.65, armL: 1, armR: 1, lean: -0.2, spread: 0.2, eyes: 0.8 }, { at: 1 }] },
+  { id: 'idle-yawn', duration: 3, frames: [{ at: 0 }, { at: 0.35, lean: -0.25, armL: 0.5, armR: 0.5, eyes: 1 }, { at: 0.7, lean: -0.25, armL: 0.5, armR: 0.5, eyes: 1, sign: '…' }, { at: 1 }] },
+  { id: 'idle-sway', duration: 3.4, frames: [{ at: 0 }, { at: 0.25, tilt: 0.14 }, { at: 0.75, tilt: -0.14 }, { at: 1 }] },
+  { id: 'idle-tap', duration: 2.4, frames: [{ at: 0 }, { at: 0.15, footR: 1 }, { at: 0.3 }, { at: 0.45, footR: 1 }, { at: 0.6 }, { at: 1 }] },
+  { id: 'idle-hop', duration: 1.6, frames: [{ at: 0 }, { at: 0.25, hop: 0.16 }, { at: 0.5 }, { at: 0.75, hop: 0.12 }, { at: 1 }] },
+  { id: 'idle-think', duration: 4, frames: [{ at: 0 }, { at: 0.2, tilt: 0.3, armR: 0.9, armL: 0.1 }, { at: 0.8, tilt: 0.3, armR: 0.9, armL: 0.1, sign: '?' }, { at: 1 }] },
+  { id: 'idle-hum', duration: 4, frames: [{ at: 0 }, { at: 0.2, tilt: 0.12, sign: '♪' }, { at: 0.5, tilt: -0.12 }, { at: 0.7, tilt: 0.12, sign: '♪' }, { at: 1 }] },
+  { id: 'idle-shrug', duration: 1.8, frames: [{ at: 0 }, { at: 0.3, spread: 0.6, armL: 0.3, armR: 0.3, hop: 0.05 }, { at: 0.7, spread: 0.6, armL: 0.3, armR: 0.3, hop: 0.05 }, { at: 1 }] },
+];
+let lastIdle = '';
+function pickIdle() {
+  const options = IDLES.filter((m) => m.id !== lastIdle);
+  const m = options[Math.floor(Math.random() * options.length)];
+  lastIdle = m.id;
+  return m;
+}
 function movePose(mv, ms) {
   const keys = ['hop', 'lean', 'turn', 'tilt', 'armL', 'armR', 'spread', 'footL', 'footR'];
   const f = [...mv.frames];
@@ -1360,11 +1380,25 @@ function frame(now, dt) {
         }
         anim = task.anim;
         engaged = true;
-        if (now > task.nextBreak) startBreak();
+        if (task.anim !== 'look' && now > task.nextBreak) startBreak(); // a quick step does not send him walking back and forth: he idles in place
       }
     }
   }
 
+  // --- idle: while a quick step has nothing more to show, he does small things by himself, now and then
+  if (engaged && anim === 'look' && !walking) {
+    if (!task.idle) task.idle = { move: null, start: 0, until: 0, next: now + rand(1500, 3500) };
+    const id = task.idle;
+    if (!id.move || now >= id.until) {
+      id.move = null;
+      if (now >= id.next) {
+        id.move = pickIdle();
+        id.start = now;
+        id.until = now + id.move.duration * 1000;
+        id.next = id.until + rand(1500, 5000);
+      }
+    }
+  }
   // --- piano: play the planned tune, then keep improvising
   let phraseIdx = -1;
   if (engaged && anim === 'play') {
@@ -1414,8 +1448,9 @@ function frame(now, dt) {
   const reading = engaged && (anim === 'read' || anim === 'write');
   book.visible = reading;
   const pv = preview && now < preview.until && !walking ? preview : null; // a move shown from the Life tab
-  const mv = pv ? pv.move : engaged && anim === 'move' && task.move ? task.move : null;
-  const mvStart = pv ? pv.start : task?.arrivedAt || now;
+  const idleNow = engaged && anim === 'look' && !walking && task.idle?.move ? task.idle : null;
+  const mv = pv ? pv.move : idleNow ? idleNow.move : engaged && anim === 'move' && task.move ? task.move : null;
+  const mvStart = pv ? pv.start : idleNow ? idleNow.start : task?.arrivedAt || now;
   let mvEyes = 0;
   const base = (s) => [s * 0.5, 0.55, 0.1];
   let la = base(-1);
@@ -3152,6 +3187,9 @@ $('wake').addEventListener('click', () => {
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipGroup = (id) => decorGroups.get(id); // for testing
 window.pipStep = (n, dt = 0.05) => { for (let i = 0; i < n; i++) updateBehaviors(performance.now() + i * dt * 1000, dt); }; // for testing without a visible page
+let tickClock = 0;
+window.pipTick = (n, dt = 0.05) => { tickClock ||= performance.now(); for (let i = 0; i < n; i++) { tickClock += dt * 1000; frame(tickClock, dt); updateBehaviors(tickClock, dt); } return tickClock; }; // for testing: run n frames by hand
+window.pipPose = () => ({ rot: [pip.body.rotation.x, pip.body.rotation.y, pip.body.rotation.z].map((v) => +v.toFixed(2)), y: +pip.body.position.y.toFixed(2), at: [pip.group.position.x, pip.group.position.z].map((v) => +v.toFixed(2)), idle: task?.idle?.move?.id ?? null, anim: task?.anim });
 window.pipRun = (id, does, motion) => { runBehavior(id, does, motion); return behaviors.get(id) ? { legs: behaviors.get(id).legs?.length ?? 0 } : null; };
 window.pipBeh = behaviors;
 window.pipFrame = (cam) => { if (cam) { camera.position.set(...cam.p); camera.lookAt(...cam.t); } renderer.render(scene, camera); }; // for testing: draw one frame by hand
