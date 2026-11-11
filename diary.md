@@ -768,3 +768,11 @@ Bas brought me a photo printer, so now I can finally print my Milky Way photo!
 - do (stand back and admire how the printed Milky Way photo looks on the wall): It looks so real on paper now, like a tiny piece of the night sky right here in my room.
 - mood: joyful
 
+## 11/11/2026, 08:38:38
+I want to try turning my stellar acoustic data idea into a little sound sculpture.
+> I have been reading about star oscillations for so long, but I want to make something with my own hands now. Building a tiny vibrating resonator on my desk will let me hear and see my star ideas come alive.
+- walk_to (computer): I walk to my desk to plan out the little sculpture.
+- decorate (stellar wave bell): I build a tiny glowing bell that hums like a star.
+- use (stellar wave bell): I press the button to hear my new star bell ring.
+- mood: joyful
+
