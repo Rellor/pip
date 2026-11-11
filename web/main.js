@@ -1670,6 +1670,12 @@ $('taskform').addEventListener('submit', async (e) => {
   }
 });
 
+// Asks you answered (by id), kept until Pip has saved his side.
+let answeredAsks = {};
+try {
+  answeredAsks = JSON.parse(store('pip-asks-answered') || '{}');
+} catch {}
+
 // Closing a task yourself: "done" or "remove". It shows right away and is saved when Pip next wakes up.
 let closing = {};
 try {
@@ -2178,7 +2184,10 @@ function render(s) {
   renderMind(s);
 
   const asks = s.asks || [];
-  const open = asks.filter((a) => a.status === 'open');
+  // Pip only saves your answer when he next wakes up, so an ask you answered is hidden here at once.
+  for (const a of asks) if (answeredAsks[a.id ?? a.item] && a.status !== 'open') delete answeredAsks[a.id ?? a.item];
+  store('pip-asks-answered', JSON.stringify(answeredAsks));
+  const open = asks.filter((a) => a.status === 'open' && !answeredAsks[a.id ?? a.item]);
   $('askcount').textContent = open.length || '';
   fill($('asks'), open.length
     ? open.map((a) => {
@@ -2188,9 +2197,16 @@ function render(s) {
       li.append(el('div', `asked ${when(a.since)}`, 'meta'));
       const row = el('div', null, 'buttons');
       const done = el('button', '✓ I did this', 'small primary');
-      done.addEventListener('click', () => sendReply(`I did this for you: "${a.item}"`));
+      const answer = async (text, kind) => {
+        if (await sendReply(text)) {
+          answeredAsks[a.id ?? a.item] = kind;
+          store('pip-asks-answered', JSON.stringify(answeredAsks));
+          if (lastState) render(lastState);
+        }
+      };
+      done.addEventListener('click', () => answer(`I did this for you: "${a.item}"`, 'done'));
       const cant = el('button', "I can't do this", 'small');
-      cant.addEventListener('click', () => sendReply(`I can't do this one: "${a.item}"`));
+      cant.addEventListener('click', () => answer(`I can't do this one: "${a.item}"`, 'cant'));
       row.append(done, cant);
       li.append(row);
       return li;
@@ -2244,7 +2260,7 @@ function render(s) {
     return box;
   }).filter(Boolean);
   fill($('tasklist'), sections.length ? sections : [el('p', 'Nothing yet. Ask Pip to do something, for example to build a kitchen.', 'muted')]);
-  const closed = asks.filter((a) => a.status !== 'open').reverse();
+  const closed = asks.filter((a) => a.status !== 'open' || answeredAsks[a.id ?? a.item]).reverse();
   fill($('asksdone'), closed.length ? closed.map((a) => el('li', a.item)) : [el('li', 'nothing yet', 'muted')]);
 
   const outbox = s.outbox || [];
