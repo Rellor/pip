@@ -1,6 +1,6 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror } from './mirror.js';
@@ -252,6 +252,7 @@ async function loadState() {
   ensureIdentity(state);
   ensureMemory(state);
   ensureTools(state);
+  squareUp(state);
   state.chest ??= null;
   delete state.builds;
   ensureFeelings(state);
@@ -453,6 +454,7 @@ ${bullets(s.reflections.slice(-5).map((r) => r.text), 'nothing yet')}
 
 ROOM
 ${ROOM.join(', ')}
+THE LAYOUT OF MY ROOM: it is square, x goes from -5 (left wall) to 5 (right wall), z from -5 (back wall, with the window) to 5 (front). Against the back wall stand the piano (left) and the bookshelf (right), and the window is in it. The desk and my computer are against the left wall, with the photo wall above the desk. My bed is in the front right corner. Things stand square to the walls, never diagonal: next to a wall they face into the room, and the code turns them for me. I leave walking space in the middle.
 
 THINGS I MADE FOR MY ROOM
 ${bullets(s.decor.filter((d) => !d.art).map((d) => `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}, standing here, so not in my inventory]` : ''}${d.parts?.length ? ` [${d.parts.length} parts, about ${(sizeOf(d) ?? []).join(' x ')} m]` : ''}${d.song ? ' [it has a song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [it makes no sound yet: I can give it one with compose]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}

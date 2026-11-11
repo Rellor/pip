@@ -22,13 +22,13 @@ const MAX_DECOR = 30;
 // "off" is where Pip stands relative to the spot, rotY turns the object to face into the room.
 export const ZONES = {
   floor_under_window: { label: 'on the floor under the window', kind: 'floor', lim: { d: 1.2 }, rotY: 0, off: [0, 1.1], slots: [[-1.0, 0, -4.4], [1.0, 0, -4.4]] },
-  floor_left_wall: { label: 'on the floor by the left wall', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: 0.8, off: [1.2, 0], slots: [[-4.5, 0, -2.9], [-4.5, 0, -1.4]] },
+  floor_left_wall: { label: 'on the floor by the left wall', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: Math.PI / 2, off: [1.2, 0], slots: [[-4.5, 0, -2.9], [-4.5, 0, -1.4]] },
   floor_middle: { label: 'on the floor in the middle of the room', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [[-1.8, 0, 0.4], [1.8, 0, 0.0], [0.2, 0, -1.2]] },
   floor_front: { label: 'on the floor near the front of the room', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [[-2.6, 0, 3.2], [-0.6, 0, 3.8], [1.2, 0, 3.4]] },
-  floor_right: { label: 'on the floor on the right side of the room', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: -0.6, off: [-1.2, 0], slots: [[4.4, 0, -1.6], [4.4, 0, -0.2]] },
+  floor_right: { label: 'on the floor on the right side of the room', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: -Math.PI / 2, off: [-1.2, 0], slots: [[4.4, 0, -1.6], [4.4, 0, -0.2]] },
   on_piano: { label: 'on top of the piano', kind: 'surface', lim: { w: 1.1, d: 0.8 }, rotY: 0, off: [0, 1.5], slots: [[-3.4, 1.4, -4.5], [-1.9, 1.4, -4.5]] },
   on_bookshelf: { label: 'on top of the bookshelf', kind: 'surface', lim: { w: 1.0, d: 0.55 }, rotY: 0, off: [0, 1.4], slots: [[2.0, 3.0, -4.65], [3.2, 3.0, -4.65]] },
-  on_desk: { label: 'on the desk', kind: 'surface', lim: { w: 1.0, d: 1.3 }, rotY: 1.2, off: [1.5, 0], slots: [[-4.2, 0.85, 0.45], [-4.2, 0.85, 1.95]] },
+  on_desk: { label: 'on the desk', kind: 'surface', lim: { w: 1.0, d: 1.3 }, rotY: Math.PI / 2, off: [1.5, 0], slots: [[-4.2, 0.85, 0.45], [-4.2, 0.85, 1.95]] },
   on_bed: { label: 'on the bed', kind: 'surface', lim: { w: 0.9, d: 0.9 }, rotY: 0, off: [-1.5, 0], slots: [[3.1, 0.7, 4.0], [3.9, 0.7, 3.4]] },
   wall_back: { label: 'on the back wall (left of the photo, above it, or above the bookshelf)', kind: 'wall', rotY: 0, side: 'back', slots: [[-4.2, 2.9, -4.97], [-2.2, 4.2, -4.97], [2.6, 3.9, -4.97]] },
   wall_desk: { label: 'on the photo wall above the desk', kind: 'wall', prints: true, rotY: Math.PI / 2, side: 'left', slots: [[-4.97, 2.35, 0.45], [-4.97, 2.35, 0.95], [-4.97, 2.35, 1.45], [-4.97, 2.35, 1.95], [-4.97, 2.85, 0.45], [-4.97, 2.85, 0.95], [-4.97, 2.85, 1.45], [-4.97, 2.85, 1.95]] }, // only for the small prints from his photo printer
@@ -420,6 +420,30 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
 export const CHEST_HOME = { x: -4.1, z: 3.9, rotY: 0 };
 export const MAX_MOVES_PER_DAY = 8;
 const CHEST_BOUNDS = { x: [-4.45, 4.45], z: [-4.4, 4.45] };
+// Things stand square to the walls, never diagonal. Next to a wall they face into the room.
+export function wallFacing(x, z) {
+  if (x <= -3.9) return Math.PI / 2;
+  if (x >= 3.9) return -Math.PI / 2;
+  if (z >= 3.9) return Math.PI;
+  return 0;
+}
+// Older saves have things at an angle: turn them square to the wall. Returns true when something changed.
+export function squareUp(s, now = new Date().toISOString()) {
+  let changed = false;
+  for (const d of s.decor ?? []) {
+    const z = ZONES[d.zone];
+    if (z && z.kind !== 'wall' && !d.image && Math.abs((d.rotY ?? 0) - z.rotY) > 0.01) {
+      d.rotY = z.rotY;
+      d.updatedAt = now;
+      changed = true;
+    }
+  }
+  if (s.chest && Math.abs((s.chest.rotY ?? 0) - wallFacing(s.chest.x, s.chest.z)) > 0.01) {
+    s.chest.rotY = wallFacing(s.chest.x, s.chest.z);
+    changed = true;
+  }
+  return changed;
+}
 const clampTo = ([lo, hi], v) => r3(Math.min(hi, Math.max(lo, v)));
 
 // details: { name, where, dx, dz }. `chest` is state.chest (or null). Returns { name, entry } for a thing, { name, chest } for the chest, or { failed }.
@@ -443,11 +467,11 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
       const i = ZONES[want].slots.findIndex((_, k) => !used.has(k));
       if (i < 0) return { failed: 'there is no free place there for the chest' };
       [x, , z] = ZONES[want].slots[i];
-      rotY = ZONES[want].rotY;
     } else if (want) return { failed: 'the chest can only stand on the floor' };
     x = clampTo(CHEST_BOUNDS.x, x + dx);
     z = clampTo(CHEST_BOUNDS.z, z + dz);
     if (floorBlocked(x, z, null)) return { failed: 'something is already standing there' };
+    rotY = wallFacing(x, z);
     const moves = [...(chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000), new Date(now).toISOString()];
     return { name: 'chest', chest: { x, z, rotY, at, moves } };
   }
