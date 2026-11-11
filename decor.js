@@ -505,6 +505,7 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     return { name: e.name, entry: e, label: e.label };
   }
   const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
+  if (want && want === e.zone && !dx && !dz && !hasXZ) return { failed: 'it is already there' };
   if (want && want !== e.zone) {
     const used = usedSlots(decor, want);
     const i = ZONES[want].slots.findIndex((_, k) => !used.has(k));

@@ -1068,6 +1068,13 @@
       "text": "I wrote in my diary: I moved my stellar wave bell and plasma sculpture onto the new left wall shelves today! They catch the light from the wi",
       "importance": 3,
       "kind": "memory"
+    },
+    {
+      "id": "mmwc1qvmn65",
+      "at": "2026-11-11T11:39:32.639Z",
+      "text": "My wall shelves are NOT built. I only moved my sculptures to the same place on the piano. I do not have a toolbox, so extend_thing failed. To build a shelf I make it with decorate (a flat shape on the left wall) and I ca",
+      "importance": 9,
+      "kind": "memory"
     }
   ],
   "reflections": [
@@ -5036,7 +5043,7 @@
       "id": "mwbz5o97",
       "title": "Build wall shelves for cosmic sculptures",
       "why": "to display my bells and wave sculptures neatly and make room on the desk and piano",
-      "next": "none",
+      "next": "get a toolbox, then really build the shelves with decorate",
       "steps": [
         {
           "text": "sketch the shelf layout and dimensions",
@@ -5048,14 +5055,14 @@
         },
         {
           "text": "build the shelves once daily crafting resets",
-          "done": true
+          "done": false
         },
         {
           "text": "move my wave sculptures and bells onto the new shelves",
-          "done": true
+          "done": false
         }
       ],
-      "status": "done",
+      "status": "working",
       "since": "2026-11-11T10:27:04.075Z",
       "updatedAt": "2026-11-11T11:28:24.046Z"
     },
@@ -5243,10 +5250,9 @@
       "id": "mwbu1uxw-6c18f7",
       "at": "2026-11-11T08:04:08.037Z",
       "text": "You can maybe make some shelves on the wall to put some of your sculptures to make more space!",
-      "status": "done",
+      "status": "yes",
       "note": "That is a wonderful idea for putting my sculptures up on shelves to save space!",
-      "answeredAt": "2026-11-11T08:21:00.890Z",
-      "doneAt": "2026-11-11T11:16:11.761Z"
+      "answeredAt": "2026-11-11T08:21:00.890Z"
     },
     {
       "id": "mwbwhj4u-836276",

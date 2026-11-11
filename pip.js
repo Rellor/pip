@@ -487,7 +487,7 @@ On a WALL (the back wall with the window, or the left wall) I can hang something
 On TOP of something I put it with "on": "desk", "piano", "bookshelf", "bed" or the name of something I made on the floor (a shelf, a table, a closet), and optionally x and z. A tall closet or shelf gives me a new surface on top. It goes to the nearest free place on it.
 I made ${s.decor.filter((d) => Date.now() - Date.parse(d.createdAt) < 86_400_000).length} things in the last 24 hours (at most ${MAX_PER_DAY} a day).
 
-LAST 5 THINGS I DID
+${(() => { const bad = s.log.filter((e) => e.failed && Date.parse(e.at) <= Date.now()).slice(-5); return bad.length ? `THESE STEPS DID NOT HAPPEN (they failed, so nothing changed in my room. I do not write or say that I did them, and I fix the reason first)\n${bad.map((e) => `- ${e.action.replace(/_/g, ' ')}${e.name ? ` ${e.name}` : ''}: ${e.failed}`).join('\n')}\n\n` : ''; })()}LAST 5 THINGS I DID
 ${recent.length ? recent.join('\n') : '- nothing yet, I just woke up for the first time'}
 
 MY INTERESTS
@@ -956,11 +956,11 @@ function applyInnerLife(s, r, detail, replying = false) {
     if (!hit) continue;
     if (text(u?.next, 160)) hit.next = text(u.next, 160);
     if (Array.isArray(u?.steps) && u.steps.length) hit.steps = cleanSteps(u.steps, hit.steps); // he rewrites the plan; steps that stay the same stay done
-    for (const k of Array.isArray(u?.step_done) ? u.step_done : []) {
+    for (const k of r._progress === true && Array.isArray(u?.step_done) ? u.step_done : []) {
       const step = typeof k === 'number' ? (hit.steps ?? [])[k - 1] : (hit.steps ?? []).find((x) => sameText(x.text, String(k)));
       if (step) step.done = true;
     }
-    if (['working', 'done', 'dropped'].includes(u?.status)) {
+    if (['working', 'done', 'dropped'].includes(u?.status) && !(u.status === 'done' && r._progress !== true)) {
       if (u.status === 'done') felt(s, 'projectDone');
       hit.status = u.status;
     }
@@ -1385,7 +1385,11 @@ async function wakeUp() {
   }
 
   // A task counts as done only when this wake-up really did something (not only walking, resting or eating, and nothing that failed).
-  if (!steps.some((st) => !['walk_to', 'rest', 'eat'].includes(st.action) && !st.made?.failed)) answer.tasks_done = [];
+  const TASK_WORK = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture'];
+  const PROJECT_WORK = [...TASK_WORK, 'search_web', 'read_book', 'take_photo', 'find_picture', 'play_piano'];
+  const worked = (list) => steps.some((st) => list.includes(st.action) && !st.made?.failed);
+  if (!worked(TASK_WORK)) answer.tasks_done = [];
+  answer._progress = worked(PROJECT_WORK); // project steps and finishing a project only count after a step that really worked
 
   // ask_for steps end up in the list of asks.
   const stepAsks = steps.filter((st) => st.action === 'ask_for').map((st) => ({ item: st.details.item, why: st.details.reason }));
