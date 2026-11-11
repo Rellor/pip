@@ -93,7 +93,7 @@ export function markBuilt(s, blueprintName, at, entry = null) {
 
 export function blueprintsText(s) {
   const open = s.requests.filter((r) => r.status === 'open');
-  const list = s.blueprints.map((b) => `- ${b.name}: ${b.goal} ${b.built ? (b.gaps?.length ? `(built as ${b.thing}, but it does not do yet: ${b.gaps.join(', ')}. I fix that with add_use or change_thing)` : '(built, and it does what the blueprint says)') : `(NOT BUILT YET. My next step is decorate with "blueprint": "${b.name}" and the parts I can make now${b.mechanisms.every((m) => m.ok) ? '' : `; ${b.mechanisms.filter((m) => !m.ok).map((m) => m.part).join(', ')} cannot be done yet, so I build around ${b.mechanisms.filter((m) => !m.ok).length === 1 ? 'it' : 'them'} and do not wait`})`}`);
+  const list = s.blueprints.map((b) => `- ${b.name}: ${b.goal} ${b.built ? (b.gaps?.length ? `(built as ${b.thing}, but it does not do yet: ${b.gaps.join(', ')}. I fix that with add_use or change_thing)` : b.tested ? `(built and tested. My verdict: ${b.verdict ?? 'it works'})` : '(built, not tested yet)') : `(NOT BUILT YET. My next step is decorate with "blueprint": "${b.name}" and the parts I can make now${b.mechanisms.every((m) => m.ok) ? '' : `; ${b.mechanisms.filter((m) => !m.ok).map((m) => m.part).join(', ')} cannot be done yet, so I build around ${b.mechanisms.filter((m) => !m.ok).length === 1 ? 'it' : 'them'} and do not wait`})`}`);
   return `MY BLUEPRINTS\n${nudgeText(s)}${list.length ? list.join('\n') : '- none yet'}${open.length ? `\nThings I cannot do yet, that people know about: ${open.map((r) => r.what).join(' | ')}` : ''}\n`;
 }
 
@@ -104,7 +104,7 @@ When I want to make something new or hard (a vehicle, a machine, a game, a gadge
 2. Blueprint. With the blueprint step I write what I learned (research), my goal, and the parts and mechanisms it needs. For each one I say which of my abilities does it, by its id, or "missing" when none can. blueprint {"name": "...", "goal": "what it should do", "research": "what I learned, in a sentence or two", "mechanisms": [{"part": "wheels", "how": "4 round parts that turn", "uses": "drive"}, {"part": "steering", "how": "...", "uses": "missing"}], "tools": ["screwdriver"]}.
 3. Tools. For the tools the blueprint lists, I make them or ask for them (asks_add) before I build.
 4. Build with decorate, mentioning the blueprint name in "blueprint", and use "needs" for the tool I use.
-5. Test. I use what I made once. If it does not do what the blueprint says, I change it, or I think of another way with my abilities. I am honest about it: I do not squeeze a mechanism into an ability that does not really do it (a drive use does not fly, a spin use does not hover). If none of my abilities does it, I write "missing". A mechanism marked missing is not a failure: it goes on the list of things people can give me, and I build the rest.
+5. Test. I use what I made, with the use that really does the thing, and I write a "verdict": what happened and whether it matches my blueprint. If it does not do what the blueprint says, I change it, or I think of another way with my abilities. I am honest about it: I do not squeeze a mechanism into an ability that does not really do it (a drive use does not fly, a spin use does not hover). If none of my abilities does it, I write "missing". A mechanism marked missing is not a failure: it goes on the list of things people can give me, and I build the rest.
 I always check my abilities first: often a thing I want can be done in a different way than the real one (a car does not need a real motor: it drives a route I design).
 `;
 
@@ -115,7 +115,7 @@ export function blueprintDue(s, now = Date.now()) {
     if (now - Date.parse(b.at) < 20 * 60_000) continue;
     if (!b.built) return { bp: b, kind: 'build', actions: ['decorate'], text: `I planned "${b.name}" and have not built it yet. A step of my plan builds it now: decorate with "blueprint": "${b.name}" (what I cannot do yet, I build around)` };
     if (b.gaps?.length) return { bp: b, kind: 'fix', actions: ['add_use', 'change_thing', 'extend_thing', 'compose'], text: `"${b.name}" is built as ${b.thing}, but it does not do yet what my blueprint says: ${b.gaps.join(', ')}. A step of my plan fixes that (add_use, change_thing or extend_thing)` };
-    if (!b.tested && b.thing) return { bp: b, kind: 'test', actions: ['use'], text: `I built "${b.name}" as ${b.thing} but I have not tried it yet. A step of my plan uses it, and then I compare what happened with what my blueprint says` };
+    if (!b.tested && b.thing) return { bp: b, kind: 'test', actions: ['use'], text: `${b.testNote ? `My last test did not count: ${b.testNote}. ` : ''}I built "${b.name}" as ${b.thing} but I have not tried it yet. A step of my plan uses it (use with a "verdict": what happened, and does it match my blueprint?)` };
   }
   return null;
 }

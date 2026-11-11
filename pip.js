@@ -75,7 +75,7 @@ const ACTIONS = [
   'compose(name, song)',
   'draw(name, where, why, svg)',
   'make_app(name, why, html)',
-  'use(name, label)',
+  'use(name, label, verdict)',
   'add_use(name, use)',
   'change_thing(name, parts, why, bigger)',
   'move_thing(name, where, dx, dz, next_to, side)',
@@ -1252,7 +1252,20 @@ async function wakeUp() {
           e.lit = e.lit === false; // switches: dark becomes lit, lit becomes dark
           e.litAt = new Date(stepStart + 6000).toISOString();
         }
-        for (const b of state.blueprints) if (b.thing && sameText(b.thing, e.name)) b.tested = new Date(stepStart).toISOString();
+        let testNote = null;
+        for (const b of state.blueprints) {
+          if (!b.thing || !sameText(b.thing, e.name)) continue;
+          const promised = b.mechanisms.filter((m) => ['spin', 'light', 'drive'].includes(m.uses));
+          const verdict = text(st.details.verdict, 240);
+          if (promised.length && !promised.some((m) => m.uses === use.does)) testNote = `that use only shows a text, it does not ${promised.map((m) => m.uses).join(' or ')} like my blueprint says, so it is not a real test. I use the one that does it`;
+          else if (verdict.length < 15) testNote = 'it happened, but I did not write my verdict yet: what happened, and does it match my blueprint? I use it again with "verdict"';
+          else {
+            b.tested = new Date(stepStart).toISOString();
+            b.verdict = verdict;
+          }
+          b.testNote = b.tested && Date.parse(b.tested) === stepStart ? null : testNote;
+        }
+        if (testNote) st.testNote = testNote;
         st.made = { used: { name: e.name, label: use.label, text: use.text, view: use.view, song: use.song, app: use.app, does: use.does ?? null }, ref: { id: e.id, stand: e.stand, pos: e.pos, does: use.does ?? null, motion: use.motion ?? null, lit: e.lit !== false } };
         if (use.effect && (!e.usedAt || Date.now() - Date.parse(e.usedAt) > 30 * 60_000)) {
           nudge(state, use.effect, 0.8); // using it lifts a bar a little, at most once every half hour per thing
@@ -1554,6 +1567,7 @@ async function wakeUp() {
     if (st.action === 'compose') Object.assign(entry, { name: text(d.name, 60), song: st.made?.song ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'draw') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), image: st.made?.entry?.image ?? null, place: withWarn(st.made?.entry?.label, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'make_app') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'use') Object.assign(entry, { verdict: text(d.verdict, 240) || null, testNote: st.testNote ?? null });
     if (st.action === 'use') Object.assign(entry, { name: st.made?.used?.name ?? text(d.name, 60), label: st.made?.used?.label ?? text(d.label, 30), text: st.made?.used?.text ?? '', view: st.made?.used?.view ?? null, song: st.made?.used?.song ?? null, app: st.made?.used?.app ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'add_use') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), label: st.made?.use?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
