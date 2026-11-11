@@ -980,7 +980,8 @@ function planFor(last) {
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
     case 'do': return { at: 'center', anim: 'look' };
     case 'print_photo': return { at: 'computer', anim: 'look' };
-    case 'move_thing': return { at: 'center', anim: 'look' };
+    case 'move_thing':
+    case 'extend_thing': return { at: 'center', anim: 'look' };
     case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
     case 'compose':
     case 'add_use': return { at: 'center', anim: 'write' };
@@ -1857,6 +1858,7 @@ function headlineBase(st) {
     case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
+    case 'extend_thing': return ['🧱', `Adding to ${d.name || st.name || 'something'}`];
     case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
     case 'print_photo': return ['🖨️', `Printing a photo (${d.id || st.name || 'a picture'})`];
     case 'take_down_print': return ['🖨️', 'Taking a print off the wall'];
@@ -1881,7 +1883,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make' };
+const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -2015,6 +2017,8 @@ function dayCard(e) {
       card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew it and put it ${e.place}.`, 'muted'));
     } else if (e.action === 'change_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
+    } else if (e.action === 'extend_thing') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He added ${e.added} parts (${e.total} in all).`, 'muted'));
     } else if (e.action === 'move_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He moved it${e.place ? ` (${e.place})` : ''}.`, 'muted'));
     } else if (e.action === 'update_app') {
@@ -2167,7 +2171,21 @@ function renderMind(s) {
       body.append(el('strong', p.title));
       if (p.why) body.append(`\n${p.why}`);
       li.append(m, body);
-      if (p.next && p.status === 'working') li.append(el('p', `Next: ${p.next}`, 'next'));
+      const steps = p.steps || [];
+      if (steps.length) {
+        const doneN = steps.filter((x) => x.done).length;
+        const prog = el('div', null, 'pprog');
+        const track = el('div', null, 'track');
+        const fillBar = el('div', null, 'fill');
+        fillBar.style.width = `${(doneN / steps.length) * 100}%`;
+        fillBar.style.background = 'var(--make)';
+        track.append(fillBar);
+        prog.append(track, el('span', `${doneN} of ${steps.length} steps`));
+        const list = el('ul', null, 'psteps');
+        const current = steps.findIndex((x) => !x.done);
+        steps.forEach((x, i) => list.append(el('li', `${x.done ? '✓' : i === current && p.status === 'working' ? '➜' : '○'} ${x.text}`, x.done ? 'done' : '')));
+        li.append(prog, list);
+      } else if (p.next && p.status === 'working') li.append(el('p', `Next: ${p.next}`, 'next'));
       return li;
     })
     : empty('None yet. When Pip learns something that excites him, he can turn it into a project.'));
@@ -2352,6 +2370,12 @@ function render(s) {
     })
     : [el('div', 'Nobody has given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
   const pantry = (s.pantry || []).filter((p) => p.qty > 0).sort((a, b) => (a.kind === 'dish' ? 0 : 1) - (b.kind === 'dish' ? 0 : 1));
+  const TOOL_FOR = { 'drawing supplies': 'drawing', 'sewing kit': 'making clothes', toolbox: 'building big things step by step' };
+  const owned = [...(s.tools || []).map((x) => ({ ...x, where: 'in his inventory' })), ...(s.decor || []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his room' })), ...(s.stored || []).filter((d) => d.tool).map((d) => ({ kind: d.tool, name: d.name, where: 'in his chest' }))];
+  fill($('toollist'), Object.entries(TOOL_FOR).map(([kind, use]) => {
+    const mine = owned.filter((x) => x.kind === kind);
+    return el('li', mine.length ? `🧰 ${kind} — ${mine.map((x) => `${x.name} (${x.where})`).join(', ')}` : `🔒 ${kind}: he does not have it yet. Needed for ${use}.`, mine.length ? '' : 'muted');
+  }));
   $('selfnote').textContent = s.self || 'Pip has not written about himself yet.';
   fill($('favlist'), (s.favorites || []).length ? s.favorites.map((f) => el('li', `❤️ ${f.kind ? `${f.kind}: ` : ''}${f.what}`)) : empty('No favorites yet.'));
   fill($('ritlist'), (s.rituals || []).length ? s.rituals.map((r) => el('li', `🔁 ${r.text}${r.when ? ` (${r.when})` : ''}`)) : empty('No rituals yet.'));

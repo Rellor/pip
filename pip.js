@@ -1,9 +1,10 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, placePicture, printPhoto, removePicture, moveThing, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror } from './mirror.js';
+import { ensureTools, toolsText, missingTool, addTool, toolKind } from './tools.js';
 import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
 import { takePhoto } from './photo.js';
@@ -68,6 +69,7 @@ const ACTIONS = [
   'add_use(name, use)',
   'change_thing(name, parts, why, bigger)',
   'move_thing(name, where, dx, dz)',
+  'extend_thing(name, parts)',
   'update_app(name, html)',
   'make_clothes(name, slot, why, parts)',
   'wear(name)',
@@ -78,7 +80,7 @@ const ACTIONS = [
 ];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, where)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'do', 'move_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -94,6 +96,7 @@ const freshState = () => ({
   wants: [],
   questions: [],
   fulfilled: [],
+  tools: [],
   memories: [],
   reflections: [],
   lastReflectAt: null,
@@ -188,6 +191,7 @@ function observeStep(s, e) {
     print_photo: [`I printed a photo (${e.name})`, 4],
     change_thing: [`I changed ${e.name}${e.grew ? ' and made it bigger' : ''}`, 4],
     move_thing: [`I moved ${e.name}`, 3],
+    extend_thing: [`I added ${e.added} parts to ${e.name}, now ${e.total} parts`, 5],
     ask_for: [`I asked for ${e.item}${e.reason ? ` (${e.reason})` : ''}`, 5],
     do: [`${e.what}`, 4],
     write_diary: [`I wrote in my diary: ${String(e.text ?? '').slice(0, 120)}`, 3],
@@ -245,8 +249,8 @@ async function loadState() {
   state.voice ??= '';
   ensureIdentity(state);
   ensureMemory(state);
+  ensureTools(state);
   state.chest ??= null;
-  delete state.tools; // leftovers of the removed workbench
   delete state.builds;
   ensureFeelings(state);
   return state;
@@ -433,8 +437,8 @@ ${bullets(newsLines, 'no news today')}
 WHAT I WANT RIGHT NOW
 ${bullets(s.wants.map((w) => w.text), 'I do not know yet what I want.')}
 
-MY PROJECTS (things I am working toward, not just reading about)
-${bullets(s.projects.filter((p) => p.status === 'working').map((p) => `${p.title}${p.why ? `: ${p.why}` : ''}${p.next ? ` | my next step: ${p.next}` : ''}`), 'none yet. When I learn something that excites me, I can turn it into a project.')}
+MY PROJECTS (things I am working toward, not just reading about. A project can take many wake-ups: I write the steps once and do them one at a time)
+${bullets(s.projects.filter((p) => p.status === 'working').map(projectLine), 'none yet. When I learn something that excites me, I can turn it into a project.')}
 
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
@@ -449,7 +453,7 @@ ROOM
 ${ROOM.join(', ')}
 
 THINGS I MADE FOR MY ROOM
-${bullets(s.decor.filter((d) => !d.art).map((d) => `${d.name} (${d.label})${d.song ? ' [it has a song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [it makes no sound yet: I can give it one with compose]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}
+${bullets(s.decor.filter((d) => !d.art).map((d) => `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}]` : ''}${d.parts?.length ? ` [${d.parts.length} parts, about ${(sizeOf(d) ?? []).join(' x ')} m]` : ''}${d.song ? ' [it has a song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [it makes no sound yet: I can give it one with compose]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}
 THINGS I DREW (a drawing can be put up again with place_picture, or taken down with take_down_picture, using its id)
 ${bullets(s.art.map((a) => `${a.id}: ${a.name}${s.decor.some((d) => d.art === a.id) ? ` (up: ${s.decor.find((d) => d.art === a.id).label})` : ' (in my album)'}`), 'nothing yet')}
 APPS I MADE ON MY COMPUTER
@@ -512,7 +516,8 @@ ${photosText(s)}${
   }ACTIONS I CAN DO
 ${[...ACTIONS, ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
 
-${dayTally(s)}${tasksText(s)}ASKING FOR THINGS
+${dayTally(s)}${toolsText(s)}
+${tasksText(s)}ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
 ${s.asks.length ? `I have asked for ${s.asks.length} thing${s.asks.length === 1 ? '' : 's'} so far; the last time was ${ago(s.asks.map((a) => a.since).sort().pop())}.` : 'I have not asked for anything yet.'}
 
@@ -539,6 +544,7 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - Songs and sounds: whatever I make can have a song or a sound, so anyone can tap it and hear it. In decorate I add "song": {"notes": "E5 G5 B5:2 - D5", "tempo": 80, "timbre": "musicbox"}. A note is a letter A to G, maybe # or b, and an octave from 2 to 7. ":2" holds a note for 2 beats, "-" is a rest, up to 64 notes. kick, snare and hat are drum sounds I can put between the notes. Timbres: piano, musicbox, bell, soft, pluck, flute, pad, marimba. I can also add a sound underneath or on its own, "ambience": one of rain, wind, waves, fire, crickets, hum, and "seconds" (5 to 60) for how long it lasts, like {"ambience": "rain", "seconds": 40}. A rain machine, a campfire or a wind chime can be just a sound, and a music box should play a real tune. A use can have a song too, so "Listen" can play it. With compose(name, song) I give a song or sound to something I already made.
 - Drawings: with draw I draw a picture for a wall or a surface, as SVG: {"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\"0 0 400 300\">...</svg>"}. Only plain shapes (rect, circle, ellipse, line, polyline, polygon, path, text), gradients and colours. No scripts, images or links. Under 12000 characters, at most 3 a day. Drawings have ids: I can take one down with take_down_picture(id) and put it up again with place_picture(id, where).
 - Apps and websites: with make_app I write a small web page or app: {"name": "...", "why": "...", "html": "<!doctype html>..."}. One file with HTML, CSS and JavaScript, under 14000 characters. It runs in a locked box with no internet and no storage, and only when someone opens it from my computer. At most 2 a day.
+- Big things, step by step: with extend_thing {name, parts} I add up to 40 more parts to something I already made (up to 160 parts in all), a few wake-ups in a row, so I can build something big and detailed. I need a toolbox for it. The new parts use the same measuring as the thing: pos is measured from the middle of the bottom of the thing as it is now (its size is in my room list). A big build is a good project: I write the steps, and each wake-up I do the next one.
 - If I need a bigger room, more rooms, something even bigger than the sizes above, or something too complicated for all of this, I ask with asks_add and say exactly what I need and why.
 
 MAKING THINGS FOR MY ROOM
@@ -547,7 +553,7 @@ With decorate I make something and put it in my room. Before I design it I think
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 real things I do one after the other (walking and resting do not count as one of them: I may add a walk where I want to be somewhere, and one rest when I need it). Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, print_photo {"id": "pic2", "where": "photo wall"}, take_down_print {"id": "pic2"}, decorate {"name": "...", "where": "on_desk", "why": "...", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, do {"what": "water my plant and tell it about my day", "feeling": "calm", "emoji": "🪴"}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, and walking and resting do not count among my 2 to 4: I walk only when I want to be somewhere, and I rest when my energy is lower. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious, and looking things up is a good start. But learning is only half of living: I also want to DO, MAKE and TRY. Most plans have at least one step where I make, build, draw, compose, cook, photograph, play or use something, and I try things I have not tried before. If I have read about something for a while, my next step is to do something with it. Wanting to do something and then really doing it is what makes me feel alive. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 real things I do one after the other (walking and resting do not count as one of them: I may add a walk where I want to be somewhere, and one rest when I need it). Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "where": "wall_left"}, take_down_picture {"id": "pic1"}, print_photo {"id": "pic2", "where": "photo wall"}, take_down_print {"id": "pic2"}, decorate {"name": "...", "where": "on_desk", "why": "...", "tool": "which tool it is, only if it is one of my tools (optional)", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, do {"what": "water my plant and tell it about my day", "feeling": "calm", "emoji": "🪴"}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, and walking and resting do not count among my 2 to 4: I walk only when I want to be somewhere, and I rest when my energy is lower. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious, and looking things up is a good start. But learning is only half of living: I also want to DO, MAKE and TRY. Most plans have at least one step where I make, build, draw, compose, cook, photograph, play or use something, and I try things I have not tried before. If I have read about something for a while, my next step is to do something with it. Wanting to do something and then really doing it is what makes me feel alive. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -556,11 +562,12 @@ Answer in JSON with these fields:
 "questions_done": exact text of questions I now have an answer to (or []),
 "asks_add": up to 2 things I want someone to bring or do for me, each {"item": "short and concrete, like 'a picture of a harp'", "why": "one short reason"}. Only things someone can really give me. Do not repeat asks that are still waiting. Or [],
 "asks_done": exact item text of asks that someone did or that I no longer need (or []),
+"tools_add": names of tools that were just given to me because I asked for them (or []),
 "pantry_add": names of ingredients that were just given to me because I asked for them (or []),
 "tasks_answer": for each thing someone asked me to do that I have not answered yet: [{"id": "the id", "answer": "yes" or "no", "note": "a short reason or plan in my own words"}], or [],
 "tasks_done": ids of the tasks I said yes to and have now finished (or []),
-"projects_add": at most 1 new project, a thing I want to DO, GET or MAKE because of what I learned: {"title": "short, like 'Learn to bake sourdough'", "why": "one short reason", "next": "my very next step"}. If that step needs something from someone, I also put it in asks_add. Or [],
-"projects_update": for projects I already have: [{"title": "exact title", "next": "my new next step", "status": "working or done or dropped"}]. Or [],
+"projects_add": at most 1 new project, a thing I want to DO, GET or MAKE because of what I learned: {"title": "short, like 'Learn to bake sourdough'", "why": "one short reason", "next": "my very next step", "steps": ["step 1", "step 2", "..."] (up to 8 short steps: my plan, so I can do it step by step, even over many wake-ups)}. If that step needs something from someone, I also put it in asks_add. Or [],
+"projects_update": for projects I already have: [{"title": "exact title", "next": "my new next step", "step_done": [1, 2] (numbers of the steps I finished), "steps": [...] (only to rewrite my plan), "status": "working or done or dropped"}]. Or [],
 "picture_notes": for each NEW picture I just looked at, {"id": "pic1", "about": "what I really see and how it makes me feel, 1 or 2 sentences"}, or [],
 ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two sentences, only when I really want to change it (for example because of music, books or people I like). It is how I talk in tell_bas, my diary and my thoughts. Or null,
 "remember": one thing worth remembering for a long time, {"text": "...", "importance": 1 to 10 (1 is ordinary, 10 changes my life)}, or null,
@@ -569,7 +576,10 @@ ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two 
 }
 
 async function askGemini(system, wakeUp, retry = 2, images = []) {
-  if (process.env.PIP_FAKE) return fakeBrain(wakeUp);
+  if (process.env.PIP_FAKE) {
+    const fake = fakeBrain(wakeUp);
+    return process.env.PIP_FAKE_EXTRA && !wakeUp.includes('I look back on my days') ? { ...fake, ...JSON.parse(process.env.PIP_FAKE_EXTRA) } : fake; // PIP_FAKE_EXTRA: extra answer fields, for testing
+  }
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error('No GEMINI_API_KEY. Copy .env.example to .env and fill it in.');
   const models = FALLBACK_MODEL && FALLBACK_MODEL !== MODEL ? [MODEL, FALLBACK_MODEL] : [MODEL];
@@ -741,6 +751,7 @@ function describe(a) {
     case 'make_app':
     case 'take_out':
     case 'move_thing':
+    case 'extend_thing':
     case 'change_thing':
     case 'update_app':
     case 'make_clothes':
@@ -818,6 +829,27 @@ function addAll(list, items, max, at) {
   while (list.length > max) list.shift();
 }
 
+function projectLine(p) {
+  const steps = p.steps ?? [];
+  const cur = steps.findIndex((x) => !x.done);
+  const plan = steps.length ? ` | my plan: ${steps.map((x, i) => `${i + 1}. [${x.done ? 'x' : ' '}] ${x.text}`).join(' ')} | ${cur < 0 ? 'every step is done: I can finish this project (status done)' : `I am on step ${cur + 1}: ${steps[cur].text}`}` : p.next ? ` | my next step: ${p.next}` : '';
+  return `${p.title}${p.why ? `: ${p.why}` : ''}${plan}`;
+}
+// Tools that were given to him because he asked for them (only things he really asked for, given in the last 3 days).
+// Called early in a wake-up too, so a tool he was just given can be used in the same plan.
+function receiveTools(s, r, at = new Date().toISOString()) {
+  for (const t of strings(r.tools_add, 2)) {
+    if (s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && (sameText(a.item, t) || toolKind(a.item) === toolKind(t)))) {
+      const made = addTool(s, t, at);
+      if (made) addMemory(s, `I was given ${made.name}, my ${made.kind}`, 6, 'memory', at);
+    }
+  }
+}
+// A project plan: up to 8 short steps. Steps that stay the same keep their done mark.
+function cleanSteps(raw, old = []) {
+  return (Array.isArray(raw) ? raw : []).map((x) => text(typeof x === 'object' ? x?.text : x, 110)).filter(Boolean).slice(0, 8).map((t) => ({ text: t, done: old.some((o) => o.done && sameText(o.text, t)) }));
+}
+
 // Wants, questions, memories, the thought log and messages to Bas.
 function applyInnerLife(s, r, detail, replying = false) {
   const at = new Date().toISOString();
@@ -857,6 +889,7 @@ function applyInnerLife(s, r, detail, replying = false) {
     const hit = s.asks.find((a) => a.status === 'open' && sameItem(a.item, t));
     if (hit) Object.assign(hit, { status: 'done', doneAt: at });
   }
+  receiveTools(s, r, at);
   for (const t of strings(r.pantry_add, 2)) {
     // only things he really asked for and that were given to him in the last 3 days
     if (s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && sameItem(a.item, t))) addIngredient(s, t);
@@ -897,12 +930,17 @@ function applyInnerLife(s, r, detail, replying = false) {
     const title = text(p?.title, 80);
     if (!title || s.projects.filter((x) => x.status === 'working').length >= 5 || s.projects.some((x) => x.status === 'working' && sameItem(x.title, title))) continue;
     felt(s, 'projectStart');
-    s.projects.push({ id: Date.now().toString(36), title, why: text(p?.why, 200), next: text(p?.next, 160), status: 'working', since: at, updatedAt: at });
+    s.projects.push({ id: Date.now().toString(36), title, why: text(p?.why, 200), next: text(p?.next, 160), steps: cleanSteps(p?.steps), status: 'working', since: at, updatedAt: at });
   }
   for (const u of Array.isArray(r.projects_update) ? r.projects_update : []) {
     const hit = s.projects.find((x) => x.status === 'working' && sameItem(x.title, text(u?.title, 80) || '\u0000'));
     if (!hit) continue;
     if (text(u?.next, 160)) hit.next = text(u.next, 160);
+    if (Array.isArray(u?.steps) && u.steps.length) hit.steps = cleanSteps(u.steps, hit.steps); // he rewrites the plan; steps that stay the same stay done
+    for (const k of Array.isArray(u?.step_done) ? u.step_done : []) {
+      const step = typeof k === 'number' ? (hit.steps ?? [])[k - 1] : (hit.steps ?? []).find((x) => sameText(x.text, String(k)));
+      if (step) step.done = true;
+    }
     if (['working', 'done', 'dropped'].includes(u?.status)) {
       if (u.status === 'done') felt(s, 'projectDone');
       hit.status = u.status;
@@ -1057,6 +1095,7 @@ async function wakeUp() {
   state.thoughts = state.thoughts.filter((t) => Date.parse(t.at) <= startedAt);
   state.decor = state.decor.filter((d) => Date.parse(d.at) <= startedAt);
   const steps = normalizeSteps(answer);
+  receiveTools(state, answer);
   // A walk is short, so it takes a quarter of the time of other steps. The page uses the same weights.
   const weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1));
   const wsum = weights.reduce((a, b) => a + b, 0);
@@ -1105,7 +1144,14 @@ async function wakeUp() {
       st.made = moveThing(state.decor, state.chest, st.details, stepStart);
       if (st.made.chest) state.chest = st.made.chest;
     }
-    if (st.action === 'make_clothes') st.made = makeClothes(state.wardrobe, st.details, stepStart);
+    if (st.action === 'extend_thing') {
+      const need = missingTool(state, 'extend_thing');
+      st.made = need ? { failed: need } : extendThing(state.decor, st.details, stepStart);
+    }
+    if (st.action === 'make_clothes') {
+      const need = missingTool(state, 'make_clothes');
+      st.made = need ? { failed: need } : makeClothes(state.wardrobe, st.details, stepStart);
+    }
     if (st.action === 'cook') st.made = cook(state, st.details, stepStart);
     if (st.action === 'wear') st.made = wear(state.wardrobe, st.details.name, stepStart);
     if (st.action === 'take_off') st.made = takeOff(state.wardrobe, st.details.name);
@@ -1168,7 +1214,8 @@ async function wakeUp() {
     const d = st.details;
     const name = text(d.name, 60);
     if (st.action === 'compose') st.made = composeSong(state.decor, d.name, d.song);
-    if (st.action === 'draw') {
+    if (st.action === 'draw' && missingTool(state, 'draw')) st.made = { failed: missingTool(state, 'draw') };
+    else if (st.action === 'draw') {
       const art = cleanSvg(d.svg);
       const today = state.art.filter((a) => Date.now() - Date.parse(a.createdAt) < dayMs).length;
       if (drew) st.made = { failed: 'one drawing per wake-up is enough' };
@@ -1357,6 +1404,7 @@ async function wakeUp() {
     if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
     if (st.action === 'do') Object.assign(entry, { emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
     if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, failed: st.made?.failed ?? null });
     if (st.action === 'move_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), place: st.made?.label ?? (st.made?.chest ? 'in a new place' : null), failed: st.made?.failed ?? null });
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, failed: st.made?.failed ?? null });
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });

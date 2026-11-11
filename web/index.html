@@ -113,6 +113,11 @@
   .taskform { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:6px; }
   .taskform textarea { width:100%; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); font:inherit; padding:10px 12px; resize:vertical; }
   .taskform .row { margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .psteps { list-style:none; margin:8px 0 0; padding:0; display:grid; gap:4px; font-size:15px; }
+  .psteps li { display:flex; gap:8px; align-items:baseline; }
+  .psteps .done { color:var(--muted); text-decoration:line-through; }
+  .pprog { display:flex; align-items:center; gap:10px; margin-top:8px; font-size:13px; color:var(--muted); }
+  .pprog .track { flex:1; }
   .tk-group { margin:22px 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); display:flex; align-items:center; gap:8px; }
   .tk-group .count { margin:0; }
   .tk-list { display:grid; gap:10px; }
@@ -276,6 +281,7 @@
       <h2>Pictures Pip has</h2><div class="pics" id="pics"></div>
       <h2>Who Pip is</h2><p id="selfnote" class="muted"></p><ul id="favlist"></ul><ul id="ritlist"></ul>
       <h2>Pip's dreams</h2><ul id="dreamlist"></ul>
+      <h2>Pip's tools</h2><ul id="toollist"></ul>
       <h2>Pip's pantry</h2><ul id="pantrylist"></ul>
       <h2>In his chest</h2><ul id="chestlist"></ul>
       <h2>The news Pip can see today</h2><ul id="newslist"></ul>

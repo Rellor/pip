@@ -1,5 +1,6 @@
 import { cleanSong } from './songs.js';
 import { storedUses } from './uses.js';
+import { toolKind } from './tools.js';
 
 // Pip's decorations.
 // He designs objects from a few simple shapes. His design is plain data, never code, and everything is checked and
@@ -156,6 +157,7 @@ function placeParts(decor, spec, atMs, now) {
       project: spec.project,
       song: spec.song ?? null,
       uses: storedUses(spec.uses),
+      tool: spec.tool ?? null,
       zone,
       slot,
       label: Z.label,
@@ -180,7 +182,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool) }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -204,7 +206,7 @@ export function takeOut(decor, stored, name, where, atMs, now = Date.now()) {
   if (i < 0 && n) i = stored.findIndex((x) => x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()));
   if (i < 0) return { failed: 'there is nothing with that name in his chest' };
   const e = stored[i];
-  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.parts, song: e.song, uses: e.uses }, atMs, now);
+  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.parts, song: e.song, uses: e.uses, tool: e.tool }, atMs, now);
   if (r.entry) {
     r.entry.createdAt = e.createdAt; // it is still the thing he made back then
     stored.splice(i, 1);
@@ -446,4 +448,42 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   e.movedAt = at;
   e.updatedAt = at;
   return { name: e.name, entry: e, label: e.label };
+}
+
+// ---- Building big things step by step: more parts are added to something he already made, a few wake-ups in a row.
+export const MAX_TOTAL_PARTS = 160;
+
+// How big a thing is now (width, height, depth), after it was scaled to fit its spot.
+export function sizeOf(e) {
+  if (!e?.parts?.length) return null;
+  const min = [Infinity, Infinity, Infinity];
+  const max = [-Infinity, -Infinity, -Infinity];
+  for (const p of e.parts) {
+    const h = halfSize(p);
+    for (let i = 0; i < 3; i++) {
+      min[i] = Math.min(min[i], p.pos[i] - h[i]);
+      max[i] = Math.max(max[i], p.pos[i] + h[i]);
+    }
+  }
+  return [0, 1, 2].map((i) => r3((max[i] - min[i]) * (e.scale || 1)));
+}
+
+export function extendThing(decor, details, atMs, now = Date.now()) {
+  const d = details && typeof details === 'object' ? details : {};
+  const n = str(d.name, 60).toLowerCase();
+  const mine = (x) => !x.image && !x.art && x.zone;
+  const e = (n ? decor.find((x) => mine(x) && x.name.toLowerCase() === n) : null) ?? (n ? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()))) : null);
+  if (!e) return { failed: 'there is nothing with that name in his room' };
+  if (decor.filter((x) => x.updatedAt && now - Date.parse(x.updatedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
+  const parts = cleanParts(d.parts);
+  if (!parts) return { failed: 'the new shapes did not work out' };
+  const room = MAX_TOTAL_PARTS - e.parts.length;
+  if (room <= 0) return { failed: `it already has the most parts a thing can have (${MAX_TOTAL_PARTS})` };
+  const added = parts.slice(0, room);
+  const all = [...e.parts, ...added];
+  const Z = ZONES[e.zone];
+  e.scale = fit(all, Z.kind, Z.lim);
+  e.parts = all;
+  e.updatedAt = new Date(atMs + 6000).toISOString();
+  return { name: e.name, entry: e, added: added.length, total: all.length };
 }
