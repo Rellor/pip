@@ -17,6 +17,12 @@ const LIMITS = {
 export const MAX_PER_DAY = 6;
 const MAX_PARTS = 40;
 const MAX_DECOR = 30;
+const STORAGE_WORDS = /shelf|shelves|closet|cabinet|wardrobe|drawer|dresser|rack|crate|storage|cupboard|bookcase|locker/i;
+// Storage furniture makes room for more things.
+export function capOf(decor) {
+  return Math.min(60, MAX_DECOR + 6 * decor.filter((d) => !d.image && !d.art && STORAGE_WORDS.test(d.name)).length);
+}
+const FULL = 'his room is full. He can put things in his chest, build storage (a shelf or a closet makes room for more), or ask for more space';
 
 // Spots: [x, y, z] in the room. For wall spots y is the height of the middle of the object.
 // "off" is where Pip stands relative to the spot, rotY turns the object to face into the room.
@@ -26,6 +32,7 @@ export const ZONES = {
   floor_middle: { label: 'on the floor in the middle of the room', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [[-1.8, 0, 0.4], [1.8, 0, 0.0], [0.2, 0, -1.2]] },
   floor_front: { label: 'on the floor near the front of the room', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [[-2.6, 0, 3.2], [-0.6, 0, 3.8], [1.2, 0, 3.4]] },
   floor_right: { label: 'on the floor on the right side of the room', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: -Math.PI / 2, off: [-1.2, 0], slots: [[4.4, 0, -1.6], [4.4, 0, -0.2]] },
+  floor: { label: 'on the floor', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [], free: true }, // anywhere on the floor that has room
   on_piano: { label: 'on top of the piano', kind: 'surface', lim: { w: 1.1, d: 0.8 }, rotY: 0, off: [0, 1.5], slots: [[-3.4, 1.4, -4.5], [-1.9, 1.4, -4.5]] },
   on_bookshelf: { label: 'on top of the bookshelf', kind: 'surface', lim: { w: 1.0, d: 0.55 }, rotY: 0, off: [0, 1.4], slots: [[2.0, 3.0, -4.65], [3.2, 3.0, -4.65]] },
   on_desk: { label: 'on the desk', kind: 'surface', lim: { w: 1.0, d: 1.3 }, rotY: Math.PI / 2, off: [1.5, 0], slots: [[-4.2, 0.85, 0.45], [-4.2, 0.85, 1.95]] },
@@ -126,10 +133,15 @@ function findZone(where) {
 // Puts a finished design into the room: his spot first, then another of the same kind, then anywhere with room.
 // `spec` is { name, why, project, where, parts } with clean parts. Does not change `decor`.
 function placeParts(decor, spec, atMs, now) {
-  if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
+  if (decor.length >= capOf(decor)) return { failed: FULL };
   const parts = spec.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] })); // fit() moves things, so work on a copy
   const want = findZone(spec.where);
-  const keys = Object.keys(ZONES).filter((k) => !ZONES[k].prints);
+  const given = Number.isFinite(Number(spec.x)) && Number.isFinite(Number(spec.z)) && spec.x !== null && spec.z !== null && spec.x !== '' && spec.z !== '';
+  if (given || (want && ZONES[want].kind === 'floor')) {
+    const anchor = given ? [Number(spec.x), Number(spec.z)] : (ZONES[want].slots[0] ?? [0, 0, 0]).filter((_, i) => i !== 1);
+    return placeFloor(decor, spec, parts, given ? { x: anchor[0], z: anchor[1] } : null, anchor, atMs, now);
+  }
+  const keys = Object.keys(ZONES).filter((k) => !ZONES[k].prints && ZONES[k].kind !== 'floor');
   const order = [...(want ? [want] : []), ...keys.filter((k) => k !== want && want && ZONES[k].kind === ZONES[want].kind), ...keys];
   let zone = null;
   let slot = -1;
@@ -179,10 +191,10 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   const name = str(d.name, 60);
   if (!name) return { failed: 'he did not give it a name' };
   if (decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
-  if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
+  if (decor.length >= capOf(decor)) return { failed: FULL };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool) }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -259,7 +271,7 @@ export const ART_MAX = { wall: [1.5, 1.2], surface: [0.5, 0.4] }; // Pip's own d
 export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PICTURE_MAX) {
   if (!pic || !pic.image) return { failed: 'he does not have that picture' };
   if (decor.some((x) => x.picture === pic.id)) return { failed: 'that picture is already up' };
-  if (decor.length >= MAX_DECOR) return { failed: 'his room is full' };
+  if (decor.length >= capOf(decor)) return { failed: FULL };
   const usable = Object.keys(ZONES).filter((k) => !ZONES[k].prints && (ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface'));
   const want = findZone(where);
   const first = want && usable.includes(want) ? want : null;
@@ -316,7 +328,7 @@ export function printPhoto(decor, pic, where, atMs, now = Date.now()) {
   if (!pic || !pic.image) return { failed: 'I do not have that picture' };
   const key = `print:${pic.id}`;
   if (decor.some((x) => x.picture === key)) return { failed: 'I already printed that one and it is still up' };
-  if (decor.length >= MAX_DECOR) return { failed: 'my room is full' };
+  if (decor.length >= capOf(decor)) return { failed: FULL };
   const usable = Object.keys(ZONES).filter((k) => ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface');
   const want = findZone(where);
   // By default a print goes on the photo wall. A spot he names comes first; when the wall is full and he named nothing, he takes one down first.
@@ -406,10 +418,16 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   let limited = false;
   if (parts || factor) {
     const Z = ZONES[e.zone];
+    const before = { parts: e.parts, scale: e.scale };
     const next = parts ?? e.parts.map((p) => ({ ...p, size: p.size.map((v) => r3(v * factor)), pos: p.pos.map((v) => r3(v * factor)), rot: [...p.rot] }));
     e.scale = fit(next, Z.kind, Z.lim);
     e.parts = next;
     limited = e.scale < 1 && (Boolean(factor) && factor > 1);
+    const hit = e.kind === 'floor' ? roomToGrow(decor, e) : null;
+    if (hit) {
+      Object.assign(e, before);
+      return { failed: `there is not enough free floor around it (it would touch ${hit}). It needs a bigger spot` };
+    }
   }
   if (why) e.why = why;
   e.updatedAt = new Date(atMs + 6000).toISOString(); // the page shows the change a few seconds into his step
@@ -432,7 +450,7 @@ export function squareUp(s, now = new Date().toISOString()) {
   let changed = false;
   for (const d of s.decor ?? []) {
     const z = ZONES[d.zone];
-    if (z && z.kind !== 'wall' && !d.image && Math.abs((d.rotY ?? 0) - z.rotY) > 0.01) {
+    if (z && z.kind !== 'wall' && !d.free && !d.image && Math.abs((d.rotY ?? 0) - z.rotY) > 0.01) {
       d.rotY = z.rotY;
       d.updatedAt = now;
       changed = true;
@@ -454,7 +472,8 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   const dx = Math.min(2, Math.max(-2, Number(d.dx) || 0));
   const dz = Math.min(2, Math.max(-2, Number(d.dz) || 0));
   const want = findZone(d.where);
-  if (!want && !dx && !dz) return { failed: 'he did not say where to move it' };
+  const hasXZ = d.x !== undefined && d.z !== undefined && d.x !== null && d.z !== null && d.x !== '' && d.z !== '' && Number.isFinite(Number(d.x)) && Number.isFinite(Number(d.z));
+  if (!want && !dx && !dz && !hasXZ) return { failed: 'he did not say where to move it' };
   if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const at = new Date(atMs + 6000).toISOString();
   const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
@@ -462,6 +481,14 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   if (/chest/.test(n)) {
     const cur = chest ?? CHEST_HOME;
     let { x, z, rotY } = cur;
+    if (hasXZ) {
+      const f = faceAndSnap(0.5, 0.3, clampTo(CHEST_BOUNDS.x, Number(d.x)), clampTo(CHEST_BOUNDS.z, Number(d.z)));
+      const hit = blocker(rectAt([0.5, 0.3], f.x, f.z, f.rotY), obstacles(decor, null, false));
+      if (hit) return { failed: `the chest does not fit there (it would touch ${hit})` };
+      ({ x, z, rotY } = f);
+      const moves = [...(chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000), new Date(now).toISOString()];
+      return { name: 'chest', chest: { x, z, rotY, at, moves } };
+    }
     if (want && ZONES[want].kind === 'floor') {
       const used = usedSlots(decor, want);
       const i = ZONES[want].slots.findIndex((_, k) => !used.has(k));
@@ -472,6 +499,8 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     z = clampTo(CHEST_BOUNDS.z, z + dz);
     if (floorBlocked(x, z, null)) return { failed: 'something is already standing there' };
     rotY = wallFacing(x, z);
+    const hit = blocker(rectAt([0.5, 0.3], x, z, rotY), obstacles(decor, null, false));
+    if (hit) return { failed: `the chest does not fit there (it would touch ${hit})` };
     const moves = [...(chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000), new Date(now).toISOString()];
     return { name: 'chest', chest: { x, z, rotY, at, moves } };
   }
@@ -480,6 +509,17 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   let e = decor.find((x) => mine(x) && x.name.toLowerCase() === n) ?? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (!e) return { failed: 'there is nothing with that name in his room' };
   if (want && ZONES[want].kind !== e.kind) return { failed: `it cannot go there: it is a ${e.kind} thing` };
+  if (e.kind === 'floor' && (hasXZ || dx || dz || (want && ZONES[want].kind === 'floor'))) {
+    const target = hasXZ ? { x: Number(d.x), z: Number(d.z) } : dx || dz ? { x: e.pos[0] + dx, z: e.pos[2] + dz } : null;
+    const anchor = target ? [target.x, target.z] : (ZONES[want].slots[0] ?? [0, 0, 0]).filter((_, i) => i !== 1);
+    const parts = e.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] }));
+    const r = placeFloor(decor.filter((o) => o !== e), { ...e, parts, name: e.name }, parts, target, anchor, atMs, now, true);
+    if (r.failed) return r;
+    Object.assign(e, { ...r.entry, id: e.id, createdAt: e.createdAt, at: e.at, uses: e.uses, song: e.song, tool: e.tool, project: e.project, why: e.why });
+    e.movedAt = at;
+    e.updatedAt = at;
+    return { name: e.name, entry: e, label: e.label };
+  }
   const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
   if (want && want !== e.zone) {
     const used = usedSlots(decor, want);
@@ -536,8 +576,175 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
   const added = parts.slice(0, room);
   const all = [...e.parts, ...added];
   const Z = ZONES[e.zone];
+  const before = { parts: e.parts, scale: e.scale };
   e.scale = fit(all, Z.kind, Z.lim);
   e.parts = all;
+  const hit = e.kind === 'floor' ? roomToGrow(decor, e) : null;
+  if (hit) {
+    Object.assign(e, before);
+    return { failed: `there is not enough free floor around it (it would touch ${hit}). It needs a bigger spot` };
+  }
   e.updatedAt = new Date(atMs + 6000).toISOString();
   return { name: e.name, entry: e, added: added.length, total: all.length };
+}
+
+// ---- Free floor space: Pip puts things where he wants. They only have to fit: not into furniture, not into each other, not through a wall.
+export const FIXED = [
+  { n: 'the piano', x0: -3.95, x1: -1.25, z0: -5, z1: -3.55 },
+  { n: 'the piano stool', x0: -2.95, x1: -2.25, z0: -3.5, z1: -2.8 },
+  { n: 'the bookshelf', x0: 1.55, x1: 3.65, z0: -5, z1: -4.3 },
+  { n: 'the desk', x0: -5, x1: -3.6, z0: 0.1, z1: 2.3 },
+  { n: 'the bed', x0: 2.2, x1: 4.6, z0: 1.3, z1: 4.7 },
+  { n: 'the plant', x0: 3.6, x1: 4.6, z0: -4.6, z1: -3.6 },
+];
+const EDGE = 4.95;
+let chestNow = null;
+export const setChest = (c) => {
+  chestNow = c;
+};
+
+function halfFoot(parts, scale = 1) {
+  let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+  for (const p of parts) {
+    let e = halfSize(p);
+    if (p.rot.some((r) => r)) e = e.map(() => Math.max(...e));
+    x0 = Math.min(x0, p.pos[0] - e[0]); x1 = Math.max(x1, p.pos[0] + e[0]);
+    z0 = Math.min(z0, p.pos[2] - e[2]); z1 = Math.max(z1, p.pos[2] + e[2]);
+  }
+  return [((x1 - x0) / 2) * scale, ((z1 - z0) / 2) * scale];
+}
+const footOf = (e) => (e.parts?.length ? halfFoot(e.parts, e.scale || 1) : [0.3, 0.3]);
+export function rectAt([hw, hd], x, z, rotY) {
+  const turned = Math.abs(Math.sin(rotY || 0)) > 0.7;
+  const [a, b] = turned ? [hd, hw] : [hw, hd];
+  return { x0: x - a, x1: x + a, z0: z - b, z1: z + b };
+}
+export function obstacles(decor, skip = null, withChest = true) {
+  const list = [...FIXED, ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
+  if (withChest) {
+    const c = chestNow ?? CHEST_HOME;
+    list.push({ n: 'the chest', ...rectAt([0.5, 0.3], c.x, c.z, c.rotY) });
+  }
+  return list;
+}
+export function blocker(r, obs, gap = 0.2) {
+  if (r.x0 < -EDGE || r.x1 > EDGE || r.z0 < -EDGE || r.z1 > EDGE) return 'the wall';
+  return obs.find((o) => r.x0 < o.x1 + gap && r.x1 + gap > o.x0 && r.z0 < o.z1 + gap && r.z1 + gap > o.z0)?.n ?? null;
+}
+// Next to a wall a thing turns to face into the room and stands flush against it. In the middle it faces the front.
+function faceAndSnap(hw, hd, x, z) {
+  const dist = { left: x + 5, right: 5 - x, back: z + 5, front: 5 - z };
+  const [wall, d] = Object.entries(dist).sort((a, b) => a[1] - b[1])[0];
+  const near = d <= 1.6;
+  const rotY = near ? { left: Math.PI / 2, right: -Math.PI / 2, back: 0, front: Math.PI }[wall] : 0;
+  const r = rectAt([hw, hd], x, z, rotY);
+  const gap = { left: r.x0 + 5, right: 5 - r.x1, back: r.z0 + 5, front: 5 - r.z1 }[wall];
+  if (near && gap > 0 && gap <= 0.6) {
+    const s = gap - 0.06;
+    if (wall === 'left') x -= s;
+    if (wall === 'right') x += s;
+    if (wall === 'back') z -= s;
+    if (wall === 'front') z += s;
+  }
+  return { rotY, x: r3(x), z: r3(z) };
+}
+// Is there room for e as it is now (after it got bigger)?
+function roomToGrow(decor, e) {
+  const [hw, hd] = footOf(e);
+  return blocker(rectAt([hw, hd], e.pos[0], e.pos[2], e.rotY), obstacles(decor, e));
+}
+function spotLabel(x, z) {
+  const side = { 'the left wall': x + 5, 'the right wall': 5 - x, 'the back wall': z + 5, 'the front wall': 5 - z };
+  const [name, d] = Object.entries(side).sort((a, b) => a[1] - b[1])[0];
+  return d <= 1.6 ? `on the floor by ${name} (x ${r3(x)}, z ${r3(z)})` : `on the floor (x ${r3(x)}, z ${r3(z)})`;
+}
+
+// Finds a place on the floor: exactly where he said, else the nearest free place (within 1.5 m when he named a spot, anywhere when he did not).
+function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false) {
+  const scale = fit(parts, 'floor', {});
+  const [hw, hd] = halfFoot(parts, scale);
+  const obs = obstacles(decor, null, true);
+  const tryAt = (x, z) => {
+    const f = faceAndSnap(hw, hd, Math.min(EDGE, Math.max(-EDGE, x)), Math.min(EDGE, Math.max(-EDGE, z)));
+    return blocker(rectAt([hw, hd], f.x, f.z, f.rotY), obs) ? null : f;
+  };
+  const [tx, tz] = want ? [want.x, want.z] : anchor;
+  let found = tryAt(tx, tz);
+  let moved = false;
+  if (!found) {
+    const grid = [];
+    for (let gx = -4.9; gx <= 4.91; gx += 0.25) for (let gz = -4.9; gz <= 4.91; gz += 0.25) grid.push([gx, gz, Math.hypot(gx - tx, gz - tz)]);
+    grid.sort((a, b) => a[2] - b[2]);
+    for (const [gx, gz, dist] of grid) {
+      if (want && dist > 1.5) break;
+      found = tryAt(gx, gz);
+      if (found) {
+        moved = true;
+        break;
+      }
+    }
+  }
+  if (!found) {
+    const f = faceAndSnap(hw, hd, Math.min(EDGE, Math.max(-EDGE, tx)), Math.min(EDGE, Math.max(-EDGE, tz)));
+    const hit = want ? blocker(rectAt([hw, hd], f.x, f.z, f.rotY), obs) : null;
+    return { failed: want ? `it does not fit there: it is about ${r3(hw * 2)} x ${r3(hd * 2)} m and would touch ${hit}, and there is no free place close by` : `there is no free floor space for something about ${r3(hw * 2)} x ${r3(hd * 2)} m. He can put things in his chest, make something smaller, build storage, or ask for more space` };
+  }
+  const front = Math.abs(Math.sin(found.rotY)) > 0.7 ? hw : hd; // half depth along the way it faces
+  const sx = Math.sin(found.rotY);
+  const sz = Math.cos(found.rotY);
+  const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
+  return {
+    moved,
+    entry: {
+      id: `d${now.toString(36)}${decor.length}`,
+      name: spec.name,
+      why: spec.why,
+      project: spec.project,
+      song: spec.song ?? null,
+      uses: moving ? spec.uses : storedUses(spec.uses),
+      tool: spec.tool ?? null,
+      zone: 'floor',
+      slot: null,
+      free: true,
+      label: spotLabel(found.x, found.z),
+      kind: 'floor',
+      pos: [found.x, 0, found.z],
+      rotY: found.rotY,
+      scale,
+      parts,
+      stand: [clampRoom(found.x + sx * (front + 0.9)), clampRoom(found.z + sz * (front + 0.9))],
+      at: new Date(atMs + 6000).toISOString(),
+      createdAt: new Date(now).toISOString(),
+    },
+  };
+}
+
+// A picture of the room in text, so he can see what stands where. Every character is half a metre.
+export function roomMap(decor) {
+  const symbols = { 'the piano': 'P', 'the piano stool': 'o', 'the bookshelf': 'B', 'the desk': 'D', 'the bed': 'E', 'the plant': 'L', 'the chest': 'C' };
+  const mine = decor.filter((o) => o.kind === 'floor' && !o.image && o.pos);
+  const marks = '123456789abcdefghijklmnopqrstuvwxyz';
+  const obs = obstacles(decor, null, true);
+  const legend = [];
+  mine.forEach((o, i) => {
+    const sym = marks[i] ?? '#';
+    symbols[o.name + '#' + i] = sym;
+    legend.push(`${sym} = ${o.name}`);
+  });
+  const named = obs.map((o, i) => ({ ...o, sym: i < FIXED.length ? symbols[o.n] : o.n === 'the chest' ? 'C' : symbols[`${o.n}#${i - FIXED.length}`] ?? '#' }));
+  const rows = [];
+  for (let z = -4.75; z < 5; z += 0.5) {
+    let row = '';
+    for (let x = -4.75; x < 5; x += 0.5) row += named.find((o) => x >= o.x0 && x <= o.x1 && z >= o.z0 && z <= o.z1)?.sym ?? '.';
+    rows.push(row);
+  }
+  return { rows, legend };
+}
+// How full his room is.
+export function crowding(decor) {
+  const cap = capOf(decor);
+  const used = obstacles(decor, null, true).slice(FIXED.length).reduce((a, o) => a + (o.x1 - o.x0) * (o.z1 - o.z0), 0);
+  const fixed = FIXED.reduce((a, o) => a + (o.x1 - o.x0) * (o.z1 - o.z0), 0);
+  const free = Math.max(0, 1 - used / (9.9 * 9.9 - fixed));
+  return { count: decor.length, cap, free: Math.round(free * 100) };
 }
