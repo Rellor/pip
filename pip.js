@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
+import { preflight, limitsText } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityGuide, blueprintDue, blueprintGaps } from './blueprints.js';
 import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
@@ -631,7 +632,7 @@ ${photosText(s)}${
   }ACTIONS I CAN DO
 ${[...ACTIONS, ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
 
-${dayTally(s)}${toolsText(s)}${movesText(s)}${blueprintsText(s)}
+${dayTally(s)}${limitsText(s)}${toolsText(s)}${movesText(s)}${blueprintsText(s)}
 ${tasksText(s)}ASKING FOR THINGS (what I may ask for is explained in my instructions)
 ${s.asks.length ? `I have asked for ${s.asks.length} thing${s.asks.length === 1 ? '' : 's'} so far; the last time was ${ago(s.asks.map((a) => a.since).sort().pop())}.` : 'I have not asked for anything yet.'}
 ${printsText(s)}
@@ -1177,6 +1178,21 @@ async function wakeUp() {
     const again = await askGemini(system, `${wakePrompt}\n\nMY PLAN HAS NO STEP FOR MY BLUEPRINT. ${due.text}. I think again and include that step in my plan of 2 to 4 real steps. This is my plan again, in the same JSON.`, 1, images).catch(() => null);
     if (again && normalizeSteps(again).some((x) => due.actions.includes(x.action))) answer = again;
   }
+  // A step that cannot work (a daily limit is used up, the thing it names is not in my room) is not wasted: one more go to plan something else.
+  let impossible = preflight(state, normalizeSteps(answer));
+  if (!process.env.PIP_FAKE && impossible.length && state.energy > 3) {
+    console.log(`Steps that cannot work (${impossible.map((b) => b.st.action).join(', ')}), asking once more...`);
+    const again = await askGemini(system, `${wakePrompt}\n\nTHESE STEPS OF MY PLAN CANNOT WORK, so I replace them with something else I can really do now (not the same thing again):\n${impossible.map((b) => `- ${b.st.action}${b.st.details?.name ? ` ${b.st.details.name}` : ''}: ${b.why}`).join('\n')}\nThis is my plan again, in the same JSON, with steps that can work.`, 1, images).catch(() => null);
+    if (again && preflight(state, normalizeSteps(again)).length <= impossible.length) answer = again;
+  }
+  // What still cannot work is dropped, as long as something else is left, so no time in the plan is wasted on it.
+  const planNow = normalizeSteps(answer);
+  impossible = preflight(state, planNow);
+  if (impossible.length) {
+    const drop = new Set(impossible.map((b) => b.st));
+    const keep = planNow.filter((st) => !drop.has(st));
+    if (keep.length >= 1) answer = { ...answer, steps: keep };
+  }
   const startedAt = Date.now();
   setChest(state.chest ?? null);
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
@@ -1486,6 +1502,19 @@ async function wakeUp() {
   const worked = (list) => steps.some((st) => list.includes(st.action) && !st.made?.failed);
   if (!worked(TASK_WORK)) answer.tasks_done = [];
   answer._progress = worked(PROJECT_WORK); // project steps and finishing a project only count after a step that really worked
+  // What I tell people must not say I did something when no step this wake-up really did anything. Those sentences are dropped.
+  const CLAIM = /\b(i|I)\s+(just\s+|already\s+|have\s+|also\s+)?(placed|moved|put|set|built|made|hung|finished|created|drew|drawn|added|arranged|baked|cooked|wrote|assembled|stood|lit|switched)\b/;
+  const stripClaims = (t) => {
+    const parts = String(t ?? '').match(/[^.!?]+[.!?]*\s*/g) ?? [];
+    const kept = parts.filter((x) => !CLAIM.test(x)).join('').trim();
+    return kept.length >= 12 ? kept : null;
+  };
+  if (!worked(TASK_WORK)) {
+    if (answer.tell && CLAIM.test(answer.tell)) answer.tell = stripClaims(answer.tell);
+    if (answer.remember?.text && CLAIM.test(answer.remember.text)) answer.remember = stripClaims(answer.remember.text) ? { ...answer.remember, text: stripClaims(answer.remember.text) } : null;
+    for (const a of Array.isArray(answer.tasks_answer) ? answer.tasks_answer : []) if (a?.note && CLAIM.test(a.note)) a.note = stripClaims(a.note) ?? (a.answer === 'yes' ? 'Yes, I will try.' : '');
+    for (const st of steps) if (st.action === 'write_diary' && st.details?.text && CLAIM.test(st.details.text)) st.details.text = stripClaims(st.details.text) ?? 'I think about what I would like to do next.';
+  }
   // What I write about something I tried to make, but could not, must not say I made it.
   const MAKE_ACTIONS = ['decorate', 'extend_thing', 'change_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'make_move', 'use', 'add_use'];
   const triedNames = steps.filter((st) => MAKE_ACTIONS.includes(st.action) && st.made?.failed).map((st) => text(st.details?.name, 60)).concat(blocked.filter((b) => MAKE_ACTIONS.includes(b.st.action)).map((b) => text(b.st.details?.name, 60))).filter(Boolean);
