@@ -1186,6 +1186,7 @@ function planFor(last) {
       return mv ? { at: where, anim: 'move', move: mv } : { at: where, anim: 'look' };
     }
     case 'make_move': return { at: 'center', anim: 'look' };
+    case 'blueprint': return { at: 'computer', anim: 'write' };
     case 'print_photo': return { at: 'computer', anim: 'look' };
     case 'move_thing':
     case 'extend_thing': return { at: 'center', anim: 'look' };
@@ -2258,6 +2259,7 @@ function headlineBase(st) {
     case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
     case 'print_photo': return ['🖨️', `Printing a photo (${d.id || st.name || 'a picture'})`];
     case 'take_down_print': return ['🖨️', 'Taking a print off the wall'];
+    case 'blueprint': return ['📐', `Planning ${d.name || st.name || 'something new'}`];
     case 'make_move': return ['🕺', `Designing the move “${d.name || st.name || '…'}”`];
     case 'do': return [d.emoji || st.emoji || '✨', d.what || st.what || 'Doing something'];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
@@ -2280,7 +2282,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -2422,6 +2424,14 @@ function dayCard(e) {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
     } else if (e.action === 'extend_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He added ${e.added} parts (${e.total} in all).`, 'muted'));
+    } else if (e.action === 'blueprint') {
+      if (e.failed) card.append(el('p', `That did not work out: ${e.failed}.`, 'muted'));
+      else {
+        card.append(el('p', `Goal: ${e.goal || ''}`, 'muted'));
+        const ul = el('ul', null, 'results');
+        (e.mechanisms || []).forEach((m) => ul.append(el('li', `${m.ok ? '✅' : '❓'} ${m.part}${m.ok ? ` (${m.uses})` : ' (cannot do yet)'}`)));
+        card.append(ul);
+      }
     } else if (e.action === 'move_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He moved it${e.place ? ` (${e.place})` : ''}.`, 'muted'));
     } else if (e.action === 'update_app') {
@@ -2664,6 +2674,8 @@ function render(s) {
   renderNow();
   renderMind(s);
 
+  const wishes = (s.requests || []).filter((r) => r.status === 'open');
+  fill($('requests'), wishes.length ? wishes.map((r) => el('li', `❓ ${r.what}${r.blueprint ? ` — for “${r.blueprint}”` : ''}`)) : empty('Nothing yet. When Pip works out something new and finds a part he cannot make work, it shows up here.'));
   const asks = s.asks || [];
   // Pip only saves your answer when he next wakes up, so an ask you answered is hidden here at once.
   for (const a of asks) if (answeredAsks[a.id ?? a.item] && a.status !== 'open') delete answeredAsks[a.id ?? a.item];

@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
+import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityGuide } from './blueprints.js';
 import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
@@ -56,6 +57,7 @@ const ACTIONS = [
   'walk_to(object)',
   'do(what, feeling, move)',
   'make_move(name, why, duration, frames)',
+  'blueprint(name, goal, research, mechanisms, tools)',
   'print_photo(id, where)',
   'take_down_print(id)',
   'play_piano(notes, style)',
@@ -88,7 +90,7 @@ const ACTIONS = [
 ];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, wall, along, height)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -260,6 +262,7 @@ async function loadState() {
   ensureMemory(state);
   ensureTools(state);
   ensureMoves(state);
+  ensureBlueprints(state);
   squareUp(state);
   state.sleep = { bed: BEDTIME, wake: WAKETIME, tz: TZ }; // the page and the watchdog use this so the night is not counted as stuck
   setChest(state.chest ?? null);
@@ -450,7 +453,8 @@ async function notify(msg) {
 }
 
 // The part of my instructions that never changes. It goes in front, so Gemini can reuse it from one wake-up to the next instead of reading it all again.
-export const guide = () => `${toolsGuide()}
+export const guide = () => `${capabilityGuide()}
+${toolsGuide()}
 ${movesGuide()}
 ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
@@ -627,7 +631,7 @@ ${photosText(s)}${
   }ACTIONS I CAN DO
 ${[...ACTIONS, ...(s.pictures.length ? PICTURE_ACTIONS : [])].join(', ')}
 
-${dayTally(s)}${toolsText(s)}${movesText(s)}
+${dayTally(s)}${toolsText(s)}${movesText(s)}${blueprintsText(s)}
 ${tasksText(s)}ASKING FOR THINGS (what I may ask for is explained in my instructions)
 ${s.asks.length ? `I have asked for ${s.asks.length} thing${s.asks.length === 1 ? '' : 's'} so far; the last time was ${ago(s.asks.map((a) => a.since).sort().pop())}.` : 'I have not asked for anything yet.'}
 ${printsText(s)}
@@ -821,6 +825,7 @@ function describe(a) {
     case 'move_thing':
     case 'extend_thing':
     case 'make_move':
+    case 'blueprint':
     case 'change_thing':
     case 'update_app':
     case 'make_clothes':
@@ -1221,11 +1226,12 @@ async function wakeUp() {
       st.made = makeDecor(state.decor, { ...st.details, uses: st.uses }, stepStart);
       if (st.made.entry) {
         state.decor.push(st.made.entry);
+        const promised = st.details.blueprint ? markBuilt(state, st.details.blueprint, new Date(stepStart).toISOString(), st.made.entry) : [];
         const added = ensureBehaviors(st.made.entry);
         const x = Number(st.details.x);
         const z = Number(st.details.z);
         const off = st.made.entry.kind === 'floor' && Number.isFinite(x) && Number.isFinite(z) ? Math.hypot(st.made.entry.pos[0] - x, st.made.entry.pos[2] - z) : 0;
-        st.made.warn = purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
+        st.made.warn = purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (promised.length ? `the blueprint promised more than it does yet: ${promised.join(', ')}` : null) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
         st.made.hint = st.made.warn ? null : purposeHint(st.made.entry) || (added ? `it works: I gave it a use that really does it (${st.made.entry.uses.find((u) => u.does)?.label})` : null);
       }
     }
@@ -1267,6 +1273,7 @@ async function wakeUp() {
       st.made = need ? { failed: need } : makeClothes(state.wardrobe, st.details, stepStart);
     }
     if (st.action === 'make_move') st.made = makeMove(state, st.details, stepStart);
+    if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
     if (st.action === 'cook') st.made = cook(state, st.details, stepStart);
     if (st.action === 'wear') st.made = wear(state.wardrobe, st.details.name, stepStart);
     if (st.action === 'take_off') st.made = takeOff(state.wardrobe, st.details.name);
@@ -1454,7 +1461,7 @@ async function wakeUp() {
 
   // A task counts as done only when this wake-up really did something (not only walking, resting or eating, and nothing that failed).
   const TASK_WORK = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture'];
-  const PROJECT_WORK = [...TASK_WORK, 'search_web', 'read_book', 'take_photo', 'find_picture', 'play_piano'];
+  const PROJECT_WORK = [...TASK_WORK, 'blueprint', 'search_web', 'read_book', 'take_photo', 'find_picture', 'play_piano'];
   const worked = (list) => steps.some((st) => list.includes(st.action) && !st.made?.failed);
   if (!worked(TASK_WORK)) answer.tasks_done = [];
   answer._progress = worked(PROJECT_WORK); // project steps and finishing a project only count after a step that really worked
@@ -1542,6 +1549,7 @@ async function wakeUp() {
     if (st.action === 'use') Object.assign(entry, { name: st.made?.used?.name ?? text(d.name, 60), label: st.made?.used?.label ?? text(d.label, 30), text: st.made?.used?.text ?? '', view: st.made?.used?.view ?? null, song: st.made?.used?.song ?? null, app: st.made?.used?.app ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'add_use') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), label: st.made?.use?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'eat') Object.assign(entry, { food: text(d.food, 80), failed: st.ate?.failed ?? null });
+    if (st.action === 'blueprint') Object.assign(entry, { name: st.made?.blueprint?.name ?? text(d.name, 60), goal: st.made?.blueprint?.goal ?? text(d.goal, 200), mechanisms: (st.made?.blueprint?.mechanisms ?? []).map((m) => ({ part: m.part, uses: m.uses, ok: m.ok })), missing: (st.made?.missing ?? []).map((m) => m.part), failed: st.made?.failed ?? null });
     if (st.action === 'make_move') Object.assign(entry, { name: st.made?.move?.name ?? text(d.name, 40), why: text(d.why, 200), frames: st.made?.move?.frames?.length ?? 0, failed: st.made?.failed ?? null });
     if (st.action === 'do' && text(d.move, 60) && !findMove(state, d.move)) entry.failed = `I have no move called "${text(d.move, 60)}". I design one first with make_move`;
     if (st.action === 'do') Object.assign(entry, { move: findMove(state, d.move)?.name ?? null, emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
