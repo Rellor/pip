@@ -2073,7 +2073,8 @@ let tab = TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day';
 let latestMsg = null;
 function showTab(name) {
   tab = name;
-  store('pip-tab', name);
+  if (name !== 'settings') store('pip-tab', name);
+  $('settingsbtn').setAttribute('aria-pressed', String(name === 'settings'));
   document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
   document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
   if (name === 'day') loadOlder();
@@ -2082,6 +2083,8 @@ function showTab(name) {
   $('msgdot').classList.toggle('on', name !== 'messages' && !!latestMsg && latestMsg !== store('pip-seen'));
 }
 document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
+// The settings are not a tab: the gear in the corner opens them, and pressing it again goes back.
+$('settingsbtn').addEventListener('click', () => showTab(tab === 'settings' ? (TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day') : 'settings'));
 
 // ---- Day: what Pip does, reads and searches, as a timeline
 const SLOT_WORDS = { head: 'his head', face: 'his face', neck: 'around his middle', body: 'his body', back: 'his back' };
