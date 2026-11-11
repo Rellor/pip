@@ -146,8 +146,12 @@ export function felt(s, event) {
 }
 
 // Eating fills him up a little. Not more than once every half hour.
+// He eats when he is hungry: with a full belly (8 or more) it does not happen.
+export const HUNGRY_BELOW = 8;
+export const notHungry = (s, now = Date.now()) => (s.lastAte && (now - Date.parse(s.lastAte)) / 60_000 < EAT_GAP_MINUTES ? 'I ate a short while ago' : s.fullness >= HUNGRY_BELOW ? `I am not hungry (fullness ${Math.round(s.fullness * 10) / 10} of 10)` : null);
 export function eatNow(s, now = Date.now(), gain = EAT_GAIN) {
   if (s.lastAte && (now - Date.parse(s.lastAte)) / 60_000 < EAT_GAP_MINUTES) return { failed: 'he ate a short while ago' };
+  if (s.fullness >= HUNGRY_BELOW) return { failed: 'he was not hungry yet' };
   s.fullness = clamp(s.fullness + gain);
   s.joy = clamp(s.joy + 0.5);
   s.calm = clamp(s.calm + 0.3);

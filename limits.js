@@ -1,6 +1,7 @@
 // Can a planned step work? Checked BEFORE the plan is used, so a step that would fail (a daily limit is used up, the thing it names
 // is not in his room) is not wasted: he gets one chance to plan something else instead. Same numbers as the places that do the work.
 import { MAX_COOKS_PER_DAY } from './food.js';
+import { notHungry } from './feelings.js';
 import { MAX_ART_PER_DAY } from './art.js';
 import { MAX_APPS_PER_DAY } from './apps.js';
 import { MAX_CLOTHES_PER_DAY } from './clothes.js';
@@ -49,6 +50,7 @@ export function preflight(s, steps, now = Date.now()) {
   const once = new Set();
   const made = [];
   const bad = [];
+  let ate = false;
   for (const st of steps) {
     const a = st.action;
     const key = SHARED[a] ?? a;
@@ -58,6 +60,8 @@ export function preflight(s, steps, now = Date.now()) {
       const u = lim[key].used + (used[key] ?? 0);
       if (u >= L.max) why = `I already used up my ${L.max} a day: I cannot ${L.what} again today`;
     }
+    if (!why && a === 'eat') why = ate ? 'I already eat once in this plan' : notHungry(s, now);
+    if (!why && a === 'eat') ate = true;
     if (!why && ONCE_PER_PLAN.includes(a) && once.has(a)) why = 'I only do one of these per wake-up';
     if (!why && a === 'decorate' && s.decor.length + made.length >= capOf(s.decor)) why = 'my room is full (chest, or storage, makes room)';
     const name = String(st.details?.name ?? '').trim().toLowerCase();
@@ -81,6 +85,8 @@ export function preflight(s, steps, now = Date.now()) {
 export function limitsText(s, now = Date.now()) {
   const rows = Object.entries(dayLimits(s, now)).filter(([k]) => k !== 'extend_thing');
   const gone = rows.filter(([, l]) => l.used >= l.max).map(([, l]) => l.what);
+  const full = notHungry(s, now);
+  if (full) gone.push(`eat (${full})`);
   const last = rows.filter(([, l]) => l.max - l.used === 1).map(([, l]) => l.what);
   if (!gone.length && !last.length) return '';
   return `WHAT I CAN STILL DO TODAY\n${gone.length ? `Used up for today (a step with these would fail, so I plan something else): ${gone.join(', ')}.\n` : ''}${last.length ? `One left today: ${last.join(', ')}.\n` : ''}\n`;
