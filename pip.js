@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
-import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityGuide } from './blueprints.js';
+import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityGuide, blueprintDue, blueprintGaps } from './blueprints.js';
 import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
@@ -1170,6 +1170,13 @@ async function wakeUp() {
     const again = await askGemini(system, `${wakePrompt}\n\nMY LAST PLAN HAD ONLY ${realSteps(answer)} REAL STEP${realSteps(answer) === 1 ? '' : 'S'}. Walking and resting do not count. I think again and plan 2 to 4 real steps, like making, trying, playing, cooking or looking something up. This is my plan again, in the same JSON.`, 1, images).catch(() => null);
     if (again && realSteps(again) >= realSteps(answer)) answer = again;
   }
+  // My blueprint waits for a step (build, fix or test). If the plan has none, one more go, once.
+  const due = blueprintDue(state);
+  if (!process.env.PIP_FAKE && due && state.energy > 3 && !normalizeSteps(answer).some((x) => due.actions.includes(x.action))) {
+    console.log('His plan has no step for his blueprint, asking once more...');
+    const again = await askGemini(system, `${wakePrompt}\n\nMY PLAN HAS NO STEP FOR MY BLUEPRINT. ${due.text}. I think again and include that step in my plan of 2 to 4 real steps. This is my plan again, in the same JSON.`, 1, images).catch(() => null);
+    if (again && normalizeSteps(again).some((x) => due.actions.includes(x.action))) answer = again;
+  }
   const startedAt = Date.now();
   setChest(state.chest ?? null);
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
@@ -1245,6 +1252,7 @@ async function wakeUp() {
           e.lit = e.lit === false; // switches: dark becomes lit, lit becomes dark
           e.litAt = new Date(stepStart + 6000).toISOString();
         }
+        for (const b of state.blueprints) if (b.thing && sameText(b.thing, e.name)) b.tested = new Date(stepStart).toISOString();
         st.made = { used: { name: e.name, label: use.label, text: use.text, view: use.view, song: use.song, app: use.app, does: use.does ?? null }, ref: { id: e.id, stand: e.stand, pos: e.pos, does: use.does ?? null, motion: use.motion ?? null, lit: e.lit !== false } };
         if (use.effect && (!e.usedAt || Date.now() - Date.parse(e.usedAt) > 30 * 60_000)) {
           nudge(state, use.effect, 0.8); // using it lifts a bar a little, at most once every half hour per thing
@@ -1579,6 +1587,10 @@ async function wakeUp() {
   if (archived) console.log(`🗄️  ${archived} old entries moved to the archive`);
 
   const brief = (f) => (f ? { title: f.title, text: f.text } : null);
+  for (const b of state.blueprints) { // what a built thing still lacks, as it is now
+    const e = b.thing ? state.decor.find((d) => d.name === b.thing) : null;
+    if (e) b.gaps = blueprintGaps(b, e);
+  }
   state.last = {
     at: new Date(startedAt).toISOString(),
     model: usedModel,

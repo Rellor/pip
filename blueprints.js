@@ -85,6 +85,7 @@ export function markBuilt(s, blueprintName, at, entry = null) {
   const b = s.blueprints.find((x) => x.name.toLowerCase() === clip(blueprintName, 60).toLowerCase());
   if (!b) return [];
   b.built = at;
+  b.tested = null;
   b.thing = entry?.name ?? b.thing ?? null;
   b.gaps = entry ? blueprintGaps(b, entry) : b.gaps ?? [];
   return b.gaps;
@@ -93,7 +94,7 @@ export function markBuilt(s, blueprintName, at, entry = null) {
 export function blueprintsText(s) {
   const open = s.requests.filter((r) => r.status === 'open');
   const list = s.blueprints.map((b) => `- ${b.name}: ${b.goal} ${b.built ? (b.gaps?.length ? `(built as ${b.thing}, but it does not do yet: ${b.gaps.join(', ')}. I fix that with add_use or change_thing)` : '(built, and it does what the blueprint says)') : `(NOT BUILT YET. My next step is decorate with "blueprint": "${b.name}" and the parts I can make now${b.mechanisms.every((m) => m.ok) ? '' : `; ${b.mechanisms.filter((m) => !m.ok).map((m) => m.part).join(', ')} cannot be done yet, so I build around ${b.mechanisms.filter((m) => !m.ok).length === 1 ? 'it' : 'them'} and do not wait`})`}`);
-  return `MY BLUEPRINTS\n${list.length ? list.join('\n') : '- none yet'}${open.length ? `\nThings I cannot do yet, that people know about: ${open.map((r) => r.what).join(' | ')}` : ''}\n`;
+  return `MY BLUEPRINTS\n${nudgeText(s)}${list.length ? list.join('\n') : '- none yet'}${open.length ? `\nThings I cannot do yet, that people know about: ${open.map((r) => r.what).join(' | ')}` : ''}\n`;
 }
 
 export const capabilityGuide = () => `HOW I WORK OUT SOMETHING NEW
@@ -106,3 +107,19 @@ When I want to make something new or hard (a vehicle, a machine, a game, a gadge
 5. Test. I use what I made once. If it does not do what the blueprint says, I change it, or I think of another way with my abilities. I am honest about it: I do not squeeze a mechanism into an ability that does not really do it (a drive use does not fly, a spin use does not hover). If none of my abilities does it, I write "missing". A mechanism marked missing is not a failure: it goes on the list of things people can give me, and I build the rest.
 I always check my abilities first: often a thing I want can be done in a different way than the real one (a car does not need a real motor: it drives a route I design).
 `;
+
+// What his blueprint is waiting for, so his plan includes it: build it, fix what it does not do yet, or test it.
+// A blueprint he only just wrote this wake-up (less than 20 minutes ago) is left alone.
+export function blueprintDue(s, now = Date.now()) {
+  for (const b of s.blueprints) {
+    if (now - Date.parse(b.at) < 20 * 60_000) continue;
+    if (!b.built) return { bp: b, kind: 'build', actions: ['decorate'], text: `I planned "${b.name}" and have not built it yet. A step of my plan builds it now: decorate with "blueprint": "${b.name}" (what I cannot do yet, I build around)` };
+    if (b.gaps?.length) return { bp: b, kind: 'fix', actions: ['add_use', 'change_thing', 'extend_thing', 'compose'], text: `"${b.name}" is built as ${b.thing}, but it does not do yet what my blueprint says: ${b.gaps.join(', ')}. A step of my plan fixes that (add_use, change_thing or extend_thing)` };
+    if (!b.tested && b.thing) return { bp: b, kind: 'test', actions: ['use'], text: `I built "${b.name}" as ${b.thing} but I have not tried it yet. A step of my plan uses it, and then I compare what happened with what my blueprint says` };
+  }
+  return null;
+}
+export const nudgeText = (s) => {
+  const d = blueprintDue(s);
+  return d ? `MY BLUEPRINT IS WAITING: ${d.text}.\n` : '';
+};
