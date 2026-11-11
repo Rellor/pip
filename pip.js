@@ -7,7 +7,7 @@ import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesText, movesGuide } from './moves.js';
-import { ensureTools, NEEDS, toolsText, toolsGuide, missingTool, addTool, toolKind, toolLabel, fits, craftTool, MAX_TOOLS } from './tools.js';
+import { ensureTools, NEEDS, toolsText, toolsGuide, toolFor, missingTool, addTool, toolKind, toolLabel, fits, craftTool, MAX_TOOLS } from './tools.js';
 import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
 import { takePhoto } from './photo.js';
@@ -1177,7 +1177,7 @@ async function wakeUp() {
       blocked.push({ st, why: `I need ${needs} in my inventory for that` });
       return false;
     }
-    if (st.action === 'decorate' && toolLabel(st.details.tool)) bag.push({ name: text(st.details.name, 40), kind: toolLabel(st.details.tool) });
+    if (st.action === 'decorate' && toolFor(st.details)) bag.push({ name: text(st.details.name, 40), kind: toolFor(st.details) });
     if (st.action === 'take_tool') [...state.decor, ...state.stored].filter((d) => d.tool && fits({ name: d.name, kind: d.tool }, text(st.details.name, 60))).slice(0, 1).forEach((d) => bag.push({ name: d.name, kind: d.tool }));
     return true;
   });
@@ -1209,7 +1209,7 @@ async function wakeUp() {
         return;
       }
       madeOne = true;
-      const kind = toolLabel(st.details.tool);
+      const kind = toolFor(st.details);
       if (kind) {
         const parts = cleanParts(st.details.parts);
         st.made = craftTool(state, st.details, kind, parts);

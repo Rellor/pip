@@ -103,3 +103,13 @@ export const toolsGuide = () => {
   return `TOOLS\nLike a person I think about what I need: ${fixed}. For any other step that needs a tool (a hammer to build, a ladder to reach something high, a telescope to look at stars), I add "needs": "the tool" to that step. If it is not in my inventory, the step does not work out. I can make a tool myself with decorate and "tool": "its name" (I design it and it goes straight into my inventory), or ask for it with asks_add. When it has been given to me I mark the ask as done and write its name in tools_add, and it goes in my inventory. Before I start something bigger (a task I said yes to, a project), I think about what tools it would need. If I am not sure, I look it up first with search_web (like "tools needed to build a bookshelf"). Then for each tool I do not have I choose: I make it myself (decorate with "tool"), or I ask someone to get it or make it for me (asks_add, saying exactly what and why). I can ask for help with anything else too, not only tools, like someone doing a part of a project for me, if I want help. It is my choice each time. place_tool {name, where} puts a tool in my room (then it is not in my inventory), take_tool {name} takes it back.
 `;
 };
+
+// He wrote "tool": "..." on something he makes. It only counts when the thing really is that tool (pencils are drawing supplies, a car is not).
+export function toolFor(d) {
+  const kind = toolLabel(d?.tool);
+  if (!kind) return null;
+  const name = clip(d.name, 60).toLowerCase();
+  if (toolKind(name) === kind || name.includes(kind) || kind.includes(name)) return kind;
+  const have = new Set(words(name));
+  return words(`${kind} ${clip(d.tool, 40)}`).some((w) => have.has(w)) ? kind : null;
+}
