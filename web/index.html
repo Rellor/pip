@@ -110,6 +110,23 @@
   .quote { margin-top:8px; padding:10px 12px; background:var(--bg); border-radius:10px; white-space:pre-wrap; }
 
   /* feeds and lists */
+  .taskform { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:6px; }
+  .taskform textarea { width:100%; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); font:inherit; padding:10px 12px; resize:vertical; }
+  .taskform .row { margin-top:10px; align-items:center; }
+  .tk-group { margin:22px 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .tk-group .count { margin:0; }
+  .tk-list { display:grid; gap:10px; }
+  .task { --st:var(--walk); background:var(--card); border:1px solid var(--line); border-left:5px solid var(--st); border-radius:14px; padding:12px 14px; }
+  .task.st-open, .task.st-sending { --st:var(--piano); }
+  .task.st-accepted { --st:var(--read); }
+  .task.st-done { --st:var(--make); }
+  .task.st-declined { --st:var(--walk); opacity:.8; }
+  .tk-head { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); margin-bottom:6px; }
+  .tk-head time { margin-left:auto; font-variant-numeric:tabular-nums; }
+  .tk-chip { background:var(--chip); color:var(--ink); border-radius:999px; padding:1px 10px; font-weight:600; }
+  .tk-text { margin:0; font-size:17px; font-weight:600; line-height:1.35; }
+  .tk-note { margin:10px 0 0; padding:8px 12px; background:var(--panel); border-radius:12px; color:var(--muted); font-size:15px; }
+  .tk-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
   .item { padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:12px; }
   .item:last-child { border-bottom:0; margin-bottom:0; }
   .meta { display:flex; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin-bottom:2px; }
@@ -214,14 +231,13 @@
     </section>
 
     <section class="pane" data-pane="tasks" hidden>
-      <h2>Things you ask Pip to do</h2>
-      <p class="muted">He can say yes or no. If he says yes, he will do it.</p>
-      <form id="taskform">
+      <h2>Ask Pip to do something</h2>
+      <form id="taskform" class="taskform">
         <textarea id="tasktext" rows="2" maxlength="300" placeholder="For example: build yourself a kitchen"></textarea>
         <input id="taskkey" type="password" autocomplete="off" placeholder="Your reply key (only needed once)" hidden>
-        <div class="row"><button type="submit" class="primary" id="tasksend">Ask Pip</button><span class="muted" id="taskstatus"></span></div>
+        <div class="row"><button type="submit" class="primary" id="tasksend">Ask Pip</button><span class="muted" id="taskstatus">He can say yes or no.</span></div>
       </form>
-      <ul id="tasklist"></ul>
+      <div id="tasklist"></div>
     </section>
 
     <section class="pane" data-pane="photos" hidden>

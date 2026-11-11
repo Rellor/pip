@@ -27,13 +27,17 @@ export default async function handler(req, res) {
 
   const body = typeof req.body === 'string' ? parse(req.body) : req.body || {};
   if (!sameKey(body.key ?? '', expected)) return res.status(401).json({ error: 'That key is not right.' });
+  // Closing a task yourself: "done" (you did it or it is finished) or "remove" (you do not want it any more).
+  const closing = ['done', 'remove'].includes(body.action) ? body.action : null;
+  const target = typeof body.id === 'string' && /^[\w-]{3,60}$/.test(body.id) ? body.id : '';
+  if (closing && !target) return res.status(400).json({ error: 'Which task?' });
   const text = typeof body.text === 'string' ? body.text.trim().slice(0, 300) : '';
-  if (!text) return res.status(400).json({ error: 'Write what you would like Pip to do.' });
-  if (Date.now() - lastCall < 3000) return res.status(429).json({ error: 'Slow down a little.' });
+  if (!closing && !text) return res.status(400).json({ error: 'Write what you would like Pip to do.' });
+  if (Date.now() - lastCall < (closing ? 800 : 3000)) return res.status(429).json({ error: 'Slow down a little.' });
   lastCall = Date.now();
 
-  const id = `${Date.now().toString(36)}-${randomBytes(3).toString('hex')}`;
-  const file = { id, at: new Date().toISOString(), text };
+  const id = closing ? `${target}~${closing}` : `${Date.now().toString(36)}-${randomBytes(3).toString('hex')}`;
+  const file = closing ? { control: closing, target, at: new Date().toISOString() } : { id, at: new Date().toISOString(), text };
   const put = await fetch(`https://api.github.com/repos/${REPO}/contents/tasks/${id}.json`, {
     method: 'PUT',
     headers: {

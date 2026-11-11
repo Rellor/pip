@@ -1670,6 +1670,45 @@ $('taskform').addEventListener('submit', async (e) => {
   }
 });
 
+// Closing a task yourself: "done" or "remove". It shows right away and is saved when Pip next wakes up.
+let closing = {};
+try {
+  closing = JSON.parse(store('pip-task-closing') || '{}');
+} catch {}
+async function closeTask(id, action) {
+  const status = $('taskstatus');
+  const key = store('pip-key') || $('taskkey').value.trim();
+  if (!key) {
+    $('taskkey').hidden = false;
+    $('taskkey').focus();
+    status.textContent = 'Enter your reply key once, then press the button again.';
+    return;
+  }
+  status.textContent = 'Sending…';
+  try {
+    const res = await fetch('/api/task', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, id, key }) });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) {
+      store('pip-key', '');
+      $('taskkey').hidden = false;
+      status.textContent = 'That key is not right.';
+      return;
+    }
+    if (!res.ok) {
+      status.textContent = data.error || 'Could not send.';
+      return;
+    }
+    store('pip-key', key);
+    $('taskkey').hidden = true;
+    closing[id] = action;
+    store('pip-task-closing', JSON.stringify(closing));
+    status.textContent = action === 'done' ? 'Marked as done.' : 'Removed.';
+    if (lastState) render(lastState);
+  } catch {
+    status.textContent = 'No connection. Try again.';
+  }
+}
+
 // Sends a message to Pip. Returns true when it was sent.
 async function sendReply(body, image = '') {
   const status = $('replystatus');
@@ -2163,16 +2202,48 @@ function render(s) {
     pendingTasks = pendingTasks.filter((p) => !knownTasks.has(p.id));
     store('pip-task-pending', JSON.stringify(pendingTasks));
   }
-  $('taskcount').textContent = tasks.filter((t) => t.status === 'open' || t.status === 'accepted').length || '';
-  const taskLabel = { sending: 'on its way…', open: 'waiting for Pip to answer', accepted: '✅ Pip said yes', declined: '🙅 Pip said no', done: '🎉 done' };
-  const taskRows = [...pendingTasks.map((p) => ({ ...p, status: 'sending' })), ...tasks.slice().reverse()];
-  fill($('tasklist'), taskRows.length
-    ? taskRows.map((t) => {
-      const li = entry([when(t.at), taskLabel[t.status] || t.status], t.text, t.status === 'declined' ? '' : 'mine');
-      if (t.note) li.append(el('p', `Pip: ${t.note}`, 'muted'));
-      return li;
-    })
-    : empty('Nothing yet. Ask Pip to do something, for example to build a kitchen.'));
+  // A task you closed disappears from the "closing" list once Pip has saved it.
+  for (const t of tasks) if (closing[t.id] && !['open', 'accepted'].includes(t.status)) delete closing[t.id];
+  store('pip-task-closing', JSON.stringify(closing));
+  const shown = [...pendingTasks.map((p) => ({ ...p, status: 'sending' })), ...tasks.slice().reverse()]
+    .filter((t) => t.status !== 'removed' && closing[t.id] !== 'remove')
+    .map((t) => (closing[t.id] === 'done' ? { ...t, status: 'done', soon: true } : t));
+  $('taskcount').textContent = shown.filter((t) => t.status === 'open' || t.status === 'accepted' || t.status === 'sending').length || '';
+  const GROUPS = [
+    ['Pip is working on it', ['accepted'], '✅ Pip said yes'],
+    ['Waiting for Pip', ['sending', 'open'], '⏳ Waiting'],
+    ['Done', ['done'], '🎉 Done'],
+    ['Not now', ['declined'], '🙅 Pip said no'],
+  ];
+  const taskCard = (t, chipText) => {
+    const card = el('article', null, `task st-${t.status}`);
+    const head = el('div', null, 'tk-head');
+    head.append(el('span', t.status === 'sending' ? '📨 On its way…' : t.soon ? '🎉 Done (saving…)' : chipText, 'tk-chip'), el('time', when(t.at)));
+    card.append(head, el('p', t.text, 'tk-text'));
+    if (t.note) card.append(el('p', `Pip: ${t.note}`, 'tk-note'));
+    if (['open', 'accepted'].includes(t.status) && t.id && !String(t.id).startsWith('sending')) {
+      const actions = el('div', null, 'tk-actions');
+      const done = el('button', '✓ Mark as done', 'small primary');
+      done.addEventListener('click', () => closeTask(t.id, 'done'));
+      const remove = el('button', 'Remove', 'small');
+      remove.addEventListener('click', () => closeTask(t.id, 'remove'));
+      actions.append(done, remove);
+      card.append(actions);
+    }
+    return card;
+  };
+  const sections = GROUPS.map(([title, statuses, chipText]) => {
+    const list = shown.filter((t) => statuses.includes(t.status));
+    if (!list.length) return null;
+    const box = el('section');
+    const h = el('h3', title, 'tk-group');
+    h.append(el('span', String(list.length), 'count'));
+    const cards = el('div', null, 'tk-list');
+    cards.append(...(title === 'Done' ? list.slice(0, 6) : list).map((t) => taskCard(t, chipText)));
+    box.append(h, cards);
+    return box;
+  }).filter(Boolean);
+  fill($('tasklist'), sections.length ? sections : [el('p', 'Nothing yet. Ask Pip to do something, for example to build a kitchen.', 'muted')]);
   const closed = asks.filter((a) => a.status !== 'open').reverse();
   fill($('asksdone'), closed.length ? closed.map((a) => el('li', a.item)) : [el('li', 'nothing yet', 'muted')]);
 

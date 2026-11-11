@@ -290,6 +290,13 @@ async function loadTasks(state) {
   for (const name of files) {
     try {
       const m = JSON.parse(await readFile(`${TASKS_DIR}/${name}`, 'utf8'));
+      if (m.control && m.target) {
+        // The person who asked closes a task themselves.
+        const t = state.tasks.find((x) => x.id === m.target);
+        if (t && ['open', 'accepted'].includes(t.status)) Object.assign(t, m.control === 'done' ? { status: 'done', doneBy: 'asker', doneAt: new Date().toISOString() } : { status: 'removed', doneAt: new Date().toISOString() });
+        names.push(name);
+        continue;
+      }
       const body = text(m.text, 300);
       const id = text(m.id, 60) || name.replace(/\.json$/, '');
       if (body && !state.tasks.some((t) => t.id === id)) {
