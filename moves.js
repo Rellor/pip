@@ -10,6 +10,9 @@
 //   armL armR 0 to 1     arm down at his side (0) up over his head (1)
 //   spread    0 to 1     arms out to the sides
 //   footL footR 0 to 1   foot on the floor (0) lifted (1)
+//   eyes      -1 to 1    wide open (-1), normal (0), closed (1)
+//   sound     one of SOUNDS, played once when the move reaches this pose
+//   sign      one symbol (like ♪ or ✨) that floats up from his head at this pose
 export const MAX_MOVES = 12;
 export const MAX_MOVES_PER_DAY = 3;
 
@@ -18,7 +21,9 @@ const num = (v, lo, hi) => {
   const n = Number(v);
   return Number.isFinite(n) ? Math.round(Math.min(hi, Math.max(lo, n)) * 100) / 100 : 0;
 };
-const RANGES = { hop: [0, 0.6], lean: [-0.6, 0.6], turn: [-1.6, 1.6], tilt: [-0.5, 0.5], armL: [0, 1], armR: [0, 1], spread: [0, 1], footL: [0, 1], footR: [0, 1] };
+const sign = (v) => (typeof v === 'string' && /^[^\p{L}\p{N}\s]{1,4}$/u.test(v.trim()) ? [...v.trim()].slice(0, 2).join('') : null);
+export const SOUNDS = ['chirp', 'boing', 'whoosh', 'pop', 'sparkle', 'hum', 'sigh'];
+const RANGES = { hop: [0, 0.6], lean: [-0.6, 0.6], turn: [-1.6, 1.6], tilt: [-0.5, 0.5], armL: [0, 1], armR: [0, 1], spread: [0, 1], footL: [0, 1], footR: [0, 1], eyes: [-1, 1] };
 
 export function ensureMoves(s) {
   s.moves = Array.isArray(s.moves) ? s.moves.filter((m) => m && m.name && Array.isArray(m.frames)) : [];
@@ -28,7 +33,7 @@ export function cleanFrames(raw) {
   const frames = (Array.isArray(raw) ? raw : [])
     .filter((f) => f && typeof f === 'object')
     .slice(0, 8)
-    .map((f, i, all) => ({ at: Object.hasOwn(f, 'at') ? num(f.at, 0, 1) : Math.round((i / Math.max(1, all.length)) * 100) / 100, ...Object.fromEntries(Object.entries(RANGES).map(([k, [lo, hi]]) => [k, num(f[k], lo, hi)])) }));
+    .map((f, i, all) => ({ at: Object.hasOwn(f, 'at') ? num(f.at, 0, 1) : Math.round((i / Math.max(1, all.length)) * 100) / 100, ...Object.fromEntries(Object.entries(RANGES).map(([k, [lo, hi]]) => [k, num(f[k], lo, hi)])), ...(SOUNDS.includes(f.sound) ? { sound: f.sound } : {}), ...(sign(f.sign) ? { sign: sign(f.sign) } : {}) }));
   return frames.length >= 2 ? frames.sort((a, b) => a.at - b.at) : null;
 }
 
@@ -58,6 +63,6 @@ export function movesText(s) {
   const list = s.moves.map((m) => `- ${m.name}${m.why ? `: ${m.why}` : ''}`);
   return `MY MOVES (little body animations. I design one once with make_move and then do it as often as I like, for free)
 ${list.length ? list.join('\n') : '- none yet'}
-make_move {"name": "happy hop", "why": "when I am glad", "duration": 1.5, "frames": [{"at": 0}, {"at": 0.5, "hop": 0.35, "armL": 1, "armR": 1, "spread": 0.6}, {"at": 1}]} designs a move: 2 to 8 poses over the move (at goes from 0 to 1, and the move loops). In each pose I can set hop 0-0.6 (how high), lean -0.6 to 0.6, turn -1.6 to 1.6, tilt -0.5 to 0.5, armL and armR 0-1 (down to up), spread 0-1 (arms out), footL and footR 0-1 (lifted). What I leave out stays at rest. I do a move with do {"what": "...", "move": "happy hop"}, and it plays for as long as that step lasts. At most ${MAX_MOVES_PER_DAY} new moves a day, ${MAX_MOVES} in all.
+make_move {"name": "happy hop", "why": "when I am glad", "duration": 1.5, "frames": [{"at": 0}, {"at": 0.5, "hop": 0.35, "armL": 1, "armR": 1, "spread": 0.6}, {"at": 1}]} designs a move: 2 to 8 poses over the move (at goes from 0 to 1, and the move loops). In each pose I can set hop 0-0.6 (how high), lean -0.6 to 0.6, turn -1.6 to 1.6, tilt -0.5 to 0.5, armL and armR 0-1 (down to up), spread 0-1 (arms out), footL and footR 0-1 (lifted), eyes -1 to 1 (wide open to closed), sound (one of ${SOUNDS.join(', ')}, heard when the pose is reached) and sign (one symbol like ♪ or ✨ that floats up from my head). What I leave out stays at rest. I do a move with do {"what": "...", "move": "happy hop", "where": "window"} (where is optional: it is where I stand, anywhere I can walk to), and it plays for as long as that step lasts. At most ${MAX_MOVES_PER_DAY} new moves a day, ${MAX_MOVES} in all.
 `;
 }

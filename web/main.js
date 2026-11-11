@@ -1008,7 +1008,8 @@ function planFor(last) {
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
     case 'do': {
       const mv = d.move ? (lastState?.moves || []).find((m) => m.name.toLowerCase() === String(d.move).toLowerCase()) : null;
-      return mv ? { at: 'center', anim: 'move', move: mv } : { at: 'center', anim: 'look' };
+      const where = d.where ? resolveSpot(d.where) : 'center';
+      return mv ? { at: where, anim: 'move', move: mv } : { at: where, anim: 'look' };
     }
     case 'make_move': return { at: 'center', anim: 'look' };
     case 'print_photo': return { at: 'computer', anim: 'look' };
@@ -1057,7 +1058,61 @@ function movePose(mv, ms) {
   const a = f[i];
   const b = f[i + 1];
   const k = b.at > a.at ? ease(Math.min(1, Math.max(0, (x - a.at) / (b.at - a.at)))) : 1;
-  return Object.fromEntries(keys.map((key) => [key, (a[key] || 0) + ((b[key] || 0) - (a[key] || 0)) * k]));
+  const pose = Object.fromEntries([...keys, 'eyes'].map((key) => [key, (a[key] || 0) + ((b[key] || 0) - (a[key] || 0)) * k]));
+  // sounds and symbols fire once each time the move passes their pose
+  const cycle = Math.floor(ms / 1000 / (mv.duration || 2));
+  if (mvTrig.id !== mv.id || mvTrig.cycle !== cycle) Object.assign(mvTrig, { id: mv.id, cycle, done: new Set() });
+  mv.frames.forEach((fr, i) => {
+    if ((fr.sound || fr.sign) && x >= fr.at && !mvTrig.done.has(i)) {
+      mvTrig.done.add(i);
+      if (fr.sound) moveSound(fr.sound);
+      if (fr.sign) floatSign(fr.sign, '#ffd27a', headPos().add(new V3(rand(-0.3, 0.3), 0.1, 0)), { life: 1.6, rise: 0.5, size: 0.5 });
+    }
+  });
+  return pose;
+}
+const mvTrig = { id: null, cycle: -1, done: new Set() };
+// Small synthesized sounds for moves.
+function moveSound(kind) {
+  if (!audio || audio.state !== 'running' || !master) return;
+  const t = audio.currentTime + 0.02;
+  const blip = (type, f0, f1, len, vol, at = 0) => {
+    const o = audio.createOscillator();
+    const g = audio.createGain();
+    o.type = type;
+    o.frequency.setValueAtTime(f0, t + at);
+    o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + at + len);
+    g.gain.setValueAtTime(0.0001, t + at);
+    g.gain.linearRampToValueAtTime(vol, t + at + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + at + len);
+    o.connect(g).connect(master);
+    o.start(t + at);
+    o.stop(t + at + len + 0.02);
+  };
+  if (kind === 'chirp') { blip('sine', 1400, 2200, 0.1, 0.12); blip('sine', 1800, 2600, 0.1, 0.1, 0.12); }
+  else if (kind === 'boing') blip('sine', 180, 520, 0.35, 0.2);
+  else if (kind === 'pop') blip('triangle', 700, 120, 0.08, 0.22);
+  else if (kind === 'sparkle') [1568, 1976, 2349, 2637].forEach((f, i) => blip('sine', f, f * 1.01, 0.18, 0.07, i * 0.06));
+  else if (kind === 'hum') { blip('triangle', 196, 200, 0.9, 0.09); blip('sine', 392, 396, 0.9, 0.04); }
+  else if (kind === 'sigh') blip('sine', 520, 260, 0.7, 0.07);
+  else if (kind === 'whoosh') {
+    const buf = audio.createBuffer(1, Math.floor(audio.sampleRate * 0.5), audio.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = audio.createBufferSource();
+    src.buffer = buf;
+    const f = audio.createBiquadFilter();
+    f.type = 'bandpass';
+    f.Q.value = 2;
+    f.frequency.setValueAtTime(400, t);
+    f.frequency.exponentialRampToValueAtTime(2800, t + 0.45);
+    const g = audio.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.12, t + 0.15);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+    src.connect(f).connect(g).connect(master);
+    src.start(t);
+  }
 }
 function startTask(last) {
   const plan = planFor(last);
@@ -1185,6 +1240,7 @@ function frame(now, dt) {
   const pv = preview && now < preview.until && !walking ? preview : null; // a move shown from the Life tab
   const mv = pv ? pv.move : engaged && anim === 'move' && task.move ? task.move : null;
   const mvStart = pv ? pv.start : task?.arrivedAt || now;
+  let mvEyes = 0;
   const base = (s) => [s * 0.5, 0.55, 0.1];
   let la = base(-1);
   let ra = base(1);
@@ -1202,6 +1258,7 @@ function frame(now, dt) {
     body.position.y = Math.sin(t * 2) * 0.012;
     if (mv) {
       const p = movePose(mv, now - mvStart);
+      mvEyes = p.eyes;
       body.position.y = p.hop;
       body.rotation.set(p.lean, p.turn, p.tilt);
       la = [-(0.5 + p.spread * 0.45), 0.55 + p.armL * 0.75, 0.1 + p.armL * 0.1];
@@ -1274,8 +1331,8 @@ function frame(now, dt) {
     blinkEnd = t + 0.13;
     blinkAt = t + 3 + Math.random() * 3;
   }
-  const closed = sleeping || t < blinkEnd;
-  eyes.forEach((e) => (e.scale.y = closed ? 0.1 : 1));
+  const closed = sleeping || t < blinkEnd || (mv && mvEyes > 0.6);
+  eyes.forEach((e) => (e.scale.set(1, closed ? 0.1 : mv ? 1 + Math.max(0, -mvEyes) * 0.45 - Math.max(0, mvEyes) * 0.5 : 1, 1)));
 }
 
 // ---------------------------------------------------------------- free view: walk around and tap things to read about them
