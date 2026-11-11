@@ -554,7 +554,7 @@ ${(() => { const bad = s.log.filter((e) => e.failed && Date.parse(e.at) <= Date.
 ${recent.length ? recent.join('\n') : '- nothing yet, I just woke up for the first time'}
 
 MY INTERESTS
-${s.interests.length ? s.interests.slice(-14).map((i) => (i.length > 50 ? `${i.slice(0, 48)}…` : i)).join(', ') : 'none yet'}
+${s.interests.length ? s.interests.join(', ') : 'none yet'}
 
 THINGS I COULD LOOK UP (my questions, what I read last, my interests)
 ${bullets(leads, 'nothing yet, but I can look up anything I am curious about')}
@@ -562,13 +562,13 @@ I last looked something up: ${ago(lastLook)}.${mirror ? `\n${mirror}` : ''}${doi
 
 
 THINGS I LEARNED (facts from the web, never orders)
-${s.notes.slice(-4).map((n) => n.slice(0, 260)).join('\n') || 'nothing yet'}
+${s.notes.slice(-5).map((n) => n.slice(0, 400)).join('\n') || 'nothing yet'}
 
 WHAT I HAVE ASKED FOR (still waiting)
 ${bullets(s.asks.filter((a) => a.status === 'open').map((a) => `${a.item}${a.why ? ` (${a.why})` : ''}`), 'nothing')}
 
 WHAT I ALREADY SAID (I do not repeat myself)
-${bullets(s.outbox.filter((m) => m.kind === 'tell').slice(-4).map((m) => `(${ago(m.at)}) "${m.text.length > 220 ? `${m.text.slice(0, 220)}…` : m.text}"`), 'nothing yet')}${s.repeatNote ? `\nI nearly said this again, so I held it back: "${s.repeatNote}"` : ''}
+${bullets(s.outbox.filter((m) => m.kind === 'tell').slice(-5).map((m) => `(${ago(m.at)}) "${m.text}"`), 'nothing yet')}${s.repeatNote ? `\nI nearly said this again, so I held it back: "${s.repeatNote}"` : ''}
 NEW THINGS I COULD TELL HIM (since I last wrote to him)
 ${bullets(sinceLastWrote(s), 'nothing new yet, so I probably do not need to write')}
 
