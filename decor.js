@@ -785,6 +785,28 @@ export function roomMap(decor) {
   return { rows, legend };
 }
 
+
+// Things on the walls that look wrong: pictures closer than 25 cm to each other, or right above a shelf or desk.
+export function wallNotes(decor) {
+  const out = [];
+  for (const side of ['back', 'left']) {
+    const obs = wallObstacles(decor, side);
+    const pics = obs.filter((o) => o.hung);
+    for (let i = 0; i < pics.length; i++) {
+      for (let j = i + 1; j < pics.length; j++) {
+        const p = pics[i];
+        const q = pics[j];
+        const gx = Math.max(q.a0 - p.a1, p.a0 - q.a1);
+        const gy = Math.max(q.y0 - p.y1, p.y0 - q.y1);
+        if (gx < PIC_GAP && gy < PIC_GAP) out.push(`${p.n} and ${q.n} hang very close together (${r3(Math.max(gx, gy))} m)`);
+      }
+      const near = tightAbove({ a0: pics[i].a0, a1: pics[i].a1, y0: pics[i].y0, y1: pics[i].y1 }, obs.filter((o) => o.clear));
+      if (near) out.push(`${pics[i].n} hangs close above ${near}`);
+    }
+  }
+  return out;
+}
+
 // Where there is room beside each big thing (a strip 0.8 m wide), so he can see the space and not guess.
 export function freeSides(decor) {
   const things = [
@@ -1033,6 +1055,7 @@ function placeWhere(decor, spec, parts, want, atMs, now) {
 // ---- Hanging pictures like a person would: in a row at eye height, next to the ones already there, or centered above a piece of furniture.
 const HANG_Y = 2.7;
 const HANG_GAP = 0.3;
+const PIC_GAP = 0.25; // pictures never hang closer to each other than this
 function hangSpot(decor, side, hw, hh) {
   const obs = wallObstacles(decor, side);
   const ok = (a, y) => { const r = { a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }; return !wallBlocker(r, obs, 0.15) && !tightAbove(r, obs); };
@@ -1087,7 +1110,8 @@ export function hangAt(decor, pic, side, along, height, max, now = Date.now(), s
   const hh = h / 2;
   const ta = Math.min(4.9 - hw, Math.max(-4.9 + hw, along ?? 0));
   const th = Math.min(WALL_TOP - hh, Math.max(0.3 + hh, height ?? HANG_Y));
-  const free = (a, y) => !wallBlocker({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs, 0.05);
+  const hit = (a, y) => obs.find((o) => a - hw < o.a1 + (o.hung ? PIC_GAP : 0.05) && a + hw + (o.hung ? PIC_GAP : 0.05) > o.a0 && y - hh < o.y1 + (o.hung ? PIC_GAP : 0.05) && y + hh + (o.hung ? PIC_GAP : 0.05) > o.y0);
+  const free = (a, y) => !wallBlocker({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs, 0.05) && !hit(a, y);
   let found = free(ta, th) ? [ta, th] : null;
   if (!found) {
     const grid = [];
