@@ -2,6 +2,7 @@
 // it writes web/health.json (the page shows a warning) and sends one push to Bas's phone.
 // Exit code 2 means "stuck right now", so the workflow can try to restart the loop.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { awakeMinutes } from './web/sleep.js';
 
 export const STUCK_MIN = 30; // about two missed wake-ups
 const HEALTH = 'web/health.json';
@@ -10,7 +11,8 @@ export const BACKUP_HOURS = 3; // how long on the backup model before it is wort
 
 export function check(state, health, now = Date.now(), primary = process.env.GEMINI_MODEL || '') {
   const lastAt = Date.parse(state?.last?.at ?? '');
-  const minutes = Number.isFinite(lastAt) ? Math.round((now - lastAt) / 60000) : null;
+  const cfg = state?.sleep ?? { bed: Number(process.env.PIP_BEDTIME ?? 23), wake: Number(process.env.PIP_WAKETIME ?? 8), tz: process.env.PIP_TZ || 'Europe/Amsterdam' };
+  const minutes = Number.isFinite(lastAt) ? awakeMinutes(lastAt, now, cfg) : null; // the night does not count
   const stuck = minutes !== null && minutes >= STUCK_MIN;
   const onBackup = Boolean(primary) && Boolean(state?.last?.model) && state.last.model !== primary;
   const backupSince = onBackup ? (health?.backupSince ?? new Date(now).toISOString()) : null;

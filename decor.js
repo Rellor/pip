@@ -33,6 +33,8 @@ export const ZONES = {
   floor_front: { label: 'on the floor near the front of the room', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [[-2.6, 0, 3.2], [-0.6, 0, 3.8], [1.2, 0, 3.4]] },
   floor_right: { label: 'on the floor on the right side of the room', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: -Math.PI / 2, off: [-1.2, 0], slots: [[4.4, 0, -1.6], [4.4, 0, -0.2]] },
   floor: { label: 'on the floor', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [], free: true }, // anywhere on the floor that has room
+  surface: { label: 'on furniture', kind: 'surface', rotY: 0, off: [0, 1.1], slots: [], free: true },
+  wall_free: { label: 'on a wall', kind: 'wall', rotY: 0, side: null, slots: [], free: true },
   on_piano: { label: 'on top of the piano', kind: 'surface', lim: { w: 1.1, d: 0.8 }, rotY: 0, off: [0, 1.5], slots: [[-3.4, 1.4, -4.5], [-1.9, 1.4, -4.5]] },
   on_bookshelf: { label: 'on top of the bookshelf', kind: 'surface', lim: { w: 1.0, d: 0.55 }, rotY: 0, off: [0, 1.4], slots: [[2.0, 3.0, -4.65], [3.2, 3.0, -4.65]] },
   on_desk: { label: 'on the desk', kind: 'surface', lim: { w: 1.0, d: 1.3 }, rotY: Math.PI / 2, off: [1.5, 0], slots: [[-4.2, 0.85, 0.45], [-4.2, 0.85, 1.95]] },
@@ -136,53 +138,8 @@ function placeParts(decor, spec, atMs, now) {
   if (decor.length >= capOf(decor)) return { failed: FULL };
   const parts = spec.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] })); // fit() moves things, so work on a copy
   const want = findZone(spec.where);
-  const given = Number.isFinite(Number(spec.x)) && Number.isFinite(Number(spec.z)) && spec.x !== null && spec.z !== null && spec.x !== '' && spec.z !== '';
-  if (given || (want && ZONES[want].kind === 'floor')) {
-    const anchor = given ? [Number(spec.x), Number(spec.z)] : (ZONES[want].slots[0] ?? [0, 0, 0]).filter((_, i) => i !== 1);
-    return placeFloor(decor, spec, parts, given ? { x: anchor[0], z: anchor[1] } : null, anchor, atMs, now);
-  }
-  const keys = Object.keys(ZONES).filter((k) => !ZONES[k].prints && ZONES[k].kind !== 'floor');
-  const order = [...(want ? [want] : []), ...keys.filter((k) => k !== want && want && ZONES[k].kind === ZONES[want].kind), ...keys];
-  let zone = null;
-  let slot = -1;
-  for (const k of order) {
-    const used = usedSlots(decor, k);
-    const i = ZONES[k].slots.findIndex((_, n) => !used.has(n));
-    if (i >= 0) {
-      zone = k;
-      slot = i;
-      break;
-    }
-  }
-  if (!zone) return { failed: 'there is no free spot left' };
-
-  const Z = ZONES[zone];
-  const [sx, sy, sz] = Z.slots[slot];
-  const scale = fit(parts, Z.kind, Z.lim);
-  const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
-  const stand = Z.kind === 'wall' ? (Z.side === 'back' ? [sx, -3.7] : [-3.7, sz]) : [clampRoom(sx + Z.off[0]), clampRoom(sz + Z.off[1])];
-  return {
-    entry: {
-      id: `d${now.toString(36)}${decor.length}`,
-      name: spec.name,
-      why: spec.why,
-      project: spec.project,
-      song: spec.song ?? null,
-      uses: storedUses(spec.uses),
-      tool: spec.tool ?? null,
-      zone,
-      slot,
-      label: Z.label,
-      kind: Z.kind,
-      pos: [sx, sy, sz],
-      rotY: Z.rotY,
-      scale,
-      parts,
-      stand,
-      at: new Date(atMs + 6000).toISOString(), // appears a few seconds into his step, when he has walked there
-      createdAt: new Date(now).toISOString(),
-    },
-  };
+  const dest = placeWhere(decor, spec, parts, want, atMs, now);
+  return dest;
 }
 
 // Pip's new object, made in one go, or the reason it did not work out. Does not change `decor`.
@@ -194,7 +151,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (decor.length >= capOf(decor)) return { failed: FULL };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, on: d.on, wall: d.wall, along: d.along, height: d.height }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -207,6 +164,7 @@ export function storeAway(decor, stored, name, now = Date.now()) {
   if (i < 0 && n) i = decor.findIndex((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (i < 0) return { failed: 'there is nothing with that name in his room' };
   if (stored.length >= MAX_STORED) return { failed: 'his chest is full' };
+  if (decor.some((x) => x.base === decor[i].id)) return { failed: 'there are still things standing on it. He takes them off first' };
   const [e] = decor.splice(i, 1);
   stored.push({ ...e, storedAt: new Date(now).toISOString() });
   return { stored: e.name };
@@ -473,7 +431,7 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   const dz = Math.min(2, Math.max(-2, Number(d.dz) || 0));
   const want = findZone(d.where);
   const hasXZ = d.x !== undefined && d.z !== undefined && d.x !== null && d.z !== null && d.x !== '' && d.z !== '' && Number.isFinite(Number(d.x)) && Number.isFinite(Number(d.z));
-  if (!want && !dx && !dz && !hasXZ) return { failed: 'he did not say where to move it' };
+  if (!want && !dx && !dz && !hasXZ && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null) return { failed: 'he did not say where to move it' };
   if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const at = new Date(atMs + 6000).toISOString();
   const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
@@ -509,13 +467,37 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   let e = decor.find((x) => mine(x) && x.name.toLowerCase() === n) ?? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (!e) return { failed: 'there is nothing with that name in his room' };
   if (want && ZONES[want].kind !== e.kind) return { failed: `it cannot go there: it is a ${e.kind} thing` };
+  const keep = (r) => {
+    Object.assign(e, { ...r.entry, id: e.id, createdAt: e.createdAt, at: e.at, uses: e.uses, song: e.song, tool: e.tool, project: e.project, why: e.why });
+    e.movedAt = at;
+    e.updatedAt = at;
+    return { name: e.name, entry: e, label: e.label };
+  };
+  const copy = () => e.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] }));
+  if (e.kind === 'wall' && (d.wall || num2(d.along) !== null || num2(d.height) !== null)) {
+    const r = placeWall(decor.filter((o) => o !== e), e, copy(), sideOf(d.wall) ?? e.side ?? ZONES[e.zone]?.side ?? 'back', [num2(d.along) ?? (e.side === 'left' ? e.pos[2] : e.pos[0]), num2(d.height) ?? e.pos[1]], atMs, now, true);
+    return r.failed ? r : keep(r);
+  }
+  if (e.kind === 'surface' && (d.on || hasXZ)) {
+    const base = d.on ? findBase(decor, d.on) : baseByKey(decor, baseKeyOf(e));
+    if (!base) return { failed: 'he cannot put it on that: the desk, piano, bookshelf, bed, or a thing he made on the floor will do' };
+    const r = placeOn(decor.filter((o) => o !== e), e, copy(), base, hasXZ ? { x: Number(d.x), z: Number(d.z) } : null, atMs, now, true);
+    return r.failed ? r : keep(r);
+  }
   if (e.kind === 'floor' && (hasXZ || dx || dz || (want && ZONES[want].kind === 'floor'))) {
     const target = hasXZ ? { x: Number(d.x), z: Number(d.z) } : dx || dz ? { x: e.pos[0] + dx, z: e.pos[2] + dz } : null;
     const anchor = target ? [target.x, target.z] : (ZONES[want].slots[0] ?? [0, 0, 0]).filter((_, i) => i !== 1);
     const parts = e.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] }));
     const r = placeFloor(decor.filter((o) => o !== e), { ...e, parts, name: e.name }, parts, target, anchor, atMs, now, true);
     if (r.failed) return r;
+    const was = [...e.pos];
     Object.assign(e, { ...r.entry, id: e.id, createdAt: e.createdAt, at: e.at, uses: e.uses, song: e.song, tool: e.tool, project: e.project, why: e.why });
+    for (const o of decor.filter((x) => x.base === e.id)) { // things standing on top of it go along
+      o.pos = [r3(o.pos[0] + e.pos[0] - was[0]), o.pos[1], r3(o.pos[2] + e.pos[2] - was[2])];
+      o.stand = [r3(o.stand[0] + e.pos[0] - was[0]), r3(o.stand[1] + e.pos[2] - was[2])];
+      o.label = `on ${e.name} (x ${o.pos[0]}, z ${o.pos[2]})`;
+      o.updatedAt = at;
+    }
     e.movedAt = at;
     e.updatedAt = at;
     return { name: e.name, entry: e, label: e.label };
@@ -650,8 +632,24 @@ function faceAndSnap(hw, hd, x, z) {
 }
 // Is there room for e as it is now (after it got bigger)?
 function roomToGrow(decor, e) {
-  const [hw, hd] = footOf(e);
-  return blocker(rectAt([hw, hd], e.pos[0], e.pos[2], e.rotY), obstacles(decor, e));
+  if (e.kind === 'floor') {
+    const [hw, hd] = footOf(e);
+    return blocker(rectAt([hw, hd], e.pos[0], e.pos[2], e.rotY), obstacles(decor, e));
+  }
+  if (!e.free) return null;
+  if (e.kind === 'wall') {
+    const [hw, hh] = halfWall(e.parts, e.scale || 1);
+    const a = e.side === 'back' ? e.pos[0] : e.pos[2];
+    return wallBlocker({ a0: a - hw, a1: a + hw, y0: e.pos[1] - hh, y1: e.pos[1] + hh }, wallObstacles(decor, e.side, e));
+  }
+  if (e.kind === 'surface') {
+    const base = baseByKey(decor, e.base);
+    if (!base) return null;
+    const r = rectAt(footOf(e), e.pos[0], e.pos[2], e.rotY);
+    if (r.x0 < base.x0 || r.x1 > base.x1 || r.z0 < base.z0 || r.z1 > base.z1) return `the edge of ${base.n}`;
+    return surfaceOthers(decor, base.key, e).find((o) => r.x0 < o.x1 + 0.05 && r.x1 + 0.05 > o.x0 && r.z0 < o.z1 + 0.05 && r.z1 + 0.05 > o.z0)?.n ?? null;
+  }
+  return null;
 }
 function spotLabel(x, z) {
   const side = { 'the left wall': x + 5, 'the right wall': 5 - x, 'the back wall': z + 5, 'the front wall': 5 - z };
@@ -747,4 +745,207 @@ export function crowding(decor) {
   const fixed = FIXED.reduce((a, o) => a + (o.x1 - o.x0) * (o.z1 - o.z0), 0);
   const free = Math.max(0, 1 - used / (9.9 * 9.9 - fixed));
   return { count: decor.length, cap, free: Math.round(free * 100) };
+}
+
+// ---- Walls and furniture tops: free too.
+const WALL_FIXED = {
+  back: [
+    { n: 'the window', a0: -0.95, a1: 1.55, y0: 1.7, y1: 4.1 },
+    { n: 'the framed photo', a0: -3.1, a1: -1.3, y0: 2.1, y1: 3.4 },
+    { n: 'the piano', a0: -3.95, a1: -1.25, y0: 0, y1: 1.5 },
+    { n: 'the bookshelf', a0: 1.55, a1: 3.65, y0: 0, y1: 3.1 },
+    { n: 'the plant', a0: 3.6, a1: 4.6, y0: 0, y1: 1.6 },
+  ],
+  left: [{ n: 'the desk and screen', a0: 0.1, a1: 2.3, y0: 0, y1: 1.95 }],
+};
+const WALL_TOP = 4.8;
+function halfWall(parts, scale = 1) {
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (const p of parts) {
+    let e = halfSize(p);
+    if (p.rot.some((r) => r)) e = e.map(() => Math.max(...e));
+    x0 = Math.min(x0, p.pos[0] - e[0]); x1 = Math.max(x1, p.pos[0] + e[0]);
+    y0 = Math.min(y0, p.pos[1] - e[1]); y1 = Math.max(y1, p.pos[1] + e[1]);
+  }
+  return [((x1 - x0) / 2) * scale, ((y1 - y0) / 2) * scale];
+}
+function wallObstacles(decor, side, skip = null) {
+  const list = [...(WALL_FIXED[side] ?? [])];
+  for (const o of decor) {
+    if (o === skip || !o.pos) continue;
+    if (o.kind === 'wall') {
+      const s = o.side ?? ZONES[o.zone]?.side;
+      if (s !== side) continue;
+      const [hw, hh] = o.parts?.length ? halfWall(o.parts, o.scale || 1) : o.image ? [0.5, 0.4] : [0.3, 0.3];
+      const a = side === 'back' ? o.pos[0] : o.pos[2];
+      list.push({ n: o.name, a0: a - hw, a1: a + hw, y0: o.pos[1] - hh, y1: o.pos[1] + hh });
+    } else if (o.kind === 'floor' && !o.image) {
+      const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
+      const h = sizeOf(o)?.[1] ?? 1;
+      if (side === 'back' && r.z0 <= -4.7) list.push({ n: o.name, a0: r.x0, a1: r.x1, y0: 0, y1: h });
+      if (side === 'left' && r.x0 <= -4.7) list.push({ n: o.name, a0: r.z0, a1: r.z1, y0: 0, y1: h });
+    }
+  }
+  return list;
+}
+function wallBlocker(r, obs, gap = 0.1) {
+  if (r.a0 < -4.9 || r.a1 > 4.9 || r.y0 < 0.2 || r.y1 > WALL_TOP) return 'the edge of the wall';
+  return obs.find((o) => r.a0 < o.a1 + gap && r.a1 + gap > o.a0 && r.y0 < o.y1 + gap && r.y1 + gap > o.y0)?.n ?? null;
+}
+function placeWall(decor, spec, parts, side, want, atMs, now, moving = false) {
+  const scale = fit(parts, 'wall', {});
+  const [hw, hh] = halfWall(parts, scale);
+  const obs = wallObstacles(decor, side);
+  const [ta, th] = want ?? [side === 'back' ? 0 : 0, 2.6];
+  const ok = (a, y) => !wallBlocker({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs);
+  let found = ok(ta, th) ? [ta, th] : null;
+  let moved = false;
+  if (!found) {
+    const grid = [];
+    for (let a = -4.9; a <= 4.91; a += 0.25) for (let y = 0.3; y <= WALL_TOP; y += 0.25) grid.push([a, y, Math.hypot(a - ta, y - th)]);
+    grid.sort((p, q) => p[2] - q[2]);
+    for (const [a, y, dist] of grid) {
+      if (want && dist > 1.5) break;
+      if (ok(a, y)) {
+        found = [a, y];
+        moved = true;
+        break;
+      }
+    }
+  }
+  if (!found) return { failed: `there is no free place on the ${side} wall for something about ${r3(hw * 2)} x ${r3(hh * 2)} m. He can use the other wall, make it smaller, or take something down` };
+  const [a, y] = found.map(r3);
+  return {
+    moved,
+    entry: {
+      id: `d${now.toString(36)}${decor.length}`,
+      name: spec.name,
+      why: spec.why,
+      project: spec.project,
+      song: spec.song ?? null,
+      uses: moving ? spec.uses : storedUses(spec.uses),
+      tool: spec.tool ?? null,
+      zone: 'wall_free',
+      slot: null,
+      free: true,
+      side,
+      label: `on the ${side} wall (${side === 'back' ? 'x' : 'z'} ${a}, height ${y})`,
+      kind: 'wall',
+      pos: side === 'back' ? [a, y, -4.97] : [-4.97, y, a],
+      rotY: side === 'back' ? 0 : Math.PI / 2,
+      scale,
+      parts,
+      stand: side === 'back' ? [Math.min(4.5, Math.max(-4.5, a)), -3.7] : [-3.7, Math.min(4.5, Math.max(-4.5, a))],
+      at: new Date(atMs + 6000).toISOString(),
+      createdAt: new Date(now).toISOString(),
+    },
+  };
+}
+
+const SURFACES = {
+  desk: { n: 'the desk', x0: -4.95, x1: -3.65, z0: 0.2, z1: 2.2, y: 0.85, rotY: Math.PI / 2, off: [1.5, 0] },
+  piano: { n: 'the piano', x0: -3.95, x1: -1.25, z0: -5, z1: -4.05, y: 1.4, rotY: 0, off: [0, 1.5] },
+  bookshelf: { n: 'the bookshelf', x0: 1.6, x1: 3.6, z0: -4.95, z1: -4.4, y: 3.0, rotY: 0, off: [0, 1.4] },
+  bed: { n: 'the bed', x0: 2.5, x1: 4.5, z0: 2.4, z1: 4.7, y: 0.7, rotY: 0, off: [-1.5, 0] },
+};
+const ZONE_BASE = { on_desk: 'desk', on_piano: 'piano', on_bookshelf: 'bookshelf', on_bed: 'bed' };
+const baseKeyOf = (o) => o.base ?? ZONE_BASE[o.zone];
+
+// What he can put things on: the furniture, or a thing he made on the floor (a shelf, a closet, a table).
+function baseByKey(decor, key) {
+  if (SURFACES[key]) return { key, ...SURFACES[key] };
+  const o = decor.find((x) => x.id === key && x.kind === 'floor' && x.pos);
+  if (!o) return null;
+  const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
+  return { key: o.id, n: o.name, ...r, y: sizeOf(o)?.[1] ?? 1, rotY: o.rotY || 0, stand: o.stand, from: o.pos };
+}
+function findBase(decor, on) {
+  const w = str(on, 60).toLowerCase().replace(/_/g, ' ').replace(/^(on |the )+/, '').trim();
+  if (!w) return null;
+  const mine = decor.find((x) => x.kind === 'floor' && !x.image && x.pos && x.name.toLowerCase() === w) ?? decor.find((x) => x.kind === 'floor' && !x.image && x.pos && (x.name.toLowerCase().includes(w) || w.includes(x.name.toLowerCase())));
+  if (mine) return baseByKey(decor, mine.id);
+  const k = /desk|computer|table/.test(w) ? 'desk' : /piano/.test(w) ? 'piano' : /book/.test(w) ? 'bookshelf' : /bed/.test(w) ? 'bed' : null;
+  return k ? baseByKey(decor, k) : null;
+}
+const surfaceOthers = (decor, key, skip) => decor.filter((o) => o !== skip && o.kind === 'surface' && o.pos && baseKeyOf(o) === key).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }));
+
+function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
+  const sq = Math.max(0.15, Math.min(base.x1 - base.x0, base.z1 - base.z0) - 0.1);
+  const scale = fit(parts, 'surface', { w: sq, d: sq });
+  const [hw, hd] = halfFoot(parts, scale);
+  const others = surfaceOthers(decor, base.key, null);
+  const fitsAt = (x, z) => {
+    const r = rectAt([hw, hd], x, z, base.rotY);
+    return r.x0 >= base.x0 && r.x1 <= base.x1 && r.z0 >= base.z0 && r.z1 <= base.z1 && !others.some((o) => r.x0 < o.x1 + 0.05 && r.x1 + 0.05 > o.x0 && r.z0 < o.z1 + 0.05 && r.z1 + 0.05 > o.z0);
+  };
+  const cx = (base.x0 + base.x1) / 2;
+  const cz = (base.z0 + base.z1) / 2;
+  const [tx, tz] = want ? [want.x, want.z] : [cx, cz];
+  let found = fitsAt(tx, tz) ? [tx, tz] : null;
+  let moved = false;
+  if (!found) {
+    const grid = [];
+    for (let x = base.x0; x <= base.x1 + 0.001; x += 0.1) for (let z = base.z0; z <= base.z1 + 0.001; z += 0.1) grid.push([x, z, Math.hypot(x - tx, z - tz)]);
+    grid.sort((p, q) => p[2] - q[2]);
+    for (const [x, z] of grid) {
+      if (fitsAt(x, z)) {
+        found = [x, z];
+        moved = true;
+        break;
+      }
+    }
+  }
+  if (!found) return { failed: `there is no room left on ${base.n} for something about ${r3(hw * 2)} x ${r3(hd * 2)} m. He can use another surface, make it smaller, or build a shelf` };
+  const [x, z] = found.map(r3);
+  const stand = base.stand ? [r3(x + (base.stand[0] - base.from[0])), r3(z + (base.stand[1] - base.from[2]))] : [r3(x + SURFACES[base.key].off[0]), r3(z + SURFACES[base.key].off[1])];
+  const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
+  return {
+    moved,
+    entry: {
+      id: `d${now.toString(36)}${decor.length}`,
+      name: spec.name,
+      why: spec.why,
+      project: spec.project,
+      song: spec.song ?? null,
+      uses: moving ? spec.uses : storedUses(spec.uses),
+      tool: spec.tool ?? null,
+      zone: 'surface',
+      slot: null,
+      free: true,
+      base: base.key,
+      label: `on ${base.n} (x ${x}, z ${z})`,
+      kind: 'surface',
+      pos: [x, base.y, z],
+      rotY: base.rotY,
+      scale,
+      parts,
+      stand: [clampRoom(stand[0]), clampRoom(stand[1])],
+      at: new Date(atMs + 6000).toISOString(),
+      createdAt: new Date(now).toISOString(),
+    },
+  };
+}
+
+const num2 = (v) => (v === undefined || v === null || v === '' || !Number.isFinite(Number(v)) ? null : Number(v));
+const sideOf = (s) => (/left/i.test(String(s)) ? 'left' : /back|window|north/i.test(String(s)) ? 'back' : null);
+// Where does it go: a wall, the top of something, or the floor. Whatever he gave: coordinates, a name, or nothing (then the nearest free place).
+function placeWhere(decor, spec, parts, want, atMs, now) {
+  const x = num2(spec.x);
+  const z = num2(spec.z);
+  const wallSide = sideOf(spec.wall) ?? (want && ZONES[want].kind === 'wall' && !ZONES[want].prints ? (ZONES[want].side === 'left' ? 'left' : 'back') : null);
+  if (wallSide || num2(spec.along) !== null || num2(spec.height) !== null) {
+    const side = wallSide ?? 'back';
+    const slot = want && ZONES[want].kind === 'wall' ? ZONES[want].slots[0] : null;
+    const along = num2(spec.along) ?? (slot ? (side === 'back' ? slot[0] : slot[2]) : null);
+    const height = num2(spec.height) ?? (slot ? slot[1] : null);
+    return placeWall(decor, spec, parts, side, along !== null || height !== null ? [along ?? 0, height ?? 2.6] : null, atMs, now);
+  }
+  const onWhat = spec.on || (want && ZONES[want].kind === 'surface' ? Object.entries(ZONE_BASE).find(([k]) => k === want)?.[1] ?? 'desk' : '');
+  if (onWhat) {
+    const base = findBase(decor, onWhat);
+    if (!base) return { failed: `he cannot put anything on "${str(onWhat, 40)}": the desk, piano, bookshelf, bed, or a thing he made on the floor will do` };
+    return placeOn(decor, spec, parts, base, x !== null && z !== null ? { x, z } : null, atMs, now);
+  }
+  const anchor = x !== null && z !== null ? [x, z] : want && ZONES[want].kind === 'floor' && ZONES[want].slots[0] ? [ZONES[want].slots[0][0], ZONES[want].slots[0][2]] : [0, 0];
+  return placeFloor(decor, spec, parts, x !== null && z !== null ? { x, z } : null, anchor, atMs, now);
 }

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { awakeMinutes } from './sleep.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -2447,7 +2448,7 @@ function render(s) {
     return row;
   }));
 
-  const quiet = s.last && !s._waking ? Math.round((Date.now() - Date.parse(s.last.at)) / 60000) : 0;
+  const quiet = s.last && !s._waking ? awakeMinutes(Date.parse(s.last.at), Date.now(), s.sleep) : 0; // his sleeping hours do not count
   $('err').textContent = s._error ? '⚠️ ' + s._error : quiet >= 30 ? `⚠️ Pip has not woken up for ${quiet >= 120 ? Math.round(quiet / 60) + ' hours' : quiet + ' minutes'}. He may be stuck. A restart is tried automatically.` : '';
   $('wake').disabled = !!s._waking;
   $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
