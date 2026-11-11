@@ -971,16 +971,38 @@ const ZONE_BASE = { on_desk: 'desk', on_piano: 'piano', on_bookshelf: 'bookshelf
 const baseKeyOf = (o) => o.base ?? ZONE_BASE[o.zone];
 
 // What he can put things on: the furniture, or a thing he made on the floor (a shelf, a closet, a table).
+// Things he makes for a purpose have to work for it. Something to put things on (a shelf, a table, a stand) needs a flat top things can stand on.
+const SUPPORT_WORDS = /\b(shelf|shelves|table|stand|rack|ledge|counter|platform|bench|desk|dresser|mantel|pedestal|display|nightstand|workbench)\b/i;
+export const holdsThings = (o) => !o.image && !o.art && o.kind !== 'surface' && (SUPPORT_WORDS.test(o.name ?? '') || /\b(put|place|hold|display|keep|stand)\b[^.]{0,40}\bon (it|top)\b/i.test(o.why ?? ''));
 // The boards of something on the wall (a shelf): every flat part is a level things can stand on, from the lowest up.
 function wallLevels(o) {
   const sc = o.scale || 1;
-  return (o.parts ?? [])
-    .filter((p) => p.shape === 'box' && p.size[1] <= 0.12 && p.size[0] >= 0.25 && p.size[2] >= 0.1)
+  const flat = (o.parts ?? []).filter((p) => p.shape === 'box' && p.size[1] <= 0.12 && p.size[0] >= 0.25 && p.size[2] >= 0.1);
+  let boards = flat;
+  if (!flat.length && holdsThings(o)) { // no thin board, but it is meant to hold things: its highest wide part is the top
+    const wide = (o.parts ?? []).filter((p) => p.shape === 'box' && p.size[0] >= 0.25 && p.size[2] >= 0.12);
+    const top = Math.max(...wide.map((p) => p.pos[1] + p.size[1] / 2));
+    boards = wide.filter((p) => p.pos[1] + p.size[1] / 2 >= top - 0.01).slice(0, 1);
+  }
+  return boards
     .map((p) => {
       const [dx, dz] = turn([p.pos[0] * sc, p.pos[2] * sc], o.rotY || 0);
       return { ...rectAt([(p.size[0] / 2) * sc, (p.size[2] / 2) * sc], o.pos[0] + dx, o.pos[2] + dz, o.rotY || 0), y: r3(o.pos[1] + (p.pos[1] + p.size[1] / 2) * sc) };
     })
     .sort((a, b) => a.y - b.y);
+}
+// null when a thing works for what it is meant for, otherwise what is missing.
+export function purposeProblem(o) {
+  if (!holdsThings(o) || !o.pos) return null;
+  if (o.kind === 'wall') return wallLevels(o).length ? null : `${o.name} is meant to hold things, but it has no flat board or top wide enough for things to stand on (it needs a part at least 0.25 wide and 0.12 deep)`;
+  const [w, , d] = sizeOf(o) ?? [0, 0, 0];
+  return w * d >= 0.12 ? null : `${o.name} is meant to hold things, but its top is too small (${w} x ${d} m) for things to stand on`;
+}
+// What works, said so he knows how to use it.
+export function purposeHint(o) {
+  if (!holdsThings(o) || purposeProblem(o)) return null;
+  const n = o.kind === 'wall' ? wallLevels(o).length : 1;
+  return `it works: things can stand on it. I put one there with move_thing {name, on: "${o.name}"${n > 1 ? ', level: "top" or "bottom"' : ''}}`;
 }
 function baseByKey(decor, key) {
   if (FURNITURE[key]) return surfaceOf(key) ? { key, ...surfaceOf(key) } : null;
