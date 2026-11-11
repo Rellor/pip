@@ -804,7 +804,7 @@ export function freeSides(decor) {
         else free.push(side);
       }
     }
-    return `${t.n.replace(/^the /, '')} (${r3(t.x1 - t.x0)} wide, ${r3(t.z1 - t.z0)} deep, at x ${r3((t.x0 + t.x1) / 2)}, z ${r3((t.z0 + t.z1) / 2)}): room on its ${free.join(', ') || 'no side'}${tight.length ? `; not on ${tight.join(', ')}` : ''}`;
+    return `${t.n.replace(/^the /, '')} ${r3(t.x1 - t.x0)}x${r3(t.z1 - t.z0)} at ${r3((t.x0 + t.x1) / 2)},${r3((t.z0 + t.z1) / 2)}: free ${free.join('/') || 'nowhere'}${tight.length ? `; blocked ${tight.join(', ')}` : ''}`;
   });
 }
 // How full his room is.

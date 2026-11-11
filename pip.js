@@ -525,7 +525,7 @@ ${ROOM.join(', ')}
 THE LAYOUT OF MY ROOM: it is square, x goes from -5 (left wall) to 5 (right wall), z from -5 (back wall, with the window) to 5 (front). The window and the framed photo are fixed on the back wall. All the other furniture I can move myself with move_thing {name, x, z} (x and z are the middle of it) or, easier, {name, next_to: "desk", side: "left"} to stand it beside another piece (side is left, right, front or back of that piece, seen from the room; leave it out and the closest side is used), if I want my room different: ${MOVABLE.map((k) => { const r = furnRects(s.furniture, k)[0]; return `the ${k} is at x ${Math.round(((r.x0 + r.x1) / 2) * 10) / 10}, z ${Math.round(((r.z0 + r.z1) / 2) * 10) / 10}`; }).join('; ')}. Furniture put next to a wall turns its back to it. Things standing on it go along. Things stand square to the walls, never diagonal, and I leave walking space in the middle.
 
 THINGS I MADE FOR MY ROOM
-${bullets(s.decor.filter((d) => !d.art).map((d) => `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}, standing here, so not in my inventory]` : ''}${d.parts?.length ? ` [${d.parts.length} parts, about ${(sizeOf(d) ?? []).join(' x ')} m]` : ''}${d.song ? ' [it has a song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [it makes no sound yet: I can give it one with compose]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why}` : ''}`), 'nothing yet, my room is plain')}
+${bullets(s.decor.filter((d) => !d.art).map((d) => d.image ? `${d.name} (${d.label})` : `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}, not in my inventory]` : ''}${sizeOf(d) ? ` [${sizeOf(d).join('x')} m]` : ''}${d.song ? ' [song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [no sound yet: compose can give it one]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why.length > 70 ? `${d.why.slice(0, 68)}…` : d.why}` : ''}`), 'nothing yet, my room is plain')}
 THINGS I DREW (a drawing can be put up again with place_picture, or taken down with take_down_picture, using its id)
 ${bullets(s.art.map((a) => `${a.id}: ${a.name}${s.decor.some((d) => d.art === a.id) ? ` (up: ${s.decor.find((d) => d.art === a.id).label})` : ' (in my album)'}`), 'nothing yet')}
 APPS I MADE ON MY COMPUTER
@@ -543,7 +543,7 @@ ${bullets((s.wardrobe ?? []).map((c) => `${c.name} (${c.slot})${c.worn ? ' [I am
 ${s.decor.filter((d) => !d.image && !d.uses?.length).length ? `I MADE THESE BUT HAVE NOT DECIDED WHAT THEY ARE FOR. A thing without a use is only decoration, so one of my steps today gives one of them a use with add_use: ${s.decor.filter((d) => !d.image && !d.uses?.length).map((d) => d.name).join(', ')}\n\n` : ''}WHERE I CAN PUT THINGS
 On the FLOOR I can put something anywhere I want, I just give x and z (the middle of the thing). It only has to fit: not into furniture, not into other things, not through a wall. Next to a wall it stands flush against it and turns to face into the room. If it is a little too close to something, the code moves it to the nearest free place. This is a map of my floor right now (every character is half a metre; x goes from -5 on the left to 5 on the right, z from -5 at the top, the back wall with the window, to 5 at the bottom, the front; a dot is free):
 ${(() => { const m = roomMap(s.decor); return `${m.rows.join('\n')}\nP piano, o piano stool, B bookshelf, D desk, E bed, L plant, C my chest${m.legend.length ? `, ${m.legend.join(', ')}` : ''}`; })()}
-WHAT IS AROUND EACH THING (the room beside it, measured; I use this to see where something fits):
+ROOM BESIDE EACH THING (width x depth at x,z; which sides have room):
 ${bullets(freeSides(s.decor), 'nothing')}
 ${(() => { const c = crowding(s.decor); return `MY ROOM HAS ${c.count} things of at most ${c.cap}, and about ${c.free}% of my floor is free.${c.count >= c.cap * 0.8 || c.free < 35 ? ' It is getting crowded. I do not have to keep everything: I can put things in my chest, take something away, build storage (a shelf, closet or cabinet gives room for 6 more things), or ask for more space with asks_add.' : ''}`; })()}
 On a WALL (the back wall with the window, or the left wall) I can hang something flat anywhere it fits: "wall": "back" or "left", "along": where along the wall (x on the back wall, z on the left wall) and "height": how high its middle is, for example "wall": "left", "along": -2, "height": 2.5. The window, the framed photo, the piano, the bookshelf, the desk and my screen are in the way, and so is anything else I hung there or a tall thing standing against the wall.
@@ -601,7 +601,11 @@ ${printsText(s)}
 I answer in the JSON described in my instructions, with the same fields, and I follow everything written in them.`;
 }
 
+// Pip does not read anyone's name: whoever wrote to him is "someone".
+const noName = (t) => String(t).replace(/\bBas(?='s)\b/g, 'someone').replace(/\bBas\b/g, 'someone');
 async function askGemini(system, wakeUp, retry = 2, images = []) {
+  system = noName(system);
+  wakeUp = noName(wakeUp);
   if (process.env.PIP_FAKE) {
     const fake = fakeBrain(wakeUp);
     return process.env.PIP_FAKE_EXTRA && !wakeUp.includes('I look back on my days') ? { ...fake, ...JSON.parse(process.env.PIP_FAKE_EXTRA) } : fake; // PIP_FAKE_EXTRA: extra answer fields, for testing
