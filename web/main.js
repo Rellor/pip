@@ -283,9 +283,12 @@ function buildDecor(d) {
 }
 // A thing appears when Pip has walked to its spot (its time in state.json), and pops in.
 const SPOT_OF = { piano: 'piano', bookshelf: 'bookshelf', desk: 'computer', bed: 'bed', plant: 'plant' };
+// A moved piece stays where it was until Pip gets there (its `at`).
+const shownFurniture = (f) => Object.fromEntries(Object.entries(f || {}).map(([k, p]) => [k, p?.from && Date.parse(p.at) > Date.now() ? p.from : p]));
 function applyFurniture(s) {
+  const furn = shownFurniture(s?.furniture);
   for (const key of MOVABLE) {
-    const pl = placeOf(s?.furniture, key);
+    const pl = placeOf(furn, key);
     const [px, pz] = pivotOf(key);
     const [rx, rz] = turn([px, pz], pl.rot);
     G[key].rotation.y = pl.rot;
@@ -298,7 +301,7 @@ function applyFurniture(s) {
   }
   for (const r of REGIONS) {
     if (!r.furn) continue;
-    const pl = placeOf(s?.furniture, r.furn);
+    const pl = placeOf(furn, r.furn);
     const [x0, x1, y0, y1, z0, z1] = r.box;
     const c = [worldPoint(r.furn, pl, [x0, z0]), worldPoint(r.furn, pl, [x1, z1])];
     r.live = [Math.min(c[0][0], c[1][0]), Math.max(c[0][0], c[1][0]), y0, y1, Math.min(c[0][1], c[1][1]), Math.max(c[0][1], c[1][1])];
@@ -1675,9 +1678,26 @@ window.addEventListener('keydown', (e) => {
 });
 window.addEventListener('keyup', (e) => view.keys.delete(e.key.toLowerCase()));
 
+// Slow device: draw with fewer pixels so it stays smooth; fast again: back to sharp.
+const SHARP = Math.min(devicePixelRatio, 1.5);
+let pixels = SHARP;
+let slowSum = 0;
+let slowN = 0;
 let prev = performance.now();
 function loop(now) {
   const dt = Math.min(0.3, (now - prev) / 1000);
+  if (!document.hidden && dt < 0.25 && ++slowN > 5) slowSum += dt; // the first frames and long pauses do not count
+  if (slowN >= 95) {
+    const avg = slowSum / 90;
+    const want = avg > 0.026 ? Math.max(0.75, pixels - 0.25) : avg < 0.015 ? Math.min(SHARP, pixels + 0.25) : pixels;
+    if (want !== pixels) {
+      pixels = want;
+      renderer.setPixelRatio(pixels);
+      fitCamera();
+    }
+    slowSum = 0;
+    slowN = 0;
+  }
   prev = now;
   frame(now, dt);
   updateFloaters(dt, now);
@@ -2336,6 +2356,16 @@ function renderMind(s) {
   fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
 }
 
+// The lines that depend on the clock, so they stay right even when nothing new came in.
+function renderStatus(s) {
+  const quiet = s.last && !s._waking ? awakeMinutes(Date.parse(s.last.at), Date.now(), s.sleep) : 0; // his sleeping hours do not count
+  $('err').textContent = s._error ? '⚠️ ' + s._error : quiet >= 30 ? `⚠️ Pip has not woken up for ${quiet >= 120 ? Math.round(quiet / 60) + ' hours' : quiet + ' minutes'}. He may be stuck. A restart is tried automatically.` : '';
+  $('wake').disabled = !!s._waking;
+  $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
+  $('hint').textContent = !s.last
+    ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
+    : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
+}
 function render(s) {
   $('mood').textContent = s.mood || '…';
   renderDay(s);
@@ -2585,13 +2615,7 @@ function render(s) {
     return row;
   }));
 
-  const quiet = s.last && !s._waking ? awakeMinutes(Date.parse(s.last.at), Date.now(), s.sleep) : 0; // his sleeping hours do not count
-  $('err').textContent = s._error ? '⚠️ ' + s._error : quiet >= 30 ? `⚠️ Pip has not woken up for ${quiet >= 120 ? Math.round(quiet / 60) + ' hours' : quiet + ' minutes'}. He may be stuck. A restart is tried automatically.` : '';
-  $('wake').disabled = !!s._waking;
-  $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
-  $('hint').textContent = !s.last
-    ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
-    : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
+  renderStatus(s);
 }
 
 // Pip's plan: a few steps, spread over the time until his next wake-up. The page works out which step is happening now.
@@ -2646,6 +2670,7 @@ function fromGithub(v) {
   return v;
 }
 
+let lastText = '';
 async function loadState() {
   if (isLocal) { // only the local server has /api/state; the live site reads the saved file
     try {
@@ -2656,7 +2681,12 @@ async function loadState() {
   if (!isLocal) {
     try {
       const r = await fetch(`${RAW}state.json?t=${Math.floor(Date.now() / 20_000)}`, { cache: 'no-store' }); // a new number every 20 seconds
-      if (r.ok) return { ...fromGithub(await r.json()), _static: true };
+      if (r.ok) {
+        const text = await r.text();
+        if (text === lastText && lastState) return { ...lastState, _same: true }; // nothing new: do not rebuild the page
+        lastText = text;
+        return { ...fromGithub(JSON.parse(text)), _static: true };
+      }
     } catch {}
   }
   const r = await fetch(`state.json?t=${Date.now()}`, { cache: 'no-store' });
@@ -2674,10 +2704,12 @@ async function poll() {
   let delay = 2000;
   try {
     const s = await loadState();
-    lastState = s;
-    isStatic = !!s._static;
-    render(s);
-    refreshNtfy();
+    if (!s._same) {
+      lastState = s;
+      isStatic = !!s._static;
+      render(s);
+      refreshNtfy();
+    } else if (lastState) renderStatus(lastState);
     if (s._static) {
       delay = Date.now() < fastUntil ? 10_000 : 30_000;
       $('wake').hidden = true;
@@ -2779,6 +2811,23 @@ window.addEventListener('pageshow', (e) => {
   if (e.persisted) location.reload(); // the browser put the whole page back from memory
 });
 window.addEventListener('online', refreshNow);
+
+// A tab left open keeps its old code. Every 5 minutes, ask (a tiny request) whether main.js changed, and reload when it did and nothing is going on.
+let codeTag = null;
+setInterval(async () => {
+  if (document.hidden || isLocal) return;
+  try {
+    const r = await fetch('main.js', { method: 'HEAD', cache: 'no-cache' });
+    const tag = r.headers.get('etag') || r.headers.get('last-modified');
+    if (!tag) return;
+    if (codeTag && tag !== codeTag) {
+      const busy = $('replytext').value.trim() || $('replykey').value || chosenImage || $('send').disabled || view.mode === 'walk';
+      if (!busy) location.reload();
+    }
+    codeTag ??= tag;
+  } catch {}
+}, 5 * 60_000);
+fetch('main.js', { method: 'HEAD' }).then((r) => { codeTag ??= r.headers.get('etag') || r.headers.get('last-modified'); }).catch(() => {});
 
 $('wake').addEventListener('click', () => {
   $('wake').disabled = true;

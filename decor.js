@@ -1250,5 +1250,5 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
     o.label = `on ${f.n} (x ${nx}, z ${nz})`;
     o.updatedAt = at;
   }
-  return { name: f.n.replace(/^the /, ''), label: `at x ${place.x}, z ${place.z}`, furniture: { key, place: { ...place, at }, moves: [...moves, new Date(now).toISOString()] }, moved };
+  return { name: f.n.replace(/^the /, ''), label: `at x ${place.x}, z ${place.z}`, furniture: { key, place: { ...place, at, from: { x: cur.x, z: cur.z, rot: cur.rot } }, moves: [...moves, new Date(now).toISOString()] }, moved };
 }
