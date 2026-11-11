@@ -63,6 +63,10 @@ export function movesText(s) {
   const list = s.moves.map((m) => `- ${m.name}${m.why ? `: ${m.why}` : ''}`);
   return `MY MOVES (little body animations. I design one once with make_move and then do it as often as I like, for free)
 ${list.length ? list.join('\n') : '- none yet'}
-make_move {"name": "happy hop", "why": "when I am glad", "duration": 1.5, "frames": [{"at": 0}, {"at": 0.5, "hop": 0.35, "armL": 1, "armR": 1, "spread": 0.6}, {"at": 1}]} designs a move: 2 to 8 poses over the move (at goes from 0 to 1, and the move loops). In each pose I can set hop 0-0.6 (how high), lean -0.6 to 0.6, turn -1.6 to 1.6, tilt -0.5 to 0.5, armL and armR 0-1 (down to up), spread 0-1 (arms out), footL and footR 0-1 (lifted), eyes -1 to 1 (wide open to closed), sound (one of ${SOUNDS.join(', ')}, heard when the pose is reached) and sign (one symbol like ♪ or ✨ that floats up from my head). What I leave out stays at rest. I do a move with do {"what": "...", "move": "happy hop", "where": "window"} (where is optional: it is where I stand, anywhere I can walk to), and it plays for as long as that step lasts. At most ${MAX_MOVES_PER_DAY} new moves a day, ${MAX_MOVES} in all.
+(How I design a move is explained in my instructions.)
 `;
 }
+
+// How to design a move never changes, so it is part of the fixed instructions.
+export const movesGuide = () => `MY MOVES: how I design one\nmake_move {"name": "happy hop", "why": "when I am glad", "duration": 1.5, "frames": [{"at": 0}, {"at": 0.5, "hop": 0.35, "armL": 1, "armR": 1, "spread": 0.6}, {"at": 1}]} designs a move: 2 to 8 poses over the move (at goes from 0 to 1, and the move loops). In each pose I can set hop 0-0.6 (how high), lean -0.6 to 0.6, turn -1.6 to 1.6, tilt -0.5 to 0.5, armL and armR 0-1 (down to up), spread 0-1 (arms out), footL and footR 0-1 (lifted), eyes -1 to 1 (wide open to closed), sound (one of ${SOUNDS.join(', ')}, heard when the pose is reached) and sign (one symbol like ♪ or ✨ that floats up from my head). What I leave out stays at rest. I do a move with do {"what": "...", "move": "happy hop", "where": "window"} (where is optional: it is where I stand, anywhere I can walk to), and it plays for as long as that step lasts. At most ${MAX_MOVES_PER_DAY} new moves a day, ${MAX_MOVES} in all.
+`;
