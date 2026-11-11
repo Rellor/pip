@@ -425,14 +425,15 @@ const clampTo = ([lo, hi], v) => r3(Math.min(hi, Math.max(lo, v)));
 
 // details: { name, where, dx, dz }. `chest` is state.chest (or null). Returns { name, entry } for a thing, { name, chest } for the chest, or { failed }.
 export function moveThing(decor, chest, details, atMs, now = Date.now()) {
-  const d = details && typeof details === 'object' ? details : {};
+  let d = details && typeof details === 'object' ? details : {};
   const n = str(d.name, 60).toLowerCase();
   if (!n) return { failed: 'he did not say what to move' };
   const dx = Math.min(2, Math.max(-2, Number(d.dx) || 0));
   const dz = Math.min(2, Math.max(-2, Number(d.dz) || 0));
   const want = findZone(d.where);
-  const hasXZ = d.x !== undefined && d.z !== undefined && d.x !== null && d.z !== null && d.x !== '' && d.z !== '' && Number.isFinite(Number(d.x)) && Number.isFinite(Number(d.z));
-  if (!want && !dx && !dz && !hasXZ && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null) return { failed: 'he did not say where to move it' };
+  const hasXZ0 = d.x !== undefined && d.z !== undefined && d.x !== null && d.z !== null && d.x !== '' && d.z !== '' && Number.isFinite(Number(d.x)) && Number.isFinite(Number(d.z));
+  let hasXZ = hasXZ0;
+  if (!want && !dx && !dz && !hasXZ && !d.next_to && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null) return { failed: 'he did not say where to move it' };
   if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const at = new Date(atMs + 6000).toISOString();
   const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
@@ -440,6 +441,12 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   if (/chest/.test(n)) {
     const cur = chest ?? CHEST_HOME;
     let { x, z, rotY } = cur;
+    if (d.next_to) {
+      const t = nextToSpot(decor, { ...d, from: [cur.x, cur.z] }, null, 0.5 * 2, 0.3 * 2);
+      if (t.failed) return t;
+      d = { ...d, x: t.x, z: t.z };
+      hasXZ = true;
+    }
     if (hasXZ) {
       const f = faceAndSnap(0.5, 0.3, clampTo(CHEST_BOUNDS.x, Number(d.x)), clampTo(CHEST_BOUNDS.z, Number(d.z)));
       const hit = blocker(rectAt([0.5, 0.3], f.x, f.z, f.rotY), obstacles(decor, null, false));
@@ -486,6 +493,14 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     const r = placeOn(decor.filter((o) => o !== e), e, copy(), base, hasXZ ? { x: Number(d.x), z: Number(d.z) } : null, atMs, now, true);
     return r.failed ? r : keep(r);
   }
+  if (d.next_to && e.kind === 'floor') {
+    const [hw, hd] = footOf(e);
+    const t = nextToSpot(decor, { ...d, from: [e.pos[0], e.pos[2]] }, null, hw * 2, hd * 2, e);
+    if (t.failed) return t;
+    d = { ...d, x: t.x, z: t.z };
+    hasXZ = true;
+  }
+  if (d.next_to && e.kind !== 'floor') return { failed: 'it can only be put next to something if it stands on the floor' };
   if (e.kind === 'floor' && (hasXZ || dx || dz || (want && ZONES[want].kind === 'floor'))) {
     const target = hasXZ ? { x: Number(d.x), z: Number(d.z) } : dx || dz ? { x: e.pos[0] + dx, z: e.pos[2] + dz } : null;
     const anchor = target ? [target.x, target.z] : (ZONES[want].slots[0] ?? [0, 0, 0]).filter((_, i) => i !== 1);
@@ -965,6 +980,30 @@ export const furnitureKey = (name) => MOVABLE.find((k) => FURN_WORDS[k].test(Str
 const DIRS = { left: [-1, 0], right: [1, 0], back: [0, -1], front: [0, 1] };
 const QUARTERS = [0, Math.PI / 2, Math.PI, -Math.PI / 2];
 
+// "next to X": X is a piece of furniture or a thing he made on the floor. Returns the center for something w wide and h deep.
+function nextToSpot(decor, d, skipKey, w, h, skipEntry = null) {
+  const name = str(d.next_to, 60).toLowerCase();
+  let a = null;
+  const fk = furnitureKey(name);
+  if (fk && fk !== skipKey && !FURNITURE[fk].flat) a = furnRects(furnNow, fk).reduce((u, r) => ({ x0: Math.min(u.x0, r.x0), x1: Math.max(u.x1, r.x1), z0: Math.min(u.z0, r.z0), z1: Math.max(u.z1, r.z1) }), { x0: 9, x1: -9, z0: 9, z1: -9 });
+  else {
+    const o = decor.find((x) => x !== skipEntry && x.kind === 'floor' && !x.image && !x.art && x.pos && (x.name.toLowerCase() === name || x.name.toLowerCase().includes(name) || name.includes(x.name.toLowerCase())));
+    if (o) a = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
+  }
+  if (!a) return { failed: `there is nothing standing on the floor called "${name}" to put it next to (furniture or things he made on the floor)` };
+  const gap = 0.12;
+  const spots = {
+    left: [a.x0 - gap - w / 2, (a.z0 + a.z1) / 2],
+    right: [a.x1 + gap + w / 2, (a.z0 + a.z1) / 2],
+    back: [(a.x0 + a.x1) / 2, a.z0 - gap - h / 2],
+    front: [(a.x0 + a.x1) / 2, a.z1 + gap + h / 2],
+  };
+  const side = Object.hasOwn(spots, String(d.side).toLowerCase()) ? String(d.side).toLowerCase() : null;
+  const from = d.from ?? [0, 0];
+  const order = side ? [side] : Object.keys(spots).sort((p, q) => Math.hypot(spots[p][0] - from[0], spots[p][1] - from[1]) - Math.hypot(spots[q][0] - from[0], spots[q][1] - from[1]));
+  return { x: r3(spots[order[0]][0]), z: r3(spots[order[0]][1]) };
+}
+
 const f0rects = (key, place) => {
   const rs = FURNITURE[key].rects.map((r) => worldRect(key, place, r));
   return { x0: Math.min(...rs.map((r) => r.x0)), x1: Math.max(...rs.map((r) => r.x1)), z0: Math.min(...rs.map((r) => r.z0)), z1: Math.max(...rs.map((r) => r.z1)) };
@@ -973,27 +1012,14 @@ const f0rects = (key, place) => {
 export function moveFurniture(decor, furn, key, details, atMs, now = Date.now()) {
   const d = details && typeof details === 'object' ? details : {};
   const cur = placeOf(furn, key);
-  // "next to the desk": stand beside another piece (side = left / right / front / back of it, from the room's view)
-  const nextKey = d.next_to ? furnitureKey(d.next_to) : null;
-  if (d.next_to && (!nextKey || nextKey === key)) return { failed: `he can only put it next to another piece of furniture (${MOVABLE.filter((k) => k !== key).join(', ')})` };
   let nx = null;
   let nz = null;
-  if (nextKey) {
-    const a = furnRects(furnNow, nextKey).reduce((u, r) => ({ x0: Math.min(u.x0, r.x0), x1: Math.max(u.x1, r.x1), z0: Math.min(u.z0, r.z0), z1: Math.max(u.z1, r.z1) }), { x0: 9, x1: -9, z0: 9, z1: -9 });
+  if (d.next_to) {
     const me = f0rects(key, cur);
-    const w = me.x1 - me.x0;
-    const h = me.z1 - me.z0;
-    const cx = (me.x0 + me.x1) / 2 - cur.x; // place is the pivot, offset between pivot and center of the piece
-    const cz = (me.z0 + me.z1) / 2 - cur.z;
-    const spots = {
-      left: [a.x0 - 0.1 - w / 2, (a.z0 + a.z1) / 2],
-      right: [a.x1 + 0.1 + w / 2, (a.z0 + a.z1) / 2],
-      back: [(a.x0 + a.x1) / 2, a.z0 - 0.1 - h / 2],
-      front: [(a.x0 + a.x1) / 2, a.z1 + 0.1 + h / 2],
-    };
-    const side = Object.hasOwn(spots, String(d.side).toLowerCase()) ? String(d.side).toLowerCase() : null;
-    const order = side ? [side] : Object.keys(spots).sort((p, q) => Math.hypot(spots[p][0] - cur.x, spots[p][1] - cur.z) - Math.hypot(spots[q][0] - cur.x, spots[q][1] - cur.z));
-    [nx, nz] = [spots[order[0]][0] - cx, spots[order[0]][1] - cz];
+    const t = nextToSpot(decor, { ...d, from: [cur.x, cur.z] }, key, me.x1 - me.x0, me.z1 - me.z0);
+    if (t.failed) return t;
+    nx = t.x - ((me.x0 + me.x1) / 2 - cur.x); // place is the pivot, not the center
+    nz = t.z - ((me.z0 + me.z1) / 2 - cur.z);
   }
   const x = num2(d.x) ?? nx ?? cur.x + (Math.min(2, Math.max(-2, Number(d.dx) || 0)));
   const z = num2(d.z) ?? nz ?? cur.z + (Math.min(2, Math.max(-2, Number(d.dz) || 0)));
