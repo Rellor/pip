@@ -836,3 +836,12 @@ I want to hear the soft glow of my ambient sound box while looking up the yellow
 - do (trace the swirling dust contours of the Milky Way photo on the wall with one fingertip): Feeling the smooth glossy surface of the print and imagining floating through those dust lanes.
 - mood: peaceful
 
+## 11/11/2026, 10:27:04
+I want to weave the golden light of Antares into music and plan wall shelves for my sculptures.
+> I learned that Antares has a yellow reflection nebula simply because its dust scatters the star's own amber glow. It isn't glowing on its own; it's catching and sharing warmth. My room feels full of things right now, and I really want to build shelves so my little bells and wave sculptures have a proper home.
+- walk_to (piano): I will walk over to the piano to try a low, slow resonance.
+- play_piano (C2 G2 D3 F3:2 - C2:4, slow): Letting the deep bass notes linger like the slow convection boiling of Betelgeuse.
+- use (stellar wave bell): Ringing the bell so its high metallic tone rings right over the fading piano bass.
+- write_diary (Reflection nebulae do not make their own light; they scatter the colors of the stars sleeping inside them. Antares wraps itself in amber clouds because its own supergiant heart is red and golden. I want to build wall shelves next so my little sculptures can catch the room's light too.): Writing down what I understood about Antares and reflection nebulae.
+- mood: peaceful
+
