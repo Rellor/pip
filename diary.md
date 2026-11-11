@@ -851,3 +851,11 @@ I want to sketch the glowing colors around Antares with my drawing supplies.
 - draw (Antares and its amber reflection nebula): I will sketch the amber nebulosity around Antares to see its warm glow on my wall.
 - mood: peaceful
 
+## 11/11/2026, 10:51:49
+I want to sketch the shelf layout for my cosmic sculptures.
+> I have been wondering about how to display my little sculptures so they catch the room's light. Sitting here with my drawing supplies makes me want to plan the wooden wall shelves step by step. It feels good to finally start building my project.
+- walk_to (desk): I am walking over to my desk to get my drawing supplies.
+- draw (shelf layout sketch): I am sketching the layout and dimensions for my new wall shelves on paper.
+- write_diary (I sketched the layout for my wall shelves today. Having my stellar wave bell and plasma wave sculpture neatly displayed on the wall will give them so much more space to catch the light.): I am writing down my thoughts about the shelf layout in my diary.
+- mood: peaceful
+
