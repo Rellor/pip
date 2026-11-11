@@ -1,7 +1,7 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
-import { freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror, themeFatigue } from './mirror.js';
@@ -260,6 +260,7 @@ async function loadState() {
   state.sleep = { bed: BEDTIME, wake: WAKETIME, tz: TZ }; // the page and the watchdog use this so the night is not counted as stuck
   setChest(state.chest ?? null);
   setFurniture(state.furniture);
+  rehangPictures(state);
   state.chest ??= null;
   delete state.builds;
   ensureFeelings(state);
@@ -482,6 +483,8 @@ ${bullets((s.wardrobe ?? []).map((c) => `${c.name} (${c.slot})${c.worn ? ' [I am
 ${s.decor.filter((d) => !d.image && !d.uses?.length).length ? `I MADE THESE BUT HAVE NOT DECIDED WHAT THEY ARE FOR. A thing without a use is only decoration, so one of my steps today gives one of them a use with add_use: ${s.decor.filter((d) => !d.image && !d.uses?.length).map((d) => d.name).join(', ')}\n\n` : ''}WHERE I CAN PUT THINGS
 On the FLOOR I can put something anywhere I want, I just give x and z (the middle of the thing). It only has to fit: not into furniture, not into other things, not through a wall. Next to a wall it stands flush against it and turns to face into the room. If it is a little too close to something, the code moves it to the nearest free place. This is a map of my floor right now (every character is half a metre; x goes from -5 on the left to 5 on the right, z from -5 at the top, the back wall with the window, to 5 at the bottom, the front; a dot is free):
 ${(() => { const m = roomMap(s.decor); return `${m.rows.join('\n')}\nP piano, o piano stool, B bookshelf, D desk, E bed, L plant, C my chest${m.legend.length ? `, ${m.legend.join(', ')}` : ''}`; })()}
+WHAT IS AROUND EACH THING (the room beside it, measured; I use this to see where something fits):
+${bullets(freeSides(s.decor), 'nothing')}
 ${(() => { const c = crowding(s.decor); return `MY ROOM HAS ${c.count} things of at most ${c.cap}, and about ${c.free}% of my floor is free.${c.count >= c.cap * 0.8 || c.free < 35 ? ' It is getting crowded. I do not have to keep everything: I can put things in my chest, take something away, build storage (a shelf, closet or cabinet gives room for 6 more things), or ask for more space with asks_add.' : ''}`; })()}
 On a WALL (the back wall with the window, or the left wall) I can hang something flat anywhere it fits: "wall": "back" or "left", "along": where along the wall (x on the back wall, z on the left wall) and "height": how high its middle is, for example "wall": "left", "along": -2, "height": 2.5. The window, the framed photo, the piano, the bookshelf, the desk and my screen are in the way, and so is anything else I hung there or a tall thing standing against the wall.
 On TOP of something I put it with "on": "desk", "piano", "bookshelf", "bed" or the name of something I made on the floor (a shelf, a table, a closet), and optionally x and z. A tall closet or shelf gives me a new surface on top. It goes to the nearest free place on it.

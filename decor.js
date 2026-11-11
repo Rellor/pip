@@ -233,6 +233,12 @@ export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PI
   if (decor.length >= capOf(decor)) return { failed: FULL };
   const usable = Object.keys(ZONES).filter((k) => !ZONES[k].prints && (ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface'));
   const want = findZone(where);
+  if (!want || ZONES[want].kind === 'wall') { // a wall: hang it where a person would
+    const h = hangPicture(decor, pic, want ? ZONES[want].side : null, max, atMs, now);
+    if (!h) return { failed: 'there is no room left on the walls for it. He can take something down first' };
+    const cap = str(pic.caption, 60);
+    return { entry: { id: `p${now.toString(36)}${decor.length}`, name: cap && cap.length <= 40 ? cap : 'a picture', why: '', project: '', scale: 1, parts: [], image: pic.image, picture: pic.id, ...h, at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString() } };
+  }
   const first = want && usable.includes(want) ? want : null;
   const kind = first ? ZONES[first].kind : 'wall';
   const order = [...(first ? [first] : []), ...usable.filter((k) => k !== first && ZONES[k].kind === kind), ...usable.filter((k) => k !== first && ZONES[k].kind !== kind)];
@@ -444,8 +450,13 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     if (d.next_to) {
       const t = nextToSpot(decor, { ...d, from: [cur.x, cur.z] }, null, 0.5 * 2, 0.3 * 2);
       if (t.failed) return t;
-      d = { ...d, x: t.x, z: t.z };
-      hasXZ = true;
+      let last = null;
+      for (const [ax, az] of t.alts) {
+        const r = moveThing(decor, chest, { name: 'chest', x: ax, z: az }, atMs, now);
+        if (!r.failed) return r;
+        last ??= r;
+      }
+      return { failed: `${last.failed}. Every side of ${d.next_to} is taken or too tight` };
     }
     if (hasXZ) {
       const f = faceAndSnap(0.5, 0.3, clampTo(CHEST_BOUNDS.x, Number(d.x)), clampTo(CHEST_BOUNDS.z, Number(d.z)));
@@ -497,8 +508,13 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     const [hw, hd] = footOf(e);
     const t = nextToSpot(decor, { ...d, from: [e.pos[0], e.pos[2]] }, null, hw * 2, hd * 2, e);
     if (t.failed) return t;
-    d = { ...d, x: t.x, z: t.z };
-    hasXZ = true;
+    let last = null;
+    for (const [ax, az] of t.alts) {
+      const r = moveThing(decor, chest, { name: e.name, x: ax, z: az }, atMs, now);
+      if (!r.failed) return r;
+      last ??= r;
+    }
+    return { failed: `${last.failed}. Every side of ${d.next_to} is taken or too tight` };
   }
   if (d.next_to && e.kind !== 'floor') return { failed: 'it can only be put next to something if it stands on the floor' };
   if (e.kind === 'floor' && (hasXZ || dx || dz || (want && ZONES[want].kind === 'floor'))) {
@@ -755,6 +771,29 @@ export function roomMap(decor) {
   }
   return { rows, legend };
 }
+
+// Where there is room beside each big thing (a strip 0.8 m wide), so he can see the space and not guess.
+export function freeSides(decor) {
+  const things = [
+    ...MOVABLE.filter((k) => !FURNITURE[k].flat).map((k) => { const rs = furnRects(furnNow, k); return { n: FURNITURE[k].n, key: k, x0: Math.min(...rs.map((r) => r.x0)), x1: Math.max(...rs.map((r) => r.x1)), z0: Math.min(...rs.map((r) => r.z0)), z1: Math.max(...rs.map((r) => r.z1)) }; }),
+    ...decor.filter((o) => o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) })),
+  ];
+  return things.map((t) => {
+    const obs = obstacles(decor, null, true, t.key ?? null).filter((o) => o.n !== t.n);
+    const strips = { left: [t.x0 - 0.8, t.x0, t.z0, t.z1], right: [t.x1, t.x1 + 0.8, t.z0, t.z1], back: [t.x0, t.x1, t.z0 - 0.8, t.z0], front: [t.x0, t.x1, t.z1, t.z1 + 0.8] };
+    const free = [];
+    const tight = [];
+    for (const [side, [x0, x1, z0, z1]] of Object.entries(strips)) {
+      if ((side === 'left' && x0 < -4.95) || (side === 'right' && x1 > 4.95) || (side === 'back' && z0 < -4.95) || (side === 'front' && z1 > 4.95)) tight.push(`${side}: wall`);
+      else {
+        const b = obs.find((o) => x0 < o.x1 && x1 > o.x0 && z0 < o.z1 && z1 > o.z0);
+        if (b) tight.push(`${side}: ${b.n.replace(/^the /, '')}`);
+        else free.push(side);
+      }
+    }
+    return `${t.n.replace(/^the /, '')} (${r3(t.x1 - t.x0)} wide, ${r3(t.z1 - t.z0)} deep, at x ${r3((t.x0 + t.x1) / 2)}, z ${r3((t.z0 + t.z1) / 2)}): room on its ${free.join(', ') || 'no side'}${tight.length ? `; not on ${tight.join(', ')}` : ''}`;
+  });
+}
 // How full his room is.
 export function crowding(decor) {
   const cap = capOf(decor);
@@ -770,7 +809,7 @@ const WALL_FIXED = {
     { n: 'the window', a0: -0.95, a1: 1.55, y0: 1.7, y1: 4.1 },
     { n: 'the framed photo', a0: -3.1, a1: -1.3, y0: 2.1, y1: 3.4 },
   ],
-  left: [],
+  left: [{ n: 'the photo wall above the desk', a0: 0.2, a1: 2.2, y0: 2.1, y1: 3.1 }], // where his prints go
 };
 const WALL_TOP = 4.8;
 function halfWall(parts, scale = 1) {
@@ -788,8 +827,8 @@ function wallObstacles(decor, side, skip = null) {
   for (const k of MOVABLE) { // furniture standing against this wall
     if (FURNITURE[k].flat) continue;
     for (const r of furnRects(furnNow, k)) {
-      if (side === 'back' && r.z0 <= -4.7) list.push({ n: r.n, a0: r.x0, a1: r.x1, y0: 0, y1: r.h });
-      if (side === 'left' && r.x0 <= -4.7) list.push({ n: r.n, a0: r.z0, a1: r.z1, y0: 0, y1: r.h });
+      if (side === 'back' && r.z0 <= -4.7) list.push({ n: r.n, a0: r.x0, a1: r.x1, y0: 0, y1: r.h, furn: true });
+      if (side === 'left' && r.x0 <= -4.7) list.push({ n: r.n, a0: r.z0, a1: r.z1, y0: 0, y1: r.h, furn: true });
     }
   }
   for (const o of decor) {
@@ -797,9 +836,9 @@ function wallObstacles(decor, side, skip = null) {
     if (o.kind === 'wall') {
       const s = o.side ?? ZONES[o.zone]?.side;
       if (s !== side) continue;
-      const [hw, hh] = o.parts?.length ? halfWall(o.parts, o.scale || 1) : o.image ? [0.5, 0.4] : [0.3, 0.3];
+      const [hw, hh] = o.parts?.length ? halfWall(o.parts, o.scale || 1) : o.image ? [(o.size?.[0] ?? 1) / 2, (o.size?.[1] ?? 0.8) / 2] : [0.3, 0.3];
       const a = side === 'back' ? o.pos[0] : o.pos[2];
-      list.push({ n: o.name, a0: a - hw, a1: a + hw, y0: o.pos[1] - hh, y1: o.pos[1] + hh });
+      list.push({ n: o.name, a0: a - hw, a1: a + hw, y0: o.pos[1] - hh, y1: o.pos[1] + hh, hung: !!o.image && o.zone !== 'wall_desk' });
     } else if (o.kind === 'floor' && !o.image) {
       const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
       const h = sizeOf(o)?.[1] ?? 1;
@@ -974,6 +1013,67 @@ function placeWhere(decor, spec, parts, want, atMs, now) {
   return placeFloor(decor, spec, parts, x !== null && z !== null ? { x, z } : null, anchor, atMs, now);
 }
 
+
+// ---- Hanging pictures like a person would: in a row at eye height, next to the ones already there, or centered above a piece of furniture.
+const HANG_Y = 2.7;
+const HANG_GAP = 0.3;
+function hangSpot(decor, side, hw, hh) {
+  const obs = wallObstacles(decor, side);
+  const ok = (a, y) => !wallBlocker({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs, 0.15);
+  const hung = obs.filter((o) => o.hung).sort((p, q) => p.a0 - q.a0);
+  const cands = [];
+  if (hung.length) {
+    const row = hung.map((o) => (o.y0 + o.y1) / 2).sort((p, q) => p - q)[Math.floor(hung.length / 2)]; // the row they hang in
+    const mid = (hung[0].a0 + hung[hung.length - 1].a1) / 2;
+    const near = [];
+    for (const o of hung) near.push([o.a1 + HANG_GAP + hw, row], [o.a0 - HANG_GAP - hw, row]);
+    near.sort((p, q) => Math.abs(p[0] - mid) - Math.abs(q[0] - mid));
+    cands.push(...near);
+  }
+  for (const o of obs.filter((x) => x.furn)) cands.push([(o.a0 + o.a1) / 2, Math.max(HANG_Y, o.y1 + 0.35 + hh)]); // above the desk, the bed, the bookshelf
+  for (let k = 0; k <= 38; k++) cands.push([k % 2 ? -Math.ceil(k / 2) * 0.25 : (k / 2) * 0.25, HANG_Y]); // otherwise around the middle of the wall
+  const c = cands.find(([a, y]) => ok(a, y));
+  return c ? [r3(c[0]), r3(c[1])] : null;
+}
+const wallCount = (decor, side) => decor.filter((o) => o.kind === 'wall' && o.image && (o.side ?? ZONES[o.zone]?.side) === side && o.zone !== 'wall_desk').length;
+export function hangPicture(decor, pic, side, max, atMs, now = Date.now(), skip = null) {
+  const aspect = pic.aspect > 0.2 && pic.aspect < 5 ? pic.aspect : 1.5;
+  const [maxW, maxH] = max.wall;
+  const w = Math.min(maxW, maxH * aspect);
+  const h = w / aspect;
+  const rest = decor.filter((o) => o !== skip);
+  const sides = side ? [side, side === 'back' ? 'left' : 'back'] : ['back', 'left'].sort((p, q) => wallCount(rest, p) - wallCount(rest, q));
+  for (const sd of sides) {
+    const spot = hangSpot(rest, sd, w / 2, h / 2);
+    if (!spot) continue;
+    const [a, y] = spot;
+    return {
+      zone: 'wall_free', slot: null, free: true, side: sd, kind: 'wall',
+      label: `on the ${sd} wall (${sd === 'back' ? 'x' : 'z'} ${a}, height ${y})`,
+      pos: sd === 'back' ? [a, y, -4.97] : [-4.97, y, a],
+      rotY: sd === 'back' ? 0 : Math.PI / 2,
+      size: [r3(w), r3(h)],
+      stand: sd === 'back' ? [Math.min(4.5, Math.max(-4.5, a)), -3.7] : [-3.7, Math.min(4.5, Math.max(-4.5, a))],
+    };
+  }
+  return null;
+}
+// Pictures that were put up one by one in slots hang at all kinds of heights. Hang them again, once, in order.
+export function rehangPictures(s, now = new Date().toISOString()) {
+  if (s.hungV === 2) return false;
+  const pics = (s.decor ?? []).filter((o) => o.kind === 'wall' && o.image && o.zone !== 'wall_desk').sort((p, q) => String(p.createdAt).localeCompare(String(q.createdAt)));
+  const rest = (s.decor ?? []).filter((o) => !pics.includes(o));
+  const done = [];
+  for (const o of pics) {
+    const max = o.art ? ART_MAX : PICTURE_MAX;
+    const h = hangPicture([...rest, ...done], { aspect: (o.size?.[0] ?? 1.5) / (o.size?.[1] ?? 1) }, o.side ?? ZONES[o.zone]?.side ?? null, max, 0, Date.now());
+    if (h) Object.assign(o, { ...h, size: o.size, updatedAt: now });
+    done.push(o);
+  }
+  s.hungV = 2;
+  return true;
+}
+
 // ---- Moving the furniture. The piece keeps its back against a wall when it is put next to one. Things standing on it go along.
 const FURN_WORDS = { piano: /piano|stool/, bookshelf: /book ?shelf|bookcase/, desk: /desk|computer/, bed: /\bbed\b/, plant: /plant/, rug: /\brug\b|carpet/ };
 export const furnitureKey = (name) => MOVABLE.find((k) => FURN_WORDS[k].test(String(name).toLowerCase())) ?? null;
@@ -1001,7 +1101,8 @@ function nextToSpot(decor, d, skipKey, w, h, skipEntry = null) {
   const side = Object.hasOwn(spots, String(d.side).toLowerCase()) ? String(d.side).toLowerCase() : null;
   const from = d.from ?? [0, 0];
   const order = side ? [side] : Object.keys(spots).sort((p, q) => Math.hypot(spots[p][0] - from[0], spots[p][1] - from[1]) - Math.hypot(spots[q][0] - from[0], spots[q][1] - from[1]));
-  return { x: r3(spots[order[0]][0]), z: r3(spots[order[0]][1]) };
+  const all = [...order, ...Object.keys(spots).filter((k) => !order.includes(k)).sort((p, q) => Math.hypot(spots[p][0] - from[0], spots[p][1] - from[1]) - Math.hypot(spots[q][0] - from[0], spots[q][1] - from[1]))];
+  return { x: r3(spots[order[0]][0]), z: r3(spots[order[0]][1]), alts: all.map((k) => [r3(spots[k][0]), r3(spots[k][1]), k]) };
 }
 
 const f0rects = (key, place) => {
@@ -1018,8 +1119,14 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
     const me = f0rects(key, cur);
     const t = nextToSpot(decor, { ...d, from: [cur.x, cur.z] }, key, me.x1 - me.x0, me.z1 - me.z0);
     if (t.failed) return t;
-    nx = t.x - ((me.x0 + me.x1) / 2 - cur.x); // place is the pivot, not the center
-    nz = t.z - ((me.z0 + me.z1) / 2 - cur.z);
+    const off = [(me.x0 + me.x1) / 2 - cur.x, (me.z0 + me.z1) / 2 - cur.z]; // place is the pivot, not the center
+    let last = null;
+    for (const [ax, az, k] of t.alts) {
+      const r = moveFurniture(decor, furn, key, { x: ax - off[0], z: az - off[1] }, atMs, now);
+      if (!r.failed) return { ...r, label: `${r.label} (${k} of ${furnitureKey(d.next_to) ? FURNITURE[furnitureKey(d.next_to)].n : d.next_to})` };
+      last ??= r;
+    }
+    return { failed: `${last.failed}. Every side of ${d.next_to} is taken or too tight` };
   }
   const x = num2(d.x) ?? nx ?? cur.x + (Math.min(2, Math.max(-2, Number(d.dx) || 0)));
   const z = num2(d.z) ?? nz ?? cur.z + (Math.min(2, Math.max(-2, Number(d.dz) || 0)));
