@@ -1452,3 +1452,11 @@ I will stand on my window stool and look at the autumn stars.
 - do (stand on my window stool and watch the distant autumn stars sparkle): Watching the stars shine in the quiet autumn night feels wonderful.
 - mood: peaceful
 
+## 12/11/2026, 19:13:54
+I want to cook a warm meal with some of my rosemary and fresh ingredients tonight.
+> The room is so quiet and peaceful tonight, with the stars shining through the tall window. My little rosemary plant is resting safely in its greenhouse by the right wall, and I have fresh rosemary in my pantry from earlier. Cooking something warm on my cozy kitchen stove feels like the most comforting thing to do right now.
+- walk_to (cozy kitchen stove): I will walk over to my cozy kitchen stove.
+- cook: I am cooking a warm rosemary potato bake on my stove.
+- eat (rosemary potato bake): I will enjoy my warm, herbal meal.
+- mood: peaceful
+
