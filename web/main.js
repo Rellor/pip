@@ -2144,6 +2144,16 @@ async function saveFront(t, side) {
     return false;
   }
 }
+// The reply key lives in Settings only: filled in once there, it works for every button.
+function needKey(status, again) {
+  showTab('settings');
+  $('setlock').hidden = false;
+  $('setpanel').hidden = true;
+  teachUnlocked = false;
+  $('setstatus').textContent = again ? 'That key is not right. Enter it again.' : 'Enter your reply key here once. After that every button works.';
+  $('setkey').focus();
+  if (status) status.textContent = again ? 'That key is not right. See Settings.' : 'Add your reply key in Settings first (the gear).';
+}
 async function unlockSettings(key) {
   const status = $('setstatus');
   try {
@@ -2155,6 +2165,8 @@ async function unlockSettings(key) {
     $('setlock').hidden = true;
     $('setpanel').hidden = false;
     $('teachfront').checked = store('pip-teach') === '1';
+    if (lastState) renderErrorLog(lastState);
+    toast('Key saved. Every button works now.');
   } catch (e) {
     teachUnlocked = false;
     status.textContent = e.message;
@@ -2168,6 +2180,7 @@ $('teachfront').addEventListener('change', (e) => store('pip-teach', e.target.ch
 if (localHost) {
   $('setlock').hidden = true;
   $('setpanel').hidden = false;
+  teachUnlocked = true;
   $('teachfront').checked = store('pip-teach') === '1';
 } else if (store('pip-key')) unlockSettings(store('pip-key')); // a saved key is checked again, so a changed key locks it
 
@@ -2323,13 +2336,8 @@ $('taskform').addEventListener('submit', async (e) => {
   const status = $('taskstatus');
   const body = $('tasktext').value.trim();
   if (!body) return;
-  const key = store('pip-key') || $('taskkey').value.trim();
-  if (!key) {
-    $('taskkey').hidden = false;
-    $('taskkey').focus();
-    status.textContent = 'Enter your reply key once, then press Ask Pip.';
-    return;
-  }
+  const key = store('pip-key');
+  if (!key) return needKey(status);
   $('tasksend').disabled = true;
   status.textContent = 'Sending…';
   try {
@@ -2337,17 +2345,12 @@ $('taskform').addEventListener('submit', async (e) => {
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) {
       store('pip-key', '');
-      $('taskkey').value = '';
-      $('taskkey').hidden = false;
-      status.textContent = 'That key is not right.';
-      return;
+      return needKey(status, true);
     }
     if (!res.ok) {
       status.textContent = data.error || 'Could not send.';
       return;
     }
-    store('pip-key', key);
-    $('taskkey').hidden = true;
     $('tasktext').value = '';
     pendingTasks.push({ id: data.id, at: new Date().toISOString(), text: body });
     store('pip-task-pending', JSON.stringify(pendingTasks));
@@ -2373,29 +2376,20 @@ try {
 } catch {}
 async function closeTask(id, action) {
   const status = $('taskstatus');
-  const key = store('pip-key') || $('taskkey').value.trim();
-  if (!key) {
-    $('taskkey').hidden = false;
-    $('taskkey').focus();
-    status.textContent = 'Enter your reply key once, then press the button again.';
-    return;
-  }
+  const key = store('pip-key');
+  if (!key) return needKey(status);
   status.textContent = 'Sending…';
   try {
     const res = await fetch('/api/task', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action, id, key }) });
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) {
       store('pip-key', '');
-      $('taskkey').hidden = false;
-      status.textContent = 'That key is not right.';
-      return;
+      return needKey(status, true);
     }
     if (!res.ok) {
       status.textContent = data.error || 'Could not send.';
       return;
     }
-    store('pip-key', key);
-    $('taskkey').hidden = true;
     closing[id] = action;
     store('pip-task-closing', JSON.stringify(closing));
     status.textContent = action === 'done' ? 'Marked as done.' : 'Removed.';
@@ -2418,14 +2412,10 @@ function toast(text) {
 // Sends a message to Pip. Returns true when it was sent.
 async function sendReply(body, image = '') {
   const status = $('replystatus');
-  let key = store('pip-key') || '';
-  if (isStatic && !key) key = $('replykey').value.trim();
+  const key = store('pip-key') || '';
   if (isStatic && !key) {
-    showTab('messages');
     $('replytext').value = body;
-    $('replykey').hidden = false;
-    $('replykey').focus();
-    status.textContent = 'Enter your reply key once, then press Send.';
+    needKey(status);
     return false;
   }
   $('send').disabled = true;
@@ -2435,19 +2425,14 @@ async function sendReply(body, image = '') {
     const data = await res.json().catch(() => ({}));
     if (res.status === 401) {
       store('pip-key', '');
-      $('replykey').value = '';
-      $('replykey').hidden = false;
-      showTab('messages');
       $('replytext').value = body;
-      status.textContent = 'That key is not right.';
+      needKey(status, true);
       return false;
     }
     if (!res.ok) {
       status.textContent = data.error || 'Could not send.';
       return false;
     }
-    if (key) store('pip-key', key);
-    $('replykey').hidden = true;
     pending.push({ id: data.id, at: new Date().toISOString(), text: body || '(a picture)' });
     store('pip-pending', JSON.stringify(pending));
     status.textContent = 'Sent. Pip reads it when he next wakes up, and answers if he wants to.';
@@ -2968,6 +2953,18 @@ function renderMind(s) {
   fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
 }
 
+// Every wake-up that failed, newest first. Only shown once the key is filled in (Settings is unlocked).
+function renderErrorLog(s) {
+  const box = $('errlog');
+  const list = (s?.errors || []).slice().reverse();
+  fill(box, list.length
+    ? list.map((e) => {
+        const d = el('details');
+        d.append(el('summary', `${when(e.at)} · ${e.kind}${e.count > 1 ? ` · ${e.count} times` : ''}`), el('p', e.message, 'muted'));
+        return d;
+      })
+    : [el('p', 'No errors yet.', 'muted')]);
+}
 // The lines that depend on the clock, so they stay right even when nothing new came in.
 function renderStatus(s) {
   const quiet = s.last && !s._waking ? awakeMinutes(Date.parse(s.last.at), Date.now(), s.sleep) : 0; // his sleeping hours do not count
@@ -2984,6 +2981,7 @@ function renderStatus(s) {
   }
   if (stuckText) box.append(el('div', stuckText));
   $('settingsbtn').classList.toggle('warn', !!$('err').textContent); // the warning itself lives in Settings; the gear gets a red dot
+  if (!$('setpanel').hidden) renderErrorLog(s);
   $('wake').disabled = !!s._waking;
   $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
   $('hint').textContent = !s.last
@@ -3449,7 +3447,7 @@ document.addEventListener('visibilitychange', () => {
   const away = hiddenAt ? Date.now() - hiddenAt : 0;
   hiddenAt = 0;
   // After a long break the page itself can be an old version, so load it again (unless you are in the middle of something).
-  const busy = $('replytext').value.trim() || $('replykey').value || chosenImage || $('send').disabled || view.mode === 'walk';
+  const busy = $('replytext').value.trim() || chosenImage || $('send').disabled || view.mode === 'walk';
   if (away > 5 * 60_000 && !busy) location.reload();
   else refreshNow();
 });
@@ -3467,7 +3465,7 @@ setInterval(async () => {
     const tag = r.headers.get('etag') || r.headers.get('last-modified');
     if (!tag) return;
     if (codeTag && tag !== codeTag) {
-      const busy = $('replytext').value.trim() || $('replykey').value || chosenImage || $('send').disabled || view.mode === 'walk';
+      const busy = $('replytext').value.trim() || chosenImage || $('send').disabled || view.mode === 'walk';
       if (!busy) location.reload();
     }
     codeTag ??= tag;

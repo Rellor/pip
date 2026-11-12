@@ -1129,7 +1129,13 @@ async function noteError(e, state = null) {
   const message = String(e?.message ?? e).replace(/AIza[\w-]+/g, '[key]').replace(/\s+/g, ' ').slice(0, 300);
   const kind = /^Rate limit/.test(message) ? 'rate limit' : /Gemini error 5\d\d|busy|UNAVAILABLE/.test(message) ? 'Gemini is busy' : /Gemini error 4\d\d/.test(message) ? 'Gemini refused' : 'error';
   const st = state ?? (await loadState());
-  st.lastError = { at: new Date().toISOString(), kind, message };
+  const at = new Date().toISOString();
+  st.lastError = { at, kind, message };
+  const log = (st.errors ||= []); // the Settings page lists them; the same error in a row is counted, not repeated
+  const prev = log[log.length - 1];
+  if (prev && prev.kind === kind && prev.message === message) Object.assign(prev, { at, count: (prev.count || 1) + 1 });
+  else log.push({ at, kind, message, count: 1 });
+  if (log.length > 40) log.splice(0, log.length - 40);
   return st;
 }
 async function napForLimit() {

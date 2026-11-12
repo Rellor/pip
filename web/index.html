@@ -252,7 +252,6 @@
       <h2>Ask Pip to do something</h2>
       <form id="taskform" class="taskform">
         <textarea id="tasktext" rows="2" maxlength="300" placeholder="For example: build yourself a kitchen"></textarea>
-        <input id="taskkey" type="password" autocomplete="off" placeholder="Your reply key (only needed once)" hidden>
         <div class="row"><button type="submit" class="primary" id="tasksend">Ask Pip</button><span class="muted" id="taskstatus">He can say yes or no.</span></div>
       </form>
       <div id="tasklist"></div>
@@ -273,7 +272,6 @@
     <section class="pane" data-pane="messages" hidden>
       <form id="reply">
         <textarea id="replytext" rows="3" maxlength="1000" placeholder="Write to Pip…"></textarea>
-        <input id="replykey" type="password" autocomplete="off" placeholder="Your reply key (only needed once)" hidden>
         <div class="row">
           <label class="attach small">📎 Picture<input id="replyimg" type="file" accept="image/*" hidden></label>
           <span class="muted" id="imgname"></span>
@@ -287,13 +285,16 @@
     <section class="pane" data-pane="settings" hidden>
       <h2>Settings</h2>
       <div class="err" id="err" style="padding:0 0 8px"></div>
-      <p class="muted">For whoever looks after Pip. It needs the reply key.</p>
+      <p class="muted">For whoever looks after Pip. Enter the reply key here once: it then works for every button (messages, tasks, fronts) on this device.</p>
       <div id="setlock">
         <input id="setkey" type="password" autocomplete="off" placeholder="Your reply key">
         <button type="button" class="small" id="setunlock">Unlock</button>
       </div>
       <p class="muted" id="setstatus"></p>
       <div id="setpanel" hidden>
+        <h2>Error log</h2>
+        <p class="muted">Every wake-up that went wrong, newest first. Tap one for details.</p>
+        <div id="errlog"></div>
         <label><input type="checkbox" id="teachfront"> Teach Pip the front of things</label>
         <p class="muted">When this is on, tap a piece of furniture, his chest or something he made. A card asks which side of the room its front faces. Pip learns it at his next wake-up. Turn it off to look around as usual.</p>
       </div>
