@@ -643,31 +643,105 @@ export function sizeOf(e) {
   return [0, 1, 2].map((i) => r3((max[i] - min[i]) * (e.scale || 1)));
 }
 
+// How far a list of parts reaches sideways (x) and back to front (z), in the thing's own frame.
+function reach(parts) {
+  let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+  for (const p of parts) {
+    let h = halfSize(p);
+    if (p.rot.some((r) => r)) h = h.map(() => Math.max(...h));
+    x0 = Math.min(x0, p.pos[0] - h[0]); x1 = Math.max(x1, p.pos[0] + h[0]);
+    z0 = Math.min(z0, p.pos[2] - h[2]); z1 = Math.max(z1, p.pos[2] + h[2]);
+  }
+  return { x0, x1, z0, z1 };
+}
+const OPPOSITE = { left: 'right', right: 'left', front: 'back', back: 'front' };
+// Put a new piece flush against one side of the old one (right/left as seen standing in front of it, front is its built front). Returns the moved parts.
+function attachSide(oldParts, piece, side) {
+  const o = reach(oldParts);
+  const n = reach(piece);
+  const midZ = (o.z0 + o.z1) / 2 - (n.z0 + n.z1) / 2;
+  const midX = (o.x0 + o.x1) / 2 - (n.x0 + n.x1) / 2;
+  const [dx, dz] = side === 'right' ? [o.x1 - n.x0, midZ] : side === 'left' ? [o.x0 - n.x1, midZ] : side === 'front' ? [midX, o.z1 - n.z0] : [midX, o.z0 - n.z1];
+  return piece.map((p) => ({ ...p, pos: [r3(p.pos[0] + dx), p.pos[1], r3(p.pos[2] + dz)] }));
+}
+
+// extend_thing {name, parts}: more parts, measured like the thing itself.
+// Upgrade: add "side" and the parts are their own little piece (built around its own middle, like a new thing) that is fitted onto that side of the old thing.
+// Or "with": another thing of his is joined onto it as one (the other one stops standing alone).
 export function extendThing(decor, details, atMs, now = Date.now()) {
   const d = details && typeof details === 'object' ? details : {};
   const n = str(d.name, 60).toLowerCase();
   const mine = (x) => !x.image && !x.art && x.zone;
-  const e = (n ? decor.find((x) => mine(x) && x.name.toLowerCase() === n) : null) ?? (n ? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()))) : null);
+  const find = (q) => (q ? decor.find((x) => mine(x) && x.name.toLowerCase() === q) ?? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(q) || q.includes(x.name.toLowerCase()))) : null);
+  const e = find(n);
   if (!e) return { failed: 'there is nothing with that name in his room' };
   if (decor.filter((x) => x.changedAt && now - Date.parse(x.changedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
-  const parts = cleanParts(d.parts);
+  const side = String(d.side ?? '').trim().toLowerCase();
+  const other = d.with ? find(str(d.with, 60).toLowerCase()) : null;
+  if (d.with && (!other || other === e)) return { failed: `there is no other thing called "${str(d.with, 60)}" in his room to join onto it` };
+  if (other && decor.some((x) => x.base === other.id || String(x.base ?? '').startsWith(`${other.id}#`))) return { failed: `there are still things standing on ${other.name}. He takes them off first` };
+  if ((side || other) && !(side in OPPOSITE)) return { failed: 'he says which side of it the new part goes on: "side": "left", "right", "front" or "back" (left and right as he sees it standing in front of it)' };
+  if ((side || other) && (e.kind !== 'floor' || (other && other.kind !== 'floor'))) return { failed: 'only things that stand on the floor can be joined side by side' };
+  if (side && decor.some((x) => x.base === e.id || String(x.base ?? '').startsWith(`${e.id}#`))) return { failed: 'there are things standing on it. He takes them off first, because the whole thing shifts when it grows to the side' };
+  let parts = null;
+  if (other) {
+    const sc = other.scale || 1;
+    parts = other.parts.map((p) => ({ ...p, size: p.size.map((v) => r3(v * sc)), pos: p.pos.map((v) => r3(v * sc)) }));
+  } else parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the new shapes did not work out' };
   const room = MAX_TOTAL_PARTS - e.parts.length;
   if (room <= 0) return { failed: `it already has the most parts a thing can have (${MAX_TOTAL_PARTS})` };
-  const added = parts.slice(0, room);
-  const all = [...e.parts, ...added];
   const Z = ZONES[e.zone];
-  const before = { parts: e.parts, scale: e.scale };
-  e.scale = fit(all, Z.kind, Z.lim);
-  e.parts = all;
-  const hit = e.kind === 'floor' ? roomToGrow(decor, e) : null;
-  if (hit) {
+  const before = { parts: e.parts, scale: e.scale, pos: e.pos, stand: e.stand };
+  const rest = other ? decor.filter((x) => x !== other) : decor;
+  const tryOn = (sd) => {
+    let added = parts.slice(0, room);
+    let all;
+    let shift = [0, 0];
+    if (sd) {
+      added = attachSide(e.parts, added, sd);
+      all = [...e.parts, ...added];
+      const r = reach(all); // the whole thing is kept centered on its own middle, so its place in the room stays honest
+      shift = [(r.x0 + r.x1) / 2, (r.z0 + r.z1) / 2];
+      all = all.map((p) => ({ ...p, pos: [r3(p.pos[0] - shift[0]), p.pos[1], r3(p.pos[2] - shift[1])] }));
+      added = added.map((p) => ({ ...p, pos: [r3(p.pos[0] - shift[0]), p.pos[1], r3(p.pos[2] - shift[1])] }));
+    } else all = [...e.parts, ...added];
+    e.scale = fit(all, Z.kind, Z.lim);
+    e.parts = all;
+    if (sd) { // the middle moved by `shift` in its own frame: its place in the room and the spot he stands at move along
+      const c = Math.cos(e.rotY || 0);
+      const sn = Math.sin(e.rotY || 0);
+      const wx = (shift[0] * c + shift[1] * sn) * (e.scale || 1);
+      const wz = (-shift[0] * sn + shift[1] * c) * (e.scale || 1);
+      e.pos = [r3(before.pos[0] + wx), before.pos[1], r3(before.pos[2] + wz)];
+      if (Array.isArray(e.stand)) e.stand = [r3(before.stand[0] + wx), r3(before.stand[1] + wz)];
+    }
+    return { added, hit: e.kind === 'floor' ? roomToGrow(rest, e) : null };
+  };
+  let used = side || null;
+  let r = tryOn(used);
+  if (r.hit && used) { // that side has no room: the opposite side is tried before he is told no
     Object.assign(e, before);
-    return { failed: `there is not enough free floor around it (it would touch ${hit}). It needs a bigger spot` };
+    const alt = OPPOSITE[used];
+    const r2 = tryOn(alt);
+    if (r2.hit) {
+      Object.assign(e, before);
+      return { failed: `there is not enough free floor on its ${used} or ${alt} side (it would touch ${r.hit}). He can move it somewhere with more room first, or choose "front" or "back"` };
+    }
+    used = alt;
+    r = r2;
+  }
+  if (r.hit) {
+    Object.assign(e, before);
+    return { failed: `there is not enough free floor around it (it would touch ${r.hit}). It needs a bigger spot` };
+  }
+  if (other) {
+    for (const u of other.uses || []) if (!(e.uses || []).some((x) => x.label === u.label)) (e.uses ||= []).push(u);
+    decor.splice(decor.indexOf(other), 1);
   }
   e.updatedAt = new Date(atMs + 6000).toISOString();
   e.changedAt = e.updatedAt;
-  return { name: e.name, entry: e, added: added.length, total: all.length };
+  return { name: e.name, entry: e, added: r.added.length, total: e.parts.length, side: used, joined: other?.name ?? null };
 }
 
 // ---- Free floor space: Pip puts things where he wants. They only have to fit: not into furniture, not into each other, not through a wall.

@@ -84,7 +84,7 @@ const ACTIONS = [
   'add_use(name, use)',
   'change_thing(name, parts, why, bigger)',
   'move_thing(name, where, dx, dz, next_to, side, turn)',
-  'extend_thing(name, parts)',
+  'extend_thing(name, parts, side, with)',
   'update_app(name, html)',
   'make_clothes(name, slot, why, parts)',
   'wear(name)',
@@ -207,7 +207,7 @@ function observeStep(s, e) {
     print_photo: [`I printed a photo (${e.name})`, 4],
     change_thing: [`I changed ${e.name}${e.grew ? ' and made it bigger' : ''}`, 4],
     move_thing: [`I moved ${e.name}`, 3],
-    extend_thing: [`I added ${e.added} parts to ${e.name}, now ${e.total} parts`, 5],
+    extend_thing: [e.joined ? `I joined ${e.joined} onto ${e.name}, now one thing with ${e.total} parts` : e.side ? `I built onto the ${e.side} side of ${e.name}: ${e.added} new parts, now ${e.total}` : `I added ${e.added} parts to ${e.name}, now ${e.total} parts`, 5],
     ask_for: [`I asked for ${e.item}${e.reason ? ` (${e.reason})` : ''}`, 5],
     do: [`${e.what}`, 4],
     write_diary: [`I wrote in my diary: ${String(e.text ?? '').slice(0, 120)}`, 3],
@@ -488,7 +488,7 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - Songs and sounds: whatever I make can have a song or a sound, so anyone can tap it and hear it. In decorate I add "song": {"notes": "E5 G5 B5:2 - D5", "tempo": 80, "timbre": "musicbox"}. A note is a letter A to G, maybe # or b, and an octave from 2 to 7. ":2" holds a note for 2 beats, "-" is a rest, up to 64 notes. kick, snare and hat are drum sounds I can put between the notes. Timbres: piano, musicbox, bell, soft, pluck, flute, pad, marimba. I can also add a sound underneath or on its own, "ambience": one of rain, wind, waves, fire, crickets, hum, and "seconds" (5 to 60) for how long it lasts, like {"ambience": "rain", "seconds": 40}. A rain machine, a campfire or a wind chime can be just a sound, and a music box should play a real tune. A use can have a song too, so "Listen" can play it. With compose(name, song) I give a song or sound to something I already made.
 - Drawings: with draw I draw a picture for a wall or a surface, as SVG: {"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\"0 0 400 300\">...</svg>"}. Only plain shapes (rect, circle, ellipse, line, polyline, polygon, path, text), gradients and colours. No scripts, images or links. Under 12000 characters, at most 3 a day. Drawings have ids: I can take one down with take_down_picture(id) and put it up again with place_picture(id, where).
 - Apps and websites: with make_app I write a small web page or app: {"name": "...", "why": "...", "html": "<!doctype html>..."}. One file with HTML, CSS and JavaScript, under 14000 characters. It runs in a locked box with no internet and no storage, and only when someone opens it from my computer. At most 2 a day.
-- Big things, step by step: with extend_thing {name, parts} I add up to 40 more parts to something I already made (up to 160 parts in all), a few wake-ups in a row, so I can build something big and detailed. I need a toolbox for it. The new parts use the same measuring as the thing: pos is measured from the middle of the bottom of the thing as it is now (its size is in my room list). A big build is a good project: I write the steps, and each wake-up I do the next one.
+- Big things, step by step: with extend_thing {name, parts} I add up to 40 more parts to something I already made (up to 160 parts in all), a few wake-ups in a row, so I can build something big and detailed. I need a toolbox for it. The new parts use the same measuring as the thing: pos is measured from the middle of the bottom of the thing as it is now (its size is in my room list). A big build is a good project: I write the steps, and each wake-up I do the next one. UPGRADING something into a bigger whole (a stove that becomes a kitchen with a counter, a bed with a night table, a desk with a shelf): extend_thing {name, side, parts} where side is \"left\", \"right\", \"front\" or \"back\" (as I see it standing in front of it) and parts are a new little piece built around ITS OWN middle, like a new thing: the game fits it flush against that side and keeps the whole thing in one place. If that side has no room, the other side is tried. Or extend_thing {name, with: \"another thing of mine\", side} joins a thing I already made onto it, and then they are one thing (the uses join too). That is how I upgrade what I have into one whole instead of leaving separate things next to each other.
 - If I need a bigger room, more rooms, something even bigger than the sizes above, or something too complicated for all of this, I ask with asks_add and say exactly what I need and why.
 
 WHAT I MAKE HAS TO WORK
@@ -1714,7 +1714,7 @@ async function wakeUp() {
     if (st.action === 'do' && text(d.move, 60) && !findMove(state, d.move)) entry.failed = `I have no move called "${text(d.move, 60)}". I design one first with make_move`;
     if (st.action === 'do') Object.assign(entry, { move: findMove(state, d.move)?.name ?? null, emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
     if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: withWarn(st.made?.entry?.label, st.made), tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
-    if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, failed: st.made?.failed ?? null });
+    if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, side: st.made?.side ?? null, joined: st.made?.joined ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'move_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), place: withWarn(st.made?.label ?? (st.made?.chest ? 'in a new place' : null), st.made), failed: st.made?.failed ?? null });
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, failed: st.made?.failed ?? null });
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });

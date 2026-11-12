@@ -2550,7 +2550,7 @@ function headlineBase(st) {
     case 'request_ability': return ['🙋', `Asking for a new ability: ${d.name || st.name || ''}`];
     case 'measure': return ['📏', `Measuring ${d.name || st.name || 'something'}`];
     case 'take_tool': return ['🎒', `Putting ${d.name || st.name || 'a tool'} in his inventory`];
-    case 'extend_thing': return ['🧱', `Adding to ${d.name || st.name || 'something'}`];
+    case 'extend_thing': return ['🧱', d.with || st.joined ? `Joining things into ${d.name || st.name || 'one'}` : `Adding to ${d.name || st.name || 'something'}`];
     case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
     case 'print_photo': return ['🖨️', `Printing a photo (${d.id || st.name || 'a picture'})`];
     case 'take_down_print': return ['🖨️', 'Taking a print off the wall'];
@@ -2718,7 +2718,7 @@ function dayCard(e) {
     } else if (e.action === 'change_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
     } else if (e.action === 'extend_thing') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He added ${e.added} parts (${e.total} in all).`, 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.joined ? `He joined ${e.joined} on, so it is one thing now (${e.total} parts).` : e.side ? `He built onto the ${e.side} side: ${e.added} new parts (${e.total} in all).` : `He added ${e.added} parts (${e.total} in all).`, 'muted'));
     } else if (e.action === 'blueprint') {
       if (e.failed) card.append(el('p', `That did not work out: ${e.failed}.`, 'muted'));
       else {
