@@ -1129,6 +1129,6 @@ I have my toolbox now, so I can finally build my window step stool!
 > The toolbox arrived just like he said, and my heart feels so warm and grateful. I can finally build the little wooden step stool to look out at the stars. It feels wonderful to turn my plans into something real in my room.
 - decorate (window step stool): I am building the window step stool using my new toolbox.
 - use (window step stool): I am testing out my new window step stool to see how it feels.
-- write_diary (The toolbox arrived today! I used it to build my little wooden step stool right by the window. Standing on it makes looking out at the night sky feel so close and magical.): I am writing about building the stool in my diary.
+- write_diary (The toolbox arrived today! I tried to make my window step stool, but it did not work out. I want to find out why and try it a different way.): I am writing about building the stool in my diary.
 - mood: content
 
