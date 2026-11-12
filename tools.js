@@ -8,10 +8,12 @@ export const TOOL_KINDS = {
   'sewing kit': { words: /\bsew|needle|thread|fabric|yarn|knit|stitch|tailor/i, hint: 'needle, thread, fabric', for: 'making clothes with make_clothes' },
   ruler: { words: /\bruler|tape measure|measuring|yardstick|meter ?stick|\bmeasure\b/i, hint: 'a ruler or tape measure', for: 'measuring things with measure' },
   'light meter': { words: /light ?meter|lux|luminance|photometer|brightness meter|glow-?o/i, hint: 'a light meter, like the Lux-O-Matic 3000', for: 'checking how bright a place is with check_light' },
+  shovel: { words: /shovel|trowel|spade|\bhovel\b|garden tool/i, hint: 'a little shovel or trowel', for: 'planting seeds with plant' },
+  'watering can': { words: /watering|gieter|sprinkl|water can/i, hint: 'a watering can', for: 'watering plants with water' },
   toolbox: { words: /hammer|\bsaw\b|tool|screw|\bnails?\b|glue|drill|wrench|carpent|workbench|pliers/i, hint: 'hammer, saw, screws, glue', for: 'building big things step by step with extend_thing' },
 };
 // What needs which tool.
-export const NEEDS = { draw: 'drawing supplies', make_clothes: 'sewing kit', extend_thing: 'toolbox', measure: 'ruler', check_light: 'light meter' };
+export const NEEDS = { draw: 'drawing supplies', make_clothes: 'sewing kit', extend_thing: 'toolbox', measure: 'ruler', check_light: 'light meter', plant: 'shovel', water: 'watering can' };
 
 const clip = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
 

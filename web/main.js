@@ -3,6 +3,7 @@ import { awakeMinutes } from './sleep.js';
 import { createOutside } from './outside.js';
 import { applyLook } from './look.js';
 import { autoLampOn } from './lighting.js';
+import { isGreenhouse, plantState, slotSpot } from './gardening.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
@@ -200,11 +201,11 @@ function buildDecor(d) {
     if (!geo) continue;
     const mesh = new THREE.Mesh(
       geo(p.size),
-      new THREE.MeshStandardMaterial({ color: p.color, roughness: 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0 })
+      new THREE.MeshStandardMaterial({ color: p.color, roughness: p.glass ? 0.1 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0, ...(p.glass ? { transparent: true, opacity: 0.2, depthWrite: false } : {}) })
     );
     mesh.position.set(...p.pos);
     mesh.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
-    mesh.castShadow = true;
+    mesh.castShadow = !p.glass;
     mesh.receiveShadow = true;
     g.add(mesh);
     if (p.glow) (g.userData.glow ??= []).push({ mat: mesh.material, at: mesh.position, color: p.color });
@@ -1239,6 +1240,12 @@ function planFor(last) {
     case 'move_thing':
     case 'extend_thing': return { at: 'center', anim: 'look' };
     case 'check_light': return { at: resolveSpot(d.where || d.name), anim: 'look' };
+    case 'plant':
+    case 'water':
+    case 'harvest': {
+      const gh = (lastState?.decor || []).find((x) => isGreenhouse(x) && x.pos && Date.parse(x.at) <= Date.now());
+      return gh ? { at: 'custom', anim: 'make', spot: { p: new V3(gh.pos[0] + Math.sin(gh.rotY || 0) * 0.9, 0, gh.pos[2] + Math.cos(gh.rotY || 0) * 0.9), face: Math.PI + (gh.rotY || 0) }, madeAt: [gh.pos[0], 0.9, gh.pos[2]] } : { at: 'center', anim: 'look' };
+    }
     case 'lamp_auto': return { at: 'center', anim: 'look' };
     case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
     case 'compose':
@@ -2173,6 +2180,65 @@ let slowSum = 0;
 let slowN = 0;
 let prev = performance.now();
 let fx = null; // a different look for the room (see look.js), chosen with ?fx=
+// ---- The greenhouse garden: plants grow in real time, drawn from the saved planting dates (see gardening.js)
+const plantViews = new Map(); // plot id -> { group, key }
+const FACTOR = { seed: 0, sprout: 0.3, young: 0.6, grown: 1, flowering: 1 };
+function buildPlant(sp, st) {
+  const g = new THREE.Group();
+  const f = FACTOR[st.stage];
+  const leaf = new THREE.Color(sp.leaf);
+  const flower = new THREE.Color(sp.flower);
+  if (st.wilted) { leaf.lerp(new THREE.Color('#9a9a58'), 0.6); flower.lerp(new THREE.Color('#9a9a58'), 0.6); }
+  const lm = new THREE.MeshStandardMaterial({ color: leaf, roughness: 0.8 });
+  const fm = new THREE.MeshStandardMaterial({ color: flower, roughness: 0.6 });
+  const stemM = new THREE.MeshStandardMaterial({ color: leaf.clone().multiplyScalar(0.6), roughness: 0.9 });
+  const add = (geo, mat, x, y, z, rx = 0, rz = 0, sc = null) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx, 0, rz); if (sc) m.scale.set(...sc); m.castShadow = true; g.add(m); return m; };
+  if (st.stage === 'seed') { add(new THREE.SphereGeometry(0.035, 8, 6), new THREE.MeshStandardMaterial({ color: 0x4a2f1c, roughness: 1 }), 0, 0.01, 0, 0, 0, [1.4, 0.45, 1.4]); return g; }
+  const h = Math.max(0.1, sp.height * f);
+  add(new THREE.CylinderGeometry(0.012, 0.018, h, 6), stemM, 0, h / 2, 0);
+  const n = (k) => Math.max(2, Math.round(k * (0.4 + 0.6 * f)));
+  if (sp.form === 'bush') { // needles all along the stem, like rosemary
+    for (let i = 0; i < n(14); i++) { const a = i * 2.4; const y = h * (0.2 + (i / n(14)) * 0.75); add(new THREE.ConeGeometry(0.014, 0.13 * (0.5 + f / 2), 5), lm, Math.sin(a) * 0.04, y, Math.cos(a) * 0.04, Math.cos(a) * 0.9, -Math.sin(a) * 0.9); }
+  } else if (sp.form === 'spikes') {
+    for (let i = 0; i < n(8); i++) { const a = i * 0.8; add(new THREE.ConeGeometry(0.012, h * 0.95, 5), lm, Math.sin(a) * 0.05, h * 0.47, Math.cos(a) * 0.05, Math.cos(a) * 0.12, -Math.sin(a) * 0.12); }
+  } else {
+    for (let i = 0; i < n(6); i++) { const a = i * 1.9; add(new THREE.SphereGeometry(0.06, 8, 6), lm, Math.sin(a) * 0.06, h * (0.25 + 0.65 * (i / n(6))), Math.cos(a) * 0.06, 0, Math.sin(a) * 0.4, [1, 0.3, 1.5]); }
+  }
+  if (st.stage === 'flowering') {
+    if (sp.form === 'tall') { add(new THREE.CylinderGeometry(0.09, 0.09, 0.025, 16), fm, 0, h + 0.02, 0, Math.PI / 2.6); add(new THREE.SphereGeometry(0.04, 8, 6), new THREE.MeshStandardMaterial({ color: 0x5a3b1c }), 0, h + 0.03, 0.01); }
+    else if (sp.form === 'vine') for (let i = 0; i < 5; i++) add(new THREE.SphereGeometry(0.035, 8, 6), fm, Math.sin(i * 1.3) * 0.08, h * (0.3 + i * 0.12), Math.cos(i * 1.3) * 0.08);
+    else if (sp.form === 'flower') add(new THREE.SphereGeometry(0.06, 10, 8), fm, 0, h + 0.03, 0);
+    else for (let i = 0; i < 9; i++) add(new THREE.SphereGeometry(0.02, 6, 5), fm, Math.sin(i * 2.2) * 0.05, h * (0.55 + (i / 9) * 0.45), Math.cos(i * 2.2) * 0.05);
+  }
+  if (st.wilted) g.rotation.z = 0.35;
+  return g;
+}
+function refreshGarden() {
+  const garden = lastState?.garden;
+  const houses = (lastState?.decor || []).filter(isGreenhouse).filter((d) => Date.parse(d.at) <= Date.now());
+  const now = Date.now();
+  const alive = new Set();
+  for (const p of garden?.plots || []) {
+    const house = houses[Math.floor(p.slot / 4)];
+    const hg = house && decorGroups.get(house.id);
+    if (!hg) continue;
+    alive.add(p.id);
+    const st = plantState(p, now);
+    const key = `${st.stage}${st.wilted ? 'w' : ''}${hg.uuid}`;
+    let v = plantViews.get(p.id);
+    if (!v || v.key !== key) {
+      if (v) v.group.parent?.remove(v.group);
+      v = { group: buildPlant(st.sp, st), key, phase: Math.random() * 6, wilted: st.wilted };
+      const [x, y, z] = slotSpot(p.slot % 4);
+      v.group.position.set(x, y, z);
+      v.born = performance.now();
+      hg.add(v.group);
+      plantViews.set(p.id, v);
+    }
+  }
+  for (const [id, v] of plantViews) if (!alive.has(id)) { v.group.parent?.remove(v.group); plantViews.delete(id); }
+}
+let gardenAt = 0;
 let autoAt = 0;
 function loop(now) {
   const dt = Math.min(0.3, (now - prev) / 1000);
@@ -2190,6 +2256,12 @@ function loop(now) {
   }
   prev = now;
   land.update(now, forceLook);
+  if (now > gardenAt && lastState) { gardenAt = now + 3000; refreshGarden(); }
+  for (const v of plantViews.values()) { // the plants sway a little and pop up when they grow
+    const k = Math.min(1, (now - v.born) / 800);
+    v.group.scale.setScalar(0.2 + 0.8 * (1 - Math.pow(1 - k, 3)));
+    if (!v.wilted) v.group.rotation.z = Math.sin(now / 1500 + v.phase) * 0.03;
+  }
   if (now > autoAt && lastState) { // lamps set to "dark" switch by themselves when the real light changes
     autoAt = now + 2000;
     for (const d of lastState.decor || []) if (d.auto === 'dark') { const g = decorGroups.get(d.id); if (g) setLit(g, litOf(d)); }
@@ -2497,6 +2569,9 @@ function headlineBase(st) {
     case 'measure': return ['📏', `Measuring ${d.name || st.name || 'something'}`];
     case 'take_tool': return ['🎒', `Putting ${d.name || st.name || 'a tool'} in his inventory`];
     case 'check_light': return ['💡', `Checking how bright it is at ${d.where || d.name || 'a place'}`];
+    case 'plant': return ['🌱', `Planting ${d.seed || 'seeds'}`];
+    case 'water': return ['💧', `Watering ${d.plant || 'the plants'}`];
+    case 'harvest': return ['🧺', d.clear ? `Clearing out ${d.plant || 'a plant'}` : `Harvesting ${d.plant || 'a plant'}`];
     case 'lamp_auto': return ['🌙', `Setting ${d.name || 'a lamp'} to switch itself on in the dark`];
     case 'extend_thing': return ['🧱', d.with || st.joined ? `Joining things into ${d.name || st.name || 'one'}` : `Adding to ${d.name || st.name || 'something'}`];
     case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
@@ -2525,7 +2600,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -2665,6 +2740,8 @@ function dayCard(e) {
       card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew it and put it ${e.place}.`, 'muted'));
     } else if (e.action === 'change_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
+    } else if (e.action === 'plant' || e.action === 'water' || e.action === 'harvest') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.result || '', 'muted'));
     } else if (e.action === 'check_light') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.result || '', 'muted'));
     } else if (e.action === 'lamp_auto') {
@@ -3117,6 +3194,9 @@ function render(s) {
     })
     : [el('div', 'Nobody has given Pip any pictures yet. Use the 📎 button in the chat.', 'muted')]);
   const pantry = (s.pantry || []).filter((p) => p.qty > 0).sort((a, b) => (a.kind === 'dish' ? 0 : 1) - (b.kind === 'dish' ? 0 : 1));
+  const plants = (s.garden?.plots || []).map((p) => { const st = plantState(p); return el('li', `🌱 ${p.plant} (place ${p.slot + 1}): ${st.stage}, ${st.wilted ? 'drooping, needs water' : st.moist ? `damp for ${Math.max(1, Math.round(st.moistLeft))} more hours` : 'thirsty'}${st.ready ? ', ready to harvest' : ''}`); });
+  const seeds = (s.garden?.seeds || []).filter((x) => x.qty > 0).map((x) => el('li', `🌰 ${x.name} seeds ×${x.qty}`));
+  fill($('gardenlist'), plants.length || seeds.length ? [...plants, ...seeds] : empty('No plants yet.'));
   const bag = s.tools || [];
   const away = [...(s.decor || []).filter((d) => d.tool).map((d) => `${d.name} (in his room)`), ...(s.stored || []).filter((d) => d.tool).map((d) => `${d.name} (in his chest)`)];
   fill($('toollist'), [

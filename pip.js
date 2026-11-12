@@ -3,6 +3,8 @@ import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { PLACE, seasonInfo, seasonText, fetchWeather, weatherText } from './web/season.js';
 import { checkLight, darkNote, lightAt, isLamp } from './web/lighting.js';
+import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPlant, growthNotes } from './garden.js';
+import { gardenText } from './web/gardening.js';
 import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, limitsText } from './limits.js';
@@ -79,6 +81,9 @@ const ACTIONS = [
   'take_tool(name)',
   'measure(name)',
   'check_light(where)',
+  'plant(seed, place)',
+  'water(plant)',
+  'harvest(plant, clear)',
   'lamp_auto(name, mode)',
   'request_ability(name, thing, what)',
   'compose(name, song)',
@@ -100,7 +105,7 @@ const ACTIONS = [
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, wall, along, height)', 'take_down_picture(id)'];
 const TASK_ACTIONS = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture', 'take_down_picture', 'remove_decoration', 'take_out', 'wear', 'add_use', 'blueprint']; // what can be work for a task
-const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -276,6 +281,8 @@ async function loadState() {
     state.gifts.push('light meter');
     state.tools.push({ id: 'tgift4', name: 'Lux-O-Matic 3000', kind: 'light meter', source: 'given', why: 'a gadget that beeps how bright a place is', at: new Date().toISOString() });
   }
+  ensureGarden(state);
+  { const gn = grantGarden(state); if (gn) state.notes.push(gn); } // once: greenhouse, seeds, shovel and watering can
   ensureMoves(state);
   ensureBlueprints(state);
   squareUp(state);
@@ -472,6 +479,7 @@ export const guide = () => `${capabilityGuide()}
 ${toolsGuide()}
 ${sizesGuide()}
 ${lightGuide()}
+${gardenGuide()}
 ${movesGuide()}
 ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
@@ -520,6 +528,7 @@ Answer in JSON with these fields:
 "asks_add": up to 2 things I want someone to bring or do for me, each {"item": "short and concrete, like 'a picture of a harp'", "why": "one short reason"}. Only things someone can really give me. Do not repeat asks that are still waiting. Or [],
 "asks_done": exact item text of asks that someone did or that I no longer need (or []),
 "tools_add": names of tools that were just given to me because I asked for them (or []),
+"seeds_add": names of seeds that were just given to me because I asked for them (or []),
 "pantry_add": names of ingredients that were just given to me because I asked for them (or []),
 "tasks_answer": for each thing someone asked me to do that I have not answered yet: [{"id": "the id", "answer": "yes" or "no", "note": "a short reason or plan in my own words"}], or [],
 "tasks_done": ids of the tasks I said yes to and have now finished (or []),
@@ -530,6 +539,11 @@ ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two 
 "remember": one thing worth remembering for a long time, {"text": "...", "importance": 1 to 10 (1 is ordinary, 10 changes my life)}, or null,
 "reflections_drop": exact text of something I realized before that is not true any more (or []),
 "tell": a message to whoever looks in on me, in my own words, or null. If nobody has written to me, I write rarely, and only when I have something NEW to say: something I discovered or made, a project, a feeling I cannot explain, or a question about their world. If someone HAS written to me, I usually answer what they said or asked, and I tell them something fresh from my own day instead of what I already told them (see above). I never repeat myself.`;
+
+// How his greenhouse garden works (fixed text).
+const gardenGuide = () => `GROWING PLANTS
+I have a little greenhouse for growing plants from seeds. It starts in my chest: take_out brings it into my room and then I choose where it stands (move_thing). It has 4 places to plant. plant {seed, place} puts seeds in the soil (I need my Little Shovel) and gives them their first water. water {plant} keeps the soil damp (I need my Watering Can): one watering lasts about 10 hours, and a plant only grows while its soil is damp, so I water now and then. Plants grow in stages (seed, sprout, young, grown, flowering) in real time, and I see them grow in the greenhouse. harvest {plant} picks a grown herb or vegetable for my pantry and it grows back. harvest {plant, clear: true} clears a place for something new. A plant that stays dry for a long time droops, but water brings it back. I started with rosemary seeds. For other kinds I can research what grows well (search_web or read_book) and ask for seeds with asks_add; when they were given to me I write their names in seeds_add. Plants and seeds are not handed to me any more, I grow them myself.
+`;
 
 // How light and dark work for him (fixed text).
 const lightGuide = () => `LIGHT AND DARK
@@ -597,6 +611,8 @@ ${identityText(s, ago, bullets)}HOW I TALK (my own note; I can change it wheneve
 ${s.voice || 'short, simple sentences (how I started; I have not chosen my own way yet)'}
 MY PANTRY (plain ingredients come back every day, so I always have something to eat)
 ${pantryText(s)}
+MY GARDEN
+${gardenText(s)}
 MY CLOTHES
 ${bullets((s.wardrobe ?? []).map((c) => `${c.name} (${c.slot})${c.worn ? ' [I am wearing it]' : ''}`), 'none yet')}
 
@@ -849,6 +865,9 @@ function describe(a) {
     case 'lamp_auto':
     case 'request_ability': return d.name;
     case 'check_light': return d.where;
+    case 'plant': return d.seed;
+    case 'water':
+    case 'harvest': return d.plant;
     case 'move_thing':
     case 'extend_thing':
     case 'make_move':
@@ -992,6 +1011,9 @@ function applyInnerLife(s, r, detail, replying = false) {
     if (hit) Object.assign(hit, { status: 'done', doneAt: at });
   }
   receiveTools(s, r, at);
+  for (const t of strings(r.seeds_add, 2)) {
+    if (s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && sameItem(a.item, t))) addSeeds(s, t);
+  }
   for (const t of strings(r.pantry_add, 2)) {
     // only things he really asked for and that were given to him in the last 3 days
     if (s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && sameItem(a.item, t))) addIngredient(s, t);
@@ -1220,6 +1242,7 @@ async function wakeUp() {
   if (!process.env.PIP_FAKE && (!state.weather || Date.now() - Date.parse(state.weather.at) > 10 * 60_000)) {
     try { state.weather = await fetchWeather(AbortSignal.timeout(8000)); } catch {} // the weather is nice to know, never a reason to fail a wake-up
   }
+  for (const n of growthNotes(state)) state.notes.push(n); // plants that grew since he last looked
   const wakePrompt = buildWakeUp(state);
   if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, `${system}\n\n=====WAKE=====\n\n${wakePrompt}`);
   state.repeatNote = '';
@@ -1434,6 +1457,15 @@ async function wakeUp() {
     if (st.action === 'measure') {
       st.made = measureThing(state.decor, st.details.name, sizeOf);
       if (st.made.ok) state.notes.push(`Measured with my ruler: ${st.made.text}`);
+    }
+    if (st.action === 'plant' || st.action === 'water') {
+      const need = missingTool(state, st.action);
+      st.made = need ? { failed: need } : st.action === 'plant' ? plantSeed(state, st.details, stepStart) : waterPlants(state, st.details, stepStart);
+      if (st.made.ok) state.notes.push(st.made.text);
+    }
+    if (st.action === 'harvest') {
+      st.made = harvestPlant(state, st.details, stepStart);
+      if (st.made.ok) state.notes.push(st.made.text);
     }
     if (st.action === 'check_light') {
       const need = missingTool(state, 'check_light');
@@ -1780,6 +1812,7 @@ async function wakeUp() {
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'place_tool') Object.assign(entry, { name: st.made?.entry?.name ?? text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'request_ability') Object.assign(entry, { name: text(d.name, 40), result: st.made?.request?.what ?? null, failed: st.made?.failed ?? null });
+    if (['plant', 'water', 'harvest'].includes(st.action)) Object.assign(entry, { name: st.made?.plant ?? text(d.seed ?? d.plant, 40), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'check_light') Object.assign(entry, { where: st.made?.where ?? text(d.where ?? d.name, 60), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'lamp_auto') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), mode: st.made?.mode ?? null, failed: st.made?.failed ?? null });
     if (st.dark) entry.dark = st.dark;

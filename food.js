@@ -1,7 +1,7 @@
 // Pip's pantry and kitchen. A small daily stock of plain ingredients refills by itself, so he never starves.
 // Dishes are cooked in a kitchen he builds himself. Eating a dish fills him more than a plain snack.
 
-export const BASICS = ['bread', 'rice', 'eggs', 'potatoes', 'carrots', 'apples', 'milk', 'cheese', 'flour', 'butter', 'onions', 'tomatoes', 'rosemary'];
+export const BASICS = ['bread', 'rice', 'eggs', 'potatoes', 'carrots', 'apples', 'milk', 'cheese', 'flour', 'butter', 'onions', 'tomatoes'];
 export const MAX_PANTRY = 24;
 export const MAX_COOKS_PER_DAY = 4;
 export const DISH_GAIN = 5;

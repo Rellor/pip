@@ -11,7 +11,7 @@
 // The bars also drift back toward the middle by themselves (see passTime), so a reward is a push, never a way to sit at 10.
 import { nudge } from './feelings.js';
 
-const MAKE = ['decorate', 'extend_thing', 'change_thing', 'add_use', 'use', 'move_thing', 'make_move', 'compose', 'draw', 'make_app', 'update_app', 'make_clothes', 'place_picture', 'cook'];
+const MAKE = ['decorate', 'extend_thing', 'change_thing', 'add_use', 'use', 'move_thing', 'make_move', 'compose', 'draw', 'make_app', 'update_app', 'make_clothes', 'place_picture', 'cook', 'plant', 'water', 'harvest'];
 const ASK = ['ask_for', 'request_ability'];
 const REWARD = { fixed: { joy: 1, wonder: 0.5, fullness: 0.5 }, research: { joy: 0.6, wonder: 0.5 }, asked: { joy: 0.3, wonder: 0.2 }, tested: { joy: 0.5, wonder: 0.4 }, lit: { joy: 0.6, calm: 0.6 } };
 const SCALE = [1, 0.6, 0.3, 0];
