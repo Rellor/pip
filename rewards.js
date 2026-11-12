@@ -3,13 +3,15 @@
 //   research paid    he looked something up and then made or fixed it with those words   joy 0.6  wonder 0.5
 //   asked after trying  asking someone (ask_for, request_ability) after he tried first   joy 0.3  wonder 0.2
 //   asked without trying                                                                nothing
+//   tested it        he used something with a real effect and wrote what happened (verdict)  joy 0.5  wonder 0.4
+//   new ability      the first time ever he uses an ability (light, drive, spin, stand, custom) joy 0.8  wonder 0.8 (once each)
 // Each kind pays less the more often it paid today (full, then 60%, then 30%, then nothing), so it cannot run away.
 // The bars also drift back toward the middle by themselves (see passTime), so a reward is a push, never a way to sit at 10.
 import { nudge } from './feelings.js';
 
 const MAKE = ['decorate', 'extend_thing', 'change_thing', 'add_use', 'use', 'move_thing', 'make_move', 'compose', 'draw', 'make_app', 'update_app', 'make_clothes', 'place_picture', 'cook'];
 const ASK = ['ask_for', 'request_ability'];
-const REWARD = { fixed: { joy: 1, wonder: 0.5, fullness: 0.5 }, research: { joy: 0.6, wonder: 0.5 }, asked: { joy: 0.3, wonder: 0.2 } };
+const REWARD = { fixed: { joy: 1, wonder: 0.5, fullness: 0.5 }, research: { joy: 0.6, wonder: 0.5 }, asked: { joy: 0.3, wonder: 0.2 }, tested: { joy: 0.5, wonder: 0.4 } };
 const SCALE = [1, 0.6, 0.3, 0];
 const words = (t) => (String(t ?? '').toLowerCase().match(/[a-z]{4,}/g) ?? []);
 const day = (now) => new Date(now).toISOString().slice(0, 10);
@@ -43,14 +45,24 @@ export function bonusRewards(s, steps, now = Date.now()) {
       if (before.length) {
         s.fixedAt[name] = new Date(now).toISOString();
         if (pay(s, 'fixed', now)) paid.push(`figured out ${name}`);
-        continue;
-      }
+      } else {
       const mine = new Set(words(`${name} ${st.details?.why ?? ''}`));
       const dug = lookedUp.some((w) => mine.has(w)) || recent.slice(-6).some((e) => ['search_web', 'read_book'].includes(e.action) && words(`${e.query ?? ''} ${e.topic ?? ''}`).some((w) => mine.has(w)));
       if (dug && !st.researchPaid && pay(s, 'research', now)) {
         st.researchPaid = true;
         paid.push(`research paid off for ${name}`);
       }
+      }
+    }
+    if (st.action === 'use' && !st.made?.failed && st.made?.ref?.does) {
+      const does = st.made.ref.does;
+      s.abilitiesUsed ??= [];
+      if (!s.abilitiesUsed.includes(does)) { // the first time ever he uses this kind of ability
+        s.abilitiesUsed.push(does);
+        for (const [bar, v] of Object.entries({ joy: 0.8, wonder: 0.8 })) nudge(s, bar, v);
+        paid.push(`first time using the ${does} ability`);
+      }
+      if (String(st.details?.verdict ?? '').trim().length >= 15 && pay(s, 'tested', now)) paid.push(`tested ${name || 'it'} and wrote what happened`);
     }
     if (ASK.includes(st.action) && !st.made?.failed && tried && pay(s, 'asked', now)) paid.push('asked after trying');
   }
