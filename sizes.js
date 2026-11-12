@@ -19,7 +19,7 @@ I am about ${PIP.height} m tall and my eyes are ${PIP.eyes} m above the floor. T
 // A thing that is made to stand on to look out of the window must be high enough.
 export function reachProblem(o, sizeOf) {
   const t = `${o?.name ?? ''} ${o?.why ?? ''}`.toLowerCase();
-  if (!/\b(stool|step|steps|ladder|platform|stand|box|bench)\b/.test(t) || !/\b(window|see out|look out|outside|stars|sky)\b/.test(t)) return null;
+  if (!/\b(stool|step|steps|ladder|platform|podium)\b/.test(String(o?.name ?? '').toLowerCase()) || !/\b(window|see out|look out|outside|stars|sky)\b/.test(t)) return null; // it must be called a stool, step...: a "box" that only mentions the sky is not one
   const h = sizeOf(o)?.[1];
   if (!h || h >= STEP_FOR_WINDOW - 0.02) return null;
   return `${o.name} is for looking out of the window, but it is only ${r2(h)} m high. My eyes are ${PIP.eyes} m up and the window starts at ${WINDOW.from} m, so standing on it my eyes would be at ${r2(PIP.eyes + h)} m. It needs to be at least ${STEP_FOR_WINDOW} m high (and wide enough for me to stand on)`;

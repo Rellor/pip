@@ -1312,11 +1312,14 @@ function nextToSpot(decor, d, skipKey, w, h, skipEntry = null) {
   }
   if (!a) return { failed: `there is nothing standing on the floor called "${name}" to put it next to (furniture or things he made on the floor)` };
   const gap = 0.27; // a little more than the room the game keeps between things, so "next to" really fits
+  // A thing that is deeper than the one it goes next to would stick through the wall behind it: it is pushed back into the room, still beside it.
+  const inX = (v) => Math.min(EDGE - w / 2, Math.max(-EDGE + w / 2, v));
+  const inZ = (v) => Math.min(EDGE - h / 2, Math.max(-EDGE + h / 2, v));
   const spots = {
-    left: [a.x0 - gap - w / 2, (a.z0 + a.z1) / 2],
-    right: [a.x1 + gap + w / 2, (a.z0 + a.z1) / 2],
-    back: [(a.x0 + a.x1) / 2, a.z0 - gap - h / 2],
-    front: [(a.x0 + a.x1) / 2, a.z1 + gap + h / 2],
+    left: [a.x0 - gap - w / 2, inZ((a.z0 + a.z1) / 2)],
+    right: [a.x1 + gap + w / 2, inZ((a.z0 + a.z1) / 2)],
+    back: [inX((a.x0 + a.x1) / 2), a.z0 - gap - h / 2],
+    front: [inX((a.x0 + a.x1) / 2), a.z1 + gap + h / 2],
   };
   // side: a side of the thing itself (its front, back, left or right, as if it were a person looking the way its front points), or of the room (toward the left wall...).
   const word = String(d.side ?? '').toLowerCase();
@@ -1376,7 +1379,7 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
       u = union(rectsAt(place));
       const g2 = { left: u.x0 + 5, right: 5 - u.x1, back: u.z0 + 5, front: 5 - u.z1 }[wall];
       if (g2 > 0) {
-        const s = g2 - 0.04;
+        const s = g2 - 0.06; // stay inside the 0.05 the game keeps free along the wall
         if (wall === 'left') place.x -= s;
         if (wall === 'right') place.x += s;
         if (wall === 'back') place.z -= s;
