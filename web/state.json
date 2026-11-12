@@ -7846,7 +7846,11 @@
       "testNote": null
     }
   ],
-  "lastError": null,
+  "lastError": {
+    "at": "2026-11-12T17:08:10.182Z",
+    "kind": "Gemini is busy",
+    "message": "Gemini error 503: { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\", \"status\": \"UNAVAILABLE\" } } "
+  },
   "fixedAt": {
     "window step stool": "2026-11-12T12:55:30.553Z"
   },
@@ -7863,10 +7867,10 @@
   ],
   "errors": [
     {
-      "at": "2026-11-12T16:12:18.146Z",
+      "at": "2026-11-12T17:08:10.182Z",
       "kind": "Gemini is busy",
       "message": "Gemini error 503: { \"error\": { \"code\": 503, \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\", \"status\": \"UNAVAILABLE\" } } ",
-      "count": 4
+      "count": 5
     }
   ],
   "weather": {
