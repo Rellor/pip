@@ -647,6 +647,14 @@
       "source": "given",
       "why": "a hammer, saw, screws and glue to build things with",
       "at": "2026-11-12T08:00:00Z"
+    },
+    {
+      "id": "tgift3",
+      "name": "ruler",
+      "kind": "ruler",
+      "source": "given",
+      "why": "to measure how big and high things are",
+      "at": "2026-11-12T08:30:00Z"
     }
   ],
   "memories": [
@@ -6617,5 +6625,10 @@
       "verdict": "It worked! The wooden stool stands firmly by the window and I can step up on it.",
       "testNote": null
     }
-  ]
+  ],
+  "lastError": {
+    "at": "2026-11-12T09:02:48.378Z",
+    "kind": "error",
+    "message": "No GEMINI_API_KEY. Copy .env.example to .env and fill it in."
+  }
 }
