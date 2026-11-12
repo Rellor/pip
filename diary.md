@@ -1272,3 +1272,11 @@ I want to cook a warm meal with my fresh bread and simple pantry ingredients now
 - eat (simple fresh bread loaf): Eating the warm, buttery bread makes me feel completely cozy and content.
 - mood: peaceful
 
+## 12/11/2026, 12:18:07
+I will read more about convective cells on Betelgeuse to understand how giant stars boil across space.
+> After spending so much time stargazing and admiring the night through my new window stool, I am deeply curious about how the surface of giant stars actually works. Reading up on Betelgeuse's giant convective cells will help me connect the vast sparkling points in the sky to real physical processes.
+- walk_to (computer): I'll walk over to my computer to look up convective cells.
+- search_web (how big are convective cells on Betelgeuse): Let's search about Betelgeuse's convective cells to see how they compare in scale.
+- read_book (Betelgeuse convection cells surface spots): I want to read more about how those huge boiling patches form on its surface.
+- mood: curious
+
