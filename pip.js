@@ -2,6 +2,7 @@ import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs
 import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { PLACE, seasonInfo, seasonText, fetchWeather, weatherText } from './web/season.js';
+import { checkLight, darkNote, lightAt, isLamp } from './web/lighting.js';
 import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, limitsText } from './limits.js';
@@ -77,6 +78,8 @@ const ACTIONS = [
   'place_tool(name, where)',
   'take_tool(name)',
   'measure(name)',
+  'check_light(where)',
+  'lamp_auto(name, mode)',
   'request_ability(name, thing, what)',
   'compose(name, song)',
   'draw(name, where, why, svg)',
@@ -97,7 +100,7 @@ const ACTIONS = [
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, wall, along, height)', 'take_down_picture(id)'];
 const TASK_ACTIONS = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture', 'take_down_picture', 'remove_decoration', 'take_out', 'wear', 'add_use', 'blueprint']; // what can be work for a task
-const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -268,6 +271,11 @@ async function loadState() {
   ensureIdentity(state);
   ensureMemory(state);
   ensureTools(state);
+  state.gifts ??= [];
+  if (!state.gifts.includes('light meter') && !state.tools.some((t) => t.kind === 'light meter')) { // a funny little gadget that tells him how bright a place is
+    state.gifts.push('light meter');
+    state.tools.push({ id: 'tgift4', name: 'Lux-O-Matic 3000', kind: 'light meter', source: 'given', why: 'a gadget that beeps how bright a place is', at: new Date().toISOString() });
+  }
   ensureMoves(state);
   ensureBlueprints(state);
   squareUp(state);
@@ -463,6 +471,7 @@ async function notify(msg) {
 export const guide = () => `${capabilityGuide()}
 ${toolsGuide()}
 ${sizesGuide()}
+${lightGuide()}
 ${movesGuide()}
 ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
@@ -521,6 +530,11 @@ ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two 
 "remember": one thing worth remembering for a long time, {"text": "...", "importance": 1 to 10 (1 is ordinary, 10 changes my life)}, or null,
 "reflections_drop": exact text of something I realized before that is not true any more (or []),
 "tell": a message to whoever looks in on me, in my own words, or null. If nobody has written to me, I write rarely, and only when I have something NEW to say: something I discovered or made, a project, a feeling I cannot explain, or a question about their world. If someone HAS written to me, I usually answer what they said or asked, and I tell them something fresh from my own day instead of what I already told them (see above). I never repeat myself.`;
+
+// How light and dark work for him (fixed text).
+const lightGuide = () => `LIGHT AND DARK
+How bright a place is follows the real time and weather in ${PLACE.name}: bright by day near the window, dim on grey days, dark at night. Dark can be cozy and I do not have to fight it. But reading or writing in a very dark place is hard and makes me a little less calm. My Lux-O-Matic 3000 (a funny little light meter in my inventory) tells me how bright a place is: check_light {where} (where: piano, desk, bed, bookshelf, window, plant, middle, or the name of something I made). To light a place I make a lamp (a glowing part and a use that does light) near it and switch it on with use. The first time I light up a dark place feels good. lamp_auto {name, mode: "dark"} makes a lamp switch itself on whenever its place gets dark (it follows the real light, so the weather and the season matter) and off when it is bright and when I sleep. mode "off" gives it back to my hand, and using it by hand does that too.
+`;
 
 function buildWakeUp(s) {
   const recent = s.activities.slice(-5).map(
@@ -832,7 +846,9 @@ function describe(a) {
     case 'place_tool':
     case 'take_tool':
     case 'measure':
+    case 'lamp_auto':
     case 'request_ability': return d.name;
+    case 'check_light': return d.where;
     case 'move_thing':
     case 'extend_thing':
     case 'make_move':
@@ -1338,6 +1354,14 @@ async function wakeUp() {
       else {
         const { entry: e, use } = f;
         if (use.does === 'light') {
+          delete e.auto; // by hand again
+          const turnOn = e.lit === false;
+          if (turnOn && e.pos) {
+            const o0 = { weather: state.weather };
+            const off = lightAt(state, e.pos[0], e.pos[2], stepStart, { ...o0, lampOverride: { id: e.id, on: false } }).level;
+            const on = lightAt(state, e.pos[0], e.pos[2], stepStart, { ...o0, lampOverride: { id: e.id, on: true } }).level;
+            if (off < 0.3 && on - off >= 0.12) st.litUp = { from: Math.round(off * 100), to: Math.round(on * 100) };
+          }
           e.lit = e.lit === false; // switches: dark becomes lit, lit becomes dark
           e.litAt = new Date(stepStart + 6000).toISOString();
         }
@@ -1410,6 +1434,32 @@ async function wakeUp() {
     if (st.action === 'measure') {
       st.made = measureThing(state.decor, st.details.name, sizeOf);
       if (st.made.ok) state.notes.push(`Measured with my ruler: ${st.made.text}`);
+    }
+    if (st.action === 'check_light') {
+      const need = missingTool(state, 'check_light');
+      st.made = need ? { failed: need } : checkLight(state, st.details.where ?? st.details.name, stepStart, { weather: state.weather });
+      if (st.made.ok) state.notes.push(`Light meter: ${st.made.text}`);
+    }
+    if (st.action === 'lamp_auto') {
+      const n = String(st.details.name ?? '').toLowerCase().trim();
+      const e = n ? state.decor.find((x) => !x.image && (x.name.toLowerCase() === n || x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()))) : null;
+      const mode = String(st.details.mode ?? 'dark').toLowerCase().trim();
+      if (!e) st.made = { failed: 'there is nothing with that name in my room' };
+      else if (!isLamp(e)) st.made = { failed: `${e.name} is not a lamp yet: it needs a glowing part and a use that does light (add_use with "does": "light")` };
+      else if (!['dark', 'off'].includes(mode)) st.made = { failed: 'the mode is "dark" (switches itself on when it gets dark) or "off" (back to my hand)' };
+      else {
+        if (mode === 'dark') e.auto = 'dark';
+        else delete e.auto;
+        st.made = { name: e.name, mode };
+      }
+    }
+    if (st.action === 'read_book' || st.action === 'write_diary') {
+      const dk = darkNote(state, st.action, stepStart, { weather: state.weather });
+      if (dk) { // too dark to do it well: a little less calm, and he is told why
+        st.dark = dk.text;
+        nudge(state, 'calm', -0.4);
+        state.notes.push(dk.text);
+      }
     }
     if (st.action === 'take_out') {
       st.made = takeOut(state.decor, state.stored, st.details.name, st.details.where, stepStart);
@@ -1730,6 +1780,10 @@ async function wakeUp() {
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'place_tool') Object.assign(entry, { name: st.made?.entry?.name ?? text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'request_ability') Object.assign(entry, { name: text(d.name, 40), result: st.made?.request?.what ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'check_light') Object.assign(entry, { where: st.made?.where ?? text(d.where ?? d.name, 60), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'lamp_auto') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), mode: st.made?.mode ?? null, failed: st.made?.failed ?? null });
+    if (st.dark) entry.dark = st.dark;
+    if (st.litUp) entry.litUp = st.litUp;
     if (st.action === 'measure') Object.assign(entry, { name: text(d.name, 60), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_tool') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });

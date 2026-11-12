@@ -437,7 +437,7 @@ export function createOutside(THREE) {
     // colours of the land: day and night, then the haze with distance (a lot of it in fog), then snow on top
     const seasonGrass = se.name === 'spring' ? '#7fcf6c' : se.name === 'autumn' ? '#a39a56' : se.name === 'winter' ? '#98a68e' : null;
     const grass = k.grass.clone().lerp(tmp.copy(grey).multiplyScalar(dim), gloom * 0.3);
-    if (seasonGrass) grass.lerp(tmp.set(seasonGrass).multiplyScalar(0.35 + 0.65 * dim), se.name === 'autumn' ? 0.2 + se.turn * 0.4 : 0.5);
+    if (seasonGrass) grass.lerp(tmp.set(seasonGrass).multiplyScalar(0.1 + 0.9 * dim), se.name === 'autumn' ? 0.2 + se.turn * 0.4 : 0.5);
     const hill = k.hill.clone().lerp(tmp.copy(grey).multiplyScalar(dim), gloom * 0.3);
     const snowy = wx === 'snow' ? C('#e8eef5').multiplyScalar(0.55 + 0.45 * dim) : null;
     for (const m of hazed) {
@@ -446,7 +446,7 @@ export function createOutside(THREE) {
       else if (m.mat === ground.material || m.mat === low.material) base = grass;
       else if (m.mat === mid.material) base = hill.clone().lerp(grass, 0.45);
       else if (m.mat === far.material) base = hill;
-      else base = m.base.clone().multiplyScalar(0.35 + 0.65 * dim); // trees, fence, house darken at night
+      else base = m.base.clone().multiplyScalar(0.2 + 0.8 * dim); // trees, fence, house darken at night
       if (snowy && (m.stripe || m.mat === ground.material || m.mat === low.material || m.mat === mid.material)) base = base.clone().lerp(snowy, 0.8);
       const amount = clamp(m.dist / 700, 0, 0.8) * (wx === 'fog' ? 1.6 : 1) + (wx === 'fog' ? clamp(m.dist / 120, 0, 0.7) : 0);
       m.mat.color.copy(base).lerp(hz, clamp(amount, 0, 0.95));

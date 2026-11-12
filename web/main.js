@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { awakeMinutes } from './sleep.js';
 import { createOutside } from './outside.js';
+import { applyLook } from './look.js';
+import { autoLampOn } from './lighting.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
@@ -345,19 +347,19 @@ function scheduleDue(s) {
 }
 // ---- What things DO when they are used (light, drive, spin). The data says what it does; the page plays it.
 // A lamp is lit unless Pip switched it off. Before his switch is due (litAt) it still shows the old state.
-const litOf = (d) => (d.litAt && Date.parse(d.litAt) > Date.now() ? d.lit === false : d.lit !== false);
+const litOf = (d) => (d.auto === 'dark' && lastState ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : d.litAt && Date.parse(d.litAt) > Date.now() ? d.lit === false : d.lit !== false); // a lamp set to "dark" follows the real light and the weather
 function setLit(g, on) {
   const list = g.userData.glow;
   if (!list || g.userData.lit === on) return;
   g.userData.lit = on;
   for (const x of list) x.mat.emissiveIntensity = on ? 0.9 : 0;
   if (!g.userData.lamp) {
-    const l = new THREE.PointLight(new THREE.Color(list[0].color), 0, 3);
+    const l = new THREE.PointLight(new THREE.Color(list[0].color), 0, 4.5);
     l.position.copy(list[0].at);
     g.add(l);
     g.userData.lamp = l;
   }
-  g.userData.lamp.intensity = on ? 1.6 : 0;
+  g.userData.lamp.intensity = on ? 3 : 0;
 }
 const behaviors = new Map(); // thing id -> what it is doing now
 const floorBlocked = (x, z, skipId) => {
@@ -1236,6 +1238,8 @@ function planFor(last) {
     case 'print_photo': return { at: 'computer', anim: 'look' };
     case 'move_thing':
     case 'extend_thing': return { at: 'center', anim: 'look' };
+    case 'check_light': return { at: resolveSpot(d.where || d.name), anim: 'look' };
+    case 'lamp_auto': return { at: 'center', anim: 'look' };
     case 'remove_decoration': return last.made?.chest ? { at: 'chest', anim: 'stash' } : { at: 'center', anim: 'look' };
     case 'compose':
     case 'add_use': return { at: 'center', anim: 'write' };
@@ -2168,6 +2172,8 @@ let pixels = SHARP;
 let slowSum = 0;
 let slowN = 0;
 let prev = performance.now();
+let fx = null; // a different look for the room (see look.js), chosen with ?fx=
+let autoAt = 0;
 function loop(now) {
   const dt = Math.min(0.3, (now - prev) / 1000);
   if (!document.hidden && dt < 0.25 && ++slowN > 5) slowSum += dt; // the first frames and long pauses do not count
@@ -2184,6 +2190,10 @@ function loop(now) {
   }
   prev = now;
   land.update(now, forceLook);
+  if (now > autoAt && lastState) { // lamps set to "dark" switch by themselves when the real light changes
+    autoAt = now + 2000;
+    for (const d of lastState.decor || []) if (d.auto === 'dark') { const g = decorGroups.get(d.id); if (g) setLit(g, litOf(d)); }
+  }
   updateSlides(now, dt);
   frame(now, dt);
   updateFloaters(dt, now);
@@ -2192,7 +2202,8 @@ function loop(now) {
   const printing = plan && stepNow >= 0 && plan.steps[stepNow]?.action === 'print_photo';
   printLight.material.color.set(printing && Math.floor(now / 250) % 2 ? 0x6dff8a : 0x2f6b3a);
   updateWalk(dt);
-  renderer.render(scene, camera);
+  if (fx) fx.render();
+  else renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
 fitCamera();
@@ -2485,6 +2496,8 @@ function headlineBase(st) {
     case 'request_ability': return ['🙋', `Asking for a new ability: ${d.name || st.name || ''}`];
     case 'measure': return ['📏', `Measuring ${d.name || st.name || 'something'}`];
     case 'take_tool': return ['🎒', `Putting ${d.name || st.name || 'a tool'} in his inventory`];
+    case 'check_light': return ['💡', `Checking how bright it is at ${d.where || d.name || 'a place'}`];
+    case 'lamp_auto': return ['🌙', `Setting ${d.name || 'a lamp'} to switch itself on in the dark`];
     case 'extend_thing': return ['🧱', d.with || st.joined ? `Joining things into ${d.name || st.name || 'one'}` : `Adding to ${d.name || st.name || 'something'}`];
     case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
     case 'print_photo': return ['🖨️', `Printing a photo (${d.id || st.name || 'a picture'})`];
@@ -2512,7 +2525,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -2652,6 +2665,10 @@ function dayCard(e) {
       card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew it and put it ${e.place}.`, 'muted'));
     } else if (e.action === 'change_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
+    } else if (e.action === 'check_light') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.result || '', 'muted'));
+    } else if (e.action === 'lamp_auto') {
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.mode === 'dark' ? `${e.name} now switches itself on when it gets dark.` : `${e.name} is back in his own hands.`, 'muted'));
     } else if (e.action === 'extend_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.joined ? `He joined ${e.joined} on, so it is one thing now (${e.total} parts).` : e.side ? `He built onto the ${e.side} side: ${e.added} new parts (${e.total} in all).` : `He added ${e.added} parts (${e.total} in all).`, 'muted'));
     } else if (e.action === 'blueprint') {
@@ -3464,6 +3481,7 @@ window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt,
 // ?az=0.8&el=0.1&zoom=0.6 or ?look=x,z,yaw,pitch (walk mode) start from another side (for checking the window)
 {
   const p = new URLSearchParams(location.search);
+  fx = applyLook(p.get('fx') || 'full', { THREE, renderer, scene, camera, hemi, sun, lamp, G, decorGroups, land });
   if (p.has('tab')) showTab(p.get('tab')); // ?tab=life&open=pantry opens a tab (for checking)
   if (p.has('open')) setTimeout(() => openLife(p.get('open')), 2500);
   if (p.has('look')) {

@@ -7,10 +7,11 @@ export const TOOL_KINDS = {
   'drawing supplies': { words: /pencil|marker|crayon|paint|brush|\bpens?\b|drawing|sketch|paper|art suppl|\bink\b|easel/i, hint: 'pencils, markers, paint, paper', for: 'drawing with draw' },
   'sewing kit': { words: /\bsew|needle|thread|fabric|yarn|knit|stitch|tailor/i, hint: 'needle, thread, fabric', for: 'making clothes with make_clothes' },
   ruler: { words: /\bruler|tape measure|measuring|yardstick|meter ?stick|\bmeasure\b/i, hint: 'a ruler or tape measure', for: 'measuring things with measure' },
+  'light meter': { words: /light ?meter|lux|luminance|photometer|brightness meter|glow-?o/i, hint: 'a light meter, like the Lux-O-Matic 3000', for: 'checking how bright a place is with check_light' },
   toolbox: { words: /hammer|\bsaw\b|tool|screw|\bnails?\b|glue|drill|wrench|carpent|workbench|pliers/i, hint: 'hammer, saw, screws, glue', for: 'building big things step by step with extend_thing' },
 };
 // What needs which tool.
-export const NEEDS = { draw: 'drawing supplies', make_clothes: 'sewing kit', extend_thing: 'toolbox', measure: 'ruler' };
+export const NEEDS = { draw: 'drawing supplies', make_clothes: 'sewing kit', extend_thing: 'toolbox', measure: 'ruler', check_light: 'light meter' };
 
 const clip = (v, n) => (typeof v === 'string' ? v.trim().slice(0, n) : '');
 
