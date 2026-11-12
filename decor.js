@@ -442,7 +442,7 @@ const clampTo = ([lo, hi], v) => r3(Math.min(hi, Math.max(lo, v)));
 // details: { name, where, dx, dz }. `chest` is state.chest (or null). Returns { name, entry } for a thing, { name, chest } for the chest, or { failed }.
 export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   const r = moveThingRaw(decor, chest, details, atMs, now);
-  if (r?.failed && !r.hinted) {
+  if (r?.failed && !r.hinted && !/It would fit/.test(r.failed)) {
     const n = String(details?.name ?? '').toLowerCase().trim();
     const e = n && decor.find((x) => !x.image && x.kind && (x.name.toLowerCase() === n || x.name.toLowerCase().includes(n)));
     if (e && KIND_HINT[e.kind]) (r.hinted = true), r.failed = `${r.failed}. ${e.name} is a ${e.kind} thing. ${KIND_HINT[e.kind]} He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way`;
@@ -769,6 +769,21 @@ function spotLabel(x, z) {
   return d <= 1.6 ? `on the floor by ${name} (x ${r3(x)}, z ${r3(z)})` : `on the floor (x ${r3(x)}, z ${r3(z)})`;
 }
 
+// The nearest places (at most 3, not too close to each other) where a try function finds room, as words: "at x 1.5, z 0.5 (1.9 m away)".
+function fitSpots(tryFn, x, z) {
+  const grid = [];
+  for (let gx = -4.75; gx <= 4.76; gx += 0.25) for (let gz = -4.75; gz <= 4.76; gz += 0.25) grid.push([gx, gz, Math.hypot(gx - x, gz - z)]);
+  grid.sort((a, b) => a[2] - b[2]);
+  const out = [];
+  for (const [gx, gz, dist] of grid) {
+    if (out.length >= 3) break;
+    if (out.some((o) => Math.hypot(o.x - gx, o.z - gz) < 1)) continue;
+    const f = tryFn(gx, gz);
+    if (f) out.push({ x: f.x ?? gx, z: f.z ?? gz, d: dist });
+  }
+  return out.map((o) => `at x ${r3(o.x)}, z ${r3(o.z)} (${r3(Math.hypot(o.x - x, o.z - z))} m away)`);
+}
+
 // Finds a place on the floor: exactly where he said, else the nearest free place (within 1.5 m when he named a spot, anywhere when he did not).
 function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false) {
   const scale = fit(parts, 'floor', {});
@@ -799,6 +814,14 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
         moved = true;
         break;
       }
+    }
+  }
+  if (!found && want) {
+    const spots = fitSpots((gx, gz) => tryAt(gx, gz), tx, tz); // where it would fit, nearest first
+    if (spots.length) {
+      const f = faceAndSnap(hw, hd, Math.min(EDGE, Math.max(-EDGE, tx)), Math.min(EDGE, Math.max(-EDGE, tz)));
+      const hit = blocker(rectAt([hw, hd], f.x, f.z, f.rotY), obs);
+      return { failed: `it does not fit there: it is about ${r3(hw * 2)} x ${r3(hd * 2)} m and would touch ${hit}. It would fit ${spots.join(' or ')}. He picks one of those, or asks someone for help with ask_for` };
     }
   }
   if (!found) {
@@ -1163,7 +1186,7 @@ const KIND_HINT = {
 };
 function placeWhere(decor, spec, parts, want, atMs, now) {
   const r = placeWhereRaw(decor, spec, parts, want, atMs, now);
-  if (r?.failed && !r.hinted) {
+  if (r?.failed && !r.hinted && !/It would fit/.test(r.failed)) {
     const kind = want && ZONES[want] ? ZONES[want].kind : spec.on ? 'surface' : spec.wall ? 'wall' : 'floor';
     r.hinted = true;
     r.failed = `${r.failed}. This is a ${kind} thing. ${KIND_HINT[kind]} He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way`;
@@ -1436,7 +1459,10 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
       }
     }
   }
-  if (hit) return { failed: `${f.n} does not fit there (it would touch ${hit}), and there is no free place close by` };
+  if (hit) {
+    const spots = fitSpots((gx, gz) => { const p = settle(gx, gz); return hits(p) ? null : p; }, x, z);
+    return { failed: `${f.n} does not fit there (it would touch ${hit}), and there is no free place close by.${spots.length ? ` It would fit ${spots.join(' or ')}. He picks one of those, or asks someone for help with ask_for` : ' There is no free place for it anywhere. He can make room by putting something in his chest, or ask for help with ask_for'}` };
+  }
   // things on top go along
   const at = new Date(atMs + 6000).toISOString();
   const remap = ([px, pz]) => {
