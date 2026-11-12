@@ -4,6 +4,7 @@
 //   asked after trying  asking someone (ask_for, request_ability) after he tried first   joy 0.3  wonder 0.2
 //   asked without trying                                                                nothing
 //   tested it        he used something with a real effect and wrote what happened (verdict)  joy 0.5  wonder 0.4
+//   still works      a thing he built days ago still works when he uses it (once in a while: 3 days apart, each thing 7)  joy 0.7  wonder 0.4  fullness 0.3
 //   new ability      the first time ever he uses an ability (light, drive, spin, stand, custom) joy 0.8  wonder 0.8 (once each)
 // Each kind pays less the more often it paid today (full, then 60%, then 30%, then nothing), so it cannot run away.
 // The bars also drift back toward the middle by themselves (see passTime), so a reward is a push, never a way to sit at 10.
@@ -61,6 +62,13 @@ export function bonusRewards(s, steps, now = Date.now()) {
         s.abilitiesUsed.push(does);
         for (const [bar, v] of Object.entries({ joy: 0.8, wonder: 0.8 })) nudge(s, bar, v);
         paid.push(`first time using the ${does} ability`);
+      }
+      const e = (s.decor ?? []).find((x) => x.id === st.made.ref.id);
+      const days = (iso) => (now - Date.parse(iso ?? 0)) / 86_400_000;
+      if (e && days(e.at) >= 1 && days(e.keptAt) >= 7 && days(s.keptAt) >= 3) { // something he built a while ago still does its job
+        e.keptAt = s.keptAt = new Date(now).toISOString();
+        for (const [bar, v] of Object.entries({ joy: 0.7, wonder: 0.4, fullness: 0.3 })) nudge(s, bar, v);
+        paid.push(`${e.name} still works, days after he built it`);
       }
       if (String(st.details?.verdict ?? '').trim().length >= 15 && pay(s, 'tested', now)) paid.push(`tested ${name || 'it'} and wrote what happened`);
     }
