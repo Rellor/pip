@@ -2026,7 +2026,8 @@ $('frontsave').addEventListener('click', saveFrontPick);
 $('frontcancel').addEventListener('click', endFrontPick);
 dom.addEventListener('pointermove', (e) => { if (frontPick && !drag && e.pointerType === 'mouse') previewFront(e.clientX, e.clientY); });
 async function saveFront(t, side) {
-  const [lx, lz] = turn(SIDE_VECTORS[side], -t.rot).map((v) => Math.round(v) || 0); // the front in the thing's own frame
+  const v = turn(SIDE_VECTORS[side], -t.rot); // the front in the thing's own frame: the nearest of the four directions, also for a thing that is turned
+  const [lx, lz] = Math.abs(v[0]) >= Math.abs(v[1]) ? [Math.sign(v[0]) || 0, 0] : [0, Math.sign(v[1]) || 0];
   try {
     if (!localHost) {
       const res = await fetch('/api/front', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: store('pip-key'), target: t.key, local: [lx, lz] }) });

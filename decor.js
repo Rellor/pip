@@ -155,7 +155,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (decor.length >= capOf(decor)) return { failed: FULL };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, on: d.on, wall: d.wall, along: d.along, height: d.height }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -458,7 +458,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   const want = findZone(d.where);
   const hasXZ0 = d.x !== undefined && d.z !== undefined && d.x !== null && d.z !== null && d.x !== '' && d.z !== '' && Number.isFinite(Number(d.x)) && Number.isFinite(Number(d.z));
   let hasXZ = hasXZ0;
-  if (!want && !dx && !dz && !hasXZ && !d.next_to && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null) return { failed: 'he did not say where to move it' };
+  if (!want && !dx && !dz && !hasXZ && !d.next_to && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null && turnRad(d.turn) === null) return { failed: 'he did not say where to move it' };
   if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const at = new Date(atMs + 6000).toISOString();
   const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
@@ -511,6 +511,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   }
   const mine = (x) => !x.image && !x.art && x.zone;
   let e = decor.find((x) => mine(x) && x.name.toLowerCase() === n) ?? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  if (!e && furnitureKey(n) && turnRad(d.turn) !== null) return { failed: 'furniture stands square to the walls: only things he made on the floor can be turned' };
   if (!e && furnitureKey(n)) return moveFurniture(decor, furnNow, furnitureKey(n), d, atMs, now);
   if (!e) return { failed: 'there is nothing with that name in his room' };
   if (want && ZONES[want].kind !== e.kind) return { failed: `it cannot go there: it is a ${e.kind} thing` };
@@ -575,11 +576,13 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
     return { failed: askedSide ? `${last.failed}. There is no room on the ${String(d.side).trim()} side of ${d.next_to}. He can name another side, or leave the side out and the nearest free side is used` : `${last.failed}. Every side of ${d.next_to} is taken or too tight` };
   }
   if (d.next_to && e.kind !== 'floor') return { failed: 'it can only be put next to something if it stands on the floor' };
-  if (e.kind === 'floor' && (hasXZ || dx || dz || (want && ZONES[want].kind === 'floor'))) {
-    const target = hasXZ ? { x: Number(d.x), z: Number(d.z) } : dx || dz ? { x: e.pos[0] + dx, z: e.pos[2] + dz } : null;
+  const turnGiven = turnRad(d.turn) !== null;
+  if (turnGiven && e.kind !== 'floor') return { failed: `${e.name} is not a thing that stands on the floor: only things standing on the floor can be turned` };
+  if (e.kind === 'floor' && (hasXZ || dx || dz || turnGiven || (want && ZONES[want].kind === 'floor'))) {
+    const target = hasXZ ? { x: Number(d.x), z: Number(d.z) } : dx || dz ? { x: e.pos[0] + dx, z: e.pos[2] + dz } : turnGiven ? { x: e.pos[0], z: e.pos[2] } : null;
     const anchor = target ? [target.x, target.z] : (ZONES[want].slots[0] ?? [0, 0, 0]).filter((_, i) => i !== 1);
     const parts = e.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] }));
-    const r = placeFloor(decor.filter((o) => o !== e), { ...e, parts, name: e.name }, parts, target, anchor, atMs, now, true);
+    const r = placeFloor(decor.filter((o) => o !== e), { ...e, parts, name: e.name, turn: turnGiven ? d.turn : e.turn }, parts, target, anchor, atMs, now, true);
     if (r.failed) return r;
     const was = [...e.pos];
     Object.assign(e, { ...r.entry, id: e.id, createdAt: e.createdAt, at: e.at, uses: e.uses, song: e.song, tool: e.tool, project: e.project, why: e.why });
@@ -697,11 +700,19 @@ function halfFoot(parts, scale = 1) {
   return [((x1 - x0) / 2) * scale, ((z1 - z0) / 2) * scale];
 }
 const footOf = (e) => (e.parts?.length ? halfFoot(e.parts, e.scale || 1) : [0.3, 0.3]);
+// The box around a footprint that is turned by rotY. For quarter turns it is exact. For 45 degrees it is the box around the turned shape, a bit roomier, so it never hides a collision.
 export function rectAt([hw, hd], x, z, rotY) {
-  const turned = Math.abs(Math.sin(rotY || 0)) > 0.7;
-  const [a, b] = turned ? [hd, hw] : [hw, hd];
+  const c = Math.abs(Math.cos(rotY || 0));
+  const s = Math.abs(Math.sin(rotY || 0));
+  const [a, b] = [hw * c + hd * s, hw * s + hd * c];
   return { x0: x - a, x1: x + a, z0: z - b, z1: z + b };
 }
+// A thing he made on the floor can be turned in steps of 45 degrees: turn is how far its front turns toward the right wall (0 = as built, 90 = right wall, 180 = back wall).
+export const turnRad = (v) => {
+  const t = num2(v);
+  if (t === null) return null;
+  return ((((Math.round(t / 45) * 45) % 360) + 360) % 360) * Math.PI / 180;
+};
 export function obstacles(decor, skip = null, withChest = true, skipKey = null) {
   const list = [...fixedRects(skipKey), ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
   if (withChest) {
@@ -763,7 +774,13 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
   const scale = fit(parts, 'floor', {});
   const [hw, hd] = halfFoot(parts, scale);
   const obs = obstacles(decor, null, true);
+  const turned = turnRad(spec.turn); // he said how it is turned: it stands that way, not flush against a wall
   const tryRaw = (x, z) => {
+    if (turned !== null) {
+      const r0 = rectAt([hw, hd], 0, 0, turned);
+      const f = { rotY: turned, x: r3(Math.min(EDGE - r0.x1, Math.max(-EDGE - r0.x0, x))), z: r3(Math.min(EDGE - r0.z1, Math.max(-EDGE - r0.z0, z))) };
+      return blocker(rectAt([hw, hd], f.x, f.z, turned), obs) ? null : f;
+    }
     const f = faceAndSnap(hw, hd, Math.min(EDGE, Math.max(-EDGE, x)), Math.min(EDGE, Math.max(-EDGE, z)));
     return blocker(rectAt([hw, hd], f.x, f.z, f.rotY), obs) ? null : f;
   };
@@ -810,6 +827,7 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
       kind: 'floor',
       pos: [found.x, 0, found.z],
       rotY: found.rotY,
+      turn: turned !== null ? Math.round((turned * 180) / Math.PI) : undefined,
       scale,
       parts,
       stand: [clampRoom(found.x + sx * (front + 0.9)), clampRoom(found.z + sz * (front + 0.9))],
