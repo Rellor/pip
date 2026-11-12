@@ -679,6 +679,8 @@ export const setFurniture = (f) => {
 // The furniture where it stands now (the rug is walked over, so it is not in the way).
 export const fixedRects = (skipKey = null) => MOVABLE.filter((k) => k !== skipKey && !FURNITURE[k].flat).flatMap((k) => furnRects(furnNow, k).map((r) => ({ n: r.n, x0: r.x0, x1: r.x1, z0: r.z0, z1: r.z1 })));
 const EDGE = 4.95;
+export const GRID = 0.125; // spots are tidied to this step when there is room, so things line up
+export const snapTo = (v) => Math.round(v / GRID) * GRID;
 let chestNow = null;
 export const setChest = (c) => {
   chestNow = c;
@@ -761,10 +763,11 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
   const scale = fit(parts, 'floor', {});
   const [hw, hd] = halfFoot(parts, scale);
   const obs = obstacles(decor, null, true);
-  const tryAt = (x, z) => {
+  const tryRaw = (x, z) => {
     const f = faceAndSnap(hw, hd, Math.min(EDGE, Math.max(-EDGE, x)), Math.min(EDGE, Math.max(-EDGE, z)));
     return blocker(rectAt([hw, hd], f.x, f.z, f.rotY), obs) ? null : f;
   };
+  const tryAt = (x, z) => tryRaw(snapTo(x), snapTo(z)) ?? tryRaw(x, z); // the tidy spot first, exactly where he said if that does not fit
   const [tx, tz] = want ? [want.x, want.z] : anchor;
   let found = tryAt(tx, tz);
   let moved = false;
@@ -1393,8 +1396,12 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
     return { x: r3(place.x), z: r3(place.z), rot: place.rot };
   };
   const hits = (place) => (f.flat ? null : rectsAt(place).map((r) => blocker(r, obs)).find(Boolean) ?? null);
-  let place = settle(x, z);
+  let place = settle(snapTo(x), snapTo(z)); // the tidy spot first
   let hit = hits(place);
+  if (hit) {
+    place = settle(x, z);
+    hit = hits(place);
+  }
   let moved = false;
   if (hit) {
     const grid = [];
