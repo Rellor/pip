@@ -5,11 +5,11 @@
 // Local coordinates: x along the wall, y up with 0 at the middle of the window, z negative = away from the room. The window is at z = 0.
 // The ground is at GY (the room's floor is 2.9 m below the middle of the window, and a little thickness more).
 
+import { PLACE, seasonInfo, fetchWeather } from './season.js';
+
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const mix = (a, b, t) => a + (b - a) * t;
 const GY = -3.2;
-// Weather lookup (Open-Meteo, free, no key). Change the place here.
-const PLACE = { lat: 52.37, lon: 4.9 };
 
 // [hour, zenith, horizon, light colour, light strength, grass, hill]
 const DAY = [
@@ -207,6 +207,8 @@ export function createOutside(THREE) {
 
   // --- the garden: lawn, path, fence, bushes, flowers, trees, a neighbour's house
   const sway = [];
+  const leaves = []; // every leaf bunch, with the moment (0 to 1) it falls in autumn and comes back in spring
+  const trunkMat = (dist) => lit('#5a3b24', dist);
   const tree = (x, z, s, kind) => {
     const g = new THREE.Group();
     g.position.set(x, GY, z);
@@ -225,12 +227,19 @@ export function createOutside(THREE) {
         crown.add(c);
       });
     } else {
-      const cols = ['#4fa05a', '#6bb868', '#3f8f58'];
       [[0, 1.6, 0, 1.5], [0.9, 1.2, 0.2, 1.0], [-0.9, 1.3, -0.1, 1.1], [0.1, 2.5, 0.2, 1.0]].forEach(([dx, dy, dz, r], i) => {
-        const b = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), lit(cols[i % 3], dist));
+        const b = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), lit('#4fa05a', dist));
         b.position.set(dx, dy, dz);
         crown.add(b);
+        leaves.push({ mesh: b, entry: hazed[hazed.length - 1], at: Math.random(), shade: (Math.random() - 0.5) * 0.08, tree: kind });
       });
+      // bare branches: they are there all year, the leaves hide them in summer
+      for (let i = 0; i < 5; i++) {
+        const br = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.09, 1.9, 5), trunkMat(dist));
+        br.position.set(Math.sin(i * 1.26) * 0.55, 1.5 + (i % 2) * 0.5, Math.cos(i * 1.26) * 0.55);
+        br.rotation.set(Math.cos(i * 1.26) * 0.55, 0, -Math.sin(i * 1.26) * 0.55);
+        crown.add(br);
+      }
     }
     g.add(crown);
     add(g);
@@ -250,6 +259,7 @@ export function createOutside(THREE) {
   pond.scale.y = 0.65;
   pond.position.set(4.2, GY + 0.03, -7.2);
   add(pond);
+  const pondMat = pond.material;
   const rim = new THREE.Mesh(new THREE.RingGeometry(2.2, 2.55, 28), basic('#a9a49a', 20));
   rim.rotation.x = -Math.PI / 2;
   rim.scale.y = 0.65;
@@ -284,13 +294,16 @@ export function createOutside(THREE) {
     add(rail);
   }
   // bushes and flowers in front of the wall
+  const bushLeaves = [];
   const bushes = [[-3.5, -1.8, 0.7], [-2.2, -2.2, 0.55], [3.6, -1.7, 0.75], [5, -2.4, 0.6], [-6.5, -2.2, 0.8], [7.5, -2, 0.7]];
   bushes.forEach(([x, z, r]) => {
     const b = new THREE.Mesh(new THREE.SphereGeometry(r, 10, 8), lit('#3f8f58', 2));
     b.position.set(x, GY + r * 0.7, z);
     add(b);
+    bushLeaves.push({ mesh: b, entry: hazed[hazed.length - 1] });
   });
   const flowerCols = ['#ff7aa8', '#ffd24a', '#ffffff', '#b58cff', '#ff9a4a'];
+  const flowerMeshes = [];
   const bed = (x0, x1, z0, z1) => {
     const soil = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0), basic('#6b4a32', 4));
     soil.rotation.x = -Math.PI / 2;
@@ -300,9 +313,11 @@ export function createOutside(THREE) {
       const f = new THREE.Mesh(new THREE.SphereGeometry(0.11, 6, 5), basic(flowerCols[i % 5], 4));
       f.position.set(x0 + 0.2 + ((i * 0.37) % (x1 - x0 - 0.4)), GY + 0.28 + (i % 3) * 0.05, z0 + 0.2 + ((i * 0.53) % (z1 - z0 - 0.4)));
       add(f);
+      flowerMeshes.push(f);
       const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.3, 4), basic('#3f8f58', 4));
       stem.position.set(f.position.x, GY + 0.15, f.position.z);
       add(stem);
+      flowerMeshes.push(stem);
     }
   };
   bed(-3.2, -0.6, -1.2, -3.2);
@@ -371,16 +386,17 @@ export function createOutside(THREE) {
   snow.frustumCulled = false;
   add(snow);
 
+  const fallLeaves = new THREE.Points(cloud(160, [26, RAIN_TOP - GY, 20], [0, GY, -1]), inHole(new THREE.PointsMaterial({ color: 0xd98a2b, size: 4.2, sizeAttenuation: false, transparent: true, opacity: 0.95, depthWrite: false })));
+  fallLeaves.visible = false;
+  fallLeaves.frustumCulled = false;
+  add(fallLeaves);
+
   // --- the weather and the time
   const state = { hour: null, weather: 'clear', cloud: 0.25, wind: 0.3, flash: 0 };
-  const CODES = (code) => (code >= 95 ? 'storm' : (code >= 71 && code <= 77) || code === 85 || code === 86 ? 'snow' : (code >= 51 && code <= 67) || (code >= 80 && code <= 82) ? 'rain' : code === 45 || code === 48 ? 'fog' : code >= 2 ? 'cloudy' : 'clear');
   async function loadWeather() {
     try {
-      const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${PLACE.lat}&longitude=${PLACE.lon}&current=weather_code,cloud_cover,wind_speed_10m`);
-      const cur = (await res.json()).current;
-      state.weather = CODES(cur.weather_code);
-      state.cloud = clamp(cur.cloud_cover / 100, 0, 1);
-      state.wind = clamp(cur.wind_speed_10m / 30, 0.1, 1);
+      const w = await fetchWeather();
+      Object.assign(state, { weather: w.kind, cloud: w.cloud, wind: w.wind, temp: w.temp });
     } catch {}
   }
   loadWeather();
@@ -399,12 +415,15 @@ export function createOutside(THREE) {
   const tmp = new THREE.Color();
   const grey = C('#8a94a2');
   let last = 0;
-  function update(now, { hour: forced, weather: forcedWeather } = {}) {
+  function update(now, { hour: forced, weather: forcedWeather, day: forcedDay } = {}) {
     const t = now / 1000;
     const dt = Math.min(0.1, t - last);
     last = t;
     const d = new Date();
-    const h = forced ?? state.hour ?? d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
+    const real = forced ?? state.hour ?? d.getHours() + d.getMinutes() / 60 + d.getSeconds() / 3600;
+    const se = seasonInfo(forcedDay ? new Date(d.getFullYear(), 0, forcedDay) : d);
+    // the day is stretched or squeezed so that sunrise and sunset are at the real times of the year (the look is made for sunrise 6:30, sunset 19:30)
+    const h = real < se.sunrise ? (real * 6.5) / se.sunrise : real <= se.sunset ? 6.5 + ((real - se.sunrise) * 13) / (se.sunset - se.sunrise) : 19.5 + ((real - se.sunset) * 4.5) / (24 - se.sunset);
     const wx = forcedWeather ?? state.weather;
     const k = keyAt(h);
     const dark = clamp(clamp((6 - h) / 1.5, 0, 1) + clamp((h - 19.5) / 1.5, 0, 1), 0, 1);
@@ -416,7 +435,9 @@ export function createOutside(THREE) {
     hz.copy(k.horizon).lerp(tmp.copy(grey).multiplyScalar(dim * 1.1), gloom * 0.9);
 
     // colours of the land: day and night, then the haze with distance (a lot of it in fog), then snow on top
+    const seasonGrass = se.name === 'spring' ? '#7fcf6c' : se.name === 'autumn' ? '#a39a56' : se.name === 'winter' ? '#98a68e' : null;
     const grass = k.grass.clone().lerp(tmp.copy(grey).multiplyScalar(dim), gloom * 0.3);
+    if (seasonGrass) grass.lerp(tmp.set(seasonGrass).multiplyScalar(0.35 + 0.65 * dim), se.name === 'autumn' ? 0.2 + se.turn * 0.4 : 0.5);
     const hill = k.hill.clone().lerp(tmp.copy(grey).multiplyScalar(dim), gloom * 0.3);
     const snowy = wx === 'snow' ? C('#e8eef5').multiplyScalar(0.55 + 0.45 * dim) : null;
     for (const m of hazed) {
@@ -426,10 +447,43 @@ export function createOutside(THREE) {
       else if (m.mat === mid.material) base = hill.clone().lerp(grass, 0.45);
       else if (m.mat === far.material) base = hill;
       else base = m.base.clone().multiplyScalar(0.35 + 0.65 * dim); // trees, fence, house darken at night
-      if (snowy && (m.mat === ground.material || m.mat === low.material || m.mat === mid.material)) base = base.clone().lerp(snowy, 0.8);
+      if (snowy && (m.stripe || m.mat === ground.material || m.mat === low.material || m.mat === mid.material)) base = base.clone().lerp(snowy, 0.8);
       const amount = clamp(m.dist / 700, 0, 0.8) * (wx === 'fog' ? 1.6 : 1) + (wx === 'fog' ? clamp(m.dist / 120, 0, 0.7) : 0);
       m.mat.color.copy(base).lerp(hz, clamp(amount, 0, 0.95));
     }
+
+    const fall = (pts, speed, drift, per = 1) => {
+      const a = pts.geometry.attributes.position;
+      for (let i = 0; i < a.count; i += per) {
+        let y = a.getY(i) - speed * dt;
+        let x = a.getX(i) + drift * dt;
+        if (y < GY) y += RAIN_TOP - GY;
+        if (x > 15) x -= 30;
+        a.setXYZ(i, x, y, a.getZ(i));
+        if (per === 2) a.setXYZ(i + 1, x + 0.06, y - 0.7, a.getZ(i));
+      }
+      a.needsUpdate = true;
+    };
+    // the trees: leaves come in spring, turn in autumn and fall; the flowers and the pond follow the year
+    const green = C(se.blossom ? '#f3b9d3' : se.day < 152 ? '#7bc660' : '#4fa05a');
+    const gold = C('#e6b83a');
+    const orange = C('#d4762a');
+    const brown = C('#8a4a22');
+    const turned = se.turn < 0.4 ? green.clone().lerp(gold, se.turn / 0.4) : se.turn < 0.75 ? gold.clone().lerp(orange, (se.turn - 0.4) / 0.35) : orange.clone().lerp(brown, (se.turn - 0.75) / 0.25);
+    const leafColor = se.day > 250 ? turned : green;
+    for (const l of leaves) {
+      l.mesh.visible = se.leafOn > l.at;
+      l.entry.base.copy(leafColor).offsetHSL(l.shade, 0, l.shade * 0.5);
+    }
+    for (const b of bushLeaves) {
+      b.mesh.visible = se.leafOn > 0.1 || se.name !== 'winter';
+      b.entry.base.copy(se.day > 250 ? turned : C('#4fa05a')).lerp(C('#3f8f58'), 0.5); // bushes do not blossom pink
+    }
+    for (const f of flowerMeshes) f.visible = se.flowers;
+    pondMat.color.set(se.frozen ? '#d8eaf2' : '#5aa6d0');
+    pondMat.userData.frozen = se.frozen;
+    fallLeaves.visible = se.falling;
+    if (se.falling) fall(fallLeaves, 0.9, 0.6 + state.wind * 3 + Math.sin(t * 0.7) * 0.4);
 
     // sun and moon travel across the sky
     const day = clamp((h - 6) / 14, 0, 1);
@@ -478,18 +532,6 @@ export function createOutside(THREE) {
       flies.position.x = Math.sin(t * 0.3) * 0.8;
       flies.position.y = Math.sin(t * 0.7) * 0.3;
     }
-    const fall = (pts, speed, drift, per = 1) => {
-      const a = pts.geometry.attributes.position;
-      for (let i = 0; i < a.count; i += per) {
-        let y = a.getY(i) - speed * dt;
-        let x = a.getX(i) + drift * dt;
-        if (y < GY) y += RAIN_TOP - GY;
-        if (x > 15) x -= 30;
-        a.setXYZ(i, x, y, a.getZ(i));
-        if (per === 2) a.setXYZ(i + 1, x + 0.06, y - 0.7, a.getZ(i));
-      }
-      a.needsUpdate = true;
-    };
     rain.visible = wx === 'rain' || wx === 'storm';
     snow.visible = wx === 'snow';
     if (rain.visible) fall(rain, 14, 1.5 + state.wind * 4, 2);

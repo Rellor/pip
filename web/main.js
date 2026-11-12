@@ -140,7 +140,7 @@ land.root.position.set(0.3, 2.9, -5.3);
 land.mask.position.set(0.3, 2.9, -5.15);
 scene.add(land.root, land.mask);
 const lookParams = new URLSearchParams(location.search); // ?hour=21&weather=rain shows another time or weather (for checking)
-const forceLook = { hour: lookParams.has('hour') ? Number(lookParams.get('hour')) : undefined, weather: lookParams.get('weather') || undefined };
+const forceLook = { hour: lookParams.has('hour') ? Number(lookParams.get('hour')) : undefined, weather: lookParams.get('weather') || undefined, day: lookParams.has('day') ? Number(lookParams.get('day')) : undefined };
 
 // framed photo above the piano (ESO / Luis Calçada / Herbert Zodet, CC BY 4.0: the credit is shown on the page)
 const wallFrame = new THREE.Group();

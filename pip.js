@@ -1,6 +1,7 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
+import { PLACE, seasonInfo, seasonText, fetchWeather, weatherText } from './web/season.js';
 import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, limitsText } from './limits.js';
@@ -536,6 +537,7 @@ function buildWakeUp(s) {
   const earlier = s.inbox.filter((m) => m.read).slice(-3);
   return `NOW
 Time: ${new Date().toLocaleString('en-GB')}
+Outside (${PLACE.name}, the real weather): ${weatherText(s.weather) ?? 'I cannot tell right now'}. It is ${seasonText(seasonInfo())}. My window shows it, and I can take a photo of it.
 Mood: ${s.mood}
 
 HOW I FEEL (0 to 10)
@@ -1198,6 +1200,9 @@ async function wakeUp() {
     try {
       images.push({ mime: p.mime || 'image/jpeg', data: (await readFile(`web/${p.image}`)).toString('base64') });
     } catch {}
+  }
+  if (!process.env.PIP_FAKE && (!state.weather || Date.now() - Date.parse(state.weather.at) > 10 * 60_000)) {
+    try { state.weather = await fetchWeather(AbortSignal.timeout(8000)); } catch {} // the weather is nice to know, never a reason to fail a wake-up
   }
   const wakePrompt = buildWakeUp(state);
   if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, `${system}\n\n=====WAKE=====\n\n${wakePrompt}`);
