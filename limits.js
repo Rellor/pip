@@ -67,7 +67,8 @@ export function preflight(s, steps, now = Date.now()) {
     const name = String(st.details?.name ?? '').trim().toLowerCase();
     if (!why && NEEDS_NAME.includes(a) && name) {
       const here = [...s.decor.filter((d) => !d.image && !d.art).map((d) => d.name.toLowerCase()), ...made, ...(a === 'move_thing' ? ['chest'] : [])];
-      const ok = here.some((n) => n === name || n.includes(name) || name.includes(n)) || (a === 'move_thing' && (furnitureKey(name) || s.decor.some((d) => d.image && d.name.toLowerCase().includes(name))));
+      const ids = s.decor.flatMap((d) => [d.id, d.art, d.picture]).filter(Boolean).map((x) => String(x).toLowerCase());
+      const ok = here.some((n) => n === name || n.includes(name) || name.includes(n)) || (a === 'move_thing' && ids.includes(name)) || (a === 'move_thing' && (furnitureKey(name) || s.decor.some((d) => d.image && d.name.toLowerCase().includes(name))));
       if (!ok) why = `there is nothing called "${st.details.name}" in my room (yet)`;
     }
     if (why) {

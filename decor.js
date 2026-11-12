@@ -1,3 +1,4 @@
+import { reachProblem } from './sizes.js';
 import { cleanSong } from './songs.js';
 import { storedUses } from './uses.js';
 import { toolKind } from './tools.js';
@@ -439,6 +440,15 @@ const clampTo = ([lo, hi], v) => r3(Math.min(hi, Math.max(lo, v)));
 
 // details: { name, where, dx, dz }. `chest` is state.chest (or null). Returns { name, entry } for a thing, { name, chest } for the chest, or { failed }.
 export function moveThing(decor, chest, details, atMs, now = Date.now()) {
+  const r = moveThingRaw(decor, chest, details, atMs, now);
+  if (r?.failed && !r.hinted) {
+    const n = String(details?.name ?? '').toLowerCase().trim();
+    const e = n && decor.find((x) => !x.image && x.kind && (x.name.toLowerCase() === n || x.name.toLowerCase().includes(n)));
+    if (e && KIND_HINT[e.kind]) (r.hinted = true), r.failed = `${r.failed}. ${e.name} is a ${e.kind} thing. ${KIND_HINT[e.kind]} He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way`;
+  }
+  return r;
+}
+function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   let d = details && typeof details === 'object' ? details : {};
   const n = str(d.name, 60).toLowerCase();
   if (!n) return { failed: 'he did not say what to move' };
@@ -491,7 +501,7 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     return { name: 'chest', chest: { x, z, rotY, at, moves } };
   }
 
-  const pic = decor.find((x) => x.image && x.kind === 'wall' && x.zone !== 'wall_desk' && x.pos && (x.name.toLowerCase() === n || x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+  const pic = decor.find((x) => x.image && x.kind === 'wall' && x.zone !== 'wall_desk' && x.pos && ([x.id, x.art, x.picture].some((i) => i && String(i).toLowerCase() === n) || x.name.toLowerCase() === n || x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (pic && (d.wall || num2(d.along) !== null || num2(d.height) !== null)) { // a picture: where on the wall
     const h = hangAt(decor, { aspect: pic.size[0] / pic.size[1] }, sideOf(d.wall) ?? pic.side ?? 'back', num2(d.along) ?? (pic.side === 'left' ? pic.pos[2] : pic.pos[0]), num2(d.height) ?? pic.pos[1], { wall: [pic.size[0], pic.size[1]] }, now, pic);
     if (h.failed) return h;
@@ -510,6 +520,12 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
     return { name: e.name, entry: e, label: e.label };
   };
   const copy = () => e.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] }));
+  if (e.kind === 'floor' && d.wall && !sideOf(d.wall) && /right|front/i.test(String(d.wall))) { // a thing that stands against that side of the room
+    const right = /right/i.test(String(d.wall));
+    d = { ...d, wall: undefined, x: right ? 4.5 : num2(d.along) ?? e.pos[0], z: right ? num2(d.along) ?? e.pos[2] : 4.5 };
+    hasXZ = true;
+  }
+  if (d.wall && !sideOf(d.wall)) return { failed: `"${str(d.wall, 20)}" is not a wall he can hang things on: only the back wall (with the window) and the left wall` };
   if (e.kind === 'wall' && (d.wall || num2(d.along) !== null || num2(d.height) !== null)) {
     const carried = decor.filter((o) => String(o.base ?? '').startsWith(`${e.id}#`));
     if (carried.length && sideOf(d.wall) && sideOf(d.wall) !== (e.side ?? ZONES[e.zone]?.side)) return { failed: 'things stand on it. He takes them off before he puts it on the other wall' };
@@ -998,7 +1014,7 @@ function wallLevels(o) {
 }
 // null when a thing works for what it is meant for, otherwise what is missing.
 export function purposeProblem(o) {
-  const b = behaviorProblem(o);
+  const b = behaviorProblem(o) ?? reachProblem(o, sizeOf);
   if (b) return b;
   if (!holdsThings(o) || !o.pos) return null;
   if (o.kind === 'wall') return wallLevels(o).length ? null : `${o.name} is meant to hold things, but it has no flat board or top wide enough for things to stand on (it needs a part at least 0.25 wide and 0.12 deep)`;
@@ -1102,7 +1118,33 @@ function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
 const num2 = (v) => (v === undefined || v === null || v === '' || !Number.isFinite(Number(v)) ? null : Number(v));
 const sideOf = (s) => (/left/i.test(String(s)) ? 'left' : /back|window|north/i.test(String(s)) ? 'back' : null);
 // Where does it go: a wall, the top of something, or the floor. Whatever he gave: coordinates, a name, or nothing (then the nearest free place).
+// What kind of thing stands where. Added to a failed placement so he can work out what would work.
+const KIND_HINT = {
+  floor: 'A floor thing stands on the floor (a stool, a chair, a table, a rug). To put it near the window he puts it on the floor in front of it, with zone floor_under_window or next_to, and not on the wall.',
+  wall: 'A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height.',
+  surface: 'A surface thing stands on something: the desk, the piano, a shelf, a table. He says on: "its name".',
+};
 function placeWhere(decor, spec, parts, want, atMs, now) {
+  const r = placeWhereRaw(decor, spec, parts, want, atMs, now);
+  if (r?.failed && !r.hinted) {
+    const kind = want && ZONES[want] ? ZONES[want].kind : spec.on ? 'surface' : spec.wall ? 'wall' : 'floor';
+    r.hinted = true;
+    r.failed = `${r.failed}. This is a ${kind} thing. ${KIND_HINT[kind]} He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way`;
+  }
+  return r;
+}
+function placeWhereRaw(decor, spec, parts, want, atMs, now) {
+  // A thing that stands on the floor does not hang on a wall: "by the window" means on the floor in front of it.
+  if (want && ZONES[want]?.kind === 'floor' && sideOf(spec.wall) && num2(spec.x) === null && num2(spec.z) === null) {
+    spec = { ...spec, wall: undefined, along: undefined, height: undefined };
+  }
+  if (spec.wall && !sideOf(spec.wall)) {
+    // There is no wall to hang things on at the right or the front of the room. What he means is a thing that stands against that side: on the floor.
+    if (/right|front/i.test(String(spec.wall))) {
+      const right = /right/i.test(String(spec.wall));
+      spec = { ...spec, wall: undefined, along: undefined, height: undefined, x: right ? 4.5 : num2(spec.along) ?? 0, z: right ? num2(spec.along) ?? 0 : 4.5 };
+    } else return { failed: `"${str(spec.wall, 20)}" is not a wall he can hang things on: only the back wall (with the window) and the left wall` };
+  }
   const x = num2(spec.x);
   const z = num2(spec.z);
   const wallSide = sideOf(spec.wall) ?? (want && ZONES[want].kind === 'wall' && !ZONES[want].prints ? (ZONES[want].side === 'left' ? 'left' : 'back') : null);
@@ -1191,11 +1233,21 @@ export function hangAt(decor, pic, side, along, height, max, now = Date.now(), s
     grid.sort((p, q) => p[2] - q[2]);
     found = grid.find(([a, y, dist]) => dist <= 1.2 && free(a, y))?.slice(0, 2) ?? null;
   }
-  if (!found) return { failed: `there is no free place on the ${sd} wall near there for something ${r3(w)} x ${r3(h)} m (it would touch ${wallBlocker({ a0: ta - hw, a1: ta + hw, y0: th - hh, y1: th + hh }, obs, 0.05) ?? 'something'})` };
+  let far = null;
+  if (!found) { // nothing near: the nearest free place anywhere on that wall
+    const wanted = wallBlocker({ a0: ta - hw, a1: ta + hw, y0: th - hh, y1: th + hh }, obs, 0.05) ?? 'something';
+    const grid = [];
+    for (let a = -4.9 + hw; a <= 4.91 - hw; a += 0.1) for (let y = 0.3 + hh; y <= WALL_TOP - hh; y += 0.1) grid.push([a, y, Math.hypot(a - ta, y - th)]);
+    grid.sort((p, q) => p[2] - q[2]);
+    const g = grid.find(([a, y]) => free(a, y));
+    if (!g) return { failed: `there is no free place on the ${sd} wall for something ${r3(w)} x ${r3(h)} m (it would touch ${wanted}). He can use the other wall or make it smaller` };
+    found = [g[0], g[1]];
+    far = `it did not fit where he asked (it would touch ${wanted}), so it hangs at the nearest free place`;
+  }
   const [a, y] = found.map(r3);
   const near = tightAbove({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs);
   return {
-    warn: near ? `it hangs close above ${near}: things standing on it would be in front of it` : null,
+    warn: far ?? (near ? `it hangs close above ${near}: things standing on it would be in front of it` : null),
     moved: Math.hypot(a - ta, y - th) > 0.05,
     place: {
       zone: 'wall_free', slot: null, free: true, side: sd, kind: 'wall',
@@ -1246,7 +1298,7 @@ function nextToSpot(decor, d, skipKey, w, h, skipEntry = null) {
     }
   }
   if (!a) return { failed: `there is nothing standing on the floor called "${name}" to put it next to (furniture or things he made on the floor)` };
-  const gap = 0.12;
+  const gap = 0.27; // a little more than the room the game keeps between things, so "next to" really fits
   const spots = {
     left: [a.x0 - gap - w / 2, (a.z0 + a.z1) / 2],
     right: [a.x1 + gap + w / 2, (a.z0 + a.z1) / 2],

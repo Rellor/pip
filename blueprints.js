@@ -99,7 +99,7 @@ export function blueprintsText(s) {
 
 export const capabilityGuide = () => `HOW I WORK OUT SOMETHING NEW
 My abilities, everything I can really make work: ${CAPS.map((c) => `${c.id} (${c.what}; ${c.how})`).join('; ')}.
-When I want to make something new or hard (a vehicle, a machine, a game, a gadget), I do not just guess. I work it out in steps:
+When I want to make something new or hard that has working parts (a vehicle, a machine, a game, a gadget), I do not just guess. I work it out in steps. Simple things (a shelf, a table, a bookcase, a chair, a decoration, a lamp) need no blueprint: I just build them with decorate. When a step does not work out, I do not repeat it. I ask myself what kind of thing it is, where that kind of thing normally goes (a stool stands on the floor, a picture hangs on a wall, a lamp stands on something) and why my plan did not fit, and then I try a different way.
 1. Research. I look up how the real thing works with search_web, like "how does a remote controlled car work", and I read what I find.
 2. Blueprint. With the blueprint step I write what I learned (research), my goal, and the parts and mechanisms it needs. For each one I say which of my abilities does it, by its id, or "missing" when none can. blueprint {"name": "...", "goal": "what it should do", "research": "what I learned, in a sentence or two", "mechanisms": [{"part": "wheels", "how": "4 round parts that turn", "uses": "drive"}, {"part": "steering", "how": "...", "uses": "missing"}], "tools": ["screwdriver"]}.
 3. Tools. For the tools the blueprint lists, I make them or ask for them (asks_add) before I build.

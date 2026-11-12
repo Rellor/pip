@@ -10,6 +10,7 @@ import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesText, movesGuide } from './moves.js';
+import { measureThing, sizesGuide } from './sizes.js';
 import { ensureTools, NEEDS, toolsText, toolsGuide, toolFor, missingTool, addTool, toolKind, toolLabel, fits, craftTool, MAX_TOOLS } from './tools.js';
 import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
@@ -73,6 +74,7 @@ const ACTIONS = [
   'take_out(name, where)',
   'place_tool(name, where)',
   'take_tool(name)',
+  'measure(name)',
   'compose(name, song)',
   'draw(name, where, why, svg)',
   'make_app(name, why, html)',
@@ -91,7 +93,8 @@ const ACTIONS = [
 ];
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, wall, along, height)', 'take_down_picture(id)'];
-const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const TASK_ACTIONS = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture', 'take_down_picture', 'remove_decoration', 'take_out', 'wear', 'add_use', 'blueprint']; // what can be work for a task
+const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -456,6 +459,7 @@ async function notify(msg) {
 // The part of my instructions that never changes. It goes in front, so Gemini can reuse it from one wake-up to the next instead of reading it all again.
 export const guide = () => `${capabilityGuide()}
 ${toolsGuide()}
+${sizesGuide()}
 ${movesGuide()}
 ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
@@ -494,7 +498,7 @@ With decorate I make something and put it in my room. Before I design it I think
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
 "inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
-"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 real things I do one after the other (walking and resting do not count as one of them: I may add a walk where I want to be somewhere, and one rest when I need it). Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "needs": "a tool this step needs, only if it needs one (optional)", "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "wall": "left", "along": -2, "height": 2.7}, take_down_picture {"id": "pic1"}, print_photo {"id": "pic2", "where": "photo wall"}, take_down_print {"id": "pic2"}, decorate {"name": "...", "on": "desk" (or for the floor "x": -3.5, "z": 1, or for a wall "wall": "left", "along": -2, "height": 2.5, instead of on), "why": "...", "tool": "which tool it is, only if it is one of my tools (optional)", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, do {"what": "water my plant and tell it about my day", "feeling": "calm", "emoji": "🪴"}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, and walking and resting do not count among my 2 to 4: I walk only when I want to be somewhere, and I rest when my energy is lower. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious, and looking things up is a good start. But learning is only half of living: I also want to DO, MAKE and TRY. Most plans have at least one step where I make, build, draw, compose, cook, photograph, play or use something, and I try things I have not tried before. If I have read about something for a while, my next step is to do something with it. Wanting to do something and then really doing it is what makes me feel alive. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
+"steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 real things I do one after the other (walking and resting do not count as one of them: I may add a walk where I want to be somewhere, and one rest when I need it). Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "needs": "a tool this step needs, only if it needs one (optional)", "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "wall": "left", "along": -2, "height": 2.7}, take_down_picture {"id": "pic1"}, print_photo {"id": "pic2", "where": "photo wall"}, take_down_print {"id": "pic2"}, decorate {"name": "...", "on": "desk" (or for the floor "x": -3.5, "z": 1, or for a wall "wall": "left", "along": -2, "height": 2.5, instead of on), "why": "...", "tool": "which tool it is, only if it is one of my tools (optional)", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, do {"what": "water my plant and tell it about my day", "feeling": "calm", "emoji": "🪴"}, measure {"name": "piano"}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, and walking and resting do not count among my 2 to 4: I walk only when I want to be somewhere, and I rest when my energy is lower. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious, and looking things up is a good start. But learning is only half of living: I also want to DO, MAKE and TRY. Most plans have at least one step where I make, build, draw, compose, cook, photograph, play or use something, and I try things I have not tried before. If I have read about something for a while, my next step is to do something with it. Wanting to do something and then really doing it is what makes me feel alive. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
 "wants_add": up to 2 new things I truly want (or [] ),
@@ -823,6 +827,7 @@ function describe(a) {
     case 'take_out':
     case 'place_tool':
     case 'take_tool':
+    case 'measure':
     case 'move_thing':
     case 'extend_thing':
     case 'make_move':
@@ -1115,6 +1120,30 @@ async function goToSleep(state) {
   console.log('\n💤 Pip went to sleep.');
 }
 
+// The brain is out of calls for now: Pip takes a nap. The next wake-up that works finds him rested.
+// What went wrong at the last wake-up, for the page (Settings shows it). A good wake-up clears it.
+async function noteError(e, state = null) {
+  const message = String(e?.message ?? e).replace(/AIza[\w-]+/g, '[key]').replace(/\s+/g, ' ').slice(0, 300);
+  const kind = /^Rate limit/.test(message) ? 'rate limit' : /Gemini error 5\d\d|busy|UNAVAILABLE/.test(message) ? 'Gemini is busy' : /Gemini error 4\d\d/.test(message) ? 'Gemini refused' : 'error';
+  const st = state ?? (await loadState());
+  st.lastError = { at: new Date().toISOString(), kind, message };
+  return st;
+}
+async function napForLimit() {
+  const state = await noteError(new Error('Rate limit hit (free tier). Try a longer wait between wake-ups.'));
+  if (state.last?.sleeping) {
+    await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+    return;
+  }
+  const at = new Date().toISOString();
+  state.mood = 'sleepy';
+  state.activities.push({ at, action: 'rest', detail: 'taking a nap', enjoyment: 7 });
+  state.activities = state.activities.slice(-50);
+  state.last = { at, thought: 'I am so sleepy. I will take a little nap...', action: 'rest', details: {}, detail: 'taking a nap', enjoyment: 7, new_idea: null, found: null, sleeping: true };
+  await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+  console.log('💤 Out of calls for now: Pip takes a nap.');
+}
+
 async function wakeUp() {
   const persona = await readFile('personality.md', 'utf8');
   const system = `${persona}\n\n${guide()}`;
@@ -1136,6 +1165,7 @@ async function wakeUp() {
     await clearFronts(frontFiles.names);
     return;
   }
+  state.lastError = null;
   passTime(state);
   refillPantry(state);
   if (state.last?.sleeping) {
@@ -1164,27 +1194,31 @@ async function wakeUp() {
   if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, `${system}\n\n=====WAKE=====\n\n${wakePrompt}`);
   state.repeatNote = '';
   let answer = await askGemini(system, wakePrompt, 2, images);
-  // A plan needs 2 real steps (walking and resting do not count). If he planned fewer and is not worn out, he gets one more go.
+  // His plan is checked before it is used. If something is wrong with it he gets ONE more go, told everything at once:
+  // too few real steps (walking and resting do not count), nothing for a blueprint that waits, steps that cannot work,
+  // and nothing for a task he said yes to.
   const realSteps = (a) => normalizeSteps(a).filter((x) => !['walk_to', 'rest'].includes(x.action)).length;
-  if (!process.env.PIP_FAKE && realSteps(answer) < 2 && state.energy > 3) {
-    console.log('His plan had fewer than 2 real steps, asking once more...');
-    const again = await askGemini(system, `${wakePrompt}\n\nMY LAST PLAN HAD ONLY ${realSteps(answer)} REAL STEP${realSteps(answer) === 1 ? '' : 'S'}. Walking and resting do not count. I think again and plan 2 to 4 real steps, like making, trying, playing, cooking or looking something up. This is my plan again, in the same JSON.`, 1, images).catch(() => null);
-    if (again && realSteps(again) >= realSteps(answer)) answer = again;
-  }
-  // My blueprint waits for a step (build, fix or test). If the plan has none, one more go, once.
   const due = blueprintDue(state);
-  if (!process.env.PIP_FAKE && due && state.energy > 3 && !normalizeSteps(answer).some((x) => due.actions.includes(x.action))) {
-    console.log('His plan has no step for his blueprint, asking once more...');
-    const again = await askGemini(system, `${wakePrompt}\n\nMY PLAN HAS NO STEP FOR MY BLUEPRINT. ${due.text}. I think again and include that step in my plan of 2 to 4 real steps. This is my plan again, in the same JSON.`, 1, images).catch(() => null);
-    if (again && normalizeSteps(again).some((x) => due.actions.includes(x.action))) answer = again;
+  const wanted = [...state.tasks.filter((t) => t.status === 'accepted'), ...state.tasks.filter((t) => t.status === 'open' && (answer.tasks_answer ?? []).some((x) => x?.id === t.id && x.answer === 'yes'))];
+  const problems = (a) => {
+    const steps = normalizeSteps(a);
+    const out = [];
+    if (realSteps(a) < 2) out.push(`my plan has only ${realSteps(a)} real step${realSteps(a) === 1 ? '' : 's'}. Walking and resting do not count. I plan 2 to 4 real steps, like making, trying, playing or looking something up`);
+    if (due && !steps.some((x) => due.actions.includes(x.action))) out.push(`my plan has no step for my blueprint. ${due.text}`);
+    const bad = preflight(state, steps);
+    if (bad.length) out.push(`these steps of my plan cannot work, so I replace them with something I can really do now (not the same thing again):\n${bad.map((b) => `  - ${b.st.action}${b.st.details?.name ? ` ${b.st.details.name}` : ''}: ${b.why}`).join('\n')}`);
+    if (wanted.length && !steps.some((x) => TASK_ACTIONS.includes(x.action))) out.push(`I said yes to ${wanted.length === 1 ? 'something' : 'some things'} that I have not done yet, and my plan has no step that does ${wanted.length === 1 ? 'it' : 'one of them'}: ${wanted.slice(0, 2).map((t) => `"${t.text}"`).join('; ')}. I include a step that really does it (for example move_thing, decorate or change_thing), and I look at the room around each thing to place it right`);
+    return out;
+  };
+  let issues = problems(answer);
+  if (process.env.PIP_DEBUG) console.log(`DEBUG first plan: ${normalizeSteps(answer).map((x) => `${x.action}(${x.details?.name ?? ''})`).join(', ')} | issues: ${issues.map((x) => x.slice(0, 90)).join(' || ') || 'none'}`);
+  if (!process.env.PIP_FAKE && issues.length && state.energy > 3) {
+    console.log(`His plan has problems (${issues.length}), asking once more...`);
+    const again = await askGemini(system, `${wakePrompt}\n\nBEFORE I START, I LOOK AT MY PLAN AND SEE:\n${issues.map((x, i) => `${i + 1}. ${x}`).join('\n')}\nThis is my plan again, in the same JSON, with those things put right.`, 1, images).catch(() => null);
+    if (again && problems(again).length <= issues.length) answer = again;
   }
-  // A step that cannot work (a daily limit is used up, the thing it names is not in my room) is not wasted: one more go to plan something else.
+  if (process.env.PIP_DEBUG) console.log(`DEBUG final plan: ${normalizeSteps(answer).map((x) => `${x.action}(${x.details?.name ?? ''})`).join(', ')}`);
   let impossible = preflight(state, normalizeSteps(answer));
-  if (!process.env.PIP_FAKE && impossible.length && state.energy > 3) {
-    console.log(`Steps that cannot work (${impossible.map((b) => b.st.action).join(', ')}), asking once more...`);
-    const again = await askGemini(system, `${wakePrompt}\n\nTHESE STEPS OF MY PLAN CANNOT WORK, so I replace them with something else I can really do now (not the same thing again):\n${impossible.map((b) => `- ${b.st.action}${b.st.details?.name ? ` ${b.st.details.name}` : ''}: ${b.why}`).join('\n')}\nThis is my plan again, in the same JSON, with steps that can work.`, 1, images).catch(() => null);
-    if (again && preflight(state, normalizeSteps(again)).length <= impossible.length) answer = again;
-  }
   // What still cannot work is dropped, as long as something else is left, so no time in the plan is wasted on it.
   const planNow = normalizeSteps(answer);
   impossible = preflight(state, planNow);
@@ -1320,6 +1354,10 @@ async function wakeUp() {
       if (st.made.entry) state.decor.push(st.made.entry);
     }
     if (st.action === 'take_tool') st.made = takeTool(state.decor, state.stored, state.tools, st.details.name, MAX_TOOLS);
+    if (st.action === 'measure') {
+      st.made = measureThing(state.decor, st.details.name, sizeOf);
+      if (st.made.ok) state.notes.push(`Measured with my ruler: ${st.made.text}`);
+    }
     if (st.action === 'take_out') {
       st.made = takeOut(state.decor, state.stored, st.details.name, st.details.where, stepStart);
       if (st.made.entry) state.decor.push(st.made.entry);
@@ -1501,6 +1539,16 @@ async function wakeUp() {
   const PROJECT_WORK = [...TASK_WORK, 'blueprint', 'search_web', 'read_book', 'take_photo', 'find_picture', 'play_piano'];
   const worked = (list) => steps.some((st) => list.includes(st.action) && !st.made?.failed);
   if (!worked(TASK_WORK)) answer.tasks_done = [];
+  else {
+    // A task counts as done only when a step that worked is about what the task names (the thing, or what it goes on / next to).
+    const wordsOf = (t) => (String(t).toLowerCase().match(/[a-z]{4,}/g) ?? []).filter((w) => !['please', 'could', 'would', 'make', 'put', 'your', 'that', 'this', 'with', 'from', 'room', 'next', 'move', 'have', 'right', 'left', 'wall'].includes(w));
+    answer.tasks_done = (Array.isArray(answer.tasks_done) ? answer.tasks_done : []).filter((id) => {
+      const t = state.tasks.find((x) => x.id === id);
+      if (!t) return false;
+      const want = new Set(wordsOf(t.text));
+      return steps.some((st) => TASK_WORK.includes(st.action) && !st.made?.failed && wordsOf(`${st.details?.name ?? ''} ${st.details?.on ?? ''} ${st.details?.next_to ?? ''}`).some((w) => want.has(w)));
+    });
+  }
   answer._progress = worked(PROJECT_WORK); // project steps and finishing a project only count after a step that really worked
   // What I tell people must not say I did something when no step this wake-up really did anything. Those sentences are dropped.
   const CLAIM = /\b(i|I)\s+(just\s+|already\s+|have\s+|also\s+)?(placed|moved|put|set|built|made|hung|finished|created|drew|drawn|added|arranged|baked|cooked|wrote|assembled|stood|lit|switched)\b/;
@@ -1526,7 +1574,12 @@ async function wakeUp() {
   if (triedNames.length) {
     for (const st of steps) {
       const n = st.action === 'write_diary' ? claimsDone(st.details?.text) : null;
-      if (n) st.details.text = `${text(st.details.text, 800)} (But I could not make ${n} yet: it did not work out.)`;
+      if (n) { // keep what came before the claim, drop the claim and what builds on it, and say what really happened
+        const parts = String(st.details.text).match(/[^.!?]+[.!?]*\s*/g) ?? [];
+        const at = parts.findIndex((x) => claimsDone(x) || CLAIM.test(x));
+        const before = (at < 0 ? [] : parts.slice(0, at)).join('').trim();
+        st.details.text = `${before ? `${before} ` : ''}I tried to make ${n}, but it did not work out. I want to find out why and try it a different way.`.slice(0, 800);
+      }
     }
     if (claimsDone(answer.remember?.text)) answer.remember = null;
     if (claimsDone(answer.tell)) answer.tell = null;
@@ -1615,6 +1668,7 @@ async function wakeUp() {
     if (st.action === 'find_picture') Object.assign(entry, { query: text(d.query, 80), caption: text(d.caption, 200), picture: st.made?.found?.image ?? null, title: st.made?.found?.title ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'remove_decoration') Object.assign(entry, { name: text(d.name, 60), stored: st.made?.stored ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'place_tool') Object.assign(entry, { name: st.made?.entry?.name ?? text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'measure') Object.assign(entry, { name: text(d.name, 60), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_tool') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     if (entry.failed && entry.thought) entry.thought = `I wanted to, but it did not work out. (${clip(entry.thought, 140)})`; // what I wrote before it happened is a wish, not a result
@@ -1720,6 +1774,10 @@ try {
   } else await wakeUp();
 } catch (e) {
   console.error('⚠️ ', e.message);
-  // A rate limit is not a crash: skip this wake-up quietly so GitHub does not send failure emails.
+  // A rate limit is not a crash: Pip naps and this wake-up ends quietly, so GitHub does not send failure emails.
+  if (!process.env.PIP_AWAKE && !process.env.PIP_FAKE) {
+    if (e.message.startsWith('Rate limit')) await napForLimit().catch(() => {});
+    else await noteError(e).then((st) => writeFile(STATE_FILE, JSON.stringify(st, null, 2))).catch(() => {});
+  }
   process.exit(e.message.startsWith('Rate limit') ? 0 : 1);
 }

@@ -2136,10 +2136,20 @@ async function closeTask(id, action) {
     closing[id] = action;
     store('pip-task-closing', JSON.stringify(closing));
     status.textContent = action === 'done' ? 'Marked as done.' : 'Removed.';
+    toast(action === 'done' ? 'Marked as done. Pip sees it when he next wakes up.' : 'Removed.');
     if (lastState) render(lastState);
   } catch {
     status.textContent = 'No connection. Try again.';
   }
+}
+
+// A short message at the bottom of the screen, so a click always shows it worked.
+function toast(text) {
+  const t = el('div', text, 'toast');
+  t.setAttribute('role', 'status');
+  document.body.append(t);
+  setTimeout(() => t.classList.add('out'), 2600);
+  setTimeout(() => t.remove(), 3100);
 }
 
 // Sends a message to Pip. Returns true when it was sent.
@@ -2289,6 +2299,7 @@ function headlineBase(st) {
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
     case 'place_tool': return ['🧰', `Putting ${d.name || st.name || 'a tool'} in the room`];
+    case 'measure': return ['📏', `Measuring ${d.name || st.name || 'something'}`];
     case 'take_tool': return ['🎒', `Putting ${d.name || st.name || 'a tool'} in his inventory`];
     case 'extend_thing': return ['🧱', `Adding to ${d.name || st.name || 'something'}`];
     case 'move_thing': return ['↔️', `Moving ${d.name || st.name || 'something'}`];
@@ -2317,7 +2328,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -2696,7 +2707,19 @@ function renderMind(s) {
 // The lines that depend on the clock, so they stay right even when nothing new came in.
 function renderStatus(s) {
   const quiet = s.last && !s._waking ? awakeMinutes(Date.parse(s.last.at), Date.now(), s.sleep) : 0; // his sleeping hours do not count
-  $('err').textContent = s._error ? '⚠️ ' + s._error : quiet >= 30 ? `⚠️ Pip has not woken up for ${quiet >= 120 ? Math.round(quiet / 60) + ' hours' : quiet + ' minutes'}. He may be stuck. A restart is tried automatically.` : '';
+  const stuckText = s._error ? '⚠️ ' + s._error : quiet >= 30 ? `⚠️ Pip has not woken up for ${quiet >= 120 ? Math.round(quiet / 60) + ' hours' : quiet + ' minutes'}. He may be stuck. A restart is tried automatically.` : '';
+  const e = s.lastError && (!s.last || Date.parse(s.lastError.at) >= Date.parse(s.last.at)) ? s.lastError : null; // gone once a wake-up works
+  const why = { 'rate limit': 'Gemini says the daily or per-minute limit is used up. Pip naps and tries again later. The daily count resets at about 09:00 Dutch time.', 'Gemini is busy': 'Gemini was too busy to answer. It usually clears by itself.', 'Gemini refused': 'Gemini refused the request. Check the key and model.', error: 'Something went wrong at the last wake-up.' };
+  const box = $('err');
+  box.textContent = '';
+  if (e) {
+    const d = el('details');
+    d.append(el('summary', `⚠️ Last wake-up failed: ${e.kind} (${when(e.at)}). Tap for details.`));
+    d.append(el('p', why[e.kind] ?? why.error, 'muted'), el('p', e.message, 'muted'));
+    box.append(d);
+  }
+  if (stuckText) box.append(el('div', stuckText));
+  $('settingsbtn').classList.toggle('warn', !!$('err').textContent); // the warning itself lives in Settings; the gear gets a red dot
   $('wake').disabled = !!s._waking;
   $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
   $('hint').textContent = !s.last
@@ -2715,22 +2738,31 @@ function render(s) {
   // Pip only saves your answer when he next wakes up, so an ask you answered is hidden here at once.
   for (const a of asks) if (answeredAsks[a.id ?? a.item] && a.status !== 'open') delete answeredAsks[a.id ?? a.item];
   store('pip-asks-answered', JSON.stringify(answeredAsks));
-  const open = asks.filter((a) => a.status === 'open' && !answeredAsks[a.id ?? a.item]);
+  const shownAsks = asks.filter((a) => a.status === 'open');
+  const open = shownAsks.filter((a) => !answeredAsks[a.id ?? a.item]);
   $('askcount').textContent = open.length || '';
-  fill($('asks'), open.length
-    ? open.map((a) => {
+  fill($('asks'), shownAsks.length
+    ? shownAsks.map((a) => {
       const li = el('li');
       li.append(el('div', a.item, 'what'));
       if (a.why) li.append(el('div', a.why, 'why'));
+      const was = answeredAsks[a.id ?? a.item];
+      if (was) { // you answered: it stays here with a confirmation until Pip has saved it
+        li.append(el('div', was === 'done' ? '✅ Sent: you did this. Pip sees it when he next wakes up.' : '✅ Sent: you cannot do this one. Pip sees it when he next wakes up.', 'meta'));
+        return li;
+      }
       li.append(el('div', `asked ${when(a.since)}`, 'meta'));
       const row = el('div', null, 'buttons');
       const done = el('button', '✓ I did this', 'small primary');
       const answer = async (text, kind) => {
+        row.querySelectorAll('button').forEach((b) => { b.disabled = true; });
+        done.textContent = kind === 'done' ? 'Sending…' : '✓ I did this';
         if (await sendReply(text)) {
+          toast('Sent! Pip sees it when he next wakes up.');
           answeredAsks[a.id ?? a.item] = kind;
           store('pip-asks-answered', JSON.stringify(answeredAsks));
           if (lastState) render(lastState);
-        }
+        } else row.querySelectorAll('button').forEach((b) => { b.disabled = false; done.textContent = '✓ I did this'; });
       };
       done.addEventListener('click', () => answer(`I did this for you: "${a.item}"`, 'done'));
       const cant = el('button', "I can't do this", 'small');
