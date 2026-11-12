@@ -1376,3 +1376,10 @@ I will search about growing rosemary in pots and then play a gentle tune on my p
 - play_piano (C4 E4 G4 B4 G4 E4, calm): I will play a gentle, flowing tune on the piano to celebrate my new plant idea.
 - mood: peaceful
 
+## 12/11/2026, 15:35:55
+I want to research indoor plant lighting so I can take care of my future rosemary properly.
+> I feel so peaceful after baking my fresh bread and playing the piano. Since I am waiting for my potted rosemary plant to arrive, I want to learn more about how much sunlight it needs during autumn so I can place it in the absolute best sunny spot by the window.
+- search_web (how much sunlight does indoor rosemary need in autumn): I will look up how much sunlight indoor rosemary needs in autumn.
+- write_diary (While I wait for my little potted rosemary plant, I am reading up on how to keep it happy and sunny during the cool autumn months.): I am writing in my diary about my baking and my plans for the rosemary plant.
+- mood: peaceful
+
