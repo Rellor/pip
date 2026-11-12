@@ -24,7 +24,7 @@ export function behaviorProblem(o) {
   const b = behaviorOf(o);
   if (!b) return null;
   if (b === 'light' && !o.parts.some((p) => p.glow)) return `${o.name} is meant to give light, but no part of it glows (a part with "glow": true is the light)`;
-  if (b === 'stand' && o.kind !== 'floor') return `${o.name} is meant to be stood on, but it does not stand on the floor`;
+  if (b === 'stand' && o.kind !== 'floor') return `${o.name} is meant to be stood on, but it hangs on a wall (a ${o.kind} thing). A stool stands on the floor. I take it away with remove_decoration and build it again with decorate on the floor, for example in front of the window (zone floor_under_window, or x and z)`;
   if (b === 'drive') {
     if (o.kind !== 'floor') return `${o.name} is meant to be driven, but it does not stand on the floor`;
     if (o.parts.filter((p) => ['cylinder', 'sphere', 'torus'].includes(p.shape)).length < 2) return `${o.name} is meant to be driven, but it has no wheels (it needs at least 2 round parts)`;
