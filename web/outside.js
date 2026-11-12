@@ -5,7 +5,7 @@
 // Local coordinates: x along the wall, y up with 0 at the middle of the window, z negative = away from the room. The window is at z = 0.
 // The ground is at GY (the room's floor is 2.9 m below the middle of the window, and a little thickness more).
 
-import { PLACE, seasonInfo, fetchWeather } from './season.js';
+import { PLACE, seasonInfo, fetchWeather, skyAim, aimVector } from './season.js';
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const mix = (a, b, t) => a + (b - a) * t;
@@ -485,15 +485,14 @@ export function createOutside(THREE) {
     fallLeaves.visible = se.falling;
     if (se.falling) fall(fallLeaves, 0.9, 0.6 + state.wind * 3 + Math.sin(t * 0.7) * 0.4);
 
-    // sun and moon travel across the sky
-    const day = clamp((h - 6) / 14, 0, 1);
-    sun.visible = h > 5.6 && h < 20.4;
-    sun.position.set(mix(-190, 190, day), Math.sin(Math.PI * day) * 170 - 40, -400);
+    // sun and moon sit in the direction the window light comes from (see skyAim)
+    const aim = skyAim(forcedDay ? new Date(d.getFullYear(), 0, forcedDay) : d, forced ?? null);
+    const V = aimVector(aim);
+    sun.visible = aim.body === 'sun' && aim.t > 0.01 && aim.t < 0.99;
+    sun.position.set(V[0] * 400, V[1] * 400, V[2] * 400);
     sun.material.opacity = clamp(1 - gloom * 2.5, 0, 1);
-    const nh = h >= 20 ? h - 20 : h + 4;
-    const nt = clamp(nh / 10, 0, 1);
-    moon.visible = dark > 0.05;
-    moon.position.set(mix(-170, 170, nt), Math.sin(Math.PI * nt) * 150 - 30, -380);
+    moon.visible = aim.body === 'moon' && dark > 0.05;
+    moon.position.set(V[0] * 380, V[1] * 380, V[2] * 380);
     moon.material.opacity = clamp(dark * (1 - gloom * 1.2), 0, 1);
     const starsOn = clamp(dark * (1 - gloom * 1.6), 0, 1);
     starsA.material.opacity = starsOn * (0.6 + Math.sin(t * 2.1) * 0.4);

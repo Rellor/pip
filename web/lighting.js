@@ -2,18 +2,12 @@
 // The page uses it to switch lamps that are set to "dark" by themselves, and Pip's light meter (check_light) reads it.
 // Numbers are 0 (pitch dark) to 1 (bright). Dark is fine: dim is cozy.
 import { FURNITURE, MOVABLE, furnRects } from './furniture.js';
-import { seasonInfo } from './season.js';
+import { seasonInfo, amsterdamHour } from './season.js';
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const ROOM_LAMP = { x: -2, z: -1 }; // the big lamp that is always on
 const LAMP_RANGE = 4;
 export const DARK_BELOW = 0.3; // lamps on "dark" switch on when their place is darker than this
-
-function amsterdamHour(date) {
-  const parts = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Amsterdam' }).formatToParts(date);
-  const get = (t) => Number(parts.find((p) => p.type === t)?.value ?? 0);
-  return (get('hour') % 24) + get('minute') / 60;
-}
 
 export const isLamp = (d) => !d.image && (d.parts ?? []).some((p) => p.glow) && (d.uses ?? []).some((u) => u.does === 'light');
 const litNow = (l, now) => (l.litAt && Date.parse(l.litAt) > now ? l.lit === false : l.lit !== false); // a switch shows its old state until it is done

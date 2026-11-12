@@ -9,6 +9,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { skyAim, aimVector } from './season.js';
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 
@@ -21,7 +22,10 @@ export function applyLook(mode, ctx) {
     detail: ['c', 'full', 'd'].includes(mode),
     tilt: mode === 'd',
   };
-  const hourParam = new URLSearchParams(location.search).get('hour');
+  const urlParams = new URLSearchParams(location.search);
+  const hourParam = urlParams.get('hour');
+  const wxParam = urlParams.get('weather'); // ?weather=cloudy&cloud=0.5 shows another weather (for checking)
+  const cloudParam = urlParams.get('cloud');
   const hourNow = () => (hourParam !== null ? Number(hourParam) : new Date().getHours() + new Date().getMinutes() / 60);
 
   // --- colours and shadows
@@ -42,14 +46,16 @@ export function applyLook(mode, ctx) {
   cool.position.set(0.3, 3.4, -3.8);
   scene.add(bounce, cool);
 
-  // --- sunlight through the window: a spot light from outside, only the hole lets it in
-  const winLight = new THREE.SpotLight(0xffe0b0, 3, 0, 0.1, 0.25, 0);
-  winLight.position.set(5, 15, -17);
-  winLight.target.position.set(0.3, 0, -1.8);
+  // --- sunlight (or moonlight) through the window: a spot light far outside that follows the sun across the sky, only the hole lets it in
+  const winLight = new THREE.SpotLight(0xffe0b0, 3, 0, 0.06, 0.3, 0);
   winLight.castShadow = true;
   winLight.shadow.mapSize.set(2048, 2048);
   winLight.shadow.bias = -0.0003;
   winLight.shadow.normalBias = 0.02;
+  winLight.shadow.camera.near = 25;
+  winLight.shadow.camera.far = 70;
+  scene.add(winLight, winLight.target);
+  if (new URLSearchParams(location.search).has('nowin')) winLight.visible = false; // for checking which light makes a shadow
   // The room has no roof in the overview, so rays that come in over the top of the back wall would light Pip and the floor with hard straight edges.
   // An invisible strip of roof along the back wall (drawn by nothing, it only casts a shadow) keeps the window the only way in.
   // It stops short of the middle of the room, so the room's own sun, which comes from the front, is not blocked.
@@ -58,32 +64,20 @@ export function applyLook(mode, ctx) {
   roof.position.set(0.15, 5.02, -3.3);
   roof.castShadow = true;
   scene.add(roof);
-  winLight.shadow.camera.near = 8;
-  winLight.shadow.camera.far = 40;
-  scene.add(winLight, winLight.target);
-  if (new URLSearchParams(location.search).has('nowin')) winLight.visible = false; // for checking which light makes a shadow
-  // a faint beam of light in the air, with dust in it
-  const hole = [[-0.7, 2.0], [1.3, 2.0], [1.3, 3.8], [-0.7, 3.8]].map(([x, y]) => new THREE.Vector3(x + 0.0, y, -5.15));
-  const dir = winLight.target.position.clone().sub(winLight.position).normalize();
-  const floorPts = hole.map((p) => p.clone().addScaledVector(dir, p.y / -dir.y));
+  // a faint beam of light in the air (the window opening stretched along the light), with dust in it
+  const hole = [[-0.7, 2.0], [1.3, 2.0], [1.3, 3.8], [-0.7, 3.8]].map(([x, y]) => new THREE.Vector3(x, y, -5.15));
+  const WIN = new THREE.Vector3(0.3, 2.9, -5.15);
+  const SEG = 6;
   const beamGeo = new THREE.BufferGeometry();
-  const pos = [];
-  const col = [];
-  const quad = (a, b, c, d) => { for (const p of [a, b, c, a, c, d]) pos.push(p.x, p.y, p.z); };
-  for (let i = 0; i < 4; i++) {
-    const j = (i + 1) % 4;
-    quad(hole[i], hole[j], floorPts[j], floorPts[i]);
-  }
-  for (let i = 0; i < pos.length / 3; i++) {
-    const y = pos[i * 3 + 1];
-    const k = clamp(y / 3.8, 0, 1) * 0.9 + 0.08; // brighter near the window, fading toward the floor
-    col.push(k, k * 0.9, k * 0.7);
-  }
-  beamGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  beamGeo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  const beamPos = new Float32Array(4 * SEG * 6 * 3);
+  const beamCol = new Float32Array(4 * SEG * 6 * 3);
+  const beamS = new Float32Array(4 * SEG * 6); // how far along the beam each vertex is (0 at the window, 1 at the floor)
+  beamGeo.setAttribute('position', new THREE.BufferAttribute(beamPos, 3));
+  beamGeo.setAttribute('color', new THREE.BufferAttribute(beamCol, 3));
   const beamMat = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false });
   const beam = new THREE.Mesh(beamGeo, beamMat);
   beam.renderOrder = 5;
+  beam.frustumCulled = false;
   scene.add(beam);
   const dustN = 90;
   const dustPos = new Float32Array(dustN * 3);
@@ -93,7 +87,35 @@ export function applyLook(mode, ctx) {
   const dustTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 32; const g = c.getContext('2d'); const r = g.createRadialGradient(16, 16, 0, 16, 16, 16); r.addColorStop(0, 'rgba(255,240,200,1)'); r.addColorStop(1, 'rgba(255,240,200,0)'); g.fillStyle = r; g.fillRect(0, 0, 32, 32); return new THREE.CanvasTexture(c); })();
   const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({ map: dustTex, size: 0.07, transparent: true, opacity: 0.8, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
   dust.renderOrder = 6;
+  dust.frustumCulled = false;
   scene.add(dust);
+  // Point the light where the sun (or moon) is now: it lands on the floor in the shape of the window, and the patch crosses the room during the day.
+  let floorC = new THREE.Vector3();
+  let aimedAt = -1e9;
+  const Lv = new THREE.Vector3();
+  function aimLight(L) {
+    Lv.set(...L).normalize();
+    const hit = WIN.clone().addScaledVector(Lv, -WIN.y / Lv.y); // where the ray through the middle of the window meets the floor
+    floorC = hit;
+    winLight.position.copy(hit).addScaledVector(Lv, 45);
+    const along = 1.8 / Math.max(0.2, Math.tan(Math.asin(Lv.y))); // how long the lit patch is on the floor
+    winLight.angle = Math.atan((0.5 * Math.hypot(along, 2.2) + 0.7) / 45); // a cone just wide enough for it
+    winLight.target.position.copy(hit);
+    winLight.target.updateMatrixWorld();
+    const fp = hole.map((p) => p.clone().addScaledVector(Lv, -p.y / Lv.y));
+    let n = 0;
+    for (let i = 0; i < 4; i++) {
+      const j = (i + 1) % 4;
+      for (let k = 0; k < SEG; k++) {
+        const s0 = k / SEG;
+        const s1 = (k + 1) / SEG;
+        const P = (idx, s) => hole[idx].clone().lerp(fp[idx], s);
+        const vs = [[P(i, s0), s0], [P(j, s0), s0], [P(j, s1), s1], [P(i, s0), s0], [P(j, s1), s1], [P(i, s1), s1]];
+        for (const [p, s] of vs) { beamPos.set([p.x, p.y, p.z], n * 3); beamS[n] = s; n++; }
+      }
+    }
+    beamGeo.attributes.position.needsUpdate = true;
+  }
 
   // --- details: textures, trim, curtains, soft shadows
   const canvasTex = (w, h, draw) => {
@@ -307,21 +329,51 @@ export function applyLook(mode, ctx) {
       lerpColor(cool.color, 0x7f98ff, 0xbcd4ff, 1 - nightK);
       scene.background.copy(bg0).lerp(nightBg, nightK * 0.4);
       // sunlight by day, a little cool moonlight through the same window at night
-      winLight.intensity = 3.2 * day * bad + 0.9 * nightK * bad;
-      if (day > 0.05) winLight.color.setRGB(1, 0.72 + 0.26 * day - dusk * 0.12, 0.5 + 0.4 * day - dusk * 0.15);
+      // Where the sun or moon is now, and how much of it comes through: all of it when clear, broken up by passing clouds when a bit cloudy, none when overcast or wet
+      const nowDate = new Date();
+      const aim = skyAim(nowDate, hourParam !== null ? Number(hourParam) : null);
+      if (t - aimedAt > 2) { aimedAt = t; aimLight(aimVector(aim)); }
+      const wxKind = wxParam || ctx.land?.state?.weather || 'clear';
+      const cover = cloudParam !== null ? Number(cloudParam) : ctx.land?.state?.cloud ?? 0.2;
+      const sky = Math.sin(t * 0.11) * Math.cos(t * 0.073 + 1) * 0.5 + 0.5 + Math.sin(t * 0.31) * 0.08; // a slow drift of clouds across the sun: 0 = cloud in front, 1 = a gap
+      let direct = 1; // how much of the sun gets through
+      if (wxKind === 'rain' || wxKind === 'storm' || wxKind === 'snow') direct = 0;
+      else if (wxKind === 'fog') direct = 0.08;
+      else if (wxKind === 'cloudy' || cover > 0.2) direct = cover < 0.25 ? 1 : cover > 0.75 ? 0.05 : clamp((sky - (cover - 0.1)) / 0.3, 0.1, 1); // a bit cloudy: sun comes and goes
+      const partly = wxKind === 'cloudy' && cover >= 0.25 && cover <= 0.75;
+      const edge = aim.body === 'sun' ? clamp(aim.t / 0.08, 0, 1) * clamp((1 - aim.t) / 0.08, 0, 1) : 1; // sunrise and sunset fade in and out
+      const sunAmount = aim.body === 'sun' ? direct * edge : 0;
+      const moonAmount = aim.body === 'moon' ? (wxKind === 'clear' || (wxKind === 'cloudy' && cover < 0.6) ? 1 : 0.2) : 0;
+      winLight.intensity = 3.2 * sunAmount + 0.9 * moonAmount * nightK;
+      const lowSun = aim.body === 'sun' ? clamp(1 - aim.el / 0.7, 0, 1) : 0;
+      if (aim.body === 'sun') winLight.color.setRGB(1, 0.78 + 0.2 * (1 - lowSun), 0.55 + 0.4 * (1 - lowSun));
       else winLight.color.setRGB(0.62, 0.72, 1);
-      beam.visible = dust.visible = !noDust && day * bad > 0.08;
-      beamMat.opacity = 0.08 * day * bad;
-      dust.material.opacity = 0.9 * day * bad;
+      const shine = Math.max(sunAmount, moonAmount * 0.5 * nightK);
+      beam.visible = dust.visible = !noDust && shine > 0.05;
+      // the beam is bright near the window and fades toward the floor; with clouds about, darker bands travel along it
+      const bands = partly ? 0.6 : 0.12;
+      for (let i = 0; i < beamS.length; i++) {
+        const s = beamS[i];
+        const k = (1 - s) * 0.9 + 0.08;
+        const band = 1 - bands * (0.5 + 0.5 * Math.sin(s * 9 - t * 0.9));
+        const c = k * band;
+        beamCol[i * 3] = c;
+        beamCol[i * 3 + 1] = c * 0.9;
+        beamCol[i * 3 + 2] = c * 0.7;
+      }
+      beamGeo.attributes.color.needsUpdate = true;
+      beamMat.opacity = 0.085 * shine;
+      dust.material.opacity = 0.9 * shine;
       for (let i = 0; i < dustN; i++) {
         const [a, b, s] = dustSeed[i];
         const k = (a + t * 0.012 * (0.5 + b)) % 1;
-        const p = hole[0].clone().lerp(floorPts[2], 0.05 + k * 0.8);
+        const p = WIN.clone().lerp(floorC, 0.05 + k * 0.8);
         dustPos[i * 3] = p.x + (b - 0.5) * 1.6 + Math.sin(t * 0.4 + s) * 0.08;
         dustPos[i * 3 + 1] = p.y + (a - 0.5) * 1.2 + Math.cos(t * 0.5 + s) * 0.06;
         dustPos[i * 3 + 2] = p.z + (a - 0.5) * 0.6;
       }
       dustGeo.attributes.position.needsUpdate = true;
+      sun.intensity = (0.28 + 1.02 * day) * (0.55 + 0.45 * Math.max(direct, aim.body === 'sun' ? 0 : 1)); // the room's own sun is weaker when it is grey
       if (on.detail) syncBlobs();
       if (noDust) winLight.intensity *= 0.9; // no shadow any more: keep only a little of it so it does not light the whole room
       const nowMs = performance.now();

@@ -54,3 +54,24 @@ export async function fetchWeather(signal) {
   const cur = (await res.json()).current;
   return { at: new Date().toISOString(), kind: weatherKind(cur.weather_code), code: cur.weather_code, temp: cur.temperature_2m, cloud: clamp(cur.cloud_cover / 100, 0, 1), wind: clamp(cur.wind_speed_10m / 30, 0.1, 1) };
 }
+
+// The hour in Purmerend (24h, with minutes as a fraction), whatever time zone the device is in.
+export function amsterdamHour(date) {
+  const parts = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Europe/Amsterdam' }).formatToParts(date);
+  const get = (t) => Number(parts.find((p) => p.type === t)?.value ?? 0);
+  return (get('hour') % 24) + get('minute') / 60;
+}
+
+// Where the sun (by day) or the moon (at night) is, for the sky and for the light that comes in at the window.
+// az is sideways (negative = left of the window), el is how high. Higher than the real sun on purpose, so the light lands inside the room.
+export function skyAim(date = new Date(), hour = null) {
+  const se = seasonInfo(date);
+  const h = hour ?? amsterdamHour(date);
+  const span = se.sunset - se.sunrise;
+  const t = (h - se.sunrise) / span;
+  if (t >= 0 && t <= 1) return { body: 'sun', t, az: -0.9 + 1.8 * t, el: 0.3 + 0.6 * Math.sin(Math.PI * t) };
+  const n = (((h - se.sunset) % 24) + 24) % 24 / (24 - span);
+  return { body: 'moon', t: Math.min(1, n), az: -0.8 + 1.6 * Math.min(1, n), el: 0.5 + 0.35 * Math.sin(Math.PI * Math.min(1, n)) };
+}
+// From the room toward that body (x sideways, y up, z negative = behind the window).
+export const aimVector = ({ az, el }) => [Math.sin(az) * Math.cos(el), Math.sin(el), -Math.cos(az) * Math.cos(el)];
