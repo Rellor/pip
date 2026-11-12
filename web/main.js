@@ -1884,6 +1884,12 @@ dom.addEventListener('pointerup', (e) => {
   const tap = !drag.moved && performance.now() - drag.t < 500;
   drag = null;
   if (!tap) return;
+  if (frontPick) {
+    if (frontSideAt(e.clientX, e.clientY)) return tapFront(e.clientX, e.clientY);
+    const other = teachOn() ? frontTargetAt(e.clientX, e.clientY) : null; // a tap on another thing starts over with that one
+    if (other) return showFrontCard(other);
+    return;
+  }
   const front = teachOn() ? frontTargetAt(e.clientX, e.clientY) : null;
   if (front) return showFrontCard(front);
   const info = pickAt(e.clientX, e.clientY);
@@ -1900,34 +1906,125 @@ dom.addEventListener('pointercancel', (e) => {
 const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 let teachUnlocked = localHost; // on your own Mac there is no key
 const teachOn = () => teachUnlocked && store('pip-teach') === '1';
-const SIDE_NAMES = { back: 'the back wall (the window)', left: 'the left wall', right: 'the right wall', front: 'the front of the room' };
+const SIDE_NAMES = { back: 'the window wall', left: 'the left wall', right: 'the right wall', front: 'the front of the room' };
 function frontTargetAt(clientX, clientY) {
   const r = renderer.domElement.getBoundingClientRect();
   ndc.set(((clientX - r.left) / r.width) * 2 - 1, -(((clientY - r.top) / r.height) * 2 - 1));
   ray.setFromCamera(ndc, camera);
   for (const h of ray.intersectObjects(scene.children, true)) {
-    if (h.object.isSprite || !h.object.visible) continue;
+    if (h.object.isSprite || !h.object.visible || h.object.userData.frontGuide) continue;
     for (let o = h.object; o; o = o.parent) {
-      if (o === chestGroup) return { key: 'chest', name: "Pip's chest", rot: chestGroup.rotation.y };
+      if (o === chestGroup) return { key: 'chest', name: "Pip's chest", rot: chestGroup.rotation.y, group: o };
       const fk = MOVABLE.find((k) => G[k] === o);
-      if (fk) return { key: fk, name: FURNITURE[fk].n.replace(/^the /, ''), rot: o.rotation.y };
+      if (fk) return { key: fk, name: FURNITURE[fk].n.replace(/^the /, ''), rot: o.rotation.y, group: o };
       for (const [id, g] of decorGroups) if (g === o) {
         const d = (lastState?.decor || []).find((x) => x.id === id);
-        return d && d.kind === 'floor' && !d.image ? { key: id, name: d.name, rot: g.rotation.y } : null;
+        return d && d.kind === 'floor' && !d.image ? { key: id, name: d.name, rot: g.rotation.y, group: g } : null;
       }
     }
   }
   return null;
 }
-function showFrontCard(t) {
-  const now = sideOfVector(frontWorld(t.key, t.rot, lastState?.fronts));
-  const shown = !!lastState?.fronts?.[t.key];
-  showInfo({
-    title: `Front of ${t.name}`,
-    lines: [`Pip thinks the front faces ${SIDE_NAMES[now]}${shown ? ' (you showed him)' : ''}.`, 'Which side of the room does the front really face?'],
-    actions: Object.keys(SIDE_VECTORS).map((side) => ({ text: `${{ back: '↑', left: '←', right: '→', front: '↓' }[side]} ${SIDE_NAMES[side]}`, run: () => saveFront(t, side) })),
-  });
+
+// Picking the front inside the room: a ring and arrows lie on the floor around the thing. The green arrow is where Pip thinks the front is.
+// Tap the floor on the side the front really faces: the orange arrow shows what you would pick, and the tap saves it.
+// Things in this room always stand square to the walls, so there are four directions: the arrow snaps to the nearest one.
+let frontPick = null;
+const FLOOR = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+function makeArrow(color) {
+  const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.92, depthTest: false });
+  const g = new THREE.Group();
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.7, 12), mat);
+  shaft.rotation.x = Math.PI / 2;
+  shaft.position.z = 0.35;
+  const head = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.36, 16), mat);
+  head.rotation.x = Math.PI / 2;
+  head.position.z = 0.88;
+  g.add(shaft, head);
+  g.traverse((o) => { o.userData.frontGuide = true; o.renderOrder = 999; });
+  g.scale.setScalar(1.5);
+  return g;
 }
+function pointArrow(arrow, center, radius, [vx, vz]) {
+  arrow.position.set(center.x + vx * radius, 0.04, center.z + vz * radius);
+  arrow.rotation.y = Math.atan2(vx, vz);
+  arrow.visible = true;
+}
+function endFrontPick() {
+  if (!frontPick) return;
+  scene.remove(frontPick.guide);
+  frontPick = null;
+  $('frontbar').hidden = true;
+}
+function showFrontCard(t) {
+  endFrontPick();
+  const box = new THREE.Box3().setFromObject(t.group);
+  const center = box.getCenter(new THREE.Vector3());
+  const radius = Math.max(box.max.x - box.min.x, box.max.z - box.min.z) / 2 + 0.9;
+  const guide = new THREE.Group();
+  guide.userData.frontGuide = true;
+  const ring = new THREE.Mesh(new THREE.RingGeometry(radius - 0.04, radius + 0.04, 64), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8, depthTest: false, side: THREE.DoubleSide }));
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.set(center.x, 0.03, center.z);
+  ring.userData.frontGuide = true;
+  ring.renderOrder = 998;
+  const now = makeArrow(0x39b36b);
+  const pick = makeArrow(0xff8a1f);
+  pick.visible = false;
+  const cur = frontWorld(t.key, t.rot, lastState?.fronts);
+  pointArrow(now, center, radius, cur);
+  guide.add(ring, now, pick);
+  scene.add(guide);
+  frontPick = { t, center, radius, guide, pick, cur };
+  const side = sideOfVector(cur);
+  $('fronttext').textContent = `${t.name}: the green arrow is where Pip thinks the front is (${SIDE_NAMES[side]}). Tap the floor on the side the front really faces.`;
+  $('frontsave').hidden = true;
+  $('frontbar').hidden = false;
+}
+// The side of the room (one of four) that a tap on the floor points to, seen from the middle of the thing.
+function frontSideAt(clientX, clientY) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((clientX - r.left) / r.width) * 2 - 1, -(((clientY - r.top) / r.height) * 2 - 1));
+  ray.setFromCamera(ndc, camera);
+  const p = ray.ray.intersectPlane(FLOOR, new THREE.Vector3());
+  if (!p) return null;
+  const dx = p.x - frontPick.center.x;
+  const dz = p.z - frontPick.center.z;
+  if (Math.hypot(dx, dz) < 0.25) return null; // on top of the thing itself
+  return Math.abs(dx) >= Math.abs(dz) ? (dx > 0 ? 'right' : 'left') : dz > 0 ? 'front' : 'back';
+}
+function previewFront(clientX, clientY) {
+  if (!frontPick || frontPick.choice) return; // once you tapped, the orange arrow stays where you put it
+  const side = frontSideAt(clientX, clientY);
+  if (!side) frontPick.pick.visible = false;
+  else pointArrow(frontPick.pick, frontPick.center, frontPick.radius, SIDE_VECTORS[side]);
+}
+// A tap puts the orange arrow on that side and it stays there. You can tap again to change it. Save keeps it, Cancel drops it.
+function tapFront(clientX, clientY) {
+  const side = frontSideAt(clientX, clientY);
+  if (!side) return;
+  frontPick.choice = side;
+  pointArrow(frontPick.pick, frontPick.center, frontPick.radius, SIDE_VECTORS[side]);
+  $('fronttext').textContent = `${frontPick.t.name}: the front faces ${SIDE_NAMES[side]}. Tap another side to change it, or save.`;
+  $('frontsave').hidden = false;
+}
+async function saveFrontPick() {
+  if (!frontPick?.choice) return;
+  const { t, choice, guide, pick, center, radius } = frontPick;
+  $('frontsave').disabled = true;
+  const ok = await saveFront(t, choice);
+  $('frontsave').disabled = false;
+  if (!ok) return; // the card stays so you can try again
+  const now = guide.children.find((c) => c.userData.frontGuide && c.children.length); // the green arrow becomes the new front
+  pick.visible = false;
+  if (now) pointArrow(now, center, radius, SIDE_VECTORS[choice]);
+  $('fronttext').textContent = `Saved! ${t.name} faces ${SIDE_NAMES[choice]}. Pip learns it at his next wake-up.`;
+  $('frontsave').hidden = true;
+  setTimeout(() => { if (frontPick?.guide === guide) endFrontPick(); }, 1800);
+}
+$('frontsave').addEventListener('click', saveFrontPick);
+$('frontcancel').addEventListener('click', endFrontPick);
+dom.addEventListener('pointermove', (e) => { if (frontPick && !drag && e.pointerType === 'mouse') previewFront(e.clientX, e.clientY); });
 async function saveFront(t, side) {
   const [lx, lz] = turn(SIDE_VECTORS[side], -t.rot).map((v) => Math.round(v) || 0); // the front in the thing's own frame
   try {
@@ -1939,9 +2036,10 @@ async function saveFront(t, side) {
       if (!res.ok) throw new Error('Could not save it.');
     }
     if (lastState) lastState.fronts = { ...(lastState.fronts || {}), [t.key]: [lx, lz] };
-    showInfo({ title: `Front of ${t.name}`, lines: [`Saved: the front faces ${SIDE_NAMES[side]}. Pip learns it at his next wake-up.`], actions: [{ text: 'Done', run: hideInfo }] });
+    return true;
   } catch (e) {
-    showInfo({ title: `Front of ${t.name}`, lines: [`⚠️ ${e.message}`], actions: [{ text: 'Close', run: hideInfo }] });
+    toast(`⚠️ ${e.message}`);
+    return false;
   }
 }
 async function unlockSettings(key) {

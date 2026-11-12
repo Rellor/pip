@@ -178,6 +178,7 @@
     #panel { border-left:0; border-top:1px solid var(--line); }
   }
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2a2a3a;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;box-shadow:0 4px 16px #0004;z-index:99;transition:opacity .4s}.toast.out{opacity:0}
+#frontbar{min-width:min(92vw,340px);position:fixed;left:50%;bottom:20px;transform:translateX(-50%);max-width:min(92vw,520px);background:#2a2a3a;color:#fff;padding:10px 14px;border-radius:14px;font-size:14px;display:flex;gap:10px;align-items:center;box-shadow:0 4px 16px #0005;z-index:98}#frontbar[hidden]{display:none}#frontbar button{flex:none}#frontbar button[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -326,5 +327,6 @@
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
 </script>
 <script type="module" src="main.js"></script>
+<div id="frontbar" hidden><span id="fronttext"></span><button class="small primary" id="frontsave" hidden>Save</button><button class="small" id="frontcancel">Cancel</button></div>
 </body>
 </html>
