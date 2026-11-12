@@ -526,6 +526,19 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
     hasXZ = true;
   }
   if (d.wall && !sideOf(d.wall)) return { failed: `"${str(d.wall, 20)}" is not a wall he can hang things on: only the back wall (with the window) and the left wall` };
+  if (e.kind === 'wall' && !e.image && hasXZ && !d.wall && num2(d.along) === null && num2(d.height) === null) { // it was put on a wall but it stands on the floor: it is moved down
+    if (decor.some((o) => String(o.base ?? '').startsWith(`${e.id}#`))) return { failed: 'things stand on it. He takes them off before he puts it on the floor' };
+    const was = { kind: e.kind, zone: e.zone, side: e.side, pos: [...e.pos], rotY: e.rotY, stand: e.stand, label: e.label, slot: e.slot, scale: e.scale, parts: e.parts };
+    e.kind = 'floor';
+    e.zone = 'floor';
+    const r = moveThingRaw(decor, chest, d, atMs, now);
+    if (r.failed) {
+      Object.assign(e, was);
+      return r;
+    }
+    r.warn = r.warn ?? 'it was hanging on a wall, and now it stands on the floor';
+    return r;
+  }
   if (e.kind === 'wall' && (d.wall || num2(d.along) !== null || num2(d.height) !== null)) {
     const carried = decor.filter((o) => String(o.base ?? '').startsWith(`${e.id}#`));
     if (carried.length && sideOf(d.wall) && sideOf(d.wall) !== (e.side ?? ZONES[e.zone]?.side)) return { failed: 'things stand on it. He takes them off before he puts it on the other wall' };
