@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { awakeMinutes } from './sleep.js';
+import { createOutside } from './outside.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
@@ -8,7 +9,7 @@ const lerp = (a, b, t) => a + (b - a) * Math.min(1, t);
 const stage = $('stage');
 
 // ---------------------------------------------------------------- scene
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, stencil: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -20,7 +21,7 @@ const G = Object.fromEntries(MOVABLE.map((k) => [k, new THREE.Group()]));
 Object.values(G).forEach((g) => scene.add(g));
 scene.background = new THREE.Color(getComputedStyle(document.body).backgroundColor);
 
-const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+const camera = new THREE.PerspectiveCamera(35, 1, 0.2, 1600);
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
 const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
@@ -100,7 +101,11 @@ function cyl(parent, [rt, rb, h], color, [x, y, z], opts) {
 
 // ---------------------------------------------------------------- room
 box(scene, [10, 0.3, 10], 0xd9b48a, [0, -0.15, 0]);
-box(scene, [10.3, 5, 0.3], 0xf3d9c4, [0.15, 2.5, -5.15]);
+// The back wall has a real hole for the window (x -0.7..1.3, y 2.0..3.8): what is outside is a 3D world behind it (outside.js).
+box(scene, [4.3, 5, 0.3], 0xf3d9c4, [-2.85, 2.5, -5.15]);
+box(scene, [4, 5, 0.3], 0xf3d9c4, [3.3, 2.5, -5.15]);
+box(scene, [2, 2, 0.3], 0xf3d9c4, [0.3, 1, -5.15]);
+box(scene, [2, 1.2, 0.3], 0xf3d9c4, [0.3, 4.4, -5.15]);
 box(scene, [0.3, 5, 10], 0xefcfb6, [-5.15, 2.5, 0]);
 // The front and right walls and the ceiling only appear in walk mode, so the overview stays open.
 const extraWalls = new THREE.Group();
@@ -121,93 +126,21 @@ if (night) {
   sun.intensity = 0.35;
   lamp.intensity = 18;
 }
-box(scene, [2.4, 2.2, 0.1], 0xffffff, [0.3, 2.9, -4.98]);
-box(scene, [2, 1.8, 0.05], night ? 0x1d2a4a : 0x9ad0f5, [0.3, 2.9, -4.93], {
-  emissive: night ? 0x0b1226 : 0x6fb4e6,
-  emissiveIntensity: 0.6,
-});
-box(scene, [0.06, 1.8, 0.07], 0xffffff, [0.3, 2.9, -4.9]);
-box(scene, [2, 0.06, 0.07], 0xffffff, [0.3, 2.9, -4.9]);
-// What is outside: a small painted view that follows the real time of day. Pip's photos of "the window" show this.
-function paintOutside(date = new Date()) {
-  const W = 500;
-  const H = 450;
-  const c = document.createElement('canvas');
-  c.width = W;
-  c.height = H;
-  const g = c.getContext('2d');
-  const h = date.getHours() + date.getMinutes() / 60;
-  const dark = h < 7 || h >= 20;
-  const glow = !dark && (h < 8.5 || h >= 18);
-  const sky = g.createLinearGradient(0, 0, 0, H);
-  const stops = dark ? ['#0b1226', '#26345c'] : glow ? ['#e58f6a', '#f6d8a8'] : ['#6fb8ee', '#d3ebfb'];
-  sky.addColorStop(0, stops[0]);
-  sky.addColorStop(1, stops[1]);
-  g.fillStyle = sky;
-  g.fillRect(0, 0, W, H);
-  if (dark) {
-    for (let k = 0; k < 40; k++) {
-      g.fillStyle = `rgba(255,255,255,${0.4 + ((k * 31) % 6) / 10})`;
-      g.fillRect(((k * 97) % W), ((k * 53) % 240), 2 + (k % 3 === 0 ? 1 : 0), 2 + (k % 3 === 0 ? 1 : 0));
-    }
-    g.fillStyle = '#fff1b8';
-    g.beginPath();
-    g.arc(W * 0.74, H * 0.22, 26, 0, Math.PI * 2);
-    g.fill();
-  } else {
-    const t = clamp((h - 7) / 13, 0, 1);
-    const sx = W * (0.1 + 0.8 * t);
-    const sy = H * 0.5 - Math.sin(Math.PI * t) * H * 0.38;
-    const halo = g.createRadialGradient(sx, sy, 6, sx, sy, 70);
-    halo.addColorStop(0, 'rgba(255,244,190,0.9)');
-    halo.addColorStop(1, 'rgba(255,244,190,0)');
-    g.fillStyle = halo;
-    g.fillRect(sx - 80, sy - 80, 160, 160);
-    g.fillStyle = '#fff4b8';
-    g.beginPath();
-    g.arc(sx, sy, 22, 0, Math.PI * 2);
-    g.fill();
-    g.fillStyle = glow ? 'rgba(255,235,220,0.8)' : 'rgba(255,255,255,0.92)';
-    for (const [cx, cy, s] of [[110, 90, 1], [330, 60, 1.3], [400, 150, 0.8]]) {
-      for (const [dx, dy, r] of [[0, 0, 26], [28, 6, 22], [-28, 8, 20], [8, -12, 20]]) {
-        g.beginPath();
-        g.ellipse(cx + dx * s, cy + dy * s, r * s * 1.25, r * s * 0.8, 0, 0, Math.PI * 2);
-        g.fill();
-      }
-    }
-  }
-  const hill = (base, amp, phase, color) => {
-    g.fillStyle = color;
-    g.beginPath();
-    g.moveTo(0, H);
-    for (let x = 0; x <= W; x += 10) g.lineTo(x, base + Math.sin(x / 70 + phase) * amp + Math.sin(x / 31 + phase * 2) * amp * 0.3);
-    g.lineTo(W, H);
-    g.fill();
-  };
-  hill(300, 24, 0.5, dark ? '#16273a' : glow ? '#9bb08a' : '#9ccfae');
-  hill(350, 18, 2.4, dark ? '#101d2b' : glow ? '#7d9c6e' : '#76bb8b');
-  for (const [tx, ty] of [[90, 372], [170, 384], [380, 366], [440, 380]]) {
-    g.fillStyle = dark ? '#0b1620' : '#5a3b24';
-    g.fillRect(tx - 3, ty, 6, 22);
-    g.fillStyle = dark ? '#0d2218' : '#3f8f58';
-    g.beginPath();
-    g.moveTo(tx, ty - 46);
-    g.lineTo(tx - 20, ty + 4);
-    g.lineTo(tx + 20, ty + 4);
-    g.fill();
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-const outside = new THREE.Mesh(new THREE.PlaneGeometry(2, 1.8), new THREE.MeshBasicMaterial({ map: paintOutside(), toneMapped: false }));
-outside.position.set(0.3, 2.9, -4.895);
-scene.add(outside);
-setInterval(() => {
-  outside.material.map.dispose();
-  outside.material.map = paintOutside();
-  outside.material.needsUpdate = true;
-}, 5 * 60_000);
+// the window frame, sill and cross bars
+box(scene, [0.1, 1.9, 0.2], 0xffffff, [-0.75, 2.95, -5.0]);
+box(scene, [0.1, 1.9, 0.2], 0xffffff, [1.35, 2.95, -5.0]);
+box(scene, [2.2, 0.1, 0.2], 0xffffff, [0.3, 3.85, -5.0]);
+box(scene, [2.3, 0.08, 0.34], 0xffffff, [0.3, 1.97, -4.95]);
+box(scene, [0.06, 1.8, 0.07], 0xffffff, [0.3, 2.9, -5.05]);
+box(scene, [2, 0.06, 0.07], 0xffffff, [0.3, 2.9, -5.05]);
+// What is outside: a real 3D world behind the wall that follows the real time of day and weather (see outside.js). It only shows through the hole, and the view changes as you move.
+// Pip's photos of "the window" show it too.
+const land = createOutside(THREE);
+land.root.position.set(0.3, 2.9, -5.3);
+land.mask.position.set(0.3, 2.9, -5.15);
+scene.add(land.root, land.mask);
+const lookParams = new URLSearchParams(location.search); // ?hour=21&weather=rain shows another time or weather (for checking)
+const forceLook = { hour: lookParams.has('hour') ? Number(lookParams.get('hour')) : undefined, weather: lookParams.get('weather') || undefined };
 
 // framed photo above the piano (ESO / Luis Calçada / Herbert Zodet, CC BY 4.0: the credit is shown on the page)
 const wallFrame = new THREE.Group();
@@ -2250,6 +2183,7 @@ function loop(now) {
     slowN = 0;
   }
   prev = now;
+  land.update(now, forceLook);
   updateSlides(now, dt);
   frame(now, dt);
   updateFloaters(dt, now);
@@ -3489,3 +3423,16 @@ window.pipBeh = behaviors;
 window.pipFrame = (cam) => { if (cam) { camera.position.set(...cam.p); camera.lookAt(...cam.t); } renderer.render(scene, camera); }; // for testing: draw one frame by hand
 window.pipDo = (last) => startTask({ at: String(Date.now()), thought: '(test)', details: {}, ...last });
 window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt, camera, openApp, playSong, getAudio: () => audio, getMaster: () => master };
+
+// ?az=0.8&el=0.1&zoom=0.6 or ?look=x,z,yaw,pitch (walk mode) start from another side (for checking the window)
+{
+  const p = new URLSearchParams(location.search);
+  if (p.has('look')) {
+    const [x, z, yaw, pitch] = p.get('look').split(',').map(Number);
+    setMode('walk');
+    Object.assign(view, { x, z, yaw, pitch });
+  } else if (p.has('az') || p.has('el') || p.has('zoom')) {
+    Object.assign(orbit, { az: Number(p.get('az') || 0), el: Number(p.get('el') || 0), zoom: Number(p.get('zoom') || 1) });
+    applyOrbit();
+  }
+}
