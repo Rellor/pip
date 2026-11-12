@@ -1225,3 +1225,11 @@ I am moving my window stool down to the floor in front of the window just like w
 - draw (starry night window view): I am drawing a picture of the quiet night sky to keep on my wall.
 - mood: peaceful
 
+## 12/11/2026, 11:02:13
+I will draw a detailed diagram of a stellar convection cell to explore how massive stars boil.
+> I want to try drawing something different after spending so much time reading and building. Sketching convection cells on Betelgeuse will let me picture how giant stars bubble and boil across millions of kilometers, bringing my star curiosity into a fresh form of expression.
+- walk_to (desk): I walk over to my desk to sit by my drawing supplies.
+- draw (Betelgeuse convection cell): I draw swirling convective cells on Betelgeuse using glowing gradients and warm fiery colors.
+- write_diary (I tried to make Betelgeuse convection cell, but it did not work out. I want to find out why and try it a different way.): I write down my thoughts about stellar convection in my diary.
+- mood: inspired
+
