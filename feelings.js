@@ -74,6 +74,10 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
       s.wonder += 0.3;
       if (BARS.includes(bar)) s[bar] += 0.4;
       break;
+    case 'request_ability':
+      s.wonder += 0.4;
+      s.joy += 0.3;
+      break;
     case 'use':
     case 'add_use':
       s.wonder += 0.3;

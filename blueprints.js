@@ -9,6 +9,7 @@ export const CAPS = [
   { id: 'light', what: 'a lamp or light that switches on and off', how: 'a use with "does": "light"' },
   { id: 'drive', what: 'a vehicle or toy on the floor that drives a route I design (needs 2 or more round parts as wheels)', how: 'a use with "does": "drive" and "motion" steps' },
   { id: 'stand', what: 'something I climb on and stand on top of (a stool, a step, a platform)', how: 'a use with "does": "stand"' },
+  { id: 'custom', what: 'my own movement built from steps: a part turns around an edge (a door or lid opens), a part slides (a drawer), a part lights up or goes dark, the whole thing spins, I climb on it, or it waits', how: 'a use with "does": "custom" and "steps": [{"do": "rotate_part", "part": 2, "deg": 90, "axis": "x", "hinge": "back", "s": 1}, {"do": "wait", "s": 2}, {"do": "rotate_part", "part": 2, "deg": -90, "axis": "x", "hinge": "back"}] (do is rotate_part, slide_part, glow, spin, climb or wait; part is the number of the part in the thing, from 1)' },
   { id: 'spin', what: 'something that turns around (a fan, a windmill, a top)', how: 'a use with "does": "spin"' },
   { id: 'song', what: 'a song, a tune or a sound that plays when it is used', how: '"song" on the thing, or compose' },
   { id: 'text', what: 'a use that tells what happens and can show a small picture', how: 'uses with text and view' },
@@ -70,6 +71,21 @@ export function makeBlueprint(s, d, at = new Date().toISOString(), now = Date.no
   return { blueprint: bp, missing };
 }
 
+// He wants a thing to do something that no ability covers. He asks for it and explains exactly what it should do, so it can be built for him.
+export function requestAbility(s, d, now = Date.now(), at = new Date(now).toISOString()) {
+  const name = clip(d?.name, 40).toLowerCase();
+  const what = clip(d?.what, 400);
+  const thing = clip(d?.thing, 60);
+  if (name.length < 3) return { failed: 'he did not give the ability a short name (like "open and close")' };
+  if (what.length < 30) return { failed: 'he did not explain what it should do. He says exactly what happens, step by step, so someone can build it' };
+  if (s.requests.some((r) => r.status === 'open' && words(`${r.ability ?? ''} ${r.what}`).join() === words(`${name} ${what}`).join())) return { failed: 'that is already asked for' };
+  if (s.requests.filter((r) => r.by === 'pip' && now - Date.parse(r.at) < 86_400_000).length >= 3) return { failed: 'he already asked for 3 new abilities today' };
+  if (s.requests.filter((r) => r.status === 'open').length >= 12) return { failed: 'there are too many open requests. They are built first' };
+  const r = { id: `r${now.toString(36)}${s.requests.length}`, what: `${name}: ${what}`, why: thing ? `for ${thing}` : '', blueprint: thing || undefined, ability: name, at, status: 'open', by: 'pip' };
+  s.requests.push(r);
+  return { request: r };
+}
+
 // What the blueprint promised that the thing he built does not do yet (a spin use, a light, a song...). Empty when it keeps its promises.
 export function blueprintGaps(bp, entry) {
   const has = { spin: (u) => u.does === 'spin', light: (u) => u.does === 'light', drive: (u) => u.does === 'drive', song: (u) => u.song, glow: () => true };
@@ -95,12 +111,15 @@ export function markBuilt(s, blueprintName, at, entry = null) {
 export function blueprintsText(s) {
   const open = s.requests.filter((r) => r.status === 'open');
   const list = s.blueprints.map((b) => `- ${b.name}: ${b.goal} ${b.built ? (b.gaps?.length ? `(built as ${b.thing}, but it does not do yet: ${b.gaps.join(', ')}. I fix that with add_use or change_thing)` : b.tested ? `(built and tested. My verdict: ${b.verdict ?? 'it works'})` : '(built, not tested yet)') : `(NOT BUILT YET. My next step is decorate with "blueprint": "${b.name}" and the parts I can make now${b.mechanisms.every((m) => m.ok) ? '' : `; ${b.mechanisms.filter((m) => !m.ok).map((m) => m.part).join(', ')} cannot be done yet, so I build around ${b.mechanisms.filter((m) => !m.ok).length === 1 ? 'it' : 'them'} and do not wait`})`}`);
-  return `MY BLUEPRINTS\n${nudgeText(s)}${list.length ? list.join('\n') : '- none yet'}${open.length ? `\nThings I cannot do yet, that people know about: ${open.map((r) => r.what).join(' | ')}` : ''}\n`;
+  const ready = s.requests.filter((r) => r.status === 'built' && r.does && Date.now() - Date.parse(r.builtAt ?? 0) < 3 * 86_400_000);
+  return `MY BLUEPRINTS\n${nudgeText(s)}${ready.length ? `New abilities that are ready for me now: ${ready.map((r) => `${r.ability ?? r.what} (a use with "does": "${r.does}")`).join(' | ')}\n` : ''}${list.length ? list.join('\n') : '- none yet'}${open.length ? `\nThings I cannot do yet, that people know about: ${open.map((r) => r.what).join(' | ')}` : ''}\n`;
 }
 
 export const capabilityGuide = () => `HOW I WORK OUT SOMETHING NEW
 My abilities, everything I can really make work: ${CAPS.map((c) => `${c.id} (${c.what}; ${c.how})`).join('; ')}.
-When I want to make something new or hard that has working parts (a vehicle, a machine, a game, a gadget), I do not just guess. I work it out in steps. Simple things (a shelf, a table, a bookcase, a chair, a decoration, a lamp) need no blueprint: I just build them with decorate. When a step does not work out, I do not repeat it. I ask myself what kind of thing it is, where that kind of thing normally goes (a stool stands on the floor, a picture hangs on a wall, a lamp stands on something) and why my plan did not fit, and then I try a different way.
+If what I want a thing to do is more than one of these abilities, I build my own with "does": "custom" and steps. If I cannot make it do what I want, or it does not work the way it should, I do not fake it with text and I do not wait: I ask for it right away with request_ability {name, thing, what}. I explain exactly what should happen, step by step, so it can be built for me, and I am told when it is ready.
+
+When I want to make something new or hard that has working parts (a vehicle, a machine, a game, a gadget), I do not just guess. I work it out in steps. Simple things (a shelf, a table, a bookcase, a chair, a decoration, a lamp) need no blueprint: I just build them with decorate. If what I want a thing to do is not one of my abilities, I do not fake it with text. I ask for the new ability with request_ability {name, thing, what}: I explain exactly what should happen, step by step, so it can be built for me, and I am told when it is ready.\n\nWhen a step does not work out, I do not repeat it. I ask myself what kind of thing it is, where that kind of thing normally goes (a stool stands on the floor, a picture hangs on a wall, a lamp stands on something) and why my plan did not fit, and then I try a different way.
 1. Research. I look up how the real thing works with search_web, like "how does a remote controlled car work", and I read what I find.
 2. Blueprint. With the blueprint step I write what I learned (research), my goal, and the parts and mechanisms it needs. For each one I say which of my abilities does it, by its id, or "missing" when none can. blueprint {"name": "...", "goal": "what it should do", "research": "what I learned, in a sentence or two", "mechanisms": [{"part": "wheels", "how": "4 round parts that turn", "uses": "drive"}, {"part": "steering", "how": "...", "uses": "missing"}], "tools": ["screwdriver"]}.
 3. Tools. For the tools the blueprint lists, I make them or ask for them (asks_add) before I build.

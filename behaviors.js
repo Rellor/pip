@@ -6,7 +6,7 @@
 // If a thing's name says what it is (a lamp, a car, a fan) and it has no such use, one is added, so it works without him asking.
 // If it cannot work (a lamp with nothing that glows, a car with no wheels) he is told what is missing.
 
-export const DOES = ['light', 'drive', 'spin', 'stand'];
+export const DOES = ['light', 'drive', 'spin', 'stand', 'custom'];
 
 const KINDS = {
   light: { words: /\b(lamp|light|lantern|candle|torch|beacon|night ?light|lighthouse)\b/i, label: 'Switch the light', text: 'The light clicks on, or off again.' },

@@ -427,11 +427,53 @@ function planDrive(g, id, motion) {
   legs.push({ kind: 'turn', face: rot0 });
   return legs;
 }
+// One step of a custom movement at progress k (0 to 1). Parts move from where they started, plus what the steps before them did.
+function applyCustom(b, step, k) {
+  const e = k * k * (3 - 2 * k);
+  const i = (step.part || 1) - 1;
+  const mesh = b.parts[i];
+  if (step.do === 'rotate_part' && mesh) {
+    const t = b.turned[i];
+    if (!t.set) Object.assign(t, { set: true, axis: step.axis || 'y', hinge: step.hinge || 'center', base: 0 });
+    if (b.curStep !== step) { b.curStep = step; t.base = t.a; }
+    const a = t.base + ((step.deg || 0) * e * Math.PI) / 180;
+    t.a = a;
+    mesh.geometry.computeBoundingBox();
+    const hb = mesh.geometry.boundingBox;
+    const h = new THREE.Vector3((hb.max.x - hb.min.x) / 2, (hb.max.y - hb.min.y) / 2, (hb.max.z - hb.min.z) / 2);
+    const off = { left: [-h.x, 0, 0], right: [h.x, 0, 0], top: [0, h.y, 0], bottom: [0, -h.y, 0], front: [0, 0, h.z], back: [0, 0, -h.z], center: [0, 0, 0] }[t.hinge];
+    const axis = new THREE.Vector3(...{ x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] }[t.axis]);
+    const q = new THREE.Quaternion().setFromAxisAngle(axis, a);
+    const pivot = new THREE.Vector3(...off).applyQuaternion(b.snap[i].q).add(b.snap[i].p);
+    mesh.quaternion.copy(q).multiply(b.snap[i].q);
+    mesh.position.copy(b.snap[i].p).sub(pivot).applyQuaternion(q).add(pivot);
+    const s = b.slid[i];
+    mesh.position.add(new THREE.Vector3(...s));
+  } else if (step.do === 'slide_part' && mesh) {
+    const s = b.slid[i];
+    if (b.curStep !== step) { b.curStep = step; step._from = [...s]; }
+    for (let j = 0; j < 3; j++) s[j] = step._from[j] + (step.d?.[j] || 0) * e;
+    mesh.position.copy(b.snap[i].p).add(new THREE.Vector3(...s));
+  } else if (step.do === 'glow' && mesh) {
+    mesh.material.emissiveIntensity = step.on === false ? 0 : 0.9;
+    if (step.on !== false) mesh.material.emissive.copy(mesh.material.color);
+  } else if (step.do === 'spin') {
+    if (b.curStep !== step) { b.curStep = step; b.spun0 = b.spun; }
+    b.spun = b.spun0 + (step.turns || 1) * e * Math.PI * 2;
+    b.parts[0].parent.rotation.y = b.y0 + b.spun;
+  }
+}
 function runBehavior(id, does, motion) {
   const g = decorGroups.get(id);
   if (!g || behaviors.has(id)) return;
   const now = performance.now();
   if (does === 'light') return setLit(g, !g.userData.lit);
+  if (does === 'custom') {
+    const steps = (Array.isArray(motion) ? motion : []).slice(0, 10);
+    const parts = g.children.filter((c) => c.isMesh);
+    if (!steps.length || !parts.length) return;
+    return behaviors.set(id, { does, steps, i: -1, t: 0, parts, snap: parts.map((p) => ({ p: p.position.clone(), q: p.quaternion.clone(), glow: p.material.emissiveIntensity })), turned: parts.map(() => ({ a: 0, axis: 'y', hinge: 'center' })), slid: parts.map(() => [0, 0, 0]), y0: g.rotation.y, spun: 0 });
+  }
   if (does === 'spin') return behaviors.set(id, { does, t0: now, until: now + 3500, y0: g.rotation.y });
   if (does === 'drive') {
     const legs = planDrive(g, id, motion?.length ? motion : DEFAULT_MOTION);
@@ -444,6 +486,23 @@ function updateBehaviors(now, dt) {
     const g = decorGroups.get(id);
     if (!g) {
       behaviors.delete(id);
+      continue;
+    }
+    if (b.does === 'custom') {
+      const step = b.steps[b.i];
+      if (!step || b.t >= (step.s || 0.8)) { // next step (or done: everything goes back)
+        if (step) applyCustom(b, step, 1);
+        b.i++;
+        b.t = 0;
+        if (b.i >= b.steps.length) {
+          b.parts.forEach((p, k) => { p.position.copy(b.snap[k].p); p.quaternion.copy(b.snap[k].q); p.material.emissiveIntensity = b.snap[k].glow; });
+          g.rotation.y = b.y0;
+          behaviors.delete(id);
+        } else if (b.steps[b.i].do === 'glow') applyCustom(b, b.steps[b.i], 1);
+        continue;
+      }
+      b.t += dt;
+      applyCustom(b, step, Math.min(1, b.t / (step.s || 0.8)));
       continue;
     }
     if (b.does === 'spin') {
@@ -1197,7 +1256,8 @@ function planFor(last) {
       const m = last.made;
       if (!m?.stand) return { at: 'center', anim: 'look' };
       const [sx, sz] = m.stand;
-      if (m.does === 'stand' && m.height) return { at: 'custom', anim: 'look', spot: { p: new V3(m.pos[0], 0, m.pos[2]), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz), y: m.height } }; // he climbs on top of it
+      const climbs = m.does === 'stand' || (m.does === 'custom' && (m.steps || []).some((x) => x.do === 'climb'));
+      if (climbs && m.height) return { at: 'custom', anim: 'look', spot: { p: new V3(m.pos[0], 0, m.pos[2]), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz), y: m.height } }; // he climbs on top of it
       return { at: 'custom', anim: 'look', spot: { p: new V3(sx, 0, sz), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz) } };
     }
     case 'make_app':
@@ -1312,6 +1372,7 @@ function moveSound(kind) {
 }
 function startTask(last) {
   const plan = planFor(last);
+  if (last.action === 'use' && last.made?.id && last.made.does === 'custom') setTimeout(() => runBehavior(last.made.id, 'custom', last.made.steps), 2500);
   if (last.action === 'use' && last.made?.id && ['drive', 'spin'].includes(last.made.does)) setTimeout(() => runBehavior(last.made.id, last.made.does, last.made.motion), 2500); // when he has walked up to it
   task = { ...plan, spot: plan.spot || SPOTS[plan.at], last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
 }
@@ -2300,6 +2361,7 @@ function headlineBase(st) {
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
     case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
     case 'place_tool': return ['🧰', `Putting ${d.name || st.name || 'a tool'} in the room`];
+    case 'request_ability': return ['🙋', `Asking for a new ability: ${d.name || st.name || ''}`];
     case 'measure': return ['📏', `Measuring ${d.name || st.name || 'something'}`];
     case 'take_tool': return ['🎒', `Putting ${d.name || st.name || 'a tool'} in his inventory`];
     case 'extend_thing': return ['🧱', `Adding to ${d.name || st.name || 'something'}`];
@@ -2329,7 +2391,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
