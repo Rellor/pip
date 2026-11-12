@@ -1295,7 +1295,9 @@ async function wakeUp() {
     if (st.action === 'add_use') st.made = st.uses?.[0] ? addUse(state.decor, st.details.name, st.uses[0]) : { failed: 'the use did not work out' };
     if (st.action === 'use') {
       const f = findUse(state.decor, st.details.name, st.details.label);
+      const reach = f.failed ? null : purposeProblem(f.entry);
       if (f.failed) st.made = f;
+      else if (reach && /\b(too|only|at least)\b/.test(reach) && /m high/.test(reach)) st.made = { failed: `it does not work yet: ${reach}. I change it with change_thing first` }; // what it is for does not work, so using it is not real
       else {
         const { entry: e, use } = f;
         if (use.does === 'light') {
@@ -1551,12 +1553,13 @@ async function wakeUp() {
   }
   answer._progress = worked(PROJECT_WORK); // project steps and finishing a project only count after a step that really worked
   // What I tell people must not say I did something when no step this wake-up really did anything. Those sentences are dropped.
-  const CLAIM = /\b(i|I)\s+(just\s+|already\s+|have\s+|also\s+)?(placed|moved|put|set|built|made|hung|finished|created|drew|drawn|added|arranged|baked|cooked|wrote|assembled|stood|lit|switched)\b/;
+  const CLAIM = /\b(i|I)\s+(just\s+|already\s+|have\s+|also\s+)?(placed|moved|put|set|built|rebuilt|made|remade|hung|finished|created|drew|drawn|added|arranged|baked|cooked|wrote|assembled|stood|lit|switched|fixed|changed|raised|resized|extended|enlarged|replaced|repaired|adjusted|improved|made it)\b/;
   const stripClaims = (t) => {
-    const parts = String(t ?? '').match(/[^.!?]+[.!?]*\s*/g) ?? [];
+    const parts = String(t ?? '').match(/(?:[^.!?]|(?<=\d)\.(?=\d))+[.!?]*\s*/g) ?? [];
     const kept = parts.filter((x) => !CLAIM.test(x)).join('').trim();
     return kept.length >= 12 ? kept : null;
   };
+  for (const st of steps) if (st.action === 'write_diary') st._was = st.details?.text;
   if (!worked(TASK_WORK)) {
     if (answer.tell && CLAIM.test(answer.tell)) answer.tell = stripClaims(answer.tell);
     if (answer.remember?.text && CLAIM.test(answer.remember.text)) answer.remember = stripClaims(answer.remember.text) ? { ...answer.remember, text: stripClaims(answer.remember.text) } : null;
@@ -1568,14 +1571,14 @@ async function wakeUp() {
   const triedNames = steps.filter((st) => MAKE_ACTIONS.includes(st.action) && st.made?.failed).map((st) => text(st.details?.name, 60)).concat(blocked.filter((b) => MAKE_ACTIONS.includes(b.st.action)).map((b) => text(b.st.details?.name, 60))).filter(Boolean);
   const claimsDone = (t) => {
     const low = String(t ?? '').toLowerCase();
-    if (!/\b(built|made|finished|created|completed|crafted|assembled|put together|tested|test drove|drove|watched|watching|drive|drives|driving|zoom|zooms|zoomed|rolled|rolls|rolling|spun|lit|switched|used|using|played with)\b/.test(low)) return null;
+    if (!/\b(built|rebuilt|made|remade|fixed|raised|resized|finished|created|completed|crafted|assembled|put together|tested|test drove|drove|watched|watching|drive|drives|driving|zoom|zooms|zoomed|rolled|rolls|rolling|spun|lit|switched|used|using|played with)\b/.test(low)) return null;
     return triedNames.find((n) => { const w = (n.toLowerCase().match(/[a-z]{4,}/g) ?? []); return w.length && w.filter((x) => low.includes(x)).length >= Math.ceil(w.length / 2); }) ?? null;
   };
   if (triedNames.length) {
     for (const st of steps) {
       const n = st.action === 'write_diary' ? claimsDone(st.details?.text) : null;
       if (n) { // keep what came before the claim, drop the claim and what builds on it, and say what really happened
-        const parts = String(st.details.text).match(/[^.!?]+[.!?]*\s*/g) ?? [];
+        const parts = String(st.details.text).match(/(?:[^.!?]|(?<=\d)\.(?=\d))+[.!?]*\s*/g) ?? [];
         const at = parts.findIndex((x) => claimsDone(x) || CLAIM.test(x));
         const before = (at < 0 ? [] : parts.slice(0, at)).join('').trim();
         st.details.text = `${before ? `${before} ` : ''}I tried to make ${n}, but it did not work out. I want to find out why and try it a different way.`.slice(0, 800);
@@ -1583,6 +1586,11 @@ async function wakeUp() {
     }
     if (claimsDone(answer.remember?.text)) answer.remember = null;
     if (claimsDone(answer.tell)) answer.tell = null;
+  }
+  for (const [i, st] of steps.entries()) {
+    if (st.action !== 'write_diary' || !results[i] || st._was === st.details?.text) continue; // what the page shows is what was kept
+    results[i].detail = describe(st);
+    for (const a of state.activities) if (a.action === 'write_diary' && a.detail === st._was) a.detail = results[i].detail;
   }
 
   // ask_for steps end up in the list of asks.
