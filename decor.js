@@ -383,7 +383,7 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   let e = n ? decor.find((x) => mine(x) && x.name.toLowerCase() === n) : null;
   if (!e && n) e = decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (!e) return { failed: 'there is nothing with that name in his room' };
-  if (decor.filter((x) => x.updatedAt && now - Date.parse(x.updatedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
+  if (decor.filter((x) => x.changedAt && now - Date.parse(x.changedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
   const parts = cleanParts(d.parts);
   const why = str(d.why, 200);
   const grow = Number(d.bigger ?? d.scale);
@@ -405,6 +405,7 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   }
   if (why) e.why = why;
   e.updatedAt = new Date(atMs + 6000).toISOString(); // the page shows the change a few seconds into his step
+  e.changedAt = e.updatedAt; // only real changes count toward the daily limit, not moves
   return { name: e.name, entry: e, reshaped: Boolean(parts || factor), grew: factor, limited, label: ZONES[e.zone].label };
 }
 
@@ -645,7 +646,7 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
   const mine = (x) => !x.image && !x.art && x.zone;
   const e = (n ? decor.find((x) => mine(x) && x.name.toLowerCase() === n) : null) ?? (n ? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()))) : null);
   if (!e) return { failed: 'there is nothing with that name in his room' };
-  if (decor.filter((x) => x.updatedAt && now - Date.parse(x.updatedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
+  if (decor.filter((x) => x.changedAt && now - Date.parse(x.changedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the new shapes did not work out' };
   const room = MAX_TOTAL_PARTS - e.parts.length;
@@ -662,6 +663,7 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
     return { failed: `there is not enough free floor around it (it would touch ${hit}). It needs a bigger spot` };
   }
   e.updatedAt = new Date(atMs + 6000).toISOString();
+  e.changedAt = e.updatedAt;
   return { name: e.name, entry: e, added: added.length, total: all.length };
 }
 

@@ -20,7 +20,7 @@ const within = (iso, now) => now - Date.parse(iso) < DAY && Date.parse(iso) <= n
 export function dayLimits(s, now = Date.now()) {
   const logN = (act) => s.log.filter((e) => e.action === act && !e.failed && now - Date.parse(e.at) < DAY).length;
   const moved = s.decor.filter((x) => x.movedAt && within(x.movedAt, now)).length + (s.chest?.moves ?? []).filter((m) => within(m, now)).length + (s.furniture?.moves ?? []).filter((m) => within(m, now)).length;
-  const updates = s.decor.filter((x) => x.updatedAt && within(x.updatedAt, now)).length;
+  const updates = s.decor.filter((x) => x.changedAt && within(x.changedAt, now)).length; // changes, not moves
   return {
     cook: { max: MAX_COOKS_PER_DAY, used: (s.cookedAt ?? []).filter((t) => within(t, now)).length, what: 'cook' },
     take_photo: { max: MAX_PHOTOS, used: s.pictures.filter((p) => p.by === 'pip' && within(p.at, now)).length, what: 'take photos' },
