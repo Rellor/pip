@@ -411,7 +411,7 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
 
 // ---- Moving things. His chest is a piece of furniture he can move too (decor never overlaps it by much, but it is not checked).
 export const CHEST_HOME = { x: -4.1, z: 3.9, rotY: 0 };
-export const MAX_MOVES_PER_DAY = 8;
+export const MAX_MOVES_PER_DAY = 12;
 const CHEST_BOUNDS = { x: [-4.45, 4.45], z: [-4.4, 4.45] };
 // Things stand square to the walls, never diagonal. Next to a wall they face into the room.
 export function wallFacing(x, z) {
