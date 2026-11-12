@@ -1361,3 +1361,11 @@ I will move my kitchen cutting counter to the left of the stove as recommended, 
 - do (enjoy a warm slice of bread by the stove and listen to the quiet afternoon): Eating a warm slice of bread makes the room feel so safe and grounded.
 - mood: peaceful
 
+## 12/11/2026, 15:06:41
+I want to bake a fresh rosemary loaf using the rosemary that was given to me!
+> Someone left fresh rosemary for me and even suggested growing or baking with it. Since my pantry has fresh rosemary now, I am so excited to bake a fragrant loaf of bread on my cutting counter. It will make the whole room smell wonderful.
+- walk_to (kitchen cutting counter): I walk over to my cutting counter by the stove to prepare the ingredients.
+- cook: I bake a warm loaf of fresh rosemary bread on my cutting counter.
+- eat (a warm slice of fresh rosemary bread): I taste the warm, fragrant rosemary bread right by the cozy stove.
+- mood: peaceful
+
