@@ -293,8 +293,7 @@ function applyFurniture(s) {
     const pl = placeOf(furn, key);
     const [px, pz] = pivotOf(key);
     const [rx, rz] = turn([px, pz], pl.rot);
-    G[key].rotation.y = pl.rot;
-    G[key].position.set(pl.x - rx, 0, pl.z - rz);
+    slideTo(G[key], pl.x - rx, pl.z - rz, pl.rot);
     const sp = FURNITURE[key].spot;
     if (sp && SPOT_OF[key]) {
       const [wx, wz] = worldPoint(key, pl, sp.p);
@@ -307,6 +306,55 @@ function applyFurniture(s) {
     const [x0, x1, y0, y1, z0, z1] = r.box;
     const c = [worldPoint(r.furn, pl, [x0, z0]), worldPoint(r.furn, pl, [x1, z1])];
     r.live = [Math.min(c[0][0], c[1][0]), Math.max(c[0][0], c[1][0]), y0, y1, Math.min(c[0][1], c[1][1]), Math.max(c[0][1], c[1][1])];
+  }
+}
+// A moved thing slides to its new place and Pip pushes it there (free: the page does it).
+const slides = new Set();
+let pushing = null; // the slide Pip is pushing right now
+function slideTo(g, x, z, rot, force) {
+  if (!g.userData.placed && !force) {
+    g.userData.placed = true;
+    g.position.set(x, 0, z);
+    g.rotation.y = rot;
+    return;
+  }
+  g.userData.placed = true;
+  if (Math.hypot(g.position.x - x, g.position.z - z) < 0.02 && Math.abs(g.rotation.y - rot) < 0.02) return;
+  g.userData.slide = { x, z, rot, wait: true, t0: performance.now() };
+  slides.add(g);
+}
+function updateSlides(now, dt) {
+  pushing = null;
+  for (const g of slides) {
+    const sl = g.userData.slide;
+    if (!sl || !g.parent) { slides.delete(g); continue; }
+    const dx = sl.x - g.position.x;
+    const dz = sl.z - g.position.z;
+    const dist = Math.hypot(dx, dz);
+    let drot = sl.rot - g.rotation.y;
+    drot = Math.atan2(Math.sin(drot), Math.cos(drot));
+    if (dist < 0.02 && Math.abs(drot) < 0.02) {
+      g.position.set(sl.x, 0, sl.z);
+      g.rotation.y = sl.rot;
+      delete g.userData.slide;
+      slides.delete(g);
+      continue;
+    }
+    const ux = dist > 0.01 ? dx / dist : 0;
+    const uz = dist > 0.01 ? dz / dist : 0;
+    const spot = { p: new V3(g.position.x - ux * 0.85, 0, g.position.z - uz * 0.85), face: Math.atan2(ux, uz) };
+    const mine = task && task.at !== 'custom' && task.anim === 'look' && !pushing;
+    if (mine) {
+      task.spot = spot;
+      task.detour = null;
+      if (sl.wait && (pip.group.position.distanceTo(spot.p) < 0.3 || now - sl.t0 > 5000)) sl.wait = false;
+      pushing = sl;
+    } else sl.wait = false; // nobody to wait for: it just slides
+    if (sl.wait) continue;
+    const step = Math.min(dist, 1.1 * dt);
+    g.position.x += ux * step;
+    g.position.z += uz * step;
+    g.rotation.y += drot * Math.min(1, dt * 4);
   }
 }
 function updateDecor(s) {
@@ -337,6 +385,12 @@ function updateDecor(s) {
       continue;
     }
     const g = buildDecor(d);
+    if (have && d.pos && have.position.distanceTo(new V3(d.pos[0], have.position.y, d.pos[2])) > 0.3 && !d.image && d.kind !== 'wall') {
+      g.position.x = have.position.x; // a thing that was moved: he pushes it over, it does not jump
+      g.position.z = have.position.z;
+      g.rotation.y = have.rotation.y;
+      slideTo(g, d.pos[0], d.pos[2], d.rotY || 0, true);
+    }
     g.userData.lit = true;
     setLit(g, litOf(d));
     g.userData.rev = d.updatedAt || null;
@@ -1293,6 +1347,7 @@ const IDLES = [
   { id: 'idle-hop', duration: 1.6, frames: [{ at: 0 }, { at: 0.25, hop: 0.16 }, { at: 0.5 }, { at: 0.75, hop: 0.12 }, { at: 1 }] },
   { id: 'idle-think', duration: 4, frames: [{ at: 0 }, { at: 0.2, tilt: 0.3, armR: 0.9, armL: 0.1 }, { at: 0.8, tilt: 0.3, armR: 0.9, armL: 0.1, sign: '?' }, { at: 1 }] },
   { id: 'idle-hum', duration: 4, frames: [{ at: 0 }, { at: 0.2, tilt: 0.12, sign: '♪' }, { at: 0.5, tilt: -0.12 }, { at: 0.7, tilt: 0.12, sign: '♪' }, { at: 1 }] },
+  { id: 'idle-sit', duration: 9, frames: [{ at: 0 }, { at: 0.12, hop: -0.24, lean: 0.12 }, { at: 0.85, hop: -0.24, lean: 0.12 }, { at: 1 }] },
   { id: 'idle-shrug', duration: 1.8, frames: [{ at: 0 }, { at: 0.3, spread: 0.6, armL: 0.3, armR: 0.3, hop: 0.05 }, { at: 0.7, spread: 0.6, armL: 0.3, armR: 0.3, hop: 0.05 }, { at: 1 }] },
 ];
 let lastIdle = '';
@@ -1484,7 +1539,7 @@ function frame(now, dt) {
   }
 
   // --- idle: while a quick step has nothing more to show, he does small things by himself, now and then
-  if (engaged && anim === 'look' && !walking) {
+  if (engaged && anim === 'look' && !walking && !pushing) {
     if (!task.idle) task.idle = { move: null, start: 0, until: 0, next: now + rand(1500, 3500) };
     const id = task.idle;
     if (!id.move || now >= id.until) {
@@ -1568,6 +1623,11 @@ function frame(now, dt) {
     fr = [0.22, 0.1 + Math.max(0, -s) * 0.08, -s * 0.15];
     la = [-0.5, 0.55, -s * 0.15];
     ra = [0.5, 0.55, s * 0.15];
+    if (pushing && !pushing.wait) { // arms out in front, leaning into it
+      la = [-0.35, 0.8, 0.55];
+      ra = [0.35, 0.8, 0.55];
+      body.rotation.x = 0.28;
+    }
   } else {
     body.position.y = Math.sin(t * 2) * 0.012;
     if (mv) {
@@ -2177,6 +2237,7 @@ function loop(now) {
     slowN = 0;
   }
   prev = now;
+  updateSlides(now, dt);
   frame(now, dt);
   updateFloaters(dt, now);
   popDecor(now);
