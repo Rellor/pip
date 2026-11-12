@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { awakeMinutes } from './sleep.js';
 import { createOutside } from './outside.js';
 import { applyLook } from './look.js';
-import { autoLampOn } from './lighting.js';
+import { autoLampOn, lightAt, levelWord, isLamp } from './lighting.js';
 import { isGreenhouse, plantState, slotSpot } from './gardening.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects } from './furniture.js';
 
@@ -24,7 +24,7 @@ const G = Object.fromEntries(MOVABLE.map((k) => [k, new THREE.Group()]));
 Object.values(G).forEach((g) => scene.add(g));
 scene.background = new THREE.Color(getComputedStyle(document.body).backgroundColor);
 
-const camera = new THREE.PerspectiveCamera(35, 1, 0.2, 1600);
+const camera = new THREE.PerspectiveCamera(35, 1, 1, 1000);
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
 const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
@@ -1680,6 +1680,8 @@ function updateWalk(dt) {
 }
 function setMode(mode) {
   view.mode = mode;
+  camera.near = mode === 'walk' ? 0.15 : 1; // close up in walk mode, far away in the overview
+  camera.updateProjectionMatrix();
   document.body.classList.toggle('walking', mode === 'walk');
   extraWalls.visible = mode === 'walk';
   $('stick').hidden = mode !== 'walk';
@@ -1721,13 +1723,44 @@ function infoFor(hit) {
   const info = REGIONS.find(({ live, box }) => { const [x0, x1, y0, y1, z0, z1] = live ?? box; return x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1; })?.info() ?? null;
   return info ? { info, direct: false } : null;
 }
-pip.group.userData.info = () => {
+const BAR_COLORS = [['Fullness', 'fullness', '#e0974a'], ['Energy', 'energy', '#e2c13c'], ['Wonder', 'wonder', '#9b6fd6'], ['Joy', 'joy', '#e0658c'], ['Calm', 'calm', '#4aa3b8']];
+// Which place he is nearest to, in words.
+const NEAR_WORDS = { piano: 'the piano', bookshelf: 'the bookshelf', computer: 'his desk', bed: 'his bed', plant: 'the plant', window: 'the window', frame: 'the picture', chest: 'his chest', center: 'the middle of the room' };
+function nearestPlace() {
+  let best = null;
+  for (const [k, sp] of Object.entries(SPOTS)) {
+    const d = Math.hypot(sp.p.x - pip.group.position.x, sp.p.z - pip.group.position.z);
+    if (!best || d < best.d) best = { k, d };
+  }
+  return best && best.d < 2.2 ? `Near ${NEAR_WORDS[best.k] || best.k}` : 'Walking around the room';
+}
+function pipInfo() {
   const s = lastState;
-  const [icon, text] = plan && stepNow >= 0 ? headline(plan.steps[stepNow]) : ['•', 'getting ready'];
+  const now = plan && stepNow >= 0 ? headline(plan.steps[stepNow]) : ['•', 'getting ready'];
+  const nextStep = plan && stepNow >= 0 ? plan.steps[stepNow + 1] : null;
+  const sleeping = !!s?.last?.sleeping || (task?.anim === 'rest' && task?.arrived);
   const wearing = (s?.wardrobe || []).filter((c) => c.worn).map((c) => c.name);
-  const bag = (s?.tools || []).map((x) => `• ${x.name}${x.why ? ` — ${x.why}` : ''}`);
-  return { title: 'Pip', lines: [`${icon} ${text}`, s?.mood ? `Mood: ${s.mood}` : '', wearing.length ? `Wearing: ${wearing.join(', ')}` : '', bag.length ? `🎒 In his inventory:\n${bag.join('\n')}` : '🎒 His inventory is empty.', s ? `Fullness ${r1(s.fullness)} · Energy ${r1(s.energy)} · Wonder ${r1(s.wonder)} · Joy ${r1(s.joy)} · Calm ${r1(s.calm)}` : ''].filter(Boolean) };
-};
+  const bag = (s?.tools || []).map((x) => ({ text: x.name, title: x.why || '' }));
+  const lvl = s ? lightAt(s, pip.group.position.x, pip.group.position.z, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : null;
+  const sections = [
+    { now: { icon: now[0], text: now[1], sleepy: sleeping }, next: nextStep ? `Next: ${headline(nextStep).join(' ')}` : '' },
+    { heading: 'Where', chips: [nearestPlace(), pip.group.position.y > 0.25 ? 'Up on something' : '', lvl ? `💡 Light here: ${levelWord(lvl.level)}` : ''].filter(Boolean) },
+  ];
+  if (s) sections.push({ heading: 'How he feels', bars: BAR_COLORS.map(([label, key, color]) => ({ label, value: Number.isFinite(Number(s[key])) ? Number(s[key]) : 5, color })) });
+  if (s?.last?.thought) sections.push({ heading: 'Latest thought', quote: `“${s.last.thought}”`, quoteNote: `${when(s.last.at)}` });
+  sections.push({ heading: 'Wearing', chips: wearing.length ? wearing : ['nothing special'] });
+  sections.push({ heading: 'In his inventory', chips: bag.length ? bag : ['empty'] });
+  return {
+    title: 'Pip',
+    icon: 'P',
+    avatar: true,
+    subtitle: [s?.mood ? `Feeling ${s.mood}` : '', sleeping ? 'asleep' : 'awake'].filter(Boolean).join(' · '),
+    sections,
+    actions: [{ icon: '📖', text: 'See his day', run: () => { hideInfo(); showTab('day'); } }, { icon: '💗', text: 'Open his life tab', run: () => { hideInfo(); showTab('life'); } }],
+    refresh: pipInfo, // the card keeps updating while it is open
+  };
+}
+pip.group.userData.info = pipInfo;
 wallFrame.userData.info = () => ({
   title: 'Beneath the Milky Way',
   image: 'pictures/dark-sky.jpg',
@@ -1745,23 +1778,40 @@ function appById(id) {
 function showUse(d, use) {
   const actions = [];
   if (use.does) runBehavior(d.id, use.does, use.motion);
-  if (use.song) actions.push({ text: '▶ Hear it', run: () => playSong(use.song) });
+  if (use.song) actions.push({ icon: '▶', text: 'Hear it', run: () => playSong(use.song) });
   const app = use.app ? appById(use.app) : null;
-  if (app) actions.push({ text: `▶ Open ${app.name}`, run: () => openApp(app) });
-  actions.push({ text: '← Back', run: () => showInfo(decorInfo(d)) });
-  showInfo({ title: `${d.name}: ${use.label}`, lines: [use.text || ''].filter(Boolean), image: use.view || null, actions });
+  if (app) actions.push({ icon: '▶', text: `Open ${app.name}`, run: () => openApp(app) });
+  actions.push({ icon: '←', text: 'Back', run: () => showInfo(decorInfo(d)) });
+  showInfo({ title: use.label, icon: USE_ICON[use.does] || '👆', subtitle: d.name, image: use.view || null, sections: use.text ? [{ lines: [use.text] }] : [], actions });
 }
+const USE_ICON = { light: '💡', drive: '🚗', spin: '🌀', stand: '🪜', custom: '✨' };
 function decorInfo(d) {
-  if (d.art) return { title: d.name, image: d.image, lines: [`A drawing by Pip. It hangs ${d.label}.`, d.why ? `Why: ${d.why}` : ''].filter(Boolean) };
-  if (d.print) return { title: d.name, image: d.image, lines: [`A small print from Pip's photo printer. It is pinned ${d.label}.`] };
+  if (d.art) return { title: d.name, icon: '🎨', subtitle: `A drawing by Pip · ${d.label}`, image: d.image, sections: d.why ? [{ heading: 'Why he drew it', quote: `“${d.why}”` }] : [] };
+  if (d.print) return { title: d.name, icon: '🖨️', subtitle: `A print from Pip's photo printer · ${d.label}`, image: d.image };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
-  const lines = d.image
-    ? [pic?.by === 'pip' ? `A photo Pip took${pic.caption ? `: "${pic.caption}"` : ''}. It hangs ${d.label}.` : `A picture${pic?.caption ? `: "${pic.caption}"` : ''} that someone gave to Pip. It hangs ${d.label}.`, pic?.notes ? `Pip says: ${pic.notes}` : '']
-    : [`Made by Pip. It is ${d.label}.`, d.why ? `Why: ${d.why}` : '', d.project ? `For his project: ${d.project}` : '', `Made ${when(d.createdAt)}.`];
-  const actions = (d.uses || []).map((u) => ({ text: u.label, run: () => showUse(d, u) }));
-  if (d.song) actions.push({ text: '▶ Hear it', run: () => playSong(d.song) });
-  if (!d.image && !(d.uses || []).length) lines.push('Pip has not decided yet what it is for.');
-  return { title: d.name, lines: lines.filter(Boolean), image: d.image || null, actions };
+  if (d.image) {
+    const mine = pic?.by === 'pip';
+    return { title: d.name, icon: mine ? '📷' : '🖼️', subtitle: `${mine ? 'A photo Pip took' : 'A picture someone gave to Pip'} · ${d.label}`, image: d.image, sections: pic?.caption ? [{ heading: 'Caption', quote: `“${pic.caption}”` }] : [] };
+  }
+  const lamp = isLamp(d);
+  const house = isGreenhouse(d);
+  const sections = [];
+  if (d.why) sections.push({ heading: 'Why he made it', quote: `“${d.why}”` });
+  const facts = [d.label, d.project ? `Project: ${d.project}` : ''].filter(Boolean);
+  if (lamp) {
+    const on = d.auto === 'dark' ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : litOf(d);
+    facts.push(on ? '💡 On' : '💡 Off', d.auto === 'dark' ? '🌙 Switches itself on in the dark' : '');
+  }
+  sections.push({ heading: 'Where', chips: facts.filter(Boolean) });
+  if (house) {
+    const plots = (lastState?.garden?.plots || []).map((p) => { const st = plantState(p); return `🌱 ${p.plant}: ${st.stage}${st.wilted ? ', drooping' : st.moist ? '' : ', thirsty'}${st.ready ? ', ready' : ''}`; });
+    sections.push({ heading: 'Growing here', chips: plots.length ? plots : ['nothing planted yet'] });
+  }
+  const actions = (d.uses || []).map((u) => ({ icon: USE_ICON[u.does] || '👆', text: u.label, run: () => showUse(d, u) }));
+  if (d.song) actions.push({ icon: '▶', text: 'Hear it', run: () => playSong(d.song) });
+  if (!(d.uses || []).length) sections.push({ heading: 'Use', lines: ['Pip has not decided yet what it is for.'] });
+  const byName = [[/stove|oven|kitchen|counter|cook/i, '🍳'], [/stool|chair|bench|seat/i, '🪑'], [/shelf|bookcase|book/i, '📚'], [/lamp|light|lantern|candle/i, '💡'], [/car|robot|toy|truck/i, '🚗'], [/table|desk/i, '🪵'], [/plant|flower|tree|pot/i, '🪴'], [/clock/i, '🕰️'], [/fan|windmill/i, '🌀']].find(([re]) => re.test(d.name))?.[1];
+  return { title: d.name, icon: house ? '🌱' : byName || (lamp ? '💡' : '🛋️'), subtitle: `Made by Pip · ${when(d.createdAt)}`, sections, actions };
 }
 
 const infoBox = $('info');
@@ -1773,8 +1823,17 @@ infoBox.addEventListener('click', (e) => {
     e.preventDefault();
   }
 }, true);
-function showInfo(info) {
+// Which icon a plain popup gets when it does not bring its own.
+const ICONS = [[/piano|stool/i, '🎹'], [/book/i, '📚'], [/computer|desk/i, '💻'], [/\bbed\b/i, '🛏️'], [/plant/i, '🪴'], [/window/i, '🪟'], [/rug/i, '🟠'], [/chest/i, '📦'], [/milky|picture|frame|photo/i, '🖼️']];
+let infoTimer = null;
+let infoLive = null;
+function renderInfo(info) {
   $('infotitle').textContent = info.title || '';
+  const sub = $('infosub');
+  sub.textContent = info.subtitle || '';
+  const icon = $('infoicon');
+  icon.textContent = info.icon || ICONS.find(([re]) => re.test(info.title || ''))?.[1] || '✨';
+  icon.classList.toggle('avatar', !!info.avatar);
   const link = $('infoimglink');
   link.hidden = !info.image;
   if (info.image) {
@@ -1782,24 +1841,67 @@ function showInfo(info) {
     $('infoimg').src = info.image;
   }
   const body = el('div');
-  (info.lines || []).forEach((l, i) => body.append(el('p', l, i && l.startsWith('Photo:') ? 'small' : '')));
-  (info.links || []).forEach((l) => {
-    const p = el('p', null, 'small');
-    p.append(link_(l.url, l.text));
-    body.append(p);
-  });
-  (info.actions || []).forEach((a) => {
-    const b = el('button', a.text, 'small');
-    b.addEventListener('click', a.run);
-    body.append(b);
-  });
+  const section = (sec) => {
+    const box = el('div', null, 'isec');
+    if (sec.heading) box.append(el('h4', sec.heading));
+    if (sec.now) {
+      const row = el('div', null, `inow${sec.now.sleepy ? ' sleepy' : ''}`);
+      row.append(el('span', null, 'dot'), el('span', `${sec.now.icon} ${sec.now.text}`));
+      box.append(row);
+      if (sec.next) box.append(el('div', sec.next, 'inext'));
+    }
+    if (sec.quote) { const q = el('blockquote', sec.quote, 'iquote'); if (sec.quoteNote) q.append(el('small', sec.quoteNote)); box.append(q); }
+    if (sec.bars) for (const b of sec.bars) {
+      const row = el('div', null, 'ibar');
+      const track = el('div', null, 'track');
+      const f = el('div', null, 'fill');
+      f.style.width = `${(Math.max(0, Math.min(10, b.value)) / 10) * 100}%`;
+      f.style.background = b.color;
+      track.append(f);
+      row.append(el('span', b.label), track, el('span', (Math.round(b.value * 10) / 10).toString(), 'val'));
+      box.append(row);
+    }
+    if (sec.chips) { const c = el('div', null, 'ichips'); for (const x of sec.chips) { const chip = el('span', typeof x === 'string' ? x : x.text, 'ichip'); if (x.title) chip.title = x.title; c.append(chip); } box.append(c); }
+    for (const l of sec.lines || []) box.append(el('p', l));
+    return box;
+  };
+  for (const sec of info.sections || []) body.append(section(sec));
+  if (info.lines?.length) body.append(section({ lines: info.lines }));
+  if (info.links?.length) {
+    const wrap = el('div', null, 'ilinks');
+    for (const l of info.links) { const p = el('p'); p.append(link_(l.url, l.text)); wrap.append(p); }
+    body.append(wrap);
+  }
+  if (info.actions?.length) {
+    const wrap = el('div', null, 'iactions');
+    info.actions.forEach((a, i) => {
+      const b = el('button', null, i === 0 && info.actions.length === 1 ? 'primary' : '');
+      if (a.icon) b.append(el('span', a.icon, 'ico'));
+      b.append(el('span', a.text));
+      b.addEventListener('click', a.run);
+      wrap.append(b);
+    });
+    body.append(wrap);
+  }
+  const scroller = $('infoscroll');
+  const top = scroller.scrollTop;
   $('infobody').replaceChildren(body);
+  scroller.scrollTop = top;
+}
+function showInfo(info) {
+  renderInfo(info);
+  clearInterval(infoTimer);
+  infoLive = info.refresh || null;
+  if (infoLive) infoTimer = setInterval(() => { if (!infoBox.hidden && infoLive) renderInfo(infoLive()); }, 1000); // Pip's card shows what he does right now
   if (infoBox.hidden) infoShownAt = performance.now();
   infoBox.hidden = false;
+  $('infoclose').focus({ preventScroll: true });
 }
 const link_ = (url, text) => link(url, text);
 function hideInfo() {
   infoBox.hidden = true;
+  clearInterval(infoTimer);
+  infoLive = null;
 }
 $('infoclose').addEventListener('click', hideInfo);
 infoBox.addEventListener('click', (e) => {
@@ -3457,6 +3559,7 @@ async function takeSnapshot() {
     renderer.setSize(960, 720, false);
     camera.aspect = 960 / 720;
     camera.fov = shot.fov;
+    camera.near = 0.15;
     camera.updateProjectionMatrix();
     camera.position.copy(shot.from);
     camera.lookAt(shot.to);
@@ -3563,6 +3666,7 @@ window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt,
   const p = new URLSearchParams(location.search);
   fx = applyLook(p.get('fx') || 'full', { THREE, renderer, scene, camera, hemi, sun, lamp, G, decorGroups, land });
   if (p.has('tab')) showTab(p.get('tab')); // ?tab=life&open=pantry opens a tab (for checking)
+  if (p.has('info')) setTimeout(() => { const w = p.get('info'); if (w === 'pip') showInfo(pipInfo()); else { const d = (lastState?.decor || []).find((x) => x.name.toLowerCase().includes(w)); if (d) showInfo(decorInfo(d)); else { const r = REGIONS.find((x) => x.info().title.toLowerCase().includes(w)); if (r) showInfo(r.info()); } } }, 8000); // ?info=pip or ?info=greenhouse opens a card (for checking)
   if (p.has('open')) setTimeout(() => openLife(p.get('open')), 2500);
   if (p.has('look')) {
     const [x, z, yaw, pitch] = p.get('look').split(',').map(Number);

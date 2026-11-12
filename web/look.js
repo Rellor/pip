@@ -43,16 +43,25 @@ export function applyLook(mode, ctx) {
   scene.add(bounce, cool);
 
   // --- sunlight through the window: a spot light from outside, only the hole lets it in
-  const winLight = new THREE.SpotLight(0xffe0b0, 3, 0, 0.13, 0.35, 0);
+  const winLight = new THREE.SpotLight(0xffe0b0, 3, 0, 0.1, 0.25, 0);
   winLight.position.set(5, 15, -17);
   winLight.target.position.set(0.3, 0, -1.8);
   winLight.castShadow = true;
   winLight.shadow.mapSize.set(2048, 2048);
   winLight.shadow.bias = -0.0003;
   winLight.shadow.normalBias = 0.02;
+  // The room has no roof in the overview, so rays that come in over the top of the back wall would light Pip and the floor with hard straight edges.
+  // An invisible strip of roof along the back wall (drawn by nothing, it only casts a shadow) keeps the window the only way in.
+  // It stops short of the middle of the room, so the room's own sun, which comes from the front, is not blocked.
+  const roof = new THREE.Mesh(new THREE.PlaneGeometry(11.2, 4.6), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, side: THREE.DoubleSide }));
+  roof.rotation.x = -Math.PI / 2;
+  roof.position.set(0.15, 5.02, -3.3);
+  roof.castShadow = true;
+  scene.add(roof);
   winLight.shadow.camera.near = 8;
   winLight.shadow.camera.far = 40;
   scene.add(winLight, winLight.target);
+  if (new URLSearchParams(location.search).has('nowin')) winLight.visible = false; // for checking which light makes a shadow
   // a faint beam of light in the air, with dust in it
   const hole = [[-0.7, 2.0], [1.3, 2.0], [1.3, 3.8], [-0.7, 3.8]].map(([x, y]) => new THREE.Vector3(x + 0.0, y, -5.15));
   const dir = winLight.target.position.clone().sub(winLight.position).normalize();
@@ -109,7 +118,7 @@ export function applyLook(mode, ctx) {
   function syncBlobs() {
     const groups = [...Object.values(G), ...decorGroups.values()];
     for (const g of groups) {
-      if (!g.visible || g.scale.x < 0.5) continue;
+      if (!g.visible || g.scale.x < 0.5 || g === G.rug) continue; // the rug is flat: it gets no shadow of its own
       let b = blobs.get(g);
       if (!b) {
         b = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), aoMat);
@@ -123,7 +132,7 @@ export function applyLook(mode, ctx) {
       box3.getSize(size);
       box3.getCenter(ctr);
       b.visible = true;
-      b.position.set(ctr.x, 0.012, ctr.z);
+      b.position.set(ctr.x, Math.hypot(ctr.x, ctr.z - 0.8) < 1.9 ? 0.05 : 0.012, ctr.z); // on the rug the shadow lies on the rug, not under it
       b.scale.set(size.x * 1.35 + 0.15, size.z * 1.35 + 0.15, 1);
     }
     for (const [g, b] of blobs) if (!g.parent) { scene.remove(b); blobs.delete(g); }
