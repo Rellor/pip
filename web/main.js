@@ -2453,6 +2453,7 @@ function showTab(name) {
   $('settingsbtn').setAttribute('aria-pressed', String(name === 'settings'));
   document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
   document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
+  if (name === 'life') openLife(null);
   if (name === 'day') loadOlder();
   if (name === 'messages') refreshNtfy(); // look for things typed in the ntfy app as soon as the chat is opened
   if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
@@ -3193,7 +3194,43 @@ function render(s) {
     return row;
   }));
 
+  renderTiles();
   renderStatus(s);
+}
+
+// ---- Life: tiles that show how much there is in each part; a tile opens that part full size
+let lifeOpen = null;
+function openLife(name) {
+  lifeOpen = name;
+  $('lifehome').hidden = !!name;
+  $('lifeopen').hidden = !name;
+  document.querySelectorAll('.lifesec').forEach((sec) => (sec.hidden = sec.dataset.sec !== name));
+  if (name) document.querySelector('[data-pane="life"]').scrollTop = 0;
+}
+$('lifeback').addEventListener('click', () => openLife(null));
+function renderTiles() {
+  const tiles = $('tiles');
+  tiles.textContent = '';
+  for (const sec of document.querySelectorAll('.lifesec')) {
+    const ids = (sec.dataset.count || '').split(',').filter(Boolean);
+    const real = (root) => [...root.querySelectorAll('li:not(.muted), .pic')];
+    const items = ids.length ? ids.flatMap((id) => real($(id))) : real(sec);
+    const imgs = [...sec.querySelectorAll('.pic img')].slice(0, 4);
+    const text = items.map((x) => ([...x.children].length > 1 ? [...x.children].map((c) => c.textContent.trim()).filter(Boolean).join(' · ') : x.textContent).replace(/\s+/g, ' ').trim()).filter(Boolean);
+    const tile = el('button', null, 'tile');
+    tile.type = 'button';
+    tile.append(el('div', null, 't'));
+    tile.firstChild.append(el('span', `${sec.dataset.icon} ${sec.dataset.title}`), el('small', sec.dataset.sec === 'story' ? 'read' : String(items.length)));
+    if (imgs.length) {
+      const th = el('div', null, 'thumbs');
+      for (const i of imgs) { const c = el('img'); c.src = i.src; c.alt = ''; th.append(c); }
+      tile.append(th);
+      tile.classList.add('wide');
+    } else if (sec.dataset.sec === 'story') tile.append(el('div', (sec.querySelector('.story')?.textContent || '').slice(0, 70) + '…', 'pv'));
+    else tile.append(el('div', text.slice(0, 3).join(' · ') || 'nothing yet', 'pv'));
+    tile.addEventListener('click', () => openLife(sec.dataset.sec));
+    tiles.append(tile);
+  }
 }
 
 // Pip's plan: a few steps, spread over the time until his next wake-up. The page works out which step is happening now.
@@ -3427,6 +3464,8 @@ window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt,
 // ?az=0.8&el=0.1&zoom=0.6 or ?look=x,z,yaw,pitch (walk mode) start from another side (for checking the window)
 {
   const p = new URLSearchParams(location.search);
+  if (p.has('tab')) showTab(p.get('tab')); // ?tab=life&open=pantry opens a tab (for checking)
+  if (p.has('open')) setTimeout(() => openLife(p.get('open')), 2500);
   if (p.has('look')) {
     const [x, z, yaw, pitch] = p.get('look').split(',').map(Number);
     setMode('walk');
