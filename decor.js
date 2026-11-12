@@ -565,12 +565,13 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
     const t = nextToSpot(decor, { ...d, from: [e.pos[0], e.pos[2]] }, null, hw * 2, hd * 2, e);
     if (t.failed) return t;
     let last = null;
-    for (const [ax, az] of t.alts) {
+    const askedSide = Boolean(String(d.side ?? '').trim()); // he named a side: it goes there or he is told why not, never quietly somewhere else
+    for (const [ax, az] of askedSide ? t.alts.slice(0, 1) : t.alts) {
       const r = moveThing(decor, chest, { name: e.name, x: ax, z: az }, atMs, now);
       if (!r.failed) return r;
       last ??= r;
     }
-    return { failed: `${last.failed}. Every side of ${d.next_to} is taken or too tight` };
+    return { failed: askedSide ? `${last.failed}. There is no room on the ${String(d.side).trim()} side of ${d.next_to}. He can name another side, or leave the side out and the nearest free side is used` : `${last.failed}. Every side of ${d.next_to} is taken or too tight` };
   }
   if (d.next_to && e.kind !== 'floor') return { failed: 'it can only be put next to something if it stands on the floor' };
   if (e.kind === 'floor' && (hasXZ || dx || dz || (want && ZONES[want].kind === 'floor'))) {
@@ -1350,12 +1351,13 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
     if (t.failed) return t;
     const off = [(me.x0 + me.x1) / 2 - cur.x, (me.z0 + me.z1) / 2 - cur.z]; // place is the pivot, not the center
     let last = null;
-    for (const [ax, az, k, own] of t.alts) {
+    const askedSide = Boolean(String(d.side ?? '').trim()); // he named a side: it goes there or he is told why not, never quietly somewhere else
+    for (const [ax, az, k, own] of askedSide ? t.alts.slice(0, 1) : t.alts) {
       const r = moveFurniture(decor, furn, key, { x: ax - off[0], z: az - off[1] }, atMs, now);
       if (!r.failed) return { ...r, label: `${r.label} (on the ${own} of ${furnitureKey(d.next_to) ? FURNITURE[furnitureKey(d.next_to)].n : d.next_to}, toward the ${k} of the room)` };
       last ??= r;
     }
-    return { failed: `${last.failed}. Every side of ${d.next_to} is taken or too tight` };
+    return { failed: askedSide ? `${last.failed}. There is no room on the ${String(d.side).trim()} side of ${d.next_to}. He can name another side, or leave the side out and the nearest free side is used` : `${last.failed}. Every side of ${d.next_to} is taken or too tight` };
   }
   const x = num2(d.x) ?? nx ?? cur.x + (Math.min(2, Math.max(-2, Number(d.dx) || 0)));
   const z = num2(d.z) ?? nz ?? cur.z + (Math.min(2, Math.max(-2, Number(d.dz) || 0)));
@@ -1378,7 +1380,7 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
       place.rot = QUARTERS.find((q) => { const [a, b] = turn(f.back, q); return Math.abs(a - want[0]) < 0.01 && Math.abs(b - want[1]) < 0.01; }) ?? cur.rot;
       u = union(rectsAt(place));
       const g2 = { left: u.x0 + 5, right: 5 - u.x1, back: u.z0 + 5, front: 5 - u.z1 }[wall];
-      if (g2 > 0) {
+      if (g2 > 0.06) {
         const s = g2 - 0.06; // stay inside the 0.05 the game keeps free along the wall
         if (wall === 'left') place.x -= s;
         if (wall === 'right') place.x += s;
