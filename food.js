@@ -1,7 +1,7 @@
 // Pip's pantry and kitchen. A small daily stock of plain ingredients refills by itself, so he never starves.
 // Dishes are cooked in a kitchen he builds himself. Eating a dish fills him more than a plain snack.
 
-export const BASICS = ['bread', 'rice', 'eggs', 'potatoes', 'carrots', 'apples', 'milk', 'cheese', 'flour', 'butter', 'onions', 'tomatoes'];
+export const BASICS = ['bread', 'rice', 'eggs', 'potatoes', 'carrots', 'apples', 'milk', 'cheese', 'flour', 'butter', 'onions', 'tomatoes', 'rosemary'];
 export const MAX_PANTRY = 24;
 export const MAX_COOKS_PER_DAY = 4;
 export const DISH_GAIN = 5;
@@ -19,12 +19,12 @@ const find = (pantry, name, kind) => pantry.find((p) => p.qty > 0 && (!kind || p
 export function refillPantry(s, now = Date.now()) {
   s.pantry ??= [];
   const day = new Date(now).toISOString().slice(0, 10);
-  if (s.pantryDay === day) return;
+  const newDay = s.pantryDay !== day;
   s.pantryDay = day;
   for (const name of BASICS) {
     const have = s.pantry.find((p) => p.kind === 'ingredient' && p.name === name);
-    if (have) have.qty = Math.max(have.qty, 2);
-    else s.pantry.push({ name, kind: 'ingredient', qty: 2 });
+    if (!have) s.pantry.push({ name, kind: 'ingredient', qty: 2 }); // a new plain ingredient shows up right away
+    else if (newDay) have.qty = Math.max(have.qty, 2);
   }
 }
 
