@@ -1197,6 +1197,7 @@ function planFor(last) {
       const m = last.made;
       if (!m?.stand) return { at: 'center', anim: 'look' };
       const [sx, sz] = m.stand;
+      if (m.does === 'stand' && m.height) return { at: 'custom', anim: 'look', spot: { p: new V3(m.pos[0], 0, m.pos[2]), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz), y: m.height } }; // he climbs on top of it
       return { at: 'custom', anim: 'look', spot: { p: new V3(sx, 0, sz), face: Math.atan2(m.pos[0] - sx, m.pos[2] - sz) } };
     }
     case 'make_app':

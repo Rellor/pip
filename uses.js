@@ -7,7 +7,7 @@ import { cleanSvg } from './art.js';
 
 export const MAX_USES = 3;
 export const EFFECTS = ['wonder', 'joy', 'calm', 'fullness'];
-export const DOES = ['light', 'drive', 'spin']; // what the website plays when it is used
+export const DOES = ['light', 'drive', 'spin', 'stand']; // what the website plays when it is used
 export const VIEW_MAX_CHARS = 6_000;
 export const MAX_MOTION_STEPS = 12;
 export const MAX_MOTION_METRES = 8; // all the forward and back together

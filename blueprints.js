@@ -8,6 +8,7 @@ export const CAPS = [
   { id: 'glow', what: 'a part that glows, like a light, a screen or an eye', how: 'a part with "glow": true' },
   { id: 'light', what: 'a lamp or light that switches on and off', how: 'a use with "does": "light"' },
   { id: 'drive', what: 'a vehicle or toy on the floor that drives a route I design (needs 2 or more round parts as wheels)', how: 'a use with "does": "drive" and "motion" steps' },
+  { id: 'stand', what: 'something I climb on and stand on top of (a stool, a step, a platform)', how: 'a use with "does": "stand"' },
   { id: 'spin', what: 'something that turns around (a fan, a windmill, a top)', how: 'a use with "does": "spin"' },
   { id: 'song', what: 'a song, a tune or a sound that plays when it is used', how: '"song" on the thing, or compose' },
   { id: 'text', what: 'a use that tells what happens and can show a small picture', how: 'uses with text and view' },
