@@ -11,6 +11,7 @@ import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesText, movesGuide } from './moves.js';
 import { measureThing, sizesGuide } from './sizes.js';
+import { bonusRewards } from './rewards.js';
 import { ensureTools, NEEDS, toolsText, toolsGuide, toolFor, missingTool, addTool, toolKind, toolLabel, fits, craftTool, MAX_TOOLS } from './tools.js';
 import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
@@ -1670,6 +1671,8 @@ async function wakeUp() {
   }
   state.notes = state.notes.slice(-30);
 
+  const rewarded = bonusRewards(state, steps);
+  if (rewarded.length) console.log(`   🌟 ${rewarded.join(', ')}`);
   // The day log: one entry per step, stamped with when the step starts, so the page can show his day as it happens.
   state.log = state.log.filter((e) => Date.parse(e.at) <= startedAt);
   steps.forEach((st, i) => {

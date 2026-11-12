@@ -75,8 +75,8 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
       if (BARS.includes(bar)) s[bar] += 0.4;
       break;
     case 'request_ability':
-      s.wonder += 0.4;
-      s.joy += 0.3;
+      s.wonder += 0.2;
+      s.joy += 0.1;
       break;
     case 'use':
     case 'add_use':
@@ -99,8 +99,7 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
       s.calm += 0.05;
       break;
     case 'ask_for':
-      s.calm -= 0.2;
-      break;
+      break; // asking for help is fine: it costs nothing
     case 'take_photo':
       s.wonder += 0.6;
       s.joy += 0.2;
