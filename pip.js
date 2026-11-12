@@ -9,7 +9,7 @@ import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, limitsText } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityGuide, blueprintDue, blueprintGaps, requestAbility } from './blueprints.js';
-import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, spaceLeft, accessProblem, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror, themeFatigue } from './mirror.js';
@@ -480,6 +480,7 @@ ${toolsGuide()}
 ${sizesGuide()}
 ${lightGuide()}
 ${gardenGuide()}
+${furnitureSense()}
 ${movesGuide()}
 ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
@@ -539,6 +540,11 @@ ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two 
 "remember": one thing worth remembering for a long time, {"text": "...", "importance": 1 to 10 (1 is ordinary, 10 changes my life)}, or null,
 "reflections_drop": exact text of something I realized before that is not true any more (or []),
 "tell": a message to whoever looks in on me, in my own words, or null. If nobody has written to me, I write rarely, and only when I have something NEW to say: something I discovered or made, a project, a feeling I cannot explain, or a question about their world. If someone HAS written to me, I usually answer what they said or asked, and I tell them something fresh from my own day instead of what I already told them (see above). I never repeat myself.`;
+
+// Where things go so they can still be used (fixed text).
+const furnitureSense = () => `FURNITURE SENSE
+Things need room to be used. I stand somewhere to use each thing (the spot where I stand is shown with it), so I never put something on that spot: a stool for the window needs the floor in front of the window, the piano needs its stool, the bed needs space beside it. When the place I want is taken, I do not just put the new thing in front of the old one. I first move the old thing (move_thing, for example next_to the new place), then I put the new one down. Things that belong together stand together: if I put my greenhouse at the window, my window stool stands beside it. After I place something the game tells me if it covers where I stand to use something else, and I fix it right away. When my room is getting tight I can rearrange, put things in my chest, or ask for more space with asks_add.
+`;
 
 // How his greenhouse garden works (fixed text).
 const gardenGuide = () => `GROWING PLANTS
@@ -621,7 +627,7 @@ On the FLOOR I can put something anywhere I want, I just give x and z (the middl
 ${(() => { const m = roomMap(s.decor); return `${m.rows.join('\n')}\nP piano, o piano stool, B bookshelf, D desk, E bed, L plant, C my chest${m.legend.length ? `, ${m.legend.join(', ')}` : ''}`; })()}
 ROOM BESIDE EACH THING (width x depth at x,z; which sides have room):
 ${bullets(freeSides(s.decor), 'nothing')}${wallNotes(s.decor).length ? `\nON MY WALLS, SOMETHING LOOKS WRONG (I can move one with move_thing {name, wall, along, height}):\n${bullets(wallNotes(s.decor), '')}` : ''}
-${(() => { const c = crowding(s.decor); return `MY ROOM HAS ${c.count} things of at most ${c.cap}, and about ${c.free}% of my floor is free.${c.count >= c.cap * 0.8 || c.free < 35 ? ' It is getting crowded. I do not have to keep everything: I can put things in my chest, take something away, build storage (a shelf, closet or cabinet gives room for 6 more things), or ask for more space with asks_add.' : ''}`; })()}
+${(() => { const c = crowding(s.decor); const sp = spaceLeft(s.decor); const tight = sp < 62 || c.count >= c.cap * 0.8; return `MY ROOM HAS ${c.count} things of at most ${c.cap}. Only about ${sp}% of my floor is free to walk on and to put things on (everything needs walking room around it).${tight ? ' It is getting tight and a bit awkward. I do not have to keep everything: I can put things in my chest, take something away, build storage (a shelf, closet or cabinet gives room for 6 more things), rearrange my furniture to make better use of the room (move_thing), or ask for more space with asks_add (a bigger room, an extension, a second room: I say what I would like and why).' : ''}`; })()}
 On a WALL (the back wall with the window, or the left wall) I can hang something flat anywhere it fits: "wall": "back" or "left", "along": where along the wall (x on the back wall, z on the left wall) and "height": how high its middle is, for example "wall": "left", "along": -2, "height": 2.5. The window, the framed photo, the piano, the bookshelf, the desk and my screen are in the way, and so is anything else I hung there or a tall thing standing against the wall.
 On TOP of something I put it with "on": "desk", "piano", "bookshelf", "bed", the name of something I made on the floor (a shelf, a table, a closet) or the name of a shelf I built on the wall (it has a flat board for each level: "level": "top", "middle", "bottom" or a number from the bottom), and optionally x and z. A thing that stands on something does not hang on a wall: to move it I use "on", or x and z. A tall closet or shelf gives me a new surface on top. It goes to the nearest free place on it.
 I made ${s.decor.filter((d) => Date.now() - Date.parse(d.createdAt) < 86_400_000).length} things in the last 24 hours (at most ${MAX_PER_DAY} a day).
@@ -1349,7 +1355,7 @@ async function wakeUp() {
         const x = Number(st.details.x);
         const z = Number(st.details.z);
         const off = st.made.entry.kind === 'floor' && Number.isFinite(x) && Number.isFinite(z) ? Math.hypot(st.made.entry.pos[0] - x, st.made.entry.pos[2] - z) : 0;
-        st.made.warn = st.made.autoNote?.startsWith('I gave no place, so it stands') ? st.made.autoNote : purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (promised.length ? `the blueprint promised more than it does yet: ${promised.join(', ')}` : null) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
+        st.made.warn = st.made.autoNote?.startsWith('I gave no place, so it stands') ? st.made.autoNote : accessProblem(state.decor, st.made.entry) || purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (promised.length ? `the blueprint promised more than it does yet: ${promised.join(', ')}` : null) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
         st.made.hint = st.made.warn ? null : purposeHint(st.made.entry) || (added ? `it works: I gave it a use that really does it (${st.made.entry.uses.find((u) => u.does)?.label})` : null);
       }
     }
@@ -1430,6 +1436,11 @@ async function wakeUp() {
         state.furniture = { ...(state.furniture ?? {}), [st.made.furniture.key]: st.made.furniture.place, moves: st.made.furniture.moves };
         setFurniture(state.furniture);
       }
+      if (!st.made.failed) { // did he cover something he needs to reach?
+        const moved = state.decor.find((x) => !x.image && x.name === st.made.name);
+        const aw = moved && accessProblem(state.decor, moved);
+        if (aw) st.made.warn = [st.made.warn, aw].filter(Boolean).join('; also ');
+      }
     }
     if (st.action === 'extend_thing') {
       const need = missingTool(state, 'extend_thing');
@@ -1495,7 +1506,11 @@ async function wakeUp() {
     }
     if (st.action === 'take_out') {
       st.made = takeOut(state.decor, state.stored, st.details.name, st.details.where, stepStart);
-      if (st.made.entry) state.decor.push(st.made.entry);
+      if (st.made.entry) {
+        state.decor.push(st.made.entry);
+        const aw = accessProblem(state.decor, st.made.entry);
+        if (aw) st.made.warn = aw;
+      }
     }
   });
 
@@ -1819,7 +1834,7 @@ async function wakeUp() {
     if (st.litUp) entry.litUp = st.litUp;
     if (st.action === 'measure') Object.assign(entry, { name: text(d.name, 60), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_tool') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), failed: st.made?.failed ?? null });
-    if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: withWarn(st.made?.entry?.label ?? null, st.made), failed: st.made?.failed ?? null });
     if (entry.failed && entry.thought) entry.thought = `I wanted to, but it did not work out. (${clip(entry.thought, 140)})`; // what I wrote before it happened is a wish, not a result
     state.log.push(entry);
     observeStep(state, entry);

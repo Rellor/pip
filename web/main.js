@@ -2315,6 +2315,16 @@ function buildPlant(sp, st) {
   if (st.wilted) g.rotation.z = 0.35;
   return g;
 }
+// Growing between stages: a plant is built for its stage and then gets slowly bigger until the next stage (hours of damp soil decide).
+function growMul(st) {
+  const [a, b, c] = st.sp.grow;
+  const span = { seed: [0, a], sprout: [a, b], young: [b, c], grown: [c, c + 12] }[st.stage];
+  if (!span) return 1;
+  const p = Math.max(0, Math.min(1, (st.g - span[0]) / (span[1] - span[0])));
+  const now = FACTOR[st.stage] || 0.3;
+  const next = { seed: 0.3, sprout: 0.6, young: 1, grown: 1 }[st.stage];
+  return st.stage === 'seed' ? 0.6 + 0.4 * p : (now + (next - now) * p) / now;
+}
 function refreshGarden() {
   const garden = lastState?.garden;
   const houses = (lastState?.decor || []).filter(isGreenhouse).filter((d) => Date.parse(d.at) <= Date.now());
@@ -2330,13 +2340,14 @@ function refreshGarden() {
     let v = plantViews.get(p.id);
     if (!v || v.key !== key) {
       if (v) v.group.parent?.remove(v.group);
-      v = { group: buildPlant(st.sp, st), key, phase: Math.random() * 6, wilted: st.wilted };
+      v = { group: buildPlant(st.sp, st), key, phase: Math.random() * 6, wilted: st.wilted, mul: growMul(st), mulTarget: growMul(st) };
       const [x, y, z] = slotSpot(p.slot % 4);
       v.group.position.set(x, y, z);
       v.born = performance.now();
       hg.add(v.group);
       plantViews.set(p.id, v);
     }
+    v.mulTarget = growMul(st); // between two stages it keeps growing a little all the time
   }
   for (const [id, v] of plantViews) if (!alive.has(id)) { v.group.parent?.remove(v.group); plantViews.delete(id); }
 }
@@ -2361,7 +2372,8 @@ function loop(now) {
   if (now > gardenAt && lastState) { gardenAt = now + 3000; refreshGarden(); }
   for (const v of plantViews.values()) { // the plants sway a little and pop up when they grow
     const k = Math.min(1, (now - v.born) / 800);
-    v.group.scale.setScalar(0.2 + 0.8 * (1 - Math.pow(1 - k, 3)));
+    v.mul += (v.mulTarget - v.mul) * 0.04;
+    v.group.scale.setScalar((0.2 + 0.8 * (1 - Math.pow(1 - k, 3))) * v.mul);
     if (!v.wilted) v.group.rotation.z = Math.sin(now / 1500 + v.phase) * 0.03;
   }
   if (now > autoAt && lastState) { // lamps set to "dark" switch by themselves when the real light changes

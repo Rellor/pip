@@ -1002,6 +1002,39 @@ export function freeSides(decor) {
   });
 }
 // How full his room is.
+// How much of the floor is really free to walk on and put things on: what is left when everything has half a metre of walking room around it.
+export function spaceLeft(decor) {
+  const obs = obstacles(decor, null, true);
+  let free = 0;
+  let total = 0;
+  for (let x = -4.9; x < 4.95; x += 0.25) for (let z = -4.9; z < 4.95; z += 0.25) {
+    total++;
+    if (!obs.some((o) => x > o.x0 - 0.5 && x < o.x1 + 0.5 && z > o.z0 - 0.5 && z < o.z1 + 0.5)) free++;
+  }
+  return Math.round((100 * free) / total);
+}
+
+// Things stand where they can still be used. Returns why a floor thing that was just put down is in a bad place, or null.
+// 1) it covers the spot where Pip stands to use something else. 2) it stands in front of the window, where the window stool should be reachable.
+export function accessProblem(decor, e) {
+  if (!e || e.kind !== 'floor' || !e.pos || e.image) return null;
+  const [hw, hd] = footOf(e);
+  const r = rectAt([hw, hd], e.pos[0], e.pos[2], e.rotY);
+  const hit = (px, pz, m = 0.2) => px > r.x0 - m && px < r.x1 + m && pz > r.z0 - m && pz < r.z1 + m;
+  for (const o of decor) {
+    if (o === e || o.image || !Array.isArray(o.stand)) continue;
+    if (hit(o.stand[0], o.stand[1])) return `it stands where I stand to use ${o.name}, so I cannot reach ${o.name} any more. I move ${o.name} (move_thing) so it can still be used, or put this somewhere else`;
+  }
+  const isStep = /\b(stool|step|steps|ladder|platform|podium)\b/i.test(e.name);
+  const win = { x0: -0.9, x1: 1.5, z0: -5, z1: -3.7 }; // the floor in front of the window
+  const over = r.x1 > win.x0 && r.x0 < win.x1 && r.z1 > win.z0 && r.z0 < win.z1;
+  if (!isStep && over) {
+    const stool = decor.find((o) => o !== e && /\b(stool|step|steps|ladder|platform|podium)\b/i.test(o.name) && /window|sky|outside|stars/i.test(`${o.name} ${o.why ?? ''}`));
+    return stool ? `it stands in front of the window, in the way of ${stool.name} that I use to look out. I move ${stool.name} next to it (move_thing next_to) first, so I can still reach the window` : 'it stands in front of the window, where I look out. If I want it there I keep room beside it to stand';
+  }
+  return null;
+}
+
 export function crowding(decor) {
   const cap = capOf(decor);
   const used = obstacles(decor, null, true).slice(fixedRects().length).reduce((a, o) => a + (o.x1 - o.x0) * (o.z1 - o.z0), 0);
