@@ -1380,9 +1380,44 @@ function startPhrase(notes, step, now) {
   task.phrase = { notes, step, t0: now, lastIdx: -1 };
   playNotes(notes, step);
 }
+// Walking: go round furniture and things on the floor instead of through them (free: the page does it).
+// Near his goal he walks straight so he can still reach it.
+let steerSide = 1; // once he picks a side to go round, he keeps it (no dithering in front of a wall)
+function steer(pos, dir, dist) {
+  if (dist < 0.8) return dir;
+  const tryAngle = (a) => {
+    const c = Math.cos(a);
+    const s = Math.sin(a);
+    const d = new V3(dir.x * c - dir.z * s, 0, dir.x * s + dir.z * c);
+    return floorBlocked(pos.x + d.x * 0.5, pos.z + d.z * 0.5) ? null : d;
+  };
+  const straight = tryAngle(0);
+  if (straight) return straight;
+  for (const a of [0.6, 1.2, 1.8, -0.6, -1.2, -1.8]) {
+    const d = tryAngle(a * steerSide);
+    if (d) return d;
+  }
+  steerSide = -steerSide; // boxed in on that side: try the other way next time
+  return dir;
+}
+// A free place to walk to, away from furniture and things; sometimes by something interesting, sometimes just anywhere.
+function wanderSpot(from) {
+  if (Math.random() < 0.3) {
+    const names = Object.keys(SPOTS).filter((n) => n !== 'chest' && SPOTS[n].p.distanceTo(from) > 1);
+    if (names.length) return SPOTS[names[Math.floor(Math.random() * names.length)]];
+  }
+  for (let i = 0; i < 20; i++) {
+    const p = new V3(rand(-4.1, 4.1), 0, rand(-3.6, 4.1));
+    if (p.distanceTo(from) < 1.3 || floorBlocked(p.x, p.z)) continue;
+    const look = SPOTS[Object.keys(SPOTS)[Math.floor(Math.random() * Object.keys(SPOTS).length)]].p;
+    return { p, face: Math.atan2(look.x - p.x, look.z - p.z) };
+  }
+  return null;
+}
 function startBreak() {
   const options = ['window', 'plant', 'center', 'bookshelf', 'computer'].filter((n) => n !== task.at);
-  task.detour = { spot: SPOTS[options[Math.floor(Math.random() * options.length)]], until: 0 };
+  const free = Math.random() < 0.5 ? wanderSpot(pip.group.position) : null;
+  task.detour = { spot: free || SPOTS[options[Math.floor(Math.random() * options.length)]], until: 0 };
   task.phrase = null;
 }
 
@@ -1418,8 +1453,9 @@ function frame(now, dt) {
       walking = true;
       g.rotation.x = lerp(g.rotation.x, 0, dt * 8);
       g.position.y = lerp(g.position.y, 0, dt * 8);
-      g.position.addScaledVector(to.normalize(), Math.min(dist, 2.2 * dt));
-      turnTo(Math.atan2(to.x, to.z), dt * 10);
+      const dir = steer(g.position, to.normalize(), dist);
+      g.position.addScaledVector(dir, Math.min(dist, 2.2 * dt));
+      turnTo(Math.atan2(dir.x, dir.z), dt * 10);
     } else {
       turnTo(spot.face, dt * 6);
       g.position.y = lerp(g.position.y, spot.y || 0, dt * 6);
@@ -1453,7 +1489,12 @@ function frame(now, dt) {
     const id = task.idle;
     if (!id.move || now >= id.until) {
       id.move = null;
-      if (now >= id.next) {
+      if (now >= id.next && task.at !== 'custom' && Math.random() < 0.55) {
+        // he strolls somewhere new and stays there (a quick step has no place he must keep)
+        const w = wanderSpot(g.position);
+        if (w) task.spot = w;
+        id.next = now + rand(5000, 12000);
+      } else if (now >= id.next) {
         id.move = pickIdle();
         id.start = now;
         id.until = now + id.move.duration * 1000;
