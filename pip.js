@@ -1294,10 +1294,18 @@ async function wakeUp() {
         state.decor.push(st.made.entry);
         const promised = st.details.blueprint ? markBuilt(state, st.details.blueprint, new Date(stepStart).toISOString(), st.made.entry) : [];
         const added = ensureBehaviors(st.made.entry);
+        const noSpot = st.made.entry.kind === 'floor' && !st.details.on && !st.details.wall && !st.details.where && !(Number.isFinite(Number(st.details.x)) && Number.isFinite(Number(st.details.z)));
+        if (noSpot) { // no place given: it would silently stand in the middle. If he said "next to the stove", put it there; otherwise say so
+          const said = `${st.details.why || ''} ${st.details.thought || ''} ${st.details.name || ''}`.toLowerCase();
+          const m = said.match(/(?:next to|beside|by|near|against|right of|left of)\s+(?:my |the |a )?([a-z][a-z ]{2,30})/);
+          const known = m && [...state.decor.filter((o) => !o.image && o.id !== st.made.entry.id).map((o) => o.name), ...MOVABLE].find((n) => m[1].trim().includes(n.toLowerCase()) || n.toLowerCase().includes(m[1].trim()));
+          const moved = known ? moveThing(state.decor, state.chest, { name: st.made.entry.name, next_to: known }, stepStart) : null;
+          st.made.autoNote = moved && !moved.failed ? `I gave no place, so it was put next to ${known}` : `I gave no place, so it stands in the middle of the room (x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}). If I want it somewhere else I move it with move_thing {name, next_to: "..."} or {name, x, z}`;
+        }
         const x = Number(st.details.x);
         const z = Number(st.details.z);
         const off = st.made.entry.kind === 'floor' && Number.isFinite(x) && Number.isFinite(z) ? Math.hypot(st.made.entry.pos[0] - x, st.made.entry.pos[2] - z) : 0;
-        st.made.warn = purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (promised.length ? `the blueprint promised more than it does yet: ${promised.join(', ')}` : null) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
+        st.made.warn = st.made.autoNote?.startsWith('I gave no place, so it stands') ? st.made.autoNote : purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (promised.length ? `the blueprint promised more than it does yet: ${promised.join(', ')}` : null) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
         st.made.hint = st.made.warn ? null : purposeHint(st.made.entry) || (added ? `it works: I gave it a use that really does it (${st.made.entry.uses.find((u) => u.does)?.label})` : null);
       }
     }
