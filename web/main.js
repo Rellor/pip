@@ -688,53 +688,95 @@ cyl(G.plant, [0.3, 0.22, 0.4], 0xc9604a, [4.1, 0.2, -4.1]);
 function makePip() {
   const group = new THREE.Group();
   group.rotation.order = 'YXZ';
-  const fur = mat(0xffc47a, { roughness: 0.7 });
   const body = new THREE.Group();
   group.add(body);
+  const furC = 0xffc47a;
+  const flat = mat(furC, { roughness: 0.7 });
+  const put = (geo, m, p, sc = [1, 1, 1], r = [0, 0, 0], parent = body) => {
+    const o = new THREE.Mesh(geo, m);
+    o.position.set(...p);
+    o.scale.set(...sc);
+    o.rotation.set(...r);
+    parent.add(o);
+    return o;
+  };
+  const twoSided = (m) => {
+    m.side = THREE.DoubleSide;
+    return m;
+  };
+  // a cone with a softly rounded tip (the ears), as a lathe: base radius R, height H, tip radius tr
+  const softCone = (R, H, tr) => {
+    const pts = [new THREE.Vector2(R, -H / 2), new THREE.Vector2(tr * 1.02, H / 2 - tr)];
+    for (let i = 1; i <= 8; i++) {
+      const a = (i / 8) * (Math.PI / 2);
+      pts.push(new THREE.Vector2(Math.max(0.0001, tr * Math.cos(a)), H / 2 - tr + tr * Math.sin(a)));
+    }
+    return new THREE.LatheGeometry(pts, 28);
+  };
 
-  const belly = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 24), fur);
+  // body: a soft shade from a warmer back to a lighter bottom, with a pale belly
+  const bg = new THREE.SphereGeometry(0.5, 40, 30);
+  const bp = bg.attributes.position;
+  const col = new Float32Array(bp.count * 3);
+  const top = new THREE.Color(0xffb764);
+  const bottom = new THREE.Color(0xffdba6);
+  const tmp = new THREE.Color();
+  for (let i = 0; i < bp.count; i++) {
+    tmp.copy(bottom).lerp(top, (bp.getY(i) + 0.5) / 1);
+    col.set([tmp.r, tmp.g, tmp.b], i * 3);
+  }
+  bg.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const belly = new THREE.Mesh(bg, new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.7 }));
   belly.scale.set(1, 1.1, 0.95);
   belly.position.y = 0.65;
   belly.castShadow = true;
   body.add(belly);
+  put(new THREE.SphereGeometry(0.5, 24, 18), mat(0xffe9c8, { roughness: 0.8 }), [0, 0.5, 0.2], [0.62, 0.62, 0.55]);
+  put(new THREE.SphereGeometry(0.17, 20, 16), mat(0xffd9a6), [0, 0.38, -0.46]); // tail
 
+  // ears: pointed, with a softly rounded tip and a pink inside
   [-1, 1].forEach((s) => {
-    const ear = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.3, 16), fur);
-    ear.position.set(s * 0.3, 1.2, 0);
-    ear.rotation.z = -s * 0.4;
+    const holder = new THREE.Group();
+    holder.position.set(s * 0.3, 1.2, 0);
+    holder.rotation.z = -s * 0.4;
+    body.add(holder);
+    const ear = new THREE.Mesh(softCone(0.154, 0.325, 0.034), twoSided(mat(furC, { roughness: 0.7 })));
     ear.castShadow = true;
-    body.add(ear);
+    holder.add(ear);
+    put(softCone(0.088, 0.24, 0.02), twoSided(mat(0xff9fa0, { roughness: 0.85 })), [0, -0.03, 0.045], [1, 1, 0.45], [0, 0, 0], holder);
   });
 
+  // eyes: dark and glossy with a brown iris and two highlights (the page squashes them to blink)
+  const r = 0.085;
   const eyes = [-1, 1].map((s) => {
     const eye = new THREE.Group();
     eye.position.set(s * 0.17, 0.8, 0.44);
-    const ball = new THREE.Mesh(new THREE.SphereGeometry(0.075, 16, 12), mat(0x2b211d));
-    const shine = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-    shine.position.set(0.02, 0.025, 0.06);
-    eye.add(ball, shine);
+    eye.add(new THREE.Mesh(new THREE.SphereGeometry(r, 24, 18), mat(0x1a1310, { roughness: 0.25 })));
+    put(new THREE.SphereGeometry(r * 0.72, 20, 14), mat(0x7b4a28, { roughness: 0.3 }), [0, -0.004, r * 0.45], [1, 1, 0.5], [0, 0, 0], eye);
+    put(new THREE.SphereGeometry(r * 0.42, 16, 12), mat(0x120c0a, { roughness: 0.2 }), [0, 0, r * 0.6], [1, 1, 0.5], [0, 0, 0], eye);
+    put(new THREE.SphereGeometry(r * 0.34, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }), [r * 0.3, r * 0.34, r * 0.85], [1, 1, 1], [0, 0, 0], eye);
+    put(new THREE.SphereGeometry(r * 0.16, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }), [-r * 0.28, -r * 0.3, r * 0.88], [1, 1, 1], [0, 0, 0], eye);
     body.add(eye);
     return eye;
   });
-  [-1, 1].forEach((s) => {
-    const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 8), mat(0xff9a9a));
-    cheek.scale.set(1, 0.6, 0.4);
-    cheek.position.set(s * 0.3, 0.64, 0.4);
-    body.add(cheek);
-  });
-  const smile = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.012, 8, 16, Math.PI), mat(0x2b211d));
-  smile.rotation.z = Math.PI;
-  smile.position.set(0, 0.68, 0.48);
-  body.add(smile);
+  [-1, 1].forEach((s) => put(new THREE.SphereGeometry(0.07, 14, 10), mat(0xff9a9a, { roughness: 0.9 }), [s * 0.3, 0.64, 0.4], [1, 0.6, 0.4]));
+  put(new THREE.TorusGeometry(0.06, 0.012, 8, 20, Math.PI), mat(0x2b211d), [0, 0.67, 0.48], [1, 1, 1], [0, 0, Math.PI]); // smile
+  put(new THREE.SphereGeometry(0.032, 12, 10), mat(0x6b3a2e, { roughness: 0.3 }), [0, 0.74, 0.485], [1.2, 0.8, 0.8]); // nose
 
-  const limb = (r) => {
-    const m = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), fur);
+  // hands and feet: a round shape with little toes (and a pink pad under the feet)
+  const limb = (rad, kind) => {
+    const g = new THREE.Group();
+    const m = new THREE.Mesh(new THREE.SphereGeometry(rad, 20, 14), flat);
     m.castShadow = true;
-    group.add(m);
-    return m;
+    g.add(m);
+    const n = kind === 'foot' ? 3 : 2;
+    for (let k = 0; k < n; k++) put(new THREE.SphereGeometry(rad * 0.3, 10, 8), mat(0xffcd90), [(k - (n - 1) / 2) * rad * 0.62, -rad * 0.1, rad * 0.82], [1, 1, 1], [0, 0, 0], g);
+    if (kind === 'foot') put(new THREE.SphereGeometry(rad * 0.45, 12, 8), mat(0xff9fa0), [0, -rad * 0.85, rad * 0.25], [1, 0.35, 1], [0, 0, 0], g);
+    group.add(g);
+    return g;
   };
-  const arms = [limb(0.11), limb(0.11)];
-  const feet = [limb(0.14), limb(0.14)];
+  const arms = [limb(0.11, 'hand'), limb(0.11, 'hand')];
+  const feet = [limb(0.14, 'foot'), limb(0.14, 'foot')];
 
   const book = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.05, 0.25), mat(0xd96c5b));
   book.position.set(0, 0.55, 0.55);
