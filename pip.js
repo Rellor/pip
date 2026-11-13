@@ -282,11 +282,6 @@ async function loadState() {
     state.gifts.push('light meter');
     state.tools.push({ id: 'tgift4', name: 'Lux-O-Matic 3000', kind: 'light meter', source: 'given', why: 'a gadget that beeps how bright a place is', at: new Date().toISOString() });
   }
-  if (!state.gifts.includes('sewing kit') && !state.tools.some((t) => t.kind === 'sewing kit')) { // he could never make clothes without one
-    state.gifts.push('sewing kit');
-    state.tools.push({ id: 'tgift7', name: 'Sewing Kit', kind: 'sewing kit', source: 'given', why: 'needle, thread and a few scraps of fabric for making clothes', at: new Date().toISOString() });
-    state.notes.push('I was given a sewing kit (needle, thread and scraps of fabric). Now I can make clothes with make_clothes: a hat, glasses, a scarf, a sweater, a cape. It is in my inventory.');
-  }
   ensureGarden(state);
   { const gn = grantGarden(state); if (gn) state.notes.push(gn); } // once: greenhouse, seeds, shovel and watering can
   ensureMoves(state);
@@ -1319,7 +1314,7 @@ async function wakeUp() {
   const steps = redundantWalks(normalizeSteps(answer)).filter((st) => {
     const needs = st.needs || NEEDS[st.action] || '';
     if (needs && !bag.some((x) => fits(x, needs))) {
-      blocked.push({ st, why: `I need ${needs} in my inventory for that` });
+      blocked.push({ st, why: `I need ${needs} in my inventory for that. If I really want to do it, I ask for it with asks_add and say why` });
       return false;
     }
     if (st.action === 'decorate' && toolFor(st.details)) bag.push({ name: text(st.details.name, 40), kind: toolFor(st.details) });

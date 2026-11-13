@@ -68,7 +68,7 @@ export const DORMANT = [
   ['draw', 'paint or draw a picture for my wall (draw, as SVG)', 8],
   ['decorate', 'build a sculpture or something new for my room (decorate, from simple shapes)', 8],
   ['compose', 'compose a song of my own', 8],
-  ['make_clothes', 'make something to wear (a hat, a scarf, glasses...)', 8],
+  ['make_clothes', 'make something to wear (a hat, a scarf, glasses...)', 72],
   ['make_app', 'make a little app', 12],
   ['cook', 'cook something', 8],
   ['read_book', 'read about something', 6],
@@ -115,18 +115,15 @@ export function moodMirror(log, now = Date.now()) {
   return `In ${hit} of my last ${recent.length} notes I used words like ${top.join(', ')}. I do love cozy, and it is only one of my sides. I can also be ${some.join(', ')}, and what I do and how I say it can show that. A bit of mischief or noise or a strong opinion is allowed too.`;
 }
 
-// ---- Clothes. He has a wardrobe and a body to dress, but nothing makes him think of it. A friendly nudge, with an example he can copy.
+// ---- Clothes. A light, rare thought, never a push: only when he has not made any for days, and about one wake-up in five.
+// Making clothes needs a sewing kit; if he has none, the note says he asks for it himself (nothing is given or dropped silently).
 export function clothesNote(s, now = Date.now()) {
   const wardrobe = s.wardrobe ?? [];
   const lastMade = [...(s.log ?? [])].reverse().find((e) => e.action === 'make_clothes' && !e.failed);
-  const hours = lastMade ? (now - Date.parse(lastMade.at)) / 3_600_000 : Infinity;
-  const wearing = wardrobe.filter((c) => c.worn);
-  if (wearing.length && hours < 48) return '';
-  if (!wardrobe.length ? false : hours < 24) return '';
+  const days = lastMade ? (now - Date.parse(lastMade.at)) / 86_400_000 : Infinity;
+  if (days < 3 || Math.floor(now / 600_000) % 5 !== 0) return '';
+  const hasKit = (s.tools ?? []).some((t) => t.kind === 'sewing kit');
   const w = s.weather;
-  const weather = w ? (w.temp <= 8 ? `It is only ${Math.round(w.temp)}°C outside: a scarf or a warm hat would suit me.` : ['rain', 'storm'].includes(w.kind) ? 'It is raining: a little hood or a rain hat would suit me.' : w.temp >= 20 ? 'It is warm: sunglasses or a sun hat would suit me.' : '') : '';
-  const k = Math.floor(now / 3_600_000);
-  const ideas = ['a scarf', 'a hat', 'round glasses', 'a cape', 'a bow tie', 'a sweater', 'a little backpack', 'a crown', 'a mask for a party'];
-  const pick = [0, 1, 2].map((i) => ideas[(k + i * 3) % ideas.length]).join(', ');
-  return `${wardrobe.length ? `I have ${wardrobe.length} clothes${wearing.length ? '' : ' but I am wearing none'}.` : 'I have never made clothes.'} My body is a round ball with a place for a hat, glasses, a scarf, a sweater and a cape, and what I wear is a way to show who I am and how I feel today. ${weather} I could make ${pick}, for example: make_clothes {"name": "red scarf", "slot": "neck", "why": "...", "parts": [{"shape": "torus", "size": [0.5, 0.07], "pos": [0, 0, 0], "color": "#d9463e"}]}. It is up to me.`;
+  const weather = w && w.temp <= 6 ? ` It is only ${Math.round(w.temp)}°C outside.` : '';
+  return `${wardrobe.length ? `I have ${wardrobe.length} clothes.` : 'I have never made clothes.'} My body has places for a hat, glasses, a scarf, a sweater or a cape.${weather} If something would really suit me or the things I love, I could make it. ${hasKit ? 'My sewing kit is in my inventory (make_clothes {name, slot, why, parts}).' : 'I would need a sewing kit first, and if I really want one I ask for it with asks_add.'} It is up to me, and not wanting clothes is fine too.`;
 }
