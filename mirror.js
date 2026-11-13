@@ -60,3 +60,37 @@ export function untriedMirror(log) {
   const missing = Object.entries(TRYABLE).filter(([a]) => !recent.some((e) => e.action === a)).map(([, t]) => t);
   return missing.length ? `In my last ${recent.length} activities I did not: ${missing.join(', ')}. That is only a picture of how I spend my time.` : '';
 }
+
+// A third mirror: things he can do that he has not done for a long time (or ever, in what the log remembers), each with an idea.
+// Only a picture, never an order. Shows at most 3, and which ones changes from wake-up to wake-up so one never nags.
+export const DORMANT = [
+  ['take_photo', 'take a photo with my camera (the window, a selfie, my room: it is a picture of my own world)', 6],
+  ['draw', 'paint or draw a picture for my wall (draw, as SVG)', 8],
+  ['decorate', 'build a sculpture or something new for my room (decorate, from simple shapes)', 8],
+  ['compose', 'compose a song of my own', 8],
+  ['make_clothes', 'make something to wear', 12],
+  ['make_app', 'make a little app', 12],
+  ['cook', 'cook something', 8],
+  ['read_book', 'read about something', 6],
+  ['find_picture', 'look for a picture online for my wall', 10],
+  ['add_use', 'give something I made a new use', 12],
+];
+export const dormantList = (log, now = Date.now(), blocked = []) => {
+  const l = (Array.isArray(log) ? log : []).filter((e) => Date.parse(e.at) <= now);
+  if (l.length < 12) return [];
+  const since = Date.parse(l[0].at);
+  return DORMANT.map(([a, text, h]) => {
+    const last = [...l].reverse().find((e) => e.action === a && !e.failed);
+    const hours = last ? (now - Date.parse(last.at)) / 3_600_000 : (now - since) / 3_600_000;
+    return { action: a, text, hours, never: !last, due: hours >= h };
+  }).filter((d) => d.due && !blocked.includes(d.action)).sort((x, y) => y.hours - x.hours);
+};
+export function dormantMirror(log, now = Date.now(), blocked = []) {
+  const list = dormantList(log, now, blocked);
+  if (!list.length) return '';
+  const k = Math.floor(now / 600_000); // changes every wake-up
+  const rest = list.slice(1);
+  const pick = [list[0], ...rest.map((_, i) => rest[(i + k) % rest.length]).slice(0, 2)].filter((d, i, a) => d && a.indexOf(d) === i); // the longest-neglected one always, the others rotate
+  const say = (d) => `${d.text}${d.never ? ' (I have not done it at all yet)' : ` (last time ${d.hours < 24 ? `${Math.round(d.hours)} hours` : `${Math.round(d.hours / 24)} days`} ago)`}`;
+  return `Things I have not done for a while: ${pick.map(say).join('; ')}. Doing something I have not done in a while feels fresh (it fills me a little extra). It is only a picture of my days; what I do is my own choice.`;
+}

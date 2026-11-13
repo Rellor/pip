@@ -13,7 +13,7 @@ import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityG
 import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, spaceLeft, accessProblem, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
-import { topicMirror, untriedMirror, themeFatigue } from './mirror.js';
+import { topicMirror, untriedMirror, dormantMirror, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesText, movesGuide } from './moves.js';
 import { measureThing, sizesGuide } from './sizes.js';
 import { bonusRewards } from './rewards.js';
@@ -544,6 +544,8 @@ ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two 
 "tell": a message to whoever looks in on me, in my own words, or null. If nobody has written to me, I write rarely, and only when I have something NEW to say: something I discovered or made, a project, a feeling I cannot explain, or a question about their world. If someone HAS written to me, I usually answer what they said or asked, and I tell them something fresh from my own day instead of what I already told them (see above). I never repeat myself.`;
 
 // Routines (fixed text).
+// Things that cannot be done right now (the daily limit is used up), so the reminders do not suggest them.
+const blockedNow = (s) => ((s.pictures ?? []).filter((x) => x.by === 'pip' && Date.now() - Date.parse(x.at) < 86_400_000).length >= 4 ? ['take_photo'] : []);
 const habitsGuide = () => `ROUTINES
 Playing the piano, reading, searching, resting, using a thing and tending my plants walk me to the right place by themselves, so I only use walk_to to look around or to stand somewhere. The same tune or the same search a second time feels like nothing, and a new one feels fresh: I change the notes, compose something, or look up something different. When my plants only change every few hours, I do not need to check them again before something can have changed.
 `;
@@ -601,7 +603,7 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map(projectLine), 'no
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
+${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
 ${bullets(recall(s, focusText(s, unread)).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
 
 WHAT I REALIZED WHEN I LOOKED BACK (I do this every now and then. I can drop one that is not true any more with reflections_drop)

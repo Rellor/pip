@@ -6,14 +6,16 @@
 //   tested it        he used something with a real effect and wrote what happened (verdict)  joy 0.5  wonder 0.4
 //   still works      a thing he built days ago still works when he uses it (once in a while: 3 days apart, each thing 7)  joy 0.7  wonder 0.4  fullness 0.3
 //   lit a dark place  he switched on a lamp where it was dark and it helped (scaled like the others)  joy 0.6  calm 0.6
+//   something fresh  he does something (photo, painting, sculpture, song...) he has not done for many hours  joy 0.5  wonder 0.5
 //   new ability      the first time ever he uses an ability (light, drive, spin, stand, custom) joy 0.8  wonder 0.8 (once each)
 // Each kind pays less the more often it paid today (full, then 60%, then 30%, then nothing), so it cannot run away.
 // The bars also drift back toward the middle by themselves (see passTime), so a reward is a push, never a way to sit at 10.
 import { nudge } from './feelings.js';
+import { DORMANT } from './mirror.js';
 
 const MAKE = ['decorate', 'extend_thing', 'change_thing', 'add_use', 'use', 'move_thing', 'make_move', 'compose', 'draw', 'make_app', 'update_app', 'make_clothes', 'place_picture', 'cook', 'plant', 'water', 'harvest'];
 const ASK = ['ask_for', 'request_ability'];
-const REWARD = { fixed: { joy: 1, wonder: 0.5, fullness: 0.5 }, research: { joy: 0.6, wonder: 0.5 }, asked: { joy: 0.3, wonder: 0.2 }, tested: { joy: 0.5, wonder: 0.4 }, lit: { joy: 0.6, calm: 0.6 } };
+const REWARD = { fixed: { joy: 1, wonder: 0.5, fullness: 0.5 }, research: { joy: 0.6, wonder: 0.5 }, asked: { joy: 0.3, wonder: 0.2 }, tested: { joy: 0.5, wonder: 0.4 }, lit: { joy: 0.6, calm: 0.6 }, fresh: { joy: 0.5, wonder: 0.5 } };
 const SCALE = [1, 0.6, 0.3, 0];
 const words = (t) => (String(t ?? '').toLowerCase().match(/[a-z]{4,}/g) ?? []);
 const day = (now) => new Date(now).toISOString().slice(0, 10);
@@ -38,6 +40,13 @@ export function bonusRewards(s, steps, now = Date.now()) {
   for (const st of steps) {
     const name = String(st.details?.name ?? '').toLowerCase();
     if (['search_web', 'read_book'].includes(st.action)) lookedUp.push(...words(`${st.details?.query ?? ''} ${st.details?.topic ?? ''}`));
+    const dorm = DORMANT.find(([a]) => a === st.action);
+    if (dorm && !st.made?.failed && !st.failed) {
+      s.doneAt ??= {};
+      const before = Math.max(Date.parse(s.doneAt[st.action] ?? 0), ...(s.log ?? []).filter((e) => e.action === st.action && now - Date.parse(e.at) > 600_000).map((e) => Date.parse(e.at)));
+      s.doneAt[st.action] = new Date(now).toISOString();
+      if (now - before >= dorm[2] * 3_600_000 && pay(s, 'fresh', now)) paid.push(`something fresh: ${st.action.replace('_', ' ')}`);
+    }
     if (MAKE.includes(st.action) && st.made?.failed) {
       tried = true;
       continue;
