@@ -37,7 +37,7 @@ jobs:
           npx playwright install --with-deps chromium
         continue-on-error: true
 
-      # Pip lives here: he wakes every 12 minutes for about 5.5 hours, and straight away when Bas writes.
+      # Pip lives here: he wakes every 8 minutes for about 5.5 hours, and straight away when Bas writes.
       - name: Pip lives
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

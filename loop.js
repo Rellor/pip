@@ -4,7 +4,7 @@ import { spawnSync } from 'node:child_process';
 // Messages from Bas never wake him. He reads them at his next normal wake-up and decides himself if he answers.
 // GitHub's own cron is best-effort and can skip runs, so the workflow starts the next loop itself.
 const LOOP_MIN = Number(process.env.LOOP_MINUTES ?? 330);
-const EVERY_MIN = Number(process.env.WAKE_EVERY_MIN ?? 12);
+const EVERY_MIN = Number(process.env.WAKE_EVERY_MIN ?? 8);
 const CHECK_SEC = Number(process.env.CHECK_SECONDS ?? 60);
 
 const stamp = () => new Date().toISOString().slice(11, 19);

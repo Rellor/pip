@@ -246,7 +246,7 @@ const bullets = (items, empty) => (items.length ? items.map((x) => `- ${x}`).joi
 const MIN_GAP_MINUTES = 180;
 // One wake-up is one plan for this many minutes. The loop passes in its real interval.
 const MAX_PRINTS_PER_DAY = 6; // photo printer
-const INTERVAL_MIN = Number(process.env.PIP_INTERVAL_MIN || 12);
+const INTERVAL_MIN = Number(process.env.PIP_INTERVAL_MIN || 8);
 
 const clamp = (n) => Math.max(0, Math.min(10, n));
 
