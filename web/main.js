@@ -363,14 +363,18 @@ function setLit(g, on) {
   g.userData.lamp.intensity = on ? 3 : 0;
 }
 const behaviors = new Map(); // thing id -> what it is doing now
-const floorBlocked = (x, z, skipId) => {
+// Is this spot in the way? goal = where he is heading: a thing that already covers the goal (the bed he walks onto, the piano he walks up to) does not count.
+const floorBlocked = (x, z, skipId, goal = null) => {
   if (Math.abs(x) > 4.55 || Math.abs(z) > 4.55) return true;
   const furn = shownFurniture(lastState?.furniture);
   for (const k of MOVABLE) {
     if (FURNITURE[k].flat) continue;
-    for (const r of furnRects(furn, k)) if (x > r.x0 - 0.25 && x < r.x1 + 0.25 && z > r.z0 - 0.25 && z < r.z1 + 0.25) return true;
+    for (const r of furnRects(furn, k)) {
+      if (goal && goal.x > r.x0 - 0.25 && goal.x < r.x1 + 0.25 && goal.z > r.z0 - 0.25 && goal.z < r.z1 + 0.25) continue;
+      if (x > r.x0 - 0.25 && x < r.x1 + 0.25 && z > r.z0 - 0.25 && z < r.z1 + 0.25) return true;
+    }
   }
-  return (lastState?.decor || []).some((o) => o.id !== skipId && o.kind === 'floor' && !o.image && o.pos && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.55);
+  return (lastState?.decor || []).some((o) => o.id !== skipId && o.kind === 'floor' && !o.image && o.pos && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.55 && !(goal && Math.hypot(o.pos[0] - goal.x, o.pos[2] - goal.z) < 0.55));
 };
 const DEFAULT_MOTION = [{ forward: 1.0 }, { turn: 90, forward: 0.9 }, { turn: 90, forward: 1.0 }, { turn: 120, forward: 0.8 }];
 // The steps of a drive as little legs: turn on the spot, roll forward or back, hop, wait. It stops at the first thing in the way, then comes back.
@@ -1382,13 +1386,13 @@ function startPhrase(notes, step, now) {
 // Walking: go round furniture and things on the floor instead of through them (free: the page does it).
 // Near his goal he walks straight so he can still reach it.
 let steerSide = 1; // once he picks a side to go round, he keeps it (no dithering in front of a wall)
-function steer(pos, dir, dist) {
+function steer(pos, dir, dist, goal = null) {
   if (dist < 0.8) return dir;
   const tryAngle = (a) => {
     const c = Math.cos(a);
     const s = Math.sin(a);
     const d = new V3(dir.x * c - dir.z * s, 0, dir.x * s + dir.z * c);
-    return floorBlocked(pos.x + d.x * 0.5, pos.z + d.z * 0.5) ? null : d;
+    return floorBlocked(pos.x + d.x * 0.5, pos.z + d.z * 0.5, undefined, goal) ? null : d;
   };
   const straight = tryAngle(0);
   if (straight) return straight;
@@ -1452,7 +1456,7 @@ function frame(now, dt) {
       walking = true;
       g.rotation.x = lerp(g.rotation.x, 0, dt * 8);
       g.position.y = lerp(g.position.y, 0, dt * 8);
-      const dir = steer(g.position, to.normalize(), dist);
+      const dir = steer(g.position, to.normalize(), dist, spot.p);
       g.position.addScaledVector(dir, Math.min(dist, 2.2 * dt));
       turnTo(Math.atan2(dir.x, dir.z), dt * 10);
     } else {
