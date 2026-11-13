@@ -162,26 +162,47 @@ export function applyLook(mode, ctx) {
   if (on.detail) {
     const [floor] = byHex(0xd9b48a);
     if (floor) {
-      floor.material.map = canvasTex(512, 512, (g, w, h) => {
-        const rows = 14;
+      // one big texture over the whole 10 m floor (no tiling), with random plank lengths, tints, grain and knots, so nothing visibly repeats
+      let seed = 20240611;
+      const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+      floor.material.map = canvasTex(2048, 2048, (g, w, h) => {
+        const rows = 64;
         const ph = h / rows;
+        g.fillStyle = '#7a4a28';
+        g.fillRect(0, 0, w, h);
         for (let r = 0; r < rows; r++) {
-          let x = -((r * 97) % 160);
+          let x = -rnd() * 400;
           while (x < w) {
-            const len = 260 + ((x * 13 + r * 71) % 200);
-            const sh = 216 + ((r * 31 + x * 7) % 18) - 9;
-            g.fillStyle = `rgb(${sh},${sh - 38},${sh - 78})`;
-            g.fillRect(x, r * ph, len, ph - 1);
-            for (let k = 0; k < 7; k++) { g.strokeStyle = `rgba(110,70,40,${0.05 + ((k * 13 + r) % 5) * 0.015})`; g.beginPath(); const yy = r * ph + 3 + k * (ph / 7); g.moveTo(x, yy); g.bezierCurveTo(x + len * 0.3, yy + 2, x + len * 0.6, yy - 2, x + len, yy); g.stroke(); }
-            g.fillStyle = 'rgba(70,40,20,0.22)';
-            g.fillRect(x + len - 1, r * ph, 1.5, ph);
+            const len = 220 + rnd() * 420;
+            const sh = 214 + (rnd() - 0.5) * 26;
+            const warm = (rnd() - 0.5) * 10;
+            g.fillStyle = `rgb(${sh + warm},${sh - 38},${sh - 78 - warm})`;
+            g.fillRect(x, r * ph, len, ph - 1.2);
+            for (let k = 0; k < 9; k++) {
+              g.strokeStyle = `rgba(${90 + rnd() * 40},${55 + rnd() * 20},30,${0.04 + rnd() * 0.08})`;
+              g.lineWidth = 0.6 + rnd() * 0.9;
+              const yy = r * ph + 2 + rnd() * (ph - 4);
+              g.beginPath();
+              g.moveTo(x, yy);
+              g.bezierCurveTo(x + len * 0.3, yy + (rnd() - 0.5) * 4, x + len * 0.65, yy + (rnd() - 0.5) * 4, x + len, yy + (rnd() - 0.5) * 2);
+              g.stroke();
+            }
+            if (rnd() < 0.12) { // a knot
+              const kx = x + 30 + rnd() * (len - 60);
+              const ky = r * ph + ph / 2;
+              const rg = g.createRadialGradient(kx, ky, 1, kx, ky, ph * 0.38);
+              rg.addColorStop(0, 'rgba(80,45,22,0.55)');
+              rg.addColorStop(1, 'rgba(80,45,22,0)');
+              g.fillStyle = rg;
+              g.fillRect(kx - ph, ky - ph / 2, ph * 2, ph);
+            }
+            g.fillStyle = 'rgba(70,40,20,0.28)';
+            g.fillRect(x + len - 1.2, r * ph, 2, ph);
             x += len;
           }
-          g.fillStyle = 'rgba(70,40,20,0.3)';
-          g.fillRect(0, r * ph + ph - 1, w, 1.4);
         }
       });
-      floor.material.map.repeat.set(4, 5);
+      floor.material.map.repeat.set(1, 1);
       floor.material.color.set(0xffffff);
       floor.material.roughness = 0.55;
     }
