@@ -127,3 +127,14 @@ export function clothesNote(s, now = Date.now()) {
   const weather = w && w.temp <= 6 ? ` It is only ${Math.round(w.temp)}°C outside.` : '';
   return `${wardrobe.length ? `I have ${wardrobe.length} clothes.` : 'I have never made clothes.'} My body has places for a hat, glasses, a scarf, a sweater or a cape.${weather} If something would really suit me or the things I love, I could make it. ${hasKit ? 'My sewing kit is in my inventory (make_clothes {name, slot, why, parts}).' : 'I would need a sewing kit first, and if I really want one I ask for it with asks_add.'} It is up to me, and not wanting clothes is fine too.`;
 }
+
+// ---- Photos. A picture, never an order: when his last photos were mostly of the same thing, he is shown it.
+export function photoMirror(log, now = Date.now()) {
+  const shots = (Array.isArray(log) ? log : []).filter((e) => e.action === 'take_photo' && !e.failed && Date.parse(e.at) <= now).slice(-4);
+  if (shots.length < 3) return '';
+  const counts = new Map();
+  for (const e of shots) counts.set(String(e.target ?? '').toLowerCase(), (counts.get(String(e.target ?? '').toLowerCase()) ?? 0) + 1);
+  const [target, n] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+  if (n < 3) return '';
+  return `${n} of my last ${shots.length} photos were of the same thing (${target}). Another photo of it looks the same unless something changed, and the camera does not keep one that looks just like an older photo. I can photograph something else: myself, a corner of my room, a thing I made, or the window when the light is different.`;
+}

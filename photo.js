@@ -32,7 +32,9 @@ function serve(root, stateJson) {
 }
 
 // Returns { bytes } or { failed }. `at` is when the photo is taken (the sky follows that time).
-export async function takePhoto(target, at, state, root = 'web') {
+// `recent` = his earlier photos as [{ id, data }] (data = base64 jpeg). When the new one looks almost the same as one of them, it is not kept.
+export const SAME_BELOW = 4.5; // average brightness difference (0 to 255) on a small copy: the same view at another time of day is about 2 to 4, a different view 6 or more
+export async function takePhoto(target, at, state, root = 'web', recent = []) {
   let pw;
   try {
     pw = await import('playwright');
@@ -53,7 +55,35 @@ export async function takePhoto(target, at, state, root = 'web') {
     const data = await page.evaluate(() => window.__photo);
     if (typeof data !== 'string' || !data.startsWith('data:image/jpeg;base64,')) return { failed: `the photo did not work out (${String(data).slice(0, 80)})` };
     const bytes = new Uint8Array(Buffer.from(data.split(',')[1], 'base64'));
-    return pictureType(bytes) ? { bytes } : { failed: 'the photo came out empty' };
+    if (!pictureType(bytes)) return { failed: 'the photo came out empty' };
+    if (recent.length) {
+      const closest = await page.evaluate(async ({ now, old }) => {
+        const small = async (src) => {
+          const img = new Image();
+          img.src = src;
+          await img.decode();
+          const c = document.createElement('canvas');
+          c.width = 32;
+          c.height = 24;
+          const x = c.getContext('2d');
+          x.drawImage(img, 0, 0, 32, 24);
+          const px = x.getImageData(0, 0, 32, 24).data;
+          return Array.from({ length: 32 * 24 }, (_, k) => 0.3 * px[k * 4] + 0.59 * px[k * 4 + 1] + 0.11 * px[k * 4 + 2]);
+        };
+        const a = await small(now);
+        let best = null;
+        for (const o of old) {
+          try {
+            const b = await small(`data:image/jpeg;base64,${o.data}`);
+            const diff = a.reduce((t, v, k) => t + Math.abs(v - b[k]), 0) / a.length;
+            if (!best || diff < best.diff) best = { id: o.id, diff };
+          } catch {}
+        }
+        return best;
+      }, { now: data, old: recent });
+      if (closest && closest.diff < SAME_BELOW) return { same: closest };
+    }
+    return { bytes };
   } catch (e) {
     return { failed: `the camera had a problem (${String(e.message).split('\n')[0].slice(0, 100)})` };
   } finally {

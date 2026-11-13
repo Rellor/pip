@@ -781,7 +781,57 @@ function makePip() {
   pageHinge.add(page);
   book.add(pageHinge);
 
-  return { group, body, eyes, arms, feet, book, pageHinge };
+  // the instruments he can hold (only the one he plays is shown); each is built in the group's own space, in front of him
+  const inst = {};
+  const wood = (c) => mat(c, { roughness: 0.55 });
+  const metal = (c) => mat(c, { roughness: 0.25, metalness: 0.6 });
+  const mk = (name, build) => {
+    const g = new THREE.Group();
+    g.visible = false;
+    build(g);
+    group.add(g);
+    inst[name] = g;
+  };
+  mk('guitar', (g) => {
+    put(new THREE.SphereGeometry(0.2, 24, 16), wood(0xc98a4b), [0, 0, 0], [1, 1.05, 0.34], [0, 0, 0], g);
+    put(new THREE.SphereGeometry(0.15, 24, 16), wood(0xc98a4b), [0, 0.21, 0], [1, 1, 0.34], [0, 0, 0], g);
+    put(new THREE.CircleGeometry(0.055, 20), mat(0x2b211d), [0, 0.07, 0.07], [1, 1, 1], [0, 0, 0], g);
+    put(new THREE.BoxGeometry(0.045, 0.5, 0.035), wood(0x5a3a22), [0, 0.52, 0.01], [1, 1, 1], [0, 0, 0], g);
+    put(new THREE.BoxGeometry(0.07, 0.11, 0.03), wood(0x3a2415), [0, 0.82, 0.01], [1, 1, 1], [0, 0, 0], g);
+    [-0.012, 0, 0.012].forEach((x) => put(new THREE.BoxGeometry(0.004, 0.7, 0.004), metal(0xe8e6df), [x, 0.4, 0.075], [1, 1, 1], [0, 0, 0], g));
+  });
+  mk('violin', (g) => {
+    put(new THREE.SphereGeometry(0.13, 24, 16), wood(0xa8541f), [0, 0, 0], [1, 1.25, 0.3], [0, 0, 0], g);
+    put(new THREE.SphereGeometry(0.1, 24, 16), wood(0xa8541f), [0, 0.18, 0], [1, 1, 0.3], [0, 0, 0], g);
+    put(new THREE.BoxGeometry(0.035, 0.28, 0.03), wood(0x2b1a10), [0, 0.38, 0.01], [1, 1, 1], [0, 0, 0], g);
+    put(new THREE.SphereGeometry(0.03, 12, 10), wood(0x2b1a10), [0, 0.54, 0.01], [1, 1.4, 1], [0, 0, 0], g);
+  });
+  mk('violin_bow', (g) => {
+    put(new THREE.BoxGeometry(0.72, 0.012, 0.012), wood(0x5a3a22), [0, 0, 0], [1, 1, 1], [0, 0, 0], g);
+    put(new THREE.BoxGeometry(0.66, 0.006, 0.006), mat(0xf4efe0), [0.01, -0.012, 0], [1, 1, 1], [0, 0, 0], g);
+  });
+  mk('flute', (g) => {
+    put(new THREE.CylinderGeometry(0.017, 0.017, 0.62, 12), metal(0xdde2ea), [0, 0, 0], [1, 1, 1], [0, 0, Math.PI / 2], g);
+    [-0.18, -0.08, 0.02, 0.12, 0.22].forEach((x) => put(new THREE.SphereGeometry(0.016, 8, 6), metal(0xaab2bf), [x, 0.02, 0.01], [1, 1, 1], [0, 0, 0], g));
+  });
+  mk('clarinet', (g) => {
+    put(new THREE.CylinderGeometry(0.02, 0.03, 0.6, 12), mat(0x2a2527, { roughness: 0.4 }), [0, 0, 0], [1, 1, 1], [0, 0, 0], g);
+    put(new THREE.ConeGeometry(0.055, 0.1, 12), mat(0x2a2527, { roughness: 0.4 }), [0, -0.33, 0], [1, 1, 1], [Math.PI, 0, 0], g);
+    [-0.12, 0, 0.12].forEach((y) => put(new THREE.SphereGeometry(0.018, 8, 6), metal(0xdde2ea), [0, y, 0.03], [1, 1, 1], [0, 0, 0], g));
+  });
+  mk('kalimba', (g) => {
+    put(new THREE.BoxGeometry(0.3, 0.06, 0.2), wood(0xb57b45), [0, 0, 0], [1, 1, 1], [0, 0, 0], g);
+    [-0.1, -0.06, -0.02, 0.02, 0.06, 0.1].forEach((x, i) => put(new THREE.BoxGeometry(0.014, 0.012, 0.12 - Math.abs(i - 2.5) * 0.012), metal(0xc9ccd4), [x, 0.036, -0.01], [1, 1, 1], [0, 0, 0], g));
+  });
+  mk('harp', (g) => {
+    put(new THREE.BoxGeometry(0.03, 0.62, 0.03), wood(0x8a5a2e), [-0.18, 0.31, 0], [1, 1, 1], [0, 0, 0], g);
+    put(new THREE.BoxGeometry(0.03, 0.62, 0.03), wood(0x8a5a2e), [0.18, 0.28, 0], [1, 1, 1], [0, 0, 0.0], g);
+    put(new THREE.BoxGeometry(0.42, 0.03, 0.03), wood(0x8a5a2e), [0, 0.61, 0], [1, 1, 1], [0, 0, 0], g);
+    put(new THREE.BoxGeometry(0.42, 0.04, 0.05), wood(0x8a5a2e), [0, 0.01, 0], [1, 1, 1], [0, 0, 0], g);
+    for (let i = 0; i < 7; i++) put(new THREE.BoxGeometry(0.004, 0.5 - i * 0.045, 0.004), metal(0xf0eadb), [-0.14 + i * 0.047, 0.05 + (0.5 - i * 0.045) / 2, 0], [1, 1, 1], [0, 0, 0], g);
+  });
+
+  return { group, body, eyes, arms, feet, book, pageHinge, inst };
 }
 const pip = makePip();
 scene.add(pip.group);
@@ -815,17 +865,23 @@ function resolveSpot(name) {
 
 // ---------------------------------------------------------------- piano sound
 let audio = null;
+const HELD_LOOKS = ['guitar', 'violin', 'flute', 'clarinet', 'kalimba', 'harp'];
 const SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
 
 function parseNotes(input) {
   const text = Array.isArray(input) ? input.join(' ') : String(input ?? '');
   const notes = [];
   for (const tok of text.split(/[\s,;|/-]+/)) {
-    const m = /^([A-G])([#b]?)(\d)?(?::[\d.]+)?$/.exec(tok);
-    if (!m) continue;
-    const semi = SEMI[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
-    const oct = m[3] ? Number(m[3]) : 4;
-    notes.push({ letter: m[1], freq: 440 * 2 ** ((oct - 4) * 1 + (semi - 9) / 12) });
+    const freqs = [];
+    let letter = null;
+    for (const part of tok.split(':')[0].split('+')) {
+      const m = /^([A-G])([#b]?)(\d)?$/.exec(part);
+      if (!m) continue;
+      const semi = SEMI[m[1]] + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0);
+      letter ??= m[1];
+      freqs.push(440 * 2 ** ((m[3] ? Number(m[3]) : 4) - 4 + (semi - 9) / 12));
+    }
+    if (freqs.length) notes.push({ letter, freq: freqs[0], chord: freqs.length > 1 ? freqs.slice(0, 4) : undefined });
   }
   return notes.length ? notes.slice(0, 24) : parseNotes('C E G E C');
 }
@@ -836,38 +892,28 @@ function stepFor(style) {
   return 0.48;
 }
 // What Pip played on the piano ("C4 E4:2 - G4", the style) as a song the player can hear again: :n is how many beats, - is a rest.
-function pianoSong(notesText, style) {
+function pianoSong(notesText, style, instrument) {
   const notes = [];
   for (const tok of String(Array.isArray(notesText) ? notesText.join(' ') : notesText ?? '').split(/[\s,;|/]+/).filter(Boolean).slice(0, 80)) {
     if (/^-+$/.test(tok)) {
       notes.push([null, 1]);
       continue;
     }
-    const m = /^([A-G])([#b]?)(\d)?(?::([\d.]+))?$/.exec(tok);
-    if (!m) continue;
-    notes.push([`${m[1]}${m[2]}${m[3] ?? 4}`, Math.min(4, Math.max(0.25, Number(m[4]) || 1))]);
+    const [what, b] = tok.split(':');
+    const names = what.split('+').slice(0, 4).map((x) => /^([A-G])([#b]?)(\d)?$/.exec(x)).filter(Boolean).map((m) => `${m[1]}${m[2]}${m[3] ?? 4}`);
+    if (names.length) notes.push([names.length > 1 ? names : names[0], Math.min(4, Math.max(0.25, Number(b) || 1))]);
   }
   if (!notes.some(([n]) => n)) return null;
   const st = String(style || '').toLowerCase();
-  return { notes, tempo: /slow|sad|soft|gentle|calm|sleep|dream|quiet/.test(st) ? 62 : /fast|happy|quick|bright|fun|dance/.test(st) ? 130 : 92, timbre: 'piano' };
+  return { notes, tempo: /slow|sad|soft|gentle|calm|sleep|dream|quiet/.test(st) ? 62 : /fast|happy|quick|bright|fun|dance/.test(st) ? 130 : 92, timbre: knownInstrument(String(instrument || '').toLowerCase()) };
 }
-function playNotes(notes, step) {
+function playNotes(notes, step, instrument = 'piano') {
   if (!audio) return;
+  buildMaster();
   const t0 = audio.currentTime + 0.05;
   notes.forEach((n, i) => {
     const t = t0 + i * step;
-    [[1, 0.35, 'triangle'], [2, 0.12, 'sine']].forEach(([mult, vol, type]) => {
-      const osc = audio.createOscillator();
-      const gain = audio.createGain();
-      osc.type = type;
-      osc.frequency.value = n.freq * mult;
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(vol, t + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 1.4);
-      osc.connect(gain).connect(audio.destination);
-      osc.start(t);
-      osc.stop(t + 1.5);
-    });
+    for (const f of n.chord ?? [n.freq]) voice(f, t, step * 1.1, instrument);
   });
 }
 $('sound').addEventListener('click', () => {
@@ -896,16 +942,31 @@ function unlockAudio() {
     a.play().then(() => setTimeout(() => a.pause(), 300)).catch(() => {});
   } catch {}
 }
+// One master volume and a limiter, plus a little room sound (reverb) so notes do not sound dry and flat.
+function buildMaster() {
+  if (master || !audio) return;
+  const comp = audio.createDynamicsCompressor();
+  master = audio.createGain();
+  master.gain.value = 1.3;
+  master.connect(comp).connect(audio.destination);
+  const n = Math.floor(audio.sampleRate * 2.2);
+  const room = audio.createBuffer(2, n, audio.sampleRate);
+  for (let c = 0; c < 2; c++) {
+    const d = room.getChannelData(c);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.8);
+  }
+  const rev = audio.createConvolver();
+  const wet = audio.createGain();
+  rev.buffer = room;
+  wet.gain.value = 0.16;
+  master.connect(rev);
+  rev.connect(wet).connect(comp);
+}
 async function ensureAudio() {
   unlockAudio();
   if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
   if (audio.state !== 'running') await audio.resume();
-  if (!master) {
-    const comp = audio.createDynamicsCompressor();
-    master = audio.createGain();
-    master.gain.value = 1.3;
-    master.connect(comp).connect(audio.destination);
-  }
+  buildMaster();
   $('sound').textContent = '🔊 Sound on';
 }
 function noteFreq(name) {
@@ -924,7 +985,7 @@ const VOICES = {
   pad: { parts: [[1, 'sawtooth', 0.07], [1.005, 'sawtooth', 0.07], [0.5, 'sine', 0.12]], attack: 0.5, release: 1.8 },
   marimba: { parts: [[1, 'sine', 0.34], [4, 'sine', 0.1]], attack: 0.003, release: 0.45, hold: 0.1 },
 };
-function voice(freq, t, hold, timbre) {
+function synthVoice(freq, t, hold, timbre) {
   const v = VOICES[timbre] || VOICES.piano;
   const len = v.hold ?? Math.max(v.attack, hold);
   for (const [mult, type, vol] of v.parts) {
@@ -949,6 +1010,86 @@ function voice(freq, t, hold, timbre) {
     o.start(t);
     o.stop(t + Math.max(v.attack, len) + v.release + 0.1);
   }
+}
+// ---- real instrument sounds: recorded samples from a free soundfont (FluidR3_GM), loaded the first time an instrument is used and kept in the browser.
+// If they cannot be loaded (offline, blocked), the synth voices above play instead, so there is always sound.
+const SF_URL = 'https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/';
+// instrument: [soundfont file, seconds the note rings after it is let go (a piano fades, a flute stops quickly)]
+const SAMPLED = {
+  piano: ['acoustic_grand_piano', 0.9], epiano: ['electric_piano_1', 0.6], harpsichord: ['harpsichord', 0.12], organ: ['church_organ', 0.2],
+  harp: ['orchestral_harp', 1.3], guitar: ['acoustic_guitar_nylon', 0.6], violin: ['violin', 0.3], cello: ['cello', 0.35], strings: ['string_ensemble_1', 0.45],
+  flute: ['flute', 0.25], clarinet: ['clarinet', 0.2], vibraphone: ['vibraphone', 1.2], marimba: ['marimba', 0.4], kalimba: ['kalimba', 0.8],
+  glockenspiel: ['glockenspiel', 1.4], musicbox: ['music_box', 1.1], bell: ['tubular_bells', 2.4], choir: ['choir_aahs', 0.5],
+};
+const SYNTH_FOR = { epiano: 'piano', harpsichord: 'pluck', organ: 'pad', harp: 'pluck', guitar: 'pluck', violin: 'pad', cello: 'pad', strings: 'pad', clarinet: 'flute', vibraphone: 'bell', kalimba: 'musicbox', glockenspiel: 'musicbox', choir: 'soft' };
+const knownInstrument = (x) => (SAMPLED[x] || VOICES[x] ? x : 'piano');
+const FLAT = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+const sampleKey = (freq) => {
+  const m = Math.round(69 + 12 * Math.log2(freq / 440));
+  return `${FLAT[((m % 12) + 12) % 12]}${Math.floor(m / 12) - 1}`;
+};
+const banks = new Map();
+const within = (p, ms) => Promise.race([p, new Promise((r) => setTimeout(() => r(null), ms))]);
+async function cachedText(url) {
+  try {
+    const c = await caches.open('pip-soundfont-1');
+    let r = await c.match(url);
+    if (!r) {
+      r = await fetch(url, { mode: 'cors' });
+      if (r.ok) await c.put(url, r.clone());
+    }
+    return r.ok ? await r.text() : null;
+  } catch {
+    try { return await (await fetch(url, { mode: 'cors' })).text(); } catch { return null; }
+  }
+}
+function bankOf(timbre) {
+  const def = SAMPLED[timbre];
+  if (!def) return null;
+  if (!banks.has(timbre)) banks.set(timbre, { def, uris: null, buf: new Map(), loading: null, failed: false });
+  return banks.get(timbre);
+}
+function bankLoad(b) {
+  b.loading ??= (async () => {
+    const text = await within(cachedText(`${SF_URL}${b.def[0]}-mp3.js`), 25000);
+    const uris = new Map();
+    for (const m of String(text || '').matchAll(/"([A-G]b?\d)":\s*"(data:audio\/mp3;base64,[^"]+)"/g)) uris.set(m[1], m[2]);
+    if (uris.size < 20) throw new Error('no samples');
+    b.uris = uris;
+  })().catch(() => { b.failed = true; });
+  return b.loading;
+}
+// Decodes the notes that are about to be played (all of an instrument at once would be too much memory on a phone).
+async function bankNeed(b, keys) {
+  await bankLoad(b);
+  if (b.failed) return;
+  await Promise.all([...new Set(keys)].filter((k) => !b.buf.has(k) && b.uris.has(k)).map(async (k) => {
+    try {
+      const raw = await (await fetch(b.uris.get(k))).arrayBuffer();
+      b.buf.set(k, await audio.decodeAudioData(raw));
+    } catch {}
+  }));
+}
+function prefetchInstrument(timbre, freqs) {
+  const b = bankOf(timbre);
+  if (b && audio) bankNeed(b, freqs.map(sampleKey)).catch(() => {});
+}
+function voice(freq, t, hold, timbre) {
+  const b = bankOf(timbre);
+  const buf = b && !b.failed ? b.buf.get(sampleKey(freq)) : null;
+  if (!buf) return synthVoice(freq, t, hold, SYNTH_FOR[timbre] || timbre);
+  const src = audio.createBufferSource();
+  const g = audio.createGain();
+  const len = Math.max(0.12, hold);
+  const vol = 0.9 * (b.def[2] ?? 2.4) * (0.92 + Math.random() * 0.08); // a tiny difference per note, so it sounds played
+  src.buffer = buf;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.006);
+  g.gain.setValueAtTime(vol, t + len);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + len + b.def[1]);
+  src.connect(g).connect(master);
+  src.start(t);
+  src.stop(t + len + b.def[1] + 0.05);
 }
 let noiseBuffer = null;
 function noise(kind) {
@@ -1117,14 +1258,17 @@ function printerSound() {
 async function playSong(song) {
   if (!song || (!song.notes?.length && !song.ambience)) return 0;
   await ensureAudio();
+  const heard = (n) => (Array.isArray(n) ? n : [n]).filter((x) => x && !['kick', 'snare', 'hat'].includes(x));
+  const bank = bankOf(song.timbre);
+  if (bank) await within(bankNeed(bank, (song.notes || []).flatMap(([n]) => heard(n)).map((x) => sampleKey(noteFreq(x) || 440))), 25000);
   const beat = 60 / (song.tempo || 90);
   const start = audio.currentTime + 0.1;
   let t = start;
   for (const [n, beats] of song.notes || []) {
     if (n === 'kick' || n === 'snare' || n === 'hat') drum(n, t);
-    else {
-      const f = n ? noteFreq(n) : null;
-      if (f) voice(f, t, beat * beats * 0.9, song.timbre);
+    else for (const x of heard(n)) {
+      const f = noteFreq(x);
+      if (f) voice(f, t, beat * beats * 0.92, song.timbre);
     }
     t += beat * beats;
   }
@@ -1259,7 +1403,9 @@ function planFor(last) {
   switch (last.action) {
     case 'play_piano': {
       const notes = parseNotes(d.notes);
-      return { at: 'piano', anim: 'play', notes, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
+      const instrument = knownInstrument(String(d.instrument || '').toLowerCase());
+      if (HELD_LOOKS.includes(String(d.instrument || '').toLowerCase())) return { at: 'center', anim: 'jam', held: String(d.instrument).toLowerCase(), notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
+      return { at: 'piano', anim: 'play', notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
     }
     case 'read_book': return { at: 'bookshelf', anim: 'read' };
     case 'search_web': return { at: 'computer', anim: 'search' };
@@ -1411,11 +1557,12 @@ function startTask(last) {
   const plan = planFor(last);
   if (last.action === 'use' && last.made?.id && last.made.does === 'custom') setTimeout(() => runBehavior(last.made.id, 'custom', last.made.steps), 2500);
   if (last.action === 'use' && last.made?.id && ['drive', 'spin'].includes(last.made.does)) setTimeout(() => runBehavior(last.made.id, last.made.does, last.made.motion), 2500); // when he has walked up to it
+  if (plan.anim === 'play' || plan.anim === 'jam') prefetchInstrument(plan.instrument, (plan.palette || []).flatMap((n) => n.chord ?? [n.freq]));
   task = { ...plan, spot: plan.spot || SPOTS[plan.at], last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
 }
 function startPhrase(notes, step, now) {
   task.phrase = { notes, step, t0: now, lastIdx: -1 };
-  playNotes(notes, step);
+  playNotes(notes, step, task.instrument);
 }
 // Walking: go round furniture and things on the floor instead of through them (free: the page does it).
 // Near his goal he walks straight so he can still reach it.
@@ -1475,7 +1622,7 @@ let screenNext = 0;
 function frame(now, dt) {
   const t = now / 1000;
   const g = pip.group;
-  const { body, eyes, arms, feet, book, pageHinge } = pip;
+  const { body, eyes, arms, feet, book, pageHinge, inst } = pip;
 
   // --- where is Pip and what is he doing right now?
   let walking = false;
@@ -1509,7 +1656,7 @@ function frame(now, dt) {
         if (!task.arrived) {
           task.arrived = true;
           task.arrivedAt = now;
-          if (task.anim === 'play') startPhrase(task.notes, task.step, now);
+          if (task.anim === 'play' || task.anim === 'jam') startPhrase(task.notes, task.step, now);
           if (task.anim === 'ask') task.askUntil = now + 9000;
           task.nextBreak = task.anim === 'rest' ? Infinity : now + rand(40_000, 80_000);
         }
@@ -1541,7 +1688,7 @@ function frame(now, dt) {
   }
   // --- piano: play the planned tune, then keep improvising
   let phraseIdx = -1;
-  if (engaged && anim === 'play') {
+  if (engaged && (anim === 'play' || anim === 'jam')) {
     if (task.phrase) {
       phraseIdx = Math.floor((now - task.phrase.t0) / (task.phrase.step * 1000));
       if (phraseIdx >= task.phrase.notes.length) {
@@ -1587,6 +1734,7 @@ function frame(now, dt) {
   body.rotation.set(0, 0, 0);
   const reading = engaged && (anim === 'read' || anim === 'write');
   book.visible = reading;
+  for (const k of Object.keys(inst)) inst[k].visible = false;
   const pv = preview && now < preview.until && !walking ? preview : null; // a move shown from the Life tab
   const idleNow = engaged && anim === 'look' && !walking && task.idle?.move ? task.idle : null;
   const mv = pv ? pv.move : idleNow ? idleNow.move : engaged && anim === 'move' && task.move ? task.move : null;
@@ -1627,6 +1775,66 @@ function frame(now, dt) {
       ra = [0.3, 0.55, 0.4 + (playing ? Math.max(0, Math.sin(t * 9 + Math.PI)) * 0.03 : 0)];
       if (playing) body.rotation.z = Math.sin(t * 2.5) * 0.06;
       else body.rotation.y = Math.sin(t * 0.7) * 0.12;
+    } else if (anim === 'jam') {
+      const playing = phraseIdx >= 0;
+      const beat = playing ? Math.sin(t * 9) : 0;
+      const alt = playing ? Math.sin(t * 9 + Math.PI) : 0;
+      const k = task.held;
+      const g2 = inst[k];
+      if (g2) {
+        g2.visible = true;
+        const loc = (x, y, z) => new V3(x, y, z).applyEuler(g2.rotation).multiplyScalar(g2.scale.x).add(g2.position).toArray();
+        body.rotation.z = playing ? Math.sin(t * 2.5) * 0.06 : Math.sin(t * 0.8) * 0.03;
+        if (k === 'guitar') {
+          g2.scale.setScalar(1.2);
+          g2.position.set(0.02, 0.26, 0.62);
+          g2.rotation.set(0.12, 0, -0.95);
+          ra = loc(0, 0.5 + (playing ? Math.sin(t * 2.2) * 0.04 : 0), 0.07);
+          la = loc(0.01, 0.07 + beat * 0.07, 0.1);
+        } else if (k === 'violin') {
+          g2.scale.setScalar(1.25);
+          g2.position.set(0.1, 0.68, 0.64);
+          g2.rotation.set(0.25, -0.35, -1.2);
+          ra = loc(0, 0.4, 0.06);
+          const bx = -0.12 + beat * 0.14;
+          la = [bx, 0.6 + beat * 0.01, 0.8];
+          const bow = inst.violin_bow;
+          bow.visible = true;
+          bow.position.set(bx + 0.18, 0.6, 0.78);
+          bow.rotation.set(0, 0.12, -0.08);
+        } else if (k === 'flute') {
+          g2.scale.setScalar(1.35);
+          g2.position.set(0, 0.68, 0.7);
+          g2.rotation.set(0, 0.12, 0.05);
+          la = loc(-0.17, 0, 0.02);
+          ra = loc(0.15, 0, 0.02);
+          la[1] += Math.max(0, beat) * 0.025;
+          ra[1] += Math.max(0, alt) * 0.025;
+          body.rotation.x = -0.06;
+        } else if (k === 'clarinet') {
+          g2.scale.setScalar(1.35);
+          g2.position.set(0, 0.34, 0.7);
+          g2.rotation.set(-0.3, 0, 0);
+          la = loc(-0.035, 0.08, 0.04);
+          ra = loc(0.035, -0.06, 0.04);
+          la[1] += Math.max(0, beat) * 0.02;
+          ra[1] += Math.max(0, alt) * 0.02;
+          body.rotation.x = -0.05;
+        } else if (k === 'kalimba') {
+          g2.scale.setScalar(1.6);
+          g2.position.set(0, 0.36, 0.72);
+          g2.rotation.set(0.75, 0, 0);
+          la = loc(-0.13, 0.03 + Math.max(0, beat) * 0.03, 0.02);
+          ra = loc(0.13, 0.03 + Math.max(0, alt) * 0.03, 0.02);
+          body.rotation.x = 0.1;
+        } else if (k === 'harp') {
+          g2.scale.setScalar(1.05);
+          g2.position.set(0, 0, 0.85);
+          g2.rotation.set(0, 0, 0);
+          la = [-0.12, 0.34 + beat * 0.1, 0.87];
+          ra = [0.12, 0.34 + alt * 0.1, 0.87];
+        }
+      }
     } else if (anim === 'read' || anim === 'write') {
       la = [-0.28, 0.5, 0.4];
       ra = [0.28 + (anim === 'write' ? Math.sin(t * 6) * 0.05 : 0), 0.5, 0.4];
@@ -1743,7 +1951,7 @@ $('walk').addEventListener('click', () => setMode(view.mode === 'walk' ? 'overvi
 
 // Things you can tap: Pip, the photo and Pip's creations carry their own info; furniture is found by where you tapped.
 const REGIONS = [
-  { furn: 'piano', box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); const songs = n.slice(-5).reverse().map((x) => ({ x, song: pianoSong(x.notes, x.style) })).filter((x) => x.song); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.', songs.length ? 'Hear what he played:' : ''].filter(Boolean), actions: songs.map(({ x, song }) => ({ text: `▶ ${hm(Date.parse(x.at))}${x.style ? ` ${x.style}` : ''}`, run: () => playSong(song) })) }; } },
+  { furn: 'piano', box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); const songs = n.slice(-5).reverse().map((x) => ({ x, song: pianoSong(x.notes, x.style, x.instrument) })).filter((x) => x.song); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.', songs.length ? 'Hear what he played:' : ''].filter(Boolean), actions: songs.map(({ x, song }) => ({ text: `▶ ${hm(Date.parse(x.at))}${x.style ? ` ${x.style}` : ''}`, run: () => playSong(song) })) }; } },
   { furn: 'piano', box: [-2.95, -2.25, 0, 0.7, -3.5, -2.8], info: () => ({ title: 'The piano stool', lines: ['Pip sits here to play.'] }) },
   { furn: 'bookshelf', box: [1.55, 3.65, 0, 3.1, -5, -4.3], info: () => { const last = logOf('read_book').at(-1); return { title: 'The bookshelf', lines: ['Pip goes here to read.', last?.opened ? `He last read about ${last.opened.title}.` : 'He has not read anything here yet.'], links: last?.opened?.url ? [{ text: `Read: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
   { furn: 'desk', box: [-5, -3.6, 0, 1.9, 0.1, 2.3], info: () => { const last = logOf('search_web').at(-1); const apps = lastState?.apps || []; return { title: 'The computer', lines: ['Pip looks things up on the web here.', last ? `His last search was "${last.query}".` : 'He has not searched yet.', apps.length ? `He has written ${apps.length} app${apps.length === 1 ? '' : 's'}:` : ''].filter(Boolean), links: last?.opened?.url ? [{ text: `He opened: ${last.opened.title}`, url: last.opened.url }] : [], actions: apps.slice(-5).map((a) => ({ text: `▶ Open ${a.name}`, run: () => openApp(a) })) }; } },
@@ -2820,7 +3028,7 @@ function dayCard(e) {
       const n = el('div', null, 'notes');
       notes.forEach((x) => n.append(el('span', x)));
       card.append(n);
-      const song = pianoSong(e.notes, e.style);
+      const song = pianoSong(e.notes, e.style, e.instrument);
       if (song) {
         const b = el('button', '▶ Listen', 'small');
         b.addEventListener('click', () => playSong(song));
@@ -3357,7 +3565,7 @@ function render(s) {
   ]);
   const pieces = (s.log || []).filter((e) => e.action === 'play_piano' && !e.failed && Date.parse(e.at) <= Date.now()).slice(-15).reverse();
   fill($('pianolist'), pieces.length ? pieces.map((e) => {
-    const song = pianoSong(e.notes, e.style);
+    const song = pianoSong(e.notes, e.style, e.instrument);
     const li = el('li', `🎹 ${when(e.at)}${e.style ? ` — ${e.style}` : ''} `);
     if (song) {
       const b = el('button', '▶ Listen', 'small');
