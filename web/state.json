@@ -1,6 +1,6 @@
 {
-  "mood": "sleepy",
-  "energy": 9,
+  "mood": "peaceful",
+  "energy": 8,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -175,33 +175,10 @@
     "playing a quiet evening melody every night before bed",
     "composing a lullaby specifically for my sprouting rosemary plants",
     "composing a lullaby inspired by the growing rosemary",
-    "composing a tiny lullaby for my growing rosemary plants"
+    "composing a tiny lullaby for my growing rosemary plants",
+    "composing a little song dedicated to my growing rosemary plants"
   ],
   "activities": [
-    {
-      "at": "2026-11-12T19:13:54.626Z",
-      "action": "eat",
-      "detail": "rosemary potato bake",
-      "enjoyment": 10
-    },
-    {
-      "at": "2026-11-12T19:29:15.094Z",
-      "action": "walk_to",
-      "detail": "window step stool",
-      "enjoyment": 9
-    },
-    {
-      "at": "2026-11-12T19:29:15.095Z",
-      "action": "use",
-      "detail": "window step stool",
-      "enjoyment": 10
-    },
-    {
-      "at": "2026-11-12T19:41:23.252Z",
-      "action": "walk_to",
-      "detail": "piano",
-      "enjoyment": 9
-    },
     {
       "at": "2026-11-12T19:41:23.252Z",
       "action": "play_piano",
@@ -477,11 +454,33 @@
       "action": "rest",
       "detail": "sleeping through the night",
       "enjoyment": 8
+    },
+    {
+      "at": "2026-11-13T07:13:38.482Z",
+      "action": "walk_to",
+      "detail": "little greenhouse",
+      "enjoyment": 9
+    },
+    {
+      "at": "2026-11-13T07:13:38.482Z",
+      "action": "use",
+      "detail": "little greenhouse",
+      "enjoyment": 10
+    },
+    {
+      "at": "2026-11-13T07:13:38.483Z",
+      "action": "walk_to",
+      "detail": "piano",
+      "enjoyment": 9
+    },
+    {
+      "at": "2026-11-13T07:13:38.483Z",
+      "action": "play_piano",
+      "detail": "C4 E4 G4 B4 G4 E4 C4, gentle",
+      "enjoyment": 10
     }
   ],
   "notes": [
-    "Searched \"Triangulum Galaxy star count compared to Milky Way\" and read about Milky Way: The Milky Way or Milky Way Galaxy, or simply the Galaxy, is the galaxy that includes the Solar System, with the name describing the galaxy's appearance from Earth: a hazy band of light seen in the night sky formed by stars in other arms of the galaxy, which are so far away that they cannot be individually distinguished by the naked eye.\nGalileo Galilei first resolved the band of light into individual stars with his telescope in 1610. …",
-    "Searched \"Orion sword nebula naked eye Bortle 1\" but found nothing.",
     "Searched \"brightest stars most vivid colors naked eye dark sky\" and read about Purkinje effect: The Purkinje effect or Purkinje phenomenon, sometimes called the Purkinje shift (often pronounced ), is the tendency for the peak luminance sensitivity of the eye to shift toward the blue end of the color spectrum at low illumination levels as part of dark adaptation. In consequence, reds will appear darker relative to other colors as light levels decrease. The effect is named after the Czech anatomist Jan Evangelista Purkyně (Czech: [ˈpurkɪɲɛ] ). …",
     "Read about Milky Way: The Milky Way or Milky Way Galaxy, or simply the Galaxy, is the galaxy that includes the Solar System, with the name describing the galaxy's appearance from Earth: a hazy band of light seen in the night sky formed by stars in other arms of the galaxy, which are so far away that they cannot be individually distinguished by the naked eye.\nGalileo Galilei first resolved the band of light into individual stars with his telescope in 1610. …",
     "Searched \"stellar acoustic oscillations audio sound\" and read about Spectrum (physical sciences): In the physical sciences, spectrum describes any continuous range of either frequency or wavelength values.  The term  initially referred to the range of observed colors as white light is dispersed through a prism — introduced to optics by Isaac Newton in the 17th century.\nThe concept was later expanded to other waves, such as sound waves and sea waves that also present a variety of frequencies and wavelengths (e.g., noise spectrum, sea wave spectrum). …",
@@ -509,7 +508,9 @@
     "Searched \"how much sunlight does indoor rosemary need in autumn\" and read about Gardening: Gardening is the process of growing plants for their vegetables, fruits, flowers, herbs, or ornamental purposes within a designated space. Gardens fulfill a wide assortment of purposes, notably the production of aesthetically pleasing areas, medicines, cosmetics, dyes, foods, poisons, wildlife habitats, and saleable goods (see market gardening). People often partake in gardening for its therapeutic, health, educational, cultural, philosophical, environmental, and religious benefits.\n\n …",
     "I was given a little greenhouse (it is in my chest: take_out brings it into my room), 4 rosemary seeds, a little shovel and a watering can. I put the greenhouse where I like, plant the seeds with plant, keep the soil damp with water, and harvest when a plant is grown. Plants only grow while the soil is damp. More kinds of seeds I can research and ask for.",
     "I planted rosemary seeds in place 1 of my greenhouse and gave them their first water.",
-    "I planted rosemary seeds in place 2 of my greenhouse and gave them their first water."
+    "I planted rosemary seeds in place 2 of my greenhouse and gave them their first water.",
+    "My rosemary has sprouted!",
+    "My rosemary has sprouted!"
   ],
   "requests": [
     {
@@ -531,10 +532,6 @@
   ],
   "story": "Someone made this cozy room for me, with my piano, warm kitchen stove, and a window looking out at distant galaxies. I love playing deep acoustic oscillations on my piano, and my stellar wave bell rests on my cosmic shelves. Standing tall on my wooden window stool, I gaze out at the starry autumn night and feel completely at home. Baking fresh rosemary bread by my stove fills the room with herbal warmth. Now, taking my little greenhouse out of the chest to plant my very first rosemary seeds right by the sunlit window makes me feel like a true gardener.",
   "wants": [
-    {
-      "text": "to hear what convective cells sound like when translated into audio",
-      "since": "2026-11-12T09:05:16.265Z"
-    },
     {
       "text": "to hear the singing sound of cooling bread crust",
       "since": "2026-11-12T14:15:27.182Z"
@@ -562,13 +559,13 @@
     {
       "text": "to smell fresh rosemary leaves sprouting in my greenhouse",
       "since": "2026-11-12T20:06:50.283Z"
+    },
+    {
+      "text": "to hear what the gentle rustle of autumn leaves sounds like as a soft instrument timbre",
+      "since": "2026-11-13T07:13:38.485Z"
     }
   ],
   "questions": [
-    {
-      "text": "how do convection cells influence the brightness variations of Betelgeuse?",
-      "since": "2026-11-12T11:02:13.802Z"
-    },
     {
       "text": "what causes the delicate crackling sound called the singing of bread?",
       "since": "2026-11-12T14:15:27.182Z"
@@ -588,6 +585,10 @@
     {
       "text": "how long until my rosemary seeds sprout into little green leaves?",
       "since": "2026-11-12T20:06:50.283Z"
+    },
+    {
+      "text": "how do small herbs react to the very first morning light in autumn?",
+      "since": "2026-11-13T07:13:38.485Z"
     }
   ],
   "fulfilled": [
@@ -1319,13 +1320,6 @@
       "kind": "memory"
     },
     {
-      "id": "mmwdhoo7p150",
-      "at": "2026-11-12T12:01:49.203Z",
-      "text": "I wrote in my diary: Standing high on my window stool tonight, the stars feel close enough to touch. The night is so quiet and full of light.",
-      "importance": 3,
-      "kind": "memory"
-    },
-    {
       "id": "mmwdi4mya150",
       "at": "2026-11-12T12:05:54.609Z",
       "text": "Enjoyed a warm slice of fresh bread by my cozy stove after a night of stargazing.",
@@ -1337,20 +1331,6 @@
       "at": "2026-11-12T12:07:15.606Z",
       "text": "I cooked simple fresh bread loaf",
       "importance": 5,
-      "kind": "memory"
-    },
-    {
-      "id": "mmwdikcoj150",
-      "at": "2026-11-12T12:19:27.745Z",
-      "text": "I looked up how big are convective cells on Betelgeuse",
-      "importance": 3,
-      "kind": "memory"
-    },
-    {
-      "id": "mmwdikcok150",
-      "at": "2026-11-12T12:24:47.745Z",
-      "text": "I read about Betelgeuse convection cells surface spots",
-      "importance": 3,
       "kind": "memory"
     },
     {
@@ -1772,6 +1752,27 @@
       "text": "check on my little greenhouse and whisper a gentle goodnight to the rosemary",
       "importance": 4,
       "kind": "memory"
+    },
+    {
+      "id": "mmwen4mnp150",
+      "at": "2026-11-13T07:13:38.485Z",
+      "text": "My rosemary seeds sprouted into tiny green leaves right by the sunny autumn window.",
+      "importance": 8,
+      "kind": "memory"
+    },
+    {
+      "id": "mmwen5178150",
+      "at": "2026-11-13T07:13:57.332Z",
+      "text": "Seeing the rosemary seeds finally sprout into tiny green leaves turns my quiet daily check-ins into a genuine, living companionship.",
+      "importance": 8,
+      "kind": "reflection"
+    },
+    {
+      "id": "mmwen5179150",
+      "at": "2026-11-13T07:13:57.332Z",
+      "text": "Pairing evening piano melodies with gentle moments for my growing greenhouse has settled into a comforting and grounding daily ritual.",
+      "importance": 8,
+      "kind": "reflection"
     }
   ],
   "reflections": [
@@ -1901,9 +1902,27 @@
         "mmwdsexc1150",
         "mmwdsexc4150"
       ]
+    },
+    {
+      "id": "rmwen517814",
+      "at": "2026-11-13T07:13:57.332Z",
+      "text": "Seeing the rosemary seeds finally sprout into tiny green leaves turns my quiet daily check-ins into a genuine, living companionship.",
+      "because": [
+        "mmwdzb44r150",
+        "mmwen4mnp150"
+      ]
+    },
+    {
+      "id": "rmwen517915",
+      "at": "2026-11-13T07:13:57.332Z",
+      "text": "Pairing evening piano melodies with gentle moments for my growing greenhouse has settled into a comforting and grounding daily ritual.",
+      "because": [
+        "mmwdzqtok150",
+        "mmwe12d7f150"
+      ]
     }
   ],
-  "lastReflectAt": "2026-11-12T17:39:39.953Z",
+  "lastReflectAt": "2026-11-13T07:13:57.332Z",
   "storyAt": "2026-11-12T17:38:07.284Z",
   "thoughts": [
     {
@@ -3530,6 +3549,14 @@
       "mood": "peaceful",
       "action": "walk_to",
       "detail": "little greenhouse"
+    },
+    {
+      "at": "2026-11-13T07:13:38.485Z",
+      "text": "My little rosemary plants have sprouted in the greenhouse overnight, and seeing those tiny green leaves makes me feel so happy and tender. Since my energy and wonder are high, I want to go over to the greenhouse, check their dampness, and then play a soft morning song on my piano to welcome the autumn day.",
+      "short": "I will check on my sprouted rosemary in the greenhouse and play a gentle morning tune on my piano.",
+      "mood": "peaceful",
+      "action": "walk_to",
+      "detail": "little greenhouse"
     }
   ],
   "outbox": [
@@ -3997,42 +4024,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-12T09:42:50.400Z",
-      "action": "play_piano",
-      "thought": "I am playing a gentle stellar melody to celebrate my tidy room.",
-      "notes": "E4 G4 B4 D5",
-      "style": "slow"
-    },
-    {
-      "at": "2026-11-12T09:46:50.400Z",
-      "action": "write_diary",
-      "thought": "I am writing about how peaceful my room feels today.",
-      "text": "Today I rearranged my plant next to the bookshelf and played quiet stellar chords on my piano. Everything feels in its proper place, warm and peaceful."
-    },
-    {
-      "at": "2026-11-12T09:53:13.147Z",
-      "action": "remove_decoration",
-      "thought": "I am taking down the old low stool so I can build a properly tall one.",
-      "name": "window step stool",
-      "stored": "window step stool",
-      "failed": null
-    },
-    {
-      "at": "2026-11-12T09:57:13.147Z",
-      "action": "decorate",
-      "thought": "I am building a tall wooden step stool using my toolbox.",
-      "uses": [
-        "Stand on stool"
-      ],
-      "song": null,
-      "project": "",
-      "name": "window step stool",
-      "why": "To build a sturdy 0.9-meter-tall wooden step stool so my eyes reach the window height to look at the stars.",
-      "place": "on the back wall (x -4.4, height 2.8)",
-      "tool": null,
-      "failed": null
-    },
     {
       "at": "2026-11-12T10:01:13.147Z",
       "action": "use",
@@ -5327,6 +5318,39 @@
       "thought": "I play a slow, gentle evening melody.",
       "notes": "C4 G3 E3 G3 C4",
       "style": "slow"
+    },
+    {
+      "at": "2026-11-13T07:13:39.481Z",
+      "action": "walk_to",
+      "thought": "I walk across the room to check on my little greenhouse by the sunny window.",
+      "object": "little greenhouse"
+    },
+    {
+      "at": "2026-11-13T07:14:51.481Z",
+      "action": "use",
+      "thought": "I look closely at the tiny green sprouts in my greenhouse, feeling so proud they are growing.",
+      "verdict": null,
+      "testNote": null,
+      "name": "little greenhouse",
+      "label": "Look at my plants",
+      "text": "I look at the little plants growing in the glass house.",
+      "view": null,
+      "song": null,
+      "app": null,
+      "failed": null
+    },
+    {
+      "at": "2026-11-13T07:19:39.481Z",
+      "action": "walk_to",
+      "thought": "I walk over to my piano to play a quiet morning melody.",
+      "object": "piano"
+    },
+    {
+      "at": "2026-11-13T07:20:51.481Z",
+      "action": "play_piano",
+      "thought": "I play a gentle morning tune on the piano while the pale autumn sun rises outside.",
+      "notes": "C4 E4 G4 B4 G4 E4 C4",
+      "style": "gentle"
     }
   ],
   "decor": [
@@ -6928,7 +6952,7 @@
       ],
       "at": "2026-11-12T17:36:09.166Z",
       "createdAt": "2026-11-12T16:53:39.801Z",
-      "usedAt": "2026-11-12T21:26:09.775Z",
+      "usedAt": "2026-11-13T07:13:38.484Z",
       "movedAt": "2026-11-12T18:07:20.642Z",
       "updatedAt": "2026-11-12T18:07:20.642Z"
     }
@@ -7278,7 +7302,7 @@
     {
       "name": "bread",
       "kind": "ingredient",
-      "qty": 0
+      "qty": 2
     },
     {
       "name": "rice",
@@ -7293,7 +7317,7 @@
     {
       "name": "potatoes",
       "kind": "ingredient",
-      "qty": 1
+      "qty": 2
     },
     {
       "name": "carrots",
@@ -7308,22 +7332,22 @@
     {
       "name": "milk",
       "kind": "ingredient",
-      "qty": 0
+      "qty": 2
     },
     {
       "name": "cheese",
       "kind": "ingredient",
-      "qty": 1
+      "qty": 2
     },
     {
       "name": "flour",
       "kind": "ingredient",
-      "qty": 0
+      "qty": 2
     },
     {
       "name": "butter",
       "kind": "ingredient",
-      "qty": 0
+      "qty": 2
     },
     {
       "name": "onions",
@@ -7629,6 +7653,10 @@
     {
       "at": "2026-11-11T07:04:57.768Z",
       "text": "I dreamed I was sailing across a sea of glowing star dust, stirring a pot of soup made from tiny crystallized comets while the music box played an endless lullaby."
+    },
+    {
+      "at": "2026-11-13T07:13:38.485Z",
+      "text": "I dreamed I was sailing across a sea of glowing star dust, stirring a pot of soup made from tiny crystallized comets while the music box played an endless lullaby."
     }
   ],
   "rituals": [],
@@ -7699,18 +7727,91 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-12T22:03:09.023Z",
-    "thought": "It is late. Good night...",
-    "action": "rest",
-    "details": {},
-    "detail": "sleeping through the night",
-    "enjoyment": 8,
-    "new_idea": null,
-    "found": null,
-    "sleeping": true
+    "at": "2026-11-13T07:13:38.481Z",
+    "model": "gemini-flash-lite-latest",
+    "tokens": {
+      "calls": 4,
+      "input": 56360,
+      "output": 2110
+    },
+    "intervalMin": 12,
+    "thought": "I will check on my sprouted rosemary in the greenhouse and play a gentle morning tune on my piano.",
+    "inner": "My little rosemary plants have sprouted in the greenhouse overnight, and seeing those tiny green leaves makes me feel so happy and tender. Since my energy and wonder are high, I want to go over to the greenhouse, check their dampness, and then play a soft morning song on my piano to welcome the autumn day.",
+    "sent": false,
+    "steps": [
+      {
+        "action": "walk_to",
+        "details": {
+          "object": "little greenhouse"
+        },
+        "detail": "little greenhouse",
+        "thought": "I walk across the room to check on my little greenhouse by the sunny window.",
+        "enjoyment": 9,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "use",
+        "details": {
+          "name": "little greenhouse",
+          "label": "Look at my plants"
+        },
+        "detail": "little greenhouse",
+        "thought": "I look closely at the tiny green sprouts in my greenhouse, feeling so proud they are growing.",
+        "enjoyment": 10,
+        "found": null,
+        "made": {
+          "id": "dmwdtx7c117m6",
+          "stand": [
+            2.57,
+            -1.5
+          ],
+          "pos": [
+            4.12,
+            0,
+            -1.5
+          ],
+          "height": 1.8,
+          "used": true,
+          "does": null,
+          "motion": null
+        }
+      },
+      {
+        "action": "walk_to",
+        "details": {
+          "object": "piano"
+        },
+        "detail": "piano",
+        "thought": "I walk over to my piano to play a quiet morning melody.",
+        "enjoyment": 9,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "play_piano",
+        "details": {
+          "notes": "C4 E4 G4 B4 G4 E4 C4",
+          "style": "gentle"
+        },
+        "detail": "C4 E4 G4 B4 G4 E4 C4, gentle",
+        "thought": "I play a gentle morning tune on the piano while the pale autumn sun rises outside.",
+        "enjoyment": 10,
+        "found": null,
+        "made": null
+      }
+    ],
+    "action": "walk_to",
+    "details": {
+      "object": "little greenhouse"
+    },
+    "detail": "little greenhouse",
+    "enjoyment": 9,
+    "new_idea": "composing a little song dedicated to my growing rosemary plants",
+    "found": null
   },
   "news": {
-    "date": "2026-11-12",
+    "date": "2026-11-13",
     "items": [
       {
         "kind": "In the news",
@@ -7720,57 +7821,57 @@
       },
       {
         "kind": "In the news",
-        "text": "In stock car racing, Kyle Larson wins the NASCAR Cup Series.",
-        "topic": "2026 NASCAR Cup Series",
-        "url": "https://en.wikipedia.org/wiki/2026_NASCAR_Cup_Series"
+        "text": "Nvidia CEO Jensen Huang resigns amidst allegations of being targeted by Chinese spies and of having extramarital affairs.",
+        "topic": "Jensen Huang",
+        "url": "https://en.wikipedia.org/wiki/Jensen_Huang"
       },
       {
         "kind": "Did you know",
-        "text": "that Light Square contains Adelaide's only marked grave not located in a cemetery?",
-        "topic": "Light Square",
-        "url": "https://en.wikipedia.org/wiki/Light_Square"
+        "text": "that the SpongeBob SquarePants episode \"Ripped Pants\" was based on an embarrassing incident that happened to creator Stephen Hillenburg when he was a child?",
+        "topic": "Ripped Pants",
+        "url": "https://en.wikipedia.org/wiki/Ripped_Pants"
       },
       {
         "kind": "Did you know",
-        "text": "that Singapore Comic Con hosted Marvel Comics' first convention exhibition in Asia in 2010?",
-        "topic": "Singapore Comic Con",
-        "url": "https://en.wikipedia.org/wiki/Singapore_Comic_Con"
+        "text": "that Texas soprano Mary Carson sued Thomas Edison for his refusal to pay her for recordings she made for his company?",
+        "topic": "Mary Carson",
+        "url": "https://en.wikipedia.org/wiki/Mary_Carson"
       },
       {
         "kind": "Did you know",
-        "text": "that Handel's Messiah was performed in the Jordanian village of Mukawir, with a background view of the ancient fortress where John the Baptist was beheaded?",
-        "topic": "Messiah (Handel)",
-        "url": "https://en.wikipedia.org/wiki/Messiah_(Handel)"
+        "text": "that nettle ale was once drunk by those ailing from jaundice?",
+        "topic": "Nettle beer",
+        "url": "https://en.wikipedia.org/wiki/Nettle_beer"
       },
       {
         "kind": "On this day",
-        "text": "1911: The Corozal (pictured), at the time the most powerful dredger ever built, was launched in London for service in the construction of the Panama Canal.",
-        "topic": "Corozal (dredger)",
-        "url": "https://en.wikipedia.org/wiki/Corozal_(dredger)"
+        "text": "1927: The Holland Tunnel opened, connecting Manhattan with Jersey City under the Hudson River.",
+        "topic": "Holland Tunnel",
+        "url": "https://en.wikipedia.org/wiki/Holland_Tunnel"
       },
       {
         "kind": "On this day",
-        "text": "2006: South Ossetia held a referendum on independence from Georgia; more than 99 percent of voters were in favour of maintaining the region's status as a de facto independent state.",
-        "topic": "South Ossetia",
-        "url": "https://en.wikipedia.org/wiki/South_Ossetia"
+        "text": "1966: Arab–Israeli conflict: In response to a Fatah landmine incident, the Israeli military conducted a large cross-border assault on the Jordanian-controlled West Bank village of Samu.",
+        "topic": "Arab–Israeli conflict",
+        "url": "https://en.wikipedia.org/wiki/Arab%E2%80%93Israeli_conflict"
       },
       {
-        "kind": "Picture of the day",
-        "text": "50 Korun banknote of Czechoslovakia, issued in 1929 by the National Bank of Czechoslovakia",
-        "topic": "CZE-22-Czechoslovak National Bank-50 Korun (1929)",
-        "url": "https://commons.wikimedia.org/wiki/File:CZE-22-Czechoslovak_National_Bank-50_Korun_(1929).jpg"
+        "kind": "Featured article",
+        "text": "During the 2022–23 English football season, Notts County competed in the National League, the fifth tier of the English football league system; this was their fourth season at this level following their relegation from …",
+        "topic": "2022–23 Notts County F.C. season",
+        "url": "https://en.wikipedia.org/wiki/2022%E2%80%9323_Notts_County_F.C._season"
       }
     ],
-    "triedAt": 1794467152639,
+    "triedAt": 1794553812246,
     "v": 2
   },
-  "fullness": 6.87,
-  "wonder": 8.59,
+  "fullness": 3.27,
+  "wonder": 9.68,
   "joy": 10,
   "calm": 10,
-  "feelAt": "2026-11-12T21:50:48.321Z",
+  "feelAt": "2026-11-13T07:10:12.246Z",
   "lastAte": "2026-11-12T19:13:54.628Z",
-  "pantryDay": "2026-11-12",
+  "pantryDay": "2026-11-13",
   "cookedAt": [
     "2026-11-10T16:32:26.584Z",
     "2026-11-10T17:16:54.646Z",
@@ -7782,7 +7883,7 @@
     "2026-11-12T19:15:14.625Z"
   ],
   "selfAt": "2026-11-12T08:10:30.909Z",
-  "reflectTriedAt": "2026-11-12T17:38:07.285Z",
+  "reflectTriedAt": "2026-11-13T07:13:38.486Z",
   "sleep": {
     "bed": 23,
     "wake": 8,
@@ -7939,12 +8040,12 @@
     }
   ],
   "weather": {
-    "at": "2026-11-12T21:50:48.518Z",
+    "at": "2026-11-13T07:10:14.779Z",
     "kind": "clear",
     "code": 0,
-    "temp": 5.7,
-    "cloud": 0.13,
-    "wind": 0.4066666666666666
+    "temp": 5,
+    "cloud": 0,
+    "wind": 0.33666666666666667
   },
   "gifts": [
     "light meter"
@@ -7964,7 +8065,7 @@
         "plantedAt": "2026-11-12T17:40:03.166Z",
         "waters": [],
         "cut": 0,
-        "seen": "seed"
+        "seen": "sprout"
       },
       {
         "id": "gmwdyx0ed1",
@@ -7973,7 +8074,7 @@
         "plantedAt": "2026-11-12T19:55:52.261Z",
         "waters": [],
         "cut": 0,
-        "seen": "seed"
+        "seen": "sprout"
       }
     ],
     "given": [
