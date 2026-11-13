@@ -60,7 +60,10 @@ export function cook(s, d, now = Date.now()) {
   const used = [];
   for (const w of wanted) {
     const hit = find(s.pantry, w, 'ingredient');
-    if (!hit || used.includes(hit)) return { failed: `I have no ${w} in my pantry` };
+    if (!hit || used.includes(hit)) {
+      const have = s.pantry.filter((p) => p.kind === 'ingredient' && p.qty > 0).map((p) => p.name).join(', ');
+      return { failed: `I have no ${w} in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: ${have || 'nothing'}` };
+    }
     used.push(hit);
   }
   const have = s.pantry.find((p) => p.kind === 'dish' && p.name.toLowerCase() === dish.toLowerCase());

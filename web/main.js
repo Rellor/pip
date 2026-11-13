@@ -1792,7 +1792,7 @@ function pipInfo() {
     title: 'Pip',
     icon: 'P',
     avatar: true,
-    subtitle: [s?.mood ? `Feeling ${s.mood}` : '', sleeping ? 'asleep' : 'awake'].filter(Boolean).join(' · '),
+    subtitle: [(s?.emotion || s?.mood) ? `Feeling ${s.emotion || s.mood}` : '', sleeping ? 'asleep' : 'awake'].filter(Boolean).join(' · '),
     sections,
     actions: [{ icon: '📖', text: 'See his day', run: () => { hideInfo(); showTab('day'); } }, { icon: '💗', text: 'Open his life tab', run: () => { hideInfo(); showTab('life'); } }],
     refresh: pipInfo, // the card keeps updating while it is open
@@ -3170,7 +3170,7 @@ function renderStatus(s) {
     : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
 }
 function render(s) {
-  $('mood').textContent = s.mood || '…';
+  $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);
   renderNow();
   renderMind(s);

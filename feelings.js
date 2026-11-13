@@ -7,6 +7,8 @@
 // The code moves the bars. Pip sees them in his prompt and decides what to do about them.
 
 export const BARS = ['fullness', 'energy', 'wonder', 'joy', 'calm'];
+// Feelings that come and go (0 to 10): they rise with what happens and fade by themselves.
+export const EMOTIONS = ['irritated', 'sad', 'excited'];
 export const EAT_GAP_MINUTES = 30;
 const EAT_GAIN = 3;
 
@@ -21,6 +23,8 @@ export function ensureFeelings(s, now = Date.now()) {
   s.wonder = clamp(s.wonder ?? 10 - (s.boredom ?? 3));
   s.joy = clamp(s.joy ?? 6);
   s.calm = clamp(s.calm ?? 6);
+  s.emo = { irritated: 0, sad: 0, excited: 0, ...(s.emo ?? {}) };
+  for (const k of EMOTIONS) s.emo[k] = clamp(s.emo[k]);
   s.feelAt ??= new Date(now).toISOString();
   s.lastAte ??= null;
 }
@@ -35,13 +39,19 @@ export function passTime(s, now = Date.now()) {
   s.wonder = clamp(s.wonder + (3 - s.wonder) * 0.2); // wonder needs new things to stay up
   s.joy = clamp(s.joy + (5 - s.joy) * 0.3); // joy and calm settle back toward the middle
   s.calm = clamp(s.calm + (5 - s.calm) * 0.22);
+  s.emo.irritated = clamp(s.emo.irritated * 0.8); // about an hour to settle by itself
+  s.emo.sad = clamp(s.emo.sad * 0.85);
+  s.emo.excited = clamp(s.emo.excited * 0.6);
   s.feelAt = new Date(now).toISOString();
 }
+
+const FUN = ['play_piano', 'draw', 'compose', 'take_photo', 'cook', 'decorate', 'make_clothes', 'make_app', 'make_move', 'find_picture', 'do', 'print_photo'];
 
 // Every step of his plan.
 // looks = how many of his last few steps were lookups (search or read). Lookups feed wonder less and less when they pile up,
 // while making something fills him: curiosity is the start, doing is what satisfies.
-export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fresh = false, style = '', looks = 0, bar = '', theme = null }) {
+export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fresh = false, style = '', looks = 0, bar = '', theme = null, soft = false }) {
+  const e = s.emo;
   const rested = s.energy >= 8; // before this step changes it
   const wonder0 = s.wonder;
   s.energy = s.energy + (action === 'rest' ? 3 : action === 'walk_to' ? 0 : -0.5); // walking costs no energy
@@ -129,6 +139,14 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     s.joy += 0.2;
   }
   if (s.energy <= 2) s.calm -= 0.5;
+  if (FUN.includes(action)) { // something fun settles the irritation and lifts the mood
+    e.irritated -= soft ? 0.6 : 1.5 + (Number(enjoyment) >= 9 ? 1 : 0); // a small shake-off settles less than something really fun
+    e.sad -= soft ? 0.2 : 0.6;
+    if (fresh) e.excited += 1.5;
+    if (Number(enjoyment) >= 10) e.excited += 0.8;
+  } else if (fresh) e.excited += 0.8;
+  if (s.joy <= 3) e.sad += 0.5;
+  for (const k of EMOTIONS) e[k] = clamp(e[k]);
   for (const b of BARS) s[b] = clamp(s[b]);
 }
 
@@ -139,13 +157,17 @@ export function nudge(s, bar, amount) {
 
 // Things that happen to him.
 const EVENTS = {
-  message: { joy: 1.5, calm: 0.3 }, // Bas wrote
+  message: { joy: 1.5, calm: 0.3 }, // Bas wrote (also settles him, see felt)
   wrote: { joy: 0.5 }, // he wrote to Bas
   projectStart: { wonder: 0.8 },
   projectDone: { joy: 2, fullness: 1 },
 };
 export function felt(s, event) {
   for (const [bar, gain] of Object.entries(EVENTS[event] ?? {})) s[bar] = clamp(s[bar] + gain);
+  if (s.emo) {
+    if (event === 'message') { s.emo.sad = clamp(s.emo.sad - 2); s.emo.irritated = clamp(s.emo.irritated - 1); s.emo.excited = clamp(s.emo.excited + 1); }
+    if (event === 'projectDone') { s.emo.irritated = clamp(s.emo.irritated - 2); s.emo.excited = clamp(s.emo.excited + 1.5); }
+  }
 }
 
 // Eating fills him up a little. Not more than once every half hour.
@@ -179,4 +201,38 @@ export function feelingsText(s) {
     `Joy ${show(s.joy)}/10: ${word(s.joy, 'I feel low and want something I love', 'I feel okay', 'I feel happy')}`,
     `Calm ${show(s.calm)}/10: ${word(s.calm, 'I feel restless and need some quiet', 'I feel steady', 'I feel peaceful')}`,
   ].join('\n');
+}
+
+// The one word for how he feels right now: the strongest feeling that is big enough to notice.
+export function emotionWord(s) {
+  const e = s.emo ?? {};
+  if (e.irritated >= 7) return 'angry';
+  if (e.irritated >= 3.5) return 'irritated';
+  if (e.sad >= 4) return 'sad';
+  if (e.excited >= 4) return 'excited';
+  if (s.joy >= 7.5 && (e.irritated ?? 0) < 2 && (e.sad ?? 0) < 2) return 'happy';
+  return '';
+}
+
+// A picture of it for his prompt, never an order.
+export function emotionText(s) {
+  const e = s.emo ?? {};
+  const w = emotionWord(s);
+  const lines = {
+    angry: 'I am properly angry: too many things went wrong. It is allowed. It shows in how I talk and what I do. It fades by itself, and faster when I do something fun.',
+    irritated: 'I am a bit irritated: something did not work out. I can show it, and be grumpy about it for a while. It fades by itself, and faster when I do something fun.',
+    sad: 'I feel sad. It is allowed to be sad for a while. Something small and warm, or writing to someone, often helps.',
+    excited: 'I am excited! It shows in how I move and what I say.',
+    happy: 'I feel happy.',
+  };
+  return w ? `Right now I feel ${w}. ${lines[w]}` : '';
+}
+
+// A step that did not work out: a little irritation.
+// More when the same thing failed again just before. Strong irritation is a bit sad too. It fades by itself, or with something fun.
+export function failStep(s, { again = false }) {
+  const e = (s.emo ??= { irritated: 0, sad: 0, excited: 0 });
+  e.irritated = clamp(e.irritated + (again ? 2 : 1.2));
+  if (e.irritated >= 6) e.sad = clamp(e.sad + 0.4);
+  s.joy = clamp(s.joy - 0.5);
 }

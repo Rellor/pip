@@ -28,7 +28,7 @@ const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
 import { refreshNews, themeMirror } from './news.js';
 import { tooSimilar, sinceLastWrote } from './repeat.js';
-import { ensureFeelings, passTime, stepFeelings, felt, nudge, eatNow, feelingsText, needsText } from './feelings.js';
+import { ensureFeelings, passTime, stepFeelings, felt, nudge, eatNow, feelingsText, needsText, emotionText, emotionWord, failStep } from './feelings.js';
 import { cleanUses, findUse, addUse, stepsProblem } from './uses.js';
 
 const STATE_FILE = 'web/state.json';
@@ -203,7 +203,7 @@ function focusText(s, unread = []) {
 }
 // The things he does become memories, with a guess of how much they matter (he can add his own with "remember").
 function observeStep(s, e) {
-  if (e.failed) return;
+  if (e.failed || e.fallback) return;
   const at = e.at;
   const note = {
     decorate: [`I made ${e.name}${e.why ? ` (${e.why})` : ''}`, 6],
@@ -575,7 +575,7 @@ How bright a place is follows the real time and weather in ${PLACE.name}: bright
 
 function buildWakeUp(s) {
   const recent = s.activities.slice(-5).map(
-    (a) => `- ${a.action}${a.detail ? ` (${a.detail})` : ''}, enjoyed ${a.enjoyment}/10`
+    (a) => (a.failed ? `- ${a.action}${a.detail ? ` (${a.detail})` : ''}: it did not work out (${a.failed})` : `- ${a.action}${a.detail ? ` (${a.detail})` : ''}, enjoyed ${a.enjoyment}/10`)
   );
   const lastWrote = s.outbox.at(-1)?.at;
   const lastLook = s.log.filter((e) => ['search_web', 'read_book'].includes(e.action) && Date.parse(e.at) <= Date.now()).at(-1)?.at;
@@ -593,6 +593,7 @@ Mood: ${s.mood}
 
 HOW I FEEL (0 to 10)
 ${feelingsText(s)}
+${emotionText(s)}
 ${needsText(s)}
 These bars are how my body and heart feel. They guide me. When Fullness is low I can eat (eat, at most once every 30 minutes). When Energy is low I rest. When Wonder is low I look for something new, or make something. When Joy is low I do something I love, or write to someone. When Calm is low I play something quiet or look out of the window.
 
@@ -934,6 +935,24 @@ function normalizeSteps(a) {
   }));
 }
 
+// What he does right after a step that did not work: something small he can always do, different each time and different from the last one.
+const SHAKE_OFF = [
+  ['do a silly little dance to shake it off', 'joy', '💃'],
+  ['hum a small tune while I swing my arms', 'joy', '🎵'],
+  ['stretch up tall and look out of the window for a moment', 'calm', '🪟'],
+  ['tell my plant what went wrong and how it felt', 'calm', '🪴'],
+  ['stomp around the room once, then laugh at myself', 'joy', '🐾'],
+  ['sit on the rug and watch the light move across the floor', 'calm', '🌤️'],
+  ['juggle three imaginary berries', 'wonder', '🍓'],
+  ['look closely at something in my room I never really looked at', 'wonder', '🔍'],
+];
+function fallbackStep(s, failedStep, n = 0) {
+  const last = s.log.filter((e) => e.fallback).at(-1)?.what;
+  const options = SHAKE_OFF.filter(([w]) => w !== last);
+  const [what, feeling, emoji] = options[(Math.floor(Date.now() / 60_000) + n * 3) % options.length];
+  return { action: 'do', fallback: true, details: { what, feeling, emoji }, thought: `That did not work out. I shake it off and ${what}.`, working_on: '', needs: '', enjoyment: 6 };
+}
+
 function applyResult(s, r) {
   if (!ACTION_NAMES.includes(r.action)) r = { ...r, action: 'rest', details: {} };
   const detail = describe(r);
@@ -943,10 +962,12 @@ function applyResult(s, r) {
   const repeating = !r.working_on && ((lastThree.length === 3 && lastThree.every((x) => x === r.action)) || loopRepeating(s.log, r.action, r.details)); // working on something on purpose is not boredom; the same thing at the same place again and again is
   const fresh = !['walk_to', 'rest', 'eat'].includes(r.action) && !s.log.slice(-40).some((e) => e.action === r.action); // something he has not done lately
   const looks = s.activities.slice(-6).filter((a) => ['search_web', 'read_book'].includes(a.action)).length;
-  stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, looks, style: r.details?.style, bar: r.details?.feeling, theme: themeFatigue(s.log, r.details) });
+  const emoBefore = { ...s.emo };
+  stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, looks, soft: !!r.fallback, style: r.details?.style, bar: r.details?.feeling, theme: themeFatigue(s.log, r.details) });
   s.mood = String(r.mood_after || s.mood);
 
-  s.activities.push({ at: new Date().toISOString(), action: r.action, detail, enjoyment });
+  const act = { at: new Date().toISOString(), action: r.action, detail, enjoyment };
+  s.activities.push(act);
   s.activities = s.activities.slice(-50);
 
   if (r.new_idea) s.ideas.push(r.new_idea);
@@ -960,7 +981,7 @@ function applyResult(s, r) {
   if (enjoyment >= 8 && ['read_book', 'search_web'].includes(r.action) && detail && !s.interests.includes(detail)) {
     s.interests.push(detail);
   }
-  return { r, detail, enjoyment };
+  return { r, detail, enjoyment, act, emoBefore };
 }
 
 function take(list, t) {
@@ -1324,9 +1345,9 @@ async function wakeUp() {
   });
   if (!steps.length) steps.push({ action: 'rest', details: {}, thought: 'I could not do what I planned, so I rest a moment.', working_on: '', needs: '', enjoyment: 5 });
   // A walk is short, so it takes a quarter of the time of other steps. The page uses the same weights.
-  const weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1));
-  const wsum = weights.reduce((a, b) => a + b, 0);
-  const offsets = weights.map((_, k) => (weights.slice(0, k).reduce((a, b) => a + b, 0) / wsum) * INTERVAL_MIN * 60_000);
+  let weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1));
+  let wsum = weights.reduce((a, b) => a + b, 0);
+  let offsets = weights.map((_, k) => (weights.slice(0, k).reduce((a, b) => a + b, 0) / wsum) * INTERVAL_MIN * 60_000);
 
   // Every step changes his state, like a single action did before.
   const results = steps.map((st, i) =>
@@ -1710,6 +1731,25 @@ async function wakeUp() {
     if (st.ate.ok && gain) eatFromPantry(state, st.details.food);
   }
 
+  // A step that did not work leaves a gap. Right after it comes one small thing he can always do (no extra Gemini call, so it costs no tokens).
+  // At most 2 per wake-up, and it never earns rewards or memories.
+  {
+    let added = 0;
+    for (let i = 0; i < steps.length && added < 2; i++) {
+      if (!steps[i].made?.failed || steps[i].fallback) continue;
+      const pick = fallbackStep(state, steps[i], added);
+      steps.splice(i + 1, 0, pick);
+      results.splice(i + 1, 0, applyResult(state, { ...pick, mood_after: undefined, new_idea: null }));
+      added++;
+      i++;
+    }
+    if (added) {
+      weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1));
+      wsum = weights.reduce((a, b) => a + b, 0);
+      offsets = weights.map((_, k) => (weights.slice(0, k).reduce((a, b) => a + b, 0) / wsum) * INTERVAL_MIN * 60_000);
+    }
+  }
+
   // A task counts as done only when this wake-up really did something (not only walking, resting or eating, and nothing that failed).
   const TASK_WORK = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture'];
   const PROJECT_WORK = [...TASK_WORK, 'blueprint', 'search_web', 'read_book', 'take_photo', 'find_picture', 'play_piano'];
@@ -1822,13 +1862,23 @@ async function wakeUp() {
   }
   state.notes = state.notes.slice(-30);
 
-  const rewarded = bonusRewards(state, steps);
+  const rewarded = bonusRewards(state, steps.filter((x) => !x.fallback));
   if (rewarded.length) console.log(`   🌟 ${rewarded.join(', ')}`);
   // The day log: one entry per step, stamped with when the step starts, so the page can show his day as it happens.
   state.log = state.log.filter((e) => Date.parse(e.at) <= startedAt);
+  steps.forEach((st, i) => { // a step that did not work: he is told so, and it irritates him a little
+    const why = st.made?.failed;
+    if (!why || !results[i]?.act) return;
+    const again = state.log.slice(-6).some((e) => e.failed && e.action === st.action);
+    failStep(state, { again });
+    Object.assign(results[i].act, { enjoyment: 0, failed: String(why).slice(0, 100) });
+    results[i].enjoyment = 0;
+  });
+  state.emotion = emotionWord(state);
   steps.forEach((st, i) => {
     const d = st.details;
     const entry = { at: new Date(startedAt + offsets[i] + 1000).toISOString(), action: st.action, thought: st.thought };
+    if (st.fallback) entry.fallback = true;
     const page = (p) => (p ? { title: p.title, url: p.url, text: clip(p.text, 1500) } : null);
     if (st.dupSearch) entry.dup = true;
     if (st.sameTune) entry.sameTune = st.sameTune;
@@ -1872,13 +1922,15 @@ async function wakeUp() {
     if (st.action === 'measure') Object.assign(entry, { name: text(d.name, 60), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_tool') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), failed: st.made?.failed ?? null });
     if (st.action === 'take_out') Object.assign(entry, { name: text(d.name, 60), place: withWarn(st.made?.entry?.label ?? null, st.made), failed: st.made?.failed ?? null });
-    if (entry.failed && entry.thought) entry.thought = `I wanted to, but it did not work out. (${clip(entry.thought, 140)})`; // what I wrote before it happened is a wish, not a result
+    if (entry.failed && entry.thought) entry.thought = `I wanted to, but ${clip(String(entry.failed).replace(/^[A-Z]/, (c) => c.toLowerCase()).replace(/[.\s]+$/, ''), 160)}. (${clip(entry.thought, 120)})`; // what I wrote before it happened is a wish, not a result
     state.log.push(entry);
     observeStep(state, entry);
   });
   for (const b of blocked) {
     const entry = { at: new Date(startedAt).toISOString(), action: b.st.action, thought: b.st.thought, failed: b.why, name: text(b.st.details.name ?? b.st.details.what ?? '', 60) };
     state.log.push(entry);
+    failStep(state, {});
+    state.emotion = emotionWord(state);
     addMemory(state, `I could not ${b.st.action.replace(/_/g, ' ')}: ${b.why}`, 4, 'memory', entry.at);
   }
   const archived = await archiveOverflow(state, { tz: TZ }); // what is too old for his state goes to web/archive, where only the website reads it

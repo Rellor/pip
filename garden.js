@@ -108,7 +108,7 @@ export function waterPlants(s, d, now = Date.now()) {
   ensureGarden(s);
   if (!s.garden.plots.length) return { failed: 'I have nothing planted to water' };
   const chosen = pick(s, d?.plant ?? d?.name);
-  if (chosen && !chosen.length) return { failed: `I have no plant like "${clean(d?.plant ?? d?.name)}" in my greenhouse` };
+  if (chosen && !chosen.length) return { failed: `I have no plant like "${clean(d?.plant ?? d?.name)}" in my greenhouse. My plants are: ${[...new Set(s.garden.plots.map((p) => p.plant))].join(', ')}` };
   const list = chosen ?? s.garden.plots;
   const done = [];
   for (const p of list) {
@@ -117,7 +117,10 @@ export function waterPlants(s, d, now = Date.now()) {
     p.waters = p.waters.slice(-40);
     done.push(p.plant);
   }
-  if (!done.length) return { failed: 'the soil is still damp, so they do not need water yet. I look again later' };
+  if (!done.length) {
+    const h = Math.max(0.1, Math.min(...list.map((p) => plantState(p, now).moistLeft)) - WATER_AGAIN_H);
+    return { failed: `the soil is still damp, so they do not need water yet. It is worth watering again in about ${h < 1 ? `${Math.max(1, Math.round(h * 60))} minutes` : `${Math.round(h)} hours`}` };
+  }
   return { ok: true, watered: done, text: `I watered ${[...new Set(done)].join(' and ')}. The soil stays damp for about 10 hours.` };
 }
 

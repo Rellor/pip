@@ -81,7 +81,7 @@ export function gardenText(s, now = Date.now()) {
   lines.push(`Seeds: ${seeds.join(', ') || 'none'}.`);
   const plots = (g.plots ?? []).map((p) => {
     const st = plantState(p, now);
-    const mood = st.wilted ? 'drooping, it needs water' : st.thirsty ? 'thirsty' : `damp for ${left(st.moistLeft)} more`;
+    const mood = st.wilted ? 'drooping, it needs water' : st.thirsty ? 'thirsty' : `damp for ${left(st.moistLeft)} more (water it again in ${left(Math.max(0.1, st.moistLeft - WATER_AGAIN_H))}, sooner does nothing)`;
     return `- ${p.plant} (place ${p.slot + 1}): ${st.stage}, ${mood}${st.ready ? ', ready to harvest' : st.next != null ? `, next stage after ${left(st.next)} of damp soil` : ''}`;
   });
   lines.push(plots.length ? `Plants:\n${plots.join('\n')}` : 'Nothing is planted.');
