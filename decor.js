@@ -366,7 +366,7 @@ export function wallPictures(decor, favorites = [], now = Date.now()) {
 const ageText = (days) => (days < 1 ? 'less than a day' : `${Math.round(days)} day${Math.round(days) === 1 ? '' : 's'}`);
 export function oldestHint(decor, now = Date.now(), favorites = []) {
   const old = wallPictures(decor, favorites, now).slice(0, 2);
-  return old.length ? `The pictures that have hung longest: ${old.map((o) => `"${o.name}" (id ${o.id}, ${ageText(o.days)})`).join(', ')}. take_down_picture {id} frees a spot (it stays in my album), or I can make a smaller picture.` : 'He can take something down first.';
+  return old.length ? `The pictures that have hung longest: ${old.map((o) => `"${o.name}" (id ${o.id}, ${ageText(o.days)})`).join(', ')}. take_down_picture {id} frees a spot (it stays in my album), or I can make a smaller picture` : 'He can take something down first';
 }
 export function removePicture(decor, id) {
   const i = decor.findIndex((x) => x.picture === id);
