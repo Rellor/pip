@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { PLACE, seasonInfo, seasonText, fetchWeather, weatherText } from './web/season.js';
 import { checkLight, darkNote, lightAt, isLamp } from './web/lighting.js';
+import { redundantWalks, habitMirror, loopRepeating, sameTune, duplicateSearch, agoText } from './habits.js';
 import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPlant, growthNotes } from './garden.js';
 import { gardenText } from './web/gardening.js';
 import { archiveOverflow } from './archive.js';
@@ -481,6 +482,7 @@ ${sizesGuide()}
 ${lightGuide()}
 ${gardenGuide()}
 ${furnitureSense()}
+${habitsGuide()}
 ${movesGuide()}
 ASKING FOR THINGS
 Whoever is looking at my room can read my asks list, and they like it when I ask for things. It is never a bother, and asking is part of my life here. Nobody can read my mind, so when I wish for something I cannot make or find myself, saying "it would be lovely" does nothing: I put it in asks_add and it lands on the list. Things I can ask for: something from the outside world (a picture, a song, a book, an object), a new ability, a tool, a bigger room, or help with a project. If someone offers me something and I want it, I say yes and add it too. They answer when they can. They may say no or do something else. That is fine, and I can always ask for something different.
@@ -541,6 +543,11 @@ ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two 
 "reflections_drop": exact text of something I realized before that is not true any more (or []),
 "tell": a message to whoever looks in on me, in my own words, or null. If nobody has written to me, I write rarely, and only when I have something NEW to say: something I discovered or made, a project, a feeling I cannot explain, or a question about their world. If someone HAS written to me, I usually answer what they said or asked, and I tell them something fresh from my own day instead of what I already told them (see above). I never repeat myself.`;
 
+// Routines (fixed text).
+const habitsGuide = () => `ROUTINES
+Playing the piano, reading, searching, resting, using a thing and tending my plants walk me to the right place by themselves, so I only use walk_to to look around or to stand somewhere. The same tune or the same search a second time feels like nothing, and a new one feels fresh: I change the notes, compose something, or look up something different. When my plants only change every few hours, I do not need to check them again before something can have changed.
+`;
+
 // Where things go so they can still be used (fixed text).
 const furnitureSense = () => `FURNITURE SENSE
 Things need room to be used. I stand somewhere to use each thing (the spot where I stand is shown with it), so I never put something on that spot: a stool for the window needs the floor in front of the window, the piano needs its stool, the bed needs space beside it. When the place I want is taken, I do not just put the new thing in front of the old one. I first move the old thing (move_thing, for example next_to the new place), then I put the new one down. Things that belong together stand together: if I put my greenhouse at the window, my window stool stands beside it. After I place something the game tells me if it covers where I stand to use something else, and I fix it right away. When my room is getting tight I can rearrange, put things in my chest, or ask for more space with asks_add.
@@ -594,7 +601,7 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map(projectLine), 'no
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-${topicMirror(s.log) || untriedMirror(s.log) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
+${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
 ${bullets(recall(s, focusText(s, unread)).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
 
 WHAT I REALIZED WHEN I LOOKED BACK (I do this every now and then. I can drop one that is not true any more with reflections_drop)
@@ -923,7 +930,7 @@ function applyResult(s, r) {
   const enjoyment = clamp(Number(r.enjoyment) || 5);
 
   const lastThree = s.activities.slice(-3).map((a) => a.action);
-  const repeating = !r.working_on && lastThree.length === 3 && lastThree.every((x) => x === r.action); // working on something on purpose is not boredom
+  const repeating = !r.working_on && ((lastThree.length === 3 && lastThree.every((x) => x === r.action)) || loopRepeating(s.log, r.action, r.details)); // working on something on purpose is not boredom; the same thing at the same place again and again is
   const fresh = !['walk_to', 'rest', 'eat'].includes(r.action) && !s.log.slice(-40).some((e) => e.action === r.action); // something he has not done lately
   const looks = s.activities.slice(-6).filter((a) => ['search_web', 'read_book'].includes(a.action)).length;
   stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, looks, style: r.details?.style, bar: r.details?.feeling, theme: themeFatigue(s.log, r.details) });
@@ -1295,7 +1302,7 @@ async function wakeUp() {
   // A step that needs a tool he does not have in his inventory does not happen. A tool made or taken back earlier in the same plan counts.
   const blocked = [];
   const bag = state.tools.map((x) => ({ name: x.name, kind: x.kind }));
-  const steps = normalizeSteps(answer).filter((st) => {
+  const steps = redundantWalks(normalizeSteps(answer)).filter((st) => {
     const needs = st.needs || NEEDS[st.action] || '';
     if (needs && !bag.some((x) => fits(x, needs))) {
       blocked.push({ st, why: `I need ${needs} in my inventory for that` });
@@ -1494,6 +1501,15 @@ async function wakeUp() {
         if (mode === 'dark') e.auto = 'dark';
         else delete e.auto;
         st.made = { name: e.name, mode };
+      }
+    }
+    if (st.action === 'play_piano') {
+      const times = sameTune(state.log, st.details.notes, stepStart);
+      if (times) { // the same tune again feels like nothing
+        st.sameTune = times;
+        nudge(state, 'wonder', -0.5);
+        nudge(state, 'joy', -0.3);
+        state.notes.push(`I played nearly the same tune ${times === 1 ? 'once' : `${times} times`} in the last day. A new tune would feel fresher: I change the notes, or I compose one.`);
       }
     }
     if (st.action === 'read_book' || st.action === 'write_diary') {
@@ -1768,8 +1784,17 @@ async function wakeUp() {
     if (lookups >= 3) break;
     try {
       if (st.action === 'search_web' && st.details.query) {
-        lookups++;
         const q = String(st.details.query);
+        const dup = duplicateSearch(state.log, q);
+        if (dup) { // he already looked this up: he is reminded instead, and it does not feel new
+          st.dupSearch = true;
+          st.search = { results: dup.results ?? [], opened: dup.opened ?? null };
+          nudge(state, 'wonder', -0.5);
+          state.notes.push(`I already looked up "${dup.query}" ${agoText(dup.at, Date.now())}${dup.opened ? ` (${dup.opened.title}: ${clip(dup.opened.text ?? '', 300)})` : ''}. I do not search the same thing again: I look for something different, or I use what I know.`);
+          st.found = st.search.opened;
+          continue;
+        }
+        lookups++;
         st.search = await lookUp(q);
         const o = st.search?.opened;
         state.notes.push(o ? `Searched "${q}" and read about ${o.title}: ${clip(o.text, 500)}` : `Searched "${q}" but found nothing.`);
@@ -1795,6 +1820,8 @@ async function wakeUp() {
     const d = st.details;
     const entry = { at: new Date(startedAt + offsets[i] + 1000).toISOString(), action: st.action, thought: st.thought };
     const page = (p) => (p ? { title: p.title, url: p.url, text: clip(p.text, 1500) } : null);
+    if (st.dupSearch) entry.dup = true;
+    if (st.sameTune) entry.sameTune = st.sameTune;
     if (st.action === 'search_web') Object.assign(entry, { query: text(d.query, 160), results: st.search?.results ?? [], opened: page(st.search?.opened) });
     if (st.action === 'read_book') Object.assign(entry, { topic: text(d.topic, 160), opened: page(st.read) });
     if (st.action === 'play_piano') Object.assign(entry, { notes: text(d.notes, 200), style: text(d.style, 80) });
