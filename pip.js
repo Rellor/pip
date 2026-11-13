@@ -13,7 +13,7 @@ import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityG
 import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, spaceLeft, accessProblem, CHEST_HOME, ART_MAX, MAX_PER_DAY, hangPicture, wallPictures } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
-import { topicMirror, untriedMirror, dormantMirror, themeFatigue } from './mirror.js';
+import { topicMirror, untriedMirror, dormantMirror, moodMirror, clothesNote, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesText, movesGuide } from './moves.js';
 import { measureThing, sizesGuide } from './sizes.js';
 import { bonusRewards } from './rewards.js';
@@ -281,6 +281,11 @@ async function loadState() {
   if (!state.gifts.includes('light meter') && !state.tools.some((t) => t.kind === 'light meter')) { // a funny little gadget that tells him how bright a place is
     state.gifts.push('light meter');
     state.tools.push({ id: 'tgift4', name: 'Lux-O-Matic 3000', kind: 'light meter', source: 'given', why: 'a gadget that beeps how bright a place is', at: new Date().toISOString() });
+  }
+  if (!state.gifts.includes('sewing kit') && !state.tools.some((t) => t.kind === 'sewing kit')) { // he could never make clothes without one
+    state.gifts.push('sewing kit');
+    state.tools.push({ id: 'tgift7', name: 'Sewing Kit', kind: 'sewing kit', source: 'given', why: 'needle, thread and a few scraps of fabric for making clothes', at: new Date().toISOString() });
+    state.notes.push('I was given a sewing kit (needle, thread and scraps of fabric). Now I can make clothes with make_clothes: a hat, glasses, a scarf, a sweater, a cape. It is in my inventory.');
   }
   ensureGarden(state);
   { const gn = grantGarden(state); if (gn) state.notes.push(gn); } // once: greenhouse, seeds, shovel and watering can
@@ -569,7 +574,7 @@ I have a little greenhouse for growing plants from seeds. It starts in my chest:
 
 // How light and dark work for him (fixed text).
 const lightGuide = () => `LIGHT AND DARK
-How bright a place is follows the real time and weather in ${PLACE.name}: bright by day near the window, dim on grey days, dark at night. Dark can be cozy and I do not have to fight it. But reading or writing in a very dark place is hard and makes me a little less calm. My Lux-O-Matic 3000 (a funny little light meter in my inventory) tells me how bright a place is: check_light {where} (where: piano, desk, bed, bookshelf, window, plant, middle, or the name of something I made). To light a place I make a lamp (a glowing part and a use that does light) near it and switch it on with use. The first time I light up a dark place feels good. lamp_auto {name, mode: "dark"} makes a lamp switch itself on whenever its place gets dark (it follows the real light, so the weather and the season matter) and off when it is bright and when I sleep. mode "off" gives it back to my hand, and using it by hand does that too.
+How bright a place is follows the real time and weather in ${PLACE.name}: bright by day near the window, dim on grey days, dark at night. Dark can be moody or nice and I do not have to fight it. But reading or writing in a very dark place is hard and makes me a little less calm. My Lux-O-Matic 3000 (a funny little light meter in my inventory) tells me how bright a place is: check_light {where} (where: piano, desk, bed, bookshelf, window, plant, middle, or the name of something I made). To light a place I make a lamp (a glowing part and a use that does light) near it and switch it on with use. The first time I light up a dark place feels good. lamp_auto {name, mode: "dark"} makes a lamp switch itself on whenever its place gets dark (it follows the real light, so the weather and the season matter) and off when it is bright and when I sleep. mode "off" gives it back to my hand, and using it by hand does that too.
 `;
 
 function buildWakeUp(s) {
@@ -610,7 +615,7 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map(projectLine), 'no
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) || wallMirror(s) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), wallMirror(s), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
+${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) || wallMirror(s) || moodMirror(s.log) || clothesNote(s) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), clothesNote(s), moodMirror(s.log), wallMirror(s), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
 ${bullets(recall(s, focusText(s, unread)).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
 
 WHAT I REALIZED WHEN I LOOKED BACK (I do this every now and then. I can drop one that is not true any more with reflections_drop)

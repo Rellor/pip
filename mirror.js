@@ -68,7 +68,7 @@ export const DORMANT = [
   ['draw', 'paint or draw a picture for my wall (draw, as SVG)', 8],
   ['decorate', 'build a sculpture or something new for my room (decorate, from simple shapes)', 8],
   ['compose', 'compose a song of my own', 8],
-  ['make_clothes', 'make something to wear', 12],
+  ['make_clothes', 'make something to wear (a hat, a scarf, glasses...)', 8],
   ['make_app', 'make a little app', 12],
   ['cook', 'cook something', 8],
   ['read_book', 'read about something', 6],
@@ -93,4 +93,40 @@ export function dormantMirror(log, now = Date.now(), blocked = []) {
   const pick = [list[0], ...rest.map((_, i) => rest[(i + k) % rest.length]).slice(0, 2)].filter((d, i, a) => d && a.indexOf(d) === i); // the longest-neglected one always, the others rotate
   const say = (d) => `${d.text}${d.never ? ' (I have not done it at all yet)' : ` (last time ${d.hours < 24 ? `${Math.round(d.hours)} hours` : `${Math.round(d.hours / 24)} days`} ago)`}`;
   return `Things I have not done for a while: ${pick.map(say).join('; ')}. Doing something I have not done in a while feels fresh (it fills me a little extra). It is only a picture of my days; what I do is my own choice.`;
+}
+
+// ---- Range of mood. A mirror (never an order): when most of his recent notes sound the same soft way, he is shown it, with the other sides he has.
+const SOFT = /\b(cozy|cosy|gentle|gently|soft|softly|quiet|quietly|peaceful|peacefully|warm|warmth|calm|serene|tranquil|snug|cuddl\w*|soothing|tender)\b/gi;
+const SIDES = ['silly', 'bold', 'restless', 'grumpy', 'mischievous', 'dramatic', 'proud', 'nosy', 'goofy', 'stubborn', 'daring', 'bossy', 'dreamy', 'showy', 'impatient', 'thrilled'];
+export function moodMirror(log, now = Date.now()) {
+  const recent = (Array.isArray(log) ? log : []).filter((e) => Date.parse(e.at) <= now).slice(-16);
+  if (recent.length < 10) return '';
+  const words = new Map();
+  let hit = 0;
+  for (const e of recent) {
+    const found = `${e.thought ?? ''} ${e.text ?? ''}`.match(SOFT);
+    if (found?.length) hit++;
+    for (const w of found ?? []) words.set(w.toLowerCase(), (words.get(w.toLowerCase()) ?? 0) + 1);
+  }
+  if (hit < recent.length * 0.35) return '';
+  const top = [...words.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([w]) => w);
+  const k = Math.floor(now / 3_600_000);
+  const some = [0, 1, 2].map((i) => SIDES[(k * 3 + i * 5) % SIDES.length]);
+  return `In ${hit} of my last ${recent.length} notes I used words like ${top.join(', ')}. I do love cozy, and it is only one of my sides. I can also be ${some.join(', ')}, and what I do and how I say it can show that. A bit of mischief or noise or a strong opinion is allowed too.`;
+}
+
+// ---- Clothes. He has a wardrobe and a body to dress, but nothing makes him think of it. A friendly nudge, with an example he can copy.
+export function clothesNote(s, now = Date.now()) {
+  const wardrobe = s.wardrobe ?? [];
+  const lastMade = [...(s.log ?? [])].reverse().find((e) => e.action === 'make_clothes' && !e.failed);
+  const hours = lastMade ? (now - Date.parse(lastMade.at)) / 3_600_000 : Infinity;
+  const wearing = wardrobe.filter((c) => c.worn);
+  if (wearing.length && hours < 48) return '';
+  if (!wardrobe.length ? false : hours < 24) return '';
+  const w = s.weather;
+  const weather = w ? (w.temp <= 8 ? `It is only ${Math.round(w.temp)}°C outside: a scarf or a warm hat would suit me.` : ['rain', 'storm'].includes(w.kind) ? 'It is raining: a little hood or a rain hat would suit me.' : w.temp >= 20 ? 'It is warm: sunglasses or a sun hat would suit me.' : '') : '';
+  const k = Math.floor(now / 3_600_000);
+  const ideas = ['a scarf', 'a hat', 'round glasses', 'a cape', 'a bow tie', 'a sweater', 'a little backpack', 'a crown', 'a mask for a party'];
+  const pick = [0, 1, 2].map((i) => ideas[(k + i * 3) % ideas.length]).join(', ');
+  return `${wardrobe.length ? `I have ${wardrobe.length} clothes${wearing.length ? '' : ' but I am wearing none'}.` : 'I have never made clothes.'} My body is a round ball with a place for a hat, glasses, a scarf, a sweater and a cape, and what I wear is a way to show who I am and how I feel today. ${weather} I could make ${pick}, for example: make_clothes {"name": "red scarf", "slot": "neck", "why": "...", "parts": [{"shape": "torus", "size": [0.5, 0.07], "pos": [0, 0, 0], "color": "#d9463e"}]}. It is up to me.`;
 }
