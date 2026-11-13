@@ -10,7 +10,7 @@ import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, limitsText } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityGuide, blueprintDue, blueprintGaps, requestAbility } from './blueprints.js';
-import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, spaceLeft, accessProblem, CHEST_HOME, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, spaceLeft, accessProblem, CHEST_HOME, ART_MAX, MAX_PER_DAY, hangPicture, wallPictures } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { topicMirror, untriedMirror, dormantMirror, themeFatigue } from './mirror.js';
@@ -546,6 +546,13 @@ ${IDENTITY_FIELDS}"voice_update": how I want to talk from now on, in one or two 
 // Routines (fixed text).
 // Things that cannot be done right now (the daily limit is used up), so the reminders do not suggest them.
 const blockedNow = (s) => ((s.pictures ?? []).filter((x) => x.by === 'pip' && Date.now() - Date.parse(x.at) < 86_400_000).length >= 4 ? ['take_photo'] : []);
+// A neutral picture of a full wall, only when the walls are full and he has not taken anything down today. No reward or penalty is tied to it.
+const wallMirror = (s, now = Date.now()) => {
+  const gone = (s.log ?? []).some((e) => ['take_down_picture', 'take_down_print', 'remove_decoration'].includes(e.action) && !e.failed && now - Date.parse(e.at) < 86_400_000);
+  if (gone || hangPicture(s.decor, { aspect: 1.25 }, null, ART_MAX, now)) return '';
+  const old = wallPictures(s.decor, s.favorites, now).slice(0, 3);
+  return old.length ? `My walls are full. What has hung longest: ${old.map((o) => `${o.name} (id ${o.id}, ${o.days < 1 ? 'under a day' : `${Math.round(o.days)} days`})`).join(', ')}. Keeping a picture up is fine, and the ones I take down stay in my album. Making room is only useful when I want to hang something new.` : '';
+};
 const habitsGuide = () => `ROUTINES
 Playing the piano, reading, searching, resting, using a thing and tending my plants walk me to the right place by themselves, so I only use walk_to to look around or to stand somewhere. The same tune or the same search a second time feels like nothing, and a new one feels fresh: I change the notes, compose something, or look up something different. When my plants only change every few hours, I do not need to check them again before something can have changed.
 `;
@@ -603,7 +610,7 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map(projectLine), 'no
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
+${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) || wallMirror(s) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), wallMirror(s), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
 ${bullets(recall(s, focusText(s, unread)).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
 
 WHAT I REALIZED WHEN I LOOKED BACK (I do this every now and then. I can drop one that is not true any more with reflections_drop)

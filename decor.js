@@ -244,7 +244,7 @@ export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PI
   }
   if (!want || ZONES[want].kind === 'wall') { // a wall: hang it where a person would
     const h = hangPicture(decor, pic, want ? ZONES[want].side : null, max, atMs, now);
-    if (!h) return { failed: 'there is no room left on the walls for it. He can take something down first' };
+    if (!h) return { failed: `there is no room left on the walls for it. ${oldestHint(decor, now)}` };
     const cap = str(pic.caption, 60);
     return { entry: { id: `p${now.toString(36)}${decor.length}${rid()}`, name: cap && cap.length <= 40 ? cap : 'a picture', why: '', project: '', scale: 1, parts: [], image: pic.image, picture: pic.id, ...h, at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString() } };
   }
@@ -355,6 +355,19 @@ export function printPhoto(decor, pic, where, atMs, now = Date.now()) {
 }
 
 // Takes a picture down again (it stays in his album). Returns the removed frame or null.
+// The pictures on his walls, oldest first, with how many days each has hung. Favourites he loves are left out.
+export function wallPictures(decor, favorites = [], now = Date.now()) {
+  const loved = (favorites ?? []).map((f) => String(f.what ?? '').toLowerCase()).filter(Boolean);
+  return decor
+    .filter((o) => o.kind === 'wall' && o.image && o.picture && o.zone !== 'wall_desk' && !loved.some((w) => String(o.name ?? '').toLowerCase().includes(w)))
+    .map((o) => ({ id: o.picture, name: o.name, days: Math.max(0, (now - Date.parse(o.at ?? o.createdAt ?? now)) / 86_400_000) }))
+    .sort((a, b) => b.days - a.days);
+}
+const ageText = (days) => (days < 1 ? 'less than a day' : `${Math.round(days)} day${Math.round(days) === 1 ? '' : 's'}`);
+export function oldestHint(decor, now = Date.now(), favorites = []) {
+  const old = wallPictures(decor, favorites, now).slice(0, 2);
+  return old.length ? `The pictures that have hung longest: ${old.map((o) => `"${o.name}" (id ${o.id}, ${ageText(o.days)})`).join(', ')}. take_down_picture {id} frees a spot (it stays in my album), or I can make a smaller picture.` : 'He can take something down first.';
+}
 export function removePicture(decor, id) {
   const i = decor.findIndex((x) => x.picture === id);
   return i >= 0 ? decor.splice(i, 1)[0] : null;
