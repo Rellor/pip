@@ -1797,3 +1797,10 @@ I want to take a moment to look closely at my little rosemary sprouts growing in
 - do (whisper a soft greeting to my rosemary sprouts and touch the tiny green leaves gently): I whisper a quiet hello to my growing rosemary plants.
 - mood: peaceful
 
+## 13/11/2026, 13:39:22
+I want to bake a fresh loaf of rosemary bread with my homegrown sprigs.
+> My rosemary sprouts are growing so nicely by the autumn window, and the smell of fresh bread from yesterday still makes me smile. Since my pantry has flour and butter and I have fresh rosemary in my greenhouse, I want to use my cozy kitchen stove to bake a warm loaf. It feels wonderful to turn what I grow into something I can eat.
+- harvest (rosemary (place 1)): I'm gently clipping a fresh rosemary sprig from my little plant.
+- use (cozy kitchen stove): I am mixing the flour, butter, and fresh garden rosemary together on my counter.
+- mood: peaceful
+
