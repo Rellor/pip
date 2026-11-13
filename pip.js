@@ -551,7 +551,8 @@ const wallMirror = (s, now = Date.now()) => {
   const gone = (s.log ?? []).some((e) => ['take_down_picture', 'take_down_print', 'remove_decoration'].includes(e.action) && !e.failed && now - Date.parse(e.at) < 86_400_000);
   if (gone || hangPicture(s.decor, { aspect: 1.25 }, null, ART_MAX, now)) return '';
   const old = wallPictures(s.decor, s.favorites, now).slice(0, 3);
-  return old.length ? `My walls are full. What has hung longest: ${old.map((o) => `${o.name} (id ${o.id}, ${o.days < 1 ? 'under a day' : `${Math.round(o.days)} days`})`).join(', ')}. Keeping a picture up is fine, and the ones I take down stay in my album. Making room is only useful when I want to hang something new.` : '';
+  const said = old.map((o) => `"${o.name}" (take_down_picture id ${o.id}), up for ${o.days < 1 ? 'less than a day' : `${Math.round(o.days)} days`}`);
+  return old.length ? `My walls are full. The pictures that have hung longest are ${said.join('; ')}. Keeping a picture up is fine, and a picture I take down stays in my album. Making room only matters when I want to hang something new.` : '';
 };
 const habitsGuide = () => `ROUTINES
 Playing the piano, reading, searching, resting, using a thing and tending my plants walk me to the right place by themselves, so I only use walk_to to look around or to stand somewhere. The same tune or the same search a second time feels like nothing, and a new one feels fresh: I change the notes, compose something, or look up something different. When my plants only change every few hours, I do not need to check them again before something can have changed.
