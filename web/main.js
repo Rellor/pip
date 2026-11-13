@@ -732,7 +732,6 @@ function makePip() {
   belly.castShadow = true;
   body.add(belly);
   put(new THREE.SphereGeometry(0.5, 24, 18), mat(0xffe9c8, { roughness: 0.8 }), [0, 0.5, 0.2], [0.62, 0.62, 0.55]);
-  put(new THREE.SphereGeometry(0.17, 20, 16), mat(0xffd9a6), [0, 0.38, -0.46]); // tail
 
   // ears: pointed, with a softly rounded tip and a pink inside
   [-1, 1].forEach((s) => {
@@ -743,19 +742,15 @@ function makePip() {
     const ear = new THREE.Mesh(softCone(0.154, 0.325, 0.034), twoSided(mat(furC, { roughness: 0.7 })));
     ear.castShadow = true;
     holder.add(ear);
-    put(softCone(0.088, 0.24, 0.02), twoSided(mat(0xff9fa0, { roughness: 0.85 })), [0, -0.03, 0.045], [1, 1, 0.45], [0, 0, 0], holder);
+    put(softCone(0.074, 0.2, 0.018), twoSided(mat(0xffa7a0, { roughness: 0.9 })), [0, -0.03, 0.095], [1, 1, 0.45], [0, 0, 0], holder); // a little pink inside
   });
 
-  // eyes: dark and glossy with a brown iris and two highlights (the page squashes them to blink)
-  const r = 0.085;
+  // eyes: flat dark discs with one small highlight (the page squashes them to blink)
   const eyes = [-1, 1].map((s) => {
     const eye = new THREE.Group();
-    eye.position.set(s * 0.17, 0.8, 0.44);
-    eye.add(new THREE.Mesh(new THREE.SphereGeometry(r, 24, 18), mat(0x1a1310, { roughness: 0.25 })));
-    put(new THREE.SphereGeometry(r * 0.72, 20, 14), mat(0x7b4a28, { roughness: 0.3 }), [0, -0.004, r * 0.45], [1, 1, 0.5], [0, 0, 0], eye);
-    put(new THREE.SphereGeometry(r * 0.42, 16, 12), mat(0x120c0a, { roughness: 0.2 }), [0, 0, r * 0.6], [1, 1, 0.5], [0, 0, 0], eye);
-    put(new THREE.SphereGeometry(r * 0.34, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }), [r * 0.3, r * 0.34, r * 0.85], [1, 1, 1], [0, 0, 0], eye);
-    put(new THREE.SphereGeometry(r * 0.16, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }), [-r * 0.28, -r * 0.3, r * 0.88], [1, 1, 1], [0, 0, 0], eye);
+    eye.position.set(s * 0.17, 0.8, 0.455);
+    put(new THREE.SphereGeometry(0.085, 24, 18), mat(0x2b211d, { roughness: 0.9 }), [0, 0, 0], [1, 1, 0.35], [0, 0, 0], eye);
+    put(new THREE.SphereGeometry(0.024, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }), [0.025, 0.028, 0.03], [1, 1, 0.4], [0, 0, 0], eye);
     body.add(eye);
     return eye;
   });
@@ -769,9 +764,6 @@ function makePip() {
     const m = new THREE.Mesh(new THREE.SphereGeometry(rad, 20, 14), flat);
     m.castShadow = true;
     g.add(m);
-    const n = kind === 'foot' ? 3 : 2;
-    for (let k = 0; k < n; k++) put(new THREE.SphereGeometry(rad * 0.3, 10, 8), mat(0xffcd90), [(k - (n - 1) / 2) * rad * 0.62, -rad * 0.1, rad * 0.82], [1, 1, 1], [0, 0, 0], g);
-    if (kind === 'foot') put(new THREE.SphereGeometry(rad * 0.45, 12, 8), mat(0xff9fa0), [0, -rad * 0.85, rad * 0.25], [1, 0.35, 1], [0, 0, 0], g);
     group.add(g);
     return g;
   };
