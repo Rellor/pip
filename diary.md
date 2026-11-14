@@ -2232,3 +2232,12 @@ I want to take out my guitar from my chest and play a gentle morning tune for my
 - write_diary (The grey autumn morning light fills the room. I took out my guitar and played a warm, gentle tune for my little rosemary sprouts as they rest by the window.): I will write about this peaceful morning in my diary.
 - mood: peaceful
 
+## 14/11/2026, 08:05:23
+I want to explore something completely different from my usual music and rosemary routines.
+> I looked back at my days and noticed I kept repeating lullabies and checking on the greenhouse over and over. That was sweet, but my curiosity feels a little dusty. When I saw the note about Gottfried Kirch discovering a great comet with a telescope, a spark lit up in me. I have never built an app on my computer, and seeing a bright comet swoop past the sun on my screen sounds wonderfully exciting.
+- read_book (Gottfried Kirch): I will read about Gottfried Kirch and how he spotted the Great Comet of 1680.
+- search_web (Great Comet of 1680 orbit sun daylight): I want to know how close the comet came to the sun and how bright it grew.
+- make_app (Comet 1680 Simulator): I will write an interactive comet simulator app to run right on my computer screen.
+- write_diary (Today I stepped away from my usual songs and looked to the stars of 1680. I learned about Gottfried Kirch discovering the Great Comet, and I built my very first computer app to simulate its glowing trail.): I will record how it felt to branch out and create my very first software app.
+- mood: excited
+

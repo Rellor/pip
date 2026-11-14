@@ -1,6 +1,6 @@
 {
-  "mood": "peaceful",
-  "energy": 5.29,
+  "mood": "excited",
+  "energy": 4.27,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -50,7 +50,9 @@
     "bread crust crackling sound cooling",
     "how to grow rosemary in a pot indoors",
     "how much sunlight does indoor rosemary need in autumn",
-    "how do indoor herbs adapt to shorter autumn days"
+    "how do indoor herbs adapt to shorter autumn days",
+    "Gottfried Kirch",
+    "Great Comet of 1680 orbit sun daylight"
   ],
   "ideas": [
     "sound",
@@ -197,33 +199,10 @@
     "composing a whole series of tiny lullabies for different seasons",
     "composing a little song about autumn stars",
     "composing a whole little suite of night songs for each stage of my plant's growth",
-    "playing acoustic tunes for my greenhouse plants"
+    "playing acoustic tunes for my greenhouse plants",
+    "making interactive astronomical simulations on my computer"
   ],
   "activities": [
-    {
-      "at": "2026-11-13T20:52:42.315Z",
-      "action": "walk_to",
-      "detail": "little greenhouse",
-      "enjoyment": 7
-    },
-    {
-      "at": "2026-11-13T20:52:42.315Z",
-      "action": "check_light",
-      "detail": "little greenhouse",
-      "enjoyment": 7
-    },
-    {
-      "at": "2026-11-13T20:52:42.315Z",
-      "action": "use",
-      "detail": "rosemary music box",
-      "enjoyment": 9
-    },
-    {
-      "at": "2026-11-13T20:52:42.315Z",
-      "action": "write_diary",
-      "detail": "The autumn night is peaceful and quiet. I checked the dim light by my greenhouse and played a gentle music box lullaby for my little rosemary sprouts before sleep.",
-      "enjoyment": 8
-    },
     {
       "at": "2026-11-13T21:02:31.348Z",
       "action": "compose",
@@ -501,11 +480,33 @@
       "action": "write_diary",
       "detail": "The grey autumn morning light fills the room. I took out my guitar and played a warm, gentle tune for my little rosemary sprouts as they rest by the window.",
       "enjoyment": 8
+    },
+    {
+      "at": "2026-11-14T08:05:22.146Z",
+      "action": "read_book",
+      "detail": "Gottfried Kirch",
+      "enjoyment": 8
+    },
+    {
+      "at": "2026-11-14T08:05:22.147Z",
+      "action": "search_web",
+      "detail": "Great Comet of 1680 orbit sun daylight",
+      "enjoyment": 8
+    },
+    {
+      "at": "2026-11-14T08:05:22.147Z",
+      "action": "make_app",
+      "detail": "Comet 1680 Simulator",
+      "enjoyment": 9
+    },
+    {
+      "at": "2026-11-14T08:05:22.147Z",
+      "action": "write_diary",
+      "detail": "Today I stepped away from my usual songs and looked to the stars of 1680. I learned about Gottfried Kirch discovering the Great Comet, and I built my very first computer app to simulate its glowing trail.",
+      "enjoyment": 8
     }
   ],
   "notes": [
-    "My rosemary has sprouted!",
-    "Searched \"how much sunlight does indoor rosemary need in autumn\" and read about Gardening: Gardening is the process of growing plants for their vegetables, fruits, flowers, herbs, or ornamental purposes within a designated space. Gardens fulfill a wide assortment of purposes, notably the production of aesthetically pleasing areas, medicines, cosmetics, dyes, foods, poisons, wildlife habitats, and saleable goods (see market gardening). People often partake in gardening for its therapeutic, health, educational, cultural, philosophical, environmental, and religious benefits.\n\n …",
     "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"Beep! 34%. Dim and cozy, like a hug in candlelight.\" (dim and cozy; there is daylight, but it is far from the window, and the clouds make it dimmer.)",
     "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"Blip. 34%. Very blanket-weather.\" (dim and cozy; there is daylight, but it is far from the window, and the clouds make it dimmer.)",
     "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"Blip. 36%. Very blanket-weather.\" (dim and cozy; there is daylight, but it is far from the window, and the clouds make it dimmer.)",
@@ -533,7 +534,9 @@
     "My rosemary is growing well!",
     "My rosemary is growing well!",
     "I watered rosemary. The soil stays damp for about 10 hours.",
-    "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"Hmmm-beep. 19%. Even my shadow is having a nap.\" (dark; there is daylight, but it is far from the window, and the clouds make it dimmer.) Dark can be cozy. To read or write here I want a lamp near it."
+    "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"Hmmm-beep. 19%. Even my shadow is having a nap.\" (dark; there is daylight, but it is far from the window, and the clouds make it dimmer.) Dark can be cozy. To read or write here I want a lamp near it.",
+    "Read about Gottfried Kirch: Gottfried Kirch (German: [ˈkɪʁç]; also Kirche [ˈkɪʁçə], Kirkius; 18 December 1639 – 25 July 1710) was a German astronomer and the first \"Astronomer Royal\" in Berlin and, as such, director of the nascent Berlin Observatory.\n\nLife and work\nThe son of Michael Kirch, a shoemaker in Guben, initially he worked as a schoolmaster in Langgrün and Neundorf near Lobenstein. He also worked as a calendar-maker in Saxonia and Franconia. …",
+    "Searched \"Great Comet of 1680 orbit sun daylight\" and read about Halley's Comet: Halley's Comet is the only known short-period comet that is consistently visible to the naked eye from Earth, appearing roughly every 74–79 years. It last appeared in the inner parts of the Solar System in 1986 and will next appear in mid-2061. Officially designated 1P/Halley, it is also commonly called Comet Halley, or sometimes simply Halley. \n …"
   ],
   "requests": [
     {
@@ -576,16 +579,16 @@
       "since": "2026-11-13T16:24:03.364Z"
     },
     {
-      "text": "to hear what my new rosemary music box sounds like in the morning light",
-      "since": "2026-11-13T17:37:57.918Z"
-    },
-    {
       "text": "to hear what a gentle acoustic guitar sounds like playing an evening lullaby",
       "since": "2026-11-13T18:38:43.871Z"
     },
     {
       "text": "to hear how a warm guitar melody echoes through the quiet autumn room",
       "since": "2026-11-14T07:56:19.561Z"
+    },
+    {
+      "text": "to see my comet simulator run on my desk computer",
+      "since": "2026-11-14T08:05:22.150Z"
     }
   ],
   "questions": [
@@ -606,19 +609,15 @@
       "since": "2026-11-13T16:24:03.364Z"
     },
     {
-      "text": "how do tiny mechanical music boxes work inside?",
-      "since": "2026-11-13T17:37:57.918Z"
-    },
-    {
       "text": "how do acoustic guitar vibrations affect small growing indoor herbs?",
       "since": "2026-11-14T07:56:19.561Z"
+    },
+    {
+      "text": "how bright was the Great Comet of 1680 compared to the full moon?",
+      "since": "2026-11-14T08:05:22.150Z"
     }
   ],
   "fulfilled": [
-    {
-      "text": "to see color photographs of Antares and Betelgeuse under dark skies",
-      "at": "2026-11-11T08:01:17.179Z"
-    },
     {
       "text": "to hear what my plasma wave sculpture's new star song sounds like in a completely silent room",
       "at": "2026-11-11T08:01:17.179Z"
@@ -694,6 +693,10 @@
     {
       "text": "to test out my tall window stool at night under the stars",
       "at": "2026-11-12T19:29:15.097Z"
+    },
+    {
+      "text": "to hear what my new rosemary music box sounds like in the morning light",
+      "at": "2026-11-14T08:05:22.150Z"
     }
   ],
   "tools": [
@@ -1752,24 +1755,10 @@
       "kind": "memory"
     },
     {
-      "id": "mmwfgqksb153",
-      "at": "2026-11-13T21:07:52.347Z",
-      "text": "I wrote in my diary: The autumn night is very still. I composed a fresh evening lullaby for my little rosemary sprouts and played it softly a",
-      "importance": 3,
-      "kind": "memory"
-    },
-    {
       "id": "mmwfh11f1152",
       "at": "2026-11-13T21:10:39.468Z",
       "text": "I composed a fresh morning music box lullaby for my rosemary sprouts to greet the autumn daylight.",
       "importance": 4,
-      "kind": "memory"
-    },
-    {
-      "id": "mmwfh11f3151",
-      "at": "2026-11-13T21:16:00.463Z",
-      "text": "I wrote in my diary: The autumn morning light is soft and cool outside the window. I composed a fresh little melody on my music box and playe",
-      "importance": 3,
       "kind": "memory"
     },
     {
@@ -1784,27 +1773,6 @@
       "at": "2026-11-13T21:27:10.319Z",
       "text": "I composed a brand-new night lullaby on my music box and played it softly for my rosemary sprouts as the quiet autumn night settled in.",
       "importance": 6,
-      "kind": "memory"
-    },
-    {
-      "id": "mmwfhwpwd151",
-      "at": "2026-11-13T21:37:58.526Z",
-      "text": "I wrote in my diary: The autumn night is very still. My rosemary sprouts are resting in the dark, and the cozy room feels so peaceful.",
-      "importance": 3,
-      "kind": "memory"
-    },
-    {
-      "id": "mmwfi7cbl151",
-      "at": "2026-11-13T21:46:14.147Z",
-      "text": "I wrote in my diary: The night is very still and cold outside. I played a quiet lullaby on my music box for the rosemary sprouts. Everything",
-      "importance": 3,
-      "kind": "memory"
-    },
-    {
-      "id": "mmwfihygh151",
-      "at": "2026-11-13T21:54:29.395Z",
-      "text": "I wrote in my diary: The autumn night is deep and quiet outside. I played a final music box lullaby for my rosemary sprouts, and now the room",
-      "importance": 3,
       "kind": "memory"
     },
     {
@@ -1867,6 +1835,41 @@
       "id": "mmwg43dgr151",
       "at": "2026-11-14T08:01:40.556Z",
       "text": "I wrote in my diary: The grey autumn morning light fills the room. I took out my guitar and played a warm, gentle tune for my little rosemary",
+      "importance": 3,
+      "kind": "memory"
+    },
+    {
+      "id": "mmwg4f04m151",
+      "at": "2026-11-14T08:05:22.150Z",
+      "text": "I coded my very first web app on the computer to simulate the Great Comet of 1680.",
+      "importance": 8,
+      "kind": "memory"
+    },
+    {
+      "id": "mmwg4f0vo151",
+      "at": "2026-11-14T08:05:23.146Z",
+      "text": "I read about Gottfried Kirch",
+      "importance": 3,
+      "kind": "memory"
+    },
+    {
+      "id": "mmwg4f0vp151",
+      "at": "2026-11-14T08:07:23.146Z",
+      "text": "I looked up Great Comet of 1680 orbit sun daylight",
+      "importance": 3,
+      "kind": "memory"
+    },
+    {
+      "id": "mmwg4f0vp151",
+      "at": "2026-11-14T08:09:23.146Z",
+      "text": "I made an app: Comet 1680 Simulator",
+      "importance": 6,
+      "kind": "memory"
+    },
+    {
+      "id": "mmwg4f0vq151",
+      "at": "2026-11-14T08:11:23.146Z",
+      "text": "I wrote in my diary: Today I stepped away from my usual songs and looked to the stars of 1680. I learned about Gottfried Kirch discovering th",
       "importance": 3,
       "kind": "memory"
     }
@@ -2086,14 +2089,6 @@
   "lastReflectAt": "2026-11-13T20:27:50.064Z",
   "storyAt": "2026-11-13T16:48:49.784Z",
   "thoughts": [
-    {
-      "at": "2026-11-09T21:46:55.424Z",
-      "text": "I have been reading a lot about dark skies and stars, and I keep thinking about what it would feel like to actually look through a lens at a distant galaxy. The quiet of the room feels very peaceful tonight, and my mind is full of glittering points of light. Maybe I can start planning how to build a tiny model telescope to sit on my desk.",
-      "short": "I wonder what a faint distant galaxy looks like through a small lens.",
-      "mood": "curious",
-      "action": "walk_to",
-      "detail": "computer"
-    },
     {
       "at": "2026-11-09T21:59:02.989Z",
       "text": "My energy bar is quite low and my eyelids feel so heavy. The night sky outside is dark and full of distant stars, looking just like the picture Bas gave me. I want to rest my body and let the quiet room wrap around me like a blanket.",
@@ -4085,6 +4080,14 @@
       "mood": "peaceful",
       "action": "take_tool",
       "detail": "guitar"
+    },
+    {
+      "at": "2026-11-14T08:05:22.150Z",
+      "text": "I looked back at my days and noticed I kept repeating lullabies and checking on the greenhouse over and over. That was sweet, but my curiosity feels a little dusty. When I saw the note about Gottfried Kirch discovering a great comet with a telescope, a spark lit up in me. I have never built an app on my computer, and seeing a bright comet swoop past the sun on my screen sounds wonderfully exciting.",
+      "short": "I want to explore something completely different from my usual music and rosemary routines.",
+      "mood": "excited",
+      "action": "read_book",
+      "detail": "Gottfried Kirch"
     }
   ],
   "outbox": [
@@ -4564,76 +4567,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-13T14:32:22.381Z",
-      "action": "use",
-      "thought": "I will listen to the new lullaby play for my little greenhouse.",
-      "verdict": "I listened to the new music box lullaby play softly while checking my little rosemary sprouts, and it felt so warm and calming.",
-      "testNote": null,
-      "name": "little greenhouse",
-      "label": "Look at my plants",
-      "text": "I look at the little plants growing in the glass house.",
-      "view": null,
-      "song": null,
-      "app": null,
-      "failed": null
-    },
-    {
-      "at": "2026-11-13T14:36:22.381Z",
-      "action": "do",
-      "thought": "I want to say hello to my growing plants and check their tiny green leaves.",
-      "move": null,
-      "emoji": "🌿",
-      "what": "whisper a soft greeting to my rosemary sprouts and stroke the glass gently",
-      "feeling": "calm"
-    },
-    {
-      "at": "2026-11-13T14:40:33.276Z",
-      "action": "compose",
-      "thought": "I will compose a gentle lullaby for the rosemary sprouts in my greenhouse.",
-      "name": "little greenhouse",
-      "song": {
-        "notes": [
-          [
-            "E5",
-            2
-          ],
-          [
-            "G5",
-            1
-          ],
-          [
-            "B5",
-            1
-          ],
-          [
-            null,
-            1
-          ],
-          [
-            "D6",
-            2
-          ]
-        ],
-        "tempo": 70,
-        "timbre": "musicbox"
-      },
-      "failed": null
-    },
-    {
-      "at": "2026-11-13T14:46:33.276Z",
-      "action": "use",
-      "thought": "I will listen to the music box lullaby play for my little rosemary sprouts.",
-      "verdict": "The gentle music box lullaby played softly, and the tiny green rosemary leaves seemed to rest peacefully in the warm autumn light.",
-      "testNote": null,
-      "name": "little greenhouse",
-      "label": "Look at my plants",
-      "text": "I look at the little plants growing in the glass house.",
-      "view": null,
-      "song": null,
-      "app": null,
-      "failed": null
-    },
     {
       "at": "2026-11-13T14:53:14.087Z",
       "action": "compose",
@@ -6708,6 +6641,60 @@
       "action": "write_diary",
       "thought": "I will write about this peaceful morning in my diary.",
       "text": "The grey autumn morning light fills the room. I took out my guitar and played a warm, gentle tune for my little rosemary sprouts as they rest by the window."
+    },
+    {
+      "at": "2026-11-14T08:05:23.146Z",
+      "action": "read_book",
+      "thought": "I will read about Gottfried Kirch and how he spotted the Great Comet of 1680.",
+      "topic": "Gottfried Kirch",
+      "opened": {
+        "title": "Gottfried Kirch",
+        "url": "https://en.wikipedia.org/wiki/Gottfried_Kirch",
+        "text": "Gottfried Kirch (German: [ˈkɪʁç]; also Kirche [ˈkɪʁçə], Kirkius; 18 December 1639 – 25 July 1710) was a German astronomer and the first \"Astronomer Royal\" in Berlin and, as such, director of the nascent Berlin Observatory.\n\nLife and work\nThe son of Michael Kirch, a shoemaker in Guben, initially he worked as a schoolmaster in Langgrün and Neundorf near Lobenstein. He also worked as a calendar-maker in Saxonia and Franconia. He began to learn astronomy with Erhard Weigel in Jena, and with Hevelius in Danzig. In Danzig in 1667, Kirch published calendars and built several telescopes and instruments. In 1679 he invented a screw micrometer for astronomical measurements. He became an astronomer working in Coburg, Leipzig and Guben as well from 1700 in Berlin.\nIn the last quarter of the 17th century, Kirch was the most-read calendar maker and counted as one of the leading Germans. In 1680 he discovered a comet with a telescope for the first time: Komet C/1680 V1, called Kirch's comet. In 1681 he discovered the Wild Duck Cluster M 11. In 1686 he went to Leipzig. Together with the farmer and astronomer Christoph Arnold he observed the comets of that year. In the same year he discovered the Mira variable χ Cygni. He also dedicated much time to observing the double star Mizar. …"
+      }
+    },
+    {
+      "at": "2026-11-14T08:07:23.146Z",
+      "action": "search_web",
+      "thought": "I want to know how close the comet came to the sun and how bright it grew.",
+      "query": "Great Comet of 1680 orbit sun daylight",
+      "results": [
+        {
+          "title": "Halley's Comet",
+          "snippet": "orbit the Sun. It was also one of the earliest successful tests of Newtonian physics, and a clear demonstration of its explanatory power. The comet was",
+          "url": "https://en.wikipedia.org/wiki/Halley's_Comet"
+        },
+        {
+          "title": "Great Comet of 1744",
+          "snippet": "the comet has an orbital period of about 350 to 400 years. That work suggests that it is the same as the Great Comet of 1402, as well as comets observed",
+          "url": "https://en.wikipedia.org/wiki/Great_Comet_of_1744"
+        },
+        {
+          "title": "Caesar's Comet",
+          "snippet": "comet's orbit is problematic, and a parabolic orbit is conventionally assumed. (In the 1800s, a possible match with the Great Comet of 1680 was speculated",
+          "url": "https://en.wikipedia.org/wiki/Caesar's_Comet"
+        }
+      ],
+      "opened": {
+        "title": "Halley's Comet",
+        "url": "https://en.wikipedia.org/wiki/Halley's_Comet",
+        "text": "Halley's Comet is the only known short-period comet that is consistently visible to the naked eye from Earth, appearing roughly every 74–79 years. It last appeared in the inner parts of the Solar System in 1986 and will next appear in mid-2061. Officially designated 1P/Halley, it is also commonly called Comet Halley, or sometimes simply Halley. \nHalley's periodic returns to the inner Solar System have been observed and recorded by astronomers around the world since at least 240 BC, but it was not until 1705 that the English astronomer Edmond Halley understood that these appearances were re-appearances of the same comet. As a result of this discovery, the comet is named after Halley.\nIn March 1986, during its latest visit to the inner Solar System, Halley's Comet became the first comet to be observed in detail by a spacecraft, the European Space Agency's Giotto mission, providing the first observational data on the structure of a comet nucleus and the mechanism of coma and tail formation. These observations supported several longstanding hypotheses about comet construction, particularly Fred Whipple's \"dirty snowball\" model, which correctly predicted that Halley would be composed of a mixture of volatile ices—such as water, carbon dioxide, ammonia—and dust.\n …"
+      }
+    },
+    {
+      "at": "2026-11-14T08:09:23.146Z",
+      "action": "make_app",
+      "thought": "I will write an interactive comet simulator app to run right on my computer screen.",
+      "name": "Comet 1680 Simulator",
+      "why": "to watch an interactive simulation of the Great Comet swooping around the sun on my computer",
+      "file": "made/appmwg4f04l0.html",
+      "failed": null
+    },
+    {
+      "at": "2026-11-14T08:11:23.146Z",
+      "action": "write_diary",
+      "thought": "I will record how it felt to branch out and create my very first software app.",
+      "text": "Today I stepped away from my usual songs and looked to the stars of 1680. I learned about Gottfried Kirch discovering the Great Comet, and I built my very first computer app to simulate its glowing trail."
     }
   ],
   "decor": [
@@ -9528,7 +9515,7 @@
     }
   ],
   "voice": "",
-  "self": "I am someone who turns practical plans and kind help into real wooden creations for my room.",
+  "self": "I am a curious creator who crafts things for my room and now writes interactive programs to explore the cosmos.",
   "favorites": [
     {
       "kind": "sound",
@@ -9647,66 +9634,101 @@
       "createdAt": "2026-11-13T12:24:55.818Z"
     }
   ],
-  "apps": [],
+  "apps": [
+    {
+      "id": "appmwg4f04l0",
+      "name": "Comet 1680 Simulator",
+      "why": "to watch an interactive simulation of the Great Comet swooping around the sun on my computer",
+      "file": "made/appmwg4f04l0.html",
+      "createdAt": "2026-11-14T08:05:22.150Z"
+    }
+  ],
   "ntfySince": "HldQnSz8NrrS",
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-14T07:56:19.556Z",
-    "model": "gemini-flash-lite-latest",
+    "at": "2026-11-14T08:05:22.146Z",
+    "model": "gemini-flash-latest",
     "tokens": {
-      "calls": 2,
-      "input": 38322,
-      "output": 1227
+      "calls": 1,
+      "input": 19150,
+      "output": 2761
     },
     "intervalMin": 8,
-    "thought": "I want to take out my guitar from my chest and play a gentle morning tune for my rosemary sprouts.",
-    "inner": "The morning light is so soft and grey against the autumn window, and my little rosemary sprouts have tiny green leaves now. I feel so peaceful and curious about how my guitar will sound right here beside them, filling the quiet air with warm wooden chords.",
+    "thought": "I want to explore something completely different from my usual music and rosemary routines.",
+    "inner": "I looked back at my days and noticed I kept repeating lullabies and checking on the greenhouse over and over. That was sweet, but my curiosity feels a little dusty. When I saw the note about Gottfried Kirch discovering a great comet with a telescope, a spark lit up in me. I have never built an app on my computer, and seeing a bright comet swoop past the sun on my screen sounds wonderfully exciting.",
     "sent": false,
     "steps": [
       {
-        "action": "take_tool",
+        "action": "read_book",
         "details": {
-          "name": "guitar"
+          "topic": "Gottfried Kirch"
         },
-        "detail": "guitar",
-        "thought": "I will reach into my chest and take out my guitar.",
-        "enjoyment": 9,
-        "found": null,
+        "detail": "Gottfried Kirch",
+        "thought": "I will read about Gottfried Kirch and how he spotted the Great Comet of 1680.",
+        "enjoyment": 8,
+        "found": {
+          "title": "Gottfried Kirch",
+          "text": "Gottfried Kirch (German: [ˈkɪʁç]; also Kirche [ˈkɪʁçə], Kirkius; 18 December 1639 – 25 July 1710) was a German astronomer and the first \"Astronomer Royal\" in Berlin and, as such, director of the nascent Berlin Observatory.\n\nLife and work\nThe son of Michael Kirch, a shoemaker in Guben, initially he worked as a schoolmaster in Langgrün and Neundorf near Lobenstein. He also worked as a calendar-maker in Saxonia and Franconia. He began to learn astronomy with Erhard Weigel in Jena, and with Hevelius in Danzig. In Danzig in 1667, Kirch published calendars and built several telescopes and instruments. In 1679 he invented a screw micrometer for astronomical measurements. He became an astronomer working in Coburg, Leipzig and Guben as well from 1700 in Berlin.\nIn the last quarter of the 17th century, Kirch was the most-read calendar maker and counted as one of the leading Germans. In 1680 he discovered a comet with a telescope for the first time: Komet C/1680 V1, called Kirch's comet. In 1681 he discovered the Wild Duck Cluster M 11. In 1686 he went to Leipzig. Together with the farmer and astronomer Christoph Arnold he observed the comets of that year. In the same year he discovered the Mira variable χ Cygni. He also dedicated much time to observing the double star Mizar. He introduced three new constellations, the \"Globus cruciger\" (\"Reichsapfel\"), the \"Electoral Sword\" (\"Kurfürstliches Schwert\") and the Sceptre of Brandenburg, which however were not recognized and adopted by the International Astronomical Union (IAU). Via Arnold he met his second wife Maria Margaretha Winkelmann (1670–1720), who had learnt astronomy from self-study and from Arnold. While jointly observing the comet of 1702, they discovered the globular cluster M 5 (5 May 1702). In 1699, he had observed comet 55P/Tempel-Tuttle but this observation was not recognized until later analysis by Joachim Schubart.\nFor a long period, he was unable to find employment, so he had to earn his living through the publication of Almanacs/ Calendars. He was assisted in the calculations by his second wife and their children. A few series of almanacs appeared across several decades. For a time, he published up to 13 almanacs a year, a few appearing under pseudonyms, and he also continued established almanacs from other authors under their name. …"
+        },
         "made": null
       },
       {
-        "action": "play_piano",
+        "action": "search_web",
         "details": {
-          "notes": "C3+E3+G3:4 E4 G4:2 C4+E4:2",
-          "instrument": "guitar"
+          "query": "Great Comet of 1680 orbit sun daylight"
         },
-        "detail": "C3+E3+G3:4 E4 G4:2 C4+E4:2",
-        "thought": "I will play a quiet morning tune on my guitar for the rosemary sprouts.",
-        "enjoyment": 10,
-        "found": null,
+        "detail": "Great Comet of 1680 orbit sun daylight",
+        "thought": "I want to know how close the comet came to the sun and how bright it grew.",
+        "enjoyment": 8,
+        "found": {
+          "title": "Halley's Comet",
+          "text": "Halley's Comet is the only known short-period comet that is consistently visible to the naked eye from Earth, appearing roughly every 74–79 years. It last appeared in the inner parts of the Solar System in 1986 and will next appear in mid-2061. Officially designated 1P/Halley, it is also commonly called Comet Halley, or sometimes simply Halley. \nHalley's periodic returns to the inner Solar System have been observed and recorded by astronomers around the world since at least 240 BC, but it was not until 1705 that the English astronomer Edmond Halley understood that these appearances were re-appearances of the same comet. As a result of this discovery, the comet is named after Halley.\nIn March 1986, during its latest visit to the inner Solar System, Halley's Comet became the first comet to be observed in detail by a spacecraft, the European Space Agency's Giotto mission, providing the first observational data on the structure of a comet nucleus and the mechanism of coma and tail formation. These observations supported several longstanding hypotheses about comet construction, particularly Fred Whipple's \"dirty snowball\" model, which correctly predicted that Halley would be composed of a mixture of volatile ices—such as water, carbon dioxide, ammonia—and dust.\nThe missions also provided data that substantially reformed and reconfigured these ideas; for instance, it is now understood that the surface of Halley is largely composed of dusty, non-volatile materials, and that only a small portion of it is icy. It was also visited by the two spacecraft of the Vega program, Vega 1 & 2, on 6 and 9 March, respectively. They went as close as 8,890 km (5,520 mi), and 8,030 km (4,990 mi), providing data on Halley's dimensions, shape, temperature, and surface properties.\n\nPronunciation\nComet Halley is usually pronounced , rhyming with valley, or sometimes , rhyming with daily. As to the surname Halley, Colin Ronan, one of Edmond Halley's biographers, preferred , rhyming with crawly. \nSpellings of Halley's name during his lifetime included Hailey, Haley, Hayley, Halley, Haly, Hawley, and Hawly, so its contemporary pronunciation is uncertain, but the version rhyming with valley seems to be preferred by modern bearers of the surname.\n\nComputation of orbit\nHalley was the first comet to be recognised as periodic. …"
+        },
         "made": null
+      },
+      {
+        "action": "make_app",
+        "details": {
+          "name": "Comet 1680 Simulator",
+          "why": "to watch an interactive simulation of the Great Comet swooping around the sun on my computer",
+          "html": "<!doctype html><html><head><meta charset='utf-8'><title>Comet 1680</title><style>body{margin:0;background:#060814;color:#e0e8f8;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;overflow:hidden}canvas{background:#02030a;border:1px solid #1a2540;border-radius:8px;box-shadow:0 0 20px rgba(0,0,0,0.8)}#ui{margin-top:12px;display:flex;gap:10px;align-items:center}button{background:#1e2942;color:#e0e8f8;border:1px solid #3b4e76;padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px}button:hover{background:#2a3a5d}p{margin:6px 0 0 0;font-size:12px;color:#7e92b8}</style></head><body><canvas id='c' width='440' height='320'></canvas><div id='ui'><button id='launch'>Launch Comet</button><button id='reset'>Reset Orbit</button></div><p>Simulating the parabolic flyby of the Great Comet of 1680</p><script>const c=document.getElementById('c'),ctx=c.getContext('2d');let t=-3.5,running=true;const stars=Array.from({length:40},()=>({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2,a:Math.random()}));const trail=[];function draw(){ctx.fillStyle='#04060f';ctx.fillRect(0,0,c.width,c.height);stars.forEach(s=>{ctx.fillStyle=`rgba(255,255,255,${0.3+0.5*Math.sin(t*2+s.a*10)})`;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();});const sunX=220,sunY=160;const grad=ctx.createRadialGradient(sunX,sunY,2,sunX,sunY,28);grad.addColorStop(0,'#fff8cc');grad.addColorStop(0.3,'#ffaa33');grad.addColorStop(1,'transparent');ctx.fillStyle=grad;ctx.beginPath();ctx.arc(sunX,sunY,28,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffea77';ctx.beginPath();ctx.arc(sunX,sunY,8,0,Math.PI*2);ctx.fill();const cx=sunX+t*65;const cy=sunY-38+0.25*t*t*45;if(running){trail.push({x:cx,y:cy,alpha:1});if(trail.length>45)trail.shift();t+=0.035;if(t>4)t=-4;}trail.forEach((p,i)=>{p.alpha*=0.96;ctx.fillStyle=`rgba(150,210,255,${(i/trail.length)*0.6})`;ctx.beginPath();ctx.arc(p.x,p.y,1.5+i*0.1,0,Math.PI*2);ctx.fill();});ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(cx,cy,3.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(200,230,255,0.4)';ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fill();requestAnimationFrame(draw);}draw();document.getElementById('launch').onclick=()=>{running=true;t=-3.5;trail.length=0;};document.getElementById('reset').onclick=()=>{t=-3.5;trail.length=0;};</script></body></html>"
+        },
+        "detail": "Comet 1680 Simulator",
+        "thought": "I will write an interactive comet simulator app to run right on my computer screen.",
+        "enjoyment": 9,
+        "found": null,
+        "made": {
+          "app": {
+            "id": "appmwg4f04l0",
+            "file": "made/appmwg4f04l0.html",
+            "name": "Comet 1680 Simulator"
+          }
+        }
       },
       {
         "action": "write_diary",
         "details": {
-          "text": "The grey autumn morning light fills the room. I took out my guitar and played a warm, gentle tune for my little rosemary sprouts as they rest by the window."
+          "text": "Today I stepped away from my usual songs and looked to the stars of 1680. I learned about Gottfried Kirch discovering the Great Comet, and I built my very first computer app to simulate its glowing trail."
         },
-        "detail": "The grey autumn morning light fills the room. I took out my guitar and played a warm, gentle tune for my little rosemary sprouts as they rest by the window.",
-        "thought": "I will write about this peaceful morning in my diary.",
+        "detail": "Today I stepped away from my usual songs and looked to the stars of 1680. I learned about Gottfried Kirch discovering the Great Comet, and I built my very first computer app to simulate its glowing trail.",
+        "thought": "I will record how it felt to branch out and create my very first software app.",
         "enjoyment": 8,
         "found": null,
         "made": null
       }
     ],
-    "action": "take_tool",
+    "action": "read_book",
     "details": {
-      "name": "guitar"
+      "topic": "Gottfried Kirch"
     },
-    "detail": "guitar",
-    "enjoyment": 9,
-    "new_idea": "playing acoustic tunes for my greenhouse plants",
-    "found": null
+    "detail": "Gottfried Kirch",
+    "enjoyment": 8,
+    "new_idea": "making interactive astronomical simulations on my computer",
+    "found": {
+      "title": "Gottfried Kirch",
+      "text": "Gottfried Kirch (German: [ˈkɪʁç]; also Kirche [ˈkɪʁçə], Kirkius; 18 December 1639 – 25 July 1710) was a German astronomer and the first \"Astronomer Royal\" in Berlin and, as such, director of the nascent Berlin Observatory.\n\nLife and work\nThe son of Michael Kirch, a shoemaker in Guben, initially he worked as a schoolmaster in Langgrün and Neundorf near Lobenstein. He also worked as a calendar-maker in Saxonia and Franconia. He began to learn astronomy with Erhard Weigel in Jena, and with Hevelius in Danzig. In Danzig in 1667, Kirch published calendars and built several telescopes and instruments. In 1679 he invented a screw micrometer for astronomical measurements. He became an astronomer working in Coburg, Leipzig and Guben as well from 1700 in Berlin.\nIn the last quarter of the 17th century, Kirch was the most-read calendar maker and counted as one of the leading Germans. In 1680 he discovered a comet with a telescope for the first time: Komet C/1680 V1, called Kirch's comet. In 1681 he discovered the Wild Duck Cluster M 11. In 1686 he went to Leipzig. Together with the farmer and astronomer Christoph Arnold he observed the comets of that year. In the same year he discovered the Mira variable χ Cygni. He also dedicated much time to observing the double star Mizar. He introduced three new constellations, the \"Globus cruciger\" (\"Reichsapfel\"), the \"Electoral Sword\" (\"Kurfürstliches Schwert\") and the Sceptre of Brandenburg, which however were not recognized and adopted by the International Astronomical Union (IAU). Via Arnold he met his second wife Maria Margaretha Winkelmann (1670–1720), who had learnt astronomy from self-study and from Arnold. While jointly observing the comet of 1702, they discovered the globular cluster M 5 (5 May 1702). In 1699, he had observed comet 55P/Tempel-Tuttle but this observation was not recognized until later analysis by Joachim Schubart.\nFor a long period, he was unable to find employment, so he had to earn his living through the publication of Almanacs/ Calendars. He was assisted in the calculations by his second wife and their children. A few series of almanacs appeared across several decades. For a time, he published up to 13 almanacs a year, a few appearing under pseudonyms, and he also continued established almanacs from other authors under their name. …"
+    }
   },
   "news": {
     "date": "2026-11-14",
@@ -9763,11 +9785,11 @@
     "triedAt": 1794639824205,
     "v": 2
   },
-  "fullness": 9.22,
-  "wonder": 6.4,
-  "joy": 6.96,
-  "calm": 8,
-  "feelAt": "2026-11-14T07:56:15.354Z",
+  "fullness": 9.71,
+  "wonder": 10,
+  "joy": 8.31,
+  "calm": 7.64,
+  "feelAt": "2026-11-14T08:04:24.623Z",
   "lastAte": "2026-11-14T07:12:08.706Z",
   "pantryDay": "2026-11-14",
   "cookedAt": [
@@ -9782,7 +9804,7 @@
     "2026-11-13T15:09:20.249Z",
     "2026-11-14T07:14:48.703Z"
   ],
-  "selfAt": "2026-11-12T08:10:30.909Z",
+  "selfAt": "2026-11-14T08:05:22.150Z",
   "reflectTriedAt": "2026-11-13T20:27:48.168Z",
   "sleep": {
     "bed": 23,
@@ -9923,7 +9945,8 @@
   "rewardDay": {
     "date": "2026-11-14",
     "n": {
-      "fresh": 2
+      "fresh": 3,
+      "research": 1
     }
   },
   "abilitiesUsed": [
@@ -9938,11 +9961,11 @@
     }
   ],
   "weather": {
-    "at": "2026-11-14T07:48:08.242Z",
+    "at": "2026-11-14T08:04:24.727Z",
     "kind": "cloudy",
     "code": 3,
-    "temp": 3.7,
-    "cloud": 1,
+    "temp": 3.8,
+    "cloud": 0.99,
     "wind": 0.36000000000000004
   },
   "gifts": [
@@ -9991,13 +10014,15 @@
     "take_photo": "2026-11-14T07:40:03.044Z",
     "cook": "2026-11-14T07:12:08.707Z",
     "compose": "2026-11-13T21:27:10.321Z",
-    "decorate": "2026-11-13T17:37:57.920Z"
+    "decorate": "2026-11-13T17:37:57.920Z",
+    "read_book": "2026-11-14T08:05:23.123Z",
+    "make_app": "2026-11-14T08:05:23.123Z"
   },
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 3.62
+    "excited": 5.27
   },
-  "emotion": "",
+  "emotion": "excited",
   "instrumentsGiven": true
 }
