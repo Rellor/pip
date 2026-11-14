@@ -3574,7 +3574,7 @@ function renderStatus(s) {
   $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
   $('hint').textContent = !s.last
     ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
-    : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
+    : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()} · ${s.last.model ? `model: ${s.last.model}${s.last.fallback ? ' (backup)' : ''}` : s.last.via === 'autopilot' ? 'no model needed (autopilot)' : s.last.via === 'fallback' ? 'no model left today (autopilot)' : 'no model'}` : '';
 }
 function render(s) {
   $('mood').textContent = s.emotion || s.mood || '…';

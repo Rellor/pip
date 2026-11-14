@@ -1,6 +1,6 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync } from 'node:fs';
+
 import { join } from 'node:path';
 import { FURNITURE, MOVABLE } from './web/furniture.js';
 import { fetchWeather, weatherText } from './web/season.js';
@@ -10,6 +10,7 @@ import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPla
 
 import { archiveOverflow } from './archive.js';
 import { loadSoul } from './soul.js';
+import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject } from './projects.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
@@ -51,16 +52,10 @@ import { cleanUses, findUse, addUse, stepsProblem } from './uses.js';
 
 const STATE_FILE = 'web/state.json';
 const DIARY_FILE = 'diary.md';
-// The better model first. When it is busy or out of free quota, the lighter one answers so he never misses a wake-up.
-const MODEL = process.env.GEMINI_MODEL || 'gemini-flash-lite-latest';
-const FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || 'gemini-flash-lite-latest';
-let usedModel = MODEL;
-const spent = { calls: 0, input: 0, output: 0 }; // tokens used this wake-up, as Gemini counts them
-const API = 'https://generativelanguage.googleapis.com/v1beta';
-// A model that said "out of quota" (429) is left alone for 45 minutes, so each wake-up does not waste time and calls on it first.
-const BLOCK_FILE = join(tmpdir(), 'pip-model-block.json');
-const blockedModels = () => { try { return JSON.parse(readFileSync(BLOCK_FILE, 'utf8')); } catch { return {}; } };
-const blockModel = (m) => { try { writeFileSync(BLOCK_FILE, JSON.stringify({ ...blockedModels(), [m]: Date.now() + 45 * 60_000 })); } catch {} };
+let usedModel = null;
+const spent = { calls: 0, input: 0, output: 0, models: {} }; // tokens used this wake-up, as Gemini counts them
+const quota = { ref: { day: null, calls: {}, out: {} }, notes: [] }; // state.quota of this run (models.js), and notes about model switches
+const API = process.env.GEMINI_API_BASE || 'https://generativelanguage.googleapis.com/v1beta'; // tests point this at a local fake server
 
 // Pip sleeps from bedtime (23:00) until wake-up time (08:00) (local time), so nights cost no API calls or deploys.
 const TZ = process.env.PIP_TZ || 'Europe/Amsterdam';
@@ -165,7 +160,7 @@ function observeStep(s, e) {
     do: [`${e.what}`, 4],
     write_diary: [`I wrote in my diary: ${String(e.text ?? '').slice(0, 120)}`, 3],
     play_piano: [`I played ${e.instrument && e.instrument !== 'piano' ? `the ${e.instrument}` : 'the piano'}`, 3],
-    record_song: [`I recorded a song in my studio: ${e.name} (${(e.tracks ?? []).map((t) => t.instrument).join(', ')})`, 6],
+    record_song: [`I recorded a song: ${e.name} (${(e.tracks ?? []).map((t) => t.instrument).join(', ')})`, 6],
     search_web: [`I looked up ${e.query}`, 3],
     read_book: [`I read about ${e.topic}`, 3],
   }[e.action];
@@ -528,7 +523,7 @@ async function morningGoals(s, soul, system) {
   const day = dayOf();
   try {
     const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [] });
-    const reply = process.env.PIP_FAKE ? fakeGoals() : await askGemini(system, prompt, 1, [], { schema: goalSchema, maxTokens: 400 });
+    const reply = process.env.PIP_FAKE ? fakeGoals() : await askGemini(system, prompt, 1, [], { schema: goalSchema, maxTokens: 400, group: 'big' });
     if (setGoals(s, reply, day)) { console.log(`🌅 goals for today: ${s.intent.items.map((i) => i.text).join(' | ')}`); return; }
   } catch (e) {
     console.error('⚠️  goals:', e.message);
@@ -547,7 +542,7 @@ async function makeIt(s, soul, system, st) {
     const old = st.action === 'record_song' && st.details?.revise ? [...s.studio.songs].reverse().find((x) => x.pattern && x.name.toLowerCase() === String(st.details.revise).toLowerCase()) : null;
     if (st.details?.revise && !old) throw new Error(`I have no song called "${st.details.revise}" to rewrite`);
     const current = old ? describePattern(old.pattern) : null;
-    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current }), 1);
+    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current }), 1, [], { group: 'big' });
     if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl) });
     return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
   } catch (e) {
@@ -567,20 +562,20 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
   }
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error('No GEMINI_API_KEY. Copy .env.example to .env and fill it in.');
-  const models = FALLBACK_MODEL && FALLBACK_MODEL !== MODEL ? [MODEL, FALLBACK_MODEL] : [MODEL];
-  let res;
-  for (const [mi, model] of models.entries()) {
-    const last = mi === models.length - 1;
-    if (!last && (blockedModels()[model] ?? 0) > Date.now()) { console.log(`${model} is out of quota for now, using ${models[mi + 1]}`); continue; }
-    const tries = last ? 5 : 2; // the better model gets two tries, then the lighter one takes over
+  const q = quota.ref;
+  const group = opts.group === 'big' ? 'big' : 'lite';
+  const { order, skipped, first } = candidates(q, group, { reply: Boolean(opts.reply) });
+  for (const x of skipped) console.log(`   (${x.model} skipped: ${x.why})`);
+  if (!order.length) throw new Error('quota: every model is out for today, back after midnight Pacific');
+  let res = null;
+  for (const model of order) {
+    let retried429 = false;
     let timeouts = 0;
-    res = null;
-    for (let attempt = 1; attempt <= tries; attempt++) {
+    for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        // Drawings and apps make long answers, so he gets up to 2.5 minutes. If it still runs out, one more try.
         res = await fetch(`${API}/models/${model}:generateContent`, {
           method: 'POST',
-          signal: AbortSignal.timeout(150_000),
+          signal: AbortSignal.timeout(150_000), // drawings and apps make long answers
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: system }] },
@@ -589,30 +584,37 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
           }),
         });
       } catch (e) {
-        if (e.name !== 'TimeoutError' || ++timeouts > 1) {
-          if (!last) break;
-          throw new Error('Gemini took too long to answer. Try again.');
-        }
-        console.log('Gemini is slow, trying once more...');
-        continue;
+        res = null;
+        if (e.name === 'TimeoutError' && ++timeouts <= 1) { console.log(`${model} is slow, trying once more...`); continue; }
+        break;
       }
-      if (res.status !== 503 || attempt === tries) break;
+      count(q, model); // every request that reached Google counts toward its quota
+      if (res.status === 429) {
+        const why = read429(await res.clone().text());
+        console.log(`   ${model}: 429 (${why.perDay ? 'daily quota' : why.perMinute ? 'per-minute limit' : 'quota'}${why.quotaId ? `, ${why.quotaId}` : ''}${why.notFree ? ', limit 0: not in the free tier' : ''})`);
+        if (why.perMinute && !retried429) { retried429 = true; await new Promise((r) => setTimeout(r, Math.min(MAX_RETRY_WAIT_MS, why.retryMs ?? 20_000))); continue; }
+        if (why.perDay || !why.perMinute) markOut(q, model);
+        break;
+      }
+      if (res.status !== 503 || attempt === 3) break;
       console.log(`${model} is busy, trying again in ${attempt * 10}s...`);
       await new Promise((r) => setTimeout(r, attempt * 10_000));
     }
     if (res?.ok) {
       usedModel = model;
+      if (model !== first) quota.notes.push(`${model} answered (${first} ${q.out[first] ? 'is out of quota' : 'was busy or capped'})`);
       break;
     }
-    if (!last && res?.status === 429) blockModel(model);
-    if (!last) console.log(`${model} did not answer (${res?.status ?? 'no answer'}), trying ${models[mi + 1]}...`);
+    console.log(`${model} did not answer (${res?.status ?? 'no answer'})${order.at(-1) !== model ? ', trying the next model' : ''}`);
   }
-  if (res.status === 429) throw new Error('Rate limit hit (free tier). Try a longer wait between wake-ups.');
+  if (!res) throw new Error('Gemini did not answer. Try again later.');
+  if (res.status === 429) throw new Error('quota: Rate limit hit on every model for now');
   if (!res.ok) throw new Error(`Gemini error ${res.status}: ${await res.text()}`);
   const data = await res.json();
   spent.calls++;
   spent.input += data.usageMetadata?.promptTokenCount ?? 0;
   spent.output += (data.usageMetadata?.candidatesTokenCount ?? 0) + (data.usageMetadata?.thoughtsTokenCount ?? 0);
+  spent.models[usedModel] = (spent.models[usedModel] ?? 0) + 1;
   const parts = data.candidates?.[0]?.content?.parts ?? [];
   const text = parts.filter((p) => !p.thought).map((p) => p.text ?? '').join('');
   try {
@@ -1058,6 +1060,7 @@ async function wakeUp() {
   const persona = soul; // the reflection and life-story calls start from who he is, too
   const system = 'I am Pip. I answer only in JSON.';
   const state = await loadState();
+  quota.ref = ensureQuota(state); // which models answered today, and which are out (reset at midnight Pacific)
   const inbox = await loadInbox(state);
   inbox.added += (await pullNtfy(state)).added;
   const taskFiles = await loadTasks(state);
@@ -1125,7 +1128,7 @@ async function wakeUp() {
       const ctx = brainContext(state, { soul, offered, reasons, unread, looking, grew });
       const prompt = brainPrompt(ctx);
       if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, prompt);
-      const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: 800 });
+      const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: 800, ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
       via = 'brain';
     } catch (e) {
@@ -1823,7 +1826,9 @@ async function wakeUp() {
   state.last = {
     at: new Date(startedAt).toISOString(),
     via,
-    model: via === 'brain' || answer.steps.some((x) => x.made_by_maker) ? (process.env.PIP_FAKE ? 'fake' : usedModel) : null,
+    model: process.env.PIP_FAKE ? (via === 'brain' ? 'fake' : null) : spent.calls ? usedModel : null, // null: no model was needed (autopilot)
+    models: { ...spent.models },
+    ...(quota.notes.length ? { modelNotes: [...quota.notes], fallback: true } : {}),
     tokens: { ...spent },
     intervalMin: INTERVAL_MIN,
     thought: text(answer.thought, 200),
@@ -1904,6 +1909,7 @@ async function tidy(apply) {
   const T = await import('./tidy.js');
   if (!apply) {
     const state = JSON.parse(await readFile(STATE_FILE, 'utf8'));
+    quota.ref = ensureQuota(state);
     const items = T.tidyItems(state, await allLogs(state));
     const prompt = T.tidyPrompt(await loadSoul(), items);
     const answer = process.env.PIP_FAKE ? T.fakeTidy(items) : await askGemini('I am Pip. I answer only in JSON.', prompt);
