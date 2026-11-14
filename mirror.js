@@ -138,3 +138,21 @@ export function photoMirror(log, now = Date.now()) {
   if (n < 3) return '';
   return `${n} of my last ${shots.length} photos were of the same thing (${target}). Another photo of it looks the same unless something changed, and the camera does not keep one that looks just like an older photo. I can photograph something else: myself, a corner of my room, a thing I made, or the window when the light is different.`;
 }
+
+// ---- Asking. A picture, never an order. Bas answers the asks list, not chat: a wish said in a message or kept as a want does not reach it.
+const OFFER = /\b(add an ask|an ask|ask for|would you like|if you (?:want|would like|like)|we could|i could|think about it)\b/i;
+const NEEDS_OTHERS = /\b(studio|music room|new room|bigger room|more space|kit|supplies|instrument|picture of|book about|tool)\b/i;
+const sameWords = (a, b) => { const w = (t) => new Set(String(t).toLowerCase().split(/[^a-z]+/).filter((x) => x.length > 3)); const A = w(a); return [...w(b)].some((x) => A.has(x)); };
+export function askMirror(s, now = Date.now()) {
+  if (Math.floor(now / 480_000) % 3 !== 0) return ''; // about one wake-up in three, so it never nags
+  const asks = s.asks ?? [];
+  const lines = [];
+  const offer = [...(s.inbox ?? [])].reverse().find((m) => OFFER.test(m.text ?? '') && now - Date.parse(m.at) < 48 * 3_600_000 && Date.parse(m.at) <= now);
+  if (offer && !asks.some((a) => Date.parse(a.since) > Date.parse(offer.at))) {
+    lines.push(`Someone offered me something: "${String(offer.text).slice(0, 160)}". If I want it, an ask is how I say yes: asks_add {item, why} with what I want and why, in detail. A reply in a message does not reach their list, and they answer the asks.`);
+  }
+  const open = asks.filter((a) => a.status !== 'done');
+  const wish = (s.wants ?? []).map((w) => w.text).find((t) => NEEDS_OTHERS.test(t) && ![...asks].some((a) => sameWords(a.item, t)));
+  if (wish && !lines.length) lines.push(`I wrote down that I want "${String(wish).slice(0, 120)}", but I have not asked for anything like it. If it is something someone has to bring or build for me, asking is welcome, and I can ask with asks_add (I have ${open.length} open ask${open.length === 1 ? '' : 's'} now).`);
+  return lines.join(' ');
+}
