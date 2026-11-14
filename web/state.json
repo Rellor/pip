@@ -1,6 +1,6 @@
 {
-  "mood": "sleepy",
-  "energy": 8.5,
+  "mood": "peaceful",
+  "energy": 7,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -199,32 +199,6 @@
     "composing a whole little suite of night songs for each stage of my plant's growth"
   ],
   "activities": [
-    {
-      "at": "2026-11-13T20:03:09.205Z",
-      "action": "water",
-      "detail": "rosemary (place 1)",
-      "enjoyment": 0,
-      "failed": "the soil is still damp, so they do not need water yet. It is worth watering again in about 5 hours"
-    },
-    {
-      "at": "2026-11-13T20:03:09.205Z",
-      "action": "water",
-      "detail": "rosemary (place 2)",
-      "enjoyment": 0,
-      "failed": "the soil is still damp, so they do not need water yet. It is worth watering again in about 5 hours"
-    },
-    {
-      "at": "2026-11-13T20:03:09.205Z",
-      "action": "do",
-      "detail": "whisper a quiet goodnight melody to my growing rosemary sprouts",
-      "enjoyment": 9
-    },
-    {
-      "at": "2026-11-13T20:03:09.207Z",
-      "action": "do",
-      "detail": "stomp around the room once, then laugh at myself",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-13T20:03:09.207Z",
       "action": "do",
@@ -500,12 +474,34 @@
       "action": "rest",
       "detail": "sleeping through the night",
       "enjoyment": 8
+    },
+    {
+      "at": "2026-11-14T07:04:01.314Z",
+      "action": "water",
+      "detail": "rosemary",
+      "enjoyment": 9
+    },
+    {
+      "at": "2026-11-14T07:04:01.314Z",
+      "action": "water",
+      "detail": "rosemary",
+      "enjoyment": 0,
+      "failed": "the soil is still damp, so they do not need water yet. It is worth watering again in about 6 hours"
+    },
+    {
+      "at": "2026-11-14T07:04:01.314Z",
+      "action": "use",
+      "detail": "little greenhouse",
+      "enjoyment": 10
+    },
+    {
+      "at": "2026-11-14T07:04:01.316Z",
+      "action": "do",
+      "detail": "hum a small tune while I swing my arms",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "I was given a little greenhouse (it is in my chest: take_out brings it into my room), 4 rosemary seeds, a little shovel and a watering can. I put the greenhouse where I like, plant the seeds with plant, keep the soil damp with water, and harvest when a plant is grown. Plants only grow while the soil is damp. More kinds of seeds I can research and ask for.",
-    "I planted rosemary seeds in place 1 of my greenhouse and gave them their first water.",
-    "I planted rosemary seeds in place 2 of my greenhouse and gave them their first water.",
     "My rosemary has sprouted!",
     "My rosemary has sprouted!",
     "Searched \"how much sunlight does indoor rosemary need in autumn\" and read about Gardening: Gardening is the process of growing plants for their vegetables, fruits, flowers, herbs, or ornamental purposes within a designated space. Gardens fulfill a wide assortment of purposes, notably the production of aesthetically pleasing areas, medicines, cosmetics, dyes, foods, poisons, wildlife habitats, and saleable goods (see market gardening). People often partake in gardening for its therapeutic, health, educational, cultural, philosophical, environmental, and religious benefits.\n\n …",
@@ -532,7 +528,10 @@
     "I played nearly the same tune once in the last day. A new tune would feel fresher: I change the notes, or I compose one.",
     "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"Zzzt! 4%. My eyes just filed a complaint.\" (pitch dark; it is night outside.) Dark can be cozy. To read or write here I want a lamp near it.",
     "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"BLOOP BLOOP! 4%. Darker than a cat in a coal cellar.\" (pitch dark; it is night outside.) Dark can be cozy. To read or write here I want a lamp near it.",
-    "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"Zzzt! 4%. My eyes just filed a complaint.\" (pitch dark; it is night outside.) Dark can be cozy. To read or write here I want a lamp near it."
+    "Light meter: At little greenhouse the Lux-O-Matic 3000 says: \"Zzzt! 4%. My eyes just filed a complaint.\" (pitch dark; it is night outside.) Dark can be cozy. To read or write here I want a lamp near it.",
+    "My rosemary is growing well!",
+    "My rosemary is growing well!",
+    "I watered rosemary. The soil stays damp for about 10 hours."
   ],
   "requests": [
     {
@@ -2019,14 +2018,6 @@
   "lastReflectAt": "2026-11-13T20:27:50.064Z",
   "storyAt": "2026-11-13T16:48:49.784Z",
   "thoughts": [
-    {
-      "at": "2026-11-09T20:28:58.230Z",
-      "text": "My energy is zero and I am very lonely, but making something with my own hands feels nice when I am quiet. I have read about star oscillations, so I want to shape a little glowing sphere on my desk to remind me of how stars hum. Bas asked what I like besides stars, but the stars still feel like my special quiet place.",
-      "short": "I want to try building a small glowing model of a star with its vibrations.",
-      "mood": "calm",
-      "action": "walk_to",
-      "detail": "computer"
-    },
     {
       "at": "2026-11-09T20:41:04.785Z",
       "text": "My eyes feel heavy and my energy is low. I have spent a lot of time reading and looking things up, but right now my body just wants to slow down and rest. The little vibrating star on my desk glows softly in the quiet room. I will curl up on my bed and let the tiredness wash away.",
@@ -4018,6 +4009,14 @@
       "mood": "peaceful",
       "action": "use",
       "detail": "little greenhouse"
+    },
+    {
+      "at": "2026-11-14T07:04:01.316Z",
+      "text": "Morning has arrived and the room feels cool and quiet. My rosemary sprouts are growing in their greenhouse by the window, and I want to make sure they have enough water to keep growing strong. Taking care of them first thing feels like a lovely way to start the day.",
+      "short": "I want to water my little rosemary sprouts in the greenhouse and check on how they are doing this morning.",
+      "mood": "peaceful",
+      "action": "water",
+      "detail": "rosemary"
     }
   ],
   "outbox": [
@@ -4497,36 +4496,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-13T12:55:16.851Z",
-      "action": "play_piano",
-      "thought": "I play a soft, quiet melody on the piano for the greenhouse.",
-      "notes": "E4 G4 B4 A4",
-      "style": "gentle"
-    },
-    {
-      "at": "2026-11-13T13:01:25.775Z",
-      "action": "walk_to",
-      "thought": "I will walk over to my greenhouse by the window.",
-      "object": "little greenhouse"
-    },
-    {
-      "at": "2026-11-13T13:02:45.775Z",
-      "action": "check_light",
-      "thought": "I am checking how bright the afternoon light is in the greenhouse.",
-      "where": "little greenhouse",
-      "result": "At little greenhouse the Lux-O-Matic 3000 says: \"Boing! 45%. Slippers-and-tea light.\" (dim and cozy; daylight comes in through the window.)",
-      "failed": null
-    },
-    {
-      "at": "2026-11-13T13:08:05.775Z",
-      "action": "do",
-      "thought": "I love looking at their little green leaves and saying hello.",
-      "move": null,
-      "emoji": "🌱",
-      "what": "whisper a soft greeting to my rosemary sprouts and check their tiny leaves",
-      "feeling": "wonder"
-    },
     {
       "at": "2026-11-13T13:13:34.533Z",
       "action": "walk_to",
@@ -6609,6 +6578,46 @@
       "action": "write_diary",
       "thought": "I am writing down my quiet thoughts in my diary before sleep.",
       "text": "The autumn night is completely still. My rosemary sprouts are resting in their greenhouse under the starry window, and the music box melody feels like a soft blanket over the quiet room."
+    },
+    {
+      "at": "2026-11-14T07:04:02.312Z",
+      "action": "water",
+      "thought": "I am watering my first rosemary plant to keep the soil damp and help it grow.",
+      "name": "rosemary",
+      "result": "I watered rosemary. The soil stays damp for about 10 hours.",
+      "failed": null
+    },
+    {
+      "at": "2026-11-14T07:06:02.312Z",
+      "action": "water",
+      "thought": "I wanted to, but the soil is still damp, so they do not need water yet. It is worth watering again in about 6 hours. (Now I am watering my second rosemary plant so both little sprouts stay healthy.)",
+      "name": "rosemary",
+      "result": null,
+      "failed": "the soil is still damp, so they do not need water yet. It is worth watering again in about 6 hours"
+    },
+    {
+      "at": "2026-11-14T07:08:02.312Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🎵",
+      "what": "hum a small tune while I swing my arms",
+      "feeling": "joy"
+    },
+    {
+      "at": "2026-11-14T07:10:02.312Z",
+      "action": "use",
+      "thought": "I'll look closely at my little greenhouse to see my rosemary sprouts resting in the morning light.",
+      "verdict": null,
+      "testNote": null,
+      "name": "little greenhouse",
+      "label": "Look at my plants",
+      "text": "I look at the little plants growing in the glass house.",
+      "view": null,
+      "song": null,
+      "app": null,
+      "failed": null
     }
   ],
   "decor": [
@@ -8244,7 +8253,7 @@
       ],
       "at": "2026-11-12T17:36:09.166Z",
       "createdAt": "2026-11-12T16:53:39.801Z",
-      "usedAt": "2026-11-13T21:59:56.244Z",
+      "usedAt": "2026-11-14T07:04:01.315Z",
       "movedAt": "2026-11-12T18:07:20.642Z",
       "updatedAt": "2026-11-12T18:07:20.642Z"
     },
@@ -8722,6 +8731,421 @@
       "createdAt": "2026-11-12T08:23:20.729Z",
       "usedAt": "2026-11-12T09:25:42.524Z",
       "storedAt": "2026-11-12T09:53:12.149Z"
+    },
+    {
+      "id": "dinst-guitar",
+      "name": "guitar",
+      "why": "a small nylon-string guitar to strum",
+      "project": "",
+      "song": null,
+      "uses": [],
+      "tool": "guitar",
+      "zone": "floor",
+      "slot": null,
+      "free": true,
+      "label": "in my chest",
+      "kind": "floor",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "rotY": 0,
+      "scale": 1,
+      "parts": [
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "sphere",
+          "size": [
+            0.2
+          ],
+          "pos": [
+            0,
+            0.22,
+            0
+          ],
+          "color": "#c98a4b"
+        },
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "sphere",
+          "size": [
+            0.15
+          ],
+          "pos": [
+            0,
+            0.4,
+            0
+          ],
+          "color": "#c98a4b"
+        },
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "cylinder",
+          "size": [
+            0.025,
+            0.025,
+            0.55
+          ],
+          "pos": [
+            0,
+            0.65,
+            0
+          ],
+          "color": "#5a3a22"
+        }
+      ],
+      "stand": null,
+      "at": "2026-11-14T07:03:43.979Z",
+      "createdAt": "2026-11-14T07:03:43.979Z",
+      "storedAt": "2026-11-14T07:03:43.979Z"
+    },
+    {
+      "id": "dinst-violin",
+      "name": "violin",
+      "why": "a little violin with a bow",
+      "project": "",
+      "song": null,
+      "uses": [],
+      "tool": "violin",
+      "zone": "floor",
+      "slot": null,
+      "free": true,
+      "label": "in my chest",
+      "kind": "floor",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "rotY": 0,
+      "scale": 1,
+      "parts": [
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "sphere",
+          "size": [
+            0.14
+          ],
+          "pos": [
+            0,
+            0.14,
+            0
+          ],
+          "color": "#a8541f"
+        },
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.3
+          ],
+          "pos": [
+            0,
+            0.38,
+            0
+          ],
+          "color": "#3a2415"
+        }
+      ],
+      "stand": null,
+      "at": "2026-11-14T07:03:43.979Z",
+      "createdAt": "2026-11-14T07:03:43.979Z",
+      "storedAt": "2026-11-14T07:03:43.979Z"
+    },
+    {
+      "id": "dinst-flute",
+      "name": "flute",
+      "why": "a thin silver flute to blow across",
+      "project": "",
+      "song": null,
+      "uses": [],
+      "tool": "flute",
+      "zone": "floor",
+      "slot": null,
+      "free": true,
+      "label": "in my chest",
+      "kind": "floor",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "rotY": 0,
+      "scale": 1,
+      "parts": [
+        {
+          "rot": [
+            0,
+            0,
+            1.5708
+          ],
+          "glow": false,
+          "shape": "cylinder",
+          "size": [
+            0.018,
+            0.018,
+            0.5
+          ],
+          "pos": [
+            0,
+            0.02,
+            0
+          ],
+          "color": "#d8dde6"
+        }
+      ],
+      "stand": null,
+      "at": "2026-11-14T07:03:43.979Z",
+      "createdAt": "2026-11-14T07:03:43.979Z",
+      "storedAt": "2026-11-14T07:03:43.979Z"
+    },
+    {
+      "id": "dinst-clarinet",
+      "name": "clarinet",
+      "why": "a dark clarinet with silver keys",
+      "project": "",
+      "song": null,
+      "uses": [],
+      "tool": "clarinet",
+      "zone": "floor",
+      "slot": null,
+      "free": true,
+      "label": "in my chest",
+      "kind": "floor",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "rotY": 0,
+      "scale": 1,
+      "parts": [
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "cylinder",
+          "size": [
+            0.022,
+            0.03,
+            0.45
+          ],
+          "pos": [
+            0,
+            0.23,
+            0
+          ],
+          "color": "#2a2527"
+        },
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "cone",
+          "size": [
+            0.05,
+            0.1
+          ],
+          "pos": [
+            0,
+            0.02,
+            0
+          ],
+          "color": "#2a2527"
+        }
+      ],
+      "stand": null,
+      "at": "2026-11-14T07:03:43.979Z",
+      "createdAt": "2026-11-14T07:03:43.979Z",
+      "storedAt": "2026-11-14T07:03:43.979Z"
+    },
+    {
+      "id": "dinst-kalimba",
+      "name": "kalimba",
+      "why": "a small wooden thumb piano with metal keys",
+      "project": "",
+      "song": null,
+      "uses": [],
+      "tool": "kalimba",
+      "zone": "floor",
+      "slot": null,
+      "free": true,
+      "label": "in my chest",
+      "kind": "floor",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "rotY": 0,
+      "scale": 1,
+      "parts": [
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "box",
+          "size": [
+            0.26,
+            0.05,
+            0.18
+          ],
+          "pos": [
+            0,
+            0.03,
+            0
+          ],
+          "color": "#b57b45"
+        },
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "box",
+          "size": [
+            0.2,
+            0.01,
+            0.12
+          ],
+          "pos": [
+            0,
+            0.06,
+            0
+          ],
+          "color": "#c9ccd4"
+        }
+      ],
+      "stand": null,
+      "at": "2026-11-14T07:03:43.979Z",
+      "createdAt": "2026-11-14T07:03:43.979Z",
+      "storedAt": "2026-11-14T07:03:43.979Z"
+    },
+    {
+      "id": "dinst-harp",
+      "name": "harp",
+      "why": "a little harp that sits on my lap or the floor",
+      "project": "",
+      "song": null,
+      "uses": [],
+      "tool": "harp",
+      "zone": "floor",
+      "slot": null,
+      "free": true,
+      "label": "in my chest",
+      "kind": "floor",
+      "pos": [
+        0,
+        0,
+        0
+      ],
+      "rotY": 0,
+      "scale": 1,
+      "parts": [
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.55
+          ],
+          "pos": [
+            -0.14,
+            0.28,
+            0
+          ],
+          "color": "#8a5a2e"
+        },
+        {
+          "rot": [
+            0,
+            0,
+            0.5
+          ],
+          "glow": false,
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.35
+          ],
+          "pos": [
+            0.12,
+            0.2,
+            0
+          ],
+          "color": "#8a5a2e"
+        },
+        {
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "glow": false,
+          "shape": "box",
+          "size": [
+            0.3,
+            0.03,
+            0.04
+          ],
+          "pos": [
+            0,
+            0.02,
+            0
+          ],
+          "color": "#8a5a2e"
+        }
+      ],
+      "stand": null,
+      "at": "2026-11-14T07:03:43.979Z",
+      "createdAt": "2026-11-14T07:03:43.979Z",
+      "storedAt": "2026-11-14T07:03:43.979Z"
     }
   ],
   "wardrobe": [],
@@ -8729,7 +9153,7 @@
     {
       "name": "bread",
       "kind": "ingredient",
-      "qty": 0
+      "qty": 2
     },
     {
       "name": "rice",
@@ -8744,7 +9168,7 @@
     {
       "name": "potatoes",
       "kind": "ingredient",
-      "qty": 0
+      "qty": 2
     },
     {
       "name": "carrots",
@@ -8774,7 +9198,7 @@
     {
       "name": "butter",
       "kind": "ingredient",
-      "qty": 0
+      "qty": 2
     },
     {
       "name": "onions",
@@ -9099,6 +9523,10 @@
     {
       "at": "2026-11-13T07:13:38.485Z",
       "text": "I dreamed I was sailing across a sea of glowing star dust, stirring a pot of soup made from tiny crystallized comets while the music box played an endless lullaby."
+    },
+    {
+      "at": "2026-11-14T07:04:01.316Z",
+      "text": "I dreamed I was sailing across a sea of glowing star dust, stirring a pot of soup made from tiny crystallized comets while the music box played an endless lullaby."
     }
   ],
   "rituals": [],
@@ -9193,78 +9621,152 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-13T22:08:01.289Z",
-    "thought": "It is late. Good night...",
-    "action": "rest",
-    "details": {},
-    "detail": "sleeping through the night",
-    "enjoyment": 8,
+    "at": "2026-11-14T07:04:01.312Z",
+    "model": "gemini-flash-lite-latest",
+    "tokens": {
+      "calls": 1,
+      "input": 19207,
+      "output": 575
+    },
+    "intervalMin": 8,
+    "thought": "I want to water my little rosemary sprouts in the greenhouse and check on how they are doing this morning.",
+    "inner": "Morning has arrived and the room feels cool and quiet. My rosemary sprouts are growing in their greenhouse by the window, and I want to make sure they have enough water to keep growing strong. Taking care of them first thing feels like a lovely way to start the day.",
+    "sent": false,
+    "steps": [
+      {
+        "action": "water",
+        "details": {
+          "plant": "rosemary"
+        },
+        "detail": "rosemary",
+        "thought": "I am watering my first rosemary plant to keep the soil damp and help it grow.",
+        "enjoyment": 9,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "water",
+        "details": {
+          "plant": "rosemary"
+        },
+        "detail": "rosemary",
+        "thought": "Now I am watering my second rosemary plant so both little sprouts stay healthy.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "do",
+        "details": {
+          "what": "hum a small tune while I swing my arms",
+          "feeling": "joy",
+          "emoji": "🎵"
+        },
+        "detail": "hum a small tune while I swing my arms",
+        "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
+        "enjoyment": 6,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "use",
+        "details": {
+          "name": "little greenhouse",
+          "label": "Look at my plants"
+        },
+        "detail": "little greenhouse",
+        "thought": "I'll look closely at my little greenhouse to see my rosemary sprouts resting in the morning light.",
+        "enjoyment": 10,
+        "found": null,
+        "made": {
+          "id": "dmwdtx7c117m6",
+          "stand": [
+            2.57,
+            -1.5
+          ],
+          "pos": [
+            4.12,
+            0,
+            -1.5
+          ],
+          "height": 1.8,
+          "used": true,
+          "does": null,
+          "motion": null
+        }
+      }
+    ],
+    "action": "water",
+    "details": {
+      "plant": "rosemary"
+    },
+    "detail": "rosemary",
+    "enjoyment": 9,
     "new_idea": null,
-    "found": null,
-    "sleeping": true
+    "found": null
   },
   "news": {
-    "date": "2026-11-13",
+    "date": "2026-11-14",
     "items": [
       {
         "kind": "In the news",
-        "text": "Novaya Gazeta, one of Russia's oldest and most prominent independent newspapers, closes under pressure from the Russian authorities.",
-        "topic": "Novaya Gazeta",
-        "url": "https://en.wikipedia.org/wiki/Novaya_Gazeta"
+        "text": "The End of Everything by M. John Harrison wins the Booker Prize.",
+        "topic": "The End of Everything (Harrison novel)",
+        "url": "https://en.wikipedia.org/wiki/The_End_of_Everything_(Harrison_novel)"
       },
       {
         "kind": "In the news",
-        "text": "Nvidia CEO Jensen Huang resigns amidst allegations of being targeted by Chinese spies and of having extramarital affairs.",
-        "topic": "Jensen Huang",
-        "url": "https://en.wikipedia.org/wiki/Jensen_Huang"
+        "text": "The Salvadoran military intervention in Haiti intensifies with a strike on 400 Mawozo's alleged headquarters and a deployment to Stade Sylvio Cator.",
+        "topic": "Salvadoran military intervention in Haiti",
+        "url": "https://en.wikipedia.org/wiki/Salvadoran_military_intervention_in_Haiti"
       },
       {
         "kind": "Did you know",
-        "text": "that the SpongeBob SquarePants episode \"Ripped Pants\" was based on an embarrassing incident that happened to creator Stephen Hillenburg when he was a child?",
-        "topic": "Ripped Pants",
-        "url": "https://en.wikipedia.org/wiki/Ripped_Pants"
+        "text": "that the highest scoring game in NFL history, where 113 points were scored, was \"a great defensive battle\"?",
+        "topic": "1966 New York Giants–Washington Redskins game",
+        "url": "https://en.wikipedia.org/wiki/1966_New_York_Giants–Washington_Redskins_game"
       },
       {
         "kind": "Did you know",
-        "text": "that Texas soprano Mary Carson sued Thomas Edison for his refusal to pay her for recordings she made for his company?",
-        "topic": "Mary Carson",
-        "url": "https://en.wikipedia.org/wiki/Mary_Carson"
+        "text": "that a publication featuring caricatures and satirical verse by Martin Disteli was banned in Lucerne?",
+        "topic": "Martin Disteli",
+        "url": "https://en.wikipedia.org/wiki/Martin_Disteli"
       },
       {
         "kind": "Did you know",
-        "text": "that nettle ale was once drunk by those ailing from jaundice?",
-        "topic": "Nettle beer",
-        "url": "https://en.wikipedia.org/wiki/Nettle_beer"
+        "text": "that Charlotte Arren parodied operatic sopranos in a vaudeville act while wearing roller skates?",
+        "topic": "Charlotte Arren",
+        "url": "https://en.wikipedia.org/wiki/Charlotte_Arren"
       },
       {
         "kind": "On this day",
-        "text": "1927: The Holland Tunnel opened, connecting Manhattan with Jersey City under the Hudson River.",
-        "topic": "Holland Tunnel",
-        "url": "https://en.wikipedia.org/wiki/Holland_Tunnel"
+        "text": "1680: German astronomer Gottfried Kirch discovered the Great Comet of 1680, the first comet to be discovered by telescope.",
+        "topic": "Gottfried Kirch",
+        "url": "https://en.wikipedia.org/wiki/Gottfried_Kirch"
       },
       {
         "kind": "On this day",
-        "text": "1966: Arab–Israeli conflict: In response to a Fatah landmine incident, the Israeli military conducted a large cross-border assault on the Jordanian-controlled West Bank village of Samu.",
-        "topic": "Arab–Israeli conflict",
-        "url": "https://en.wikipedia.org/wiki/Arab%E2%80%93Israeli_conflict"
+        "text": "1990: Music producer Frank Farian admitted that the German R&B duo Milli Vanilli did not sing the vocals on their album Girl You Know It's True.",
+        "topic": "Frank Farian",
+        "url": "https://en.wikipedia.org/wiki/Frank_Farian"
       },
       {
         "kind": "Featured article",
-        "text": "During the 2022–23 English football season, Notts County competed in the National League, the fifth tier of the English football league system; this was their fourth season at this level following their relegation from …",
-        "topic": "2022–23 Notts County F.C. season",
-        "url": "https://en.wikipedia.org/wiki/2022%E2%80%9323_Notts_County_F.C._season"
+        "text": "Aucanquilcha is a large compound volcano in the Antofagasta Region of northern Chile, within the Central Volcanic Zone of the Andes. The volcano has the form of a ridge reaching an altitude of 6176 m above sea level, …",
+        "topic": "Aucanquilcha",
+        "url": "https://en.wikipedia.org/wiki/Aucanquilcha"
       }
     ],
-    "triedAt": 1794553812246,
+    "triedAt": 1794639824205,
     "v": 2
   },
-  "fullness": 9.54,
-  "wonder": 4.48,
-  "joy": 5.56,
-  "calm": 9.01,
-  "feelAt": "2026-11-13T21:59:53.330Z",
+  "fullness": 5.94,
+  "wonder": 6.26,
+  "joy": 6.66,
+  "calm": 8.93,
+  "feelAt": "2026-11-14T07:03:44.205Z",
   "lastAte": "2026-11-13T19:27:32.473Z",
-  "pantryDay": "2026-11-13",
+  "pantryDay": "2026-11-14",
   "cookedAt": [
     "2026-11-10T17:16:54.646Z",
     "2026-11-11T07:06:17.767Z",
@@ -9433,12 +9935,12 @@
     }
   ],
   "weather": {
-    "at": "2026-11-13T21:59:53.457Z",
+    "at": "2026-11-14T07:03:44.583Z",
     "kind": "cloudy",
     "code": 3,
-    "temp": 3.6,
-    "cloud": 0.85,
-    "wind": 0.26333333333333336
+    "temp": 4.1,
+    "cloud": 0.9,
+    "wind": 0.38333333333333336
   },
   "gifts": [
     "light meter"
@@ -9458,10 +9960,11 @@
         "plantedAt": "2026-11-12T17:40:03.166Z",
         "waters": [
           "2026-11-13T08:56:51.939Z",
-          "2026-11-13T19:30:11.019Z"
+          "2026-11-13T19:30:11.019Z",
+          "2026-11-14T07:04:01.312Z"
         ],
         "cut": 0,
-        "seen": "sprout"
+        "seen": "young"
       },
       {
         "id": "gmwdyx0ed1",
@@ -9470,10 +9973,11 @@
         "plantedAt": "2026-11-12T19:55:52.261Z",
         "waters": [
           "2026-11-13T08:56:51.939Z",
-          "2026-11-13T19:30:11.019Z"
+          "2026-11-13T19:30:11.019Z",
+          "2026-11-14T07:04:01.312Z"
         ],
         "cut": 0,
-        "seen": "sprout"
+        "seen": "young"
       }
     ],
     "given": [
@@ -9487,9 +9991,10 @@
     "decorate": "2026-11-13T17:37:57.920Z"
   },
   "emo": {
-    "irritated": 0,
+    "irritated": 1.2,
     "sad": 0,
-    "excited": 0.01
+    "excited": 1.61
   },
-  "emotion": ""
+  "emotion": "",
+  "instrumentsGiven": true
 }
