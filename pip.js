@@ -13,7 +13,7 @@ import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityG
 import { purposeProblem, purposeHint, supportsInfo, looseSmall, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, spaceLeft, accessProblem, CHEST_HOME, ART_MAX, MAX_PER_DAY, hangPicture, wallPictures } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
-import { topicMirror, untriedMirror, dormantMirror, moodMirror, clothesNote, photoMirror, askMirror, studioMirror, shareMirror, bigIdeasMirror, menuMirror, interestThemes, pastMirror, themeFatigue } from './mirror.js';
+import { topicMirror, untriedMirror, dormantMirror, moodMirror, clothesNote, photoMirror, askMirror, studioMirror, shareMirror, bigIdeasMirror, menuMirror, interestThemes, pastMirror, lessonsFrom, sparkMirror, kindsToday, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesText, movesGuide } from './moves.js';
 import { measureThing, sizesGuide } from './sizes.js';
 import { bonusRewards } from './rewards.js';
@@ -629,7 +629,7 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map(projectLine), 'no
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) || wallMirror(s) || moodMirror(s.log) || clothesNote(s) || photoMirror(s.log) || askMirror(s) || studioMirror(s) || shareMirror(s.log) || bigIdeasMirror(s) || pastMirror(s) || menuMirror(s) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), clothesNote(s), moodMirror(s.log), photoMirror(s.log), askMirror(s), studioMirror(s), shareMirror(s.log), bigIdeasMirror(s), pastMirror(s), menuMirror(s), wallMirror(s), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
+${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) || wallMirror(s) || moodMirror(s.log) || clothesNote(s) || photoMirror(s.log) || askMirror(s) || studioMirror(s) || shareMirror(s.log) || bigIdeasMirror(s) || pastMirror(s) || sparkMirror() || kindsToday(s.log) || menuMirror(s) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), clothesNote(s), moodMirror(s.log), photoMirror(s.log), askMirror(s), studioMirror(s), kindsToday(s.log), shareMirror(s.log), bigIdeasMirror(s), pastMirror(s), sparkMirror(), menuMirror(s), wallMirror(s), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
 ${bullets(recall(s, focusText(s, unread)).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
 
 WHAT I REALIZED WHEN I LOOKED BACK (I do this every now and then. I can drop one that is not true any more with reflections_drop)
@@ -1977,6 +1977,7 @@ async function wakeUp() {
     state.emotion = emotionWord(state);
     addMemory(state, `I could not ${b.st.action.replace(/_/g, ' ')}: ${b.why}`, 4, 'memory', entry.at);
   }
+  for (const l of lessonsFrom(state.log, state.memories)) addMemory(state, l, 7, 'lesson', new Date().toISOString()); // what keeps failing becomes something he knows
   const doneToday = markIntentions(state, state.log.filter((e) => Date.parse(e.at) >= startedAt - 1000));
   for (const i of doneToday) { // a plan he made for himself came true: a small lift, and a note
     state.joy = Math.min(10, state.joy + 0.5);

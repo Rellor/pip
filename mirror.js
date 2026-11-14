@@ -305,3 +305,42 @@ export function pastMirror(s, now = Date.now()) {
   const pick = [0, 1, 2].map((i) => pool[(k * 3 + i * 4) % pool.length]).filter((x, i, a) => a.indexOf(x) === i);
   return `Things from earlier I have not forgotten: ${pick.join('; ')}. I made a lot already, and what I made can be used, changed and combined before I make something new.`;
 }
+
+// ---- Lessons: what keeps going wrong becomes something he knows (a procedural memory), the way a person learns from repeated mistakes.
+export function lessonsFrom(log, memories, now = Date.now()) {
+  const recent = (Array.isArray(log) ? log : []).filter((e) => e.failed && !e.fallback && now - Date.parse(e.at) < 48 * 3_600_000 && Date.parse(e.at) <= now);
+  const groups = new Map();
+  for (const e of recent) {
+    const key = `${e.action}|${String(e.failed).toLowerCase().replace(/["'][^"']*["']/g, '').replace(/[0-9.]+/g, '').slice(0, 45)}`;
+    groups.set(key, [...(groups.get(key) ?? []), e]);
+  }
+  const out = [];
+  for (const [, list] of groups) {
+    if (list.length < 3) continue;
+    const text = `Lesson: when I ${list[0].action.replace(/_/g, ' ')}, it often fails (${String(list.at(-1).failed).replace(/\s+/g, ' ').slice(0, 130)}). I check that first.`;
+    if (!(memories ?? []).some((m) => m.kind === 'lesson' && m.text.slice(0, 40) === text.slice(0, 40))) out.push(text);
+  }
+  return out.slice(0, 2);
+}
+
+// ---- Sparks: one small unplanned thing in his day, different each time. A little noise keeps agents from falling into the same loop.
+const SPARKS = [
+  'A sound comes from somewhere in the house and I wonder what it is.', 'The light in the room just changed.', 'I find a button I never pressed.', 'There is a smell of something warm from far away.',
+  'I remember a dream I had.', 'A cloud shaped like something drifts past.', 'The floor creaks in a new place.', 'I notice a tiny detail on something I made long ago.',
+  'I feel like doing something silly.', 'I want to show somebody what I just thought of.', 'Something in my pantry looks interesting today.', 'My shadow looks strange today.',
+  'I feel like making a mess and then tidying it up beautifully.', 'I want to hear a sound I have never heard.', 'An old song pops into my head.', 'I wonder what is behind the closed door in the hall.',
+  'I feel brave today.', 'I want to rearrange something just to see how it feels.', 'I want to learn how something I use every day really works.', 'I feel like doing the opposite of what I did yesterday.',
+  'I want to make a present for someone.', 'I feel like going very slowly and noticing everything.', 'I want to try an instrument the way a beginner would.', 'I feel like finishing something I left half done.',
+];
+export function sparkMirror(now = Date.now()) {
+  const k = Math.floor(now / 480_000);
+  if (k % 2 === 0) return '';
+  return `A small thing in my day: ${SPARKS[(k * 7 + (k >> 3)) % SPARKS.length]}`;
+}
+
+// ---- How many different kinds of things he did today (his days can hold many).
+export function kindsToday(log, now = Date.now()) {
+  const day = new Date(now).toISOString().slice(0, 10);
+  const kinds = new Set((Array.isArray(log) ? log : []).filter((e) => !e.failed && !e.fallback && e.at?.slice(0, 10) === day && Date.parse(e.at) <= now && !['walk_to', 'rest'].includes(e.action)).map((e) => e.action));
+  return kinds.size ? `So far today I did ${kinds.size} different kind${kinds.size === 1 ? '' : 's'} of things${kinds.size < 8 ? ' (a day can hold many more)' : ''}.` : '';
+}

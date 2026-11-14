@@ -30,6 +30,9 @@ export function addMemory(s, text, importance = 5, kind = 'memory', at = new Dat
   if (!t) return null;
   const last = s.memories.slice(-12);
   if (last.some((m) => m.text.toLowerCase() === t.toLowerCase())) return null;
+  const words = (x) => new Set(String(x).toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 3));
+  const wt = words(t);
+  if (wt.size >= 4 && s.memories.slice(-60).some((m) => { const o = words(m.text); const i = [...wt].filter((w) => o.has(w)).length; return i / Math.min(wt.size, o.size) >= 0.8; })) return null; // nearly the same as a recent memory
   const m = { id: `m${Date.now().toString(36)}${s.memories.length}`, at, text: t, importance: imp(importance), kind };
   s.memories.push(m);
   if (s.memories.length > MAX_MEMORIES) {
