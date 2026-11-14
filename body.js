@@ -43,7 +43,7 @@ export function ensureBody(s, now = Date.now()) {
   s.recent.moves = Array.isArray(s.recent.moves) ? s.recent.moves.slice(-RECENT_MOVES) : [];
   s.recent.moods = Array.isArray(s.recent.moods) ? s.recent.moods.slice(-RECENT_MOODS) : [];
   const today = dayOf(now);
-  if (s.today?.day !== today) s.today = { day: today, done: {}, tried: {}, kinds: {} };
+  if (s.today?.day !== today) s.today = { day: today, done: {}, tried: {}, kinds: {}, moods: {}, lift: {} };
 }
 
 // How full the room feels: things on the floor and on the walls, beyond what feels cosy.
@@ -104,9 +104,12 @@ export function noteMove(s, move, { failed = false, mood = null, now = Date.now(
 }
 
 // His mood after a tick: the last 5 are kept, so code can see when he is stuck in one mood.
-export function noteMood(s, mood) {
-  ensureBody(s);
-  if (mood) s.recent.moods = [...s.recent.moods, String(mood)].slice(-RECENT_MOODS);
+export function noteMood(s, mood, now = Date.now()) {
+  ensureBody(s, now);
+  if (!mood) return;
+  s.recent.moods = [...s.recent.moods, String(mood)].slice(-RECENT_MOODS);
+  s.today.moods ??= {};
+  s.today.moods[mood] = (s.today.moods[mood] ?? 0) + 1;
 }
 
 // Someone wrote to him.

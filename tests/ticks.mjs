@@ -25,7 +25,10 @@ for (let i = 1; i <= ticks; i++) {
   for (const st of s.last.steps ?? []) moves[st.action] = (moves[st.action] ?? 0) + 1;
   failed += (s.log ?? []).filter((e) => e.failed && Date.parse(e.at) >= Date.parse(s.last.at) - 1000).length;
 }
+// then a night: the sleep call runs once, and the next morning he sets his goals
+for (const night of ['1', '1', '0']) execFileSync('node', ['pip.js'], { cwd: work, env: { ...env, PIP_AWAKE: '', PIP_NIGHT: night }, stdio: 'pipe', timeout: 120_000 });
 const s = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
+if (!s.days?.length || !s.dreams?.length) { console.log('FAIL the sleep call did not run'); process.exit(1); }
 if (!s.recent?.moves?.length || !s.today || !s.body) { console.log('FAIL body state missing'); process.exit(1); }
 console.log(`ok  ${ticks} ticks: ${JSON.stringify(count)}, ${failed} failed moves (allowed), moves: ${JSON.stringify(moves)}`);
 console.log(`    work copy: ${work}`);

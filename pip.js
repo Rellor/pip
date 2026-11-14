@@ -14,7 +14,8 @@ import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject } from './projects.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
-import { tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
+import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
+import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep } from './night.js';
 import { availableMoves } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
@@ -32,7 +33,7 @@ import { ensureMoves, makeMove, findMove, movesGuide } from './dances.js';
 import { measureThing, sizesGuide } from './sizes.js';
 import { bonusRewards } from './rewards.js';
 import { ensureTools, NEEDS, toolsGuide, toolFor, missingTool, toolList, addTool, toolKind, fits, craftTool, MAX_TOOLS } from './tools.js';
-import { ensureMemory, addMemory, recall, markUsed, fade, archiveForgotten, addInterest, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
+import { ensureMemory, addMemory, recall, markUsed, fade, archiveForgotten, addInterest } from './memory.js';
 import { ensureIdentity, applyIdentity } from './identity.js';
 import { takePhoto } from './photo.js';
 import { TIMBRES, cleanTracks } from './songs.js';
@@ -70,6 +71,7 @@ function localHour() {
   return Number(h) % 24;
 }
 function isNight() {
+  if (process.env.PIP_NIGHT) return process.env.PIP_NIGHT === '1'; // for tests: force night (1) or day (0)
   const h = localHour();
   return BEDTIME > WAKETIME ? h >= BEDTIME || h < WAKETIME : h >= BEDTIME && h < WAKETIME;
 }
@@ -171,7 +173,6 @@ function observeStep(s, e) {
 }
 const sameText = (a, b) => a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
 const withWarn = (place, made) => (place && made?.warn ? `${place} (careful: ${made.warn})` : place && made?.hint ? `${place} (${made.hint})` : place ?? null);
-const bullets = (items, empty) => (items.length ? items.map((x) => `- ${x}`).join('\n') : empty);
 // Pip may write to Bas at most once every 3 hours, so he only says what really matters.
 const MIN_GAP_MINUTES = 180;
 // One wake-up is one plan for this many minutes. The loop passes in its real interval.
@@ -954,36 +955,6 @@ function applyInnerLife(s, r, detail, replying = false) {
   return sent;
 }
 
-// When many new memories have piled up, Pip rewrites his life story. The memories themselves stay (the best ones are kept).
-async function consolidate(s, system) {
-  try {
-    const fresh = s.memories.filter((m) => m.kind !== 'reflection' && Date.parse(m.at) > (Date.parse(s.storyAt) || 0)).slice(-40);
-    const res = await askGemini(
-      system,
-      `YOUR LIFE STORY SO FAR\n${s.story || '(nothing yet)'}\n\nNEWER MEMORIES\n${bullets(fresh.map((m) => m.text), '')}\n\nRewrite your life story in the first person, as one short text of at most 120 words. Keep what matters most to you, and let small details go. Answer in JSON: {"story": "..."}`
-    );
-    const story = text(res?.story, 900);
-    if (story) {
-      s.story = story;
-      s.storyAt = new Date().toISOString();
-    }
-  } catch (e) {
-    console.error('⚠️  memory:', e.message);
-  }
-}
-
-// Looking back: a few insights about his own life, with the memories they come from.
-async function reflectNow(s, system) {
-  s.reflectTriedAt = new Date().toISOString();
-  try {
-    const res = await askGemini(system, reflectionPrompt(s, bullets), 1);
-    const made = applyReflection(s, res);
-    console.log(made.length ? `🪞 Pip looked back and realized:\n${made.map((r) => `   • ${r.text}`).join('\n')}` : '🪞 Pip looked back but found nothing new.');
-  } catch (e) {
-    console.error('⚠️  reflection:', e.message);
-  }
-}
-
 // A use can have a small picture. It is saved as a file in web/made/ and the use points to it.
 async function prepareUses(state, raw, ownerId) {
   const uses = [];
@@ -1006,6 +977,7 @@ async function goToSleep(state) {
     return;
   }
   const at = new Date().toISOString();
+  await sleepCall(state);
   state.mood = 'sleepy';
   state.activities.push({ at, action: 'rest', detail: 'sleeping through the night', enjoyment: 8 });
   state.activities = state.activities.slice(-50);
@@ -1023,6 +995,32 @@ async function goToSleep(state) {
   await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
   await appendFile(DIARY_FILE, `## ${new Date().toLocaleString('en-GB')}\nGood night. Pip went to sleep.\n\n`);
   console.log('\n💤 Pip went to sleep.');
+}
+
+// Once a night: sum up the day, maybe add a line to his soul, let old lines go, update his story, dream. One model call.
+async function sleepCall(state) {
+  try {
+    ensureBody(state);
+    const today = daySummary(state);
+    const days = [...(state.days ?? []).filter((d) => d.day !== today.day), today];
+    const found = patterns(days, state.soulLines ?? []);
+    const soul = await loadSoul();
+    const prompt = sleepPrompt({ soul, today, found, added: state.soulLines ?? [], story: state.story });
+    const reply = process.env.PIP_FAKE ? fakeSleep(found) : await askGemini('I am Pip. I answer only in JSON.', prompt, 1, [], { schema: sleepSchema(found.map((p) => p.key)), maxTokens: 800, group: 'big' }).catch((e) => { console.error('⚠️  sleep:', e.message); return null; });
+    const { changes } = applySleep(state, reply);
+    await saveSoul(state.soulLines, changes);
+    if (text(reply?.story, 900)) { state.story = text(reply.story, 900); state.storyAt = new Date().toISOString(); }
+    if (text(reply?.dream, 300)) state.dreams = [...(state.dreams ?? []), { at: new Date().toISOString(), text: text(reply.dream, 300) }].slice(-10);
+    for (const c of changes) {
+      console.log(`🌙 soul ${c.change}: ${c.text}`);
+      await appendFile(DIARY_FILE, `## ${new Date().toLocaleString('en-GB')}
+${c.change === 'added' ? `Something I noticed about myself, day after day: ${c.text}` : `I let go of this about myself: ${c.text}`}
+
+`);
+    }
+  } catch (e) {
+    console.error('⚠️  sleep call:', e.message);
+  }
 }
 
 // The brain is out of calls for now: Pip takes a nap. The next wake-up that works finds him rested.
@@ -1150,6 +1148,7 @@ async function wakeUp() {
     const keep = answer.steps.filter((st) => !drop.has(st));
     answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
   }
+  const feelBefore = feelSum(state);
   const startedAt = Date.now();
   setChest(state.chest ?? null);
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
@@ -1675,9 +1674,9 @@ async function wakeUp() {
     m.readAt = readAt;
     addMemory(state, `Someone wrote to me: "${String(m.text ?? '').slice(0, 140)}"`, 7, 'memory', readAt);
   });
-  if (state.memories.filter((m) => m.kind !== 'reflection' && Date.parse(m.at) > (Date.parse(state.storyAt) || 0)).length > 40) await consolidate(state, persona);
+  // (Looking back and rewriting his story now happen once a night, in the sleep call.)
   // Now and then he looks back and writes down what he realized (at most a few times a day, and only when enough has happened).
-  if (!process.env.PIP_NO_REFLECT && shouldReflect(state) && Date.now() - (Date.parse(state.reflectTriedAt) || 0) > 3_600_000) await reflectNow(state, persona);
+  // (No daytime reflection call any more.)
 
   // Pip really searches and reads: at most 3 lookups per wake-up.
   let lookups = 0;
@@ -1818,6 +1817,7 @@ async function wakeUp() {
   }
   if ((answer.asks_add ?? []).some((a) => a?.big)) state.bigDreamAt = new Date().toISOString();
   noteMood(state, state.mood);
+  noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state));
   const failedNow = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 && x.failed).at(-1);
   if (failedNow) state.plan.lastFail = { at: new Date().toISOString(), why: `${failedNow.action}: ${failedNow.failed}` };
   state.last = {
