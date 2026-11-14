@@ -1,9 +1,9 @@
 // His own plan for each day: three or four small things he wants to do today, picked from what is true in his life (his project, a thing to learn,
 // something to look after, music, an old thing to go back to, a place to explore). The game ticks them off when a step really did one.
 // It is a plan he can ignore, never an order. Ticking one off gives a small lift, a few times a day at most, so it cannot be farmed.
-const MAKE = ['decorate', 'extend_thing', 'change_thing', 'draw', 'make_app', 'update_app', 'make_clothes', 'make_move', 'blueprint', 'record_song', 'compose'];
+const MAKE = ['decorate', 'extend_thing', 'change_thing', 'draw', 'make_app', 'update_app', 'make_clothes', 'make_move', 'blueprint'];
 const MATCH = {
-  make: (e) => MAKE.includes(e.action),
+  make: (e, s, i) => (i.big ? (s.projects ?? []).some((p) => Date.parse(p.since ?? 0) >= Date.parse(`${s.intent.day}T00:00:00Z`)) : MAKE.includes(e.action)),
   learn: (e) => ['search_web', 'read_book'].includes(e.action),
   tend: (e) => ['water', 'plant', 'harvest', 'cook'].includes(e.action),
   music: (e) => ['play_piano', 'record_song', 'compose'].includes(e.action),
@@ -41,7 +41,7 @@ export function ensureIntentions(s, now = Date.now()) {
   const second = ['music', 'tend'][h % 2];
   const third = ['revisit', 'explore'][(h >> 1) % 2];
   const cats = ['make', 'learn', second, third];
-  s.intent = { day: d, streak: prev.day && kept ? (prev.streak || 0) + 1 : 0, items: cats.map((cat) => ({ cat, text: c[cat], done: false })) };
+  s.intent = { day: d, streak: prev.day && kept ? (prev.streak || 0) + 1 : 0, items: cats.map((cat) => ({ cat, text: c[cat], done: false, ...(cat === 'make' && !(s.projects ?? []).some((p) => p.status === 'working' && p.next) ? { big: true } : {}) })) };
   return true;
 }
 
@@ -50,7 +50,7 @@ export function markIntentions(s, entries) {
   const out = [];
   for (const e of entries) {
     if (e.failed || e.fallback) continue;
-    for (const i of s.intent?.items ?? []) if (!i.done && MATCH[i.cat]?.(e)) { i.done = true; out.push(i); }
+    for (const i of s.intent?.items ?? []) if (!i.done && MATCH[i.cat]?.(e, s, i)) { i.done = true; out.push(i); }
   }
   return out;
 }
