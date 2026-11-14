@@ -1598,7 +1598,7 @@ function planFor(last) {
     default: return { at: resolveSpot(d.object), anim: 'look' };
   }
 }
-// A move is a few poses over time (see moves.js). Between two poses it eases; the last one leads back to the first.
+// A move is a few poses over time (see dances.js). Between two poses it eases; the last one leads back to the first.
 let preview = null;
 const ease = (x) => x * x * (3 - 2 * x);
 // Little things he does by himself when a step is quick and he is just standing there (not sleeping): free, no tokens, played by the page.

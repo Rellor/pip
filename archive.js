@@ -2,7 +2,7 @@
 // The website can show them (Day tab, "Older days"). Pip never reads them: his prompt, his repetition checks and his feelings only use what is still in state.json.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
-export const KEEP = { log: 150, thoughts: 30 }; // log goes to 30 in Phase 4, when daily limits move from the log to day counters
+export const KEEP = { log: 30, thoughts: 30 }; // daily limits count with s.today (body.js), not the log
 const dayOf = (at, tz) => {
   const t = Date.parse(at);
   if (!Number.isFinite(t)) return null;
