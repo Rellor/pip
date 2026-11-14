@@ -888,6 +888,14 @@
         }
       ],
       "at": "2026-11-14T10:26:16.039Z"
+    },
+    {
+      "id": "tgift7",
+      "name": "sewing kit",
+      "kind": "sewing kit",
+      "source": "given",
+      "why": "needle, thread and fabric to sew clothes with",
+      "at": "2026-11-14T15:44:58.482Z"
     }
   ],
   "memories": [
@@ -4736,6 +4744,13 @@
       "read": true,
       "picture": null,
       "readAt": "2026-11-14T11:07:18.485Z"
+    },
+    {
+      "id": "gmwgku25v-kit",
+      "at": "2026-11-14T15:44:58.482Z",
+      "text": "I gave you the sewing kit! It is in your inventory now. Have fun making something to wear.",
+      "read": false,
+      "picture": null
     }
   ],
   "asks": [
@@ -4744,7 +4759,8 @@
       "item": "sewing kit",
       "why": "to sew warm clothes and a little scarf for chilly autumn mornings",
       "since": "2026-11-14T08:15:02.161Z",
-      "status": "open"
+      "status": "done",
+      "doneAt": "2026-11-14T15:44:58.482Z"
     },
     {
       "id": "mwdp4go90",
