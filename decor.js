@@ -212,7 +212,10 @@ export function takeTool(decor, stored, tools, name, maxTools, now = Date.now())
     from = stored;
     i = stored.findIndex(match);
   }
-  if (i < 0) return { failed: 'there is no tool with that name in his room or chest' };
+  if (i < 0) {
+    const have = tools.find((t) => t.name.toLowerCase() === n || t.name.toLowerCase().includes(n) || n.includes(t.name.toLowerCase()) || t.kind === n);
+    return { failed: have ? `my ${have.name} is already in my inventory, so I can just use it` : 'there is no tool with that name in his room or chest' };
+  }
   const [e] = from.splice(i, 1);
   tools.push({ id: `t${now.toString(36)}${tools.length}`, name: e.name, kind: e.tool, source: 'made', why: e.why || '', parts: e.parts ?? null, at: new Date(now).toISOString() });
   return { name: e.name, kind: e.tool };

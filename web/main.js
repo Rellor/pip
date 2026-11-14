@@ -591,6 +591,47 @@ function syncClothes(s) {
   }
 }
 
+// A small picture of Pip wearing one of his clothes (drawn once, then kept), for the log and the wardrobe.
+let thumbRenderer = null;
+const thumbCache = new Map();
+function clothesThumb(c) {
+  const key = `${c.id}|${c.madeAt}`;
+  if (thumbCache.has(key)) return thumbCache.get(key);
+  let url = null;
+  try {
+    thumbRenderer ??= new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    thumbRenderer.setPixelRatio(1);
+    thumbRenderer.setSize(320, 320);
+    thumbRenderer.outputColorSpace = renderer.outputColorSpace;
+    const sc = new THREE.Scene();
+    sc.add(new THREE.HemisphereLight(0xfff4e6, 0xb08a6a, 1.5));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+    sun.position.set(2, 4, 5);
+    sc.add(sun);
+    const who = makePip();
+    who.body.add(buildClothes(c));
+    sc.add(who.group);
+    const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 30);
+    const close = c.slot === 'head' || c.slot === 'face';
+    const behind = c.slot === 'back';
+    cam.position.set(0, close ? 0.95 : 0.7, (behind ? -1 : 1) * (close ? 3.1 : 4.0));
+    cam.lookAt(0, close ? 0.85 : 0.5, 0);
+    thumbRenderer.render(sc, cam);
+    url = thumbRenderer.domElement.toDataURL('image/png');
+  } catch {}
+  thumbCache.set(key, url);
+  return url;
+}
+const clothesOf = (name) => { const n = String(name || '').toLowerCase(); return (lastState?.wardrobe || []).find((c) => String(c.name).toLowerCase() === n) || null; };
+function clothesPic(c, extra = '') {
+  const url = clothesThumb(c);
+  if (!url) return null;
+  const img = el('img', null, 'thumb clothesthumb');
+  img.src = url;
+  img.alt = c.name;
+  return img;
+}
+
 // The chest, where Pip keeps things he does not want in his room right now.
 const chestGroup = new THREE.Group();
 chestGroup.position.set(-4.1, 0, 3.9);
@@ -2642,7 +2683,7 @@ fitCamera();
 requestAnimationFrame(loop);
 
 // ---------------------------------------------------------------- panel + polling
-const ICON = { play_piano: '🎹', read_book: '📖', search_web: '🌐', write_diary: '✍️', rest: '💤', ask_for: '🙏', walk_to: '🚶' };
+const ICON = { play_piano: '🎶', read_book: '📖', search_web: '🌐', write_diary: '✍️', rest: '💤', ask_for: '🙏', walk_to: '🚶' };
 function el(tag, text, cls) {
   const e = document.createElement(tag);
   if (text != null) e.textContent = text;
@@ -2908,6 +2949,14 @@ $('settingsbtn').addEventListener('click', () => showTab(tab === 'settings' ? (T
 
 // ---- Day: what Pip does, reads and searches, as a timeline
 const SLOT_WORDS = { head: 'his head', face: 'his face', neck: 'around his middle', body: 'his body', back: 'his back' };
+// What he plays, for the icons and words on the page: the keyboards are "the piano", the rest are what they are.
+const PLAYED = {
+  piano: ['🎹', 'the piano'], epiano: ['🎹', 'the electric piano'], harpsichord: ['🎹', 'the harpsichord'], organ: ['🎹', 'the organ'],
+  guitar: ['🎸', 'the guitar'], violin: ['🎻', 'the violin'], cello: ['🎻', 'the cello'], strings: ['🎻', 'the strings'], flute: ['🪈', 'the flute'],
+  clarinet: ['🎶', 'the clarinet'], kalimba: ['🎵', 'the kalimba'], harp: ['🎼', 'the harp'], vibraphone: ['🎶', 'the vibraphone'], marimba: ['🎶', 'the marimba'],
+  glockenspiel: ['🔔', 'the glockenspiel'], musicbox: ['🎶', 'the music box'], bell: ['🔔', 'the bells'], choir: ['🎤', 'the choir voices'],
+};
+const playedOf = (e) => PLAYED[String(e?.instrument || e?.details?.instrument || '').toLowerCase()] || PLAYED.piano;
 function headline(st) {
   const [icon, line] = headlineBase(st);
   return [icon, st.working_on ? `${line} · ${st.working_on}` : line];
@@ -2917,7 +2966,7 @@ function headlineBase(st) {
   switch (st.action) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
     case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
-    case 'play_piano': return ['🎹', `Playing the piano${d.style ? ` (${d.style})` : ''}`];
+    case 'play_piano': return [playedOf(st)[0], `Playing ${playedOf(st)[1]}${d.style ? ` (${d.style})` : ''}`];
     case 'write_diary': return ['✍️', 'Writing in his diary'];
     case 'rest': return ['💤', 'Resting'];
     case 'cook': return ['🍳', `Cooking ${d.dish || st.dish || 'something'}`];
@@ -2961,7 +3010,7 @@ function headlineBase(st) {
   }
 }
 const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
-const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Piano'], ['make', 'Creations']];
+const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Music'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
 // Old saves had no day log yet: build entries from the latest plan.
@@ -2998,7 +3047,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: 'Played the piano', diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3120,12 +3169,11 @@ function dayCard(e) {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He moved it${e.place ? ` (${e.place})` : ''}.`, 'muted'));
     } else if (e.action === 'update_app') {
       card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He made a new version of the app.', 'muted'));
-    } else if (e.action === 'make_clothes') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He made clothes for ${SLOT_WORDS[e.slot] || 'himself'}.`, 'muted'));
-    } else if (e.action === 'wear') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He put it on.', 'muted'));
-    } else if (e.action === 'take_off') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He took it off.', 'muted'));
+    } else if (e.action === 'make_clothes' || e.action === 'wear' || e.action === 'take_off') {
+      const c = !e.failed ? clothesOf(e.name) : null;
+      const pic = c ? clothesPic(c) : null;
+      if (pic) card.append(pic);
+      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.action === 'make_clothes' ? `He made ${e.name || 'clothes'} for ${SLOT_WORDS[e.slot] || 'himself'}.` : e.action === 'wear' ? 'He put it on.' : 'He took it off.', 'muted'));
     } else if (e.action === 'make_app') {
       card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : 'He wrote a small app on his computer. It opens in a locked box.', 'muted'));
     } else if (e.action === 'remove_decoration') {
@@ -3566,14 +3614,14 @@ function render(s) {
   const pieces = (s.log || []).filter((e) => e.action === 'play_piano' && !e.failed && Date.parse(e.at) <= Date.now()).slice(-15).reverse();
   fill($('pianolist'), pieces.length ? pieces.map((e) => {
     const song = pianoSong(e.notes, e.style, e.instrument);
-    const li = el('li', `🎹 ${when(e.at)}${e.style ? ` — ${e.style}` : ''} `);
+    const li = el('li', `${playedOf(e)[0]} ${when(e.at)}${e.style ? ` — ${e.style}` : ''}${e.instrument && e.instrument !== 'piano' ? ` — ${playedOf(e)[1].replace('the ', '')}` : ''} `);
     if (song) {
       const b = el('button', '▶ Listen', 'small');
       b.addEventListener('click', () => playSong(song));
       li.append(b);
     }
     return li;
-  }) : empty('He has not played the piano yet.'));
+  }) : empty('He has not played any music yet.'));
   fill($('movelist'), (s.moves || []).length ? s.moves.map((m) => {
     const li = el('li', `🕺 ${m.name}${m.why ? ` — ${m.why}` : ''} `);
     const b = el('button', '▶ Show', 'small');
@@ -3592,6 +3640,15 @@ function render(s) {
   fill($('chestlist'), inChest.length
     ? inChest.map((x) => entry([`put away ${when(x.storedAt)}`, `it was ${x.label}`], x.name))
     : empty('The chest is empty.'));
+  fill($('wardrobelist'), (s.wardrobe || []).length
+    ? s.wardrobe.slice().reverse().map((c) => {
+      const div = el('div', null, 'pic');
+      const pic = clothesPic(c);
+      if (pic) div.append(pic);
+      div.append(el('div', `${c.name}${c.why ? ` — ${c.why}` : ''}`, 'note'), el('p', `${({ head: 'on his head', face: 'on his face', neck: 'around his middle', body: 'around his body', back: 'on his back' })[c.slot] || 'on him'} · ${c.worn ? 'wearing it now' : 'in his wardrobe'}`, 'muted meta'));
+      return div;
+    })
+    : empty('He has not made any clothes yet.'));
   const drawings = (s.art || []).slice().reverse();
   fill($('drawlist'), drawings.length
     ? drawings.map((a) => {
