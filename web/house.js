@@ -1,14 +1,17 @@
 // Pip's home: his bedroom (the original room, x -5 to 5), a hall in the middle (x 5.3 to 8.3) and a music studio (x 8.6 to 16.6).
+// The studio is switched off for now (HAS_STUDIO): the hall ends in a plain wall. Its code stays, so it can come back.
+export const HAS_STUDIO = false;
 // Doors in the walls between them, at z 0.4. The page draws it all and Pip walks through the doors; Node can use the routing and the move too.
 export const DOOR_Z = 0.4;
 export const DOOR_W = 1.2;
-export const WALLS_X = [5.15, 8.45]; // the walls between bedroom and hall, and hall and studio
-export const ROOM_X = { bedroom: [-5, 5], hall: [5.3, 8.3], studio: [8.6, 16.6] };
+export const WALLS_X = HAS_STUDIO ? [5.15, 8.45] : [5.15]; // the walls with doors: bedroom|hall, and hall|studio
+export const HALL_END_X = 8.45; // the hall's right wall (a plain outside wall when there is no studio)
+export const ROOM_X = HAS_STUDIO ? { bedroom: [-5, 5], hall: [5.3, 8.3], studio: [8.6, 16.6] } : { bedroom: [-5, 5], hall: [5.3, 8.3] };
 export const FOCUS_X = { bedroom: 0, hall: 6.8, studio: 12.6, house: 5.9 };
-export const roomOf = (x) => (x < WALLS_X[0] ? 'bedroom' : x < WALLS_X[1] ? 'hall' : 'studio');
+export const roomOf = (x) => (x < WALLS_X[0] ? 'bedroom' : !HAS_STUDIO || x < WALLS_X[1] ? 'hall' : 'studio');
 
 // Where a person can stand: inside a room (a little away from the walls) or in a doorway.
-const FLOORS = [[-4.55, 4.55, -4.55, 4.55], [5.55, 8.05, -4.55, 4.55], [9.0, 16.2, -4.55, 4.55]];
+const FLOORS = [[-4.55, 4.55, -4.55, 4.55], [5.55, 8.05, -4.55, 4.55], ...(HAS_STUDIO ? [[9.0, 16.2, -4.55, 4.55]] : [])];
 export function walkable(x, z) {
   if (FLOORS.some(([x0, x1, z0, z1]) => x >= x0 && x <= x1 && z >= z0 && z <= z1)) return true;
   return WALLS_X.some((w) => x > w - 0.9 && x < w + 0.9 && Math.abs(z - DOOR_Z) < 0.5);
@@ -26,6 +29,7 @@ export const HOUSE_BLOCKS = [
   [9.8, 10.55, 2.55, 3.65], // coffee table
   [14.1, 16.3, 1.3, 3.7], // drum kit
 ];
+if (!HAS_STUDIO) HOUSE_BLOCKS.splice(0, HOUSE_BLOCKS.length, ...HOUSE_BLOCKS.filter(([x0]) => x0 < HALL_END_X));
 export const blockedInHouse = (x, z, m = 0.28) => HOUSE_BLOCKS.some(([x0, x1, z0, z1]) => x > x0 - m && x < x1 + m && z > z0 - m && z < z1 + m);
 
 // The next place to walk to on the way from `from` to `to` (both { x, z }): through the doors when the rooms differ.
@@ -55,6 +59,24 @@ export function moveMusicToStudio(s, now = Date.now()) {
     else if (/music box/i.test(d.name) && d.song) Object.assign(d, { pos: [8.9, 0.8, -1.6], zone: 'surface', base: null, label: 'on the sideboard in the music studio' });
   }
   return true;
+}
+
+// Without the studio, the piano goes back to the bedroom (its first place) and what stood in the studio goes to the chest. Once.
+export function moveMusicBack(s, now = Date.now()) {
+  if (HAS_STUDIO || !s.musicMoved || s.musicBack) return [];
+  s.musicBack = true;
+  if (s.furniture?.piano) delete s.furniture.piano;
+  const toChest = [];
+  for (const d of [...(s.decor ?? [])]) {
+    if (d.image || !d.pos) continue;
+    if (d.zone === 'on_piano' && d.pos[0] > HALL_END_X) d.pos = [d.pos[0] - STUDIO_MOVE.dx, d.pos[1], d.pos[2]];
+    else if (d.pos[0] > HALL_END_X) toChest.push(d);
+  }
+  for (const d of toChest) {
+    s.decor.splice(s.decor.indexOf(d), 1);
+    (s.stored ??= []).push({ ...d, storedAt: new Date(now).toISOString() });
+  }
+  return toChest.map((d) => d.name);
 }
 
 // Wall things too close to a window (the bedroom's new side window, z 4.15 to 4.85) are moved along the wall, once.
@@ -138,7 +160,7 @@ export function buildHouse(THREE, scene) {
     house.add(m);
   };
   floor(3.3, 10, 6.8, 0, [205, 165, 120], 11);
-  floor(8.4, 10, 12.65, 0, [175, 130, 88], 29);
+  if (HAS_STUDIO) floor(8.4, 10, 12.65, 0, [175, 130, 88], 29);
 
   // ---- views through the windows: a painted sky and hills that follow the time of day
   const views = [];
@@ -229,13 +251,17 @@ export function buildHouse(THREE, scene) {
   windowAt(5.65, 0.9, 3.3, 0.4);
   windowAt(7.95, 0.9, 3.3, 0.4);
   // the studio: a wide window between the piano and the desk, and a tall one at the left end
-  backWall(8.3, 16.9, WALL.studio, [{ x0: 8.75, x1: 9.35, y0: 1.3, y1: 3.6 }, { x0: 12.55, x1: 13.75, y0: 1.9, y1: 3.7 }, { x0: 15.75, x1: 16.35, y0: 1.3, y1: 3.6 }]);
-  windowAt(9.05, 1.3, 3.6, 0.6);
-  windowAt(13.15, 1.9, 3.7, 1.2);
-  windowAt(16.05, 1.3, 3.6, 0.6);
+  if (HAS_STUDIO) {
+    backWall(8.3, 16.9, WALL.studio, [{ x0: 8.75, x1: 9.35, y0: 1.3, y1: 3.6 }, { x0: 12.55, x1: 13.75, y0: 1.9, y1: 3.7 }, { x0: 15.75, x1: 16.35, y0: 1.3, y1: 3.6 }]);
+    windowAt(9.05, 1.3, 3.6, 0.6);
+    windowAt(13.15, 1.9, 3.7, 1.2);
+    windowAt(16.05, 1.3, 3.6, 0.6);
+  } else backWall(8.3, 8.6, WALL.hall, []);
   // a dark wooden wainscot and rail along the studio's back wall, white panelling in the hall
-  B(house, [8.4, 1.0, 0.05], WALL.wood, [12.65, 0.5, -4.98]);
-  B(house, [8.4, 0.06, 0.08], 0x3f2c1f, [12.65, 1.02, -4.96]);
+  if (HAS_STUDIO) {
+    B(house, [8.4, 1.0, 0.05], WALL.wood, [12.65, 0.5, -4.98]);
+    B(house, [8.4, 0.06, 0.08], 0x3f2c1f, [12.65, 1.02, -4.96]);
+  }
   B(house, [3.3, 1.0, 0.05], 0xf5f1e6, [6.8, 0.5, -4.98]);
 
   // ---- walls between the rooms: low for the overview, full height for walk mode
@@ -251,13 +277,20 @@ export function buildHouse(THREE, scene) {
     piece(full, 2.6, dz0, dz1, 2.4);
   };
   partition(WALLS_X[0], 0xefcfb6, 0xdcb99c);
-  partition(WALLS_X[1], WALL.studio, WALL.studioLow);
-  // the far right wall of the studio
-  B(low, [0.3, 0.45, 10.6], WALL.studioLow, [16.75, 0.225, 0]);
-  B(low, [0.36, 0.05, 10.6], 0xffffff, [16.75, 0.47, 0]);
-  sideWall(full, 16.75, -5.3, 5.3, WALL.studio, [{ a0: -3.1, a1: -1.7, y0: 1.4, y1: 3.4 }, { a0: 0.9, a1: 2.3, y0: 1.4, y1: 3.4 }]);
-  windowOn('right', -2.4, 1.4, 3.4, 1.4, full);
-  windowOn('right', 1.6, 1.4, 3.4, 1.4, full);
+  if (HAS_STUDIO) {
+    partition(WALLS_X[1], WALL.studio, WALL.studioLow);
+    // the far right wall of the studio
+    B(low, [0.3, 0.45, 10.6], WALL.studioLow, [16.75, 0.225, 0]);
+    B(low, [0.36, 0.05, 10.6], 0xffffff, [16.75, 0.47, 0]);
+    sideWall(full, 16.75, -5.3, 5.3, WALL.studio, [{ a0: -3.1, a1: -1.7, y0: 1.4, y1: 3.4 }, { a0: 0.9, a1: 2.3, y0: 1.4, y1: 3.4 }]);
+    windowOn('right', -2.4, 1.4, 3.4, 1.4, full);
+    windowOn('right', 1.6, 1.4, 3.4, 1.4, full);
+  } else {
+    // the hall's right wall is the end of the house: no door
+    B(low, [0.3, 0.45, 10.6], 0xcfc6b2, [HALL_END_X, 0.225, 0]);
+    B(low, [0.36, 0.05, 10.6], 0xffffff, [HALL_END_X, 0.47, 0]);
+    sideWall(full, HALL_END_X, -5.3, 5.3, WALL.hall, []);
+  }
 
   // ---- doors: a frame and a leaf swung open into the room, always visible
   const doorway = (x, leafColor) => {
@@ -273,13 +306,13 @@ export function buildHouse(THREE, scene) {
     house.add(hinge);
   };
   doorway(WALLS_X[0], 0xb98a5b);
-  doorway(WALLS_X[1], 0xa97a4d);
+  if (HAS_STUDIO) doorway(WALLS_X[1], 0xa97a4d);
 
   // ---- walk-mode walls and ceilings: the front of the hall and studio, and a ceiling over everything
   B(roof, [3.3, 5, 0.3], WALL.hall, [6.8, 2.5, 5.15]);
-  B(roof, [8.4, 5, 0.3], WALL.studio, [12.65, 2.5, 5.15]);
+  if (HAS_STUDIO) B(roof, [8.4, 5, 0.3], WALL.studio, [12.65, 2.5, 5.15]);
   B(roof, [3.3, 0.3, 10.6], 0xf1ebdd, [6.8, 5.15, 0]);
-  B(roof, [8.4, 0.3, 10.6], 0xe5ddcc, [12.65, 5.15, 0]);
+  if (HAS_STUDIO) B(roof, [8.4, 0.3, 10.6], 0xe5ddcc, [12.65, 5.15, 0]);
 
   // ---------------------------------------------------------------- the hall
   const hall = new THREE.Group();
@@ -322,7 +355,7 @@ export function buildHouse(THREE, scene) {
 
   // ---------------------------------------------------------------- the music studio
   const studio = new THREE.Group();
-  house.add(studio);
+  if (HAS_STUDIO) house.add(studio); // built either way (the page animates its parts), only shown with the studio
   const warm = 0xffd9a0;
   // a rug, a Persian-style one
   B(studio, [4.6, 0.04, 3.4], 0x7d2e2a, [12.5, 0.03, 0.4]);
@@ -452,11 +485,11 @@ export function buildHouse(THREE, scene) {
     S(studio, 0.24, warm, [x, 3.95, z], glow(warm, 0.85), [1, 0.6, 1]);
     const l = new THREE.PointLight(warm, 11, 12);
     l.position.set(x, 3.8, z);
-    house.add(l);
+    if (HAS_STUDIO) house.add(l);
   });
   const studioLight = new THREE.PointLight(0xfff2dd, 7, 16);
   studioLight.position.set(12.6, 4.6, 0);
-  house.add(studioLight);
+  if (HAS_STUDIO) house.add(studioLight);
 
   // the bedroom's left wall has a window too (the wall itself is drawn here, with the hole)
   sideWall(house, -5.15, -5.0, 5.0, 0xefcfb6, [{ a0: 4.15, a1: 4.85, y0: 1.3, y1: 3.5 }]);

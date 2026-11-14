@@ -53,7 +53,7 @@ export const MOVES = [
   // --- making (a maker fills in the design) ---
   { name: 'decorate', maker: true, line: () => 'make something new for my room from simple shapes: {what, why}', when: (s, n) => can(s, 'decorate', n), score: (s) => 1 + s.body.creativity / 3 },
   { name: 'draw', maker: true, line: () => 'draw a picture: {what, why}', when: (s, n) => can(s, 'draw', n), score: (s) => 0.8 + s.body.creativity / 4 },
-  { name: 'record_song', maker: true, line: () => 'write and record a song in my studio: {what, why}', when: (s, n) => can(s, 'record_song', n), score: (s) => 0.8 + s.body.creativity / 4 },
+  { name: 'record_song', maker: true, line: () => 'write and record a song with a few instruments: {what, why}', when: (s, n) => can(s, 'record_song', n), score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'make_app', maker: true, line: () => 'write a little program on my computer: {what, why}', when: (s, n) => can(s, 'make_app', n), score: (s) => 0.4 + s.body.creativity / 6 },
   { name: 'make_clothes', maker: true, line: () => 'sew something to wear: {what, why}', when: (s, n) => can(s, 'make_clothes', n), score: (s) => 0.4 + s.body.creativity / 6 },
   { name: 'change_thing', maker: true, line: (s) => `change or improve something I made (${names(own(s).map((d) => d.name))}): {name, change}`, when: (s, n) => own(s).length > 0 && can(s, 'change_thing', n), score: (s) => 0.5 + working(s).length * 0.5 },
