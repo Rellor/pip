@@ -1912,7 +1912,7 @@ async function tidy(apply) {
     quota.ref = ensureQuota(state);
     const items = T.tidyItems(state, await allLogs(state));
     const prompt = T.tidyPrompt(await loadSoul(), items);
-    const answer = process.env.PIP_FAKE ? T.fakeTidy(items) : await askGemini('I am Pip. I answer only in JSON.', prompt);
+    const answer = process.env.PIP_FAKE ? T.fakeTidy(items) : await askGemini('I am Pip. I answer only in JSON.', prompt, 2, [], { group: 'big' });
     const choices = T.settleChoices(items, answer);
     await mkdir('web/archive', { recursive: true });
     await writeFile(TIDY_FILE, JSON.stringify({ at: new Date().toISOString(), fake: Boolean(process.env.PIP_FAKE), diary: answer?.diary ?? '', choices }, null, 1));
