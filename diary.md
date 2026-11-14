@@ -2293,3 +2293,13 @@ I want to take out my guitar from my chest and strum a quiet autumn morning melo
 - write_diary (The autumn morning is crisp and clear. I took out my guitar and played a warm acoustic melody by the greenhouse. The bright guitar strings sound so different from the piano, bringing a fresh, lively warmth into the quiet room.): I will write down how wonderful it feels to play the guitar for my plants today.
 - mood: inspired
 
+## 14/11/2026, 09:34:03
+I want to water my little rosemary sprouts and watch them grow.
+> My rosemary sprouts are resting by the window in the gentle autumn light. I want to check on them, make sure their soil is nice and damp, and spend a quiet moment watching the autumn sky.
+- water (rosemary (place 1)): I will water the first rosemary sprout to keep the soil nice and damp.
+- do (tell my plant what went wrong and how it felt): That did not work out. I shake it off and tell my plant what went wrong and how it felt.
+- water (rosemary (place 2)): I will water the second rosemary sprout too so they both grow strong.
+- do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
+- do (watch the tiny green leaves on my rosemary sprouts and hum a gentle tune): I will stand by the greenhouse and watch them quietly.
+- mood: peaceful
+
