@@ -1,5 +1,7 @@
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { FURNITURE, MOVABLE, furnRects } from './web/furniture.js';
 import { PLACE, seasonInfo, seasonText, fetchWeather, weatherText } from './web/season.js';
 import { checkLight, darkNote, lightAt, isLamp } from './web/lighting.js';
@@ -43,6 +45,10 @@ const FALLBACK_MODEL = process.env.GEMINI_FALLBACK_MODEL || 'gemini-flash-lite-l
 let usedModel = MODEL;
 const spent = { calls: 0, input: 0, output: 0 }; // tokens used this wake-up, as Gemini counts them
 const API = 'https://generativelanguage.googleapis.com/v1beta';
+// A model that said "out of quota" (429) is left alone for 45 minutes, so each wake-up does not waste time and calls on it first.
+const BLOCK_FILE = join(tmpdir(), 'pip-model-block.json');
+const blockedModels = () => { try { return JSON.parse(readFileSync(BLOCK_FILE, 'utf8')); } catch { return {}; } };
+const blockModel = (m) => { try { writeFileSync(BLOCK_FILE, JSON.stringify({ ...blockedModels(), [m]: Date.now() + 45 * 60_000 })); } catch {} };
 
 // Pip sleeps from bedtime (23:00) until wake-up time (08:00) (local time), so nights cost no API calls or deploys.
 const TZ = process.env.PIP_TZ || 'Europe/Amsterdam';
@@ -733,6 +739,7 @@ async function askGemini(system, wakeUp, retry = 2, images = []) {
   let res;
   for (const [mi, model] of models.entries()) {
     const last = mi === models.length - 1;
+    if (!last && (blockedModels()[model] ?? 0) > Date.now()) { console.log(`${model} is out of quota for now, using ${models[mi + 1]}`); continue; }
     const tries = last ? 5 : 2; // the better model gets two tries, then the lighter one takes over
     let timeouts = 0;
     res = null;
@@ -765,6 +772,7 @@ async function askGemini(system, wakeUp, retry = 2, images = []) {
       usedModel = model;
       break;
     }
+    if (!last && res?.status === 429) blockModel(model);
     if (!last) console.log(`${model} did not answer (${res?.status ?? 'no answer'}), trying ${models[mi + 1]}...`);
   }
   if (res.status === 429) throw new Error('Rate limit hit (free tier). Try a longer wait between wake-ups.');
