@@ -4033,7 +4033,7 @@ async function takeSnapshot() {
       g.scale.setScalar(g.userData.scale);
     }
     await new Promise((r) => setTimeout(r, 1500)); // textures and pictures load
-    const shot = photoCamera(String(spec.target || 'room'));
+    const shot = angled(photoCamera(String(spec.target || 'room')), spec.camera);
     renderer.setSize(960, 720, false);
     camera.aspect = 960 / 720;
     camera.fov = shot.fov;
@@ -4047,6 +4047,18 @@ async function takeSnapshot() {
   } catch (e) {
     window.__photo = `error: ${e.message}`;
   }
+}
+// The angle Pip chose: close (nearer), wide (further back, wider lens), low (from near the floor) or high (from above).
+function angled(shot, camera) {
+  const s = { from: shot.from.clone(), to: shot.to.clone(), fov: shot.fov };
+  if (camera === 'close') s.from.lerp(s.to, 0.45);
+  if (camera === 'wide') { s.from.addScaledVector(s.from.clone().sub(s.to).normalize(), 1.2); s.fov = Math.min(75, s.fov + 12); }
+  if (camera === 'low') s.from.y = 0.45;
+  if (camera === 'high') s.from.y += 1.3;
+  s.from.x = Math.max(-4.7, Math.min(s.from.x, 8.2));
+  s.from.z = Math.max(-4.7, Math.min(s.from.z, 4.9));
+  s.from.y = Math.max(0.3, Math.min(s.from.y, 4.6));
+  return s;
 }
 // Where the camera stands and looks, for what Pip wants to photograph.
 function photoCamera(target) {

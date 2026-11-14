@@ -18,7 +18,8 @@ import { tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body
 import { availableMoves } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
-import { makerPrompt, applyMade, fakeMade } from './maker.js';
+import { makerPrompt, applyMade, fakeMade, finishSong } from './maker.js';
+import { describePattern } from './music.js';
 const KEEP_IDEAS = 30;
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
@@ -502,6 +503,25 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
   };
 }
 
+// After a photo: he looks at it (a vision call). He writes what he sees and why it matters, and may retake it once
+// from another angle (queued as his next move). Not in fake mode or tests.
+async function lookAtPhoto(s, pic, bytes, d, soul, system) {
+  if (process.env.PIP_FAKE || d.retake) return;
+  try {
+    const prompt = `${soul}\n\nI just took this photo of ${pic.target}${d.why ? ` because ${text(d.why, 160)}` : ''}${pic.camera ? ` (camera: ${pic.camera})` : ''}. I look at it.\nDoes it show what I wanted? What do I see, and why does it matter to me? If it did not work, would another angle be better: close, wide, low or high?\n\nAnswer in JSON: {"shows_it": true, "about": "what I see, one sentence", "matters": "why it matters to me, one sentence", "retake": false, "camera": "close"}`;
+    const r = await askGemini(system, prompt, 1, [{ mime: 'image/jpeg', data: Buffer.from(bytes).toString('base64') }], { schema: PHOTO_SCHEMA, maxTokens: 300, group: 'big' });
+    if (text(r?.about, 300)) pic.notes = text(r.about, 300);
+    if (text(r?.matters, 300)) pic.matters = text(r.matters, 300);
+    pic.showsIt = r?.shows_it !== false;
+    if (r?.retake && !pic.showsIt && ['close', 'wide', 'low', 'high'].includes(r.camera)) {
+      s.plan.queue.unshift({ action: 'take_photo', details: { target: pic.target, camera: r.camera, why: d.why, caption: pic.caption, retake: pic.id }, thought: 'Let me try that again from another angle.', enjoyment: 6 });
+    }
+  } catch (e) {
+    console.error('⚠️  photo look:', e.message);
+  }
+}
+const PHOTO_SCHEMA = { type: 'OBJECT', properties: { shows_it: { type: 'BOOLEAN' }, about: { type: 'STRING' }, matters: { type: 'STRING' }, retake: { type: 'BOOLEAN' }, camera: { type: 'STRING', enum: ['close', 'wide', 'low', 'high'] } }, required: ['shows_it', 'about', 'matters'] };
+
 // Good morning: one small call where he sets 1 to 3 goals for today. Without a model, the old code-made day plan.
 async function morningGoals(s, soul, system) {
   const day = dayOf();
@@ -523,7 +543,11 @@ async function makeIt(s, soul, system, st) {
     const sk = skillOf(st.action, st.details);
     const lvl = sk ? level(s, sk) : 1;
     const skill = sk ? `my ${sk} is level ${lvl} of 10. ${['decorate', 'change_thing', 'extend_thing', 'make_clothes'].includes(st.action) ? `At this level I can use up to ${maxParts(lvl)} parts.` : st.action === 'record_song' ? `At this level a song can be up to ${maxBars(lvl)} bars long.` : ''}` : '';
-    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill }), 1);
+    const old = st.action === 'record_song' && st.details?.revise ? [...s.studio.songs].reverse().find((x) => x.pattern && x.name.toLowerCase() === String(st.details.revise).toLowerCase()) : null;
+    if (st.details?.revise && !old) throw new Error(`I have no song called "${st.details.revise}" to rewrite`);
+    const current = old ? describePattern(old.pattern) : null;
+    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current }), 1);
+    if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl) });
     return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
   } catch (e) {
     console.error('⚠️  maker:', e.message);
@@ -1424,7 +1448,7 @@ async function wakeUp() {
       else if (!song) st.made = { failed: 'a recording needs tracks: [{"instrument": "piano", "notes": "C3+E3+G3:4 E4 G4:2", "volume": 0.8, "pan": 0, "reverb": 0.2}, {"instrument": "drums", "notes": "kick hat snare hat"}], each with at least 2 sounding notes' };
       else if (todaySongs >= MAX_SONGS_PER_DAY) st.made = { failed: `I already recorded ${MAX_SONGS_PER_DAY} songs today` };
       else {
-        const rec = { id: `song${Date.now().toString(36)}${state.studio.songs.length}`, name, why: text(d.why, 200), tempo: song.tempo, tracks: song.tracks.map((t, k) => ({ instrument: t.timbre, notes: text(d.tracks?.[k]?.notes, 400), volume: t.volume, pan: t.pan, reverb: t.reverb })), createdAt: new Date(startedAt + offsets[i]).toISOString() };
+        const rec = { id: `song${Date.now().toString(36)}${state.studio.songs.length}`, name, why: text(d.why, 200), tempo: song.tempo, tracks: song.tracks.map((t, k) => ({ instrument: t.timbre, notes: text(d.tracks?.[k]?.notes, 400), volume: t.volume, pan: t.pan, reverb: t.reverb })), createdAt: new Date(startedAt + offsets[i]).toISOString(), ...(d.pattern ? { pattern: d.pattern, v: d.v ?? 1, of: d.of ?? null, changed: d.changed ?? null } : {}) };
         state.studio.songs = [...state.studio.songs, rec].slice(-20);
         st.made = { recording: rec };
       }
@@ -1508,7 +1532,8 @@ async function wakeUp() {
         try { recentShots.push({ id: x.id, at: x.at, data: (await readFile(`web/${x.image}`)).toString('base64') }); } catch {}
       }
       if (process.env.PIP_NO_PHOTO) { st.made = { failed: '(test run) the camera is off' }; continue; }
-      const shot = await takePhoto(target, when, state, 'web', recentShots);
+      const camera = ['close', 'wide', 'low', 'high'].includes(String(d.camera ?? '').toLowerCase()) ? String(d.camera).toLowerCase() : null;
+      const shot = await takePhoto(target, when, state, 'web', recentShots, camera);
       if (shot.same) {
         const twin = recentShots.find((x) => x.id === shot.same.id);
         st.made = { failed: `this photo looks just like ${shot.same.id}${twin ? `, which I took ${agoText(twin.at, Date.now())}` : ''}, so it is not kept. A new photo is worth it when something is different: another place or thing, the light at another time of day, or something new in my room` };
@@ -1523,10 +1548,11 @@ async function wakeUp() {
       await writeFile(`web/photos/${file}`, shot.bytes);
       const n = Math.max(0, ...state.pictures.map((p) => Number(String(p.id).replace('pic', '')) || 0)) + 1;
       const caption = text(d.caption, 300);
-      const pic = { id: `pic${n}`, image: `photos/${file}`, mime: 'image/jpeg', at: when, by: 'pip', target, caption, seen: true, notes: caption, aspect: 1.33 };
+      const pic = { id: `pic${n}`, image: `photos/${file}`, mime: 'image/jpeg', at: when, by: 'pip', target, caption, seen: true, notes: caption, aspect: 1.33, ...(camera ? { camera } : {}), ...(d.retake ? { retakeOf: d.retake } : {}) };
       state.pictures = trimPictures([...state.pictures, pic]);
       shotsToday++;
       st.made = { picture: pic };
+      await lookAtPhoto(state, pic, shot.bytes, d, soul, system); // a vision call: did it work, and why does it matter to me?
     }
     if (st.action === 'find_picture') {
       if (foundToday >= MAX_FOUND) {

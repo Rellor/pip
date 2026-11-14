@@ -10,7 +10,7 @@ const list = (items, none = 'nothing') => (items.length ? items.map((x) => `- ${
 const S = { type: 'STRING' };
 const SA = { type: 'ARRAY', items: S };
 // One flat set of detail fields for all moves; each move uses the ones its line names.
-const DETAILS = { type: 'OBJECT', properties: Object.fromEntries(['what', 'why', 'name', 'label', 'query', 'topic', 'text', 'notes', 'instrument', 'food', 'dish', 'plant', 'seed', 'target', 'caption', 'id', 'wall', 'next_to', 'item', 'title', 'change', 'add', 'project', 'proud'].map((k) => [k, S]).concat([['ingredients', SA], ['steps', SA], ['needs', SA]])) };
+const DETAILS = { type: 'OBJECT', properties: Object.fromEntries(['what', 'why', 'name', 'label', 'query', 'topic', 'text', 'notes', 'instrument', 'food', 'dish', 'plant', 'seed', 'target', 'caption', 'id', 'wall', 'next_to', 'item', 'title', 'change', 'add', 'project', 'proud', 'section', 'camera'].map((k) => [k, S]).concat([['ingredients', SA], ['steps', SA], ['needs', SA]])) };
 export const brainSchema = (names = MOVE_NAMES) => ({
   type: 'OBJECT',
   properties: {
@@ -88,6 +88,7 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
     const details = { ...d };
     if (!details.name && details.what && !MAKER_MOVES.includes(name) && name !== 'do') details.name = details.what; // "what" and "name" both name the thing
     if (name === 'ask_for') details.reason = details.reason ?? details.why;
+    if (name === 'revise_song') { steps.push({ action: 'record_song', details: { revise: details.name ?? details.what, section: details.section, why: details.why }, thought, enjoyment: 6, needs: '', make: true }); continue; }
     if (name === 'search_web' && !details.query) details.query = details.topic ?? details.what;
     if (name === 'read_book' && !details.topic) details.topic = details.query ?? details.what;
     if (name === 'take_photo' && !details.target) details.target = details.what ?? 'window';

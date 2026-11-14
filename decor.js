@@ -67,7 +67,8 @@ export function cleanParts(raw) {
   for (const p of raw.slice(0, MAX_PARTS)) {
     if (!p || typeof p !== 'object' || typeof p.shape !== 'string' || !Object.hasOwn(SHAPES, p.shape)) continue;
     const need = SHAPES[p.shape];
-    const size = (Array.isArray(p.size) ? p.size : []).slice(0, need).map((v) => num(v, 0.02, 2, 0.1));
+    const k = Number.isFinite(Number(p.scale)) ? Math.min(4, Math.max(0.1, Number(p.scale))) : 1; // an optional scale grows or shrinks the whole shape
+    const size = (Array.isArray(p.size) ? p.size : []).slice(0, need).map((v) => num(Number(v) * k, 0.02, 2, 0.1));
     while (size.length < need) size.push(size[0] ?? 0.1); // a missing number copies the first one
     parts.push({
       shape: p.shape,

@@ -56,7 +56,7 @@ export function askReason(s, now = Date.now()) {
 
 export const MOVES = [
   // --- making (a maker fills in the design) ---
-  { name: 'decorate', maker: true, line: (s) => `make something new for my room from simple shapes: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s) => 1 + s.body.creativity / 3 },
+  { name: 'decorate', maker: true, line: (s) => `make a sculpture, a piece of furniture or a thing for my room from simple shapes: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s) => 1 + s.body.creativity / 3 },
   { name: 'draw', maker: true, line: (s) => `draw a picture: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'draw', n), score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'record_song', maker: true, line: (s) => `write and record a song with a few instruments: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'record_song', n), score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'make_app', maker: true, line: (s) => `write a little program on my computer: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'make_app', n), score: (s) => 0.4 + s.body.creativity / 6 },
@@ -64,6 +64,7 @@ export const MOVES = [
   { name: 'change_thing', maker: true, line: (s) => `change or improve something I made (${names(own(s).map((d) => d.name))}): {name, change${working(s).length ? ', project' : ''}}`, when: (s, n) => own(s).length > 0 && can(s, 'change_thing', n), score: (s) => 0.5 + working(s).length * 0.5 },
   { name: 'extend_thing', maker: true, line: (s) => `add more parts to something I made (${names(own(s).map((d) => d.name))}): {name, add}`, when: (s, n) => own(s).length > 0 && can(s, 'extend_thing', n), score: () => 0.4 },
   // --- music ---
+  { name: 'revise_song', maker: true, line: (s) => `rewrite one section of a song I made (${names((s.studio?.songs ?? []).filter((x) => x.pattern).slice(-3).map((x) => x.name))}): {name, section, why}`, when: (s, n) => (s.studio?.songs ?? []).some((x) => x.pattern) && can(s, 'record_song', n), score: (s) => 0.5 + s.body.creativity / 6 },
   { name: 'play_piano', line: (s) => `play music: {notes like "C4 E4 G4:2 C3+E3+G3:4", instrument: ${['piano', ...(s.tools ?? []).filter((t) => /guitar|harp|kalimba|flute|violin/i.test(t.kind ?? t.name)).map((t) => t.kind ?? t.name)].join(' or ')}}`, when: () => true, score: (s) => 0.8 + s.calm / 10 },
   // --- learning ---
   { name: 'search_web', line: () => 'look something up online: {query}', when: () => true, score: (s) => 0.8 + s.body.curiosity / 3 },
@@ -80,7 +81,7 @@ export const MOVES = [
   { name: 'do', line: () => 'do anything else I can think of, in my own words: {what}', when: () => true, score: () => 1 },
   // --- my things ---
   { name: 'use', line: (s) => `use one of my things (${usable(s).slice(0, 3).map((d) => `"${d.name}": ${(d.uses ?? []).map((u) => u.label).slice(0, 2).join(' / ')}`).join('; ')}): {name, label}`, when: (s) => usable(s).length > 0, score: () => 0.8 },
-  { name: 'take_photo', line: () => 'take a photo: {target: window, room, myself or a thing, caption}', when: (s, n) => left(s, 'take_photo', n) > 0, score: () => 0.5 },
+  { name: 'take_photo', line: () => 'take a photo of something that matters to me: {target: window, room, myself or one of my things, why, camera: close, wide, low or high, caption}', when: (s, n) => left(s, 'take_photo', n) > 0, score: () => 0.5 },
   { name: 'place_picture', line: (s) => `hang a picture I was given (${names(unplacedGifts(s).map((p) => p.id))}): {id, wall}`, when: (s) => unplacedGifts(s).length > 0, score: () => 1.5 },
   { name: 'move_thing', line: (s) => `move something in my room (${names(own(s).map((d) => d.name))}): {name, next_to}`, when: (s, n) => own(s).length > 0 && left(s, 'move_thing', n) > 0, score: (s) => 0.3 + (s.tasks ?? []).filter((t) => t.status === 'accepted').length },
   { name: 'remove_decoration', line: (s) => `put something away in my chest (${names(own(s).map((d) => d.name))}): {name}`, when: (s) => own(s).length > 0, score: (s) => (10 - s.body.tidiness) / 3 },

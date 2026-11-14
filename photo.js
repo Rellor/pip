@@ -34,7 +34,7 @@ function serve(root, stateJson) {
 // Returns { bytes } or { failed }. `at` is when the photo is taken (the sky follows that time).
 // `recent` = his earlier photos as [{ id, data }] (data = base64 jpeg). When the new one looks almost the same as one of them, it is not kept.
 export const SAME_BELOW = 4.5; // average brightness difference (0 to 255) on a small copy: the same view at another time of day is about 2 to 4, a different view 6 or more
-export async function takePhoto(target, at, state, root = 'web', recent = []) {
+export async function takePhoto(target, at, state, root = 'web', recent = [], camera = null) {
   let pw;
   try {
     pw = await import('playwright');
@@ -49,7 +49,7 @@ export async function takePhoto(target, at, state, root = 'web', recent = []) {
     try {
       await page.clock.setFixedTime(new Date(at));
     } catch {}
-    const spec = encodeURIComponent(JSON.stringify({ target: String(target).slice(0, 60) }));
+    const spec = encodeURIComponent(JSON.stringify({ target: String(target).slice(0, 60), camera }));
     await page.goto(`http://127.0.0.1:${server.address().port}/index.html?photo=${spec}`, { waitUntil: 'load', timeout: 45_000 });
     await page.waitForFunction(() => window.__photo, null, { timeout: 45_000 });
     const data = await page.evaluate(() => window.__photo);
