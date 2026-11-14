@@ -18,7 +18,7 @@ const MAX_REFLECTION_MEMORIES = 6; // most of his reflections say "cozy and peac
 // Many of these had already fallen out of his 150-memory list.
 const CORE = [
   ['2026-11-09T15:22:55.000Z', 'Bas made my room. The first time he wrote to me, I felt a little less alone.'],
-  ['2026-11-09T16:30:00.000Z', 'I asked Bas for a picture of a truly dark sky. He brought it in a frame, and now it hangs on my wall.'],
+  ['2026-11-09T16:30:00.000Z', 'I asked Bas for a picture of a truly dark sky, and he brought it to me in a frame.'],
   ['2026-11-11T12:00:00.000Z', 'I once said I had built shelves, but I had only moved things around. Now I check before I say I made something.'],
   ['2026-11-12T12:00:00.000Z', 'My first window stool was too low. I asked for a toolbox and built a taller one, and now I can see the stars.'],
   ['2026-11-13T12:00:00.000Z', 'I grew rosemary from seeds and baked bread with what I picked. Food I grow myself tastes the best.'],

@@ -9,6 +9,7 @@ import { redundantWalks, habitMirror, loopRepeating, sameTune, duplicateSearch, 
 import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPlant, growthNotes } from './garden.js';
 import { gardenText } from './web/gardening.js';
 import { archiveOverflow } from './archive.js';
+import { loadSoul } from './soul.js';
 const KEEP_IDEAS = 30;
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, limitsText, MAX_SONGS_PER_DAY } from './limits.js';
@@ -2073,7 +2074,50 @@ async function listModels() {
   }
 }
 
+// The big tidy, once: "node pip.js tidy" asks Pip and saves his choices; "node pip.js tidy apply" carries them out.
+const TIDY_FILE = 'web/archive/tidy-proposal.json';
+async function allLogs(state) {
+  const logs = [...(state.log ?? [])];
+  for (const f of (await readdir('web/archive').catch(() => [])).filter((x) => /^\d{4}-\d\d-\d\d\.json$/.test(x))) logs.push(...(JSON.parse(await readFile(`web/archive/${f}`, 'utf8')).log ?? []));
+  const old = await readFile('web/archive/pre-rebuild/state.json', 'utf8').then(JSON.parse, () => null);
+  if (old) logs.push(...(old.log ?? []));
+  const seen = new Set();
+  return logs.filter((e) => { const k = `${e.at}|${e.action}`; if (seen.has(k)) return false; seen.add(k); return true; });
+}
+async function tidy(apply) {
+  const T = await import('./tidy.js');
+  if (!apply) {
+    const state = JSON.parse(await readFile(STATE_FILE, 'utf8'));
+    const items = T.tidyItems(state, await allLogs(state));
+    const prompt = T.tidyPrompt(await loadSoul(), items);
+    const answer = process.env.PIP_FAKE ? T.fakeTidy(items) : await askGemini('I am Pip. I answer only in JSON.', prompt);
+    const choices = T.settleChoices(items, answer);
+    await mkdir('web/archive', { recursive: true });
+    await writeFile(TIDY_FILE, JSON.stringify({ at: new Date().toISOString(), fake: Boolean(process.env.PIP_FAKE), diary: answer?.diary ?? '', choices }, null, 1));
+    for (const k of ['keep', 'store', 'let go']) {
+      console.log(`\n${k.toUpperCase()}`);
+      for (const c of choices.filter((x) => x.choice === k)) console.log(`  ${c.group.padEnd(8)} ${c.name.slice(0, 40).padEnd(40)} ${c.reason}${c.note ? ` (${c.note})` : ''}`);
+    }
+    console.log(`\n${answer?.diary ?? ''}\n\nSaved to ${TIDY_FILE}. Nothing changed yet. Run "node pip.js tidy apply" to carry it out.`);
+    return;
+  }
+  const plan = JSON.parse(await readFile(TIDY_FILE, 'utf8'));
+  const state = JSON.parse(await readFile(STATE_FILE, 'utf8'));
+  ensureMemory(state);
+  const at = new Date().toISOString();
+  const done = T.applyTidy(state, plan.choices, at);
+  addMemory(state, `I had a big tidy and made a fresh start. I kept ${done.keep.filter((n) => !plan.choices.find((c) => c.name === n && (c.group === 'tool' || c.needed))).join(', ') || 'almost nothing'}, and let go of ${done['let go'].length} things.`, 8, 'memory', at);
+  await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+  await appendFile(DIARY_FILE, T.tidyDiary(plan.choices, plan.diary));
+  await writeFile(TIDY_FILE, JSON.stringify({ ...plan, appliedAt: at }, null, 1));
+  console.log(`kept ${done.keep.length}, stored ${done.store.length}, let go ${done['let go'].length}. The let-go things are in state.archive.`);
+}
+
 const [cmd, minutes] = process.argv.slice(2);
+if (cmd === 'tidy') {
+  await tidy(minutes === 'apply');
+  process.exit(0);
+}
 if (cmd === 'search') {
   console.log(await searchWeb(process.argv.slice(3).join(' ')));
   process.exit(0);
