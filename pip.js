@@ -9,6 +9,7 @@ import { redundantWalks, habitMirror, loopRepeating, sameTune, duplicateSearch, 
 import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPlant, growthNotes } from './garden.js';
 import { gardenText } from './web/gardening.js';
 import { archiveOverflow } from './archive.js';
+const KEEP_IDEAS = 30;
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, limitsText, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityGuide, blueprintDue, blueprintGaps, requestAbility } from './blueprints.js';
@@ -20,7 +21,7 @@ import { ensureMoves, makeMove, findMove, movesText, movesGuide } from './moves.
 import { measureThing, sizesGuide } from './sizes.js';
 import { bonusRewards } from './rewards.js';
 import { ensureTools, NEEDS, toolsText, toolsGuide, toolFor, missingTool, toolList, addTool, toolKind, toolLabel, fits, craftTool, MAX_TOOLS } from './tools.js';
-import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
+import { ensureMemory, addMemory, recall, markUsed, fade, archiveForgotten, addInterest, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
 import { takePhoto } from './photo.js';
 import { TIMBRES, cleanTracks } from './songs.js';
@@ -636,7 +637,7 @@ WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
 ${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) || wallMirror(s) || moodMirror(s.log) || clothesNote(s) || photoMirror(s.log) || askMirror(s) || studioMirror(s) || shareMirror(s.log) || bigIdeasMirror(s) || pastMirror(s) || sparkMirror() || kindsToday(s.log) || menuMirror(s) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), clothesNote(s), moodMirror(s.log), photoMirror(s.log), askMirror(s), studioMirror(s), kindsToday(s.log), shareMirror(s.log), bigIdeasMirror(s), pastMirror(s), sparkMirror(), menuMirror(s), wallMirror(s), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
-${bullets(recall(s, focusText(s, unread)).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
+${bullets(markUsed(recall(s, focusText(s, unread))).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
 
 WHAT I REALIZED WHEN I LOOKED BACK (I do this every now and then. I can drop one that is not true any more with reflections_drop)
 ${bullets(s.reflections.slice(-5).map((r) => r.text), 'nothing yet')}
@@ -1003,12 +1004,10 @@ function applyResult(s, r) {
   // An idea that comes back 3 times becomes an interest.
   if (r.new_idea) {
     const count = s.ideas.filter((i) => i === r.new_idea).length;
-    if (count >= 3 && !s.interests.includes(r.new_idea)) s.interests.push(r.new_idea);
+    if (count >= 3) addInterest(s, r.new_idea);
   }
   // Liked topics become interests.
-  if (enjoyment >= 8 && ['read_book', 'search_web'].includes(r.action) && detail && !s.interests.includes(detail)) {
-    s.interests.push(detail);
-  }
+  if (enjoyment >= 8 && ['read_book', 'search_web'].includes(r.action) && detail) addInterest(s, detail);
   return { r, detail, enjoyment, act, emoBefore };
 }
 
@@ -1993,6 +1992,10 @@ async function wakeUp() {
     console.log(`   ✅ plan done: ${i.text}`);
   }
   if (doneToday.length && state.intent.items.every((i) => i.done)) addMemory(state, 'I did everything I wanted to do today. It feels good to follow my own plans.', 6, 'memory', new Date().toISOString());
+  const faded = fade(state);
+  if (faded.length) console.log(`🍂 ${faded.length} old memories faded and went to the archive`);
+  await archiveForgotten(state);
+  state.ideas = state.ideas.slice(-KEEP_IDEAS);
   const archived = await archiveOverflow(state, { tz: TZ }); // what is too old for his state goes to web/archive, where only the website reads it
   if (archived) console.log(`🗄️  ${archived} old entries moved to the archive`);
 
