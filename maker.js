@@ -24,15 +24,17 @@ I AM MAKING THIS NOW
 ${asked || 'something new'}${d.why ? `\nWhy: ${d.why}` : ''}
 
 ${ctx.room?.length ? `MY ROOM NOW\n${ctx.room.map((x) => `- ${x}`).join('\n')}\n\n` : ''}HOW MAKING WORKS
-${ctx.rules}
+${ctx.rules}${ctx.skill ? `\n\nMY SKILL: ${ctx.skill}` : ''}
 
 I make it my own way. A first try may be clumsy; that is fine.
 Answer in JSON with exactly this shape: ${FORMATS[ctx.step.action] ?? '{}'}`;
 }
 
 // The maker's answer becomes the step's details. What the brain said (what, why) stays as a fallback.
-export function applyMade(step, reply) {
-  const d = reply && typeof reply === 'object' ? reply : {};
+export function applyMade(step, reply, limits = {}) {
+  const d = reply && typeof reply === 'object' ? { ...reply } : {};
+  if (limits.parts && Array.isArray(d.parts)) d.parts = d.parts.slice(0, limits.parts); // his skill sets how much he can do
+  if (limits.bars && Array.isArray(d.tracks)) d.tracks = d.tracks.slice(0, 4);
   return { ...step, details: { ...step.details, ...d, name: d.name ?? step.details?.name ?? step.details?.what }, make: false, made_by_maker: true };
 }
 

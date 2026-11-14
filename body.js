@@ -99,6 +99,8 @@ export function noteMove(s, move, { failed = false, mood = null, now = Date.now(
   if (kind === 'people') b.loneliness = clamp(b.loneliness - 3);
   if (move === 'remove_decoration' || move === 'take_down_picture') b.tidiness = clamp(b.tidiness + 1);
   b.boredom = clamp(b.boredom + (fresh ? -2 : sameKindRun(s) >= 3 ? 1 : 0));
+  if (sameKindRun(s) >= 4) s.joy = clamp((s.joy ?? 5) - 0.3); // the same thing again and again feels flat
+  if (fresh) s.wonder = clamp((s.wonder ?? 5) + 0.5);
 }
 
 // His mood after a tick: the last 5 are kept, so code can see when he is stuck in one mood.

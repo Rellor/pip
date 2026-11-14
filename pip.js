@@ -10,7 +10,11 @@ import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPla
 
 import { archiveOverflow } from './archive.js';
 import { loadSoul } from './soul.js';
-import { tickBody, noteMove, noteMood, heardFrom, bodyText } from './body.js';
+import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
+import { ensureProjects, projectLines, addVersion, judgeProject } from './projects.js';
+import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
+import { ensureIntentions, markIntentions } from './intent.js';
+import { tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
 import { availableMoves } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
@@ -33,9 +37,8 @@ import { takePhoto } from './photo.js';
 import { TIMBRES, cleanTracks } from './songs.js';
 import { grantInstruments, instrumentNeeds } from './instruments.js';
 import { moveMusicToStudio, moveMusicBack, keepWindowsClear, HAS_STUDIO } from './web/house.js';
-import { markIntentions } from './intent.js';
 import { findPicture } from './found.js';
-import { refillPantry, cook, addIngredient, eatFromPantry, mealGain } from './food.js';
+import { cook, addIngredient, eatFromPantry, mealGain } from './food.js';
 import { makeClothes, wear, takeOff, SLOTS } from './clothes.js';
 const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
@@ -482,13 +485,16 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     now: `${when}${sky ? `, ${sky}` : ''}. I am in my ${s.where ?? 'room'}.`,
     feelings: [...bodyText(s), `my mood was ${s.mood}`],
     doing: [
-      ...working.map((p) => `my project "${p.title}": next step ${p.next || '?'}${(p.steps ?? []).length ? ` (steps: ${p.steps.map((x, i) => `${i + 1}. ${x.text}${x.done ? ' ✓' : ''}`).join('; ')})` : ''}`),
+      ...working.slice(0, 1).map((p) => `my project "${p.title}"`),
       last.length ? `I just did: ${last.join(', ')}` : null,
+      ...(s.plan?.queue ?? []).slice(0, 2).map((q) => `still planned: ${q.action.replace(/_/g, ' ')}`),
     ].filter(Boolean),
     events: [...reasons, ...grew.slice(0, 2)],
     messages: unread.map((m) => `(${ago(m.at)}) "${text(m.text, 400)}"`),
     memories: markUsed(recall(s, focus, 5)).map((m) => m.text),
-    projects: s.projects.filter((p) => p.status !== 'working').slice(-3).map((p) => `${p.title} (${p.status})`),
+    projects: [...projectLines(s), ...s.projects.filter((p) => p.status === 'done').slice(-2).map((p) => `"${p.title}" (done${p.proud ? ', proud of it' : ''})`)],
+    goals: (s.intent?.items ?? []).map((i) => `[${i.done ? 'x' : ' '}] ${i.text}`),
+    skills: skillLine(s),
     moves: offered,
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
@@ -496,12 +502,29 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
   };
 }
 
+// Good morning: one small call where he sets 1 to 3 goals for today. Without a model, the old code-made day plan.
+async function morningGoals(s, soul, system) {
+  const day = dayOf();
+  try {
+    const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [] });
+    const reply = process.env.PIP_FAKE ? fakeGoals() : await askGemini(system, prompt, 1, [], { schema: goalSchema, maxTokens: 400 });
+    if (setGoals(s, reply, day)) { console.log(`🌅 goals for today: ${s.intent.items.map((i) => i.text).join(' | ')}`); return; }
+  } catch (e) {
+    console.error('⚠️  goals:', e.message);
+  }
+  ensureIntentions(s);
+  s.intent.day = day;
+}
+
 // The maker designs one thing the brain chose. If it fails, the step fails with a reason (and the brain hears it).
 async function makeIt(s, soul, system, st) {
   const room = s.decor.filter((d) => !d.image).slice(0, 12).map((d) => `${d.name} (${d.label ?? d.zone})`);
   try {
-    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room }), 1);
-    return applyMade(st, reply);
+    const sk = skillOf(st.action, st.details);
+    const lvl = sk ? level(s, sk) : 1;
+    const skill = sk ? `my ${sk} is level ${lvl} of 10. ${['decorate', 'change_thing', 'extend_thing', 'make_clothes'].includes(st.action) ? `At this level I can use up to ${maxParts(lvl)} parts.` : st.action === 'record_song' ? `At this level a song can be up to ${maxBars(lvl)} bars long.` : ''}` : '';
+    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill }), 1);
+    return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
   } catch (e) {
     console.error('⚠️  maker:', e.message);
     s.plan.lastFail = { at: new Date().toISOString(), why: `${st.action}: I could not work out how to make it (${e.message.slice(0, 60)})` };
@@ -842,7 +865,7 @@ function applyInnerLife(s, r, detail, replying = false) {
     if (hit) Object.assign(hit, { status: 'done', doneAt: at });
   }
   s.tasks = s.tasks.slice(-30);
-  const wanted = (Array.isArray(r.asks_add) ? r.asks_add : []).slice(0, 3).map((a) => ({ item: text(a?.item ?? a, 140), why: text(a?.why, 200) }));
+  const wanted = (Array.isArray(r.asks_add) ? r.asks_add : []).slice(0, 3).map((a) => ({ item: text(a?.item ?? a, 140), why: text(a?.why, 200), big: Boolean(a?.big) }));
   if (r.action === 'ask_for') {
     const d = r.details || {};
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
@@ -852,7 +875,7 @@ function applyInnerLife(s, r, detail, replying = false) {
     const open = s.asks.filter((a) => a.status === 'open');
     const recentlyGiven = s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && sameItem(a.item, c.item));
     if (!c.item || open.length >= 5 || open.some((a) => sameItem(a.item, c.item)) || recentlyGiven) continue;
-    const ask = { id: Date.now().toString(36) + fresh.length, item: c.item, why: c.why, since: at, status: 'open' };
+    const ask = { id: Date.now().toString(36) + fresh.length, item: c.item, why: c.why, since: at, status: 'open', ...(c.big ? { big: true } : {}) };
     s.asks.push(ask);
     fresh.push(ask);
   }
@@ -867,7 +890,7 @@ function applyInnerLife(s, r, detail, replying = false) {
     const title = text(p?.title, 80);
     if (!title || s.projects.filter((x) => x.status === 'working').length >= 5 || s.projects.some((x) => x.status === 'working' && sameItem(x.title, title))) continue;
     felt(s, 'projectStart');
-    s.projects.push({ id: Date.now().toString(36), title, why: text(p?.why, 200), next: text(p?.next, 160), steps: cleanSteps(p?.steps), status: 'working', since: at, updatedAt: at });
+    s.projects.push({ id: Date.now().toString(36), title, why: text(p?.why, 200), next: text(p?.next, 160), nextStep: text(p?.next, 160), steps: cleanSteps(p?.steps), needs: (Array.isArray(p?.needs) ? p.needs : []).map((x) => text(x, 40)).filter(Boolean).slice(0, 4), versions: [], notes: [], status: 'working', since: at, updatedAt: at });
   }
   for (const u of Array.isArray(r.projects_update) ? r.projects_update : []) {
     const hit = s.projects.find((x) => x.status === 'working' && sameItem(x.title, text(u?.title, 80) || '\u0000'));
@@ -878,11 +901,13 @@ function applyInnerLife(s, r, detail, replying = false) {
       const step = typeof k === 'number' ? (hit.steps ?? [])[k - 1] : (hit.steps ?? []).find((x) => sameText(x.text, String(k)));
       if (step) step.done = true;
     }
-    if (['working', 'done', 'dropped'].includes(u?.status) && !(u.status === 'done' && r._progress !== true)) {
-      if (u.status === 'done') felt(s, 'projectDone');
-      hit.status = u.status;
-    }
+    if (u?.status === 'dropped') hit.status = 'dropped'; // done only comes from saying he is proud of it (judgeProject)
     hit.updatedAt = at;
+  }
+  if (r.project_judged?.title) { // he looked at his project: proud means done; not proud means a note and another version
+    const j = judgeProject(s, r.project_judged.title, r.project_judged, at);
+    if (j?.done) { felt(s, 'projectDone'); addMemory(s, `I finished my project "${j.project}" and I am proud of it: ${r.project_judged.why}`, 8, 'memory', at); }
+    else if (j) console.log(`   🔁 not proud of "${j.project}" yet: ${j.note}`);
   }
   s.projects = [...s.projects.filter((x) => x.status === 'working'), ...s.projects.filter((x) => x.status !== 'working').slice(-10)];
 
@@ -1031,7 +1056,10 @@ async function wakeUp() {
   state.lastError = null;
   const wokeNow = Boolean(state.last?.sleeping);
   tickBody(state); // needs and feelings, no model call (it also passes time for the bars)
-  refillPantry(state);
+  // No free food any more: what he eats he grows, cooks, or asks for (the pantry he has is what is left).
+  ensureProjects(state);
+  ensureSkills(state);
+  if (state.intent?.day !== dayOf()) await morningGoals(state, soul, system);
   if (state.last?.sleeping) {
     state.energy = 9;
     state.calm = Math.max(state.calm, 7);
@@ -1751,7 +1779,18 @@ async function wakeUp() {
     const e = b.thing ? state.decor.find((d) => d.name === b.thing) : null;
     if (e) b.gaps = blueprintGaps(b, e);
   }
-  for (const e of state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)) noteMove(state, e.action, { failed: Boolean(e.failed), now: Math.min(Date.now(), Date.parse(e.at)) });
+  for (const e of state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)) {
+    noteMove(state, e.action, { failed: Boolean(e.failed), now: Math.min(Date.now(), Date.parse(e.at)) });
+    if (e.failed) continue;
+    const up = practise(state, e.action, { ...e, name: e.name ?? e.details?.name, query: e.query, topic: e.topic });
+    if (up) { addMemory(state, `My ${up.skill} got better: I am level ${up.level} now.`, 6, 'memory', new Date().toISOString()); console.log(`   📈 ${up.skill} is level ${up.level}`); }
+  }
+  for (const st of steps) { // something made for a project is its next version
+    if (!st.made_by_maker || !st.details?.project || st.made?.failed) continue;
+    const v = addVersion(state, st.details.project, { kind: st.action, name: st.details.name, ref: st.made?.entry?.id ?? st.made?.id ?? null });
+    if (v) console.log(`   🧩 ${v.project}: v${v.v}`);
+  }
+  if ((answer.asks_add ?? []).some((a) => a?.big)) state.bigDreamAt = new Date().toISOString();
   noteMood(state, state.mood);
   const failedNow = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 && x.failed).at(-1);
   if (failedNow) state.plan.lastFail = { at: new Date().toISOString(), why: `${failedNow.action}: ${failedNow.failed}` };

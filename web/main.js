@@ -3533,6 +3533,10 @@ function renderMind(s) {
   fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
   const done = (s.fulfilled || []).slice().reverse();
   fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
+  const goals = s.intent?.items || [];
+  if ($('goals')) fill($('goals'), goals.length ? goals.map((g) => entry([g.done ? 'done' : 'not yet'], `${g.done ? '✓ ' : ''}${g.text}`)) : empty('He sets his goals when he wakes up.'));
+  const skills = Object.entries(s.skills || {}).filter(([, xp]) => xp > 0);
+  if ($('skills')) fill($('skills'), skills.length ? skills.map(([k, xp]) => el('span', `${k} ${Math.min(10, 1 + Math.floor(Math.sqrt(xp / 2)))}`, 'chip')) : [el('span', 'just starting', 'muted')]);
   const interests = s.interests || [];
   fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
 }

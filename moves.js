@@ -12,6 +12,8 @@ import { kitchenIn } from './food.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE } from './web/gardening.js';
 import { kindOf } from './body.js';
+import { missingForProject } from './projects.js';
+import { hasTool } from './tools.js';
 
 export const MIN_MOVES = 6;
 export const MAX_MOVES = 10;
@@ -40,6 +42,9 @@ const lastFail = (s) => s.plan?.lastFail ?? null;
 // Why an ask would make sense now, or null. At most ASKS_PER_DAY a day.
 export function askReason(s, now = Date.now()) {
   if ((s.today?.done?.ask_for ?? 0) >= ASKS_PER_DAY) return null;
+  if (s.fullness <= 3 && !food(s).length && !ripe(s, now).length) return 'I am hungry and I have nothing left to eat or harvest (seeds would help)';
+  const need = missingForProject(s, (n) => hasTool(s, n) || (s.tools ?? []).some((t) => String(t.name).toLowerCase().includes(String(n).toLowerCase())));
+  if (need) return `my project "${need.project}" needs ${need.tool}, and I looked into how it is done`;
   const f = lastFail(s);
   if (f && /need|missing|do not have|don't have|ask for|no tool|nothing called/i.test(f.why)) return `my last try failed: ${f.why}`;
   const stuck = working(s).find((p) => daysSince(p.updatedAt ?? p.since, now) >= 2);
@@ -51,12 +56,12 @@ export function askReason(s, now = Date.now()) {
 
 export const MOVES = [
   // --- making (a maker fills in the design) ---
-  { name: 'decorate', maker: true, line: () => 'make something new for my room from simple shapes: {what, why}', when: (s, n) => can(s, 'decorate', n), score: (s) => 1 + s.body.creativity / 3 },
-  { name: 'draw', maker: true, line: () => 'draw a picture: {what, why}', when: (s, n) => can(s, 'draw', n), score: (s) => 0.8 + s.body.creativity / 4 },
-  { name: 'record_song', maker: true, line: () => 'write and record a song with a few instruments: {what, why}', when: (s, n) => can(s, 'record_song', n), score: (s) => 0.8 + s.body.creativity / 4 },
-  { name: 'make_app', maker: true, line: () => 'write a little program on my computer: {what, why}', when: (s, n) => can(s, 'make_app', n), score: (s) => 0.4 + s.body.creativity / 6 },
-  { name: 'make_clothes', maker: true, line: () => 'sew something to wear: {what, why}', when: (s, n) => can(s, 'make_clothes', n), score: (s) => 0.4 + s.body.creativity / 6 },
-  { name: 'change_thing', maker: true, line: (s) => `change or improve something I made (${names(own(s).map((d) => d.name))}): {name, change}`, when: (s, n) => own(s).length > 0 && can(s, 'change_thing', n), score: (s) => 0.5 + working(s).length * 0.5 },
+  { name: 'decorate', maker: true, line: (s) => `make something new for my room from simple shapes: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s) => 1 + s.body.creativity / 3 },
+  { name: 'draw', maker: true, line: (s) => `draw a picture: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'draw', n), score: (s) => 0.8 + s.body.creativity / 4 },
+  { name: 'record_song', maker: true, line: (s) => `write and record a song with a few instruments: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'record_song', n), score: (s) => 0.8 + s.body.creativity / 4 },
+  { name: 'make_app', maker: true, line: (s) => `write a little program on my computer: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'make_app', n), score: (s) => 0.4 + s.body.creativity / 6 },
+  { name: 'make_clothes', maker: true, line: (s) => `sew something to wear: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'make_clothes', n), score: (s) => 0.4 + s.body.creativity / 6 },
+  { name: 'change_thing', maker: true, line: (s) => `change or improve something I made (${names(own(s).map((d) => d.name))}): {name, change${working(s).length ? ', project' : ''}}`, when: (s, n) => own(s).length > 0 && can(s, 'change_thing', n), score: (s) => 0.5 + working(s).length * 0.5 },
   { name: 'extend_thing', maker: true, line: (s) => `add more parts to something I made (${names(own(s).map((d) => d.name))}): {name, add}`, when: (s, n) => own(s).length > 0 && can(s, 'extend_thing', n), score: () => 0.4 },
   // --- music ---
   { name: 'play_piano', line: (s) => `play music: {notes like "C4 E4 G4:2 C3+E3+G3:4", instrument: ${['piano', ...(s.tools ?? []).filter((t) => /guitar|harp|kalimba|flute|violin/i.test(t.kind ?? t.name)).map((t) => t.kind ?? t.name)].join(' or ')}}`, when: () => true, score: (s) => 0.8 + s.calm / 10 },
@@ -87,7 +92,9 @@ export const MOVES = [
   { name: 'tell', line: () => 'write a message to Bas: {text}', when: (s, n) => s.plan?.unread > 0 || (s.body.loneliness >= 7 && daysSince(s.outbox?.filter((m) => m.kind === 'tell').at(-1)?.at, n) >= 1), score: (s) => (s.plan?.unread ? 5 : 1) },
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
-  { name: 'start_project', line: () => 'start a project, something to make or learn over days: {title, why, steps: [3 to 6 short steps]}', when: (s) => working(s).length < 2, score: (s) => 0.5 + s.body.creativity / 5 + (working(s).length ? 0 : 1) },
+  { name: 'dream', line: () => 'tell Bas about a big dream, something far too big to make myself (he might build it): {what, why}', when: (s, n) => daysSince(s.bigDreamAt, n) >= 3 && s.body.creativity >= 6, score: () => 0.8 },
+  { name: 'judge_project', line: (s) => `look at my project (${names(working(s).filter((p) => (p.versions ?? []).length).map((p) => p.title))}) and say if I am proud of it: {title, proud: "yes" or "no", why}`, when: (s) => working(s).some((p) => (p.versions ?? []).length), score: (s) => 0.6 + working(s).filter((p) => (p.versions ?? []).length >= 2).length },
+  { name: 'start_project', line: () => 'start a project, something to make or learn over days: {title, why, steps: [3 to 6 short steps], needs: [tools it needs, if any]}', when: (s) => working(s).length < 2, score: (s) => 0.5 + s.body.creativity / 5 + (working(s).length ? 0 : 1) },
 ];
 export const MOVE_NAMES = MOVES.map((m) => m.name);
 export const MAKER_MOVES = MOVES.filter((m) => m.maker).map((m) => m.name);
