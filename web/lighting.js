@@ -17,6 +17,7 @@ const GLOOM = { storm: 0.6, rain: 0.45, snow: 0.3, fog: 0.4 };
 
 // The light that is there without any lamp of his: the daylight (through the window and the walls) and the big room lamp.
 function base(s, x, z, ctx) {
+  if (x > 5.3) return { window: 0, roomLamp: 0.55, ambient: 0.1 }; // the hall and the studio have their own ceiling lamps
   const wd = Math.hypot(x - 0.3, z + 5);
   const window = ctx.sky * 0.9 * Math.pow(clamp(1 - wd / 7, 0, 1), 1.3);
   const roomLamp = 0.5 * Math.pow(clamp(1 - Math.hypot(x - ROOM_LAMP.x, z - ROOM_LAMP.z) / 6, 0, 1), 1.4);
@@ -69,6 +70,9 @@ export function autoLampOn(s, l, now = Date.now(), o = {}) {
 const WORDS = { piano: /piano|keys/, bookshelf: /book|shelf|dresser|drawers/, desk: /desk|computer|laptop|screen/, bed: /\bbed\b|pillow/, plant: /plant/, rug: /\brug\b|carpet/ };
 export function placeFor(s, name) {
   const n = String(name ?? '').toLowerCase().trim() || 'center';
+  if (/mixing|mixer|studio desk/.test(n)) return { name: 'the mixing desk', x: 12.6, z: -3.3 };
+  if (/studio|music room|drum/.test(n)) return { name: 'the music studio', x: 12.8, z: 1.0 };
+  if (/hall/.test(n)) return { name: 'the hall', x: 6.8, z: 0.4 };
   if (/window|sky|outside|curtain/.test(n)) return { name: 'the window', x: 0.3, z: -4.5 };
   for (const key of MOVABLE) {
     if (!WORDS[key]?.test(n) || FURNITURE[key].flat) continue;

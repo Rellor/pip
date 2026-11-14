@@ -214,7 +214,8 @@ export function takeTool(decor, stored, tools, name, maxTools, now = Date.now())
   }
   if (i < 0) {
     const have = tools.find((t) => t.name.toLowerCase() === n || t.name.toLowerCase().includes(n) || n.includes(t.name.toLowerCase()) || t.kind === n);
-    return { failed: have ? `my ${have.name} is already in my inventory, so I can just use it` : 'there is no tool with that name in his room or chest' };
+    const names = [...decor, ...stored].filter((x) => x.tool).map((x) => x.name);
+    return { failed: have ? `my ${have.name} is already in my inventory, so I can just use it` : `there is no tool with that name in his room or chest${names.length ? `. The tools there are: ${names.join(', ')}` : ''}` };
   }
   const [e] = from.splice(i, 1);
   tools.push({ id: `t${now.toString(36)}${tools.length}`, name: e.name, kind: e.tool, source: 'made', why: e.why || '', parts: e.parts ?? null, at: new Date(now).toISOString() });
@@ -773,7 +774,9 @@ export const setFurniture = (f) => {
   furnNow = f ?? null;
 };
 // The furniture where it stands now (the rug is walked over, so it is not in the way).
-export const fixedRects = (skipKey = null) => MOVABLE.filter((k) => k !== skipKey && !FURNITURE[k].flat).flatMap((k) => furnRects(furnNow, k).map((r) => ({ n: r.n, x0: r.x0, x1: r.x1, z0: r.z0, z1: r.z1 })));
+// The door to the hall in the right wall of the bedroom must stay free.
+const DOOR_RECT = { n: 'the door to the hall', x0: 3.7, x1: 5.05, z0: -0.45, z1: 1.25 };
+export const fixedRects = (skipKey = null) => [...MOVABLE.filter((k) => k !== skipKey && !FURNITURE[k].flat).flatMap((k) => furnRects(furnNow, k).map((r) => ({ n: r.n, x0: r.x0, x1: r.x1, z0: r.z0, z1: r.z1 }))), DOOR_RECT];
 const EDGE = 4.95;
 export const GRID = 0.125; // spots are tidied to this step when there is room, so things line up
 export const snapTo = (v) => Math.round(v / GRID) * GRID;
@@ -955,7 +958,7 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
 
 // A picture of the room in text, so he can see what stands where. Every character is half a metre.
 export function roomMap(decor) {
-  const symbols = { 'the piano': 'P', 'the piano stool': 'o', 'the bookshelf': 'B', 'the desk and screen': 'D', 'the bed': 'E', 'the plant': 'L', 'the chest': 'C' };
+  const symbols = { 'the piano': 'P', 'the piano stool': 'o', 'the bookshelf': 'B', 'the desk and screen': 'D', 'the bed': 'E', 'the plant': 'L', 'the chest': 'C', 'the door to the hall': 'Z' };
   const mine = decor.filter((o) => o.kind === 'floor' && !o.image && o.pos);
   const marks = '123456789abcdefghijklmnopqrstuvwxyz';
   const obs = obstacles(decor, null, true);
@@ -1065,10 +1068,10 @@ export function crowding(decor) {
 // ---- Walls and furniture tops: free too.
 const WALL_FIXED = {
   back: [
-    { n: 'the window', a0: -0.95, a1: 1.55, y0: 1.7, y1: 4.1 },
+    { n: 'the window', a0: -1.05, a1: 1.65, y0: 1.6, y1: 4.2 },
     { n: 'the framed photo', a0: -3.1, a1: -1.3, y0: 2.1, y1: 3.4 },
   ],
-  left: [{ n: 'the photo wall above the desk', a0: 0.2, a1: 2.2, y0: 2.1, y1: 3.1 }], // where his prints go
+  left: [{ n: 'the photo wall above the desk', a0: 0.2, a1: 2.2, y0: 2.1, y1: 3.1 }, { n: 'the window in the left wall', a0: 3.9, a1: 5.0, y0: 1.15, y1: 3.65 }], // where his prints go, and the side window
 };
 const WALL_TOP = 4.8;
 const FURN_CLEAR = 0.5; // room above a shelf, a desk, a piano: things stand on it
@@ -1085,7 +1088,7 @@ function halfWall(parts, scale = 1) {
   return [((x1 - x0) / 2) * scale, ((y1 - y0) / 2) * scale];
 }
 function wallObstacles(decor, side, skip = null) {
-  const list = [...(WALL_FIXED[side] ?? [])];
+  const list = [...(WALL_FIXED[side] ?? [])].filter((o) => !(o.n === 'the framed photo' && (furnNow?.piano?.x ?? -2.6) > 5.3)); // the photo went with the piano
   for (const k of MOVABLE) { // furniture standing against this wall
     if (FURNITURE[k].flat) continue;
     for (const r of furnRects(furnNow, k)) {
@@ -1226,6 +1229,27 @@ function baseByKey(decor, key) {
   const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
   return { key: o.id, n: o.name, ...r, y: sizeOf(o)?.[1] ?? 1, rotY: o.rotY || 0, stand: o.stand, from: o.pos };
 }
+// Everything he can put things on (furniture tops, his shelves, tables and stands): how many things stand there and about how many more small things fit.
+export function supportsInfo(decor) {
+  const bases = [];
+  for (const k of ['desk', 'bookshelf']) { const b = baseByKey(decor, k); if (b) bases.push({ label: FURNITURE[k].n.replace(/^the /, ''), ...b }); }
+  const pianoTop = baseByKey(decor, 'piano');
+  if (pianoTop) bases.push({ label: 'piano', ...pianoTop });
+  for (const o of decor) {
+    if (o.image || o.art || !o.pos) continue;
+    if (o.kind === 'wall' && !o.image) { const L = wallLevels(o); L.forEach((lv, i) => bases.push({ label: `${o.name}${L.length > 1 ? ` (level ${i + 1})` : ''}`, key: `${o.id}#${i}`, ...lv })); }
+    else if (o.kind === 'floor' && holdsThings(o) && !purposeProblem(o)) { const b = baseByKey(decor, o.id); if (b) bases.push({ label: o.name, ...b }); }
+  }
+  return bases.filter((b) => b.key && Number.isFinite(b.x0)).map((b) => {
+    const on = decor.filter((o) => o.kind === 'surface' && o.pos && baseKeyOf(o) === b.key);
+    const area = (b.x1 - b.x0) * (b.z1 - b.z0);
+    const used = on.reduce((t, o) => { const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY); return t + (r.x1 - r.x0) * (r.z1 - r.z0); }, 0);
+    return { label: b.label, on: on.map((o) => o.name), room: Math.max(0, Math.floor((area - used * 1.4) / 0.05)) };
+  });
+}
+// Small things that stand loose on the floor (not furniture he can sit in or use).
+export const looseSmall = (decor) => decor.filter((o) => o.kind === 'floor' && !o.image && o.pos && (() => { const s = sizeOf(o); return s && s[0] <= 0.5 && s[2] <= 0.5 && s[1] <= 0.6; })()).map((o) => o.name);
+
 function findBase(decor, on, pick = {}) {
   const w = str(on, 60).toLowerCase().replace(/_/g, ' ').replace(/^(on |the )+/, '').trim();
   if (!w) return null;

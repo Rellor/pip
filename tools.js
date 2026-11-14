@@ -10,6 +10,7 @@ export const TOOL_KINDS = {
   'light meter': { words: /light ?meter|lux|luminance|photometer|brightness meter|glow-?o/i, hint: 'a light meter, like the Lux-O-Matic 3000', for: 'checking how bright a place is with check_light' },
   shovel: { words: /shovel|trowel|spade|\bhovel\b|garden tool/i, hint: 'a little shovel or trowel', for: 'planting seeds with plant' },
   'watering can': { words: /watering|gieter|sprinkl|water can/i, hint: 'a watering can', for: 'watering plants with water' },
+  synthesizer: { words: /synth|synthesi[sz]er|moog|keytar|drum machine|sampler/i, hint: 'a synthesizer, for the synth sounds in a recording', for: 'synth and synthbass sounds in record_song and play_piano' },
   toolbox: { words: /hammer|\bsaw\b|tool|screw|\bnails?\b|glue|drill|wrench|carpent|workbench|pliers/i, hint: 'hammer, saw, screws, glue', for: 'building big things step by step with extend_thing' },
 };
 // What needs which tool.

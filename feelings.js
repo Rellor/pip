@@ -45,7 +45,7 @@ export function passTime(s, now = Date.now()) {
   s.feelAt = new Date(now).toISOString();
 }
 
-const FUN = ['play_piano', 'draw', 'compose', 'take_photo', 'cook', 'decorate', 'make_clothes', 'make_app', 'make_move', 'find_picture', 'do', 'print_photo'];
+const FUN = ['record_song', 'play_piano', 'draw', 'compose', 'take_photo', 'cook', 'decorate', 'make_clothes', 'make_app', 'make_move', 'find_picture', 'do', 'print_photo'];
 
 // Every step of his plan.
 // looks = how many of his last few steps were lookups (search or read). Lookups feed wonder less and less when they pile up,
@@ -72,6 +72,7 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'make_app':
     case 'make_clothes':
     case 'make_move':
+    case 'record_song':
     case 'blueprint':
     case 'change_thing':
     case 'update_app':

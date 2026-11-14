@@ -10,6 +10,8 @@ import { MAX_PER_DAY, MAX_UPDATES_PER_DAY, MAX_MOVES_PER_DAY, capOf } from './de
 import { furnitureKey } from './decor.js';
 
 export const MAX_PHOTOS = 4;
+export const MAX_SONGS_PER_DAY = 4;
+export const MAX_COMPOSE_PER_DAY = 6;
 export const MAX_FOUND = 6;
 export const MAX_APP_UPDATES_PER_DAY = 4;
 export const MAX_PRINTS_PER_DAY = 6;
@@ -34,6 +36,8 @@ export function dayLimits(s, now = Date.now()) {
     change_thing: { max: MAX_UPDATES_PER_DAY, used: updates, what: 'change things' },
     extend_thing: { max: MAX_UPDATES_PER_DAY, used: updates, what: 'extend things' },
     move_thing: { max: MAX_MOVES_PER_DAY, used: moved, what: 'move things' },
+    compose: { max: MAX_COMPOSE_PER_DAY, used: logN('compose'), what: 'compose songs for my things' },
+    record_song: { max: MAX_SONGS_PER_DAY, used: (s.studio?.songs ?? []).filter((x) => within(x.createdAt, now)).length, what: 'record songs' },
     print_photo: { max: MAX_PRINTS_PER_DAY, used: logN('print_photo'), what: 'print photos' },
   };
 }

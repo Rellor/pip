@@ -64,6 +64,11 @@
   .ilinks { margin-top:12px; font-size:13px; }
   .ilinks p { margin:3px 0; }
   #resetview { left:auto; right:12px; }
+  #rooms { position:absolute; left:50%; transform:translateX(-50%); top:12px; z-index:3; display:flex; gap:4px; background:var(--panel); border-radius:12px; padding:4px; box-shadow:0 2px 10px rgba(0,0,0,.25); }
+  #rooms button { font-size:13px; padding:5px 9px; border-radius:9px; background:transparent; color:inherit; }
+  #rooms button.on { background:var(--accent, #e9855b); color:#fff; }
+  body.walking #rooms { display:none; }
+  @media (max-width: 640px) { #rooms { top:56px; } #rooms button { padding:5px 7px; font-size:12px; } }
   #info h3 { margin:0 28px 6px 0; font-size:18px; }
   #info p { margin:6px 0; font-size:15px; }
   #info .small { color:var(--muted); font-size:13px; }
@@ -240,6 +245,7 @@
     <div id="hint"></div>
     <button id="walk" class="stagebtn" type="button">🚶 Walk around</button>
     <div id="stick" hidden><div id="knob"></div></div>
+    <div id="rooms"><button data-room="auto" class="on" type="button">Auto</button><button data-room="bedroom" type="button">🛏 Bedroom</button><button data-room="hall" type="button">🚪 Hall</button><button data-room="studio" type="button">🎵 Studio</button><button data-room="house" type="button">🏠 All</button></div>
     <button id="resetview" class="stagebtn" type="button" aria-label="Reset the view">⟲ View</button>
     <div id="info" hidden role="dialog" aria-modal="true" aria-label="About this">
       <div id="infocard">
@@ -372,6 +378,7 @@
         <div class="lifesec" data-sec="tools" data-icon="🧰" data-title="Tools" hidden><h2>Pip's inventory (tools)</h2><ul id="toollist"></ul></div>
         <div class="lifesec" data-sec="moves" data-icon="🕺" data-title="Moves" hidden><h2>Pip's moves</h2><ul id="movelist"></ul></div>
         <div class="lifesec" data-sec="piano" data-icon="🎶" data-title="Music" hidden><h2>Pip's music</h2><ul id="pianolist"></ul></div>
+        <div class="lifesec" data-sec="studio" data-icon="🎛️" data-title="Studio" hidden><h2>Songs recorded in the studio</h2><ul id="studiolist"></ul></div>
         <div class="lifesec" data-sec="pantry" data-icon="🍞" data-title="Pantry" hidden><h2>Pip's pantry</h2><ul id="pantrylist" class="chipsul"></ul></div>
         <div class="lifesec" data-sec="garden" data-icon="🌱" data-title="Garden" hidden><h2>Pip's greenhouse garden</h2><ul id="gardenlist"></ul></div>
         <div class="lifesec" data-sec="chest" data-icon="📦" data-title="Chest" hidden><h2>In his chest</h2><ul id="chestlist"></ul></div>

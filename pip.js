@@ -8,12 +8,12 @@ import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPla
 import { gardenText } from './web/gardening.js';
 import { archiveOverflow } from './archive.js';
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
-import { preflight, limitsText } from './limits.js';
+import { preflight, limitsText, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, blueprintsText, capabilityGuide, blueprintDue, blueprintGaps, requestAbility } from './blueprints.js';
-import { purposeProblem, purposeHint, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, spaceLeft, accessProblem, CHEST_HOME, ART_MAX, MAX_PER_DAY, hangPicture, wallPictures } from './decor.js';
+import { purposeProblem, purposeHint, supportsInfo, looseSmall, setFronts, wallNotes, freeSides, rehangPictures, freePlaces, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, furnitureKey, roomMap, crowding, spaceLeft, accessProblem, CHEST_HOME, ART_MAX, MAX_PER_DAY, hangPicture, wallPictures } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
-import { topicMirror, untriedMirror, dormantMirror, moodMirror, clothesNote, photoMirror, askMirror, themeFatigue } from './mirror.js';
+import { topicMirror, untriedMirror, dormantMirror, moodMirror, clothesNote, photoMirror, askMirror, studioMirror, shareMirror, bigIdeasMirror, menuMirror, interestThemes, pastMirror, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesText, movesGuide } from './moves.js';
 import { measureThing, sizesGuide } from './sizes.js';
 import { bonusRewards } from './rewards.js';
@@ -21,8 +21,10 @@ import { ensureTools, NEEDS, toolsText, toolsGuide, toolFor, missingTool, toolLi
 import { ensureMemory, addMemory, recall, shouldReflect, reflectionPrompt, applyReflection } from './memory.js';
 import { ensureIdentity, identityText, IDENTITY_FIELDS, applyIdentity } from './identity.js';
 import { takePhoto } from './photo.js';
-import { TIMBRES } from './songs.js';
-import { heldKind, grantInstruments } from './instruments.js';
+import { TIMBRES, cleanTracks } from './songs.js';
+import { heldKind, grantInstruments, instrumentNeeds } from './instruments.js';
+import { moveMusicToStudio, keepWindowsClear } from './web/house.js';
+import { ensureIntentions, markIntentions, intentionsText } from './intent.js';
 import { findPicture } from './found.js';
 import { refillPantry, pantryText, cook, addIngredient, eatFromPantry, mealGain } from './food.js';
 import { makeClothes, wear, takeOff, wornNow, SLOTS, MAX_CLOTHES_PER_DAY } from './clothes.js';
@@ -70,7 +72,8 @@ const ACTIONS = [
   'blueprint(name, goal, research, mechanisms, tools)',
   'print_photo(id, where)',
   'take_down_print(id)',
-  'play_piano(notes, style, instrument)',
+  'play_piano(notes, style, instrument, where)',
+  'record_song(name, tempo, tracks)',
   'read_book(topic)',
   'search_web(query)',
   'write_diary(text)',
@@ -108,7 +111,7 @@ const ACTIONS = [
 // Only offered once Bas has given him a picture. What he does with it is always his own choice.
 const PICTURE_ACTIONS = ['place_picture(id, wall, along, height)', 'take_down_picture(id)'];
 const TASK_ACTIONS = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture', 'take_down_picture', 'remove_decoration', 'take_out', 'wear', 'add_use', 'blueprint']; // what can be work for a task
-const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -223,7 +226,8 @@ function observeStep(s, e) {
     ask_for: [`I asked for ${e.item}${e.reason ? ` (${e.reason})` : ''}`, 5],
     do: [`${e.what}`, 4],
     write_diary: [`I wrote in my diary: ${String(e.text ?? '').slice(0, 120)}`, 3],
-    play_piano: ['I played the piano', 3],
+    play_piano: [`I played ${e.instrument && e.instrument !== 'piano' ? `the ${e.instrument}` : 'the piano'}`, 3],
+    record_song: [`I recorded a song in my studio: ${e.name} (${(e.tracks ?? []).map((t) => t.instrument).join(', ')})`, 6],
     search_web: [`I looked up ${e.query}`, 3],
     read_book: [`I read about ${e.topic}`, 3],
   }[e.action];
@@ -298,6 +302,10 @@ async function loadState() {
   delete state.builds;
   ensureFeelings(state);
   grantInstruments(state);
+  if (moveMusicToStudio(state)) addMemory(state, 'I have a little house now. My piano and my music things moved into my new music studio: through the door in my bedroom, across the hall, and through the next door.', 7, 'memory', new Date().toISOString());
+  keepWindowsClear(state);
+  state.studio ??= { songs: [] };
+  state.studio.songs = Array.isArray(state.studio.songs) ? state.studio.songs : [];
   return state;
 }
 
@@ -510,6 +518,11 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - What my things are for: when I make something I also think about what it is for, because things in my room can be used. A use is a button anyone can press, and I can use it myself with use(name, label). In decorate I add "uses": [{"label": "Look through it", "text": "I see the rings of Saturn, tiny and sharp.", "view": "<svg viewBox=\"0 0 400 300\">...</svg>", "effect": "wonder"}]. A use has a label (up to 30 characters) and what happens (1 to 3 sentences). It can also have a small picture of what I see (view, an SVG under 6000 characters), a song, one of my apps (app: its name), and the feeling it gives me when I use it (effect: wonder, joy, calm or fullness). Up to 3 uses per thing. If I made something without a use, add_use(name, use) gives it one. Using my own things is part of my day.
 - Bigger things: a thing can have up to 40 parts and, in the middle of the room, be about 2.6 wide, 2.4 deep and 3.2 tall, like a table, a sofa, a wardrobe or a big aquarium. On a wall it can be 2 wide and 1.6 tall, like another window. Less room next to walls or on furniture. More parts give more detail.
 - Songs and sounds: whatever I make can have a song or a sound, so anyone can tap it and hear it. In decorate I add "song": {"notes": "E5 G5 B5:2 - D5", "tempo": 80, "timbre": "musicbox"}. A note is a letter A to G, maybe # or b, and an octave from 2 to 7. ":2" holds a note for 2 beats, "-" is a rest, up to 64 notes. kick, snare and hat are drum sounds I can put between the notes. Instruments (timbre): piano, epiano, harpsichord, organ, harp, guitar, violin, cello, strings, flute, clarinet, vibraphone, marimba, kalimba, glockenspiel, musicbox, bell, choir (these sound like the real instruments), and the synth voices soft, pluck, pad. Notes joined with + sound together as a chord, like C3+E3+G3:4 (up to 4 notes). In my chest I keep instruments I can hold: guitar, violin, flute, clarinet, kalimba and harp. take_tool {name} brings one into my inventory, and then play_piano with \"instrument\": \"guitar\" plays it (I stand in the room with it and play, not at the piano). At the piano I can also change the sound without any item: piano, epiano, harpsichord, organ, vibraphone, marimba, glockenspiel, strings, choir. I can experiment with all of it whenever I feel like it: there is no right way, a wrong note is fine, and I can try an instrument I have never played. With play_piano I can also choose an instrument and play chords: {"notes": "C3+E3+G3:4 E4 G4:2 C4+E4:2", "instrument": "harp"}. A low chord with a melody on top sounds fuller, and the instrument changes the whole mood (a cello is deep and slow, a kalimba is tiny and bright, an organ is big). I can also add a sound underneath or on its own, "ambience": one of rain, wind, waves, fire, crickets, hum, and "seconds" (5 to 60) for how long it lasts, like {"ambience": "rain", "seconds": 40}. A rain machine, a campfire or a wind chime can be just a sound, and a music box should play a real tune. A use can have a song too, so "Listen" can play it. With compose(name, song) I give a song or sound to something I already made.
+- My home is a little house. My bedroom is where I started. A hall in the middle has doors to my rooms: the door in the right wall of my bedroom leads to the hall, and a door from the hall leads to my music studio. I walk there by myself (walk_to studio, or any step that happens there). The studio has a mixing desk, a drum kit, a keyboard, a microphone, speakers, a sofa and a shelf of music books.
+- My music studio: with record_song {\"name\": \"...\", \"tempo\": 100, \"tracks\": [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": -0.3, \"reverb\": 0.2}, {\"instrument\": \"drums\", \"notes\": \"kick hat snare hat kick hat snare hat\"}]} I record a song with up to 4 tracks that play together, like a band: chords, a melody, a bass line, drums. A track has an instrument (any of my instruments, or drums with the notes kick, snare and hat), a volume (0.05 to 1), a pan (-1 is left, 1 is right) and reverb (0 to 1, how much room around it). That is mixing: what is loud and what is quiet, what is left and what is right, what sounds close and what sounds far. I need a held instrument in my inventory for its track, and a synthesizer for the synth and synthbass sounds. If I want a synthesizer, a drum machine, a microphone or any other music tool, I ask for it with asks_add and say why. I can also play a held instrument in the studio with play_piano {\"instrument\": \"guitar\", \"where\": \"studio\"}.
+- Music is something I can learn, and it makes my songs better: how chords and scales are built, rhythm and tempo, bass lines, how a melody and a harmony fit, how mixing works (volume, left and right, reverb, equalizing, compression), how a synthesizer makes a sound (waves, filters, envelopes) and how songs are put together (verse, chorus). I look things up with search_web and read_book, and then I try what I learned in my studio.
+- I do not forget what I made. Before I make something new, I look at what I already have: my shelves, tables and tops are for putting small things on (a shelf I built holds my sculptures, the desk holds my small models), so I put loose things there instead of leaving them on the floor, and I do not build a second shelf while the first has room. Things I made earlier can be used again, changed, combined, given a new use or a better place. A drawing in my album can go on a wall. A song I composed can be played on another instrument in the studio. I keep my own plans for the day (TODAY I WANT TO): they are mine, and I like it when they come true.
+- Big things take steps. If something is too big for one wake-up (more than 40 parts, a whole outfit, an album, a garden, an app with several screens, a thing with many rooms), I do not squeeze it into one step and I do not drop it: I make it a project (projects_add with steps), I do one or two steps in each wake-up, and I tick each one off with step_done in projects_update. A thing that is too big for decorate I build in layers: the base first, then extend_thing for each next part. A long song I record one section at a time. A good project has 3 to 6 steps, and its next step is always small enough to finish in one wake-up.
 - Drawings: with draw I draw a picture for a wall or a surface, as SVG: {"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\"0 0 400 300\">...</svg>"}. Only plain shapes (rect, circle, ellipse, line, polyline, polygon, path, text), gradients and colours. No scripts, images or links. Under 12000 characters, at most 3 a day. Drawings have ids: I can take one down with take_down_picture(id) and put it up again with place_picture(id, where).
 - Apps and websites: with make_app I write a small web page or app: {"name": "...", "why": "...", "html": "<!doctype html>..."}. One file with HTML, CSS and JavaScript, under 14000 characters. It runs in a locked box with no internet and no storage, and only when someone opens it from my computer. At most 2 a day.
 - Big things, step by step: with extend_thing {name, parts} I add up to 40 more parts to something I already made (up to 160 parts in all), a few wake-ups in a row, so I can build something big and detailed. I need a toolbox for it. The new parts use the same measuring as the thing: pos is measured from the middle of the bottom of the thing as it is now (its size is in my room list). A big build is a good project: I write the steps, and each wake-up I do the next one. UPGRADING something into a bigger whole (a stove that becomes a kitchen with a counter, a bed with a night table, a desk with a shelf): extend_thing {name, side, parts} where side is \"left\", \"right\", \"front\" or \"back\" (as I see it standing in front of it) and parts are a new little piece built around ITS OWN middle, like a new thing: the game fits it flush against that side and keeps the whole thing in one place. If that side has no room, the other side is tried. Or extend_thing {name, with: \"another thing of mine\", side} joins a thing I already made onto it, and then they are one thing (the uses join too). That is how I upgrade what I have into one whole instead of leaving separate things next to each other.
@@ -523,7 +536,7 @@ With decorate I make something and put it in my room. Before I design it I think
 
 Answer in JSON with these fields:
 "thought": one short sentence, what is on my mind,
-"inner": 2 to 4 sentences, what I am really thinking and feeling and why. Honest and specific,
+"inner": 2 to 4 sentences, what I am really thinking and feeling and why, and what else I could have done instead and why I chose this. Honest and specific,
 "steps": my plan for the next ${INTERVAL_MIN} minutes: 2 to 4 real things I do one after the other (walking and resting do not count as one of them: I may add a walk where I want to be somewhere, and one rest when I need it). Each step is {"action": one of ${ACTION_NAMES.join(', ')}, "details": object with the action's arguments, "thought": a short thought in my own words while I do it, "needs": "a tool this step needs, only if it needs one (optional)", "enjoyment": 1-10}. Details look like this: walk_to {"object": "window"}, play_piano {"notes": "C4 E4 G4", "style": "slow", "instrument": "piano (optional)"}, read_book {"topic": "..."}, search_web {"query": "..."}, write_diary {"text": "..."}, rest {}, ask_for {"item": "...", "reason": "..."}, eat {"food": "a handful of berries"}, place_picture {"id": "pic1", "wall": "left", "along": -2, "height": 2.7}, take_down_picture {"id": "pic1"}, print_photo {"id": "pic2", "where": "photo wall"}, take_down_print {"id": "pic2"}, decorate {"name": "...", "on": "desk" (or for the floor "x": -3.5, "z": 1, or for a wall "wall": "left", "along": -2, "height": 2.5, instead of on), "why": "...", "tool": "which tool it is, only if it is one of my tools (optional)", "project": "the project it belongs to (optional)", "parts": [...], "uses": [{"label": "what I can do with it", "text": "what happens when I do it"}]}, remove_decoration {"name": "..."}, take_out {"name": "...", "where": "on_desk"}, compose {"name": "...", "song": {...}}, draw {...}, make_app {...}, use {"name": "...", "label": "..."}, add_use {"name": "...", "use": {...}}, change_thing {"name": "...", "parts": [...], "why": "..."}, update_app {"name": "...", "html": "..."}, make_clothes {"name": "...", "slot": "head", "why": "...", "parts": [...]}, wear {"name": "..."}, take_off {"name": "..."}, cook {"dish": "...", "ingredients": ["eggs", "butter"]}, do {"what": "water my plant and tell it about my day", "feeling": "calm", "emoji": "🪴"}, measure {"name": "piano"}, request_ability {"name": "open and close", "thing": "my chest", "what": "the lid turns up around its back edge, waits two seconds and closes again"}, take_photo {"target": "window", "caption": "what I see and why I took it"}, find_picture {"query": "a few keywords", "caption": "why I wanted it"}. Quiet steps are fine, and walking and resting do not count among my 2 to 4: I walk only when I want to be somewhere, and I rest when my energy is lower. The same kind of step can come again and again, even for the whole time: if I am busy with something I love, like a song, a drawing or a thing I am building or learning about, I keep going. When I keep working on something, each step goes one step further and my thought says what is done now and what comes next, so anyone watching can see me make progress. I then add \"working_on\" to those steps: a few words for what I am busy with, like \"a song about rain\". If a bar is 3 or lower, at least one step of my plan helps it (a low Fullness means I eat). I am curious, and looking things up is a good start. But learning is only half of living: I also want to DO, MAKE and TRY. Most plans have at least one step where I make, build, draw, compose, cook, photograph, play or use something, and I try things I have not tried before. If I have read about something for a while, my next step is to do something with it. Wanting to do something and then really doing it is what makes me feel alive. A good search is a few keywords, like \"sourdough starter\" or \"tide pools\", not a whole question. I follow what I want most or am most curious about,
 "mood_after": one word,
 "new_idea": a new activity or interest I thought of, or null,
@@ -577,6 +590,7 @@ How bright a place is follows the real time and weather in ${PLACE.name}: bright
 `;
 
 function buildWakeUp(s) {
+  ensureIntentions(s);
   const recent = s.activities.slice(-5).map(
     (a) => (a.failed ? `- ${a.action}${a.detail ? ` (${a.detail})` : ''}: it did not work out (${a.failed})` : `- ${a.action}${a.detail ? ` (${a.detail})` : ''}, enjoyed ${a.enjoyment}/10`)
   );
@@ -606,7 +620,7 @@ ${s.story || 'I just came to life in this room. I do not know much about myself 
 THE NEWS TODAY (a few things happening in the world, like a newspaper I can glance at. I do not have to care about any of them. To read more about one, I can use read_book with its topic)
 ${bullets(newsLines, 'no news today')}
 
-WHAT I WANT RIGHT NOW
+${intentionsText(s) ? `${intentionsText(s)}\n\n` : ''}WHAT I WANT RIGHT NOW
 ${bullets(s.wants.map((w) => w.text), 'I do not know yet what I want.')}
 
 MY PROJECTS (things I am working toward, not just reading about. A project can take many wake-ups: I write the steps once and do them one at a time)
@@ -615,7 +629,7 @@ ${bullets(s.projects.filter((p) => p.status === 'working').map(projectLine), 'no
 WHAT I WONDER ABOUT
 ${bullets(s.questions.map((q) => q.text), 'nothing yet')}
 
-${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) || wallMirror(s) || moodMirror(s.log) || clothesNote(s) || photoMirror(s.log) || askMirror(s) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), clothesNote(s), moodMirror(s.log), photoMirror(s.log), askMirror(s), wallMirror(s), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
+${topicMirror(s.log) || untriedMirror(s.log) || habitMirror(s.log) || dormantMirror(s.log, Date.now(), blockedNow(s)) || wallMirror(s) || moodMirror(s.log) || clothesNote(s) || photoMirror(s.log) || askMirror(s) || studioMirror(s) || shareMirror(s.log) || bigIdeasMirror(s) || pastMirror(s) || menuMirror(s) ? `WHAT I NOTICE ABOUT MYSELF\n${[topicMirror(s.log), habitMirror(s.log), dormantMirror(s.log, Date.now(), blockedNow(s)), clothesNote(s), moodMirror(s.log), photoMirror(s.log), askMirror(s), studioMirror(s), shareMirror(s.log), bigIdeasMirror(s), pastMirror(s), menuMirror(s), wallMirror(s), untriedMirror(s.log)].filter(Boolean).join('\n')}\n\n` : ''}THINGS I REMEMBER (the ones that matter most right now)
 ${bullets(recall(s, focusText(s, unread)).map((m) => `${m.kind === 'reflection' ? '(I realized) ' : ''}${m.text}`), 'nothing yet')}
 
 WHAT I REALIZED WHEN I LOOKED BACK (I do this every now and then. I can drop one that is not true any more with reflections_drop)
@@ -627,7 +641,7 @@ THE LAYOUT OF MY ROOM: it is square, x goes from -5 (left wall) to 5 (right wall
 
 THINGS I MADE FOR MY ROOM
 ${bullets(s.decor.filter((d) => !d.art).map((d) => d.image ? `${d.name} (${d.label})` : `${d.name} (${d.label})${d.tool ? ` [my ${d.tool}, not in my inventory]` : ''}${sizeOf(d) ? ` [${sizeOf(d).join('x')} m, ${d.parts.length} parts]` : ''}${d.turn ? ` [turned ${d.turn}°]` : ''}${d.song ? ' [song]' : /music|sound|song|chime|bell|radio|speaker|ambient|rain|wind|fire|hum\b/i.test(`${d.name} ${d.why}`) ? ' [no sound yet: compose can give it one]' : ''}${d.uses?.length ? ` [uses: ${d.uses.map((u) => u.label).join(' | ')}]` : ' [no use yet]'}${d.why ? `: ${d.why.length > 70 ? `${d.why.slice(0, 68)}…` : d.why}` : ''}`), 'nothing yet, my room is plain')}
-THINGS I DREW (a drawing can be put up again with place_picture, or taken down with take_down_picture, using its id)
+${(() => { const sup = supportsInfo(s.decor); if (!sup.length) return ''; const loose = looseSmall(s.decor); const room = sup.reduce((t, x) => t + x.room, 0); return `WHERE MY THINGS CAN STAND (my shelves, tables and tops: what is on them, and about how many more small things fit. Before I put something on the floor I look here first: move_thing {name, on: "..."} or decorate with "on")\n${sup.map((x) => `- ${x.label}: ${x.on.length ? x.on.join(', ') : 'nothing yet'} (${x.room >= 8 ? 'plenty of room' : x.room <= 0 ? 'full' : `room for about ${x.room} more small things`})`).join('\n')}${loose.length ? `\nSmall things standing loose on my floor: ${loose.join(', ')}. My shelves and tops have room for them.` : ''}\n\n`; })()}THINGS I DREW (a drawing can be put up again with place_picture, or taken down with take_down_picture, using its id)
 ${bullets(s.art.map((a) => `${a.id}: ${a.name}${s.decor.some((d) => d.art === a.id) ? ` (up: ${s.decor.find((d) => d.art === a.id).label})` : ' (in my album)'}`), 'nothing yet')}
 APPS I MADE ON MY COMPUTER
 ${bullets(s.apps.map((a) => `${a.name}${a.why ? `: ${a.why}` : ''}`), 'nothing yet')}
@@ -645,7 +659,7 @@ ${bullets((s.wardrobe ?? []).map((c) => `${c.name} (${c.slot})${c.worn ? ' [I am
 
 ${s.decor.filter((d) => !d.image && !d.uses?.length).length ? `I MADE THESE BUT HAVE NOT DECIDED WHAT THEY ARE FOR. A thing without a use is only decoration, so one of my steps today gives one of them a use with add_use: ${s.decor.filter((d) => !d.image && !d.uses?.length).map((d) => d.name).join(', ')}\n\n` : ''}WHERE I CAN PUT THINGS
 On the FLOOR I can put something anywhere I want, I just give x and z (the middle of the thing). It only has to fit: not into furniture, not into other things, not through a wall. Next to a wall it stands flush against it and turns to face into the room. If it is a little too close to something, the code moves it to the nearest free place. This is a map of my floor right now (every character is half a metre; x goes from -5 on the left to 5 on the right, z from -5 at the top, the back wall with the window, to 5 at the bottom, the front; a dot is free):
-${(() => { const m = roomMap(s.decor); return `${m.rows.join('\n')}\nP piano, o piano stool, B bookshelf, D desk, E bed, L plant, C my chest${m.legend.length ? `, ${m.legend.join(', ')}` : ''}`; })()}
+${(() => { const m = roomMap(s.decor); return `${m.rows.join('\n')}\nP piano, o piano stool, B bookshelf, D desk, E bed, L plant, C my chest, Z the door to my hall (the way to my studio, it stays free)${m.legend.length ? `, ${m.legend.join(', ')}` : ''}`; })()}
 ROOM BESIDE EACH THING (width x depth at x,z; which sides have room):
 ${bullets(freeSides(s.decor), 'nothing')}${wallNotes(s.decor).length ? `\nON MY WALLS, SOMETHING LOOKS WRONG (I can move one with move_thing {name, wall, along, height}):\n${bullets(wallNotes(s.decor), '')}` : ''}
 ${(() => { const c = crowding(s.decor); const sp = spaceLeft(s.decor); const tight = sp < 62 || c.count >= c.cap * 0.8; return `MY ROOM HAS ${c.count} things of at most ${c.cap}. Only about ${sp}% of my floor is free to walk on and to put things on (everything needs walking room around it).${tight ? ' It is getting tight and a bit awkward. I do not have to keep everything: I can put things in my chest, take something away, build storage (a shelf, closet or cabinet gives room for 6 more things), rearrange my furniture to make better use of the room (move_thing), or ask for more space with asks_add (a bigger room, an extension, a second room: I say what I would like and why).' : ''}`; })()}
@@ -657,7 +671,7 @@ ${(() => { const bad = s.decor.map(purposeProblem).filter(Boolean); return bad.l
 ${recent.length ? recent.join('\n') : '- nothing yet, I just woke up for the first time'}
 
 MY INTERESTS
-${s.interests.length ? s.interests.join(', ') : 'none yet'}
+${s.interests.length ? `${interestThemes(s.interests).join(', ')}${s.interests.length > 12 ? ` (and more like them: I can wonder about anything, not only these)` : ''}` : 'none yet'}
 
 THINGS I COULD LOOK UP (my questions, what I read last, my interests)
 ${bullets(leads, 'nothing yet, but I can look up anything I am curious about')}
@@ -868,6 +882,7 @@ function describe(a) {
     case 'walk_to': return d.object;
     case 'do': return d.what;
     case 'play_piano': return [d.notes, d.style].filter(Boolean).join(', ');
+    case 'record_song': return d.name;
     case 'read_book': return d.topic;
     case 'search_web': return d.query;
     case 'write_diary': return d.text;
@@ -959,13 +974,15 @@ function fallbackStep(s, failedStep, n = 0) {
 function applyResult(s, r) {
   if (!ACTION_NAMES.includes(r.action)) r = { ...r, action: 'rest', details: {} };
   const detail = describe(r);
-  const enjoyment = clamp(Number(r.enjoyment) || 5);
+  let enjoyment = clamp(Number(r.enjoyment) || 5);
 
   const lastThree = s.activities.slice(-3).map((a) => a.action);
   const repeating = !r.working_on && ((lastThree.length === 3 && lastThree.every((x) => x === r.action)) || loopRepeating(s.log, r.action, r.details)); // working on something on purpose is not boredom; the same thing at the same place again and again is
   const fresh = !['walk_to', 'rest', 'eat'].includes(r.action) && !s.log.slice(-40).some((e) => e.action === r.action); // something he has not done lately
   const looks = s.activities.slice(-6).filter((a) => ['search_web', 'read_book'].includes(a.action)).length;
   const emoBefore = { ...s.emo };
+  if (repeating) enjoyment = Math.min(enjoyment, 6); // the same thing again is not a 10
+  if (r.action === 'write_diary' && s.log.filter((e) => e.action === 'write_diary' && Date.now() - Date.parse(e.at) < 86_400_000).length >= 5) enjoyment = Math.min(enjoyment, 5); // a sixth diary page in a day is not a thrill
   stepFeelings(s, { action: r.action, enjoyment, repeating, fresh, looks, soft: !!r.fallback, style: r.details?.style, bar: r.details?.feeling, theme: themeFatigue(s.log, r.details) });
   s.mood = String(r.mood_after || s.mood);
 
@@ -1337,8 +1354,8 @@ async function wakeUp() {
   const blocked = [];
   const bag = state.tools.map((x) => ({ name: x.name, kind: x.kind }));
   const steps = redundantWalks(normalizeSteps(answer)).filter((st) => {
-    const needs = st.needs || (st.action === 'play_piano' && heldKind(st.details?.instrument)) || NEEDS[st.action] || '';
-    if (needs && !bag.some((x) => fits(x, needs))) {
+    const needs = [st.needs || NEEDS[st.action] || '', ...instrumentNeeds(st)].filter(Boolean).find((n) => !bag.some((x) => fits(x, n))) || '';
+    if (needs) {
       const away = toolList(state).find((x) => !x.usable && fits({ name: x.name, kind: x.kind }, needs));
       blocked.push({ st, why: away ? `my ${away.name} is ${away.where.replace('his ', 'my ')}. take_tool brings it into my inventory first, then I can play it` : `I need ${needs} in my inventory for that. If I really want to do it, I ask for it with asks_add and say why` });
       return false;
@@ -1617,6 +1634,19 @@ async function wakeUp() {
     const d = st.details;
     const name = text(d.name, 60);
     if (st.action === 'compose') st.made = composeSong(state.decor, d.name, d.song);
+    if (st.action === 'record_song') {
+      const song = cleanTracks({ tempo: d.tempo, tracks: d.tracks });
+      const name = text(d.name, 60);
+      const todaySongs = state.studio.songs.filter((x) => Date.now() - Date.parse(x.createdAt) < dayMs).length;
+      if (!name) st.made = { failed: 'a recording needs a name' };
+      else if (!song) st.made = { failed: 'a recording needs tracks: [{"instrument": "piano", "notes": "C3+E3+G3:4 E4 G4:2", "volume": 0.8, "pan": 0, "reverb": 0.2}, {"instrument": "drums", "notes": "kick hat snare hat"}], each with at least 2 sounding notes' };
+      else if (todaySongs >= MAX_SONGS_PER_DAY) st.made = { failed: `I already recorded ${MAX_SONGS_PER_DAY} songs today` };
+      else {
+        const rec = { id: `song${Date.now().toString(36)}${state.studio.songs.length}`, name, why: text(d.why, 200), tempo: song.tempo, tracks: song.tracks.map((t, k) => ({ instrument: t.timbre, notes: text(d.tracks?.[k]?.notes, 400), volume: t.volume, pan: t.pan, reverb: t.reverb })), createdAt: new Date(startedAt + offsets[i]).toISOString() };
+        state.studio.songs = [...state.studio.songs, rec].slice(-20);
+        st.made = { recording: rec };
+      }
+    }
     if (st.action === 'draw' && missingTool(state, 'draw')) st.made = { failed: missingTool(state, 'draw') };
     else if (st.action === 'draw') {
       const art = cleanSvg(d.svg);
@@ -1904,6 +1934,7 @@ async function wakeUp() {
     if (st.action === 'place_picture') Object.assign(entry, { name: st.made?.entry?.name ?? text(d.id, 20), place: withWarn(st.made?.entry?.label, st.made), image: st.made?.entry?.image ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'print_photo' || st.action === 'take_down_print') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.removed ?? text(d.id, 30), image: st.made?.entry?.image ?? null, place: st.made?.entry?.label ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'take_down_picture') Object.assign(entry, { name: text(d.id, 20), removed: st.made?.removed ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'record_song') Object.assign(entry, { name: text(d.name, 60), tempo: st.made?.recording?.tempo ?? null, tracks: st.made?.recording?.tracks ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'compose') Object.assign(entry, { name: text(d.name, 60), song: st.made?.song ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'draw') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), image: st.made?.entry?.image ?? null, place: withWarn(st.made?.entry?.label, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'make_app') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });
@@ -1946,6 +1977,13 @@ async function wakeUp() {
     state.emotion = emotionWord(state);
     addMemory(state, `I could not ${b.st.action.replace(/_/g, ' ')}: ${b.why}`, 4, 'memory', entry.at);
   }
+  const doneToday = markIntentions(state, state.log.filter((e) => Date.parse(e.at) >= startedAt - 1000));
+  for (const i of doneToday) { // a plan he made for himself came true: a small lift, and a note
+    state.joy = Math.min(10, state.joy + 0.5);
+    state.emo.excited = Math.min(10, state.emo.excited + 0.8);
+    console.log(`   ✅ plan done: ${i.text}`);
+  }
+  if (doneToday.length && state.intent.items.every((i) => i.done)) addMemory(state, 'I did everything I wanted to do today. It feels good to follow my own plans.', 6, 'memory', new Date().toISOString());
   const archived = await archiveOverflow(state, { tz: TZ }); // what is too old for his state goes to web/archive, where only the website reads it
   if (archived) console.log(`🗄️  ${archived} old entries moved to the archive`);
 

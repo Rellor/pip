@@ -4,6 +4,7 @@ import { createOutside } from './outside.js';
 import { applyLook } from './look.js';
 import { autoLampOn, lightAt, levelWord, isLamp } from './lighting.js';
 import { isGreenhouse, plantState, slotSpot } from './gardening.js';
+import { buildHouse, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X } from './house.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
@@ -29,19 +30,33 @@ const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set()
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
 const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
 // The parts of the room that can be seen from the front: the floor and the two back walls.
-const ROOM_POINTS = [[-5, 0, -5], [5, 0, -5], [-5, 0, 5], [5, 0, 5], [-5, 5, -5], [5, 5, -5], [-5, 5, 5]].map(([x, y, z]) => new THREE.Vector3(x, y, z));
+const pointsFor = (x0, x1) => [[x0, 0, -5], [x1, 0, -5], [x0, 0, 5], [x1, 0, 5], [x0, 5, -5], [x1, 5, -5], [x0, 5, 5]].map(([x, y, z]) => new THREE.Vector3(x, y, z));
+// Which part of the house the overview shows: the room Pip is in (auto), or one room, or the whole house.
+const houseView = { want: 'auto', now: 'bedroom' };
+const FOCUS_RANGE = { bedroom: [-5, 5], hall: [3, 11], studio: [8.4, 16.9], house: [-5, 16.9] };
+let fitGoal = 1;
+const focusName = () => (houseView.want === 'auto' ? houseView.now : houseView.want);
+let focusX = 0; // the middle of what is shown, eased toward the goal
 // How far back the camera must be for the whole room to fit on this screen, however wide or tall it is.
-function fitRoom() {
+function fitRoom(instant = true) {
+  const prevFit = orbit.fit;
   orbit.fit = 1;
+  const name = focusName();
+  const range = FOCUS_RANGE[name];
+  const pts = pointsFor(range[0], range[1]);
+  const cx = FOCUS_X[name];
   for (let i = 0; i < 8; i++) {
     const base = new THREE.Vector3(9.5, 9, 11).multiplyScalar(orbit.fit);
-    camera.position.set(base.x, 1.2 + base.y, -0.3 + base.z);
-    camera.lookAt(0, 1.2, -0.3);
+    camera.position.set(cx + base.x, 1.2 + base.y, -0.3 + base.z);
+    camera.lookAt(cx, 1.2, -0.3);
     camera.updateMatrixWorld(true);
     camera.updateProjectionMatrix();
-    const worst = Math.max(...ROOM_POINTS.map((p) => { const q = p.clone().project(camera); return Math.max(Math.abs(q.x), Math.abs(q.y)); }));
+    const worst = Math.max(...pts.map((p) => { const q = p.clone().project(camera); return Math.max(Math.abs(q.x), Math.abs(q.y)); }));
     orbit.fit *= worst / 0.94;
   }
+  fitGoal = orbit.fit;
+  if (!instant) orbit.fit = prevFit;
+  else focusX = cx;
 }
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function applyOrbit() {
@@ -51,7 +66,7 @@ function applyOrbit() {
   const dist = base.length();
   const half = dist * Math.tan((camera.fov * Math.PI) / 360) * Math.sqrt(1 - (base.y / dist) ** 2);
   orbit.py = clamp(orbit.py, Math.min(0, -0.3 + half - 1.2), Math.max(0, 5.3 - half - 1.2));
-  const target = new THREE.Vector3(orbit.px, 1.2 + orbit.py, -0.3 + orbit.pz);
+  const target = new THREE.Vector3(focusX + orbit.px, 1.2 + orbit.py, -0.3 + orbit.pz);
   camera.position.copy(target).add(base);
   camera.lookAt(target);
 }
@@ -109,15 +124,15 @@ box(scene, [4.3, 5, 0.3], 0xf3d9c4, [-2.85, 2.5, -5.15]);
 box(scene, [4, 5, 0.3], 0xf3d9c4, [3.3, 2.5, -5.15]);
 box(scene, [2, 2, 0.3], 0xf3d9c4, [0.3, 1, -5.15]);
 box(scene, [2, 1.2, 0.3], 0xf3d9c4, [0.3, 4.4, -5.15]);
-box(scene, [0.3, 5, 10], 0xefcfb6, [-5.15, 2.5, 0]);
+// (the left wall is drawn with the house, because it has a window)
 // The front and right walls and the ceiling only appear in walk mode, so the overview stays open.
 const extraWalls = new THREE.Group();
 extraWalls.visible = false;
 box(extraWalls, [10.3, 5, 0.3], 0xefd7c0, [0, 2.5, 5.15]);
-box(extraWalls, [0.3, 5, 10.3], 0xefd7c0, [5.15, 2.5, 0]);
 box(extraWalls, [10.6, 0.3, 10.6], 0xe8c9b0, [0, 5.15, 0]);
 extraWalls.traverse((o) => (o.castShadow = false));
 scene.add(extraWalls);
+const home = buildHouse(THREE, scene); // the hall and the music studio
 const rug = cyl(G.rug, [2, 2, 0.04], 0xe3a183, [0, 0.02, 0.8]);
 rug.castShadow = false;
 
@@ -236,6 +251,8 @@ function applyFurniture(s) {
       SPOTS[SPOT_OF[key]] = { ...SPOTS[SPOT_OF[key]], p: new V3(wx, 0, wz), face: sp.face + pl.rot };
     }
   }
+  const pianoAt = placeOf(furn, 'piano');
+  wallFrame.position.x = pianoAt.x > 5.3 ? -2.2 + (pianoAt.x - pivotOf('piano')[0]) : -2.2;
   for (const r of REGIONS) {
     if (!r.furn) continue;
     const pl = placeOf(furn, r.furn);
@@ -248,7 +265,7 @@ function applyFurniture(s) {
 const slides = new Set();
 let pushing = null; // the slide Pip is pushing right now
 function slideTo(g, x, z, rot, force) {
-  if (!g.userData.placed && !force) {
+  if ((!g.userData.placed && !force) || Math.hypot(g.position.x - x, g.position.z - z) > 8) { // far away (into another room): it is simply there
     g.userData.placed = true;
     g.position.set(x, 0, z);
     g.rotation.y = rot;
@@ -365,7 +382,7 @@ function setLit(g, on) {
 const behaviors = new Map(); // thing id -> what it is doing now
 // Is this spot in the way? goal = where he is heading: a thing that already covers the goal (the bed he walks onto, the piano he walks up to) does not count.
 const floorBlocked = (x, z, skipId, goal = null) => {
-  if (Math.abs(x) > 4.55 || Math.abs(z) > 4.55) return true;
+  if (!walkable(x, z) || blockedInHouse(x, z)) return true;
   const furn = shownFurniture(lastState?.furniture);
   for (const k of MOVABLE) {
     if (FURNITURE[k].flat) continue;
@@ -888,8 +905,22 @@ const SPOTS = {
   bed: { p: new V3(3.4, 0, 3.45), face: 0, y: 1.15, rx: -Math.PI / 2 },
   frame: { p: new V3(-1.5, 0, -3.7), face: Math.PI },
   chest: { p: new V3(-4.1, 0, 4.65), face: Math.PI },
+  hall: { p: new V3(6.8, 0, 0.4), face: 0 },
+  studio_desk: { p: new V3(15.2, 0, -3.3), face: Math.PI, y: 0.5 },
+  studio_stage: { p: new V3(12.4, 0, 0.8), face: 0 },
+  studio_keys: { p: new V3(13.1, 0, -1.45), face: Math.PI, y: 0.5 },
+  studio_books: { p: new V3(9.7, 0, -3.0), face: -Math.PI / 2 },
+  studio_drums: { p: new V3(13.6, 0, 2.4), face: Math.PI / 2 },
+  hall_door: { p: new V3(6.8, 0, -3.7), face: Math.PI },
 };
 const SYNONYMS = {
+  studio_desk: ['mixing', 'mixer', 'record', 'studio desk'],
+  studio_keys: ['studio keyboard', 'synth keyboard'],
+  studio_books: ['music book', 'studio shelf', 'studio book'],
+  studio_drums: ['drum'],
+  hall_door: ['front door', 'hall door'],
+  studio_stage: ['studio', 'music room'],
+  hall: ['hall', 'corridor'],
   frame: ['picture', 'frame', 'photo', 'painting', 'milky way'],
   piano: ['piano', 'keys', 'music'],
   bookshelf: ['book', 'shelf'],
@@ -933,6 +964,31 @@ function stepFor(style) {
   return 0.48;
 }
 // What Pip played on the piano ("C4 E4:2 - G4", the style) as a song the player can hear again: :n is how many beats, - is a rest.
+// The tracks of a recording as little lines: instrument, how loud, left or right, how much room.
+function trackList(rec) {
+  const ul = el('ul', null, 'results');
+  for (const t of rec.tracks || []) {
+    const side = t.pan < -0.2 ? 'left' : t.pan > 0.2 ? 'right' : 'middle';
+    const icon = (PLAYED[t.instrument] || (t.instrument === 'drums' ? ['🥁'] : ['🎶']))[0];
+    ul.append(el('li', `${icon} ${t.instrument} · volume ${Math.round((t.volume ?? 0.8) * 100)}% · ${side} · room ${Math.round((t.reverb ?? 0) * 100)}%`));
+  }
+  return ul;
+}
+// A song with several tracks, from what Pip wrote ({ tempo, tracks: [{ instrument, notes, volume, pan, reverb }] }): every track has its own sound, loudness, place left to right and amount of room.
+function trackSong(d) {
+  const tracks = [];
+  for (const t of Array.isArray(d?.tracks) ? d.tracks.slice(0, 4) : []) {
+    const one = pianoSong(t?.notes, '', t?.instrument);
+    const drums = String(t?.instrument || '').toLowerCase() === 'drums';
+    const notes = drums
+      ? String(t?.notes || '').split(/[\s,;|/]+/).filter(Boolean).slice(0, 64).map((tok) => { const [n, b] = tok.split(':'); return /^-+$/.test(n) ? [null, 1] : ['kick', 'snare', 'hat'].includes(n.toLowerCase()) ? [n.toLowerCase(), Math.min(4, Math.max(0.25, Number(b) || 1))] : null; }).filter(Boolean)
+      : one?.notes;
+    if (!notes?.some(([n]) => n)) continue;
+    tracks.push({ timbre: drums ? 'drums' : one.timbre, notes, volume: Math.min(1, Math.max(0.05, Number(t.volume) || 0.8)), pan: Math.min(1, Math.max(-1, Number(t.pan) || 0)), reverb: Math.min(1, Math.max(0, Number(t.reverb) || 0.15)) });
+  }
+  if (!tracks.length) return null;
+  return { tempo: Math.min(200, Math.max(40, Math.round(Number(d.tempo) || 90))), tracks, notes: [] };
+}
 function pianoSong(notesText, style, instrument) {
   const notes = [];
   for (const tok of String(Array.isArray(notesText) ? notesText.join(' ') : notesText ?? '').split(/[\s,;|/]+/).filter(Boolean).slice(0, 80)) {
@@ -968,6 +1024,7 @@ $('sound').addEventListener('click', () => {
 // ---- songs and sounds: what Pip makes can play a tune and a background sound (a short list of notes, a tempo, a voice, rain...)
 // Everything goes through one master volume and a limiter, so a phone speaker is loud enough and never crackles.
 let master = null;
+let reverbIn = null;
 let unlocked = false;
 // An iPhone on silent mode mutes web sound unless the page says it is "playback". A silent clip does the same on older ones.
 const SILENT_WAV = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
@@ -997,6 +1054,7 @@ function buildMaster() {
     for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.8);
   }
   const rev = audio.createConvolver();
+  reverbIn = rev;
   const wet = audio.createGain();
   rev.buffer = room;
   wet.gain.value = 0.16;
@@ -1025,10 +1083,22 @@ const VOICES = {
   flute: { parts: [[1, 'sine', 0.3], [2, 'sine', 0.06], [3, 'sine', 0.02]], attack: 0.09, release: 0.35, vibrato: 5.5 },
   pad: { parts: [[1, 'sawtooth', 0.07], [1.005, 'sawtooth', 0.07], [0.5, 'sine', 0.12]], attack: 0.5, release: 1.8 },
   marimba: { parts: [[1, 'sine', 0.34], [4, 'sine', 0.1]], attack: 0.003, release: 0.45, hold: 0.1 },
+  synth: { parts: [[1, 'sawtooth', 0.12], [1.008, 'sawtooth', 0.12], [0.5, 'square', 0.07]], attack: 0.02, release: 0.5, lp: 1800, q: 6 },
+  synthbass: { parts: [[1, 'sawtooth', 0.26], [0.5, 'sine', 0.34]], attack: 0.01, release: 0.25, lp: 700, q: 3 },
 };
-function synthVoice(freq, t, hold, timbre) {
+function synthVoice(freq, t, hold, timbre, dest = master) {
   const v = VOICES[timbre] || VOICES.piano;
   const len = v.hold ?? Math.max(v.attack, hold);
+  let into = dest;
+  if (v.lp) { // a filter that opens and closes with the note, like a synthesizer
+    const f = audio.createBiquadFilter();
+    f.type = 'lowpass';
+    f.Q.value = v.q || 4;
+    f.frequency.setValueAtTime(v.lp * 3, t);
+    f.frequency.exponentialRampToValueAtTime(v.lp, t + 0.3);
+    f.connect(dest);
+    into = f;
+  }
   for (const [mult, type, vol] of v.parts) {
     const o = audio.createOscillator();
     const g = audio.createGain();
@@ -1047,7 +1117,7 @@ function synthVoice(freq, t, hold, timbre) {
     g.gain.exponentialRampToValueAtTime(vol, t + v.attack);
     g.gain.setValueAtTime(vol, t + Math.max(v.attack, len));
     g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(v.attack, len) + v.release);
-    o.connect(g).connect(master);
+    o.connect(g).connect(into);
     o.start(t);
     o.stop(t + Math.max(v.attack, len) + v.release + 0.1);
   }
@@ -1115,10 +1185,10 @@ function prefetchInstrument(timbre, freqs) {
   const b = bankOf(timbre);
   if (b && audio) bankNeed(b, freqs.map(sampleKey)).catch(() => {});
 }
-function voice(freq, t, hold, timbre) {
+function voice(freq, t, hold, timbre, dest = master) {
   const b = bankOf(timbre);
   const buf = b && !b.failed ? b.buf.get(sampleKey(freq)) : null;
-  if (!buf) return synthVoice(freq, t, hold, SYNTH_FOR[timbre] || timbre);
+  if (!buf) return synthVoice(freq, t, hold, SYNTH_FOR[timbre] || timbre, dest);
   const src = audio.createBufferSource();
   const g = audio.createGain();
   const len = Math.max(0.12, hold);
@@ -1128,7 +1198,7 @@ function voice(freq, t, hold, timbre) {
   g.gain.exponentialRampToValueAtTime(vol, t + 0.006);
   g.gain.setValueAtTime(vol, t + len);
   g.gain.exponentialRampToValueAtTime(0.0001, t + len + b.def[1]);
-  src.connect(g).connect(master);
+  src.connect(g).connect(dest);
   src.start(t);
   src.stop(t + len + b.def[1] + 0.05);
 }
@@ -1145,7 +1215,7 @@ function noise(kind) {
   return src;
 }
 // Drums are short bursts of tone and noise.
-function drum(kind, t) {
+function drum(kind, t, dest = master) {
   if (kind === 'kick') {
     const o = audio.createOscillator();
     const g = audio.createGain();
@@ -1153,7 +1223,7 @@ function drum(kind, t) {
     o.frequency.exponentialRampToValueAtTime(45, t + 0.25);
     g.gain.setValueAtTime(0.9, t);
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
-    o.connect(g).connect(master);
+    o.connect(g).connect(dest);
     o.start(t);
     o.stop(t + 0.35);
     return;
@@ -1165,7 +1235,7 @@ function drum(kind, t) {
   f.frequency.value = kind === 'hat' ? 7000 : 1800;
   g.gain.setValueAtTime(kind === 'hat' ? 0.25 : 0.6, t);
   g.gain.exponentialRampToValueAtTime(0.0001, t + (kind === 'hat' ? 0.06 : 0.18));
-  src.connect(f).connect(g).connect(master);
+  src.connect(f).connect(g).connect(dest);
   src.start(t);
   src.stop(t + 0.25);
 }
@@ -1296,8 +1366,33 @@ function printerSound() {
   click.start(t + len - 0.2);
   click.stop(t + len);
 }
+// Several tracks at once: each one has its own sound, loudness, place from left to right and amount of room.
+async function playTracks(song) {
+  await ensureAudio();
+  const heard = (n) => (Array.isArray(n) ? n : [n]).filter((x) => x && !['kick', 'snare', 'hat'].includes(x));
+  await Promise.all(song.tracks.map((tr) => { const b = bankOf(tr.timbre); return b ? within(bankNeed(b, tr.notes.flatMap(([n]) => heard(n)).map((x) => sampleKey(noteFreq(x) || 440))), 25000) : null; }));
+  const beat = 60 / (song.tempo || 90);
+  const start = audio.currentTime + 0.15;
+  let end = 0;
+  for (const tr of song.tracks) {
+    const bus = audio.createGain();
+    bus.gain.value = tr.volume ?? 0.8;
+    const pan = audio.createStereoPanner ? audio.createStereoPanner() : null;
+    if (pan) { pan.pan.value = tr.pan || 0; bus.connect(pan).connect(master); } else bus.connect(master);
+    if (reverbIn && tr.reverb > 0.01) { const send = audio.createGain(); send.gain.value = tr.reverb * 1.4; bus.connect(send).connect(reverbIn); }
+    let t = start;
+    for (const [n, beats] of tr.notes) {
+      if (n === 'kick' || n === 'snare' || n === 'hat') drum(n, t, bus);
+      else for (const x of heard(n)) { const f = noteFreq(x); if (f) voice(f, t, beat * beats * 0.92, tr.timbre, bus); }
+      t += beat * beats;
+    }
+    end = Math.max(end, t - start);
+  }
+  return end;
+}
 async function playSong(song) {
-  if (!song || (!song.notes?.length && !song.ambience)) return 0;
+  if (!song || (!song.notes?.length && !song.ambience && !song.tracks?.length)) return 0;
+  if (song.tracks?.length) return playTracks(song);
   await ensureAudio();
   const heard = (n) => (Array.isArray(n) ? n : [n]).filter((x) => x && !['kick', 'snare', 'hat'].includes(x));
   const bank = bankOf(song.timbre);
@@ -1445,10 +1540,11 @@ function planFor(last) {
     case 'play_piano': {
       const notes = parseNotes(d.notes);
       const instrument = knownInstrument(String(d.instrument || '').toLowerCase());
-      if (HELD_LOOKS.includes(String(d.instrument || '').toLowerCase())) return { at: 'center', anim: 'jam', held: String(d.instrument).toLowerCase(), notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
-      return { at: 'piano', anim: 'play', notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
+      if (HELD_LOOKS.includes(String(d.instrument || '').toLowerCase())) return { at: /studio|music room/i.test(String(d.where || '')) ? 'studio_stage' : 'center', anim: 'jam', held: String(d.instrument).toLowerCase(), notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
+      return { at: /studio|music room/i.test(String(d.where || '')) && ['epiano', 'harpsichord', 'organ', 'synth'].includes(instrument) ? 'studio_keys' : 'piano', anim: 'play', notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
     }
-    case 'read_book': return { at: 'bookshelf', anim: 'read' };
+    case 'record_song': return { at: 'studio_desk', anim: 'mix', song: trackSong(d) };
+    case 'read_book': return { at: /music|chord|scale|rhythm|melody|harmony|synth|mix|song|instrument|sound|beat|bass|drum/i.test(String(d.topic || '')) ? 'studio_books' : 'bookshelf', anim: 'read' };
     case 'search_web': return { at: 'computer', anim: 'search' };
     case 'write_diary': return { at: 'center', anim: 'write' };
     case 'rest': return { at: 'bed', anim: 'rest' };
@@ -1659,6 +1755,8 @@ let nextSign = 0;
 let pageStart = 0;
 let nextPage = 0;
 let screenNext = 0;
+let studioBusy = false;
+let viewAt = 0;
 
 function frame(now, dt) {
   const t = now / 1000;
@@ -1671,15 +1769,21 @@ function frame(now, dt) {
   let anim = 'idle';
   if (task) {
     const spot = task.detour ? task.detour.spot : task.spot;
-    const to = spot.p.clone().sub(g.position);
-    to.y = 0;
-    const dist = to.length();
+    const toSpot = spot.p.clone().sub(g.position);
+    toSpot.y = 0;
+    const dist = toSpot.length();
     if (dist > 0.06) {
       walking = true;
       g.rotation.x = lerp(g.rotation.x, 0, dt * 8);
       g.position.y = lerp(g.position.y, 0, dt * 8);
-      const dir = steer(g.position, to.normalize(), dist, spot.p);
-      g.position.addScaledVector(dir, Math.min(dist, 2.2 * dt));
+      // to another room: through the doors, one waypoint at a time
+      const way = nextGoal({ x: g.position.x, z: g.position.z }, { x: spot.p.x, z: spot.p.z });
+      const wayP = way.x === spot.p.x && way.z === spot.p.z ? spot.p : new V3(way.x, 0, way.z);
+      const to = wayP.clone().sub(g.position);
+      to.y = 0;
+      const wd = Math.max(to.length(), 1e-6);
+      const dir = steer(g.position, to.normalize(), wd, wayP);
+      g.position.addScaledVector(dir, Math.min(Math.max(wd, 0.06), 2.2 * dt));
       turnTo(Math.atan2(dir.x, dir.z), dt * 10);
     } else {
       turnTo(spot.face, dt * 6);
@@ -1698,6 +1802,7 @@ function frame(now, dt) {
           task.arrived = true;
           task.arrivedAt = now;
           if (task.anim === 'play' || task.anim === 'jam') startPhrase(task.notes, task.step, now);
+          if (task.anim === 'mix' && task.song && audio?.state === 'running') playSong(task.song);
           if (task.anim === 'ask') task.askUntil = now + 9000;
           task.nextBreak = task.anim === 'rest' ? Infinity : now + rand(40_000, 80_000);
         }
@@ -1708,6 +1813,7 @@ function frame(now, dt) {
     }
   }
 
+  studioBusy = engaged && anim === 'mix';
   // --- idle: while a quick step has nothing more to show, he does small things by himself, now and then
   if (engaged && anim === 'look' && !walking && !pushing) {
     if (!task.idle) task.idle = { move: null, start: 0, until: 0, next: now + rand(1500, 3500) };
@@ -1816,6 +1922,12 @@ function frame(now, dt) {
       ra = [0.3, 0.55, 0.4 + (playing ? Math.max(0, Math.sin(t * 9 + Math.PI)) * 0.03 : 0)];
       if (playing) body.rotation.z = Math.sin(t * 2.5) * 0.06;
       else body.rotation.y = Math.sin(t * 0.7) * 0.12;
+    } else if (anim === 'mix') {
+      const k = Math.sin(t * 1.7);
+      body.rotation.x = 0.1;
+      body.rotation.z = Math.sin(t * 4.2) * 0.035;
+      la = [-0.3 + k * 0.14, 0.55, 0.62];
+      ra = [0.3 + Math.sin(t * 1.3 + 1) * 0.14, 0.55 + Math.max(0, Math.sin(t * 5.1)) * 0.05, 0.62];
     } else if (anim === 'jam') {
       const playing = phraseIdx >= 0;
       const beat = playing ? Math.sin(t * 9) : 0;
@@ -1943,12 +2055,12 @@ function frame(now, dt) {
 // ---------------------------------------------------------------- free view: walk around and tap things to read about them
 const r1 = (v) => (Math.round(Number(v) * 10) / 10).toString();
 const logOf = (...actions) => (lastState?.log || []).filter((e) => actions.includes(e.action) && Date.parse(e.at) <= Date.now());
-const WALK_BLOCKS = [ // places you cannot walk through: [minX, maxX, minZ, maxZ]
-  [-3.95, -1.25, -5, -3.6], [-2.95, -2.25, -3.5, -2.8], [1.55, 3.65, -5, -4.3], [-5, -3.6, 0.1, 2.3], [2.2, 4.6, 1.3, 4.7], [3.6, 4.6, -4.6, -3.6], [-4.6, -3.6, 3.6, 4.2],
-];
+const WALK_EXTRA = [[-4.6, -3.6, 3.6, 4.2]]; // the chest
 function blocked(x, z) {
-  if (Math.abs(x) > 4.7 || Math.abs(z) > 4.7) return true;
-  return WALK_BLOCKS.some(([x0, x1, z0, z1]) => x > x0 - 0.28 && x < x1 + 0.28 && z > z0 - 0.28 && z < z1 + 0.28);
+  if (!walkable(x, z) || blockedInHouse(x, z, 0.1)) return true;
+  const furn = shownFurniture(lastState?.furniture);
+  const rects = [...MOVABLE.filter((k) => !FURNITURE[k].flat).flatMap((k) => furnRects(furn, k)).map((r) => [r.x0, r.x1, r.z0, r.z1]), ...WALK_EXTRA];
+  return rects.some(([x0, x1, z0, z1]) => x > x0 - 0.28 && x < x1 + 0.28 && z > z0 - 0.28 && z < z1 + 0.28);
 }
 function updateWalk(dt) {
   if (view.mode !== 'walk') return;
@@ -1971,6 +2083,9 @@ function setMode(mode) {
   camera.updateProjectionMatrix();
   document.body.classList.toggle('walking', mode === 'walk');
   extraWalls.visible = mode === 'walk';
+  home.low.visible = mode !== 'walk';
+  home.full.visible = mode === 'walk';
+  home.roof.visible = mode === 'walk';
   $('stick').hidden = mode !== 'walk';
   $('resetview').hidden = mode === 'walk';
   if (mode === 'walk') {
@@ -2198,6 +2313,11 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !infoBox.hidden) hideInfo();
 });
 $('resetview').addEventListener('click', resetOrbit);
+document.querySelectorAll('#rooms button').forEach((b) => b.addEventListener('click', () => {
+  houseView.want = b.dataset.room;
+  document.querySelectorAll('#rooms button').forEach((x) => x.classList.toggle('on', x === b));
+  fitRoom(false);
+}));
 
 const ray = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
@@ -2669,6 +2789,18 @@ function loop(now) {
   }
   updateSlides(now, dt);
   frame(now, dt);
+  home.update(now / 1000, studioBusy);
+  if (now > viewAt) { viewAt = now + 60_000; home.refreshViews(forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60); }
+  if (view.mode === 'overview') { // the overview follows Pip from room to room (or stays on the room chosen)
+    const roomNow = roomOf(pip.group.position.x);
+    if (houseView.now !== roomNow) { houseView.now = roomNow; if (houseView.want === 'auto') fitRoom(false); }
+    const goalX = FOCUS_X[focusName()];
+    if (Math.abs(focusX - goalX) > 0.005 || Math.abs(orbit.fit - fitGoal) > 0.001) {
+      focusX += (goalX - focusX) * Math.min(1, dt * 3);
+      orbit.fit += (fitGoal - orbit.fit) * Math.min(1, dt * 3);
+      applyOrbit();
+    }
+  }
   updateFloaters(dt, now);
   popDecor(now);
   updateBehaviors(now, dt);
@@ -2683,7 +2815,7 @@ fitCamera();
 requestAnimationFrame(loop);
 
 // ---------------------------------------------------------------- panel + polling
-const ICON = { play_piano: '🎶', read_book: '📖', search_web: '🌐', write_diary: '✍️', rest: '💤', ask_for: '🙏', walk_to: '🚶' };
+const ICON = { record_song: '🎛️', play_piano: '🎶', read_book: '📖', search_web: '🌐', write_diary: '✍️', rest: '💤', ask_for: '🙏', walk_to: '🚶' };
 function el(tag, text, cls) {
   const e = document.createElement(tag);
   if (text != null) e.textContent = text;
@@ -2966,6 +3098,7 @@ function headlineBase(st) {
   switch (st.action) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
     case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
+    case 'record_song': return ['🎛️', `Mixing “${d.name || st.name || 'a song'}” in his studio`];
     case 'play_piano': return [playedOf(st)[0], `Playing ${playedOf(st)[1]}${d.style ? ` (${d.style})` : ''}`];
     case 'write_diary': return ['✍️', 'Writing in his diary'];
     case 'rest': return ['💤', 'Resting'];
@@ -3009,7 +3142,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', record_song: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Music'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -3047,7 +3180,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: e.action === 'record_song' ? 'Recorded in his studio' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3070,6 +3203,18 @@ function dayCard(e) {
     if (e.topic && e.opened) card.append(el('p', `He wanted to know about “${e.topic}”.`, 'muted'));
     if (e.opened) card.append(pageBlock(e.opened, 'He read:'));
     else card.append(el('p', 'He could not find anything to read about this.', 'muted'));
+  } else if (kind === 'piano' && e.action === 'record_song') {
+    card.append(el('h3', e.name || 'A recording', 'title'));
+    if (e.failed) card.append(el('p', `That did not work out: ${e.failed}.`, 'muted'));
+    else {
+      card.append(trackList(e));
+      const song = trackSong({ tempo: e.tempo, tracks: e.tracks });
+      if (song) {
+        const b = el('button', '▶ Listen', 'small');
+        b.addEventListener('click', () => playSong(song));
+        card.append(b);
+      }
+    }
   } else if (kind === 'piano') {
     if (e.style) card.append(el('h3', e.style, 'title'));
     const notes = String(e.notes || '').split(/[\s,;]+/).filter(Boolean);
@@ -3611,6 +3756,18 @@ function render(s) {
     ...(bag.length ? bag.map((x) => el('li', `🎒 ${x.name}${x.why ? ` — ${x.why}` : ''}`)) : [el('li', 'His inventory is empty. Without a tool he cannot do some things, like drawing.', 'muted')]),
     ...away.map((x) => el('li', `📦 ${x}. Not in his inventory, so he cannot use it.`, 'muted')),
   ]);
+  const recs = (s.studio?.songs || []).slice().reverse();
+  fill($('studiolist'), recs.length ? recs.map((r) => {
+    const li = el('li', `🎛️ ${r.name} — ${when(r.createdAt)} `);
+    const song = trackSong({ tempo: r.tempo, tracks: r.tracks });
+    if (song) {
+      const b = el('button', '▶ Listen', 'small');
+      b.addEventListener('click', () => playSong(song));
+      li.append(b);
+    }
+    li.append(trackList(r));
+    return li;
+  }) : empty('He has not recorded anything in his studio yet.'));
   const pieces = (s.log || []).filter((e) => e.action === 'play_piano' && !e.failed && Date.parse(e.at) <= Date.now()).slice(-15).reverse();
   fill($('pianolist'), pieces.length ? pieces.map((e) => {
     const song = pianoSong(e.notes, e.style, e.instrument);

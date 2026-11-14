@@ -21,6 +21,7 @@ export function placeOfAction(action, d = {}) {
     case 'read_book': return 'the bookshelf';
     case 'search_web': case 'make_app': case 'update_app': case 'blueprint': return 'his desk';
     case 'rest': return 'his bed';
+    case 'record_song': return 'the studio';
     case 'plant': case 'water': case 'harvest': return 'the greenhouse';
     case 'use': return placeOfText(d.name);
     case 'walk_to': return placeOfText(d.object);
