@@ -3801,26 +3801,43 @@ function renderMind(s) {
 }
 
 // Every wake-up that failed, newest first. Only shown once the key is filled in (Settings is unlocked).
-// The check-up the watchdog writes to health.json: what looks fine and what looks off.
-let checkupAt = 0;
-async function renderCheckup() {
-  if (Date.now() - checkupAt < 60_000) return;
-  checkupAt = Date.now();
-  try {
-    const r = await fetch(`${isLocal ? '' : RAW}health.json?t=${Math.floor(Date.now() / 60_000)}`, { cache: 'no-store' });
-    const data = r.ok ? await r.json() : {};
-    const items = data.checkup?.items ?? [];
-    fill($('checkup'), items.length
-      ? items.slice().sort((a, b) => a.ok - b.ok).map((x) => { const li = el('li', null, x.ok ? 'ok' : 'bad'); li.append(el('b', `${x.ok ? '✅' : '⚠️'} ${x.label}`), el('span', x.text, 'muted')); return li; })
-      : [el('li', 'No check-up yet. It runs every 10 minutes.', 'muted')]);
-    const fails = data.checkup?.failures ?? [];
-    fill($('failgroups'), fails.length
-      ? fails.map((f) => { const li = el('li', null, f.count >= 3 ? 'bad' : 'ok'); li.append(el('b', `${f.count >= 3 ? '🔁' : '•'} ${f.move}: ${f.count}× · last ${when(f.last)}`), el('span', f.reason, 'muted')); return li; })
-      : [el('li', 'Nothing failed in the last day.', 'muted')]);
-  } catch {}
+// The check-up Pip's wake-up writes into his state: what looks fine, what looks off, and the facts to fix it.
+function renderCheckup(s) {
+  const c = s?.checkup;
+  const items = c?.items ?? [];
+  fill($('checkup'), items.length
+    ? items.slice().sort((a, b) => a.ok - b.ok).map((x) => {
+      const li = el('li', null, x.ok ? 'ok' : 'bad');
+      li.append(el('b', `${x.ok ? '✅' : '⚠️'} ${x.label}`), el('span', x.text, 'muted'));
+      if (!x.ok && (x.look || x.debug)) {
+        const d = el('details');
+        d.append(el('summary', 'Details for fixing'));
+        if (x.look) d.append(el('p', `Where to look: ${x.look}`, 'muted'));
+        if (x.debug) d.append(el('pre', x.debug, 'debug'));
+        const copy = el('button', '📋 Copy for Claude', 'small');
+        copy.type = 'button';
+        copy.addEventListener('click', async () => {
+          const report = `Pip check-up problem (${new Date(c.at).toLocaleString()}): ${x.label}\n${x.text}\nWhere to look: ${x.look ?? '-'}\n\nFacts:\n${x.debug ?? '-'}`;
+          try { await navigator.clipboard.writeText(report); toast('Copied. Paste it to Claude.'); } catch { toast('Copying did not work here.'); }
+        });
+        d.append(copy);
+        li.append(d);
+      }
+      return li;
+    })
+    : [el('li', 'No check-up yet. It runs at the end of each wake-up.', 'muted')]);
+  const fails = c?.failures ?? [];
+  fill($('failgroups'), fails.length
+    ? fails.map((f) => {
+      const li = el('li', null, f.count >= 3 ? 'bad' : 'ok');
+      li.append(el('b', `${f.count >= 3 ? '🔁' : '•'} ${f.move}: ${f.count}× · last ${when(f.last)}`), el('span', f.reason, 'muted'));
+      if (f.raw) { const d = el('details'); d.append(el('summary', 'Details'), el('pre', `move: ${f.action}${f.names?.length ? `\nnames: ${f.names.join(', ')}` : ''}\nfull reason: ${f.raw}`, 'debug')); li.append(d); }
+      return li;
+    })
+    : [el('li', 'Nothing failed in the last day.', 'muted')]);
 }
 function renderErrorLog(s) {
-  renderCheckup();
+  renderCheckup(s);
   const box = $('errlog');
   const list = (s?.errors || []).slice().reverse();
   fill(box, list.length

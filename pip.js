@@ -17,6 +17,8 @@ import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject } from './projects.js';
+import { checkup } from './checkup.js';
+import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
@@ -1902,6 +1904,19 @@ async function wakeUp() {
     sealFields(state.last, ['thought', 'inner', 'detail']);
     for (const st of state.last.steps ?? []) { sealFields(st, ['thought', 'detail']); if (st.details) sealFields(st.details, ['text', 'what', 'query', 'topic']); }
     state.last.private = true;
+  }
+  // The check-up (plain code, no model): new problems go to Bas's warning channel, each at most once a day.
+  try {
+    const c = checkup(state, { checkup: state.checkup });
+    state.checkup = c.saved;
+    if (c.fresh.length && !process.env.PIP_FAKE) {
+      const body = c.fresh.map((x) => `• ${x.label}: ${x.text}`).join('\n') + '\n\nDetails: Settings (⚙) → Check-up.';
+      await warn(`Pip check-up: ${c.fresh.length === 1 ? c.fresh[0].label.toLowerCase() : `${c.fresh.length} things`}`, body);
+    }
+    const bad = c.items.filter((x) => !x.ok).map((x) => x.id);
+    if (bad.length) console.log(`🩺 check-up: ${bad.join(', ')}`);
+  } catch (e) {
+    console.error('⚠️  check-up:', e.message);
   }
   await saveState(state);
   await clearInbox(inbox.names);

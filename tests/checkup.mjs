@@ -23,3 +23,6 @@ assert.equal(checkup(bad, { checkup: r.saved }, now + 600_000).fresh.length, 0, 
 const fine = { thoughts: [], projects: [], today: { tried: { decorate: 3 }, done: { decorate: 3 } }, fullness: 6, pantry: [], asks: [], errors: [] };
 assert.ok(checkup(fine, {}, now).items.every((x) => x.ok));
 console.log('ok  check-up finds circling, a stuck project, a failing move and pretending; each sent once a day');
+const sealed = { ...fine, thoughts: Array.from({ length: 20 }, (_, i) => ({ at: ago(i / 4), text: '🔒 private', sealed: 'x' })) };
+assert.ok(checkup(sealed, {}, now).items.find((x) => x.id === 'circling').ok, 'private thoughts are not read');
+console.log('ok  private thoughts stay out of the check-up');
