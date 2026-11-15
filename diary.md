@@ -314,3 +314,9 @@ I am continuing my wooden music box project by working on the gears.
 - do (look out of the window for a while): I watch the sky for a bit.
 - mood: focused
 
+## 15/11/2026, 17:11:24
+The wooden music box project failed because the box did not exist yet, so I must start crafting the individual parts like the gears.
+> The wooden music box project failed because the box did not exist yet, so I must start crafting the individual parts like the gears.
+- do (carve a tiny wooden gear for the music box mechanism): I will carve the small gear since the wooden music box project needs precise parts.
+- mood: focused
+
