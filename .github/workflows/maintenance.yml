@@ -4,6 +4,7 @@ name: Maintenance
 #   quota       one tiny call per model, writes docs/quota.md
 #   tidy        Pip chooses keep / store / let go for his things, writes web/archive/tidy-proposal.json (nothing changes yet)
 #   tidy-apply  carries out the saved choices (no model call). Pause the Pip loop first: it changes web/state.json.
+#   secrets     says which secrets are set (only "set" or "missing", never a value)
 on:
   workflow_dispatch:
     inputs:
@@ -33,11 +34,14 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_BIG: ${{ vars.GEMINI_BIG }}
           GEMINI_LITE: ${{ vars.GEMINI_LITE }}
+          PIP_REPLY_KEY: ${{ secrets.PIP_REPLY_KEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         run: |
           case "${{ inputs.task }}" in
             quota) node scripts/check-quota.mjs ;;
             tidy) node pip.js tidy ;;
             tidy-apply) node pip.js tidy apply ;;
+            secrets) for n in GEMINI_API_KEY PIP_REPLY_KEY NTFY_TOPIC; do if [ -n "${!n}" ]; then echo "$n: set"; else echo "$n: missing"; fi; done ;;
             *) echo "unknown task"; exit 1 ;;
           esac
       - name: Save
