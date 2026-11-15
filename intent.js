@@ -8,7 +8,7 @@ const MATCH = {
   tend: (e) => ['water', 'plant', 'harvest', 'cook'].includes(e.action),
   music: (e) => ['play_piano', 'record_song', 'compose'].includes(e.action),
   revisit: (e) => ['use', 'add_use', 'change_thing', 'place_picture', 'take_out', 'move_thing', 'extend_thing'].includes(e.action),
-  explore: (e) => (e.action === 'walk_to' && /hall|studio|door|window|mixing|drum|keyboard/i.test(String(e.object ?? ''))) || e.action === 'take_photo' || e.action === 'check_light',
+  explore: (e) => (e.action === 'walk_to' && /hall|door|window/i.test(String(e.object ?? ''))) || e.action === 'take_photo' || e.action === 'check_light',
 };
 const dayOf = (now) => new Date(now).toISOString().slice(0, 10);
 const hash = (t) => [...String(t)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
@@ -22,7 +22,7 @@ function candidates(s, now) {
   c.tend = 'look after my plants, my pantry or my kitchen';
   const owned = (s.tools ?? []).map((t) => t.kind);
   const fresh = ['guitar', 'violin', 'flute', 'clarinet', 'kalimba', 'harp'].find((i) => owned.includes(i));
-  c.music = fresh ? `make music a new way: a recording in the studio, or the ${fresh} in a new tune` : 'make music a new way: a recording in the studio';
+  c.music = fresh ? `make music a new way: the ${fresh} in a new tune, or a recording` : 'make music, or ask for something to play on';
   const old = (s.decor ?? []).filter((d) => !d.image && d.pos && now - Date.parse(d.usedAt || d.createdAt) > 36 * 3_600_000).sort(() => 0);
   const pick = old.length ? old[hash(dayOf(now)) % old.length] : null;
   c.revisit = pick ? `go back to my "${pick.name}": use it, change it, give it a new use or a better place` : 'go back to something I made earlier';

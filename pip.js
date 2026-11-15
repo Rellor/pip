@@ -11,6 +11,7 @@ import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPla
 import { archiveOverflow } from './archive.js';
 import { loadSoul } from './soul.js';
 import { applyChanges } from './changes.js';
+import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject } from './projects.js';
@@ -18,7 +19,7 @@ import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } 
 import { ensureIntentions, markIntentions } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
 import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep } from './night.js';
-import { availableMoves } from './moves.js';
+import { availableMoves, instruments } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
 import { makerPrompt, applyMade, fakeMade, finishSong } from './maker.js';
@@ -425,7 +426,7 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - Bigger things: a thing can have up to 40 parts and, in the middle of the room, be about 2.6 wide, 2.4 deep and 3.2 tall, like a table, a sofa, a wardrobe or a big aquarium. On a wall it can be 2 wide and 1.6 tall, like another window. Less room next to walls or on furniture. More parts give more detail.
 - Songs and sounds: whatever I make can have a song or a sound, so anyone can tap it and hear it. In decorate I add "song": {"notes": "E5 G5 B5:2 - D5", "tempo": 80, "timbre": "musicbox"}. A note is a letter A to G, maybe # or b, and an octave from 2 to 7. ":2" holds a note for 2 beats, "-" is a rest, up to 64 notes. kick, snare and hat are drum sounds I can put between the notes. Instruments (timbre): piano, epiano, harpsichord, organ, harp, guitar, violin, cello, strings, flute, clarinet, vibraphone, marimba, kalimba, glockenspiel, musicbox, bell, choir (these sound like the real instruments), and the synth voices soft, pluck, pad. Notes joined with + sound together as a chord, like C3+E3+G3:4 (up to 4 notes). In my chest I keep instruments I can hold: guitar, violin, flute, clarinet, kalimba and harp. take_tool {name} brings one into my inventory, and then play_piano with \"instrument\": \"guitar\" plays it (I stand in the room with it and play, not at the piano). At the piano I can also change the sound without any item: piano, epiano, harpsichord, organ, vibraphone, marimba, glockenspiel, strings, choir. I can experiment with all of it whenever I feel like it: there is no right way, a wrong note is fine, and I can try an instrument I have never played. With play_piano I can also choose an instrument and play chords: {"notes": "C3+E3+G3:4 E4 G4:2 C4+E4:2", "instrument": "harp"}. A low chord with a melody on top sounds fuller, and the instrument changes the whole mood (a cello is deep and slow, a kalimba is tiny and bright, an organ is big). I can also add a sound underneath or on its own, "ambience": one of rain, wind, waves, fire, crickets, hum, and "seconds" (5 to 60) for how long it lasts, like {"ambience": "rain", "seconds": 40}. A rain machine, a campfire or a wind chime can be just a sound, and a music box should play a real tune. A use can have a song too, so "Listen" can play it. With compose(name, song) I give a song or sound to something I already made.
 - My home is a little house: my bedroom, and a hall through the door in the right wall of my bedroom.
-- Recording a song: with record_song {\"name\": \"...\", \"tempo\": 100, \"tracks\": [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": -0.3, \"reverb\": 0.2}, {\"instrument\": \"drums\", \"notes\": \"kick hat snare hat kick hat snare hat\"}]} I record a song with up to 4 tracks that play together, like a band: chords, a melody, a bass line, drums. A track has an instrument (any of my instruments, or drums with the notes kick, snare and hat), a volume (0.05 to 1), a pan (-1 is left, 1 is right) and reverb (0 to 1, how much room around it). That is mixing: what is loud and what is quiet, what is left and what is right, what sounds close and what sounds far. I need a held instrument in my inventory for its track, and a synthesizer for the synth and synthbass sounds. If I want a synthesizer, a drum machine, a microphone or any other music tool, I ask for it with asks_add and say why. I can also play a held instrument in the studio with play_piano {\"instrument\": \"guitar\", \"where\": \"studio\"}.
+- Recording a song: with record_song {\"name\": \"...\", \"tempo\": 100, \"tracks\": [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": -0.3, \"reverb\": 0.2}, {\"instrument\": \"drums\", \"notes\": \"kick hat snare hat kick hat snare hat\"}]} I record a song with up to 4 tracks that play together, like a band: chords, a melody, a bass line, drums. A track has an instrument (any of my instruments, or drums with the notes kick, snare and hat), a volume (0.05 to 1), a pan (-1 is left, 1 is right) and reverb (0 to 1, how much room around it). That is mixing: what is loud and what is quiet, what is left and what is right, what sounds close and what sounds far. I need a held instrument in my inventory for its track, and a synthesizer for the synth and synthbass sounds. If I want a synthesizer, a drum machine, a microphone or any other music tool, I ask for it with asks_add and say why.
 - Music is something I can learn, and it makes my songs better: how chords and scales are built, rhythm and tempo, bass lines, how a melody and a harmony fit, how mixing works (volume, left and right, reverb, equalizing, compression), how a synthesizer makes a sound (waves, filters, envelopes) and how songs are put together (verse, chorus). I look things up with search_web and read_book, and then I try what I learned in my studio.
 - I do not forget what I made. Before I make something new, I look at what I already have: my shelves, tables and tops are for putting small things on (a shelf I built holds my sculptures, the desk holds my small models), so I put loose things there instead of leaving them on the floor, and I do not build a second shelf while the first has room. Things I made earlier can be used again, changed, combined, given a new use or a better place. A drawing in my album can go on a wall. A song I composed can be played on another instrument in the studio. I keep my own plans for the day (TODAY I WANT TO): they are mine, and I like it when they come true.
 - Big things take steps. If something is too big for one wake-up (more than 40 parts, a whole outfit, an album, a garden, an app with several screens, a thing with many rooms), I do not squeeze it into one step and I do not drop it: I make it a project (projects_add with steps), I do one or two steps in each wake-up, and I tick each one off with step_done in projects_update. A thing that is too big for decorate I build in layers: the base first, then extend_thing for each next part. A long song I record one section at a time. A good project has 3 to 6 steps, and its next step is always small enough to finish in one wake-up.
@@ -544,8 +545,8 @@ async function makeIt(s, soul, system, st) {
     const old = st.action === 'record_song' && st.details?.revise ? [...s.studio.songs].reverse().find((x) => x.pattern && x.name.toLowerCase() === String(st.details.revise).toLowerCase()) : null;
     if (st.details?.revise && !old) throw new Error(`I have no song called "${st.details.revise}" to rewrite`);
     const current = old ? describePattern(old.pattern) : null;
-    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current }), 1, [], { group: 'big' });
-    if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl) });
+    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
+    if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl), allowed: [...instruments(s), 'drums'] });
     return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
   } catch (e) {
     console.error('⚠️  maker:', e.message);
@@ -1061,7 +1062,12 @@ async function wakeUp() {
   const soul = await loadSoul();
   const persona = soul; // the reflection and life-story calls start from who he is, too
   const system = 'I am Pip. I answer only in JSON.';
-  const state = await loadState();
+  let state = await loadState();
+  if (needsFresh(state)) { // once (Bas): only his soul and his furniture stay; the rest goes to web/archive/pre-fresh/
+    await freshStart(state);
+    state = await loadState();
+    console.log('🌱 Pip starts fresh');
+  }
   quota.ref = ensureQuota(state); // which models answered today, and which are out (reset at midnight Pacific)
   const inbox = await loadInbox(state);
   inbox.added += (await pullNtfy(state)).added;
