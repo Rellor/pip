@@ -1781,6 +1781,7 @@ let studioBusy = false;
 let viewAt = 0;
 
 function frame(now, dt) {
+  updatePick(now, dt);
   const t = now / 1000;
   const g = pip.group;
   const { body, eyes, arms, feet, book, pageHinge, inst } = pip;
@@ -2128,24 +2129,49 @@ function setMode(mode) {
 $('walk').addEventListener('click', () => setMode(view.mode === 'walk' ? 'overview' : 'walk'));
 
 // Things you can tap: Pip, the photo and Pip's creations carry their own info; furniture is found by where you tapped.
+// Places in the room that are worth a tap (by where the tap lands). Plain furniture (rug, shelves, bed, wardrobe, plant) is not:
+// it has nothing to show. Pip, his creations, his chest and the framed photo carry their own info.
 const REGIONS = [
-  { furn: 'piano', box: [-3.95, -1.25, 0, 1.5, -5, -3.55], info: () => { const n = logOf('play_piano'); const last = n.at(-1); const songs = n.slice(-5).reverse().map((x) => ({ x, song: pianoSong(x.notes, x.style, x.instrument) })).filter((x) => x.song); return { title: 'The piano', lines: ['Pip plays here when he feels like music.', n.length ? `He has played it ${n.length} time${n.length === 1 ? '' : 's'} lately${last?.style ? `, the last time ${last.style}` : ''}.` : 'He has not played it yet.', songs.length ? 'Hear what he played:' : ''].filter(Boolean), actions: songs.map(({ x, song }) => ({ text: `▶ ${hm(Date.parse(x.at))}${x.style ? ` ${x.style}` : ''}`, run: () => playSong(song) })) }; } },
-  { furn: 'piano', box: [-2.95, -2.25, 0, 0.7, -3.5, -2.8], info: () => ({ title: 'The piano stool', lines: ['Pip sits here to play.'] }) },
-  { furn: 'bookshelf', box: [1.55, 3.65, 0, 3.1, -5, -4.3], info: () => { const last = logOf('read_book').at(-1); return { title: 'The bookshelf', lines: ['Pip goes here to read.', last?.opened ? `He last read about ${last.opened.title}.` : 'He has not read anything here yet.'], links: last?.opened?.url ? [{ text: `Read: ${last.opened.title}`, url: last.opened.url }] : [] }; } },
-  { furn: 'desk', box: [-5, -3.6, 0, 1.9, 0.1, 2.3], info: () => { const last = logOf('search_web').at(-1); const apps = lastState?.apps || []; return { title: 'The computer', lines: ['Pip looks things up on the web here.', last ? `His last search was "${last.query}".` : 'He has not searched yet.', apps.length ? `He has written ${apps.length} app${apps.length === 1 ? '' : 's'}:` : ''].filter(Boolean), links: last?.opened?.url ? [{ text: `He opened: ${last.opened.title}`, url: last.opened.url }] : [], actions: apps.slice(-5).map((a) => ({ text: `▶ Open ${a.name}`, run: () => openApp(a) })) }; } },
-  { furn: 'bed', box: [2.2, 4.6, 0, 1.1, 1.3, 4.7], info: () => ({ title: "Pip's bed", lines: ['Pip sleeps here, from 23:00 until 08:00.', 'He also rests here when he is tired.'] }) },
-  { furn: 'plant', box: [3.6, 4.6, 0, 1.5, -4.6, -3.6], info: () => ({ title: 'A plant', lines: ['A leafy plant in the corner.'] }) },
-  { box: [-0.9, 1.5, 1.7, 4.1, -5.1, -4.8], info: () => ({ title: 'The window', lines: ['Pip looks outside here.', 'The sky follows the real time of day where you are.'] }) },
-  { furn: 'rug', box: [-2, 2, 0, 0.12, -1.2, 2.8], info: () => ({ title: 'The rug', lines: ['A soft round rug in the middle of the room.'] }) },
+  { furn: 'desk', box: [-5, -3.6, 0, 1.9, 0.1, 2.3], center: [-4.3, 1.4, 1.2], info: () => computerInfo() },
+  { box: [-0.9, 1.5, 1.7, 4.1, -60, -4.8], center: [0.3, 3.9, -4.9], info: () => windowInfo() }, // deep: a tap through the glass lands on the world outside
 ];
-// `direct` is true when the thing tapped carries its own info (Pip, his creations); furniture is found by where the ray landed.
+function computerInfo() {
+  const s = lastState || {};
+  const apps = (s.apps || []).slice(-4).reverse();
+  const searches = [...new Set((s.log || []).filter((e) => e.action === 'search_web' && e.query && !e.failed).map((e) => e.query))].slice(-3).reverse();
+  const lvl = Math.min(10, 1 + Math.floor(Math.sqrt((s.skills?.coding || 0) / 2)));
+  const sections = [
+    { lines: ['Pip looks things up here, and writes his little programs.'] },
+    { heading: 'What he looked up lately', chips: searches.length ? searches : ['nothing yet'] },
+    { heading: 'His programs', chips: apps.length ? apps.map((a) => a.name) : ['none yet'] },
+    { heading: 'Skill', chips: [`💻 coding ${lvl}/10`] },
+  ];
+  return { title: 'His computer', icon: '💻', subtitle: 'On his desk', sections, actions: apps.map((a) => ({ icon: '▶', text: `Open ${a.name}`, run: () => openApp(a) })) };
+}
+function windowInfo() {
+  const s = lastState || {};
+  const lvl = lightAt(s, 0.3, -4.4, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } });
+  const wx = { clear: '☀️ clear', cloudy: '☁️ cloudy', rain: '🌧️ raining', snow: '❄️ snowing', fog: '🌫️ foggy', storm: '⛈️ a storm' }[forceLook.weather || land.state.weather] || '';
+  const shots = (s.pictures || []).filter((p) => p.by === 'pip' && /window|sky/i.test(p.target || '')).length;
+  return {
+    title: 'The window', icon: '🪟', subtitle: 'What Pip sees of the world',
+    sections: [
+      { lines: ['The sky, the weather and the light out there follow the real time where Pip lives.'] },
+      { heading: 'Now', chips: [wx, s.weather?.temp != null ? `🌡️ ${Math.round(s.weather.temp)}°C` : '', `💡 ${levelWord(lvl.level)} by the window`].filter(Boolean) },
+      ...(shots ? [{ heading: 'His photos', chips: [`📷 ${shots} of the view`] }] : []),
+    ],
+  };
+}
+// What a tap hit: its info, and what to highlight (the thing itself, or a point for a place like the window).
+const shown = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
 function infoFor(hit) {
   for (let o = hit.object; o; o = o.parent) {
-    if (o.userData?.info) return { info: typeof o.userData.info === 'function' ? o.userData.info() : o.userData.info, direct: true };
+    if (o.userData?.info) { const info = typeof o.userData.info === 'function' ? o.userData.info() : o.userData.info; return info ? { info, direct: true, anchor: o } : null; }
   }
   const { x, y, z } = hit.point;
-  const info = REGIONS.find(({ live, box }) => { const [x0, x1, y0, y1, z0, z1] = live ?? box; return x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1; })?.info() ?? null;
-  return info ? { info, direct: false } : null;
+  const r = REGIONS.find(({ live, box }) => { const [x0, x1, y0, y1, z0, z1] = live ?? box; return x >= x0 && x <= x1 && y >= y0 && y <= y1 && z >= z0 && z <= z1; });
+  const info = r?.info() ?? null;
+  return info ? { info, direct: false, anchor: new V3(...r.center) } : null;
 }
 const BAR_COLORS = [['Fullness', 'fullness', '#e0974a'], ['Energy', 'energy', '#e2c13c'], ['Wonder', 'wonder', '#9b6fd6'], ['Joy', 'joy', '#e0658c'], ['Calm', 'calm', '#4aa3b8']];
 // Which place he is nearest to, in words.
@@ -2193,6 +2219,7 @@ wallFrame.userData.info = () => ({
 });
 chestGroup.userData.info = () => {
   const items = lastState?.stored || [];
+  if (!items.length) return null; // an empty chest has nothing to show
   return { title: "Pip's chest", lines: items.length ? ['Things Pip put away. Nothing is lost, and he can take them out again:', ...items.map((x) => `• ${x.name}`)] : ['An empty chest. Pip puts things here when he does not want them in his room for a while.'] };
 };
 function appById(id) {
@@ -2215,13 +2242,19 @@ function decorInfo(d) {
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
   if (d.image) {
     const mine = pic?.by === 'pip';
-    return { title: d.name, icon: mine ? '📷' : '🖼️', subtitle: `${mine ? 'A photo Pip took' : 'A picture someone gave to Pip'} · ${d.label}`, image: d.image, sections: pic?.caption ? [{ heading: 'Caption', quote: `“${pic.caption}”` }] : [] };
+    const secs = [];
+    if (pic?.caption) secs.push({ heading: mine ? 'His caption' : 'What you wrote', quote: `“${pic.caption}”` });
+    if (pic?.matters) secs.push({ heading: 'Why it matters to him', quote: `“${pic.matters}”` });
+    else if (pic?.notes && pic.notes !== pic.caption) secs.push({ heading: 'What he sees', quote: `“${pic.notes}”` });
+    return { title: d.name, icon: mine ? '📷' : '🖼️', subtitle: `${mine ? 'A photo Pip took' : 'A picture someone gave to Pip'} · ${d.label}`, image: d.image, sections: secs };
   }
   const lamp = isLamp(d);
   const house = isGreenhouse(d);
   const sections = [];
   if (d.why) sections.push({ heading: 'Why he made it', quote: `“${d.why}”` });
-  const facts = [d.label, d.project ? `Project: ${d.project}` : ''].filter(Boolean);
+  const proj = (lastState?.projects || []).find((p) => (p.versions || []).some((v) => v.ref === d.id));
+  const ver = proj?.versions.find((v) => v.ref === d.id);
+  const facts = [d.label, proj ? `🧩 ${proj.title} · v${ver.v}${proj.status === 'done' && proj.proud ? ' · he is proud of it' : ''}` : d.project ? `Project: ${d.project}` : '', d.usedAt ? `👆 last used ${when(d.usedAt)}` : ''].filter(Boolean);
   if (lamp) {
     const on = d.auto === 'dark' ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : litOf(d);
     facts.push(on ? '💡 On' : '💡 Off', d.auto === 'dark' ? '🌙 Switches itself on in the dark' : '');
@@ -2312,7 +2345,61 @@ function renderInfo(info) {
   $('infobody').replaceChildren(body);
   scroller.scrollTop = top;
 }
-function showInfo(info) {
+// The thing that was tapped: it glows softly, its name floats above it, and the view moves a little toward it.
+const pickTag = document.createElement('div');
+pickTag.id = 'picktag';
+pickTag.hidden = true;
+stage.append(pickTag);
+let picked = null; // { anchor, mats: [{ m, color, intensity }], t0 }
+let pickEase = null;
+let pickHome = null;
+const pickP = new V3();
+const anchorPoint = (a, out) => {
+  if (a?.isVector3) return out.copy(a);
+  box3.setFromObject(a);
+  if (box3.isEmpty()) return null;
+  return out.set((box3.min.x + box3.max.x) / 2, box3.max.y + 0.18, (box3.min.z + box3.max.z) / 2);
+};
+function clearPick() {
+  if (!picked) return;
+  for (const x of picked.mats) { x.m.emissive.copy(x.color); x.m.emissiveIntensity = x.intensity; }
+  picked = null;
+  pickTag.hidden = true;
+}
+function setPick(anchor, title) {
+  clearPick();
+  if (!anchor) return;
+  const mats = [];
+  if (anchor.isObject3D) anchor.traverse((o) => {
+    if (!o.isMesh || !o.material?.emissive || o.material.emissiveIntensity > 0.5 || mats.some((x) => x.m === o.material)) return; // lamps keep their own glow
+    mats.push({ m: o.material, color: o.material.emissive.clone(), intensity: o.material.emissiveIntensity });
+  });
+  picked = { anchor, mats, t0: performance.now() };
+  pickTag.textContent = title || '';
+  pickTag.hidden = !title;
+  const p = anchorPoint(anchor, new V3());
+  if (p && view.mode === 'overview') pickHome ??= { px: orbit.px, pz: orbit.pz }; // where the view was before: it goes back when the card closes
+  if (p && view.mode === 'overview') pickEase = { px: clamp(orbit.px + (p.x - (focusX + orbit.px)) * 0.3, -5, 5), pz: clamp(orbit.pz + (p.z - (-0.3 + orbit.pz)) * 0.3, -5, 5) };
+}
+function updatePick(now, dt) {
+  if (pickEase && view.mode === 'overview') {
+    orbit.px += (pickEase.px - orbit.px) * Math.min(1, dt * 3);
+    orbit.pz += (pickEase.pz - orbit.pz) * Math.min(1, dt * 3);
+    applyOrbit();
+    if (Math.abs(pickEase.px - orbit.px) + Math.abs(pickEase.pz - orbit.pz) < 0.01) pickEase = null;
+  }
+  if (!picked) return;
+  const glow = 0.14 + 0.1 * Math.sin((now - picked.t0) / 260);
+  for (const x of picked.mats) { x.m.emissive.setRGB(1, 0.82, 0.5); x.m.emissiveIntensity = glow; }
+  if (pickTag.hidden || !anchorPoint(picked.anchor, pickP)) return;
+  pickP.project(camera);
+  if (pickP.z > 1) { pickTag.style.opacity = '0'; return; }
+  const r = stage.getBoundingClientRect();
+  pickTag.style.opacity = '1';
+  pickTag.style.transform = `translate(-50%, -100%) translate(${((pickP.x + 1) / 2) * r.width}px, ${((1 - pickP.y) / 2) * r.height}px)`;
+}
+function showInfo(info, anchor = null) {
+  setPick(anchor, anchor ? info.title : '');
   renderInfo(info);
   clearInterval(infoTimer);
   infoLive = info.refresh || null;
@@ -2323,13 +2410,18 @@ function showInfo(info) {
 }
 const link_ = (url, text) => link(url, text);
 function hideInfo() {
+  clearPick();
+  if (pickHome && view.mode === 'overview') pickEase = pickHome;
+  pickHome = null;
   infoBox.hidden = true;
   clearInterval(infoTimer);
   infoLive = null;
 }
 $('infoclose').addEventListener('click', hideInfo);
-infoBox.addEventListener('click', (e) => {
-  if (e.target === infoBox) hideInfo(); // a tap outside the card closes it
+// The room stays visible while a card is open: a tap on an empty spot closes it, a tap on something else switches to it.
+document.addEventListener('pointerdown', (e) => {
+  if (infoBox.hidden || $('infocard').contains(e.target) || e.target === renderer.domElement) return;
+  hideInfo(); // a tap in the panel or on the buttons around the room closes the card
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !infoBox.hidden) hideInfo();
@@ -2346,42 +2438,47 @@ const ndc = new THREE.Vector2();
 // Small things are hard to hit with a finger, so a tap close to one of Pip's creations counts as a tap on it.
 const box3 = new THREE.Box3();
 const corner = new THREE.Vector3();
-function nearDecor(clientX, clientY, rect) {
-  let best = null;
-  for (const g of decorGroups.values()) {
-    if (!g.visible || !g.userData.info) continue;
-    box3.setFromObject(g);
-    if (box3.isEmpty()) continue;
-    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity, behind = false;
-    for (let i = 0; i < 8; i++) {
-      corner.set(i & 1 ? box3.max.x : box3.min.x, i & 2 ? box3.max.y : box3.min.y, i & 4 ? box3.max.z : box3.min.z).project(camera);
-      if (corner.z > 1) behind = true;
-      const px = rect.left + ((corner.x + 1) / 2) * rect.width;
-      const py = rect.top + ((1 - corner.y) / 2) * rect.height;
-      x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
-    }
-    const pad = 16;
-    if (behind || clientX < x0 - pad || clientX > x1 + pad || clientY < y0 - pad || clientY > y1 + pad) continue;
-    const area = (x1 - x0 + 2 * pad) * (y1 - y0 + 2 * pad);
-    if (!best || area < best.area) best = { area, g };
+// The box a thing covers on the screen (with some room around it for a finger), or null when it is behind the camera.
+function screenBox(g, rect, pad) {
+  box3.setFromObject(g);
+  if (box3.isEmpty()) return null;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (let i = 0; i < 8; i++) {
+    corner.set(i & 1 ? box3.max.x : box3.min.x, i & 2 ? box3.max.y : box3.min.y, i & 4 ? box3.max.z : box3.min.z).project(camera);
+    if (corner.z > 1) return null;
+    const px = rect.left + ((corner.x + 1) / 2) * rect.width;
+    const py = rect.top + ((1 - corner.y) / 2) * rect.height;
+    x0 = Math.min(x0, px); x1 = Math.max(x1, px); y0 = Math.min(y0, py); y1 = Math.max(y1, py);
   }
-  const info = best?.g.userData.info;
-  return info ? (typeof info === 'function' ? info() : info) : null;
+  return { x0: x0 - pad, x1: x1 + pad, y0: y0 - pad, y1: y1 + pad, area: (x1 - x0 + 2 * pad) * (y1 - y0 + 2 * pad) };
+}
+// Small things are hard to hit with a finger: a tap close to Pip or one of his creations counts as a tap on it (the smallest wins).
+function nearThing(clientX, clientY, rect) {
+  let best = null;
+  const near = [[pip.group, 26], ...[...decorGroups.values()].map((g) => [g, 18])];
+  for (const [g, pad] of near) {
+    if (!shown(g) || !g.userData.info) continue;
+    const b = screenBox(g, rect, pad);
+    if (!b || clientX < b.x0 || clientX > b.x1 || clientY < b.y0 || clientY > b.y1) continue;
+    if (!best || b.area < best.area) best = { area: b.area, g };
+  }
+  if (!best) return null;
+  const info = typeof best.g.userData.info === 'function' ? best.g.userData.info() : best.g.userData.info;
+  return info ? { info, anchor: best.g } : null;
 }
 function pickAt(clientX, clientY) {
   const r = renderer.domElement.getBoundingClientRect();
   ndc.set(((clientX - r.left) / r.width) * 2 - 1, -(((clientY - r.top) / r.height) * 2 - 1));
   ray.setFromCamera(ndc, camera);
-  let furniture = null;
+  let place = null;
   for (const h of ray.intersectObjects(scene.children, true)) {
-    if (h.object.isSprite || !h.object.visible) continue;
+    if (h.object.isSprite || h.object.isPoints || !shown(h.object)) continue;
     const found = infoFor(h);
-    if (!found) continue;
-    if (found.direct) return found.info;
-    furniture ??= found.info;
-    break;
+    if (found?.direct) return found;
+    if (found) { place = found; break; }
+    if (!h.object.material?.transparent) break; // the first solid thing hides what is behind it
   }
-  return nearDecor(clientX, clientY, r) ?? furniture;
+  return nearThing(clientX, clientY, r) ?? place;
 }
 
 // Looking around (drag) and tapping (a short touch that hardly moves).
@@ -2468,8 +2565,8 @@ dom.addEventListener('pointerup', (e) => {
   }
   const front = teachOn() ? frontTargetAt(e.clientX, e.clientY) : null;
   if (front) return showFrontCard(front);
-  const info = pickAt(e.clientX, e.clientY);
-  if (info) showInfo(info);
+  const hit = pickAt(e.clientX, e.clientY);
+  if (hit) showInfo(hit.info, hit.anchor);
   else hideInfo();
 });
 dom.addEventListener('pointercancel', (e) => {
