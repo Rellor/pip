@@ -1,0 +1,35 @@
+name: Deploy site
+
+# Vercel no longer deploys every commit (vercel.json: git.deploymentEnabled false). Pip commits his state every 8 minutes,
+# and the site reads that state straight from GitHub, so it only needs a new deployment when the site's own files change.
+# This asks Vercel to deploy then, through a deploy hook (Vercel: Project, Settings, Git, Deploy Hooks; saved here as the
+# secret VERCEL_DEPLOY_HOOK). It can also be started by hand.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - '!web/state.json'
+      - '!web/health.json'
+      - '!web/gifts/**'
+      - '!web/made/**'
+      - '!web/photos/**'
+      - '!web/archive/**'
+      - 'api/**'
+      - 'seal.js'
+      - 'github.js'
+      - 'inbox.js'
+      - 'vercel.json'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ask Vercel to deploy
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "No VERCEL_DEPLOY_HOOK secret yet: nothing deployed."; exit 1; fi
+          curl -fsS -X POST "$HOOK" > /dev/null && echo "Vercel is deploying."
