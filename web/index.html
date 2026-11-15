@@ -210,6 +210,14 @@
   .thumb { display:block; max-width:100%; max-height:220px; border-radius:10px; margin-top:8px; }
   /* Life: a dashboard of tiles; a tile opens its part full size */
   #lifehome .tile.feel { margin-bottom:8px; }
+  .pipnow { margin-bottom:8px; }
+  .pipnow #nowproject { margin:6px 0 4px; font-size:14px; }
+  .pipnow #nowproject .track { margin-top:4px; }
+  .goals { list-style:none; padding:0; margin:6px 0; font-size:14px; }
+  .goals li { padding:2px 0; color:var(--ink); }
+  .goals li.done { color:var(--muted); }
+  .pipnow .chips { margin-top:6px; }
+  .stillempty { font-size:13px; margin:10px 2px 0; }
   .tiles { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; grid-auto-flow:dense; }
   .tile { min-width:0; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; text-align:left; color:var(--ink); font:inherit; font-size:15px; display:block; width:100%; }
   button.tile { cursor:pointer; }
@@ -386,25 +394,21 @@
     <section class="pane" data-pane="life" hidden>
       <div id="lifehome">
         <div class="tile feel"><div class="t"><span>💗 How Pip feels</span></div><div id="bars"></div></div>
+        <div class="tile pipnow"><div class="t"><span>🎯 Right now</span><small id="coziness"></small></div><div id="nowproject"></div><ul id="goals" class="goals"></ul><div class="chips" id="skills"></div></div>
         <div class="tiles" id="tiles"></div>
-        <div class="merged mind">
-      <h2>What Pip is working toward</h2>
-      <ul id="projects"></ul>
-      <h2>What Pip realized</h2>
-      <ul id="reflections"></ul>
-      <h2>What Pip is thinking about</h2>
-      <ul id="thoughts"></ul>
-      <h2>Pip wants</h2><ul id="wants"></ul>
-      <h2>Pip wonders</h2><ul id="questions"></ul>
-      <h2>Came true</h2><ul id="fulfilled"></ul>
-      <h2>His room</h2><p id="coziness" class="muted"></p>
-      <h2>Goals today</h2><ul id="goals"></ul>
-      <h2>Skills</h2><div class="chips" id="skills"></div>
-      <h2>Interests</h2><div class="chips" id="interests"></div>
-        </div>
+        <p class="muted stillempty" id="stillempty"></p>
       </div>
       <div id="lifeopen" hidden>
-        <button class="small" id="lifeback" type="button">← Life</button>
+        <button class="small" id="lifeback" type="button">← Pip</button>
+        <div class="lifesec" data-sec="mind" data-icon="🧠" data-title="His mind" data-count="thoughts" hidden>
+          <div class="msec"><h2>What Pip is working toward</h2><ul id="projects"></ul></div>
+          <div class="msec"><h2>What Pip is thinking about</h2><ul id="thoughts"></ul></div>
+          <div class="msec"><h2>What Pip realized</h2><ul id="reflections"></ul></div>
+          <div class="msec"><h2>Pip wants</h2><ul id="wants"></ul></div>
+          <div class="msec"><h2>Pip wonders</h2><ul id="questions"></ul></div>
+          <div class="msec"><h2>Came true</h2><ul id="fulfilled"></ul></div>
+          <div class="msec"><h2>Interests</h2><div class="chips" id="interests"></div></div>
+        </div>
         <div class="lifesec" data-sec="story" data-icon="📖" data-title="Story" hidden><h2>Pip's story so far</h2><p class="story" id="story"></p></div>
         <div class="lifesec" data-sec="photos" data-icon="📷" data-title="Photos" hidden><h2>Photos Pip took</h2><p class="muted">Of the window, his room, something he made, or himself.</p><div class="pics" id="photolist"></div></div>
         <div class="lifesec" data-sec="found" data-icon="🌍" data-title="Found online" hidden><h2>Pictures Pip found online</h2><p class="muted">Free pictures from Wikimedia Commons. Pip picks what to look for. Tap one to see where it came from.</p><div class="pics" id="foundlist"></div></div>

@@ -3758,7 +3758,7 @@ function renderMind(s) {
     })
     : empty('None yet. When Pip learns something that excites him, he can turn it into a project.'));
   const now = Date.now();
-  const thoughts = (s.thoughts || []).filter((t) => !t.step && Date.parse(t.at) <= now).sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 40);
+  const thoughts = (s.thoughts || []).filter((t) => !t.step && Date.parse(t.at) <= now).sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 12);
   fill($('thoughts'), thoughts.length
     ? thoughts.map((t) => entry([when(t.at), t.mood || ''].filter(Boolean), t.text, 'reflect'))
     : empty('Pip has not thought anything yet.'));
@@ -3768,13 +3768,36 @@ function renderMind(s) {
   fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
   const done = (s.fulfilled || []).slice().reverse();
   fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
-  if ($('coziness')) { const c = s.body?.coziness; $('coziness').textContent = Number.isFinite(c) ? `Cozy ${Math.round(c)}/10${c <= 3 ? ': it still feels bare' : c >= 7 ? ': it feels like home' : ''}` : 'not measured yet'; }
+  { const c = s.body?.coziness; $('coziness').textContent = Number.isFinite(c) ? `🏠 cozy ${Math.round(c)}/10` : ''; }
+  // Right now: the project he is on (one line and a bar) and today's goals as a small checklist.
+  const cur = projects.find((p) => p.status === 'working');
+  const np = $('nowproject');
+  np.textContent = '';
+  if (cur) {
+    const steps = cur.steps || [];
+    const doneN = steps.filter((x) => x.done).length;
+    np.append(el('strong', cur.title));
+    if (steps.length) {
+      const prog = el('div', null, 'pprog');
+      const track = el('div', null, 'track');
+      const fillBar = el('div', null, 'fill');
+      fillBar.style.width = `${(doneN / steps.length) * 100}%`;
+      fillBar.style.background = 'var(--make)';
+      track.append(fillBar);
+      prog.append(track, el('span', `${doneN} of ${steps.length}`));
+      np.append(prog);
+    }
+  } else np.append(el('span', 'No project right now.', 'muted'));
   const goals = s.intent?.items || [];
-  if ($('goals')) fill($('goals'), goals.length ? goals.map((g) => entry([g.done ? 'done' : 'not yet'], `${g.done ? '✓ ' : ''}${g.text}`)) : empty('He sets his goals when he wakes up.'));
+  const goalText = (g) => g.text.replace(/\s*\([a-z_]+\)/g, '').replace(/:\s*/, ': ');
+  fill($('goals'), goals.map((g) => el('li', `${g.done ? '✓' : '○'} ${goalText(g)}`, g.done ? 'done' : '')));
   const skills = Object.entries(s.skills || {}).filter(([, xp]) => xp > 0);
   if ($('skills')) fill($('skills'), skills.length ? skills.map(([k, xp]) => el('span', `${k} ${Math.min(10, 1 + Math.floor(Math.sqrt(xp / 2)))}`, 'chip')) : [el('span', 'just starting', 'muted')]);
   const interests = s.interests || [];
   fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
+  // Parts of his mind with nothing in them yet are left out, so the page stays short.
+  const has = { reflections: (s.reflections || []).length, wants: wants.length, questions: qs.length, fulfilled: done.length, interests: interests.length, projects: projects.length, thoughts: thoughts.length };
+  for (const [id, n] of Object.entries(has)) $(id).closest('.msec').hidden = !n;
 }
 
 // Every wake-up that failed, newest first. Only shown once the key is filled in (Settings is unlocked).
@@ -4131,12 +4154,14 @@ $('lifeback').addEventListener('click', () => openLife(null));
 function renderTiles() {
   const tiles = $('tiles');
   tiles.textContent = '';
+  const emptyNames = [];
   for (const sec of document.querySelectorAll('.lifesec')) {
     const ids = (sec.dataset.count || '').split(',').filter(Boolean);
     const real = (root) => [...root.querySelectorAll('li:not(.muted), .pic')];
     const items = ids.length ? ids.flatMap((id) => real($(id))) : real(sec);
     const imgs = [...sec.querySelectorAll('.pic img')].slice(0, 4);
-    const text = items.map((x) => ([...x.children].length > 1 ? [...x.children].map((c) => c.textContent.trim()).filter(Boolean).join(' · ') : x.textContent).replace(/\s+/g, ' ').trim()).filter(Boolean);
+    const text = items.map((x) => (sec.dataset.sec === 'mind' && x.querySelector('p') ? x.querySelector('p').textContent : [...x.children].length > 1 ? [...x.children].map((c) => c.textContent.trim()).filter(Boolean).join(' · ') : x.textContent).replace(/\s+/g, ' ').trim()).filter(Boolean);
+    if (!items.length && sec.dataset.sec !== 'story') { emptyNames.push(sec.dataset.title); continue; }
     const tile = el('button', null, 'tile');
     tile.type = 'button';
     tile.append(el('div', null, 't'));
@@ -4151,6 +4176,7 @@ function renderTiles() {
     tile.addEventListener('click', () => openLife(sec.dataset.sec));
     tiles.append(tile);
   }
+  $('stillempty').textContent = emptyNames.length ? `Still empty: ${emptyNames.join(', ')}.` : '';
 }
 
 // Pip's plan: a few steps, spread over the time until his next wake-up. The page works out which step is happening now.
