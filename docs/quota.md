@@ -1,19 +1,28 @@
 # Gemini free-tier check
 
-**Not checked yet.** As of 2026-11-14 nothing here has been verified.
+Checked on 2026-11-15 with `node --env-file=.env scripts/check-quota.mjs` (one tiny call per model).
 
-Why: this was built in a session with no Gemini key (Bas asked not to use his calls), and the docs page
-(https://ai.google.dev/gemini-api/docs/rate-limits) could not be reached from that session. Nothing below is assumed.
+| group | model | listed for this key | answer | quota | verdict |
+|---|---|---|---|---|---|
+| big | gemini-3.8-flash | yes | 503 |  | check: 503 |
+| big | gemini-3.6-flash | yes | 200 |  | works |
+| big | gemini-3.5-flash | yes | 200 |  | works |
+| lite | gemini-3.5-flash-lite | yes | 200 |  | works |
+| lite | gemini-3.1-flash-lite | yes | 200 |  | works |
 
-## How to check (uses one tiny call per model)
-```
-node --env-file=.env scripts/check-quota.mjs
-```
-It lists the models your key can use, makes one tiny call to each model in `GEMINI_BIG` and `GEMINI_LITE`,
-reads any 429 answer (`quotaId` and `limit`: per minute or per day; `limit: 0` means not in the free tier)
-and rewrites this file with a dated table.
+Models this key can use for generateContent: 49.
 
-Then remove any model marked "no free quota" or "not found" from the `GEMINI_BIG` / `GEMINI_LITE` variables.
+## What to do
+- Remove models marked "no free quota" or "not found" from GEMINI_BIG / GEMINI_LITE (GitHub: Settings, Secrets and variables, Actions, Variables).
+- Free-tier limits are per Google Cloud **project**, not per key: the key must belong to a project used only by Pip.
+- The official limits are at https://ai.google.dev/gemini-api/docs/rate-limits (they change; the 429 details above are what really counts).
 
-## Important
-Quota is per Google Cloud **project**, not per key. The key must belong to a project that only Pip uses.
+## Raw 429 details
+- gemini-3.8-flash: `{
+  "error": {
+    "code": 503,
+    "message": "This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.",
+    "status": "UNAVAILABLE"
+  }
+}
+`
