@@ -1,5 +1,6 @@
 import { timingSafeEqual, randomBytes } from 'node:crypto';
 import { pictureType } from '../inbox.js';
+import { seal } from '../seal.js';
 
 // Receives Bas's reply from the app (text and/or one small picture) and saves it in the repo (inbox/).
 // It does not wake Pip: he reads it at his next own wake-up. If NTFY_TOPIC is set, a silent copy goes to the ntfy chat too.
@@ -63,7 +64,8 @@ export default async function handler(req, res) {
     });
     if (!img.ok) return res.status(502).json({ error: `Could not save the picture (GitHub said ${img.status}).` });
   }
-  const file = { id, at: new Date().toISOString(), text, ...(picture ? { image: `${id}.${type.ext}` } : {}) };
+  // The text is sealed with the reply key: the repo is public, and only Bas (on the site) and Pip (on GitHub) can open it.
+  const file = { id, at: new Date().toISOString(), private: true, ...(text ? { enc: seal(text, expected) } : { text: '' }), ...(picture ? { image: `${id}.${type.ext}` } : {}) };
   const put = await gh(`/contents/inbox/${id}.json`, {
     method: 'PUT',
     body: JSON.stringify({ message: 'Someone wrote to Pip [skip ci]', branch: BRANCH, content: Buffer.from(JSON.stringify(file)).toString('base64') }),

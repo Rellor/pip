@@ -12,7 +12,7 @@ const MAX_NOTES_PER_TRACK = 64;
 
 export function cleanPattern(raw, maxBars = 16) {
   if (!raw || typeof raw !== 'object') return null;
-  const instruments = (Array.isArray(raw.instruments) ? raw.instruments : []).map((x) => String(x).toLowerCase()).filter((x) => TRACK_TIMBRES.includes(x)).slice(0, 4);
+  const instruments = (Array.isArray(raw.instruments) ? raw.instruments : []).map((x) => String(x).toLowerCase()).filter((x) => TRACK_TIMBRES.includes(x) || x === 'voice').slice(0, 4); // voice: his own singing (played as choir)
   const sections = (Array.isArray(raw.sections) ? raw.sections : []).slice(0, 4).map((sec, i) => ({
     name: clip(sec?.name, 12) || String.fromCharCode(65 + i),
     bars: (Array.isArray(sec?.bars) ? sec.bars : []).slice(0, 8).map((b) => Object.fromEntries(instruments.filter((k) => b && typeof b[k] === 'string').map((k) => [k, clip(b[k], 120)]))),

@@ -1146,7 +1146,7 @@ const SAMPLED = {
   glockenspiel: ['glockenspiel', 1.4], musicbox: ['music_box', 1.1], bell: ['tubular_bells', 2.4], choir: ['choir_aahs', 0.5],
 };
 const SYNTH_FOR = { epiano: 'piano', harpsichord: 'pluck', organ: 'pad', harp: 'pluck', guitar: 'pluck', violin: 'pad', cello: 'pad', strings: 'pad', clarinet: 'flute', vibraphone: 'bell', kalimba: 'musicbox', glockenspiel: 'musicbox', choir: 'soft' };
-const knownInstrument = (x) => (SAMPLED[x] || VOICES[x] ? x : 'piano');
+const knownInstrument = (x) => (x === 'voice' ? 'choir' : SAMPLED[x] || VOICES[x] ? x : 'piano'); // his own voice sings with the choir sound
 const FLAT = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
 const sampleKey = (freq) => {
   const m = Math.round(69 + 12 * Math.log2(freq / 440));
@@ -1553,7 +1553,7 @@ function planFor(last) {
     case 'play_piano': {
       const notes = parseNotes(d.notes);
       const instrument = knownInstrument(String(d.instrument || '').toLowerCase());
-      if (HELD_LOOKS.includes(String(d.instrument || '').toLowerCase())) return { at: /studio|music room/i.test(String(d.where || '')) ? 'studio_stage' : 'center', anim: 'jam', held: String(d.instrument).toLowerCase(), notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
+      if (String(d.instrument || '').toLowerCase() === 'voice' || HELD_LOOKS.includes(String(d.instrument || '').toLowerCase())) return { at: String(d.instrument || '').toLowerCase() === 'voice' ? 'window' : /studio|music room/i.test(String(d.where || '')) ? 'studio_stage' : 'center', anim: 'jam', held: String(d.instrument).toLowerCase(), notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
       return { at: /studio|music room/i.test(String(d.where || '')) && ['epiano', 'harpsichord', 'organ', 'synth'].includes(instrument) ? 'studio_keys' : 'piano', anim: 'play', notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
     }
     case 'record_song': return HAS_STUDIO ? { at: 'studio_desk', anim: 'mix', song: trackSong(d) } : { at: 'computer', anim: 'write', song: trackSong(d) };
@@ -3055,6 +3055,76 @@ $('reply').addEventListener('submit', async (e) => {
   }
 });
 
+// The private chat: its texts are sealed in state.json (the repo is public). With the key, /api/private opens them.
+const privateText = new Map();
+let privateWaiting = [];
+let pendingVisitors = [];
+let privateAt = 0;
+let privateOff = false;
+async function refreshPrivate(force = false) {
+  const key = store('pip-key');
+  if (privateOff || !key || (!force && Date.now() - privateAt < 20_000)) return;
+  privateAt = Date.now();
+  try {
+    const res = await fetch('/api/private', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key }) });
+    if (res.status === 501 || res.status === 404) privateOff = true;
+    if (!res.ok) return;
+    const data = await res.json();
+    for (const m of data.messages || []) privateText.set(m.id, m.text);
+    privateWaiting = (data.messages || []).filter((m) => m.waiting);
+    pendingVisitors = data.visitors || [];
+    if (lastState) render(lastState);
+  } catch {}
+}
+function renderApprovals() {
+  const key = store('pip-key');
+  $('approvals').hidden = !key || !pendingVisitors.length;
+  if ($('approvals').hidden) return;
+  fill($('approvallist'), pendingVisitors.map((v) => {
+    const li = entry([when(v.at), v.name || 'a visitor'], v.text);
+    const row = el('div', null, 'row');
+    for (const [label, what] of [['✓ Let Pip read it', 'approve'], ['Remove', 'remove']]) {
+      const b = el('button', label, what === 'approve' ? 'small primary' : 'small');
+      b.type = 'button';
+      b.addEventListener('click', async () => {
+        b.disabled = true;
+        const res = await fetch('/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key, [what]: v.id }) }).catch(() => null);
+        if (res?.ok) { pendingVisitors = pendingVisitors.filter((x) => x.id !== v.id); toast(what === 'approve' ? 'Pip will read it at his next wake-up.' : 'Removed.'); renderApprovals(); }
+        else { b.disabled = false; toast('That did not work. Try again later.'); }
+      });
+      row.append(b);
+    }
+    li.append(row);
+    return li;
+  }));
+}
+// The public mailbox: approved visitor messages and Pip's answers.
+function renderVisitors(s) {
+  const list = (s.visitors || []).slice().reverse();
+  fill($('visitlist'), list.length
+    ? list.flatMap((v) => [entry([when(v.at), v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
+    : empty('No messages yet. Be the first to say hello.'));
+}
+const pageOpenedAt = Date.now();
+$('visit').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const text = $('visittext').value.trim();
+  if (!text) return;
+  $('visitsend').disabled = true;
+  $('visitstatus').textContent = 'Sending…';
+  try {
+    const res = await fetch('/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, name: $('visitname').value.trim(), website: $('visitweb').value, since: Date.now() - pageOpenedAt }) });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'That did not work.');
+    $('visittext').value = '';
+    $('visitstatus').textContent = 'Thank you! Bas reads it first, then Pip.';
+  } catch (err) {
+    $('visitstatus').textContent = err.message;
+  } finally {
+    $('visitsend').disabled = false;
+  }
+});
+
 // What Bas typed in the ntfy app shows up in this chat too (the website asks ntfy through a small service, with the same key).
 let ntfyMsgs = [];
 let ntfyAt = 0;
@@ -3073,7 +3143,7 @@ async function refreshNtfy() {
 }
 
 // tabs
-const TABS = ['day', 'mind', 'asks', 'tasks', 'photos', 'found', 'messages', 'life'];
+const TABS = ['day', 'mind', 'asks', 'tasks', 'photos', 'found', 'messages', 'visitors', 'life'];
 let tab = TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day';
 let latestMsg = null;
 function showTab(name) {
@@ -3100,6 +3170,7 @@ const PLAYED = {
   guitar: ['🎸', 'the guitar'], violin: ['🎻', 'the violin'], cello: ['🎻', 'the cello'], strings: ['🎻', 'the strings'], flute: ['🪈', 'the flute'],
   clarinet: ['🎶', 'the clarinet'], kalimba: ['🎵', 'the kalimba'], harp: ['🎼', 'the harp'], vibraphone: ['🎶', 'the vibraphone'], marimba: ['🎶', 'the marimba'],
   glockenspiel: ['🔔', 'the glockenspiel'], musicbox: ['🎶', 'the music box'], bell: ['🔔', 'the bells'], choir: ['🎤', 'the choir voices'],
+  voice: ['🎤', 'a tune with his own voice'],
 };
 const playedOf = (e) => PLAYED[String(e?.instrument || e?.details?.instrument || '').toLowerCase()] || PLAYED.piano;
 function headline(st) {
@@ -3193,7 +3264,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: e.action === 'record_song' ? 'Recorded a song' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: e.action === 'record_song' ? 'Recorded a song' : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3691,13 +3762,18 @@ function render(s) {
     pending = pending.filter((p) => !gotIds.has(p.id));
     store('pip-pending', JSON.stringify(pending));
   }
+  const opened = (m) => (m.private ? privateText.get(m.id) ?? '🔒 private' : m.text); // private texts come from /api/private, with the key
   const thread = [
-    ...outbox.map((m) => ({ at: m.at, kind: m.kind, text: m.text })),
-    ...(s.inbox || []).map((m) => ({ at: m.at, mine: true, read: m.read, readAt: m.readAt, text: m.text, via: m.via, image: (s.pictures || []).find((p) => p.id === m.picture)?.image })),
+    ...outbox.map((m) => ({ at: m.at, kind: m.kind, text: opened(m) })),
+    ...(s.inbox || []).map((m) => ({ at: m.at, mine: true, read: m.read, readAt: m.readAt, text: opened(m), via: m.via, image: (s.pictures || []).find((p) => p.id === m.picture)?.image })),
+    ...privateWaiting.filter((m) => !gotIds.has(m.id) && !pending.some((p) => p.id === m.id)).map((m) => ({ at: m.at, mine: true, text: m.text })),
     ...ntfyMsgs.filter((m) => !gotIds.has(m.id)).map((m) => ({ at: m.at, mine: true, via: 'ntfy', text: m.text })),
     ...pending.map((p) => ({ at: p.at, mine: true, sending: true, text: p.text })),
   ].sort((a, b) => new Date(b.at) - new Date(a.at));
-  fill($('messages'), thread.length
+  $('privnote').textContent = store('pip-key') ? 'This chat is private: only you (with your key) and Pip can read it.' : 'This chat is private. Add your key in Settings (the gear) to read and write.';
+  renderApprovals();
+  renderVisitors(s);
+  fill($('messages'), !store('pip-key') ? [] : thread.length
     ? thread.map((m) => m.mine
       ? entry([when(m.at), m.via === 'ntfy' ? 'You (ntfy)' : 'You', m.sending ? 'on its way…' : m.read ? `✓ Pip read it ${when(m.readAt || m.at)}` : 'Pip has not read it yet'], m.text, 'mine', m.image)
       : entry([when(m.at), m.kind === 'ask' ? '🙏 Pip asks for something' : '✉️ Pip writes to you'], m.text, m.kind === 'ask' ? 'ask' : ''))
@@ -4012,6 +4088,7 @@ async function poll() {
       isStatic = !!s._static;
       render(s);
       refreshNtfy();
+      refreshPrivate();
     } else if (lastState) renderStatus(lastState);
     if (s._static) {
       delay = Date.now() < fastUntil ? 10_000 : 30_000;

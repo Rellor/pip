@@ -29,6 +29,8 @@ export function ensureMemory(s) {
     const importance = imp(m.importance);
     const out = { id: m.id ?? `m${Date.parse(m.at) || i}x${i}`, at: m.at, text: m.text, importance, kind: m.kind ?? 'memory', weight: Number.isFinite(m.weight) ? m.weight : importance, lastUsed: m.lastUsed ?? m.at };
     if (m.pinned) out.pinned = true;
+    if (m.private) out.private = true; // sealed when saved (seal.js)
+    if (m.enc) out.enc = m.enc;
     return out;
   });
   s.memoryFadeAt ??= new Date().toISOString();
@@ -120,7 +122,8 @@ export async function archiveForgotten(s, file = 'web/archive/memories.json') {
   try { have = JSON.parse(await readFile(file, 'utf8')); } catch {}
   const known = new Set(have.map((m) => m.id));
   const at = new Date().toISOString();
-  for (const m of list) if (!known.has(m.id)) have.push({ ...m, forgottenAt: at });
+  const { seal, PRIVATE } = await import('./seal.js');
+  for (const m of list) if (!known.has(m.id)) have.push(m.private && m.text !== PRIVATE ? { ...m, text: PRIVATE, enc: seal(m.text) ?? undefined, forgottenAt: at } : { ...m, forgottenAt: at }); // the archive is public: private ones stay sealed
   await mkdir(dirname(file), { recursive: true });
   await writeFile(file, JSON.stringify(have, null, 1));
   s.forgotten = [];

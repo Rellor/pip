@@ -45,7 +45,7 @@ export function cleanTracks(raw) {
   if (!raw || typeof raw !== 'object' || !Array.isArray(raw.tracks)) return null;
   const tracks = [];
   for (const t of raw.tracks.slice(0, 4)) {
-    const timbre = String(t?.instrument ?? t?.timbre ?? 'piano').toLowerCase();
+    const timbre = String(t?.instrument ?? t?.timbre ?? 'piano').toLowerCase().replace(/^voice$/, 'choir'); // his voice sings with the choir sound
     const kind = TRACK_TIMBRES.includes(timbre) ? timbre : 'piano';
     const notes = parseNotesText(t?.notes, kind === 'drums');
     if (soundingOf(notes) < 2) continue;
@@ -68,7 +68,8 @@ export function cleanSong(raw) {
   const sounding = soundingOf(notes);
   if (sounding < 2 && !ambience) return null;
   const tempo = Math.min(200, Math.max(40, Math.round(Number(raw.tempo) || 90)));
-  const timbre = TIMBRES.includes(String(raw.timbre ?? '').toLowerCase()) ? String(raw.timbre).toLowerCase() : 'piano';
+  const asked = String(raw.timbre ?? '').toLowerCase().replace(/^voice$/, 'choir');
+  const timbre = TIMBRES.includes(asked) ? asked : 'piano';
   const song = { notes: sounding < 2 ? [] : notes, tempo, timbre };
   if (ambience) {
     song.ambience = ambience;

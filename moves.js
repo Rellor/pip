@@ -40,13 +40,13 @@ const daysSince = (iso, now) => (iso ? (now - Date.parse(iso)) / DAY : Infinity)
 const lastFail = (s) => s.plan?.lastFail ?? null;
 const HELD_KINDS = ['guitar', 'violin', 'flute', 'clarinet', 'kalimba', 'harp'];
 // What he can make music on now: the piano when it is in his room (or was given back), and held instruments he owns.
-export const instruments = (s) => [...(!s.furniture?.piano?.gone || (s.tools ?? []).some((t) => /piano/i.test(`${t.kind} ${t.name}`)) ? ['piano'] : []), ...new Set((s.tools ?? []).map((t) => String(t.kind ?? '').toLowerCase()).filter((k) => HELD_KINDS.includes(k)))];
+export const instruments = (s) => ['voice', ...(!s.furniture?.piano?.gone || (s.tools ?? []).some((t) => /piano/i.test(`${t.kind} ${t.name}`)) ? ['piano'] : []), ...new Set((s.tools ?? []).map((t) => String(t.kind ?? '').toLowerCase()).filter((k) => HELD_KINDS.includes(k)))];
 
 // Why an ask would make sense now, or null. At most ASKS_PER_DAY a day.
 export function askReason(s, now = Date.now()) {
   if ((s.today?.done?.ask_for ?? 0) >= ASKS_PER_DAY) return null;
   const askedForMusic = (s.asks ?? []).some((a) => a.status === 'open' && /piano|guitar|violin|flute|clarinet|kalimba|harp|instrument|ukulele|drum/i.test(a.item));
-  if (!instruments(s).length && !askedForMusic) return 'I have no instrument to make music on';
+  if (instruments(s).length === 1 && !askedForMusic && (s.today?.done?.play_piano ?? 0) >= 2) return 'I can only hum and sing, and I would like an instrument'; // he sang today and wants more
   if (s.fullness <= 3 && !food(s).length && !ripe(s, now).length) return 'I am hungry and I have nothing left to eat or harvest (seeds would help)';
   const need = missingForProject(s, (n) => hasTool(s, n) || (s.tools ?? []).some((t) => String(t.name).toLowerCase().includes(String(n).toLowerCase())));
   if (need) return `my project "${need.project}" needs ${need.tool}, and I looked into how it is done`;
@@ -70,7 +70,7 @@ export const MOVES = [
   { name: 'extend_thing', maker: true, line: (s) => `add more parts to something I made (${names(own(s).map((d) => d.name))}): {name, add}`, when: (s, n) => own(s).length > 0 && can(s, 'extend_thing', n), score: () => 0.4 },
   // --- music ---
   { name: 'revise_song', maker: true, line: (s) => `rewrite one section of a song I made (${names((s.studio?.songs ?? []).filter((x) => x.pattern).slice(-3).map((x) => x.name))}): {name, section, why}`, when: (s, n) => (s.studio?.songs ?? []).some((x) => x.pattern) && can(s, 'record_song', n) && instruments(s).length > 0, score: (s) => 0.5 + s.body.creativity / 6 },
-  { name: 'play_piano', line: (s) => `play music: {notes like "C4 E4 G4:2 C3+E3+G3:4", instrument: ${instruments(s).join(' or ')}}`, when: (s) => instruments(s).length > 0, score: (s) => 0.8 + s.calm / 10 },
+  { name: 'play_piano', line: (s) => `${instruments(s).length === 1 ? 'hum or sing a tune' : 'make music'}: {notes like "C4 E4 G4:2 E4:4", instrument: ${instruments(s).join(' or ')}}`, when: (s) => instruments(s).length > 0, score: (s) => 0.8 + s.calm / 10 },
   // --- learning ---
   { name: 'search_web', line: () => 'look something up online: {query}', when: () => true, score: (s) => 0.8 + s.body.curiosity / 3 },
   { name: 'read_book', line: () => 'read about something: {topic}', when: () => true, score: (s) => 0.5 + s.body.curiosity / 4 },
@@ -96,6 +96,7 @@ export const MOVES = [
   // --- writing and people ---
   { name: 'write_diary', line: () => 'write in my diary: {text}', when: () => true, score: (s, n) => 0.3 + (new Date(n).getHours() >= 20 ? 1 : 0) },
   { name: 'tell', line: () => 'write a message to Bas: {text}', when: (s, n) => s.plan?.unread > 0 || (s.body.loneliness >= 7 && daysSince(s.outbox?.filter((m) => m.kind === 'tell').at(-1)?.at, n) >= 1), score: (s) => (s.plan?.unread ? 5 : 1) },
+  { name: 'answer_visitor', line: (s) => `answer a visitor's message on my page (${names((s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => v.id))}): {id, text}`, when: (s) => (s.visitors ?? []).some((v) => !v.answer), score: () => 2 },
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
   { name: 'dream', line: () => 'tell Bas about a big dream, something far too big to make myself (he might build it): {what, why}', when: (s, n) => daysSince(s.bigDreamAt, n) >= 3 && s.body.creativity >= 6, score: () => 0.8 },
