@@ -41,8 +41,8 @@ jobs:
       - name: Pip lives
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
-          GEMINI_FALLBACK_MODEL: ${{ vars.GEMINI_FALLBACK_MODEL }}
+          GEMINI_BIG: ${{ vars.GEMINI_BIG }}
+          GEMINI_LITE: ${{ vars.GEMINI_LITE }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           PIP_SITE_URL: ${{ vars.PIP_SITE_URL }}
         run: node loop.js

@@ -5,7 +5,7 @@ import { notHungry } from './feelings.js';
 import { MAX_ART_PER_DAY } from './art.js';
 import { MAX_APPS_PER_DAY } from './apps.js';
 import { MAX_CLOTHES_PER_DAY } from './clothes.js';
-import { MAX_MOVES_PER_DAY as MAX_NEW_MOVES_PER_DAY } from './moves.js';
+import { MAX_MOVES_PER_DAY as MAX_NEW_MOVES_PER_DAY } from './dances.js';
 import { MAX_PER_DAY, MAX_UPDATES_PER_DAY, MAX_MOVES_PER_DAY, capOf } from './decor.js';
 import { furnitureKey } from './decor.js';
 
@@ -20,7 +20,7 @@ const within = (iso, now) => now - Date.parse(iso) < DAY && Date.parse(iso) <= n
 
 // action -> { max, used, what } for everything that has a daily limit.
 export function dayLimits(s, now = Date.now()) {
-  const logN = (act) => s.log.filter((e) => e.action === act && !e.failed && now - Date.parse(e.at) < DAY).length;
+  const logN = (act) => s.today?.done?.[act] ?? s.log.filter((e) => e.action === act && !e.failed && now - Date.parse(e.at) < DAY).length; // today's count (body.js), or the log for old saves
   const moved = s.decor.filter((x) => x.movedAt && within(x.movedAt, now)).length + (s.chest?.moves ?? []).filter((m) => within(m, now)).length + (s.furniture?.moves ?? []).filter((m) => within(m, now)).length;
   const updates = s.decor.filter((x) => x.changedAt && within(x.changedAt, now)).length; // changes, not moves
   return {

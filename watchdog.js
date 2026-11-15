@@ -14,10 +14,10 @@ export function check(state, health, now = Date.now(), primary = process.env.GEM
   const cfg = state?.sleep ?? { bed: Number(process.env.PIP_BEDTIME ?? 23), wake: Number(process.env.PIP_WAKETIME ?? 8), tz: process.env.PIP_TZ || 'Europe/Amsterdam' };
   const minutes = Number.isFinite(lastAt) ? awakeMinutes(lastAt, now, cfg) : null; // the night does not count
   const stuck = minutes !== null && minutes >= STUCK_MIN;
-  const onBackup = Boolean(primary) && Boolean(state?.last?.model) && state.last.model !== primary;
+  const onBackup = state?.last?.fallback === true || (Boolean(primary) && Boolean(state?.last?.model) && state.last.model !== primary && !state?.quota); // models.js marks a real fallback
   const backupSince = onBackup ? (health?.backupSince ?? new Date(now).toISOString()) : null;
   const backupLong = onBackup && now - Date.parse(backupSince) >= BACKUP_HOURS * 3600_000;
-  const next = { backupSince, backupNotified: onBackup ? Boolean(health?.backupNotified) || backupLong : false, stuck, minutes, lastWake: state?.last?.at ?? null, since: stuck ? (health?.stuck ? health.since : new Date(now).toISOString()) : null, healedAt: health?.healedAt ?? null };
+  const next = { ...(state?.quota ? { models: { day: state.quota.day, calls: state.quota.calls, out: Object.keys(state.quota.out ?? {}), history: state.quota.history ?? [] } } : {}), backupSince, backupNotified: onBackup ? Boolean(health?.backupNotified) || backupLong : false, stuck, minutes, lastWake: state?.last?.at ?? null, since: stuck ? (health?.stuck ? health.since : new Date(now).toISOString()) : null, healedAt: health?.healedAt ?? null };
   const event = stuck && !health?.stuck ? 'stuck' : !stuck && health?.stuck ? 'recovered' : backupLong && !health?.backupNotified ? 'backup' : null;
   return { next, event };
 }
@@ -43,7 +43,7 @@ if (process.argv[1]?.endsWith('watchdog.js')) {
   const health = existsSync(HEALTH) ? JSON.parse(readFileSync(HEALTH, 'utf8')) : {};
   const { next, event } = check(state, health);
   if (event === 'stuck') await push('Pip seems stuck', `Pip has not woken up for ${next.minutes} minutes. I will try to restart him.`);
-  if (event === 'backup') await push('Pip is on the backup model', `Pip has answered with the lighter model (${state.last.model}) for ${BACKUP_HOURS} hours. The better model is busy or out of free quota.`);
+  if (event === 'backup') await push('Pip is on a backup model', `For ${BACKUP_HOURS} hours Pip has been answered by a model further down his list (${state.last.model}). The first one is busy or out of free quota. ${(state.last.modelNotes ?? []).join('; ')}`);
   if (event === 'recovered') await push('Pip is awake again', 'He woke up and the loop runs again.');
   if (JSON.stringify({ ...next, minutes: 0 }) !== JSON.stringify({ ...health, minutes: 0 })) writeFileSync(HEALTH, JSON.stringify(next) + '\n');
   console.log(next.stuck ? `STUCK: ${next.minutes} minutes since the last wake-up` : `fine: last wake-up ${next.minutes} minutes ago`);

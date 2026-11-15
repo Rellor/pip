@@ -4,7 +4,7 @@ import { createOutside } from './outside.js';
 import { applyLook } from './look.js';
 import { autoLampOn, lightAt, levelWord, isLamp } from './lighting.js';
 import { isGreenhouse, plantState, slotSpot } from './gardening.js';
-import { buildHouse, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X } from './house.js';
+import { buildHouse, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
@@ -33,7 +33,9 @@ const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
 const pointsFor = (x0, x1) => [[x0, 0, -5], [x1, 0, -5], [x0, 0, 5], [x1, 0, 5], [x0, 5, -5], [x1, 5, -5], [x0, 5, 5]].map(([x, y, z]) => new THREE.Vector3(x, y, z));
 // Which part of the house the overview shows: the room Pip is in (auto), or one room, or the whole house.
 const houseView = { want: 'auto', now: 'bedroom' };
-const FOCUS_RANGE = { bedroom: [-5, 5], hall: [3, 11], studio: [8.4, 16.9], house: [-5, 16.9] };
+const FOCUS_RANGE = HAS_STUDIO ? { bedroom: [-5, 5], hall: [3, 11], studio: [8.4, 16.9], house: [-5, 16.9] } : { bedroom: [-5, 5], hall: [3, 9.5], house: [-5, 8.8] };
+const FOCUS = HAS_STUDIO ? FOCUS_X : { ...FOCUS_X, house: 1.9 };
+if (!HAS_STUDIO) document.querySelector('#rooms [data-room="studio"]')?.remove();
 let fitGoal = 1;
 const focusName = () => (houseView.want === 'auto' ? houseView.now : houseView.want);
 let focusX = 0; // the middle of what is shown, eased toward the goal
@@ -44,7 +46,7 @@ function fitRoom(instant = true) {
   const name = focusName();
   const range = FOCUS_RANGE[name];
   const pts = pointsFor(range[0], range[1]);
-  const cx = FOCUS_X[name];
+  const cx = FOCUS[name];
   for (let i = 0; i < 8; i++) {
     const base = new THREE.Vector3(9.5, 9, 11).multiplyScalar(orbit.fit);
     camera.position.set(cx + base.x, 1.2 + base.y, -0.3 + base.z);
@@ -1543,7 +1545,7 @@ function planFor(last) {
       if (HELD_LOOKS.includes(String(d.instrument || '').toLowerCase())) return { at: /studio|music room/i.test(String(d.where || '')) ? 'studio_stage' : 'center', anim: 'jam', held: String(d.instrument).toLowerCase(), notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
       return { at: /studio|music room/i.test(String(d.where || '')) && ['epiano', 'harpsichord', 'organ', 'synth'].includes(instrument) ? 'studio_keys' : 'piano', anim: 'play', notes, instrument, step: stepFor(d.style), palette: [...new Map(notes.map((n) => [n.freq, n])).values()] };
     }
-    case 'record_song': return { at: 'studio_desk', anim: 'mix', song: trackSong(d) };
+    case 'record_song': return HAS_STUDIO ? { at: 'studio_desk', anim: 'mix', song: trackSong(d) } : { at: 'computer', anim: 'write', song: trackSong(d) };
     case 'read_book': return { at: /music|chord|scale|rhythm|melody|harmony|synth|mix|song|instrument|sound|beat|bass|drum/i.test(String(d.topic || '')) ? 'studio_books' : 'bookshelf', anim: 'read' };
     case 'search_web': return { at: 'computer', anim: 'search' };
     case 'write_diary': return { at: 'center', anim: 'write' };
@@ -1598,7 +1600,7 @@ function planFor(last) {
     default: return { at: resolveSpot(d.object), anim: 'look' };
   }
 }
-// A move is a few poses over time (see moves.js). Between two poses it eases; the last one leads back to the first.
+// A move is a few poses over time (see dances.js). Between two poses it eases; the last one leads back to the first.
 let preview = null;
 const ease = (x) => x * x * (3 - 2 * x);
 // Little things he does by himself when a step is quick and he is just standing there (not sleeping): free, no tokens, played by the page.
@@ -2794,7 +2796,7 @@ function loop(now) {
   if (view.mode === 'overview') { // the overview follows Pip from room to room (or stays on the room chosen)
     const roomNow = roomOf(pip.group.position.x);
     if (houseView.now !== roomNow) { houseView.now = roomNow; if (houseView.want === 'auto') fitRoom(false); }
-    const goalX = FOCUS_X[focusName()];
+    const goalX = FOCUS[focusName()];
     if (Math.abs(focusX - goalX) > 0.005 || Math.abs(orbit.fit - fitGoal) > 0.001) {
       focusX += (goalX - focusX) * Math.min(1, dt * 3);
       orbit.fit += (fitGoal - orbit.fit) * Math.min(1, dt * 3);
@@ -3098,7 +3100,7 @@ function headlineBase(st) {
   switch (st.action) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
     case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
-    case 'record_song': return ['🎛️', `Mixing “${d.name || st.name || 'a song'}” in his studio`];
+    case 'record_song': return ['🎛️', `Recording “${d.name || st.name || 'a song'}”`];
     case 'play_piano': return [playedOf(st)[0], `Playing ${playedOf(st)[1]}${d.style ? ` (${d.style})` : ''}`];
     case 'write_diary': return ['✍️', 'Writing in his diary'];
     case 'rest': return ['💤', 'Resting'];
@@ -3180,7 +3182,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: e.action === 'record_song' ? 'Recorded in his studio' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: e.action === 'record_song' ? 'Recorded a song' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3531,6 +3533,10 @@ function renderMind(s) {
   fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
   const done = (s.fulfilled || []).slice().reverse();
   fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
+  const goals = s.intent?.items || [];
+  if ($('goals')) fill($('goals'), goals.length ? goals.map((g) => entry([g.done ? 'done' : 'not yet'], `${g.done ? '✓ ' : ''}${g.text}`)) : empty('He sets his goals when he wakes up.'));
+  const skills = Object.entries(s.skills || {}).filter(([, xp]) => xp > 0);
+  if ($('skills')) fill($('skills'), skills.length ? skills.map(([k, xp]) => el('span', `${k} ${Math.min(10, 1 + Math.floor(Math.sqrt(xp / 2)))}`, 'chip')) : [el('span', 'just starting', 'muted')]);
   const interests = s.interests || [];
   fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
 }
@@ -3568,7 +3574,7 @@ function renderStatus(s) {
   $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
   $('hint').textContent = !s.last
     ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
-    : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
+    : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()} · ${s.last.model ? `model: ${s.last.model}${s.last.fallback ? ' (backup)' : ''}` : s.last.via === 'autopilot' ? 'no model needed (autopilot)' : s.last.via === 'fallback' ? 'no model left today (autopilot)' : 'no model'}` : '';
 }
 function render(s) {
   $('mood').textContent = s.emotion || s.mood || '…';
@@ -3767,7 +3773,7 @@ function render(s) {
     }
     li.append(trackList(r));
     return li;
-  }) : empty('He has not recorded anything in his studio yet.'));
+  }) : empty('He has not recorded a song yet.'));
   const pieces = (s.log || []).filter((e) => e.action === 'play_piano' && !e.failed && Date.parse(e.at) <= Date.now()).slice(-15).reverse();
   fill($('pianolist'), pieces.length ? pieces.map((e) => {
     const song = pianoSong(e.notes, e.style, e.instrument);
@@ -4027,7 +4033,7 @@ async function takeSnapshot() {
       g.scale.setScalar(g.userData.scale);
     }
     await new Promise((r) => setTimeout(r, 1500)); // textures and pictures load
-    const shot = photoCamera(String(spec.target || 'room'));
+    const shot = angled(photoCamera(String(spec.target || 'room')), spec.camera);
     renderer.setSize(960, 720, false);
     camera.aspect = 960 / 720;
     camera.fov = shot.fov;
@@ -4041,6 +4047,18 @@ async function takeSnapshot() {
   } catch (e) {
     window.__photo = `error: ${e.message}`;
   }
+}
+// The angle Pip chose: close (nearer), wide (further back, wider lens), low (from near the floor) or high (from above).
+function angled(shot, camera) {
+  const s = { from: shot.from.clone(), to: shot.to.clone(), fov: shot.fov };
+  if (camera === 'close') s.from.lerp(s.to, 0.45);
+  if (camera === 'wide') { s.from.addScaledVector(s.from.clone().sub(s.to).normalize(), 1.2); s.fov = Math.min(75, s.fov + 12); }
+  if (camera === 'low') s.from.y = 0.45;
+  if (camera === 'high') s.from.y += 1.3;
+  s.from.x = Math.max(-4.7, Math.min(s.from.x, 8.2));
+  s.from.z = Math.max(-4.7, Math.min(s.from.z, 4.9));
+  s.from.y = Math.max(0.3, Math.min(s.from.y, 4.6));
+  return s;
 }
 // Where the camera stands and looks, for what Pip wants to photograph.
 function photoCamera(target) {

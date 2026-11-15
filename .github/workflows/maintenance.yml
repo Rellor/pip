@@ -1,0 +1,49 @@
+name: Maintenance
+
+# One-off jobs started by hand (Actions tab, or the API), each with the Gemini key:
+#   quota       one tiny call per model, writes docs/quota.md
+#   tidy        Pip chooses keep / store / let go for his things, writes web/archive/tidy-proposal.json (nothing changes yet)
+#   tidy-apply  carries out the saved choices (no model call). Pause the Pip loop first: it changes web/state.json.
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'quota, tidy or tidy-apply'
+        required: true
+        default: quota
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Git identity
+        run: |
+          git config user.name "pip-bot"
+          git config user.email "pip-bot@users.noreply.github.com"
+      - name: Run
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_BIG: ${{ vars.GEMINI_BIG }}
+          GEMINI_LITE: ${{ vars.GEMINI_LITE }}
+        run: |
+          case "${{ inputs.task }}" in
+            quota) node scripts/check-quota.mjs ;;
+            tidy) node pip.js tidy ;;
+            tidy-apply) node pip.js tidy apply ;;
+            *) echo "unknown task"; exit 1 ;;
+          esac
+      - name: Save
+        run: |
+          git add -A docs web/archive web/state.json diary.md
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Maintenance: ${{ inputs.task }} [skip ci]"
+          for i in 1 2 3; do git pull --rebase --autostash -q && git push -q && exit 0; git rebase --abort; sleep 5; done
+          exit 1
