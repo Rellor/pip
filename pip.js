@@ -18,6 +18,7 @@ import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } f
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject } from './projects.js';
 import { checkup } from './checkup.js';
+import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
@@ -501,6 +502,7 @@ Things need room to be used. I stand somewhere to use each thing (the spot where
 `;
 
 // What the brain gets to see (brain.js turns it into a short prompt). Only what matters now.
+const findProjectAny = (s, title) => (s.projects ?? []).find((p) => p.title === title) ?? null;
 function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
   const when = new Date().toLocaleString('en-GB', { timeZone: TZ, weekday: 'long', hour: '2-digit', minute: '2-digit' });
   const sky = [isNight() ? 'night' : null, weatherText(s.weather)].filter(Boolean).join(', ');
@@ -523,6 +525,8 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     goals: (s.intent?.items ?? []).map((i) => `[${i.done ? 'x' : ' '}] ${i.text}`),
     skills: skillLine(s),
     moves: offered,
+    fresh: freshLines(s, offered.map((m) => m.name)),
+    lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
     visitors: (s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => `[${v.id}] ${v.name || 'someone'}: "${v.text}"`),
@@ -573,7 +577,9 @@ async function makeIt(s, soul, system, st) {
     const old = st.action === 'record_song' && st.details?.revise ? [...s.studio.songs].reverse().find((x) => x.pattern && x.name.toLowerCase() === String(st.details.revise).toLowerCase()) : null;
     if (st.details?.revise && !old) throw new Error(`I have no song called "${st.details.revise}" to rewrite`);
     const current = old ? describePattern(old.pattern) : null;
-    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
+    const lessons = lessonsFor(s, st.action);
+    const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
+    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, lessons, recipes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
     if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl), allowed: [...instruments(s), 'drums'] });
     return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
   } catch (e) {
@@ -964,6 +970,7 @@ function applyInnerLife(s, r, detail, replying = false) {
   }
   if (r.project_judged?.title) { // he looked at his project: proud means done; not proud means a note and another version
     const j = judgeProject(s, r.project_judged.title, r.project_judged, at);
+    if (j?.done) for (const v of findProjectAny(s, j.project)?.versions ?? []) markProud(s, v.name); // what he made for it goes in his recipe book as something he is proud of
     if (j?.done) { felt(s, 'projectDone'); addMemory(s, `I finished my project "${j.project}" and I am proud of it: ${r.project_judged.why}`, 8, 'memory', at); }
     else if (j) console.log(`   🔁 not proud of "${j.project}" yet: ${j.note}`);
   }
@@ -1870,6 +1877,21 @@ async function wakeUp() {
     console.log(`   🧩 ${v.project}: v${v.v}`);
     const step = !ticked && findProject(state, v.project)?.steps?.find((x) => !x.done);
     if (step) { step.done = true; ticked = true; console.log(`   ✓ step done: ${step.text}`); }
+  }
+  // Growing: a failed move becomes a lesson, a move that works counts as learned, and a thing that worked goes in the recipe book.
+  for (const e of state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)) {
+    if (e.failed) noteLesson(state, e.action, e.failed, e.at);
+    else noteWorked(state, e.action, e.at);
+  }
+  for (const st of steps) {
+    if (!st.made || st.made.failed) continue;
+    if (['decorate', 'change_thing', 'extend_thing', 'make_clothes'].includes(st.action)) {
+      const id = st.made?.entry?.id ?? st.made?.id;
+      const name = st.made?.name ?? st.made?.entry?.name ?? st.details?.name;
+      const thing = [...(state.decor ?? []), ...(state.wardrobe ?? [])].find((d) => (id && d.id === id) || (name && d.name === name));
+      if (thing?.parts?.length) saveRecipe(state, { kind: st.action === 'make_clothes' ? 'make_clothes' : 'decorate', name: thing.name, why: thing.why ?? st.details?.why, parts: thing.parts });
+    }
+    if (st.action === 'record_song' && st.made.recording?.pattern) saveRecipe(state, { kind: 'record_song', name: st.made.recording.name, why: st.made.recording.why, song: describePattern(st.made.recording.pattern) });
   }
   if ((answer.asks_add ?? []).some((a) => a?.big)) state.bigDreamAt = new Date().toISOString();
   noteMood(state, state.mood);

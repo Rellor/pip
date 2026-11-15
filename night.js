@@ -3,7 +3,7 @@
 // Lines with no sign for 30 days are let go. Every change is logged in web/archive/soul-changes.json.
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
-export const PATTERN_DAYS = 5;
+export const PATTERN_DAYS = 3; // seen on 3 of his days: true enough to say something about who he is
 export const LET_GO_DAYS = 30;
 export const MAX_ADDED = 8;
 export const KEEP_DAYS = 30;

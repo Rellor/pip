@@ -12,6 +12,7 @@ import { kitchenIn } from './food.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
 import { kindOf } from './body.js';
+import { noveltyBoost } from './growth.js';
 import { missingForProject } from './projects.js';
 import { hasTool } from './tools.js';
 
@@ -124,6 +125,7 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
     score *= 0.5 ** recent.filter((x) => x === m.name).length;
     if ((s.today?.done?.[m.name] ?? 0) >= 4 && !['eat', 'rest', 'water', 'harvest'].includes(m.name)) score *= 0.2;
     score *= 0.8 ** recentKinds.filter((k) => k === kindOf(m.name)).length;
+    score *= noveltyBoost(s, m.name); // something he has never (or hardly) done is more inviting
     if (['decorate', 'draw', 'place_picture', 'move_thing'].includes(m.name)) score += Math.max(0, 5 - (s.body?.coziness ?? 5)) * 0.15; // a bare room: a small push to make it his
     scored.push({ m, score: score * (0.75 + random() * 0.5) });
   }

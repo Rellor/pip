@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { applySleep, patterns, withAddedLines, saveSoul, fakeSleep, sleepPrompt, daySummary, noteLift, LET_GO_DAYS } from '../night.js';
+import { applySleep, patterns, withAddedLines, saveSoul, fakeSleep, sleepPrompt, daySummary, noteLift, LET_GO_DAYS, PATTERN_DAYS } from '../night.js';
 import { ensureBody, noteMove, noteMood } from '../body.js';
 import { soulText } from '../soul.js';
 
@@ -32,14 +32,14 @@ await ok('the day is summed up in code', () => {
   assert.deepEqual(d.unfinished, ['Bird house']);
 });
 
-await ok('a pattern needs 5 days before it can become a line', () => {
+await ok(`a pattern needs ${PATTERN_DAYS} days before it can become a line`, () => {
   const s = { projects: [] };
-  for (let i = 0; i < 4; i++) { live(s, i); applySleep(s, fakeSleep(patterns(s.days ?? [], s.soulLines))); }
+  for (let i = 0; i < PATTERN_DAYS - 1; i++) { live(s, i); applySleep(s, fakeSleep(patterns(s.days ?? [], s.soulLines))); }
   assert.equal((s.soulLines ?? []).length, 0);
-  live(s, 4);
+  live(s, PATTERN_DAYS - 1);
   const found = patterns([...s.days, daySummary(s)], s.soulLines);
-  assert.ok(found.some((p) => p.key === 'lifted:play_piano' && p.days === 5));
-  const { changes } = applySleep(s, fakeSleep(found), t0 + 4 * DAY);
+  assert.ok(found.some((p) => p.key === 'lifted:play_piano' && p.days === PATTERN_DAYS));
+  const { changes } = applySleep(s, fakeSleep(found), t0 + (PATTERN_DAYS - 1) * DAY);
   assert.equal(s.soulLines.length, 1);
   assert.equal(changes[0].change, 'added');
 });
