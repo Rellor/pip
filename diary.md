@@ -308,3 +308,9 @@ I will write a small program to simulate how the pins hit the comb.
 - make_app (gear ratio simulation): I will write a small program to simulate how the pins hit the comb.
 - mood: curious
 
+## 15/11/2026, 17:03:06
+I am continuing my wooden music box project by working on the gears.
+> I am continuing my wooden music box project by working on the gears.
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: focused
+
