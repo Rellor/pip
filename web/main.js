@@ -3273,7 +3273,7 @@ function showTab(name) {
   renderTalk();
 }
 // Talk: everyone sees the visitor mailbox. With the key, a switch also opens the private chat with Bas.
-let talkMode = store('pip-talk') === 'private' ? 'private' : 'public';
+let talkMode = store('pip-talk') === 'public' ? 'public' : 'private'; // with the key, the private chat comes first
 function renderTalk() {
   const key = !!store('pip-key');
   const mode = key ? talkMode : 'public';
