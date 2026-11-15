@@ -13,6 +13,7 @@ const work = fs.mkdtempSync(path.join(os.tmpdir(), 'pip-quota-'));
 fs.cpSync(root, work, { recursive: true, filter: (p) => !p.includes(`${path.sep}.git`) && !p.includes('node_modules') });
 const hits = [];
 let allOut = false;
+let broken = false;
 const answer = { moves: [{ move: 'rest', details: {}, thought: 'a short rest' }, { move: 'do', details: { what: 'hum a tune' } }], reason: 'I am a little tired.', mood: 'sleepy', remember: null };
 const server = http.createServer((req, res) => {
   const model = req.url.match(/models\/([^:]+):/)?.[1];
@@ -25,6 +26,7 @@ const server = http.createServer((req, res) => {
       return res.end(JSON.stringify({ error: { code: 429, details: [{ '@type': 'type.googleapis.com/google.rpc.QuotaFailure', violations: [{ quotaId: 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', quotaValue: '20' }] }] } }));
     }
     res.writeHead(200, { 'content-type': 'application/json' });
+    if (broken) return res.end(JSON.stringify({ candidates: [{ content: { parts: [{ text: '{"moves": [{"move": "re' }] }, finishReason: 'MAX_TOKENS' }] })); // cut off
     res.end(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(answer) }] } }], usageMetadata: { promptTokenCount: 1000, candidatesTokenCount: 80 } }));
   });
 }).listen(0);
@@ -34,6 +36,7 @@ delete env.PIP_FAKE;
 const state = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
 state.inbox = (state.inbox ?? []).map((m) => ({ ...m, read: true })); // nobody wrote: a normal (lite) brain call
 state.changes = [...new Set([...(state.changes ?? []), '2026-11-15 greenhouse by the window, instruments by asking', '2026-11-15 old clothes put away', '2026-11-15 forget what was removed', '2026-11-15 fresh start'])]; // no one-time changes in this test
+state.plan = { ...(state.plan ?? {}), queue: [], decidedAt: null }; // the brain decides now
 state.intent = { day: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }), items: [] }; // goals already set today
 fs.writeFileSync(path.join(work, 'web/state.json'), JSON.stringify(state));
 const run = () => new Promise((resolve, reject) => {
@@ -48,6 +51,17 @@ st2.plan.queue = [];
 fs.writeFileSync(path.join(work, 'web/state.json'), JSON.stringify(st2));
 await run();
 const s2 = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
+// a cut-off answer (or any other bad answer) never stops a wake-up: he carries on by himself
+allOut = false;
+broken = true;
+const st3 = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
+st3.plan.queue = [];
+st3.quota.out = {};
+fs.writeFileSync(path.join(work, 'web/state.json'), JSON.stringify(st3));
+await run();
+const s3 = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
+assert.equal(s3.last.via, 'fallback');
+assert.equal(s3.lastError.kind, 'brain');
 server.close();
 assert.equal(s2.last.via, 'fallback');
 assert.equal(s2.quota.out['lite-b'], s2.quota.day);
@@ -60,4 +74,4 @@ assert.equal(s.quota.out['lite-a'], s.quota.day);
 assert.equal(s.quota.calls['lite-a'], 1);
 assert.equal(s.quota.calls['lite-b'], 1);
 assert.ok(!hits.includes('big-a'), 'a normal brain call does not use the big model');
-console.log(`ok  out-of-quota model skipped, the next one answered: ${JSON.stringify(s.quota.calls)}, footer model ${s.last.model}; then all out: ${s2.last.via} (${s2.last.steps[0].action})`);
+console.log(`ok  out-of-quota model skipped, the next one answered: ${JSON.stringify(s.quota.calls)}, footer model ${s.last.model}; then all out: ${s2.last.via} (${s2.last.steps[0].action}); then a cut-off answer: ${s3.last.via}`);
