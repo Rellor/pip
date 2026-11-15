@@ -221,6 +221,8 @@
   .checkup li { font-size:14px; }
   .checkup b { display:block; }
   .checkup .bad b { color:var(--accent); }
+  .checkup details { margin-top:4px; font-size:13px; }
+  .checkup pre.debug { white-space:pre-wrap; word-break:break-word; font-size:12px; background:var(--chip); border-radius:8px; padding:8px; margin:6px 0; max-height:220px; overflow:auto; }
   .stillempty { font-size:13px; margin:10px 2px 0; }
   .tiles { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; grid-auto-flow:dense; }
   .tile { min-width:0; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; text-align:left; color:var(--ink); font:inherit; font-size:15px; display:block; width:100%; }
@@ -388,7 +390,7 @@
       <p class="muted" id="setstatus"></p>
       <div id="setpanel" hidden>
         <h2>Check-up</h2>
-        <p class="muted">Simple checks on how Pip spends his days, every 10 minutes. A new problem also goes to your phone, once a day.</p>
+        <p class="muted">Simple checks on how Pip spends his days, after every wake-up. A new problem also goes to your phone, once a day. Tap "Details for fixing" to see the facts, and copy them to Claude.</p>
         <ul id="checkup" class="checkup"></ul>
         <h2>Keeps going wrong</h2>
         <p class="muted">Moves that failed in the last day, grouped by reason. A number above 1 means the same error repeats.</p>
