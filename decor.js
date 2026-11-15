@@ -10,7 +10,7 @@ import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pi
 // limited here. He places things in named spots; this file works out the exact position, so nothing overlaps or
 // ends up outside the room.
 
-const SHAPES = { box: 3, sphere: 1, cylinder: 3, cone: 2, torus: 2, capsule: 2 }; // how many numbers each shape needs
+const SHAPES = { box: 3, roundbox: 3, sphere: 1, cylinder: 3, cone: 2, torus: 2, capsule: 2 }; // how many numbers each shape needs
 // Biggest size by kind. Spots with less room (next to a wall, on a small table) have their own smaller `lim`.
 const LIMITS = {
   floor: { w: 2.6, h: 3.2, d: 2.4 },
@@ -86,7 +86,8 @@ export function cleanParts(raw) {
 function halfSize(p) {
   const [a, b, c] = p.size;
   switch (p.shape) {
-    case 'box': return [a / 2, b / 2, c / 2];
+    case 'box':
+    case 'roundbox': return [a / 2, b / 2, c / 2];
     case 'sphere': return [a, a, a];
     case 'cylinder': return [Math.max(a, b), c / 2, Math.max(a, b)];
     case 'cone': return [a, b / 2, a];
@@ -1188,10 +1189,10 @@ export const holdsThings = (o) => !o.image && !o.art && o.kind !== 'surface' && 
 // The boards of something on the wall (a shelf): every flat part is a level things can stand on, from the lowest up.
 function wallLevels(o) {
   const sc = o.scale || 1;
-  const flat = (o.parts ?? []).filter((p) => p.shape === 'box' && p.size[1] <= 0.12 && p.size[0] >= 0.25 && p.size[2] >= 0.1);
+  const flat = (o.parts ?? []).filter((p) => ['box', 'roundbox'].includes(p.shape) && p.size[1] <= 0.12 && p.size[0] >= 0.25 && p.size[2] >= 0.1);
   let boards = flat;
   if (!flat.length && holdsThings(o)) { // no thin board, but it is meant to hold things: its highest wide part is the top
-    const wide = (o.parts ?? []).filter((p) => p.shape === 'box' && p.size[0] >= 0.25 && p.size[2] >= 0.12);
+    const wide = (o.parts ?? []).filter((p) => ['box', 'roundbox'].includes(p.shape) && p.size[0] >= 0.25 && p.size[2] >= 0.12);
     const top = Math.max(...wide.map((p) => p.pos[1] + p.size[1] / 2));
     boards = wide.filter((p) => p.pos[1] + p.size[1] / 2 >= top - 0.01).slice(0, 1);
   }

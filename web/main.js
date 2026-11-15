@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { awakeMinutes } from './sleep.js';
 import { createOutside } from './outside.js';
 import { applyLook } from './look.js';
+import { makeProps } from './props.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { autoLampOn, lightAt, levelWord, isLamp } from './lighting.js';
 import { isGreenhouse, plantState, slotSpot } from './gardening.js';
 import { buildHouse, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
@@ -192,6 +194,7 @@ new THREE.TextureLoader().load('pictures/dark-sky.jpg', (tex) => {
 const decorGroups = new Map();
 const SHAPE_GEO = {
   box: (s) => new THREE.BoxGeometry(...s),
+  roundbox: (s) => new RoundedBoxGeometry(s[0], s[1], s[2], 3, Math.min(...s) * 0.18), // a box with soft edges
   sphere: (s) => new THREE.SphereGeometry(s[0], 20, 14),
   cylinder: (s) => new THREE.CylinderGeometry(s[0], s[1], s[2], 20),
   cone: (s) => new THREE.ConeGeometry(s[0], s[1], 20),
@@ -667,13 +670,11 @@ function clothesPic(c, extra = '') {
 const chestGroup = new THREE.Group();
 chestGroup.position.set(-4.1, 0, 3.9);
 scene.add(chestGroup);
-box(chestGroup, [1.0, 0.45, 0.6], 0x8d5a3b, [0, 0.225, 0]);
-box(chestGroup, [1.04, 0.06, 0.64], 0xd9a441, [0, 0.1, 0]);
+const props = makeProps(THREE); // the room's own furniture, made with care (props.js)
 const chestLid = new THREE.Group();
 chestLid.position.set(0, 0.45, -0.3);
 chestGroup.add(chestLid);
-box(chestLid, [1.04, 0.14, 0.64], 0xa06a3f, [0, 0.07, 0.3]);
-box(chestLid, [0.12, 0.12, 0.05], 0xd9a441, [0, 0.0, 0.62]);
+props.chest(chestGroup, chestLid);
 
 // piano
 const PIANO = new V3(-2.6, 0, -4.5);
@@ -692,22 +693,11 @@ cyl(G.piano, [0.38, 0.38, 0.12], 0xc9604a, [PIANO.x, 0.55, -3.15]);
 const shelf = new THREE.Group();
 shelf.position.set(2.6, 0, -4.65);
 G.bookshelf.add(shelf);
-box(shelf, [2, 3, 0.6], 0x8d5a3b, [0, 1.5, 0]);
-[0.75, 1.5, 2.25].forEach((y) => box(shelf, [1.8, 0.06, 0.55], 0x6e4529, [0, y, 0.03]));
-const bookColors = [0xd96c5b, 0x6fa8dc, 0xf0c05a, 0x7bb87f, 0xb48ac9, 0xf08fb0];
-[0.78, 1.53, 2.28, 0.03].forEach((y, row) => {
-  if (row === 3) return;
-  for (let i = 0; i < 6; i++) {
-    const h = 0.45 + ((i * 7 + row * 3) % 4) * 0.05;
-    box(shelf, [0.2, h, 0.4], bookColors[(i + row) % 6], [-0.7 + i * 0.27, y + h / 2, 0.05]);
-  }
-});
+props.bookshelf(shelf);
 
 // computer desk
-box(G.desk, [1.3, 0.1, 2], 0xb98a62, [-4.3, 0.8, 1.2]);
-box(G.desk, [0.1, 0.8, 1.9], 0x9a6f4b, [-3.75, 0.4, 1.2]);
-box(G.desk, [0.1, 0.8, 1.9], 0x9a6f4b, [-4.85, 0.4, 1.2]);
-box(G.desk, [0.1, 0.8, 1.1], 0x222222, [-4.55, 1.3, 1.2]);
+props.desk(G.desk);
+props.monitorBack(G.desk); // the screen's frame and back (props.js)
 const screenCanvas = document.createElement('canvas');
 screenCanvas.width = 128;
 screenCanvas.height = 160;
@@ -733,8 +723,7 @@ function drawScreen(typing) {
 drawScreen(false);
 const screenMesh = box(G.desk, [0.02, 0.65, 0.95], 0x8fd3ff, [-4.49, 1.3, 1.2]);
 screenMesh.material = new THREE.MeshBasicMaterial({ map: screenTex });
-box(G.desk, [0.1, 0.3, 0.2], 0x222222, [-4.55, 0.95, 1.2]);
-box(G.desk, [0.4, 0.04, 0.8], 0x444444, [-4.0, 0.87, 1.2]);
+props.monitorStand(G.desk); // its stand, and the keyboard
 // photo printer on the desk (faces into the room); its little light blinks while he prints
 box(G.desk, [0.26, 0.1, 0.3], 0xe9e4da, [-3.84, 0.92, 0.5]);
 box(G.desk, [0.22, 0.03, 0.24], 0xcfc8ba, [-3.85, 0.985, 0.5]);
@@ -743,18 +732,10 @@ const printLight = box(G.desk, [0.03, 0.012, 0.03], 0x2f6b3a, [-3.76, 1.004, 0.3
 printLight.material = new THREE.MeshBasicMaterial({ color: 0x2f6b3a });
 
 // bed
-box(G.bed, [2.2, 0.4, 3.2], 0x8d5a3b, [3.4, 0.2, 3]);
-box(G.bed, [2, 0.3, 3], 0xcfe3f3, [3.4, 0.55, 3]);
-box(G.bed, [1.4, 0.2, 0.6], 0xffffff, [3.4, 0.8, 1.85]);
+props.bed(G.bed);
 
 // plant
-cyl(G.plant, [0.3, 0.22, 0.4], 0xc9604a, [4.1, 0.2, -4.1]);
-[[0, 0.75, 0, 0.42], [0.18, 1.05, 0.05, 0.3], [-0.15, 1.0, -0.05, 0.28]].forEach(([x, y, z, r]) => {
-  const leaf = new THREE.Mesh(new THREE.SphereGeometry(r, 16, 12), mat(0x6fae6f));
-  leaf.position.set(4.1 + x, y, -4.1 + z);
-  leaf.castShadow = true;
-  G.plant.add(leaf);
-});
+props.plant(G.plant);
 
 // ---------------------------------------------------------------- Pip
 function makePip() {

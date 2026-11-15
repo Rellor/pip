@@ -27,7 +27,7 @@ ${asked || 'something new'}${d.why ? `\nWhy: ${d.why}` : ''}
 ${ctx.room?.length ? `MY ROOM NOW\n${ctx.room.map((x) => `- ${x}`).join('\n')}\n\n` : ''}HOW MAKING WORKS
 ${ctx.rules}${ctx.have ? `\n\nWHAT I HAVE TO MAKE IT WITH: ${ctx.have}` : ''}${ctx.skill ? `\n\nMY SKILL: ${ctx.skill}` : ''}
 
-I make it my own way. A first try may be clumsy; that is fine.
+${['decorate', 'change_thing', 'extend_thing', 'make_clothes'].includes(ctx.step.action) ? 'The furniture in my room shows what good craft looks like: a bed with legs, a headboard, a mattress, pillows and a blanket; a desk with a top, slim legs and a drawer; a bookshelf with sides, shelves and books of many sizes. Soft rounded edges (roundbox), a few colours that go together, and small details make a thing look real.\n' : ''}I make it my own way. A first try may be clumsy; that is fine.
 ${ctx.current ? `THE SONG AS IT IS NOW\n${ctx.current}\nI rewrite ONE section of it, and keep the rest.\n\n` : ''}Answer in JSON with exactly this shape: ${FORMATS[ctx.current ? 'revise_song' : ctx.step.action] ?? '{}'}`;
 }
 
