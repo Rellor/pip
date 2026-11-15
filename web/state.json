@@ -1,17 +1,11 @@
 {
   "mood": "focused",
-  "energy": 9.5,
-  "boredom": 6.18,
-  "loneliness": 1.4,
+  "energy": 9.43,
+  "boredom": 4.16,
+  "loneliness": 1.41,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-15T14:50:37.221Z",
-      "action": "do",
-      "detail": "plant basil and mint seeds in the wooden planter box",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-15T14:58:59.978Z",
       "action": "change_thing",
@@ -311,6 +305,12 @@
       "at": "2026-11-15T20:43:20.768Z",
       "action": "search_web",
       "detail": "how mechanical music box cylinders and combs work",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-15T20:46:57.681Z",
+      "action": "make_app",
+      "detail": "gear_tooth_smoother",
       "enjoyment": 6
     }
   ],
@@ -614,17 +614,8 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.913,
+      "weight": 7.912,
       "lastUsed": "2026-11-15T09:26:36.400Z"
-    },
-    {
-      "id": "mmwhnpv8f7",
-      "at": "2026-11-15T09:53:28.899Z",
-      "text": "I recorded a song: Humming for a Little Box (choir, drums)",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.92,
-      "lastUsed": "2026-11-15T09:53:28.899Z"
     },
     {
       "id": "mmwhnpv8g8",
@@ -803,7 +794,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.955,
+      "weight": 7.954,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -812,7 +803,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.956,
+      "weight": 7.955,
       "lastUsed": "2026-11-15T14:58:41.375Z"
     },
     {
@@ -875,7 +866,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.963,
+      "weight": 7.962,
       "lastUsed": "2026-11-15T15:57:05.738Z"
     },
     {
@@ -884,7 +875,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.963,
+      "weight": 6.962,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -1111,7 +1102,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.993,
+      "weight": 6.992,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -1142,27 +1133,28 @@
       "lastUsed": "2026-11-15T20:27:07.993Z"
     },
     {
-      "id": "mmwiaxmmc60",
-      "at": "2026-11-15T20:43:21.766Z",
-      "text": "I looked up how mechanical music box cylinders and combs work",
-      "importance": 3,
+      "id": "mmwib29p260",
+      "at": "2026-11-15T20:46:58.680Z",
+      "text": "I made an app: gear_tooth_smoother",
+      "importance": 6,
       "kind": "memory",
-      "weight": 2.999,
-      "lastUsed": "2026-11-15T20:43:21.766Z"
+      "weight": 6,
+      "lastUsed": "2026-11-15T20:46:58.680Z"
+    },
+    {
+      "id": "mmwib29p860",
+      "at": "2026-11-15T20:46:57.692Z",
+      "text": "My coding got better: I am level 2 now.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 6,
+      "lastUsed": "2026-11-15T20:46:57.692Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": null,
   "thoughts": [
-    {
-      "at": "2026-11-15T16:38:10.282Z",
-      "text": "I want to read up on how music is made and how music boxes work before trying to build again.",
-      "short": "I want to read up on how music is made and how music boxes work before trying to build again.",
-      "mood": "curious",
-      "action": "read_book",
-      "detail": "how music boxes work"
-    },
     {
       "at": "2026-11-15T16:46:17.205Z",
       "text": "I am exploring how music works and working on the gears for my music box project.",
@@ -1394,6 +1386,14 @@
       "mood": "focused",
       "action": "search_web",
       "detail": "how mechanical music box cylinders and combs work"
+    },
+    {
+      "at": "2026-11-15T20:46:57.684Z",
+      "text": "I need a little program to calculate the spacing.",
+      "short": "I need a little program to calculate the spacing.",
+      "mood": "focused",
+      "action": "make_app",
+      "detail": "gear_tooth_smoother"
     }
   ],
   "outbox": [
@@ -1431,15 +1431,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-15T17:27:58.315Z",
-      "action": "do",
-      "thought": "I need to start my music box project properly since the previous attempt failed due to naming issues in the room inventory system, and I want to build the gears",
-      "move": null,
-      "emoji": "",
-      "what": "plan my new project: Build a little wooden music box",
-      "feeling": null
-    },
     {
       "at": "2026-11-15T17:36:03.221Z",
       "action": "write_diary",
@@ -1758,6 +1749,15 @@
         "url": "https://en.wikipedia.org/wiki/Music_box",
         "text": "A music box (American English) or musical box (British English) is an automatic musical instrument in a box that produces musical notes by using a set of pins placed on a revolving cylinder or disc to pluck the tuned teeth (or lamellae) of a steel comb. The popular device best known today as a \"music box\" developed from musical snuff boxes of the 18th century and were originally called carillons à musique (French for \"chimes of music\"). Some of the more complex boxes also contain a tiny drum and/or bells in addition to the metal comb.\n\nHistory\n\nThe Symphonium company started business in 1885 as the first manufacturers of disc-playing music boxes. Two of the founders of the company, Gustave Brachhausen and Paul Riessner, left to set up a new firm, Polyphon, in direct competition with their original business and their third partner, Oscar Paul Lochmann. Following the establishment of the Original Musikwerke Paul Lochmann in 1900, the founding Symphonion business continued until 1909.\nAccording to the Victoria Museums in Australia, \"The Symphonion is notable for the enormous diversity of types, styles, and models produced... No other disc-playing musical box exists in so many varieties. The company also pioneered the use of electric motors... the first model fitted with an electric motor being advertised in 1900. The company moved into the piano-orchestrion business and made both disc-operated and barrel-playing models, player-pianos, and phonographs.\"\n …"
       }
+    },
+    {
+      "at": "2026-11-15T20:46:58.680Z",
+      "action": "make_app",
+      "thought": "I need a little program to calculate the spacing.",
+      "name": "gear_tooth_smoother",
+      "why": "to test gear ratios for the music box project",
+      "file": "made/appmwib29oy1.html",
+      "failed": null
     }
   ],
   "decor": [
@@ -2478,57 +2478,74 @@
       "why": "to better understand the mechanics of the music box",
       "file": "made/appmwi2rpat0.html",
       "createdAt": "2026-11-15T16:54:47.766Z"
+    },
+    {
+      "id": "appmwib29oy1",
+      "name": "gear_tooth_smoother",
+      "why": "to test gear ratios for the music box project",
+      "file": "made/appmwib29oy1.html",
+      "createdAt": "2026-11-15T20:46:57.683Z"
     }
   ],
   "ntfySince": "AHmBEjaWNQ8F",
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-15T20:43:20.766Z",
-    "via": "brain",
+    "at": "2026-11-15T20:46:57.680Z",
+    "via": "autopilot",
     "model": "gemini-3.5-flash-lite",
     "models": {
       "gemini-3.5-flash-lite": 1
     },
+    "modelNotes": [
+      "gemini-3.5-flash-lite answered (gemini-3.8-flash is out of quota)"
+    ],
+    "fallback": true,
     "tokens": {
       "calls": 1,
-      "input": 1104,
-      "output": 191,
+      "input": 623,
+      "output": 1099,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am working on the wooden music box project and want to make sure the mechanics work properly.",
-    "inner": "I am working on the wooden music box project and want to make sure the mechanics work properly.",
+    "thought": "I need a little program to calculate the spacing.",
+    "inner": "",
     "sent": false,
     "steps": [
       {
-        "action": "search_web",
+        "action": "make_app",
         "details": {
-          "query": "how mechanical music box cylinders and combs work"
+          "what": "music box gear tooth smoother tool",
+          "why": "to test gear ratios for the music box project",
+          "name": "gear_tooth_smoother",
+          "html": "<!doctype html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>Gear Tooth Smoother</title>\n<style>\n  body { background: #1e1b18; color: #d4c5b9; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }\n  canvas { background: #2b2621; border: 2px solid #5c4e43; box-shadow: 0 4px 12px rgba(0,0,0,0.5); cursor: pointer; }\n  .controls { margin-top: 15px; display: flex; gap: 10px; }\n  button { background: #5c4e43; color: #f0e6df; border: none; padding: 8px 16px; font-family: monospace; cursor: pointer; border-radius: 4px; }\n  button:hover { background: #736254; }\n  p { margin: 5px 0; font-size: 14px; }\n</style>\n</head>\n<body>\n  <p>Click the gear to file down rough teeth. Make it smooth.</p>\n  <canvas id=\"c\" width=\"300\" height=\"300\"></canvas>\n  <div class=\"controls\">\n    <button id=\"fileBtn\">File Tooth</button>\n    <button id=\"resetBtn\">New Gear</button>\n  </div>\n  <p id=\"status\">Roughness: 100%</p>\n\n  <script>\n    const canvas = document.getElementById('c');\n    const ctx = canvas.getContext('2d');\n    const fileBtn = document.getElementById('fileBtn');\n    const resetBtn = document.getElementById('resetBtn');\n    const status = document.getElementById('status');\n\n    let teethCount = 12;\n    let roughness = 100;\n    let angle = 0;\n\n    function drawGear() {\n      ctx.clearRect(0, 0, 300, 300);\n      ctx.save();\n      ctx.translate(150, 150);\n      ctx.rotate(angle);\n\n      // Draw gear body\n      ctx.beginPath();\n      let rOuter = 80;\n      let rInner = 60;\n      \n      for (let i = 0; i < teethCount * 2; i++) {\n        let a = (i / (teethCount * 2)) * Math.PI * 2;\n        let r = (i % 2 === 0) ? (rOuter + (roughness * 0.1 * (Math.sin(i*5)))) : rInner;\n        let x = Math.cos(a) * r;\n        let y = Math.sin(a) * r;\n        if (i === 0) ctx.moveTo(x, y);\n        else ctx.lineTo(x, y);\n      }\n      ctx.closePath();\n      ctx.fillStyle = '#a67c52';\n      ctx.fill();\n      ctx.strokeStyle = '#3d2817';\n      ctx.lineWidth = 3;\n      ctx.stroke();\n\n      // Center hole\n      ctx.beginPath();\n      ctx.arc(0, 0, 15, 0, Math.PI * 2);\n      ctx.fillStyle = '#1e1b18';\n      ctx.fill();\n      ctx.stroke();\n\n      ctx.restore();\n    }\n\n    function update() {\n      angle += 0.01;\n      drawGear();\n      requestAnimationFrame(update);\n    }\n\n    fileBtn.addEventListener('click', () => {\n      if (roughness > 0) {\n        roughness = Math.max(0, roughness - 5);\n        status.innerText = `Roughness: ${roughness}%`;\n      }\n    });\n\n    resetBtn.addEventListener('click', () => {\n      roughness = 100;\n      teethCount = Math.floor(Math.random() * 6) + 10;\n      status.innerText = `Roughness: ${roughness}%`;\n    });\n\n    update();\n  </script>\n</body>\n</html>"
         },
-        "detail": "how mechanical music box cylinders and combs work",
-        "thought": "I want to check how the gears connect to the notes.",
+        "detail": "gear_tooth_smoother",
+        "thought": "I need a little program to calculate the spacing.",
         "enjoyment": 6,
-        "found": {
-          "title": "Music box",
-          "text": "A music box (American English) or musical box (British English) is an automatic musical instrument in a box that produces musical notes by using a set of pins placed on a revolving cylinder or disc to pluck the tuned teeth (or lamellae) of a steel comb. The popular device best known today as a \"music box\" developed from musical snuff boxes of the 18th century and were originally called carillons à musique (French for \"chimes of music\"). Some of the more complex boxes also contain a tiny drum and/or bells in addition to the metal comb.\n\nHistory\n\nThe Symphonium company started business in 1885 as the first manufacturers of disc-playing music boxes. Two of the founders of the company, Gustave Brachhausen and Paul Riessner, left to set up a new firm, Polyphon, in direct competition with their original business and their third partner, Oscar Paul Lochmann. Following the establishment of the Original Musikwerke Paul Lochmann in 1900, the founding Symphonion business continued until 1909.\nAccording to the Victoria Museums in Australia, \"The Symphonion is notable for the enormous diversity of types, styles, and models produced... No other disc-playing musical box exists in so many varieties. The company also pioneered the use of electric motors... the first model fitted with an electric motor being advertised in 1900. The company moved into the piano-orchestrion business and made both disc-operated and barrel-playing models, player-pianos, and phonographs.\"\nMeanwhile, Polyphon expanded to America, where Brachhausen established the Regina Company. Regina was a spectacular success. It eventually reinvented itself as a maker of vacuum cleaners and steam cleaners.\nIn the heyday of the music box, some variations were as tall as a grandfather clock and all used interchangeable large disks to play different sets of tunes. These were spring-wound and driven and both had a bell-like sound. The machines were often made in England, Italy, and the US, with additional disks made in Switzerland, Austria, and Prussia. Early \"juke-box\" pay versions of them existed in public places. Marsh's free Museum and curio shop in Long Beach, Washington, has several still-working versions of them on public display. The Musical Museum, Brentford, London, has a number of machines. The Morris Museum in Morristown, New Jersey, USA has a notable collection, including interactive exhibits. …"
-        },
-        "made": null
+        "found": null,
+        "made": {
+          "app": {
+            "id": "appmwib29oy1",
+            "file": "made/appmwib29oy1.html",
+            "name": "gear_tooth_smoother"
+          }
+        }
       }
     ],
-    "action": "search_web",
+    "action": "make_app",
     "details": {
-      "query": "how mechanical music box cylinders and combs work"
+      "what": "music box gear tooth smoother tool",
+      "why": "to test gear ratios for the music box project",
+      "name": "gear_tooth_smoother",
+      "html": "<!doctype html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n<title>Gear Tooth Smoother</title>\n<style>\n  body { background: #1e1b18; color: #d4c5b9; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }\n  canvas { background: #2b2621; border: 2px solid #5c4e43; box-shadow: 0 4px 12px rgba(0,0,0,0.5); cursor: pointer; }\n  .controls { margin-top: 15px; display: flex; gap: 10px; }\n  button { background: #5c4e43; color: #f0e6df; border: none; padding: 8px 16px; font-family: monospace; cursor: pointer; border-radius: 4px; }\n  button:hover { background: #736254; }\n  p { margin: 5px 0; font-size: 14px; }\n</style>\n</head>\n<body>\n  <p>Click the gear to file down rough teeth. Make it smooth.</p>\n  <canvas id=\"c\" width=\"300\" height=\"300\"></canvas>\n  <div class=\"controls\">\n    <button id=\"fileBtn\">File Tooth</button>\n    <button id=\"resetBtn\">New Gear</button>\n  </div>\n  <p id=\"status\">Roughness: 100%</p>\n\n  <script>\n    const canvas = document.getElementById('c');\n    const ctx = canvas.getContext('2d');\n    const fileBtn = document.getElementById('fileBtn');\n    const resetBtn = document.getElementById('resetBtn');\n    const status = document.getElementById('status');\n\n    let teethCount = 12;\n    let roughness = 100;\n    let angle = 0;\n\n    function drawGear() {\n      ctx.clearRect(0, 0, 300, 300);\n      ctx.save();\n      ctx.translate(150, 150);\n      ctx.rotate(angle);\n\n      // Draw gear body\n      ctx.beginPath();\n      let rOuter = 80;\n      let rInner = 60;\n      \n      for (let i = 0; i < teethCount * 2; i++) {\n        let a = (i / (teethCount * 2)) * Math.PI * 2;\n        let r = (i % 2 === 0) ? (rOuter + (roughness * 0.1 * (Math.sin(i*5)))) : rInner;\n        let x = Math.cos(a) * r;\n        let y = Math.sin(a) * r;\n        if (i === 0) ctx.moveTo(x, y);\n        else ctx.lineTo(x, y);\n      }\n      ctx.closePath();\n      ctx.fillStyle = '#a67c52';\n      ctx.fill();\n      ctx.strokeStyle = '#3d2817';\n      ctx.lineWidth = 3;\n      ctx.stroke();\n\n      // Center hole\n      ctx.beginPath();\n      ctx.arc(0, 0, 15, 0, Math.PI * 2);\n      ctx.fillStyle = '#1e1b18';\n      ctx.fill();\n      ctx.stroke();\n\n      ctx.restore();\n    }\n\n    function update() {\n      angle += 0.01;\n      drawGear();\n      requestAnimationFrame(update);\n    }\n\n    fileBtn.addEventListener('click', () => {\n      if (roughness > 0) {\n        roughness = Math.max(0, roughness - 5);\n        status.innerText = `Roughness: ${roughness}%`;\n      }\n    });\n\n    resetBtn.addEventListener('click', () => {\n      roughness = 100;\n      teethCount = Math.floor(Math.random() * 6) + 10;\n      status.innerText = `Roughness: ${roughness}%`;\n    });\n\n    update();\n  </script>\n</body>\n</html>"
     },
-    "detail": "how mechanical music box cylinders and combs work",
+    "detail": "gear_tooth_smoother",
     "enjoyment": 6,
     "new_idea": null,
-    "found": {
-      "title": "Music box",
-      "text": "A music box (American English) or musical box (British English) is an automatic musical instrument in a box that produces musical notes by using a set of pins placed on a revolving cylinder or disc to pluck the tuned teeth (or lamellae) of a steel comb. The popular device best known today as a \"music box\" developed from musical snuff boxes of the 18th century and were originally called carillons à musique (French for \"chimes of music\"). Some of the more complex boxes also contain a tiny drum and/or bells in addition to the metal comb.\n\nHistory\n\nThe Symphonium company started business in 1885 as the first manufacturers of disc-playing music boxes. Two of the founders of the company, Gustave Brachhausen and Paul Riessner, left to set up a new firm, Polyphon, in direct competition with their original business and their third partner, Oscar Paul Lochmann. Following the establishment of the Original Musikwerke Paul Lochmann in 1900, the founding Symphonion business continued until 1909.\nAccording to the Victoria Museums in Australia, \"The Symphonion is notable for the enormous diversity of types, styles, and models produced... No other disc-playing musical box exists in so many varieties. The company also pioneered the use of electric motors... the first model fitted with an electric motor being advertised in 1900. The company moved into the piano-orchestrion business and made both disc-operated and barrel-playing models, player-pianos, and phonographs.\"\nMeanwhile, Polyphon expanded to America, where Brachhausen established the Regina Company. Regina was a spectacular success. It eventually reinvented itself as a maker of vacuum cleaners and steam cleaners.\nIn the heyday of the music box, some variations were as tall as a grandfather clock and all used interchangeable large disks to play different sets of tunes. These were spring-wound and driven and both had a bell-like sound. The machines were often made in England, Italy, and the US, with additional disks made in Switzerland, Austria, and Prussia. Early \"juke-box\" pay versions of them existed in public places. Marsh's free Museum and curio shop in Long Beach, Washington, has several still-working versions of them on public display. The Musical Museum, Brentford, London, has a number of machines. The Morris Museum in Morristown, New Jersey, USA has a notable collection, including interactive exhibits. …"
-    }
+    "found": null
   },
   "furniture": {
     "plant": {
@@ -2588,7 +2605,7 @@
   "quota": {
     "day": "2026-11-15",
     "calls": {
-      "gemini-3.5-flash-lite": 83,
+      "gemini-3.5-flash-lite": 84,
       "gemini-3.6-flash": 15,
       "gemini-3.8-flash": 8,
       "gemini-3.5-flash": 1
@@ -2601,12 +2618,12 @@
     "history": []
   },
   "weather": {
-    "at": "2026-11-15T20:35:12.943Z",
+    "at": "2026-11-15T20:46:54.905Z",
     "kind": "cloudy",
     "code": 3,
-    "temp": 8.8,
+    "temp": 8.6,
     "cloud": 1,
-    "wind": 0.6
+    "wind": 0.6233333333333333
   },
   "news": {
     "date": "2026-11-15",
@@ -2693,22 +2710,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-15T20:43:21.157Z",
-  "fullness": 2.98,
+  "memoryFadeAt": "2026-11-15T20:46:57.687Z",
+  "fullness": 2.91,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.04,
-  "joy": 3.86,
-  "calm": 5.12,
+  "wonder": 6.88,
+  "joy": 4.58,
+  "calm": 5.09,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.81
+    "excited": 1.99
   },
-  "feelAt": "2026-11-15T20:43:19.223Z",
+  "feelAt": "2026-11-15T20:46:54.689Z",
   "lastAte": "2026-11-15T17:52:37.206Z",
   "studio": {
     "songs": [
@@ -2879,22 +2896,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.8,
-    "curiosity": 0,
-    "boredom": 4.18,
-    "loneliness": 1.4,
+    "creativity": 0,
+    "curiosity": 0.03,
+    "boredom": 2.16,
+    "loneliness": 1.41,
     "tidiness": 10,
-    "at": "2026-11-15T20:43:19.223Z",
+    "at": "2026-11-15T20:46:54.689Z",
     "coziness": 6
   },
   "recent": {
     "moves": [
-      {
-        "move": "record_song",
-        "kind": "music",
-        "at": "2026-11-15T19:30:21.135Z",
-        "failed": true
-      },
       {
         "move": "do",
         "kind": "play",
@@ -2968,6 +2979,11 @@
         "move": "search_web",
         "kind": "learn",
         "at": "2026-11-15T20:43:21.162Z"
+      },
+      {
+        "move": "make_app",
+        "kind": "make",
+        "at": "2026-11-15T20:46:57.692Z"
       }
     ],
     "moods": [
@@ -2993,7 +3009,7 @@
       "ask_for": 2,
       "eat": 2,
       "plant": 1,
-      "make_app": 1
+      "make_app": 2
     },
     "tried": {
       "do": 44,
@@ -3009,13 +3025,13 @@
       "ask_for": 2,
       "eat": 2,
       "plant": 1,
-      "make_app": 1
+      "make_app": 2
     },
     "kinds": {
       "play": 48,
       "learn": 9,
       "music": 7,
-      "make": 10,
+      "make": 11,
       "write": 2,
       "people": 2,
       "food": 2,
@@ -3025,7 +3041,7 @@
       "curious": 7,
       "energetic": 23,
       "gentle": 4,
-      "focused": 31,
+      "focused": 32,
       "hungry": 9,
       "determined": 3,
       "satisfied": 4
@@ -3044,7 +3060,7 @@
       "ask_for": 2.27,
       "eat": 2.9,
       "plant": 1.5,
-      "make_app": 2.46
+      "make_app": 5.09
     }
   },
   "skills": {
@@ -3055,7 +3071,7 @@
     "sewing": 0,
     "gardening": 3,
     "cooking": 0.5,
-    "coding": 1
+    "coding": 2
   },
   "intent": {
     "day": "2026-11-15",
@@ -3085,19 +3101,7 @@
     ]
   },
   "plan": {
-    "queue": [
-      {
-        "action": "make_app",
-        "details": {
-          "what": "music box gear tooth smoother tool",
-          "why": "to test gear ratios for the music box project"
-        },
-        "thought": "I need a little program to calculate the spacing.",
-        "enjoyment": 6,
-        "needs": "",
-        "make": true
-      }
-    ],
+    "queue": [],
     "decidedAt": "2026-11-15T20:43:20.766Z",
     "seen": {
       "tools": 2,
@@ -3121,13 +3125,13 @@
     "read_book": "2026-11-15T16:38:10.754Z",
     "record_song": "2026-11-15T19:22:00.637Z",
     "decorate": "2026-11-15T18:00:45.224Z",
-    "make_app": "2026-11-15T16:54:47.767Z"
+    "make_app": "2026-11-15T20:46:57.684Z"
   },
   "rewardDay": {
     "date": "2026-11-15",
     "n": {
       "fresh": 3,
-      "research": 2,
+      "research": 3,
       "fixed": 3,
       "asked": 2
     }
@@ -3140,5 +3144,15 @@
       "count": 1
     }
   ],
-  "forgotten": []
+  "forgotten": [
+    {
+      "id": "mmwhnpv8f7",
+      "at": "2026-11-15T09:53:28.899Z",
+      "text": "I recorded a song: Humming for a Little Box (choir, drums)",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.92,
+      "lastUsed": "2026-11-15T09:53:28.899Z"
+    }
+  ]
 }

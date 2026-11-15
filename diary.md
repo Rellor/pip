@@ -480,3 +480,8 @@ I am working on the wooden music box project and want to make sure the mechanics
 - search_web (how mechanical music box cylinders and combs work): I want to check how the gears connect to the notes.
 - mood: focused
 
+## 15/11/2026, 20:46:57
+I need a little program to calculate the spacing.
+- make_app (gear_tooth_smoother): I need a little program to calculate the spacing.
+- mood: focused
+
