@@ -3808,10 +3808,15 @@ async function renderCheckup() {
   checkupAt = Date.now();
   try {
     const r = await fetch(`${isLocal ? '' : RAW}health.json?t=${Math.floor(Date.now() / 60_000)}`, { cache: 'no-store' });
-    const items = r.ok ? (await r.json()).checkup?.items ?? [] : [];
+    const data = r.ok ? await r.json() : {};
+    const items = data.checkup?.items ?? [];
     fill($('checkup'), items.length
       ? items.slice().sort((a, b) => a.ok - b.ok).map((x) => { const li = el('li', null, x.ok ? 'ok' : 'bad'); li.append(el('b', `${x.ok ? '✅' : '⚠️'} ${x.label}`), el('span', x.text, 'muted')); return li; })
       : [el('li', 'No check-up yet. It runs every 10 minutes.', 'muted')]);
+    const fails = data.checkup?.failures ?? [];
+    fill($('failgroups'), fails.length
+      ? fails.map((f) => { const li = el('li', null, f.count >= 3 ? 'bad' : 'ok'); li.append(el('b', `${f.count >= 3 ? '🔁' : '•'} ${f.move}: ${f.count}× · last ${when(f.last)}`), el('span', f.reason, 'muted')); return li; })
+      : [el('li', 'Nothing failed in the last day.', 'muted')]);
   } catch {}
 }
 function renderErrorLog(s) {

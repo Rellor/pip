@@ -6,6 +6,8 @@ const MOVE_WORDS = { record_song: 'recording a song', change_thing: 'changing so
 // Words that show up in any thought, so they do not count as "the same topic".
 const COMMON = new Set('that this with have want just then from what will some them they need make made making about would could should still more next step steps project projects little small really little first last again before after work working keep going feel feels like into over time today here there when your mine very also been being because finished finish start started trying tried test testing done good back sure right nice well'.split(' '));
 
+// A failure reason without the code examples that are only meant for Pip.
+const plainReason = (t) => String(t ?? '').replace(/[:\s]*[\[{][\s\S]*$/, '').replace(/\s+/g, ' ').trim().slice(0, 160) || 'it did not work';
 const words = (t) => [...new Set(String(t ?? '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter((w) => w.length >= 4 && !COMMON.has(w)))];
 
 export function checkup(s, health = {}, now = Date.now()) {
@@ -33,7 +35,7 @@ export function checkup(s, health = {}, now = Date.now()) {
   const done = s.today?.done ?? {};
   const failing = Object.keys(tried).map((m) => ({ m, n: tried[m], bad: tried[m] - (done[m] ?? 0) })).filter((x) => x.bad >= 3 && x.bad / x.n >= 0.5).sort((a, b) => b.bad - a.bad);
   const why = failing.length ? (s.log ?? []).filter((e) => e.action === failing[0].m && e.failed).at(-1)?.failed : '';
-  add('failing', !failing.length, 'Moves', failing.length ? `${MOVE_WORDS[failing[0].m] ?? failing[0].m} failed ${failing[0].bad} of ${failing[0].n} times today${why ? `. Last reason: ${String(why).replace(/[:\s]*[\[{][\s\S]*$/, '').slice(0, 140)}` : ''}.` : 'No move keeps failing today.');
+  add('failing', !failing.length, 'Moves', failing.length ? `${MOVE_WORDS[failing[0].m] ?? failing[0].m} failed ${failing[0].bad} of ${failing[0].n} times today${why ? `. Last reason: ${plainReason(why)}` : ''}.` : 'No move keeps failing today.');
 
   // 4. Too much pretending: free "do" steps make nothing.
   const total = Object.values(done).reduce((a, b) => a + b, 0);
@@ -51,10 +53,21 @@ export function checkup(s, health = {}, now = Date.now()) {
   const allOut = s.quota?.out && Object.keys(s.quota.out).length && s.last?.via === 'fallback';
   add('models', !allOut && errs < 5, 'Models', allOut ? 'No model is left today, so he runs on autopilot until the daily reset.' : errs >= 5 ? `${errs} wake-ups went wrong in the last 6 hours.` : 'The models answer.');
 
+  // Every move that failed lately, grouped by what went wrong, so a repeating error stands out in Settings.
+  const groups = {};
+  for (const e of (s.log ?? []).filter((x) => x.failed && now - Date.parse(x.at) < DAY)) {
+    const reason = plainReason(e.failed);
+    const k = `${e.action}|${reason}`;
+    groups[k] ??= { move: MOVE_WORDS[e.action] ?? e.action.replace(/_/g, ' '), reason, count: 0, last: e.at };
+    groups[k].count += 1;
+    if (e.at > groups[k].last) groups[k].last = e.at;
+  }
+  const failures = Object.values(groups).sort((a, b) => b.count - a.count || b.last.localeCompare(a.last)).slice(0, 8);
+
   // What to send: problems not sent yet today. A problem that goes away and comes back the same day stays quiet.
   const day = new Date(now).toISOString().slice(0, 10);
   const sent = Object.fromEntries(Object.entries(health.checkup?.sent ?? {}).filter(([, d]) => d === day));
   const fresh = out.filter((x) => !x.ok && !sent[x.id]);
   for (const x of fresh) sent[x.id] = day;
-  return { items: out, fresh, saved: { at: new Date(now).toISOString(), items: out, sent } };
+  return { items: out, fresh, failures, saved: { at: new Date(now).toISOString(), items: out, failures, sent } };
 }
