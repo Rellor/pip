@@ -7,3 +7,8 @@ I am full of energy and ready to tackle a multi-step project while also learning
 - do (plan my new project: Build a little wooden music box): I want to start something big with multiple steps today.
 - mood: curious
 
+## 15/11/2026, 09:43:53
+I need to learn a bit about how music is made before I try to build the music box mechanism.
+- read_book (how simple melodies and musical notes work): I need to learn a bit about how music is made before I try to build the music box mechanism.
+- mood: curious
+
