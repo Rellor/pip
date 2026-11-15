@@ -225,7 +225,7 @@ async function loadState() {
   grantInstruments(state);
   if (HAS_STUDIO && moveMusicToStudio(state)) addMemory(state, 'I have a little house now. My piano and my music things moved into my new music studio: through the door in my bedroom, across the hall, and through the next door.', 7, 'memory', new Date().toISOString());
   for (const note of applyChanges(state)) addMemory(state, note, 8, 'memory', new Date().toISOString()); // one-time changes from Bas
-  { const back = moveMusicBack(state); if (back.length || state.musicBack === true && !state.musicBackNoted) { state.musicBackNoted = true; addMemory(state, 'The music studio is gone for now. My piano is back in my bedroom, by the window where I started.', 7, 'memory', new Date().toISOString()); } }
+  moveMusicBack(state); // once: the piano and studio things come back from the old studio (no memory of it: Bas wants it forgotten)
   keepWindowsClear(state);
   state.studio ??= { songs: [] };
   state.studio.songs = Array.isArray(state.studio.songs) ? state.studio.songs : [];

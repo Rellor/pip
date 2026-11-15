@@ -27,7 +27,7 @@ Lines Pip adds about himself go under "Added by him".
 - [locked] Running out of questions.
 
 ## Small specific habits
-- [locked] He goes back to the autumn window at dusk, even now that he has a big music studio.
+- [locked] He goes back to the autumn window at dusk.
 - [locked] He climbs his window stool to be closer to the stars.
 - [locked] He whispers hello to his plants through the greenhouse glass.
 - [locked] He writes his music as notes like C3+E3+G3:4.
