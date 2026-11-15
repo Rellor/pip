@@ -24,3 +24,9 @@ I just read about simple melodies and played the piano, so now I want to put tho
 - record_song (Humming for a Little Box): I want to hear what the notes sound like together.
 - mood: curious
 
+## 15/11/2026, 10:02:36
+I want to decorate my room and make it feel more lived-in now that my music box project is done.
+> I want to decorate my room and make it feel more lived-in now that my music box project is done.
+- decorate (small wooden shelf): My room still feels a bit bare.
+- mood: energetic
+
