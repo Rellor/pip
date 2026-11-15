@@ -4097,6 +4097,9 @@ function render(s) {
     return li;
   }) : empty('No moves yet.'));
   $('selfnote').textContent = s.self || 'Pip has not written about himself yet.';
+  fill($('soullist'), (s.soulLines || []).length ? s.soulLines.map((l) => el('li', `✨ ${l.text}`)) : empty('Nothing yet. When he sees the same thing in himself on 3 days, he may add a line.'));
+  fill($('lessonlist'), (s.lessons || []).length ? s.lessons.slice(0, 8).map((l) => el('li', `${l.solvedAt ? '✅' : '📝'} ${plainText(l.text) || l.text}${l.count > 1 ? ` (${l.count}×)` : ''}`)) : empty('No lessons yet.'));
+  fill($('recipelist'), (s.recipes || []).length ? s.recipes.slice().reverse().map((r) => el('li', `${r.proud ? '⭐' : '📖'} ${r.name}${r.why ? ` — ${r.why}` : ''}`)) : empty('Nothing in his recipe book yet.'));
   fill($('favlist'), (s.favorites || []).length ? s.favorites.map((f) => el('li', `❤️ ${f.kind ? `${f.kind}: ` : ''}${f.what}`)) : empty('No favorites yet.'));
   fill($('ritlist'), (s.rituals || []).length ? s.rituals.map((r) => el('li', `🔁 ${r.text}${r.when ? ` (${r.when})` : ''}`)) : empty('No rituals yet.'));
   fill($('dreamlist'), (s.dreams || []).length ? [...s.dreams].reverse().slice(0, 8).map((d) => el('li', `🌙 ${new Date(d.at).toLocaleDateString([], { day: "numeric", month: "short" })}: ${d.text}`)) : empty('No dreams yet.'));

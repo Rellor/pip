@@ -111,6 +111,8 @@ export function noteMove(s, move, { failed = false, mood = null, now = Date.now(
   const kind = kindOf(move);
   s.today.tried[move] = (s.today.tried[move] ?? 0) + 1;
   if (!failed) {
+    s.ever ??= {}; // every move he ever did (for the pull towards new things)
+    s.ever[move] = (s.ever[move] ?? 0) + 1;
     s.today.done[move] = (s.today.done[move] ?? 0) + 1;
     s.today.kinds[kind] = (s.today.kinds[kind] ?? 0) + 1;
   }

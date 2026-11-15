@@ -10,7 +10,7 @@ const COMMON = new Set('that this with have want just then from what will some t
 
 // A failure reason without the code examples that are only meant for Pip.
 const plainReason = (t) => String(t ?? '').replace(/[:\s]*[\[{][\s\S]*$/, '').replace(/\s+/g, ' ').trim().slice(0, 160) || 'it did not work';
-const words = (t) => [...new Set(String(t ?? '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter((w) => w.length >= 4 && !COMMON.has(w)))];
+export const words = (t) => [...new Set(String(t ?? '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter((w) => w.length >= 4 && !COMMON.has(w)))];
 
 export function checkup(s, health = {}, now = Date.now()) {
   const out = [];
