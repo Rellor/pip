@@ -53,6 +53,15 @@ const CHANGES = [
       return given.length ? `Bas gave me seeds: ${given.join(', ')}. Now I can grow my own food.` : null;
     },
   },
+  {
+    id: '2026-11-15 no pretend planting',
+    run(s) { // he "planted" with a free do-step, but nothing is in the soil: that memory goes, and he knows what planting takes
+      if ((s.garden?.plots ?? []).length) return null;
+      const before = (s.memories ?? []).length;
+      s.memories = (s.memories ?? []).filter((m) => !/\bI planted\b|plant basil and mint seeds/i.test(m.text));
+      return before !== s.memories.length ? 'My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.' : null;
+    },
+  },
 ];
 
 // What was removed is also forgotten: the studio, the piano, the instruments, the old clothes and what he let go in the tidy.

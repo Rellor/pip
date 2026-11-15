@@ -91,6 +91,19 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       steps.push({ action: 'do', details: { what: `look closely at my project ${clip(d.title ?? d.project, 60)}` }, thought, enjoyment: 6 });
       continue;
     }
+    // "do" is for anything else: when it is really planting, watering, harvesting, eating or cooking, it becomes that move,
+    // so it only happens if it can (a shovel, seeds, food...). Pretending to plant leaves no seeds in the soil.
+    if (name === 'do') {
+      const w = String(d.what ?? '').toLowerCase();
+      const seedName = (w.match(/\b(basil|mint|strawberr\w*|tomato\w*|rosemary|thyme|parsley|chives?|lettuce|radish\w*|carrots?|beans?|peas?|potato\w*|sunflower\w*|daisy|tulips?|lavender)\b/) ?? [])[1];
+      const real = /\b(plant|sow)\b/.test(w) && /seed|soil|planter|pot|greenhouse|basil|mint|strawberr/.test(w) ? { action: 'plant', details: { seed: seedName ?? '' } }
+        : /\bwater\b/.test(w) && /plant|seed|sprout|planter|garden|basil|mint/.test(w) ? { action: 'water', details: {} }
+        : /\b(harvest|pick)\b/.test(w) && /plant|basil|mint|strawberr|herb|leaves|fruit|tomato/.test(w) ? { action: 'harvest', details: {} }
+        : /\bcook\b/.test(w) ? { action: 'cook', details: { dish: w.replace(/^.*\bcook\s*/, '').slice(0, 40) || 'something warm', ingredients: [] } }
+        : /\b(eat|have a bite of|munch)\b/.test(w) ? { action: 'eat', details: { food: w.replace(/^.*\b(eat|have a bite of|munch)\s*(some|a|an|the|my)?\s*/, '').slice(0, 40) } }
+        : null;
+      if (real) { steps.push({ ...real, thought, enjoyment: 6, needs: '' }); continue; }
+    }
     const details = { ...d };
     if (!details.name && details.what && !MAKER_MOVES.includes(name) && name !== 'do') details.name = details.what; // "what" and "name" both name the thing
     if (name === 'ask_for') details.reason = details.reason ?? details.why;

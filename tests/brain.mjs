@@ -103,3 +103,10 @@ ok('no model: needs come first', () => {
   s.energy = 2;
   assert.equal(fallbackSteps(s, [])[0].action, 'rest');
 });
+
+ok('a "do" that is really planting, watering or eating becomes that move (no pretending)', () => {
+  const a = toAnswer({ moves: [{ move: 'do', details: { what: 'plant basil seeds in my planter box' } }, { move: 'do', details: { what: 'eat some bread' } }, { move: 'do', details: { what: 'hum by the window' } }] }, ['do']);
+  assert.deepEqual(a.steps.map((x) => x.action), ['plant', 'eat', 'do']);
+  assert.equal(a.steps[0].details.seed, 'basil');
+  assert.equal(a.steps[1].details.food, 'bread');
+});
