@@ -5,11 +5,12 @@ name: Maintenance
 #   tidy        Pip chooses keep / store / let go for his things, writes web/archive/tidy-proposal.json (nothing changes yet)
 #   tidy-apply  carries out the saved choices (no model call). Pause the Pip loop first: it changes web/state.json.
 #   secrets     says which secrets are set (only "set" or "missing", never a value)
+#   test-push   sends one test message to the warning channel (the ntfy topic + "-checkup")
 on:
   workflow_dispatch:
     inputs:
       task:
-        description: 'quota, tidy or tidy-apply'
+        description: 'quota, tidy, tidy-apply, secrets or test-push'
         required: true
         default: quota
 
@@ -42,6 +43,7 @@ jobs:
             tidy) node pip.js tidy ;;
             tidy-apply) node pip.js tidy apply ;;
             secrets) for n in GEMINI_API_KEY PIP_REPLY_KEY NTFY_TOPIC; do if [ -n "${!n}" ]; then echo "$n: set"; else echo "$n: missing"; fi; done ;;
+            test-push) curl -sf -H "Title: Pip check-up: test" -H "Tags: white_check_mark,from-web" -d "This is a test. Warnings about Pip will arrive here." "https://ntfy.sh/${NTFY_TOPIC}-checkup" > /dev/null && echo "sent" ;;
             *) echo "unknown task"; exit 1 ;;
           esac
       - name: Save
