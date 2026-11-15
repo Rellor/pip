@@ -27,6 +27,7 @@ import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './a
 import { makerPrompt, applyMade, fakeMade, finishSong } from './maker.js';
 import { describePattern } from './music.js';
 const KEEP_IDEAS = 30;
+const THINK_ROOM = 3000; // these models think before they answer, and the thinking counts toward maxOutputTokens
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, capabilityGuide, blueprintGaps, requestAbility } from './blueprints.js';
@@ -533,7 +534,7 @@ async function lookAtPhoto(s, pic, bytes, d, soul, system) {
   if (process.env.PIP_FAKE || d.retake) return;
   try {
     const prompt = `${soul}\n\nI just took this photo of ${pic.target}${d.why ? ` because ${text(d.why, 160)}` : ''}${pic.camera ? ` (camera: ${pic.camera})` : ''}. I look at it.\nDoes it show what I wanted? What do I see, and why does it matter to me? If it did not work, would another angle be better: close, wide, low or high?\n\nAnswer in JSON: {"shows_it": true, "about": "what I see, one sentence", "matters": "why it matters to me, one sentence", "retake": false, "camera": "close"}`;
-    const r = await askGemini(system, prompt, 1, [{ mime: 'image/jpeg', data: Buffer.from(bytes).toString('base64') }], { schema: PHOTO_SCHEMA, maxTokens: 300, group: 'big' });
+    const r = await askGemini(system, prompt, 1, [{ mime: 'image/jpeg', data: Buffer.from(bytes).toString('base64') }], { schema: PHOTO_SCHEMA, maxTokens: THINK_ROOM + 300, group: 'big' });
     if (text(r?.about, 300)) pic.notes = text(r.about, 300);
     if (text(r?.matters, 300)) pic.matters = text(r.matters, 300);
     pic.showsIt = r?.shows_it !== false;
@@ -551,7 +552,7 @@ async function morningGoals(s, soul, system) {
   const day = dayOf();
   try {
     const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [] });
-    const reply = process.env.PIP_FAKE ? fakeGoals() : await askGemini(system, prompt, 1, [], { schema: goalSchema, maxTokens: 400, group: 'big' });
+    const reply = process.env.PIP_FAKE ? fakeGoals() : await askGemini(system, prompt, 1, [], { schema: goalSchema, maxTokens: THINK_ROOM + 400, group: 'big' });
     if (setGoals(s, reply, day)) { console.log(`🌅 goals for today: ${s.intent.items.map((i) => i.text).join(' | ')}`); return; }
   } catch (e) {
     console.error('⚠️  goals:', e.message);
@@ -1036,7 +1037,7 @@ async function sleepCall(state) {
     const found = patterns(days, state.soulLines ?? []);
     const soul = await loadSoul();
     const prompt = sleepPrompt({ soul, today, found, added: state.soulLines ?? [], story: state.story });
-    const reply = process.env.PIP_FAKE ? fakeSleep(found) : await askGemini('I am Pip. I answer only in JSON.', prompt, 1, [], { schema: sleepSchema(found.map((p) => p.key)), maxTokens: 800, group: 'big' }).catch((e) => { console.error('⚠️  sleep:', e.message); return null; });
+    const reply = process.env.PIP_FAKE ? fakeSleep(found) : await askGemini('I am Pip. I answer only in JSON.', prompt, 1, [], { schema: sleepSchema(found.map((p) => p.key)), maxTokens: THINK_ROOM + 800, group: 'big' }).catch((e) => { console.error('⚠️  sleep:', e.message); return null; });
     const { changes } = applySleep(state, reply);
     await saveSoul(state.soulLines, changes);
     if (text(reply?.story, 900)) { state.story = text(reply.story, 900); state.storyAt = new Date().toISOString(); }
@@ -1167,12 +1168,14 @@ async function wakeUp() {
       const ctx = brainContext(state, { soul, offered, reasons, unread, looking, grew });
       const prompt = brainPrompt(ctx);
       if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, prompt);
-      const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: 800, ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
+      const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
       via = 'brain';
     } catch (e) {
-      if (!/quota|Rate limit|429/i.test(e.message)) throw e;
-      console.log(`🚶 no model right now (${e.message.slice(0, 80)}), so Pip runs on autopilot`);
+      // No answer (out of quota, a broken or cut-off answer, a network error): he carries on without the model this time,
+      // instead of the wake-up failing (and failing again next time, while the same message waits).
+      console.log(`🚶 no usable answer from the model (${e.message.slice(0, 80)}), so Pip carries on by himself this time`);
+      state.lastError = { at: new Date().toISOString(), kind: 'brain', message: e.message.slice(0, 200) };
       answer = { thought: '', inner: '', steps: [], mood_after: state.mood, new_idea: null };
       via = 'fallback';
     }
