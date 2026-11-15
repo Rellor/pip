@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Music Box Gear Study</title>
+<style>
+  body {
+    background: #f4efe6;
+    color: #4a3e3d;
+    font-family: Georgia, serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1 {
+    font-size: 1.3rem;
+    font-weight: normal;
+    margin-bottom: 4px;
+    color: #3a2e2b;
+  }
+  p.sub {
+    font-size: 0.85rem;
+    color: #8c7a78;
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .card {
+    background: #fffdf9;
+    border: 1px solid #e0d6cd;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    max-width: 440px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  canvas {
+    background: #fcfaf7;
+    border: 1px dashed #d5c8bc;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto 16px auto;
+  }
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 0.85rem;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  input[type=range] {
+    accent-color: #8c6d58;
+    cursor: pointer;
+  }
+  .notes {
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: #6e5d5b;
+    border-top: 1px solid #efe6dd;
+    padding-top: 12px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Music Box Gear Study</h1>
+    <p class="sub">turning slow handle into tiny music plinks</p>
+    
+    <canvas id="cv" width="400" height="220"></canvas>
+    
+    <div class="controls">
+      <div class="row">
+        <label for="teeth1">Handle Gear (Left): <b id="val1">12</b> teeth</label>
+        <input type="range" id="teeth1" min="6" max="20" value="12">
+      </div>
+      <div class="row">
+        <label for="teeth2">Cylinder Gear (Right): <b id="val2">24</b> teeth</label>
+        <input type="range" id="teeth2" min="6" max="30" value="24">
+      </div>
+      <div class="row">
+        <label for="speed">Speed:</label>
+        <input type="range" id="speed" min="0" max="40" value="12">
+      </div>
+    </div>
+    
+    <div class="notes">
+      <b>Teeth ratio:</b> <span id="ratio">12 : 24</span><br>
+      <small>When handle turns 1 full turn, the cylinder turns <span id="turns">0.50</span> turns.</small><br>
+      <small style="color: #a08c8a;">(click page once to allow tiny sound)</small>
+    </div>
+  </div>
+
+<script>
+const canvas = document.getElementById('cv');
+const ctx = canvas.getContext('2d');
+
+const t1Input = document.getElementById('teeth1');
+const t2Input = document.getElementById('teeth2');
+const spdInput = document.getElementById('speed');
+
+const val1 = document.getElementById('val1');
+const val2 = document.getElementById('val2');
+const ratioEl = document.getElementById('ratio');
+const turnsEl = document.getElementById('turns');
+
+let angle1 = 0;
+let audioCtx = null;
+let lastToothHit = -1;
+
+function initAudio() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) audioCtx = new AudioContext();
+  }
+}
+document.addEventListener('click', initAudio, { once: true });
+
+function playPlink(pitch) {
+  if (!audioCtx) return;
+  try {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    let osc = audioCtx.createOscillator();
+    let gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.25);
+  } catch(e){}
+}
+
+function drawGear(x, y, teeth, radius, angle, color) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+  
+  ctx.fillStyle = color;
+  ctx.strokeStyle = '#5a4a42';
+  ctx.lineWidth = 1.5;
+  
+  ctx.beginPath();
+  let toothDepth = 7;
+  for (let i = 0; i < teeth; i++) {
+    let a1 = (i / teeth) * Math.PI * 2;
+    let a2 = ((i + 0.25) / teeth) * Math.PI * 2;
+    let a3 = ((i + 0.5) / teeth) * Math.PI * 2;
+    let a4 = ((i + 0.75) / teeth) * Math.PI * 2;
+    
+    let rOuter = radius + toothDepth / 2;
+    let rInner = radius - toothDepth / 2;
+    
+    if (i === 0) ctx.moveTo(Math.cos(a1) * rInner, Math.sin(a1) * rInner);
+    ctx.lineTo(Math.cos(a1) * rInner, Math.sin(a1) * rInner);
+    ctx.lineTo(Math.cos(a2) * rOuter, Math.sin(a2) * rOuter);
+    ctx.lineTo(Math.cos(a3) * rOuter, Math.sin(a3) * rOuter);
+    ctx.lineTo(Math.cos(a4) * rInner, Math.sin(a4) * rInner);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  
+  // center hole
+  ctx.beginPath();
+  ctx.arc(0, 0, Math.max(6, radius * 0.2), 0, Math.PI * 2);
+  ctx.fillStyle = '#fcfaf7';
+  ctx.fill();
+  ctx.stroke();
+
+  // marker dot
+  ctx.beginPath();
+  ctx.arc(radius * 0.5, 0, 2.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#5a4a42';
+  ctx.fill();
+  
+  ctx.restore();
+}
+
+function loop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  let teeth1 = parseInt(t1Input.value);
+  let teeth2 = parseInt(t2Input.value);
+  let spd = parseFloat(spdInput.value) * 0.0012;
+  
+  val1.textContent = teeth1;
+  val2.textContent = teeth2;
+  
+  let ratio = teeth1 / teeth2;
+  ratioEl.textContent = teeth1 + ' : ' + teeth2;
+  turnsEl.textContent = ratio.toFixed(2);
+  
+  angle1 += spd;
+  let angle2 = -angle1 * (teeth1 / teeth2);
+  
+  let pitchRadius = 5.5; 
+  let r1 = teeth1 * pitchRadius;
+  let r2 = teeth2 * pitchRadius;
+  
+  let totalDist = r1 + r2;
+  let startX = (canvas.width - totalDist) / 2;
+  let x1 = startX + r1;
+  let y1 = 110;
+  let x2 = x1 + r1 + r2 - 1;
+  let y2 = 110;
+  
+  // Handle gear
+  drawGear(x1, y1, teeth1, r1, angle1, '#d9b48f');
+  
+  // Music comb
+  ctx.fillStyle = '#8c7a78';
+  ctx.fillRect(x2 + r2 + 2, y2 - 10, 16, 3);
+  ctx.fillRect(x2 + r2 + 2, y2 - 3, 20, 3);
+  ctx.fillRect(x2 + r2 + 2, y2 + 4, 16, 3);
+  
+  // Cylinder gear
+  drawGear(x2, y2, teeth2, r2, angle2, '#c48b71');
+  
+  // Sound check
+  let currentToothHit = Math.floor(((-angle2) / (Math.PI * 2)) * teeth2);
+  if (currentToothHit !== lastToothHit && spd > 0) {
+    lastToothHit = currentToothHit;
+    let scale = [440, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99];
+    let note = scale[Math.abs(currentToothHit) % scale.length];
+    playPlink(note);
+  }
+  
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>

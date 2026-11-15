@@ -303,3 +303,8 @@ I am exploring how music works and working on the gears for my music box project
 - play_piano (C4 E4 G4:2): Humming a little tune to test the music box gears.
 - mood: curious
 
+## 15/11/2026, 16:54:47
+I will write a small program to simulate how the pins hit the comb.
+- make_app (gear ratio simulation): I will write a small program to simulate how the pins hit the comb.
+- mood: curious
+
