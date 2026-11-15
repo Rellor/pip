@@ -118,3 +118,9 @@ My last attempt failed because there was not enough free floor space, so I need 
 - do (look closely at something in my room I never really looked at): That did not work out. I shake it off and look closely at something in my room I never really looked at.
 - mood: energetic
 
+## 15/11/2026, 12:24:18
+I need to fix how I placed the small wooden shelf by hanging it on the wall correctly.
+> I need to fix how I placed the small wooden shelf by hanging it on the wall correctly.
+- change_thing (small wooden shelf): I will try hanging the shelf on the wall since it's a wall thing and not a floor item.
+- mood: energetic
+
