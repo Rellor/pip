@@ -39,12 +39,17 @@ export function applyLook(mode, ctx) {
   hemi.groundColor.set(0xb88f6c);
   sun.color.set(0xffe2c0);
   lamp.color.set(0xffa860);
-  // a little bounce light from the floor and a cool fill from the window side, so the shadows are not black
-  const bounce = new THREE.PointLight(0xffc89a, 2.2, 14, 1.4);
-  bounce.position.set(3.4, 0.9, -2.4); // far from where Pip stands, so he does not glow
+  // Light only comes from real sources: the windows, the lamps. No sun from the front of the room (there is no window there),
+  // and only a little sky light all around, so dark corners stay dark.
+  sun.intensity = 0;
+  sun.castShadow = false;
+  // daylight through each window (soft, no shadow), and sunlight that bounces up from the bright patch on the floor
   const cool = new THREE.PointLight(0xbcd4ff, 1.6, 16, 1.6);
-  cool.position.set(0.3, 3.4, -3.8);
-  scene.add(bounce, cool);
+  cool.position.set(0.3, 3.2, -4.4); // just inside the back window
+  const side = new THREE.PointLight(0xbcd4ff, 1.2, 14, 1.6);
+  side.position.set(-4.4, 3.0, -2.4); // just inside the square window in the left wall
+  const bounce = new THREE.PointLight(0xffc89a, 0, 7, 1.6);
+  scene.add(bounce, cool, side);
 
   // --- sunlight (or moonlight) through the window: a spot light far outside that follows the sun across the sky, only the hole lets it in
   const winLight = new THREE.SpotLight(0xffe0b0, 3, 0, 0.06, 0.3, 0);
@@ -58,10 +63,10 @@ export function applyLook(mode, ctx) {
   if (new URLSearchParams(location.search).has('nowin')) winLight.visible = false; // for checking which light makes a shadow
   // The room has no roof in the overview, so rays that come in over the top of the back wall would light Pip and the floor with hard straight edges.
   // An invisible strip of roof along the back wall (drawn by nothing, it only casts a shadow) keeps the window the only way in.
-  // It stops short of the middle of the room, so the room's own sun, which comes from the front, is not blocked.
-  const roof = new THREE.Mesh(new THREE.PlaneGeometry(11.2, 4.6), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, side: THREE.DoubleSide }));
+  // It covers the whole room: daylight only comes in through the windows.
+  const roof = new THREE.Mesh(new THREE.PlaneGeometry(11.2, 10.6), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, side: THREE.DoubleSide }));
   roof.rotation.x = -Math.PI / 2;
-  roof.position.set(0.15, 5.02, -3.3);
+  roof.position.set(0.15, 5.02, 0);
   roof.castShadow = true;
   scene.add(roof);
   // a faint beam of light in the air (the window opening stretched along the light), with dust in it
@@ -140,7 +145,7 @@ export function applyLook(mode, ctx) {
   function syncBlobs() {
     const groups = [...Object.values(G), ...decorGroups.values()];
     for (const g of groups) {
-      if (!g.visible || g.scale.x < 0.5 || g === G.rug) continue; // the rug is flat: it gets no shadow of its own
+      if (!g.visible || g.scale.x < 0.5 || g === G.rug) { if (blobs.get(g)) blobs.get(g).visible = false; continue; } // gone or flat: no shadow on the floor (a removed piano left one behind)
       let b = blobs.get(g);
       if (!b) {
         b = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), aoMat);
@@ -339,15 +344,15 @@ export function applyLook(mode, ctx) {
       const dusk = day < 0.4 ? 1 - day / 0.4 : 0; // low sun: redder
       const nightK = 1 - clamp(day * 4, 0, 1);
       // the whole room follows the time of day: bright and warm by day, dim and blue at night with the lamp doing the work
-      hemi.intensity = 0.42 + 0.55 * day;
+      hemi.intensity = 0.16 + 0.42 * day; // only a little light from everywhere: what lights the room are the windows and the lamps
       lerpColor(hemi.color, 0x9fb0f0, 0xfff0e0, 1 - nightK);
       lerpColor(hemi.groundColor, 0x5a4a6a, 0xb88f6c, 1 - nightK);
-      sun.intensity = 0.28 + 1.02 * day;
-      lerpColor(sun.color, 0x8fa6ff, dusk > 0.1 ? 0xffb48a : 0xffe2c0, 1 - nightK);
+      sun.intensity = 0;
       lamp.intensity = 13 - 3 * day;
-      bounce.intensity = 0.5 + 1.7 * day;
-      cool.intensity = 0.7 + 1.1 * day;
+      cool.intensity = 0.15 + 2.8 * day; // daylight comes in even when it is grey
+      side.intensity = 0.1 + 2.2 * day;
       lerpColor(cool.color, 0x7f98ff, 0xbcd4ff, 1 - nightK);
+      side.color.copy(cool.color);
       scene.background.copy(bg0).lerp(nightBg, nightK * 0.4);
       // sunlight by day, a little cool moonlight through the same window at night
       // Where the sun or moon is now, and how much of it comes through: all of it when clear, broken up by passing clouds when a bit cloudy, none when overcast or wet
@@ -394,7 +399,8 @@ export function applyLook(mode, ctx) {
         dustPos[i * 3 + 2] = p.z + (a - 0.5) * 0.6;
       }
       dustGeo.attributes.position.needsUpdate = true;
-      sun.intensity = (0.28 + 1.02 * day) * (0.55 + 0.45 * Math.max(direct, aim.body === 'sun' ? 0 : 1)); // the room's own sun is weaker when it is grey
+      bounce.position.set(floorC.x, 0.5, floorC.z); // the sunny patch on the floor lights the room a little from below
+      bounce.intensity = 2.4 * sunAmount * day;
       if (on.detail) syncBlobs();
       if (noDust) winLight.intensity *= 0.9; // no shadow any more: keep only a little of it so it does not light the whole room
       const nowMs = performance.now();

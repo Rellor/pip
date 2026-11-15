@@ -100,6 +100,15 @@ scene.add(sun);
 const lamp = new THREE.PointLight(0xffb066, 12, 12);
 lamp.position.set(-2, 3.5, -1);
 scene.add(lamp);
+// the lamp itself: a warm shade on a cord, so the room's light comes from something you can see
+{
+  const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 1.0, 6), new THREE.MeshStandardMaterial({ color: 0x222222 }));
+  cord.position.set(-2, 4.4, -1);
+  const shade = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 14), new THREE.MeshStandardMaterial({ color: 0xfff1d0, emissive: 0xffd98a, emissiveIntensity: 0.9 }));
+  shade.scale.set(1, 0.7, 1);
+  shade.position.set(-2, 3.82, -1);
+  scene.add(cord, shade);
+}
 
 const mat = (color, opts = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...opts });
 function box(parent, [w, h, d], color, [x, y, z], opts) {
