@@ -80,6 +80,7 @@ ok('the reply becomes steps; moves that were not offered are dropped', () => {
 ok('asks: only for a reason, at most 2 a day', () => {
   const s = fresh();
   s.projects = [];
+  s.tools.push({ name: 'guitar', kind: 'guitar' }); // with no instrument at all, asking for one is a reason too
   assert.equal(askReason(s), null);
   ensurePlan(s);
   s.plan.lastFail = { at: new Date().toISOString(), why: 'extend_thing: I need a toolbox' };

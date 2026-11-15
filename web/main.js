@@ -254,6 +254,7 @@ function applyFurniture(s) {
       SPOTS[SPOT_OF[key]] = { ...SPOTS[SPOT_OF[key]], p: new V3(wx, 0, wz), face: sp.face + pl.rot };
     }
   }
+  if (isGone(furn, 'piano')) SPOTS.piano = { ...SPOTS.window }; // no piano: what pointed at it goes to the window
   const pianoAt = placeOf(furn, 'piano');
   wallFrame.position.x = pianoAt.x > 5.3 ? -2.2 + (pianoAt.x - pivotOf('piano')[0]) : -2.2;
   for (const r of REGIONS) {
@@ -932,6 +933,14 @@ const SYNONYMS = {
   plant: ['plant', 'flower', 'leaf'],
   bed: ['bed', 'pillow'],
 };
+// Without the studio its spots do not exist (they are behind the hall's end wall): old entries and wandering use a bedroom spot.
+const NO_STUDIO = { studio_desk: 'computer', studio_stage: 'center', studio_keys: 'center', studio_books: 'bookshelf', studio_drums: 'center' };
+if (!HAS_STUDIO) {
+  for (const k of Object.keys(NO_STUDIO)) { delete SPOTS[k]; delete SYNONYMS[k]; }
+  SYNONYMS.computer.push('mixing', 'mixer', 'record');
+  SYNONYMS.bookshelf.unshift('music book');
+}
+const spotOf = (key) => SPOTS[key] ?? SPOTS[NO_STUDIO[key]] ?? SPOTS.center;
 function resolveSpot(name) {
   const n = String(name || '').toLowerCase();
   for (const [spot, words] of Object.entries(SYNONYMS)) if (words.some((w) => n.includes(w))) return spot;
@@ -1698,7 +1707,7 @@ function startTask(last) {
   if (last.action === 'use' && last.made?.id && last.made.does === 'custom') setTimeout(() => runBehavior(last.made.id, 'custom', last.made.steps), 2500);
   if (last.action === 'use' && last.made?.id && ['drive', 'spin'].includes(last.made.does)) setTimeout(() => runBehavior(last.made.id, last.made.does, last.made.motion), 2500); // when he has walked up to it
   if (plan.anim === 'play' || plan.anim === 'jam') prefetchInstrument(plan.instrument, (plan.palette || []).flatMap((n) => n.chord ?? [n.freq]));
-  task = { ...plan, spot: plan.spot || SPOTS[plan.at], last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
+  task = { ...plan, spot: plan.spot || spotOf(plan.at), last, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
 }
 function startPhrase(notes, step, now) {
   task.phrase = { notes, step, t0: now, lastIdx: -1 };
