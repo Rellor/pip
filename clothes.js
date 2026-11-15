@@ -21,7 +21,7 @@ function fitWorn(parts, { w, h, d }, bottom) {
   const max = [-Infinity, -Infinity, -Infinity];
   for (const p of parts) {
     const s = p.shape;
-    let e = s === 'box' ? p.size.map((v) => v / 2) : s === 'sphere' ? [p.size[0], p.size[0], p.size[0]] : s === 'cylinder' ? [Math.max(p.size[0], p.size[1]), p.size[2] / 2, Math.max(p.size[0], p.size[1])] : s === 'cone' ? [p.size[0], p.size[1] / 2, p.size[0]] : s === 'torus' ? [p.size[0] + p.size[1], p.size[0] + p.size[1], p.size[1]] : [p.size[0], p.size[1] / 2 + p.size[0], p.size[0]];
+    let e = s === 'box' || s === 'roundbox' ? p.size.map((v) => v / 2) : s === 'sphere' ? [p.size[0], p.size[0], p.size[0]] : s === 'cylinder' ? [Math.max(p.size[0], p.size[1]), p.size[2] / 2, Math.max(p.size[0], p.size[1])] : s === 'cone' ? [p.size[0], p.size[1] / 2, p.size[0]] : s === 'torus' ? [p.size[0] + p.size[1], p.size[0] + p.size[1], p.size[1]] : [p.size[0], p.size[1] / 2 + p.size[0], p.size[0]];
     if (p.rot.some((r) => r)) e = e.map(() => Math.max(...e));
     for (let i = 0; i < 3; i++) {
       min[i] = Math.min(min[i], p.pos[i] - e[i]);
