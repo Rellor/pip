@@ -1005,7 +1005,7 @@ export function wallNotes(decor) {
 // Where there is room beside each big thing (a strip 0.8 m wide), so he can see the space and not guess.
 export function freeSides(decor) {
   const things = [
-    ...MOVABLE.filter((k) => !FURNITURE[k].flat).map((k) => { const rs = furnRects(furnNow, k); return { n: FURNITURE[k].n, key: k, facing: facingOf(k, placeOf(furnNow, k).rot), shown: !!frontsNow?.[k], x0: Math.min(...rs.map((r) => r.x0)), x1: Math.max(...rs.map((r) => r.x1)), z0: Math.min(...rs.map((r) => r.z0)), z1: Math.max(...rs.map((r) => r.z1)) }; }),
+    ...MOVABLE.filter((k) => !FURNITURE[k].flat && furnRects(furnNow, k).length).map((k) => { const rs = furnRects(furnNow, k); return { n: FURNITURE[k].n, key: k, facing: facingOf(k, placeOf(furnNow, k).rot), shown: !!frontsNow?.[k], x0: Math.min(...rs.map((r) => r.x0)), x1: Math.max(...rs.map((r) => r.x1)), z0: Math.min(...rs.map((r) => r.z0)), z1: Math.max(...rs.map((r) => r.z1)) }; }),
     ...decor.filter((o) => o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, facing: facingOf(o.id, o.rotY), shown: !!frontsNow?.[o.id], ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) })),
   ];
   return things.map((t) => {

@@ -78,7 +78,9 @@ export function worldRect(key, place, r) {
   const b = worldPoint(key, place, [r.x[1], r.z[1]]);
   return { n: r.n, x0: Math.min(a[0], b[0]), x1: Math.max(a[0], b[0]), z0: Math.min(a[1], b[1]), z1: Math.max(a[1], b[1]), h: r.h };
 }
-export const furnRects = (furn, key) => FURNITURE[key].rects.map((r) => worldRect(key, placeOf(furn, key), r));
+// A piece marked { gone: true } is not in the room: nothing is drawn and nothing bumps into it.
+export const isGone = (furn, key) => Boolean(furn?.[key]?.gone);
+export const furnRects = (furn, key) => (isGone(furn, key) ? [] : FURNITURE[key].rects.map((r) => worldRect(key, placeOf(furn, key), r)));
 
 // The front of a thing: the side that faces out, like a person's face. In its own frame (before it is turned).
 // Furniture: the opposite of its back. Everything else: the way it was made (+z). Someone can show Pip a different front (fronts[key] = [x, z]).
