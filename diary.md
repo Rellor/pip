@@ -474,3 +474,9 @@ I want to test the music box now that the gears are nearly complete and smooth.
 - do (test the tiny wooden music box with the smoothed gears): Let us see if the gears finally turn smoothly.
 - mood: focused
 
+## 15/11/2026, 20:43:21
+I am working on the wooden music box project and want to make sure the mechanics work properly.
+> I am working on the wooden music box project and want to make sure the mechanics work properly.
+- search_web (how mechanical music box cylinders and combs work): I want to check how the gears connect to the notes.
+- mood: focused
+
