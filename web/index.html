@@ -105,14 +105,15 @@
   .dot.on { display:block; }
 
   @media (max-width:600px) {
-    #tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:0; padding:6px 6px 0; overflow:visible; }
-    .tab { padding:9px 2px; font-size:14px; text-align:center; border-bottom-width:3px; }
+    #tabs { display:grid; grid-template-columns:repeat(6,1fr); gap:0; padding:6px 6px 0; overflow:visible; }
+    .tab { padding:9px 2px; font-size:13.5px; text-align:center; border-bottom-width:3px; }
     .count { margin-left:3px; padding:0 5px; font-size:11px; }
     .dot { right:6px; }
   }
 
   .pane { flex:1; overflow:auto; padding:16px; }
   .pane[hidden] { display:none; }
+  .merged { margin-top:28px; padding-top:4px; border-top:1px solid rgba(127,127,127,.25); }
   h2 { margin:22px 0 8px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
   h2:first-child { margin-top:0; }
   ul, ol { list-style:none; margin:0; padding:0; }
@@ -275,14 +276,11 @@
     </div>
     <nav id="tabs" role="tablist">
       <button class="tab" role="tab" data-tab="day">Day</button>
-      <button class="tab" role="tab" data-tab="mind">Mind</button>
+      <button class="tab" role="tab" data-tab="life">Pip</button>
       <button class="tab" role="tab" data-tab="asks">Asks<span class="count" id="askcount"></span></button>
-      <button class="tab" role="tab" data-tab="tasks">Tasks<span class="count" id="taskcount"></span></button>
-      <button class="tab" role="tab" data-tab="photos">Photos</button>
-      <button class="tab" role="tab" data-tab="found">Found</button>
-      <button class="tab" role="tab" data-tab="messages">🔒 Messages<span class="dot" id="msgdot"></span></button>
+      <button class="tab" role="tab" data-tab="photos">Pictures</button>
+      <button class="tab" role="tab" data-tab="messages">🔒 Chat<span class="dot" id="msgdot"></span></button>
       <button class="tab" role="tab" data-tab="visitors">Visitors</button>
-      <button class="tab" role="tab" data-tab="life">Life</button>
     </nav>
 
     <section class="pane" data-pane="day">
@@ -294,21 +292,6 @@
       <div id="olderlist"></div>
     </section>
 
-    <section class="pane" data-pane="mind" hidden>
-      <h2>What Pip is working toward</h2>
-      <ul id="projects"></ul>
-      <h2>What Pip realized</h2>
-      <ul id="reflections"></ul>
-      <h2>What Pip is thinking about</h2>
-      <ul id="thoughts"></ul>
-      <h2>Pip wants</h2><ul id="wants"></ul>
-      <h2>Pip wonders</h2><ul id="questions"></ul>
-      <h2>Came true</h2><ul id="fulfilled"></ul>
-      <h2>His room</h2><p id="coziness" class="muted"></p>
-      <h2>Goals today</h2><ul id="goals"></ul>
-      <h2>Skills</h2><div class="chips" id="skills"></div>
-      <h2>Interests</h2><div class="chips" id="interests"></div>
-    </section>
 
     <section class="pane" data-pane="asks" hidden>
       <h2>Pip would like from you</h2>
@@ -318,28 +301,28 @@
       <ul id="requests"></ul>
       <h2>Done</h2>
       <ul class="donelist" id="asksdone"></ul>
-    </section>
-
-    <section class="pane" data-pane="tasks" hidden>
+      <div class="merged">
       <h2>Ask Pip to do something</h2>
       <form id="taskform" class="taskform">
         <textarea id="tasktext" rows="2" maxlength="300" placeholder="For example: build yourself a kitchen"></textarea>
         <div class="row"><button type="submit" class="primary" id="tasksend">Ask Pip</button><span class="muted" id="taskstatus">He can say yes or no.</span></div>
       </form>
       <div id="tasklist"></div>
+      </div>
     </section>
+
 
     <section class="pane" data-pane="photos" hidden>
       <h2>Pictures taken by Pip</h2>
       <p class="muted">Photos Pip took of the window, his room, something he made, or himself.</p>
       <div class="pics" id="photolist"></div>
-    </section>
-
-    <section class="pane" data-pane="found" hidden>
+      <div class="merged">
       <h2>Pictures Pip found online</h2>
       <p class="muted">Free pictures from Wikimedia Commons. Pip picks what to look for. Tap one to see where it came from.</p>
       <div class="pics" id="foundlist"></div>
+      </div>
     </section>
+
 
     <section class="pane" data-pane="messages" hidden>
       <form id="reply">
@@ -390,6 +373,21 @@
       <div id="lifehome">
         <div class="tile feel"><div class="t"><span>💗 How Pip feels</span></div><div id="bars"></div></div>
         <div class="tiles" id="tiles"></div>
+        <div class="merged mind">
+      <h2>What Pip is working toward</h2>
+      <ul id="projects"></ul>
+      <h2>What Pip realized</h2>
+      <ul id="reflections"></ul>
+      <h2>What Pip is thinking about</h2>
+      <ul id="thoughts"></ul>
+      <h2>Pip wants</h2><ul id="wants"></ul>
+      <h2>Pip wonders</h2><ul id="questions"></ul>
+      <h2>Came true</h2><ul id="fulfilled"></ul>
+      <h2>His room</h2><p id="coziness" class="muted"></p>
+      <h2>Goals today</h2><ul id="goals"></ul>
+      <h2>Skills</h2><div class="chips" id="skills"></div>
+      <h2>Interests</h2><div class="chips" id="interests"></div>
+        </div>
       </div>
       <div id="lifeopen" hidden>
         <button class="small" id="lifeback" type="button">← Life</button>

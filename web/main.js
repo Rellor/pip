@@ -3230,10 +3230,15 @@ async function refreshNtfy() {
 }
 
 // tabs
-const TABS = ['day', 'mind', 'asks', 'tasks', 'photos', 'found', 'messages', 'visitors', 'life'];
-let tab = TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day';
+const TABS = ['day', 'life', 'asks', 'photos', 'messages', 'visitors'];
+// Tabs that were folded into another one: Mind lives under Pip, Tasks under Asks, Found under Pictures.
+const OLD_TABS = { mind: 'life', tasks: 'asks', found: 'photos' };
+const tabName = (n) => OLD_TABS[n] || n;
+let tab = TABS.includes(tabName(store('pip-tab'))) ? tabName(store('pip-tab')) : 'day';
 let latestMsg = null;
+let askOpen = 0, taskOpen = 0; // the Asks tab counts open asks and open tasks together
 function showTab(name) {
+  name = tabName(name);
   tab = name;
   if (name !== 'settings') store('pip-tab', name);
   $('settingsbtn').setAttribute('aria-pressed', String(name === 'settings'));
@@ -3772,7 +3777,7 @@ function renderStatus(s) {
   $('wake').textContent = s._waking ? 'Pip is thinking…' : 'Wake Pip now';
   $('hint').textContent = !s.last
     ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
-    : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()} · ${s.last.model ? `model: ${s.last.model}${s.last.fallback ? ' (backup)' : ''}` : s.last.via === 'autopilot' ? 'no model needed (autopilot)' : s.last.via === 'fallback' ? 'no model left today (autopilot)' : 'no model'}` : '';
+    : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
 }
 function render(s) {
   $('mood').textContent = s.emotion || s.mood || '…';
@@ -3788,7 +3793,8 @@ function render(s) {
   store('pip-asks-answered', JSON.stringify(answeredAsks));
   const shownAsks = asks.filter((a) => a.status === 'open');
   const open = shownAsks.filter((a) => !answeredAsks[a.id ?? a.item]);
-  $('askcount').textContent = open.length || '';
+  askOpen = open.length;
+  $('askcount').textContent = askOpen + taskOpen || '';
   fill($('asks'), shownAsks.length
     ? shownAsks.map((a) => {
       const li = el('li');
@@ -3832,7 +3838,8 @@ function render(s) {
   const shown = [...pendingTasks.map((p) => ({ ...p, status: 'sending' })), ...tasks.slice().reverse()]
     .filter((t) => t.status !== 'removed' && closing[t.id] !== 'remove')
     .map((t) => (closing[t.id] === 'done' ? { ...t, status: 'done', soon: true } : t));
-  $('taskcount').textContent = shown.filter((t) => t.status === 'open' || t.status === 'accepted' || t.status === 'sending').length || '';
+  taskOpen = shown.filter((t) => t.status === 'open' || t.status === 'accepted' || t.status === 'sending').length;
+  $('askcount').textContent = askOpen + taskOpen || '';
   const GROUPS = [
     ['Pip is working on it', ['accepted'], '✅ Pip said yes'],
     ['Waiting for Pip', ['sending', 'open'], '⏳ Waiting'],
