@@ -1276,7 +1276,6 @@ async function wakeUp() {
     if (st.action === 'add_use' && st.made?.use?.does) { // he gave it a use that really does something himself
       nudge(state, 'joy', 0.8);
       nudge(state, 'wonder', 1);
-      nudge(state, 'fullness', 0.5);
       st.reward = 'made';
     }
     if (st.action === 'use') {
@@ -1320,11 +1319,10 @@ async function wakeUp() {
           if (!use.worked) {
             use.worked = new Date().toISOString();
             nudge(state, 'joy', 0.8);
-            nudge(state, 'fullness', 0.5);
             st.reward = 'first';
           }
         }
-        if (use.effect && (!e.usedAt || Date.now() - Date.parse(e.usedAt) > 30 * 60_000)) {
+        if (use.effect && use.effect !== 'fullness' && (!e.usedAt || Date.now() - Date.parse(e.usedAt) > 30 * 60_000)) {
           nudge(state, use.effect, 0.8); // using it lifts a bar a little, at most once every half hour per thing
           e.usedAt = new Date().toISOString();
         }
@@ -1619,8 +1617,9 @@ async function wakeUp() {
   for (const st of steps) {
     if (st.action !== 'eat') continue;
     const gain = mealGain(state.pantry, st.details.food)?.gain;
-    st.ate = eatNow(state, Date.now(), gain);
-    if (st.ate.ok && gain) eatFromPantry(state, st.details.food);
+    // Food never appears by itself: he can only eat what is really in his pantry (grown, cooked, found or given).
+    st.ate = gain ? eatNow(state, Date.now(), gain) : { failed: `I have no ${text(st.details.food, 40) || 'food'}. Food does not appear by itself: I grow it, cook it, or ask Bas for some` };
+    if (st.ate.ok) eatFromPantry(state, st.details.food);
   }
 
   // A step that did not work leaves a gap. Right after it comes one small thing he can always do (no extra Gemini call, so it costs no tokens).

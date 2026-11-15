@@ -6,7 +6,7 @@ import { cleanSong } from './songs.js';
 import { cleanSvg } from './art.js';
 
 export const MAX_USES = 3;
-export const EFFECTS = ['wonder', 'joy', 'calm', 'fullness'];
+export const EFFECTS = ['wonder', 'joy', 'calm']; // not fullness: using a thing he made never feeds him (only food does)
 export const DOES = ['light', 'drive', 'spin', 'stand', 'custom']; // what the website plays when it is used
 export const VIEW_MAX_CHARS = 6_000;
 export const MAX_MOTION_STEPS = 12;

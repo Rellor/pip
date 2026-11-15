@@ -74,3 +74,23 @@ ok('dreams become big asks; judging a project is passed on', () => {
   assert.match(a.asks_add[0].item, /^Dream: a synth machine/);
   assert.deepEqual(a.project_judged, { title: 'Bird house', proud: false, why: 'crooked roof' });
 });
+
+// ---- food: only real food fills him, and hunger never harms him for good
+const { ensureFeelings, passTime, stepFeelings, felt } = await import('../feelings.js');
+ok('only eating fills him; making, learning and pretending do not', () => {
+  const s = { fullness: 4, energy: 5, wonder: 5, joy: 5, calm: 5 };
+  ensureFeelings(s);
+  for (const action of ['decorate', 'draw', 'search_web', 'write_diary', 'record_song']) stepFeelings(s, { action, enjoyment: 9 });
+  stepFeelings(s, { action: 'do', bar: 'fullness', enjoyment: 9 });
+  felt(s, 'projectDone');
+  assert.equal(s.fullness, 4);
+});
+ok('he never drops below 1, and very hungry is tiring, not deadly', () => {
+  const s = { fullness: 3, energy: 5, wonder: 5, joy: 6, calm: 5, feelAt: new Date(now - 10 * 3_600_000).toISOString() };
+  ensureFeelings(s, now - 10 * 3_600_000);
+  for (let h = 1; h <= 48; h++) { s.feelAt = new Date(now + (h - 1) * 3_600_000).toISOString(); passTime(s, now + h * 3_600_000); }
+  assert.equal(s.fullness, 1);
+  const hour = (full) => { const x = { fullness: full, energy: 3, wonder: 5, joy: 5, calm: 5, feelAt: new Date(now).toISOString() }; ensureFeelings(x, now); passTime(x, now + 3_600_000); return x; };
+  assert.ok(hour(1.5).energy < hour(6).energy, 'very hungry: energy comes back slower');
+  assert.ok(hour(1.5).joy < hour(6).joy, 'very hungry: he feels lower');
+});

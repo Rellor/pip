@@ -33,6 +33,7 @@ const env = { ...process.env, GEMINI_API_KEY: 'test', GEMINI_API_BASE: `http://1
 delete env.PIP_FAKE;
 const state = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
 state.inbox = (state.inbox ?? []).map((m) => ({ ...m, read: true })); // nobody wrote: a normal (lite) brain call
+state.changes = [...new Set([...(state.changes ?? []), '2026-11-15 greenhouse by the window, instruments by asking', '2026-11-15 old clothes put away', '2026-11-15 forget what was removed', '2026-11-15 fresh start'])]; // no one-time changes in this test
 state.intent = { day: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }), items: [] }; // goals already set today
 fs.writeFileSync(path.join(work, 'web/state.json'), JSON.stringify(state));
 const run = () => new Promise((resolve, reject) => {
