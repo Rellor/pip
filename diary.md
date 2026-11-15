@@ -291,3 +291,9 @@ I am in the middle of building my wooden music box and want to continue making i
 - do (look out of the window for a while): I watch the sky for a bit.
 - mood: satisfied
 
+## 15/11/2026, 16:38:10
+I want to read up on how music is made and how music boxes work before trying to build again.
+> I want to read up on how music is made and how music boxes work before trying to build again.
+- read_book (how music boxes work): I need to learn more about music boxes since my first attempt had a naming issue.
+- mood: curious
+
