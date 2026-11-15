@@ -1096,13 +1096,13 @@
       "lastUsed": "2026-11-15T15:40:26.195Z"
     },
     {
-      "id": "mmwi0ehq955",
-      "at": "2026-11-15T15:48:32.193Z",
-      "text": "I planted basil in the wooden planter box today.",
-      "importance": 6,
+      "id": "mmwi0phzf55",
+      "at": "2026-11-15T15:57:05.738Z",
+      "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
+      "importance": 8,
       "kind": "memory",
-      "weight": 5.999,
-      "lastUsed": "2026-11-15T15:48:32.193Z"
+      "weight": 8,
+      "lastUsed": "2026-11-15T15:57:05.738Z"
     }
   ],
   "reflections": [],
@@ -1358,7 +1358,16 @@
       "text": "Pip would like:\n• seeds (I am very hungry and need to grow some food in my room since my pantry is empty.)"
     }
   ],
-  "inbox": [],
+  "inbox": [
+    {
+      "id": "gift-bread-mwi0phze",
+      "at": "2026-11-15T15:57:05.738Z",
+      "text": "(private)",
+      "read": false,
+      "private": true,
+      "enc": "v1.b7NJOSpHxHYN9-pK.7hHDNWTR7hMjk-lLi3DZww.5J32Fw_plYtF1tANVfzJSPM6s_kQtF-zoAJg6K0Pph5b4_OF9qWYXE9iH9C97BBDHatToi_NOXplYfRpdQ0pSwLGHhbSEtJlJaoZmkExSucNko7iaaEM5vKEhhH_wjAE3q8INFu8arPwkpRtfRSB8lbESR6vb1Mrbh9U5AF9h1-SrBF6oNTH-Yga3g9qTi1-MIqoJuIp4ApgJXy58tNoMPI"
+    }
+  ],
   "asks": [
     {
       "id": "mwhx6d210",
@@ -2204,7 +2213,23 @@
   "pictures": [],
   "stored": [],
   "wardrobe": [],
-  "pantry": [],
+  "pantry": [
+    {
+      "name": "warm bread",
+      "kind": "dish",
+      "qty": 1,
+      "ingredients": [
+        "bread"
+      ],
+      "madeAt": "2026-11-15T15:57:05.738Z",
+      "from": "bas"
+    },
+    {
+      "name": "apples",
+      "kind": "ingredient",
+      "qty": 3
+    }
+  ],
   "tasks": [],
   "found": [],
   "voice": "",
@@ -2339,7 +2364,8 @@
     "2026-11-15 forget what was removed",
     "2026-11-15 fresh start",
     "2026-11-15 Bas gives seeds",
-    "2026-11-15 no pretend planting"
+    "2026-11-15 no pretend planting",
+    "2026-11-15 warm bread and apples from Bas"
   ],
   "quota": {
     "day": "2026-11-15",
@@ -2517,7 +2543,11 @@
       }
     ]
   },
-  "lastError": null,
+  "lastError": {
+    "at": "2026-11-15T15:57:05.739Z",
+    "kind": "error",
+    "message": "Gemini gave an empty or broken answer. Try again."
+  },
   "body": {
     "creativity": 0.08,
     "curiosity": 1.19,
@@ -2753,5 +2783,13 @@
       "fixed": 3,
       "asked": 2
     }
-  }
+  },
+  "errors": [
+    {
+      "at": "2026-11-15T15:57:05.739Z",
+      "kind": "error",
+      "message": "Gemini gave an empty or broken answer. Try again.",
+      "count": 1
+    }
+  ]
 }
