@@ -62,6 +62,19 @@ const CHANGES = [
       return before !== s.memories.length ? 'My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.' : null;
     },
   },
+  {
+    id: '2026-11-15 warm bread and apples from Bas',
+    run(s, at) { // Bas: a start, just because his pantry is empty. A dish fills him more than plain ingredients.
+      s.pantry ??= [];
+      s.pantry.push({ name: 'warm bread', kind: 'dish', qty: 1, ingredients: ['bread'], madeAt: at, from: 'bas' });
+      const apples = s.pantry.find((p) => p.kind === 'ingredient' && p.name === 'apples');
+      if (apples) apples.qty += 3;
+      else s.pantry.push({ name: 'apples', kind: 'ingredient', qty: 3 });
+      (s.inbox ??= []).push({ id: `gift-bread-${Date.parse(at).toString(36)}`, at, text: 'I brought you a warm loaf of bread and 3 apples, just because your pantry is empty. This is a start! From now on, try to make your own food: grow it and cook it.', read: false, private: true });
+      if (!(s.garden?.plots ?? []).length) s.memories = (s.memories ?? []).filter((m) => !/\bI planted\b/i.test(m.text)); // nothing is in the soil yet
+      return 'Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.';
+    },
+  },
 ];
 
 // What was removed is also forgotten: the studio, the piano, the instruments, the old clothes and what he let go in the tidy.

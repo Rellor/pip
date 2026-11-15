@@ -93,8 +93,8 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
     }
     // "do" is for anything else: when it is really planting, watering, harvesting, eating or cooking, it becomes that move,
     // so it only happens if it can (a shovel, seeds, food...). Pretending to plant leaves no seeds in the soil.
-    if (name === 'do') {
-      const w = String(d.what ?? '').toLowerCase();
+    if (name === 'do' || name === 'use') { // "use my planter: plant seeds" is a real move too
+      const w = String(name === 'use' ? `${d.label ?? ''} ${d.name ?? ''}` : d.what ?? '').toLowerCase();
       const seedName = (w.match(/\b(basil|mint|strawberr\w*|tomato\w*|rosemary|thyme|parsley|chives?|lettuce|radish\w*|carrots?|beans?|peas?|potato\w*|sunflower\w*|daisy|tulips?|lavender)\b/) ?? [])[1];
       const real = /\b(plant|sow)\b/.test(w) && /seed|soil|planter|pot|greenhouse|basil|mint|strawberr/.test(w) ? { action: 'plant', details: { seed: seedName ?? '' } }
         : /\bwater\b/.test(w) && /plant|seed|sprout|planter|garden|basil|mint/.test(w) ? { action: 'water', details: {} }
