@@ -34,7 +34,8 @@ ok('revising changes one section and makes a new version', () => {
   assert.equal(st.details.name, 'Bee waltz');
   assert.deepEqual(st.details.pattern.sections[0], p.sections[0], 'section A is kept');
   assert.equal(st.details.pattern.sections[1].bars[0].piano, 'A4 G4 F4 E4');
-  assert.equal(reviseSection(p, 'Z', [{ piano: 'C4' }]), null);
+  assert.equal(reviseSection(p, 'Z', [{ piano: 'C4' }]).sections[0].bars[0].piano, 'C4', 'an unknown section name means the first one');
+  assert.equal(reviseSection(p, 'A', []), null);
 });
 
 ok('the brain can ask to revise a song; the maker sees the song as it is', () => {
@@ -57,4 +58,14 @@ ok('fake makers give valid designs', () => {
   assert.ok(cleanParts(fakeMade({ action: 'decorate', details: { what: 'x' } }).parts));
   const song = finishSong({ action: 'record_song', details: { what: 'hum' } }, fakeMade({ action: 'record_song', details: { what: 'hum' } }));
   assert.ok(song.details.tracks.length);
+});
+
+ok('revising a drum song with a sung line keeps the voice (and odd names still work)', () => {
+  const old = cleanPattern({ name: 'Beat', tempo: 80, instruments: ['drums'], form: ['A'], sections: [{ name: 'A', bars: [{ drums: 'kick hat snare hat' }] }] }, 16);
+  const songs = [{ id: 's1', name: 'Beat', pattern: old }];
+  for (const reply of [{ section: 'A', bars: [{ piano: 'C4 E4 G4:2' }] }, { section: 'chorus', bars: [{ vocals: 'C4 E4 G4:2', drums: 'kick hat snare hat' }] }]) {
+    const song = finishSong({ action: 'record_song', details: { revise: 'Beat' } }, reply, { songs, allowed: ['voice', 'drums'] });
+    assert.ok(cleanTracks({ tempo: song.details.tempo, tracks: song.details.tracks }), `no playable song for ${JSON.stringify(reply)}`);
+    assert.ok(song.details.tracks.some((t) => t.instrument === 'voice'), 'the voice was thrown away');
+  }
 });

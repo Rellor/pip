@@ -217,6 +217,10 @@
   .goals li { padding:2px 0; color:var(--ink); }
   .goals li.done { color:var(--muted); }
   .pipnow .chips { margin-top:6px; }
+  .checkup { list-style:none; padding:0; margin:0 0 8px; display:grid; gap:6px; }
+  .checkup li { font-size:14px; }
+  .checkup b { display:block; }
+  .checkup .bad b { color:var(--accent); }
   .stillempty { font-size:13px; margin:10px 2px 0; }
   .tiles { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; grid-auto-flow:dense; }
   .tile { min-width:0; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; text-align:left; color:var(--ink); font:inherit; font-size:15px; display:block; width:100%; }
@@ -383,6 +387,9 @@
       </div>
       <p class="muted" id="setstatus"></p>
       <div id="setpanel" hidden>
+        <h2>Check-up</h2>
+        <p class="muted">Simple checks on how Pip spends his days, every 10 minutes. A new problem also goes to your phone, once a day.</p>
+        <ul id="checkup" class="checkup"></ul>
         <h2>Error log</h2>
         <p class="muted">Every wake-up that went wrong, newest first. Tap one for details.</p>
         <div id="errlog"></div>

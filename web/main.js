@@ -3801,7 +3801,21 @@ function renderMind(s) {
 }
 
 // Every wake-up that failed, newest first. Only shown once the key is filled in (Settings is unlocked).
+// The check-up the watchdog writes to health.json: what looks fine and what looks off.
+let checkupAt = 0;
+async function renderCheckup() {
+  if (Date.now() - checkupAt < 60_000) return;
+  checkupAt = Date.now();
+  try {
+    const r = await fetch(`${isLocal ? '' : RAW}health.json?t=${Math.floor(Date.now() / 60_000)}`, { cache: 'no-store' });
+    const items = r.ok ? (await r.json()).checkup?.items ?? [] : [];
+    fill($('checkup'), items.length
+      ? items.slice().sort((a, b) => a.ok - b.ok).map((x) => { const li = el('li', null, x.ok ? 'ok' : 'bad'); li.append(el('b', `${x.ok ? '✅' : '⚠️'} ${x.label}`), el('span', x.text, 'muted')); return li; })
+      : [el('li', 'No check-up yet. It runs every 10 minutes.', 'muted')]);
+  } catch {}
+}
 function renderErrorLog(s) {
+  renderCheckup();
   const box = $('errlog');
   const list = (s?.errors || []).slice().reverse();
   fill(box, list.length

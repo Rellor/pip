@@ -58,7 +58,8 @@ function onlyWhatHeHas(reply, allowed) {
     }),
   }));
   for (const sec of sections) for (const bar of sec.bars) for (const k of Object.keys(bar)) if (!instruments.includes(k)) instruments.push(k);
-  return { ...reply, instruments: instruments.slice(0, 4), sections };
+  const fitBar = (bar) => { const out = {}; for (const [k, v] of Object.entries(bar ?? {})) { const f = fit(k); out[f] = out[f] ? `${out[f]} ${v}` : v; } return out; };
+  return { ...reply, instruments: instruments.slice(0, 4), sections, ...(Array.isArray(reply.bars) ? { bars: reply.bars.map(fitBar) } : {}) }; // a revised section's bars too
 }
 
 // A song: the maker's pattern (or one revised section of an old one) becomes tracks the site can play.

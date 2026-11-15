@@ -1491,7 +1491,7 @@ async function wakeUp() {
       const name = text(d.name, 60);
       const todaySongs = state.studio.songs.filter((x) => Date.now() - Date.parse(x.createdAt) < dayMs).length;
       if (!name) st.made = { failed: 'a recording needs a name' };
-      else if (!song) st.made = { failed: 'a recording needs tracks: [{"instrument": "piano", "notes": "C3+E3+G3:4 E4 G4:2", "volume": 0.8, "pan": 0, "reverb": 0.2}, {"instrument": "drums", "notes": "kick hat snare hat"}], each with at least 2 sounding notes' };
+      else if (!song) st.made = { failed: 'the song had no part with at least 2 sounding notes (for example voice "C4 E4 G4:2" and drums "kick hat snare hat")' };
       else if (todaySongs >= MAX_SONGS_PER_DAY) st.made = { failed: `I already recorded ${MAX_SONGS_PER_DAY} songs today` };
       else {
         const rec = { id: `song${Date.now().toString(36)}${state.studio.songs.length}`, name, why: text(d.why, 200), tempo: song.tempo, tracks: song.tracks.map((t, k) => ({ instrument: t.timbre, notes: text(d.tracks?.[k]?.notes, 400), volume: t.volume, pan: t.pan, reverb: t.reverb })), createdAt: new Date(startedAt + offsets[i]).toISOString(), ...(d.pattern ? { pattern: d.pattern, v: d.v ?? 1, of: d.of ?? null, changed: d.changed ?? null } : {}) };
