@@ -12,6 +12,7 @@ import { archiveOverflow } from './archive.js';
 import { loadSoul } from './soul.js';
 import { seal, unseal, sealSecret, sealState, unsealState, sealFields, PRIVATE } from './seal.js';
 import { applyChanges } from './changes.js';
+import { giveForAsk } from './gifts.js';
 import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
@@ -1130,7 +1131,11 @@ async function wakeUp() {
   for (const m of state.inbox.filter((x) => !x.read)) {
     const done = /^I did this for you: "(.+)"$/.exec(m.text);
     const ask = done && state.asks.find((a) => a.status === 'open' && sameText(a.item, done[1]));
-    if (ask) Object.assign(ask, { status: 'done', doneAt: new Date().toISOString() });
+    if (ask) {
+      Object.assign(ask, { status: 'done', doneAt: new Date().toISOString() });
+      const given = giveForAsk(state, ask.item); // the real thing, in code (gifts.js)
+      if (given.length) { ask.given = given; addMemory(state, `Bas gave me what I asked for: ${given.join(', ')}.`, 8, 'memory', new Date().toISOString()); console.log(`🎁 given: ${given.join(', ')}`); }
+    }
   }
   const unread = state.inbox.filter((m) => !m.read);
   // Pictures he has not seen yet are shown to him together with the prompt (at most 3 per wake-up).

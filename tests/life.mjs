@@ -111,3 +111,21 @@ ok('a bare room offers making things a little more (not a must)', () => {
   const rate = (coz) => { let n = 0; for (let i = 0; i < 400; i++) { const s = structuredClone(base); s.body = { creativity: 3, curiosity: 5, boredom: 3, loneliness: 2, tidiness: 9, coziness: coz }; s.today = { done: {} }; let k = i; if (availableMoves(s, { random: () => ((k = (k * 16807 + 7) % 2147483647) / 2147483647) }).slice(0, 4).some((m) => m.name === 'decorate')) n++; } return n; };
   assert.ok(rate(1) > rate(8), `${rate(1)} > ${rate(8)}`);
 });
+
+// ---- gifts: "I did this for you" hands over the real thing; a planter counts for growing
+const { giveForAsk } = await import('../gifts.js');
+const { isGreenhouse } = await import('../web/gardening.js');
+ok('a done ask gives the real thing: seeds, tools, food; nothing made up', () => {
+  const s = { tools: [], pantry: [], garden: { seeds: [], plots: [], given: [] } };
+  assert.deepEqual(giveForAsk(s, 'seeds'), ['basil seeds', 'mint seeds', 'strawberry seeds']);
+  assert.deepEqual(giveForAsk(s, 'tomato seeds please'), ['tomato seeds']);
+  assert.deepEqual(giveForAsk(s, 'a small shovel'), ['a small shovel']);
+  assert.deepEqual(giveForAsk(s, 'some bread'), ['bread']);
+  assert.deepEqual(giveForAsk(s, 'a flying carpet'), []);
+  assert.ok(s.pantry[0].qty >= 3, 'some bread in his pantry');
+});
+ok('a planter he made counts as a place to grow', () => {
+  assert.ok(isGreenhouse({ name: 'wooden planter box' }));
+  assert.ok(isGreenhouse({ name: 'little greenhouse' }));
+  assert.ok(!isGreenhouse({ name: 'small wooden shelf' }));
+});
