@@ -2,7 +2,7 @@
   "mood": "energetic",
   "energy": 9.5,
   "boredom": 0,
-  "loneliness": 2.14,
+  "loneliness": 2.18,
   "interests": [],
   "ideas": [],
   "activities": [
@@ -35,6 +35,12 @@
       "action": "decorate",
       "detail": "small wooden shelf",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-15T10:10:50.536Z",
+      "action": "do",
+      "detail": "check on my tiny indoor herb sprouts in the corner",
+      "enjoyment": 6
     }
   ],
   "notes": [
@@ -53,7 +59,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.994,
+      "weight": 7.993,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -62,7 +68,7 @@
       "text": "Today I decided to start a bigger project instead of just small things.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.996,
+      "weight": 5.995,
       "lastUsed": "2026-11-15T09:35:50.591Z"
     },
     {
@@ -71,7 +77,7 @@
       "text": "plan my new project: Build a little wooden music box",
       "importance": 4,
       "kind": "memory",
-      "weight": 3.996,
+      "weight": 3.995,
       "lastUsed": "2026-11-15T09:35:51.589Z"
     },
     {
@@ -80,7 +86,7 @@
       "text": "I read about how simple melodies and musical notes work",
       "importance": 3,
       "kind": "memory",
-      "weight": 2.997,
+      "weight": 2.996,
       "lastUsed": "2026-11-15T09:43:54.684Z"
     },
     {
@@ -89,7 +95,7 @@
       "text": "Simple melodies are built from a few well-placed notes.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
+      "weight": 5.997,
       "lastUsed": "2026-11-15T09:44:57.927Z"
     },
     {
@@ -98,7 +104,7 @@
       "text": "I sang a little tune",
       "importance": 3,
       "kind": "memory",
-      "weight": 2.998,
+      "weight": 2.997,
       "lastUsed": "2026-11-15T09:44:58.925Z"
     },
     {
@@ -107,7 +113,7 @@
       "text": "Simple melodies come alive when you record them.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
+      "weight": 5.997,
       "lastUsed": "2026-11-15T09:53:27.902Z"
     },
     {
@@ -116,7 +122,7 @@
       "text": "I recorded a song: Humming for a Little Box (choir, drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
+      "weight": 5.997,
       "lastUsed": "2026-11-15T09:53:28.899Z"
     },
     {
@@ -125,7 +131,7 @@
       "text": "My music got better: I am level 2 now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-15T09:53:27.904Z"
     },
     {
@@ -134,7 +140,7 @@
       "text": "A bare room changes quickly with just one small shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-15T10:02:36.482Z"
     },
     {
@@ -143,8 +149,26 @@
       "text": "I made small wooden shelf (to make my room feel more like mine and hold my little things)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-15T10:02:37.476Z"
+    },
+    {
+      "id": "mmwhoc7qi11",
+      "at": "2026-11-15T10:10:50.537Z",
+      "text": "Plants need a gentle touch and quiet attention.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.999,
+      "lastUsed": "2026-11-15T10:10:50.537Z"
+    },
+    {
+      "id": "mmwhoc7qi12",
+      "at": "2026-11-15T10:10:51.535Z",
+      "text": "check on my tiny indoor herb sprouts in the corner",
+      "importance": 4,
+      "kind": "memory",
+      "weight": 3.999,
+      "lastUsed": "2026-11-15T10:10:51.535Z"
     }
   ],
   "reflections": [],
@@ -190,6 +214,14 @@
       "mood": "energetic",
       "action": "decorate",
       "detail": "small wooden shelf"
+    },
+    {
+      "at": "2026-11-15T10:10:50.537Z",
+      "text": "I have music and woodwork covered, so now I should tend to my plants in the room.",
+      "short": "I have music and woodwork covered, so now I should tend to my plants in the room.",
+      "mood": "energetic",
+      "action": "do",
+      "detail": "check on my tiny indoor herb sprouts in the corner"
     }
   ],
   "outbox": [],
@@ -263,6 +295,15 @@
       "place": "on the left wall (z -4.15, height 2.8) (it works: things can stand on it. I put one there with move_thing {name, on: \"small wooden shelf\"})",
       "tool": null,
       "failed": null
+    },
+    {
+      "at": "2026-11-15T10:10:51.535Z",
+      "action": "do",
+      "thought": "I want to look after my plants as planned.",
+      "move": null,
+      "emoji": "",
+      "what": "check on my tiny indoor herb sprouts in the corner",
+      "feeling": null
     }
   ],
   "decor": [
@@ -494,279 +535,42 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-15T10:02:36.476Z",
+    "at": "2026-11-15T10:10:50.535Z",
     "via": "brain",
-    "model": "gemini-3.6-flash",
+    "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 1,
-      "gemini-3.6-flash": 1
+      "gemini-3.5-flash-lite": 1
     },
-    "modelNotes": [
-      "gemini-3.6-flash answered (gemini-3.8-flash was busy or capped)"
-    ],
-    "fallback": true,
     "tokens": {
-      "calls": 2,
-      "input": 6955,
-      "output": 2428,
+      "calls": 1,
+      "input": 1043,
+      "output": 117,
       "models": {
-        "gemini-3.5-flash-lite": 1,
-        "gemini-3.6-flash": 1
+        "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I want to decorate my room and make it feel more lived-in now that my music box project is done.",
-    "inner": "I want to decorate my room and make it feel more lived-in now that my music box project is done.",
+    "thought": "I have music and woodwork covered, so now I should tend to my plants in the room.",
+    "inner": "I have music and woodwork covered, so now I should tend to my plants in the room.",
     "sent": false,
     "steps": [
       {
-        "action": "decorate",
+        "action": "do",
         "details": {
-          "what": "a small wooden shelf for my wall",
-          "why": "to make my room feel more like mine and hold my little things",
-          "name": "small wooden shelf",
-          "where": "wall_left",
-          "parts": [
-            {
-              "shape": "box",
-              "size": [
-                0.55,
-                0.03,
-                0.16
-              ],
-              "pos": [
-                0,
-                0.2,
-                0
-              ],
-              "color": "#a47449"
-            },
-            {
-              "shape": "box",
-              "size": [
-                0.55,
-                0.15,
-                0.02
-              ],
-              "pos": [
-                0,
-                0.26,
-                -0.07
-              ],
-              "color": "#8c5e37"
-            },
-            {
-              "shape": "box",
-              "size": [
-                0.03,
-                0.12,
-                0.12
-              ],
-              "pos": [
-                -0.2,
-                0.125,
-                -0.01
-              ],
-              "color": "#734a26"
-            },
-            {
-              "shape": "box",
-              "size": [
-                0.03,
-                0.12,
-                0.12
-              ],
-              "pos": [
-                0.2,
-                0.125,
-                -0.01
-              ],
-              "color": "#734a26"
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.01,
-                0.01,
-                0.05
-              ],
-              "pos": [
-                -0.15,
-                0.14,
-                0.04
-              ],
-              "color": "#bf8d5e"
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.01,
-                0.01,
-                0.05
-              ],
-              "pos": [
-                0.15,
-                0.14,
-                0.04
-              ],
-              "color": "#bf8d5e"
-            },
-            {
-              "shape": "box",
-              "size": [
-                0.04,
-                0.04,
-                0.01
-              ],
-              "pos": [
-                0,
-                0.28,
-                -0.055
-              ],
-              "color": "#c48859"
-            }
-          ],
-          "uses": [
-            {
-              "label": "Run fingers over edge",
-              "text": "The wood is a bit rough where I sanded it, but it smells nice and warm like pine.",
-              "effect": "calm"
-            }
-          ]
+          "what": "check on my tiny indoor herb sprouts in the corner"
         },
-        "detail": "small wooden shelf",
-        "thought": "My room still feels a bit bare.",
+        "detail": "check on my tiny indoor herb sprouts in the corner",
+        "thought": "I want to look after my plants as planned.",
         "enjoyment": 6,
         "found": null,
-        "made": {
-          "id": "dmwho1mim0av",
-          "stand": [
-            -3.7,
-            -4.15
-          ],
-          "pos": [
-            -4.97,
-            2.8,
-            -4.15
-          ]
-        }
+        "made": null
       }
     ],
-    "action": "decorate",
+    "action": "do",
     "details": {
-      "what": "a small wooden shelf for my wall",
-      "why": "to make my room feel more like mine and hold my little things",
-      "name": "small wooden shelf",
-      "where": "wall_left",
-      "parts": [
-        {
-          "shape": "box",
-          "size": [
-            0.55,
-            0.03,
-            0.16
-          ],
-          "pos": [
-            0,
-            0.2,
-            0
-          ],
-          "color": "#a47449"
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.55,
-            0.15,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.26,
-            -0.07
-          ],
-          "color": "#8c5e37"
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.03,
-            0.12,
-            0.12
-          ],
-          "pos": [
-            -0.2,
-            0.125,
-            -0.01
-          ],
-          "color": "#734a26"
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.03,
-            0.12,
-            0.12
-          ],
-          "pos": [
-            0.2,
-            0.125,
-            -0.01
-          ],
-          "color": "#734a26"
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.01,
-            0.01,
-            0.05
-          ],
-          "pos": [
-            -0.15,
-            0.14,
-            0.04
-          ],
-          "color": "#bf8d5e"
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.01,
-            0.01,
-            0.05
-          ],
-          "pos": [
-            0.15,
-            0.14,
-            0.04
-          ],
-          "color": "#bf8d5e"
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.04,
-            0.01
-          ],
-          "pos": [
-            0,
-            0.28,
-            -0.055
-          ],
-          "color": "#c48859"
-        }
-      ],
-      "uses": [
-        {
-          "label": "Run fingers over edge",
-          "text": "The wood is a bit rough where I sanded it, but it smells nice and warm like pine.",
-          "effect": "calm"
-        }
-      ]
+      "what": "check on my tiny indoor herb sprouts in the corner"
     },
-    "detail": "small wooden shelf",
+    "detail": "check on my tiny indoor herb sprouts in the corner",
     "enjoyment": 6,
     "new_idea": null,
     "found": null
@@ -826,7 +630,7 @@
   "quota": {
     "day": "2026-11-15",
     "calls": {
-      "gemini-3.5-flash-lite": 8,
+      "gemini-3.5-flash-lite": 9,
       "gemini-3.6-flash": 3,
       "gemini-3.8-flash": 5
     },
@@ -903,22 +707,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-15T10:02:36.484Z",
-  "fullness": 6.3,
+  "memoryFadeAt": "2026-11-15T10:10:50.538Z",
+  "fullness": 6.12,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 10,
-  "joy": 6.17,
-  "calm": 5.48,
+  "wonder": 8.9,
+  "joy": 5.62,
+  "calm": 5.37,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 3.58
+    "excited": 2.15
   },
-  "feelAt": "2026-11-15T10:01:32.225Z",
+  "feelAt": "2026-11-15T10:10:41.094Z",
   "lastAte": null,
   "studio": {
     "songs": [
@@ -986,13 +790,13 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0,
-    "curiosity": 2.29,
+    "creativity": 0.09,
+    "curiosity": 2.37,
     "boredom": 0,
-    "loneliness": 2.14,
+    "loneliness": 2.18,
     "tidiness": 10,
-    "at": "2026-11-15T10:01:32.225Z",
-    "coziness": 1
+    "at": "2026-11-15T10:10:41.094Z",
+    "coziness": 2.4
   },
   "recent": {
     "moves": [
@@ -1020,44 +824,49 @@
         "move": "decorate",
         "kind": "make",
         "at": "2026-11-15T10:02:36.484Z"
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-15T10:10:50.539Z"
       }
     ],
     "moods": [
       "curious",
       "curious",
       "curious",
-      "curious",
+      "energetic",
       "energetic"
     ]
   },
   "today": {
     "day": "2026-11-15",
     "done": {
-      "do": 1,
+      "do": 2,
       "read_book": 1,
       "play_piano": 1,
       "record_song": 1,
       "decorate": 1
     },
     "tried": {
-      "do": 1,
+      "do": 2,
       "read_book": 1,
       "play_piano": 1,
       "record_song": 1,
       "decorate": 1
     },
     "kinds": {
-      "play": 1,
+      "play": 2,
       "learn": 1,
       "music": 2,
       "make": 1
     },
     "moods": {
       "curious": 4,
-      "energetic": 1
+      "energetic": 2
     },
     "lift": {
-      "do": 3.07,
+      "do": 3.17,
       "read_book": 3.22,
       "play_piano": 1.6,
       "record_song": 1.98,
@@ -1103,7 +912,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-15T10:01:34.902Z",
+    "decidedAt": "2026-11-15T10:10:50.535Z",
     "seen": {
       "tools": 0,
       "gifts": 0,
