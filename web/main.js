@@ -3615,6 +3615,7 @@ function renderMind(s) {
   fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
   const done = (s.fulfilled || []).slice().reverse();
   fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
+  if ($('coziness')) { const c = s.body?.coziness; $('coziness').textContent = Number.isFinite(c) ? `Cozy ${Math.round(c)}/10${c <= 3 ? ': it still feels bare' : c >= 7 ? ': it feels like home' : ''}` : 'not measured yet'; }
   const goals = s.intent?.items || [];
   if ($('goals')) fill($('goals'), goals.length ? goals.map((g) => entry([g.done ? 'done' : 'not yet'], `${g.done ? '✓ ' : ''}${g.text}`)) : empty('He sets his goals when he wakes up.'));
   const skills = Object.entries(s.skills || {}).filter(([, xp]) => xp > 0);

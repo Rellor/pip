@@ -5,8 +5,11 @@
 //   boredom     grows when he does the same kind of thing again and again. New kinds of things lower it.
 //   loneliness  grows slowly, drops when someone writes or he writes to them.
 //   tidiness    how tidy his room feels (10 is tidy). Falls when the room fills up, rises when he puts things away.
+//   coziness    how much his room feels like his home (0 to 10), from what is in it (coziness() below). Never a must:
+//               a bare room gives a small push to make things for it, a cozy one a little calm.
 // It also remembers his last 15 moves and last 5 moods, and counts what he did today.
 import { passTime } from './feelings.js';
+import { isLamp } from './web/lighting.js';
 
 const clamp = (n) => Math.round(Math.max(0, Math.min(10, Number.isFinite(n) ? n : 5)) * 100) / 100;
 export const DRIVES = ['creativity', 'curiosity', 'boredom', 'loneliness', 'tidiness'];
@@ -53,6 +56,26 @@ export function clutter(s) {
   return Math.max(0, own - 6) * 0.6 + Math.max(0, pics - 4) * 0.4;
 }
 
+// How much the room feels like home, 0 to 10, from what is really in it. More is not always better: after about 6 things
+// it stops rising, and clutter (too many things, see clutter) brings it down again.
+//   things he made or hung up (up to 6)     0.6 each
+//   variety: something on the floor, on a wall, on a surface, a light, a plant   0.8 each
+//   a lamp of his that is on when it is dark   0.6
+export function coziness(s, dark = false) {
+  const items = (s.decor ?? []).filter((d) => d.pos);
+  const own = items.filter((d) => !d.image);
+  const kinds = [
+    items.some((d) => !d.image && /floor/.test(d.zone ?? d.kind ?? '')),
+    items.some((d) => d.image || d.kind === 'wall' || /^wall/.test(d.zone ?? '')),
+    items.some((d) => !d.image && (d.kind === 'surface' || /^on_/.test(d.zone ?? ''))),
+    own.some((d) => isLamp(d) || (d.parts ?? []).some((p) => p.glow)),
+    own.some((d) => /plant|flower|greenhouse|herb|tree|fern|cactus|moss/i.test(d.name)) || (s.garden?.plots ?? []).length > 0,
+  ].filter(Boolean).length;
+  const lit = dark && own.some((d) => isLamp(d) && d.lit !== false) ? 0.6 : 0;
+  const v = 1 + Math.min(items.length, 6) * 0.6 + kinds * 0.8 + lit - clutter(s) * 0.5;
+  return clamp(v);
+}
+
 // Once per tick: the bars from feelings.js, then the drives.
 export function tickBody(s, now = Date.now()) {
   ensureBody(s, now);
@@ -64,6 +87,9 @@ export function tickBody(s, now = Date.now()) {
   b.loneliness = clamp(b.loneliness + hours * 0.25);
   b.boredom = clamp(b.boredom + (sameKindRun(s) >= 3 ? hours * 0.8 : -hours * 0.3));
   b.tidiness = clamp(10 - clutter(s));
+  const h = Number(new Date(now).toLocaleString('en-GB', { hour: 'numeric', hour12: false, timeZone: process.env.PIP_TZ || 'Europe/Amsterdam' }));
+  b.coziness = coziness(s, h >= 18 || h < 8);
+  if (b.coziness >= 7) s.calm = clamp((s.calm ?? 5) + hours * 0.2); // a cozy room settles him a little
   b.at = new Date(now).toISOString();
   s.boredom = b.boredom; // older fields the site and feelings.js still read
   s.loneliness = b.loneliness;
@@ -130,6 +156,7 @@ export function bodyText(s) {
     level(b.boredom, null, 'I am bored of doing the same things'),
     level(b.loneliness, null, 'I feel a bit lonely'),
     b.tidiness <= 4 ? 'my room feels too full' : null,
+    (b.coziness ?? 5) <= 3 ? 'my room feels bare, not quite mine yet' : (b.coziness ?? 5) >= 7 ? 'my room feels cozy, like home' : null,
     level(s.wonder, 'nothing feels new', 'everything feels full of wonder'),
     level(s.joy, 'I feel low', 'I feel happy'),
   ].filter(Boolean);

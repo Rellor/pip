@@ -121,6 +121,7 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
     score *= 0.5 ** recent.filter((x) => x === m.name).length;
     if ((s.today?.done?.[m.name] ?? 0) >= 4 && !['eat', 'rest', 'water', 'harvest'].includes(m.name)) score *= 0.2;
     score *= 0.8 ** recentKinds.filter((k) => k === kindOf(m.name)).length;
+    if (['decorate', 'draw', 'place_picture', 'move_thing'].includes(m.name)) score += Math.max(0, 5 - (s.body?.coziness ?? 5)) * 0.15; // a bare room: a small push to make it his
     scored.push({ m, score: score * (0.75 + random() * 0.5) });
   }
   scored.sort((a, b) => b.score - a.score);
