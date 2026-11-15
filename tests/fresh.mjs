@@ -10,6 +10,8 @@ const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 'pip-fresh-'));
 fs.cpSync(root, work, { recursive: true, filter: (p) => !p.includes(`${path.sep}.git`) && !p.includes('node_modules') });
 const old = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
+old.changes = (old.changes ?? []).filter((c) => c !== '2026-11-15 fresh start'); // run the fresh start again on today's state
+fs.writeFileSync(path.join(work, 'web/state.json'), JSON.stringify(old));
 const soul = fs.readFileSync(path.join(work, 'soul.md'), 'utf8');
 execFileSync('node', ['pip.js'], { cwd: work, env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NIGHT: '0' }, stdio: 'pipe' });
 const s = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));

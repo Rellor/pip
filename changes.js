@@ -1,6 +1,7 @@
 // One-time changes Bas asks for. Each runs once, on Pip's next wake-up, and is remembered in s.changes,
 // so the live loop applies it itself (no need to pause him). Nothing is deleted: what goes, goes to s.archive.
 import { HELD } from './instruments.js';
+import { giveForAsk } from './gifts.js';
 
 const CHANGES = [
   {
@@ -41,6 +42,16 @@ const CHANGES = [
   {
     id: '2026-11-15 forget what was removed',
     run(s, at) { return forgetRemoved(s, at); },
+  },
+  {
+    id: '2026-11-15 Bas gives seeds',
+    run(s, at) { // Bas answered Pip's first ask: seeds, because he was very hungry
+      const ask = (s.asks ?? []).find((a) => a.status === 'open' && /seed/i.test(a.item));
+      if (ask) Object.assign(ask, { status: 'done', doneAt: at });
+      const given = giveForAsk(s, ask?.item ?? 'seeds');
+      if (ask) ask.given = given;
+      return given.length ? `Bas gave me seeds: ${given.join(', ')}. Now I can grow my own food.` : null;
+    },
   },
 ];
 

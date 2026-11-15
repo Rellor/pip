@@ -10,7 +10,7 @@ import { dayLimits } from './limits.js';
 import { missingTool } from './tools.js';
 import { kitchenIn } from './food.js';
 import { notHungry as notHungryReason } from './feelings.js';
-import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE } from './web/gardening.js';
+import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
 import { kindOf } from './body.js';
 import { missingForProject } from './projects.js';
 import { hasTool } from './tools.js';
@@ -32,7 +32,7 @@ const plots = (s) => s.garden?.plots ?? [];
 const thirsty = (s, now) => plots(s).filter((p) => plantState(p, now).moistLeft <= WATER_AGAIN_H);
 const ripe = (s, now) => plots(s).filter((p) => plantState(p, now).ready);
 const seeds = (s) => (s.garden?.seeds ?? []).filter((x) => x.qty > 0);
-const greenhouse = (s) => own(s).some((d) => /greenhouse/i.test(d.name));
+const greenhouse = (s) => own(s).some(isGreenhouse); // a greenhouse or a planter
 const food = (s) => (s.pantry ?? []).filter((p) => p.qty > 0);
 const working = (s) => (s.projects ?? []).filter((p) => p.status === 'working');
 const unplacedGifts = (s) => (s.pictures ?? []).filter((p) => p.by !== 'pip' && !(s.decor ?? []).some((d) => d.picture === p.id));

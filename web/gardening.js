@@ -7,7 +7,8 @@ export const WATER_AGAIN_H = 4; // watering when the soil is still damp for long
 export const SLOTS_PER_GREENHOUSE = 4;
 export const STAGES = ['seed', 'sprout', 'young', 'grown', 'flowering'];
 
-export const isGreenhouse = (d) => !d.image && /greenhouse|glasshouse|glass house|conservatory|\bkas\b/i.test(String(d.name ?? ''));
+// Somewhere to grow plants: a greenhouse, or anything like a planter he makes (a planter box, a flower pot, a raised bed...).
+export const isGreenhouse = (d) => !d.image && /greenhouse|glasshouse|glass house|conservatory|\bkas\b|planter|flower ?pot|plant ?pot|garden ?bed|raised bed|seed tray|grow ?box|window box|herb box|herb garden/i.test(String(d.name ?? ''));
 
 // What he knows how to grow: hours of damp soil until it sprouts, is young, is grown (then flowers 12 hours later).
 const KNOWN = [
