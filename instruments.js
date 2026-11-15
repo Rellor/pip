@@ -42,7 +42,7 @@ export function instrumentNeeds(st, { pianoGone = false } = {}) {
   const out = [];
   for (const n of names) {
     const k = String(n ?? '').toLowerCase();
-    const need = heldKind(k) ?? (SYNTH_VOICES.includes(k) ? 'synthesizer' : pianoGone && k !== 'drums' ? 'piano' : null);
+    const need = heldKind(k) ?? (SYNTH_VOICES.includes(k) ? 'synthesizer' : pianoGone && !['drums', 'voice', 'choir'].includes(k) ? 'piano' : null); // his own voice needs nothing
     if (need && !out.includes(need)) out.push(need);
   }
   return out;

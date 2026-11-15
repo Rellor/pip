@@ -21,10 +21,11 @@ export function snapshot(s) {
     projectsDone: (s.projects ?? []).filter((p) => p.status === 'done').length,
     tasks: (s.tasks ?? []).filter((t) => t.status === 'open').length,
     seeds: (s.garden?.seeds ?? []).reduce((a, x) => a + (x.qty ?? 0), 0),
+    visitors: (s.visitors ?? []).length,
   };
 }
 
-const GOT = { tools: 'I got a new tool', gifts: 'I was given a picture', asksDone: 'Bas did something I asked for', projectsDone: 'I finished a project', tasks: 'Bas asked me to do something', seeds: 'I got new seeds' };
+const GOT = { tools: 'I got a new tool', gifts: 'I was given a picture', asksDone: 'Bas did something I asked for', projectsDone: 'I finished a project', tasks: 'Bas asked me to do something', seeds: 'I got new seeds', visitors: 'a visitor left me a message' };
 
 // Why the brain should think now. Empty means: autopilot.
 export function wakeReasons(s, { unread = 0, woke = false, now = Date.now() } = {}) {
@@ -75,7 +76,7 @@ export function fallbackSteps(s, moves) {
   if (s.energy <= 3) return [{ action: 'rest', details: {}, thought: 'I am tired. I rest a while.', enjoyment: 6 }];
   if (has('water')) return [{ action: 'water', details: {}, thought: 'My plants look dry.', enjoyment: 6 }];
   const quiet = [
-    { action: 'play_piano', details: { notes: 'C4 E4 G4 E4 C4:2', instrument: 'piano' }, thought: 'I play a little tune while I think.' },
+    { action: 'play_piano', details: { notes: 'C4 E4 G4 E4 C4:2', instrument: 'voice' }, thought: 'I hum a little tune while I think.' },
     { action: 'do', details: { what: 'look out of the window for a while' }, thought: 'I watch the sky for a bit.' },
     { action: 'do', details: { what: 'say hello to my plants through the glass' }, thought: 'Hello, little plants.' },
   ];

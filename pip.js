@@ -10,6 +10,7 @@ import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPla
 
 import { archiveOverflow } from './archive.js';
 import { loadSoul } from './soul.js';
+import { seal, unseal, sealSecret, sealState, unsealState, sealFields, PRIVATE } from './seal.js';
 import { applyChanges } from './changes.js';
 import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
@@ -161,7 +162,7 @@ function observeStep(s, e) {
     ask_for: [`I asked for ${e.item}${e.reason ? ` (${e.reason})` : ''}`, 5],
     do: [`${e.what}`, 4],
     write_diary: [`I wrote in my diary: ${String(e.text ?? '').slice(0, 120)}`, 3],
-    play_piano: [`I played ${e.instrument && e.instrument !== 'piano' ? `the ${e.instrument}` : 'the piano'}`, 3],
+    play_piano: [e.instrument === 'voice' ? 'I sang a little tune' : `I played ${e.instrument && e.instrument !== 'piano' ? `the ${e.instrument}` : 'the piano'}`, 3],
     record_song: [`I recorded a song: ${e.name} (${(e.tracks ?? []).map((t) => t.instrument).join(', ')})`, 6],
     search_web: [`I looked up ${e.query}`, 3],
     read_book: [`I read about ${e.topic}`, 3],
@@ -236,6 +237,8 @@ async function loadState() {
 // Bas's messages arrive as small files in inbox/ (written by the website), or he types them in the ntfy app.
 // Files are deleted only after Pip's state is saved.
 const INBOX_DIR = 'inbox';
+// Saving always seals what is private (seal.js): the repo and the site are public.
+const saveState = (state) => writeFile(STATE_FILE, JSON.stringify(sealState(state), null, 2));
 
 // A picture from Bas: keep a copy in web/gifts and remember it in Pip's album.
 // Bas's gifts and Pip's own photos are kept apart, so photos never push a gift out.
@@ -271,7 +274,8 @@ async function loadInbox(state) {
   for (const name of files) {
     try {
       const m = JSON.parse(await readFile(`${INBOX_DIR}/${name}`, 'utf8'));
-      const body = text(m.text, 1000);
+      if (m.enc && unseal(m.enc) === null) { console.error(`🔒 inbox ${name}: a private message, but there is no key to open it (GitHub secret PIP_REPLY_KEY). It waits.`); continue; }
+      const body = text(m.enc ? unseal(m.enc) : m.text, 1000);
       const id = text(m.id, 60) || name;
       const file = typeof m.image === 'string' && /^[\w-]+\.(jpg|png)$/.test(m.image) ? m.image : null;
       if ((body || file) && !state.inbox.some((x) => x.id === id)) {
@@ -279,7 +283,7 @@ async function loadInbox(state) {
         const pic = file ? await keepPicture(state, await readFile(`${INBOX_DIR}/${file}`), body, at, file.replace(/\.\w+$/, '')) : null;
         if (file) imageNames.push(file);
         if (body || pic) {
-          state.inbox.push({ id, at, text: body || '(a picture)', read: false, picture: pic?.id ?? null });
+          state.inbox.push({ id, at, text: body || '(a picture)', read: false, picture: pic?.id ?? null, private: true });
           added++;
         }
       }
@@ -357,6 +361,24 @@ async function clearFronts(names) {
 async function clearTasks(names) {
   for (const n of names) await unlink(`${TASKS_DIR}/${n}`).catch(() => {});
 }
+// Visitor messages Bas approved (visitors/*.json with status "approved"). Waiting ones stay sealed in the folder.
+async function loadVisitors(state) {
+  state.visitors ??= [];
+  const names = [];
+  for (const name of (await readdir('visitors').catch(() => [])).filter((n) => n.endsWith('.json'))) {
+    try {
+      const v = JSON.parse(await readFile(`visitors/${name}`, 'utf8'));
+      if (v.status !== 'approved') continue;
+      if (!state.visitors.some((x) => x.id === v.id)) state.visitors.push({ id: text(v.id, 40), at: v.at, name: text(v.name, 30), text: text(v.text, 300), answer: null });
+      names.push(name);
+    } catch {}
+  }
+  state.visitors = state.visitors.slice(-40);
+  return names;
+}
+async function clearVisitors(names) {
+  for (const n of names) await unlink(`visitors/${n}`).catch(() => {});
+}
 async function clearInbox(names) {
   for (const n of names) await unlink(`${INBOX_DIR}/${n}`).catch(() => {});
 }
@@ -365,6 +387,7 @@ async function clearInbox(names) {
 async function pullNtfy(state) {
   const topic = process.env.NTFY_TOPIC;
   if (!topic) return { added: 0 };
+  if (!sealSecret()) { console.error('🔒 ntfy: no key to keep messages private (GitHub secret PIP_REPLY_KEY), so they wait in ntfy.'); return { added: 0 }; }
   let added = 0;
   try {
     for (const e of await ntfyPoll(topic, state.ntfySince || 'all')) {
@@ -378,7 +401,7 @@ async function pullNtfy(state) {
       const bytes = await downloadAttachment(e); // a network error here stops the loop; the message is tried again next wake-up
       const pic = bytes ? await keepPicture(state, bytes, caption, at, `ntfy-${String(e.id).replace(/[^\w-]/g, '')}`) : null;
       if (caption || pic) {
-        state.inbox.push({ id, at, text: caption || '(a picture)', read: false, via: 'ntfy', picture: pic?.id ?? null });
+        state.inbox.push({ id, at, text: caption || '(a picture)', read: false, via: 'ntfy', picture: pic?.id ?? null, private: true });
         added++;
       }
       state.ntfySince = e.id;
@@ -498,6 +521,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     moves: offered,
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
+    visitors: (s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => `[${v.id}] ${v.name || 'someone'}: "${v.text}"`),
     gifts: unread.length > 0,
   };
 }
@@ -865,7 +889,7 @@ function applyInnerLife(s, r, detail, replying = false) {
 
   const sent = [];
   const send = (kind, body) => {
-    const msg = { id: Date.now().toString(36) + (sent.length ? 'b' : ''), at, kind, text: body };
+    const msg = { id: Date.now().toString(36) + (sent.length ? 'b' : ''), at, kind, text: body, ...(kind === 'ask' ? {} : { private: true }) }; // asks are public (the Asks tab); what he tells Bas is private
     s.outbox = [...s.outbox, msg].slice(-50);
     sent.push(msg);
   };
@@ -997,7 +1021,7 @@ async function goToSleep(state) {
     found: null,
     sleeping: true,
   };
-  await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+  await saveState(state);
   await appendFile(DIARY_FILE, `## ${new Date().toLocaleString('en-GB')}\nGood night. Pip went to sleep.\n\n`);
   console.log('\n💤 Pip went to sleep.');
 }
@@ -1046,7 +1070,7 @@ async function noteError(e, state = null) {
 async function napForLimit() {
   const state = await noteError(new Error('Rate limit hit (free tier). Try a longer wait between wake-ups.'));
   if (state.last?.sleeping) {
-    await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+    await saveState(state);
     return;
   }
   const at = new Date().toISOString();
@@ -1054,7 +1078,7 @@ async function napForLimit() {
   state.activities.push({ at, action: 'rest', detail: 'taking a nap', enjoyment: 7 });
   state.activities = state.activities.slice(-50);
   state.last = { at, thought: 'I am so sleepy. I will take a little nap...', action: 'rest', details: {}, detail: 'taking a nap', enjoyment: 7, new_idea: null, found: null, sleeping: true };
-  await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+  await saveState(state);
   console.log('💤 Out of calls for now: Pip takes a nap.');
 }
 
@@ -1072,17 +1096,19 @@ async function wakeUp() {
   const inbox = await loadInbox(state);
   inbox.added += (await pullNtfy(state)).added;
   const taskFiles = await loadTasks(state);
+  const visitorFiles = await loadVisitors(state);
   inbox.added += taskFiles.added;
   const frontFiles = await loadFronts(state);
   setFronts(state.fronts);
   if (isNight() && !process.env.PIP_AWAKE) {
     await goToSleep(state);
     if (inbox.added) {
-      await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+      await saveState(state);
       console.log('✉️  Bas wrote while Pip sleeps. He will read it in the morning.');
     }
     await clearInbox(inbox.names);
     await clearTasks(taskFiles.names);
+  await clearVisitors(visitorFiles);
     await clearFronts(frontFiles.names);
     return;
   }
@@ -1144,6 +1170,10 @@ async function wakeUp() {
       console.log(`🚶 no model right now (${e.message.slice(0, 80)}), so Pip runs on autopilot`);
       answer = { thought: '', inner: '', steps: [], mood_after: state.mood, new_idea: null };
       via = 'fallback';
+    }
+    for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
+      const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
+      if (v && text(a.text, 400)) Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() });
     }
     if (!answer.steps.length) answer.steps = fallbackSteps(state, offered);
     answer.steps = decided(state, answer.steps);
@@ -1683,7 +1713,8 @@ async function wakeUp() {
   unread.forEach((m) => {
     m.read = true;
     m.readAt = readAt;
-    addMemory(state, `Someone wrote to me: "${String(m.text ?? '').slice(0, 140)}"`, 7, 'memory', readAt);
+    const mm = addMemory(state, `Someone wrote to me: "${String(m.text ?? '').slice(0, 140)}"`, 7, 'memory', readAt);
+    if (mm) mm.private = true;
   });
   // (Looking back and rewriting his story now happen once a night, in the sleep call.)
   // Now and then he looks back and writes down what he realized (at most a few times a day, and only when enough has happened).
@@ -1745,7 +1776,7 @@ async function wakeUp() {
     if (st.sameTune) entry.sameTune = st.sameTune;
     if (st.action === 'search_web') Object.assign(entry, { query: text(d.query, 160), results: st.search?.results ?? [], opened: page(st.search?.opened) });
     if (st.action === 'read_book') Object.assign(entry, { topic: text(d.topic, 160), opened: page(st.read) });
-    if (st.action === 'play_piano') Object.assign(entry, { notes: text(d.notes, 200), style: text(d.style, 80), instrument: TIMBRES.includes(String(d.instrument ?? '').toLowerCase()) ? String(d.instrument).toLowerCase() : undefined });
+    if (st.action === 'play_piano') Object.assign(entry, { notes: text(d.notes, 200), style: text(d.style, 80), instrument: [...TIMBRES, 'voice'].includes(String(d.instrument ?? '').toLowerCase()) ? String(d.instrument).toLowerCase() : undefined });
     if (st.action === 'write_diary') entry.text = text(d.text, 800);
     if (st.action === 'walk_to') entry.object = text(d.object, 60);
     if (st.action === 'ask_for') Object.assign(entry, { item: text(d.item, 140), reason: text(d.reason, 200) });
@@ -1850,14 +1881,25 @@ async function wakeUp() {
     new_idea: answer.new_idea ?? null,
     found: brief(steps[0].found),
   };
-  await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+  const privateTick = unread.length > 0; // he read Bas's private messages: what he thought and wrote this time stays private too
+  if (privateTick) {
+    const since = (x) => Date.parse(x.at) >= startedAt - 1000;
+    for (const t of state.thoughts.filter(since)) sealFields(t, ['text', 'short', 'inner', 'detail']);
+    for (const e of state.log.filter(since)) sealFields(e, ['thought', 'text', 'detail']);
+    for (const m of state.memories.filter(since)) m.private = true;
+    sealFields(state.last, ['thought', 'inner', 'detail']);
+    for (const st of state.last.steps ?? []) { sealFields(st, ['thought', 'detail']); if (st.details) sealFields(st.details, ['text', 'what', 'query', 'topic']); }
+    state.last.private = true;
+  }
+  await saveState(state);
   await clearInbox(inbox.names);
   await clearTasks(taskFiles.names);
+  await clearVisitors(visitorFiles);
   await clearFronts(frontFiles.names);
   const planLines = steps.map((st, i) => `- ${st.action}${results[i].detail ? ` (${results[i].detail})` : ''}${st.thought ? `: ${st.thought}` : ''}`).join('\n');
   await appendFile(
     DIARY_FILE,
-    `## ${new Date().toLocaleString('en-GB')}\n${text(answer.thought, 200)}\n${text(answer.inner, 600) ? `> ${text(answer.inner, 600)}\n` : ''}${planLines}\n- mood: ${state.mood}\n\n`
+    privateTick ? `## ${new Date().toLocaleString('en-GB')}\nA private moment with Bas.\n\n` : `## ${new Date().toLocaleString('en-GB')}\n${text(answer.thought, 200)}\n${text(answer.inner, 600) ? `> ${text(answer.inner, 600)}\n` : ''}${planLines}\n- mood: ${state.mood}\n\n`
   );
   console.log(`\n💭 ${text(answer.thought, 200)}`);
   if (answer.inner) console.log(`   ${text(answer.inner, 600)}`);
@@ -1939,7 +1981,7 @@ async function tidy(apply) {
   const at = new Date().toISOString();
   const done = T.applyTidy(state, plan.choices, at);
   addMemory(state, `I had a big tidy and made a fresh start. I kept ${done.keep.filter((n) => !plan.choices.find((c) => c.name === n && (c.group === 'tool' || c.needed))).join(', ') || 'almost nothing'}, and let go of ${done['let go'].length} things.`, 8, 'memory', at);
-  await writeFile(STATE_FILE, JSON.stringify(state, null, 2));
+  await saveState(state);
   await appendFile(DIARY_FILE, T.tidyDiary(plan.choices, plan.diary));
   await writeFile(TIDY_FILE, JSON.stringify({ ...plan, appliedAt: at }, null, 1));
   console.log(`kept ${done.keep.length}, stored ${done.store.length}, let go ${done['let go'].length}. The let-go things are in state.archive.`);
@@ -1969,7 +2011,7 @@ try {
   // A rate limit is not a crash: Pip naps and this wake-up ends quietly, so GitHub does not send failure emails.
   if (!process.env.PIP_AWAKE && !process.env.PIP_FAKE) {
     if (e.message.startsWith('Rate limit')) await napForLimit().catch(() => {});
-    else await noteError(e).then((st) => writeFile(STATE_FILE, JSON.stringify(st, null, 2))).catch(() => {});
+    else await noteError(e).then((st) => saveState(st)).catch(() => {});
   }
   process.exit(e.message.startsWith('Rate limit') ? 0 : 1);
 }

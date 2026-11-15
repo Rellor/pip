@@ -156,6 +156,8 @@
   /* feeds and lists */
   .taskform { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:6px; }
   .taskform textarea { width:100%; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); font:inherit; padding:10px 12px; resize:vertical; }
+  #visitname { width:100%; margin-bottom:8px; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); font:inherit; padding:10px 12px; box-sizing:border-box; }
+  #visit .muted { margin-top:8px; }
   .taskform .row { margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
   .psteps { list-style:none; margin:8px 0 0; padding:0; display:grid; gap:4px; font-size:15px; }
   .psteps li { display:flex; gap:8px; align-items:baseline; }
@@ -273,7 +275,8 @@
       <button class="tab" role="tab" data-tab="tasks">Tasks<span class="count" id="taskcount"></span></button>
       <button class="tab" role="tab" data-tab="photos">Photos</button>
       <button class="tab" role="tab" data-tab="found">Found</button>
-      <button class="tab" role="tab" data-tab="messages">Messages<span class="dot" id="msgdot"></span></button>
+      <button class="tab" role="tab" data-tab="messages">🔒 Messages<span class="dot" id="msgdot"></span></button>
+      <button class="tab" role="tab" data-tab="visitors">Visitors</button>
       <button class="tab" role="tab" data-tab="life">Life</button>
     </nav>
 
@@ -342,7 +345,21 @@
         </div>
         <div class="row"><button type="submit" class="primary" id="send">Send</button><span class="muted" id="replystatus"></span></div>
       </form>
+      <p class="muted" id="privnote">This chat is private: only you (with your key) and Pip can read it.</p>
+      <div id="approvals" hidden><h2>Visitors waiting for your OK</h2><ul id="approvallist"></ul></div>
       <ul id="messages"></ul>
+    </section>
+
+    <section class="pane" data-pane="visitors" hidden>
+      <h2>Leave Pip a message</h2>
+      <form id="visit">
+        <input id="visitname" maxlength="30" placeholder="Your name (optional)" autocomplete="off">
+        <textarea id="visittext" rows="3" maxlength="300" placeholder="Say hello, ask him something, tell him about something you love…"></textarea>
+        <input id="visitweb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+        <div class="row"><button type="submit" class="primary" id="visitsend">Send</button><span class="muted" id="visitstatus"></span></div>
+        <p class="muted">Short and plain words only (no links). Bas reads every message first; then Pip reads it and may answer here.</p>
+      </form>
+      <ul id="visitlist"></ul>
     </section>
 
     <section class="pane" data-pane="settings" hidden>

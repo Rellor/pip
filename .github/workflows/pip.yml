@@ -44,6 +44,7 @@ jobs:
           GEMINI_BIG: ${{ vars.GEMINI_BIG }}
           GEMINI_LITE: ${{ vars.GEMINI_LITE }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          PIP_REPLY_KEY: ${{ secrets.PIP_REPLY_KEY }}  # opens and seals the private chat (seal.js)
           PIP_SITE_URL: ${{ vars.PIP_SITE_URL }}
         run: node loop.js
 

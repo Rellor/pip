@@ -60,7 +60,7 @@ export function fakeMade(step) {
     extend_thing: { name: step.details?.name, parts: box.slice(0, 1) },
     draw: { name, where: 'wall_left', why: '(fake)', svg: '<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#223"/><circle cx="200" cy="150" r="40" fill="#fd4"/></svg>' },
     make_app: { name, why: '(fake)', html: '<!doctype html><title>x</title><p>Hello</p>' },
-    record_song: step.details?.revise ? { section: 'A', bars: [{ piano: 'E4 D4 C4:2' }], why: '(fake) a softer ending' } : { name, tempo: 90, instruments: ['piano', 'drums'], form: ['A', 'B', 'A'], sections: [{ name: 'A', bars: [{ piano: 'C4 E4 G4:2', drums: 'kick hat snare hat' }] }, { name: 'B', bars: [{ piano: 'F4 A4 C5:2' }] }] },
+    record_song: step.details?.revise ? { section: 'A', bars: [{ piano: 'E4 D4 C4:2' }], why: '(fake) a softer ending' } : { name, tempo: 90, instruments: ['voice', 'drums'], form: ['A', 'B', 'A'], sections: [{ name: 'A', bars: [{ voice: 'C4 E4 G4:2', drums: 'kick hat snare hat' }] }, { name: 'B', bars: [{ voice: 'F4 A4 C5:2' }] }] },
     make_clothes: { name, slot: 'head', why: '(fake)', parts: box.slice(0, 1) },
   })[step.action] ?? {};
 }
