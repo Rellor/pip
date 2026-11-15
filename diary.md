@@ -349,3 +349,9 @@ I finished my last steps and want to keep refining the wooden music box gears.
 - eat (apples): I am hungry.
 - mood: focused
 
+## 15/11/2026, 18:00:45
+Since the small wooden music box did not exist yet, I will craft its parts using the decorate move.
+> Since the small wooden music box did not exist yet, I will craft its parts using the decorate move.
+- decorate (tiny wooden music box): I need to carve the tiny gears carefully.
+- mood: focused
+
