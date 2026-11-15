@@ -23,9 +23,15 @@ export function check(state, health, now = Date.now(), primary = process.env.GEM
   return { next, event };
 }
 
+// Warnings go to their own channel: the Pip topic with "-checkup" at the end (no new secret needed), so they do not mix
+// with Pip's own messages. Until BOTH_UNTIL they also go to the old topic, so nothing is missed while Bas subscribes.
+const BOTH_UNTIL = Date.parse('2026-11-17T00:00:00Z');
 async function push(title, body) {
   const topic = process.env.NTFY_TOPIC;
   if (!topic) return;
+  for (const t of [`${topic}-checkup`, ...(Date.now() < BOTH_UNTIL ? [topic] : [])]) await pushTo(t, title, body);
+}
+async function pushTo(topic, title, body) {
   try {
     await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
       method: 'POST',
