@@ -67,7 +67,8 @@ export function settleChoices(items, answer) {
   const norm = (c) => (/keep/i.test(c) ? 'keep' : /store|chest|album|away/i.test(c) ? 'store' : 'let go');
   const out = items.map((i) => {
     const c = by.get(i.id);
-    return { ...i, choice: c ? norm(c.choice) : 'store', reason: String(c?.reason ?? '').trim().slice(0, 200) || (c ? '' : '(I did not say, so I put it away for now.)') };
+    const free = i.group === 'tool' || i.needed; // tools and things he needs to live stay unless he says otherwise
+    return { ...i, choice: c ? norm(c.choice) : free ? 'keep' : 'store', reason: String(c?.reason ?? '').trim().slice(0, 200) || (c ? '' : free ? '(I use it, so it stays.)' : '(I did not say, so I put it away for now.)') };
   });
   const free = (i) => i.group === 'tool' || i.needed;
   const trim = (choice, max, to) => {

@@ -1924,6 +1924,8 @@ async function tidy(apply) {
     return;
   }
   const plan = JSON.parse(await readFile(TIDY_FILE, 'utf8'));
+  for (const c of plan.choices) if (c.group === 'tool' && /^\(I did not say/.test(c.reason)) Object.assign(c, { choice: 'keep', reason: '(I use it, so it stays.)' }); // older proposals filed unanswered tools as "store"
+  if (plan.appliedAt) { console.log(`This tidy was already applied at ${plan.appliedAt}.`); return; }
   const state = JSON.parse(await readFile(STATE_FILE, 'utf8'));
   ensureMemory(state);
   const at = new Date().toISOString();
