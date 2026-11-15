@@ -86,6 +86,12 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       steps.push({ action: 'do', details: { what: `dream about ${clip(d.what, 100)}` }, thought, enjoyment: 7 });
       continue;
     }
+    if (name === 'plan_project') {
+      const st = (Array.isArray(d.steps) ? d.steps : []).map((x) => clip(x, 120)).filter(Boolean).slice(0, 6);
+      if (clip(d.title ?? d.project, 80) && st.length) answer.projects_update.push({ title: clip(d.title ?? d.project, 80), steps: st, next: st[0] });
+      steps.push({ action: 'do', details: { what: `plan the steps of my project ${clip(d.title ?? d.project, 60)}` }, thought, enjoyment: 6 });
+      continue;
+    }
     if (name === 'judge_project') {
       answer.project_judged = { title: clip(d.title ?? d.project, 80), proud: /^(yes|true|proud)/i.test(String(d.proud ?? '')), why: clip(d.why, 200) };
       steps.push({ action: 'do', details: { what: `look closely at my project ${clip(d.title ?? d.project, 60)}` }, thought, enjoyment: 6 });
@@ -130,6 +136,6 @@ export function fakeReply(moves, random = Math.random) {
   const n = 1 + Math.floor(random() * MAX_PICK);
   const picked = [];
   for (let i = 0; i < n && pool.length; i++) picked.push(pool.splice(Math.floor(random() * pool.length), 1)[0]);
-  const fill = { project: '', proud: 'no', query: 'how do bees make honey', topic: 'bees', text: '(fake) a quiet day.', what: 'a small wooden bee', why: '(fake) because I want to', notes: 'C4 E4 G4:2', instrument: 'voice', food: 'bread', dish: 'toast', ingredients: ['bread'], plant: 'rosemary', seed: 'rosemary', target: 'window', caption: '(fake) the window', item: 'a small saw', title: '(fake) Learn about bees', steps: ['read about bees', 'make a bee', 'write a bee song'] };
+  const fill = { project: '(fake) Learn about bees', proud: 'no', query: 'how do bees make honey', topic: 'bees', text: '(fake) a quiet day.', what: 'a small wooden bee', why: '(fake) because I want to', notes: 'C4 E4 G4:2', instrument: 'voice', food: 'bread', dish: 'toast', ingredients: ['bread'], plant: 'rosemary', seed: 'rosemary', target: 'window', caption: '(fake) the window', item: 'a small saw', title: '(fake) Learn about bees', steps: ['read about bees', 'make a bee', 'write a bee song'] };
   return { moves: picked.map((m) => ({ move: m.name, details: fill, thought: '(fake) I want to.' })), reason: '(fake) This feels right now.', mood: ['curious', 'calm', 'happy', 'restless', 'proud'][Math.floor(random() * 5)], remember: null };
 }

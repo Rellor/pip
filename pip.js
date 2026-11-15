@@ -16,7 +16,7 @@ import { giveForAsk } from './gifts.js';
 import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
-import { ensureProjects, projectLines, addVersion, judgeProject } from './projects.js';
+import { ensureProjects, projectLines, addVersion, judgeProject, findProject } from './projects.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
@@ -1859,10 +1859,15 @@ async function wakeUp() {
     const up = practise(state, e.action, { ...e, name: e.name ?? e.details?.name, query: e.query, topic: e.topic });
     if (up) { addMemory(state, `My ${up.skill} got better: I am level ${up.level} now.`, 6, 'memory', new Date().toISOString()); console.log(`   📈 ${up.skill} is level ${up.level}`); }
   }
-  for (const st of steps) { // something made for a project is its next version
-    if (!st.made_by_maker || !st.details?.project || st.made?.failed) continue;
-    const v = addVersion(state, st.details.project, { kind: st.action, name: st.details.name, ref: st.made?.entry?.id ?? st.made?.id ?? null });
-    if (v) console.log(`   🧩 ${v.project}: v${v.v}`);
+  const VERSION_WORK = ['decorate', 'change_thing', 'extend_thing', 'draw', 'record_song', 'make_app', 'update_app', 'make_clothes', 'cook'];
+  let ticked = (answer.projects_update ?? []).some((u) => Array.isArray(u?.step_done) && u.step_done.length);
+  for (const st of steps) { // something really made for a project is its next version, and moves the plan one step on
+    if (!VERSION_WORK.includes(st.action) || !st.details?.project || !st.made || st.made.failed) continue;
+    const v = addVersion(state, st.details.project, { kind: st.action, name: st.made?.name ?? st.made?.recording?.name ?? st.details.name ?? st.details.what, ref: st.made?.entry?.id ?? st.made?.id ?? st.made?.recording?.id ?? null });
+    if (!v) continue;
+    console.log(`   🧩 ${v.project}: v${v.v}`);
+    const step = !ticked && findProject(state, v.project)?.steps?.find((x) => !x.done);
+    if (step) { step.done = true; ticked = true; console.log(`   ✓ step done: ${step.text}`); }
   }
   if ((answer.asks_add ?? []).some((a) => a?.big)) state.bigDreamAt = new Date().toISOString();
   noteMood(state, state.mood);
