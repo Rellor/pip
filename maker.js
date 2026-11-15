@@ -39,10 +39,32 @@ export function applyMade(step, reply, limits = {}) {
   return { ...step, details: { ...step.details, ...d, name: d.name ?? step.details?.name ?? step.details?.what }, make: false, made_by_maker: true };
 }
 
+// Songs only use what he has. An instrument he does not own becomes his voice (drums stay drums), and names are matched
+// loosely ("Voice", "vocals", "singing"), so a whole song is not lost to one wrong word.
+const ALIAS = { vocals: 'voice', vocal: 'voice', singing: 'voice', sing: 'voice', hum: 'voice', humming: 'voice', choir: 'voice', drum: 'drums', percussion: 'drums' };
+function onlyWhatHeHas(reply, allowed) {
+  const fit = (name) => {
+    const n = String(name ?? '').toLowerCase().trim();
+    const a = ALIAS[n] ?? n;
+    return allowed.includes(a) ? a : allowed.includes('voice') ? 'voice' : allowed[0];
+  };
+  const instruments = [...new Set((Array.isArray(reply.instruments) ? reply.instruments : []).map(fit))];
+  const sections = (Array.isArray(reply.sections) ? reply.sections : []).map((sec) => ({
+    ...sec,
+    bars: (Array.isArray(sec?.bars) ? sec.bars : []).map((bar) => {
+      const out = {};
+      for (const [k, v] of Object.entries(bar ?? {})) { const f = fit(k); out[f] = out[f] ? `${out[f]} ${v}` : v; }
+      return out;
+    }),
+  }));
+  for (const sec of sections) for (const bar of sec.bars) for (const k of Object.keys(bar)) if (!instruments.includes(k)) instruments.push(k);
+  return { ...reply, instruments: instruments.slice(0, 4), sections };
+}
+
 // A song: the maker's pattern (or one revised section of an old one) becomes tracks the site can play.
 import { cleanPattern, patternToTracks, reviseSection } from './music.js';
 export function finishSong(step, reply, { songs = [], maxBars = 16, allowed = null } = {}) {
-  if (allowed && Array.isArray(reply?.instruments)) reply = { ...reply, instruments: reply.instruments.filter((i) => allowed.includes(String(i).toLowerCase())) }; // only what he has
+  if (allowed && reply && typeof reply === 'object') reply = onlyWhatHeHas(reply, allowed);
   const old = step.details?.revise ? [...songs].reverse().find((x) => x.pattern && x.name.toLowerCase() === String(step.details.revise).toLowerCase()) : null;
   const pattern = old ? reviseSection(old.pattern, reply?.section, reply?.bars) : cleanPattern({ ...reply, name: reply?.name ?? step.details?.what }, maxBars);
   if (!pattern) return { ...step, details: { ...step.details, name: step.details?.what ?? step.details?.revise, tracks: [] }, make: false, made_by_maker: true };

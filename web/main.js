@@ -3347,11 +3347,39 @@ function pageBlock(opened, label) {
   return box;
 }
 
+// Failure reasons and thoughts can hold Pip's own instructions (action names, JSON examples). On the page they read as plain words.
+const ACTION_WORDS = { asks_add: 'his asks', ask_for: 'asking', take_tool: 'picking it up', place_tool: 'putting it down', move_thing: 'moving it', change_thing: 'changing it', extend_thing: 'adding to it', add_use: 'giving it a use', request_ability: 'asking for it', take_out: 'taking it out', remove_decoration: 'putting it away', take_down_picture: 'taking it down', record_song: 'recording a song', play_piano: 'playing music', search_web: 'looking it up', read_book: 'reading', write_diary: 'writing in his diary', make_app: 'making a program', make_clothes: 'sewing', make_move: 'a new move' };
+function plainText(t) {
+  let x = String(t ?? '')
+    .replace(/\[\s*\{[\s\S]*?\}\s*\]/g, '') // JSON lists
+    .replace(/\{[^{}]*\}/g, '') // { ... }
+    .replace(/"[a-z_]+"\s*:\s*("[^"]*"|[\d.]+)/gi, '')
+    .replace(/\(\s*\)/g, '')
+    .replace(/[\[{][^()]*?(?=\s*\(|$)/g, '') // code that was cut off half way (up to the next bracket or the end)
+    .replace(/:\s*[….]+/g, '.')
+    .replace(/:\s*(?=\()/g, '. ');
+  const sentences = x.split(/(?<=[.;!?])\s+/).map((y) => y.trim()).filter(Boolean);
+  const clean = sentences.filter((y) => !/\b[a-z]+_[a-z_]+\b|\bwith (asks|use|do)\b/.test(y)); // drop sentences that are instructions to Pip
+  x = (clean.length ? clean : sentences.slice(0, 1)).join(' ');
+  x = x.replace(/\b[a-z]+_[a-z_]+\b/g, (w) => ACTION_WORDS[w] ?? w.replace(/_/g, ' '));
+  return x.replace(/:\s*,/g, ',').replace(/\s+([,.;])/g, '$1').replace(/[,;:\s]+$/, '').replace(/\s{2,}/g, ' ').trim();
+}
+// The same, told about him: "I need a shovel" becomes "he needs a shovel".
+function humanFail(t) {
+  const VERB = { am: 'is', have: 'has', need: 'needs', want: 'wants', do: 'does', was: 'was', can: 'can', cannot: 'cannot', already: 'already', did: 'did', will: 'will', could: 'could', ate: 'ate', took: 'took', made: 'made', only: 'only' };
+  const ADVERB = /^(really|also|just|still|always|never|first|then|now|even)$/;
+  const third = (v) => VERB[v] ?? (ADVERB.test(v) ? v : /(s|sh|ch|x|o)$/.test(v) ? `${v}es` : /[^aeiou]y$/.test(v) ? `${v.slice(0, -1)}ies` : `${v}s`);
+  return plainText(t)
+    .replace(/\bI (\w+)(?: (\w+))?/g, (m, v, w) => (ADVERB.test(v) && w ? `he ${v} ${third(w)}` : `he ${third(v)}${w ? ` ${w}` : ''}`))
+    .replace(/\bI'm\b/g, 'he is')
+    .replace(/\bmy\b/g, 'his').replace(/\bMy\b/g, 'His').replace(/\bme\b/g, 'him').replace(/\bmyself\b/g, 'himself')
+    .replace(/^./, (c) => c.toLowerCase()).replace(/\.$/, '') || 'something was missing'; // the card adds its own full stop
+}
 function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: e.action === 'record_song' ? 'Recorded a song' : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3376,7 +3404,7 @@ function dayCard(e) {
     else card.append(el('p', 'He could not find anything to read about this.', 'muted'));
   } else if (kind === 'piano' && e.action === 'record_song') {
     card.append(el('h3', e.name || 'A recording', 'title'));
-    if (e.failed) card.append(el('p', `That did not work out: ${e.failed}.`, 'muted'));
+    if (e.failed) card.append(el('p', `That did not work out: ${humanFail(e.failed)}.`, 'muted'));
     else {
       card.append(trackList(e));
       const song = trackSong({ tempo: e.tempo, tracks: e.tracks });
@@ -3410,7 +3438,7 @@ function dayCard(e) {
   } else if (kind === 'cook') {
     card.append(el('h3', e.dish || 'a meal', 'title'));
     if (e.ingredients?.length) card.append(el('p', e.ingredients.join(', '), 'muted'));
-    if (e.failed) card.append(el('p', 'It did not work out: ' + e.failed, 'muted'));
+    if (e.failed) card.append(el('p', 'It did not work out: ' + humanFail(e.failed), 'muted'));
   } else if (kind === 'print') {
     card.append(el('h3', e.name || 'a photo', 'title'));
     if (e.image) {
@@ -3420,7 +3448,7 @@ function dayCard(e) {
       img.alt = e.name || '';
       card.append(img);
     }
-    card.append(el('p', e.failed ? 'It did not work out: ' + e.failed : e.place ? `Pinned ${e.place}.` : '', 'muted'));
+    card.append(el('p', e.failed ? 'It did not work out: ' + humanFail(e.failed) : e.place ? `Pinned ${e.place}.` : '', 'muted'));
   } else if (kind === 'photo' || kind === 'find') {
     card.append(el('h3', kind === 'photo' ? `A photo of ${e.target || 'something'}` : e.title || `“${e.query || ''}”`, 'title'));
     const src = kind === 'photo' ? e.image : e.picture;
@@ -3432,7 +3460,7 @@ function dayCard(e) {
       card.append(img);
     }
     if (e.caption) card.append(el('p', e.caption, 'muted'));
-    if (e.failed) card.append(el('p', 'It did not work out: ' + e.failed, 'muted'));
+    if (e.failed) card.append(el('p', 'It did not work out: ' + humanFail(e.failed), 'muted'));
   } else if (kind === 'eat') {
     card.append(el('h3', e.food || 'a snack', 'title'));
     if (e.failed) card.append(el('p', 'He was not hungry yet.', 'muted'));
@@ -3445,7 +3473,7 @@ function dayCard(e) {
       card.append(img);
     }
     if (e.action === 'use') {
-      if (e.failed) card.append(el('p', `That did not work out: ${e.failed}.`, 'muted'));
+      if (e.failed) card.append(el('p', `That did not work out: ${humanFail(e.failed)}.`, 'muted'));
       else {
         if (e.text) card.append(el('div', e.text, 'quote'));
         if (e.view) {
@@ -3458,23 +3486,23 @@ function dayCard(e) {
         if (app) card.append(appButton(app));
       }
     } else if (e.action === 'add_use') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He decided what it is for: ${e.label}.`, 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : `He decided what it is for: ${e.label}.`, 'muted'));
     } else if (e.action === 'compose') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He gave it a song.', 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : 'He gave it a song.', 'muted'));
     } else if (e.action === 'draw') {
-      card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He drew it and put it ${e.place}.`, 'muted'));
+      card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `He drew it and put it ${e.place}.`, 'muted'));
     } else if (e.action === 'change_thing') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
     } else if (e.action === 'plant' || e.action === 'water' || e.action === 'harvest') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.result || '', 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.result || '', 'muted'));
     } else if (e.action === 'check_light') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.result || '', 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.result || '', 'muted'));
     } else if (e.action === 'lamp_auto') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.mode === 'dark' ? `${e.name} now switches itself on when it gets dark.` : `${e.name} is back in his own hands.`, 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.mode === 'dark' ? `${e.name} now switches itself on when it gets dark.` : `${e.name} is back in his own hands.`, 'muted'));
     } else if (e.action === 'extend_thing') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.joined ? `He joined ${e.joined} on, so it is one thing now (${e.total} parts).` : e.side ? `He built onto the ${e.side} side: ${e.added} new parts (${e.total} in all).` : `He added ${e.added} parts (${e.total} in all).`, 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.joined ? `He joined ${e.joined} on, so it is one thing now (${e.total} parts).` : e.side ? `He built onto the ${e.side} side: ${e.added} new parts (${e.total} in all).` : `He added ${e.added} parts (${e.total} in all).`, 'muted'));
     } else if (e.action === 'blueprint') {
-      if (e.failed) card.append(el('p', `That did not work out: ${e.failed}.`, 'muted'));
+      if (e.failed) card.append(el('p', `That did not work out: ${humanFail(e.failed)}.`, 'muted'));
       else {
         card.append(el('p', `Goal: ${e.goal || ''}`, 'muted'));
         const ul = el('ul', null, 'results');
@@ -3482,24 +3510,24 @@ function dayCard(e) {
         card.append(ul);
       }
     } else if (e.action === 'move_thing') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He moved it${e.place ? ` (${e.place})` : ''}.`, 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : `He moved it${e.place ? ` (${e.place})` : ''}.`, 'muted'));
     } else if (e.action === 'update_app') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : 'He made a new version of the app.', 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : 'He made a new version of the app.', 'muted'));
     } else if (e.action === 'make_clothes' || e.action === 'wear' || e.action === 'take_off') {
       const c = !e.failed ? clothesOf(e.name) : null;
       const pic = c ? clothesPic(c) : null;
       if (pic) card.append(pic);
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : e.action === 'make_clothes' ? `He made ${e.name || 'clothes'} for ${SLOT_WORDS[e.slot] || 'himself'}.` : e.action === 'wear' ? 'He put it on.' : 'He took it off.', 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.action === 'make_clothes' ? `He made ${e.name || 'clothes'} for ${SLOT_WORDS[e.slot] || 'himself'}.` : e.action === 'wear' ? 'He put it on.' : 'He took it off.', 'muted'));
     } else if (e.action === 'make_app') {
-      card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : 'He wrote a small app on his computer. It opens in a locked box.', 'muted'));
+      card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : 'He wrote a small app on his computer. It opens in a locked box.', 'muted'));
     } else if (e.action === 'remove_decoration') {
-      card.append(el('p', e.stored ? 'He put it away in his chest. It is not lost.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
+      card.append(el('p', e.stored ? 'He put it away in his chest. It is not lost.' : `That did not work out: ${humanFail(e.failed || 'something was in the way')}.`, 'muted'));
     } else if (e.action === 'take_out') {
-      card.append(el('p', e.failed ? `That did not work out: ${e.failed}.` : `He took it out of his chest and put it ${e.place}.`, 'muted'));
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : `He took it out of his chest and put it ${e.place}.`, 'muted'));
     } else if (e.action === 'take_down_picture') {
-      card.append(el('p', e.removed ? 'He took it down. It stays in his album.' : `That did not work out: ${e.failed || 'unknown'}.`, 'muted'));
+      card.append(el('p', e.removed ? 'He took it down. It stays in his album.' : `That did not work out: ${humanFail(e.failed || 'something was in the way')}.`, 'muted'));
     } else {
-      card.append(el('p', e.failed ? `It did not work out: ${e.failed}.` : `He made it and put it ${e.place}.`, 'muted'));
+      card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `He made it and put it ${e.place}.`, 'muted'));
     }
     if (e.why && !e.failed) card.append(el('p', e.why));
     if (e.project && !e.failed) card.append(el('p', `For his project: ${e.project}`, 'muted'));
@@ -3515,7 +3543,7 @@ function dayCard(e) {
     if (main) card.append(el('h3', main.slice(0, 160), 'title'));
     for (const [, v] of parts.filter(([, v]) => v !== main).slice(0, 2)) card.append(el('p', v.slice(0, 200), 'muted'));
   }
-  if (e.thought) card.append(el('p', `“${e.thought}”`, 'thought'));
+  if (e.thought) card.append(el('p', `“${plainText(e.thought)}”`, 'thought'));
   return card;
 }
 
