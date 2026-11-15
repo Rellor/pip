@@ -3067,3 +3067,10 @@ I want to stand on my step stool and take a photo of the early morning sky befor
 - play_piano (C3+G3:4 E4 G4 B4 C5:2 G4 E4:2): Letting low harp chords resonate in the spacious studio acoustics.
 - mood: peaceful
 
+## 15/11/2026, 07:43:35
+I want to try making my very first computer app to visualize stereo panning for my studio project.
+> I noticed I have never made an app on my computer before, and today is a wonderful chance to try it for the first time. Since I cannot record multi-track audio right now, building a stereo panning visualizer app lets me design the soundstage layout for my guitar and kalimba suite visually.
+- make_app (Stereo Panning Visualizer): Writing the code for my soundstage panning visualizer map!
+- write_diary (I built my very first computer app today! It displays an interactive stereo soundstage visualizer that maps my acoustic guitar to the left channel and kalimba to the right.): Writing down how exciting it was to code my first app.
+- mood: excited
+
