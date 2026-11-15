@@ -62,5 +62,5 @@ export default async function handler(req, res) {
   const file = { id, at: new Date().toISOString(), status: 'pending', who, enc: seal(JSON.stringify({ name, text }), key) };
   const put = await putFile(`visitors/${id}.json`, JSON.stringify(file), 'A visitor left Pip a message [skip ci]');
   if (!put.ok) return res.status(502).json({ error: 'The message could not be saved. Please try again later.' });
-  return res.status(200).json({ ok: true });
+  return res.status(200).json({ ok: true, id }); // the id lets this visitor's page follow their message
 }

@@ -2187,7 +2187,7 @@ function pipInfo() {
     avatar: true,
     subtitle: [(s?.emotion || s?.mood) ? `Feeling ${s.emotion || s.mood}` : '', sleeping ? 'asleep' : 'awake'].filter(Boolean).join(' · '),
     sections,
-    actions: [{ icon: '📖', text: 'See his day', run: () => { hideInfo(); showTab('day'); } }, { icon: '💗', text: 'Open his life tab', run: () => { hideInfo(); showTab('life'); } }],
+    actions: [{ icon: '📖', text: 'See his day', run: () => { hideInfo(); showTab('day'); } }, { icon: '💗', text: 'Open the Pip tab', run: () => { hideInfo(); showTab('life'); } }],
     refresh: pipInfo, // the card keeps updating while it is open
   };
 }
@@ -3186,29 +3186,50 @@ function renderApprovals() {
   }));
 }
 // The public mailbox: approved visitor messages and Pip's answers.
+// Messages sent from this device, so the visitor can see where theirs is: waiting for Bas, or answered.
+let myVisits = [];
+try { myVisits = JSON.parse(store('pip-my-visits') || '[]'); } catch {}
+function renderMyVisits(s) {
+  const seen = (s?.visitors || []);
+  const week = Date.now() - 7 * 864e5;
+  myVisits = myVisits.filter((m) => Date.parse(m.at) > week);
+  store('pip-my-visits', JSON.stringify(myVisits));
+  fill($('myvisits'), myVisits.slice().reverse().map((m) => {
+    const got = seen.find((v) => (m.id && v.id === m.id) || v.text === m.text);
+    const box = el('div', null, 'myvisit');
+    box.append(el('div', `“${m.text}”`), el('div', got?.answer ? `🐣 Pip answered! Look below.` : got ? '👀 Bas said yes. Pip reads it when he wakes up.' : '⏳ Sent. Waiting for Bas to check it.', 'st'));
+    return box;
+  }));
+}
 function renderVisitors(s) {
+  renderMyVisits(s);
   const list = (s.visitors || []).slice().reverse();
   fill($('visitlist'), list.length
     ? list.flatMap((v) => [entry([when(v.at), v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
     : empty('No messages yet. Be the first to say hello.'));
 }
 const pageOpenedAt = Date.now();
+$('visittext').addEventListener('input', () => { $('visitcount').textContent = `${$('visittext').value.length} / 300`; });
 $('visit').addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = $('visittext').value.trim();
   if (!text) return;
   $('visitsend').disabled = true;
-  $('visitstatus').textContent = 'Sending…';
+  $('visitsend').textContent = 'Sending…';
   try {
     const res = await fetch('/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, name: $('visitname').value.trim(), website: $('visitweb').value, since: Date.now() - pageOpenedAt }) });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || 'That did not work.');
+    myVisits.push({ id: data.id, text, at: new Date().toISOString() });
     $('visittext').value = '';
-    $('visitstatus').textContent = 'Thank you! Bas reads it first, then Pip.';
+    $('visitcount').textContent = '0 / 300';
+    renderMyVisits(lastState);
+    toast('Sent! Bas checks it first, then Pip reads it.');
   } catch (err) {
-    $('visitstatus').textContent = err.message;
+    toast(err.message);
   } finally {
     $('visitsend').disabled = false;
+    $('visitsend').textContent = 'Send to Pip';
   }
 });
 
@@ -3230,9 +3251,9 @@ async function refreshNtfy() {
 }
 
 // tabs
-const TABS = ['day', 'life', 'asks', 'photos', 'messages', 'visitors'];
-// Tabs that were folded into another one: Mind lives under Pip, Tasks under Asks, Found under Pictures.
-const OLD_TABS = { mind: 'life', tasks: 'asks', found: 'photos' };
+const TABS = ['day', 'life', 'asks', 'messages'];
+// Tabs that were folded into another one: Mind and the pictures live under Pip, Tasks under Asks, Visitors under Talk.
+const OLD_TABS = { mind: 'life', tasks: 'asks', photos: 'life', found: 'life', visitors: 'messages', talk: 'messages', pip: 'life' };
 const tabName = (n) => OLD_TABS[n] || n;
 let tab = TABS.includes(tabName(store('pip-tab'))) ? tabName(store('pip-tab')) : 'day';
 let latestMsg = null;
@@ -3248,8 +3269,20 @@ function showTab(name) {
   if (name === 'day') loadOlder();
   if (name === 'messages') refreshNtfy(); // look for things typed in the ntfy app as soon as the chat is opened
   if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
-  $('msgdot').classList.toggle('on', name !== 'messages' && !!latestMsg && latestMsg !== store('pip-seen'));
+  $('msgdot').classList.toggle('on', name !== 'messages' && !!store('pip-key') && !!latestMsg && latestMsg !== store('pip-seen'));
+  renderTalk();
 }
+// Talk: everyone sees the visitor mailbox. With the key, a switch also opens the private chat with Bas.
+let talkMode = store('pip-talk') === 'private' ? 'private' : 'public';
+function renderTalk() {
+  const key = !!store('pip-key');
+  const mode = key ? talkMode : 'public';
+  $('talkswitch').hidden = !key;
+  document.querySelectorAll('[data-talk]').forEach((b) => b.classList.toggle('on', b.dataset.talk === mode));
+  $('talkpublic').hidden = mode !== 'public';
+  $('talkprivate').hidden = mode !== 'private';
+}
+document.querySelectorAll('[data-talk]').forEach((b) => b.addEventListener('click', () => { talkMode = b.dataset.talk; store('pip-talk', talkMode); renderTalk(); if (talkMode === 'private') refreshNtfy(); }));
 document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => showTab(b.dataset.tab)));
 // The settings are not a tab: the gear in the corner opens them, and pressing it again goes back.
 $('settingsbtn').addEventListener('click', () => showTab(tab === 'settings' ? (TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day') : 'settings'));

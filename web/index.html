@@ -105,14 +105,29 @@
   .dot.on { display:block; }
 
   @media (max-width:600px) {
-    #tabs { display:grid; grid-template-columns:repeat(6,1fr); gap:0; padding:6px 6px 0; overflow:visible; }
-    .tab { padding:9px 2px; font-size:13.5px; text-align:center; border-bottom-width:3px; }
+    #tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:0; padding:6px 6px 0; overflow:visible; }
+    .tab { padding:9px 2px; font-size:14.5px; text-align:center; border-bottom-width:3px; }
     .count { margin-left:3px; padding:0 5px; font-size:11px; }
     .dot { right:6px; }
   }
 
   .pane { flex:1; overflow:auto; padding:16px; }
   .pane[hidden] { display:none; }
+
+  .talkswitch { display:flex; gap:4px; background:var(--line); border-radius:12px; padding:3px; margin-bottom:16px; }
+  .talkswitch[hidden] { display:none; }
+  .talkswitch button { flex:1; border:0; background:none; border-radius:9px; padding:8px 6px; font-size:14px; color:var(--muted); }
+  .talkswitch button.on { background:var(--card); color:var(--ink); font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .writecard { border:1px solid var(--line); border-radius:16px; padding:14px 14px 6px; margin-bottom:18px; }
+  .writehead { margin-top:0; }
+  .steps { list-style:none; display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:0; margin:0 0 12px; }
+  .steps li { font-size:12.5px; line-height:1.3; color:var(--muted); text-align:center; }
+  .steps b { display:block; color:var(--ink); font-size:13px; margin-bottom:2px; }
+  #visit input, #visit textarea { width:100%; box-sizing:border-box; margin-bottom:8px; }
+  #visit .small { font-size:12.5px; }
+  #visitcount { margin-left:10px; }
+  .myvisit { border:1px dashed var(--accent); border-radius:12px; padding:10px 12px; margin-bottom:10px; }
+  .myvisit .st { font-size:12.5px; color:var(--muted); margin-top:4px; }
   .merged { margin-top:28px; padding-top:4px; border-top:1px solid rgba(127,127,127,.25); }
   h2 { margin:22px 0 8px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; }
   h2:first-child { margin-top:0; }
@@ -275,12 +290,10 @@
       <button class="small" id="settingsbtn" aria-label="Settings" title="Settings">⚙</button>
     </div>
     <nav id="tabs" role="tablist">
-      <button class="tab" role="tab" data-tab="day">Day</button>
-      <button class="tab" role="tab" data-tab="life">Pip</button>
-      <button class="tab" role="tab" data-tab="asks">Asks<span class="count" id="askcount"></span></button>
-      <button class="tab" role="tab" data-tab="photos">Pictures</button>
-      <button class="tab" role="tab" data-tab="messages">🔒 Chat<span class="dot" id="msgdot"></span></button>
-      <button class="tab" role="tab" data-tab="visitors">Visitors</button>
+      <button class="tab" role="tab" data-tab="day">📖 Day</button>
+      <button class="tab" role="tab" data-tab="life">🐣 Pip</button>
+      <button class="tab" role="tab" data-tab="asks">🙏 Asks<span class="count" id="askcount"></span></button>
+      <button class="tab" role="tab" data-tab="messages">💬 Talk<span class="dot" id="msgdot"></span></button>
     </nav>
 
     <section class="pane" data-pane="day">
@@ -312,19 +325,33 @@
     </section>
 
 
-    <section class="pane" data-pane="photos" hidden>
-      <h2>Pictures taken by Pip</h2>
-      <p class="muted">Photos Pip took of the window, his room, something he made, or himself.</p>
-      <div class="pics" id="photolist"></div>
-      <div class="merged">
-      <h2>Pictures Pip found online</h2>
-      <p class="muted">Free pictures from Wikimedia Commons. Pip picks what to look for. Tap one to see where it came from.</p>
-      <div class="pics" id="foundlist"></div>
-      </div>
-    </section>
+
+
 
 
     <section class="pane" data-pane="messages" hidden>
+      <div class="talkswitch" id="talkswitch" hidden role="tablist">
+        <button type="button" data-talk="public" class="on">💬 Visitors</button>
+        <button type="button" data-talk="private">🔒 Just you and Pip</button>
+      </div>
+      <div id="talkpublic">
+      <div id="approvals" hidden><h2>Visitors waiting for your OK</h2><ul id="approvallist"></ul></div>
+        <div class="writecard">
+          <h2 class="writehead">Write to Pip</h2>
+          <ol class="steps"><li><b>✍️ You write</b>a short hello or a question</li><li><b>👀 Bas checks it</b>so the room stays kind</li><li><b>🐣 Pip answers</b>right here, when he wakes up</li></ol>
+          <form id="visit">
+            <input id="visitname" maxlength="30" placeholder="Your name (you can leave this empty)" autocomplete="off">
+            <textarea id="visittext" rows="3" maxlength="300" placeholder="Say hello, ask him something, tell him about something you love…"></textarea>
+            <input id="visitweb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+            <div class="row"><button type="submit" class="primary" id="visitsend">Send to Pip</button><span class="muted" id="visitcount">0 / 300</span></div>
+            <p class="muted small">Plain words only, no links. Everyone can read the messages Pip answers.</p>
+          </form>
+        </div>
+        <div id="myvisits"></div>
+        <h2>Messages and Pip's answers</h2>
+        <ul id="visitlist" class="talklist"></ul>
+      </div>
+      <div id="talkprivate" hidden>
       <form id="reply">
         <textarea id="replytext" rows="3" maxlength="1000" placeholder="Write to Pip…"></textarea>
         <div class="row">
@@ -335,22 +362,9 @@
         <div class="row"><button type="submit" class="primary" id="send">Send</button><span class="muted" id="replystatus"></span></div>
       </form>
       <p class="muted" id="privnote">This chat is private: only you (with your key) and Pip can read it.</p>
-      <div id="approvals" hidden><h2>Visitors waiting for your OK</h2><ul id="approvallist"></ul></div>
       <ul id="messages"></ul>
+      </div>
     </section>
-
-    <section class="pane" data-pane="visitors" hidden>
-      <h2>Leave Pip a message</h2>
-      <form id="visit">
-        <input id="visitname" maxlength="30" placeholder="Your name (optional)" autocomplete="off">
-        <textarea id="visittext" rows="3" maxlength="300" placeholder="Say hello, ask him something, tell him about something you love…"></textarea>
-        <input id="visitweb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
-        <div class="row"><button type="submit" class="primary" id="visitsend">Send</button><span class="muted" id="visitstatus"></span></div>
-        <p class="muted">Short and plain words only (no links). Bas reads every message first; then Pip reads it and may answer here.</p>
-      </form>
-      <ul id="visitlist"></ul>
-    </section>
-
     <section class="pane" data-pane="settings" hidden>
       <h2>Settings</h2>
       <div class="err" id="err" style="padding:0 0 8px"></div>
@@ -392,6 +406,8 @@
       <div id="lifeopen" hidden>
         <button class="small" id="lifeback" type="button">← Life</button>
         <div class="lifesec" data-sec="story" data-icon="📖" data-title="Story" hidden><h2>Pip's story so far</h2><p class="story" id="story"></p></div>
+        <div class="lifesec" data-sec="photos" data-icon="📷" data-title="Photos" hidden><h2>Photos Pip took</h2><p class="muted">Of the window, his room, something he made, or himself.</p><div class="pics" id="photolist"></div></div>
+        <div class="lifesec" data-sec="found" data-icon="🌍" data-title="Found online" hidden><h2>Pictures Pip found online</h2><p class="muted">Free pictures from Wikimedia Commons. Pip picks what to look for. Tap one to see where it came from.</p><div class="pics" id="foundlist"></div></div>
         <div class="lifesec" data-sec="drawings" data-icon="🎨" data-title="Drawings" hidden><h2>Pip's drawings</h2><div class="pics" id="drawlist"></div></div>
         <div class="lifesec" data-sec="wardrobe" data-icon="👕" data-title="Wardrobe" hidden><h2>Clothes Pip made</h2><div class="pics" id="wardrobelist"></div></div>
         <div class="lifesec" data-sec="apps" data-icon="💻" data-title="Apps" hidden><h2>Apps on his computer</h2><ul id="applist"></ul></div>
