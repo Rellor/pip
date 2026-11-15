@@ -5,7 +5,7 @@ import { applyLook } from './look.js';
 import { autoLampOn, lightAt, levelWord, isLamp } from './lighting.js';
 import { isGreenhouse, plantState, slotSpot } from './gardening.js';
 import { buildHouse, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
-import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects } from './furniture.js';
+import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects, isGone } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -247,6 +247,7 @@ function applyFurniture(s) {
     const [px, pz] = pivotOf(key);
     const [rx, rz] = turn([px, pz], pl.rot);
     slideTo(G[key], pl.x - rx, pl.z - rz, pl.rot);
+    G[key].visible = !isGone(furn, key);
     const sp = FURNITURE[key].spot;
     if (sp && SPOT_OF[key]) {
       const [wx, wz] = worldPoint(key, pl, sp.p);

@@ -7,6 +7,7 @@ import { soulText } from '../soul.js';
 
 const real = JSON.parse(fs.readFileSync(new URL('../web/state.json', import.meta.url), 'utf8'));
 const s = structuredClone(real);
+const archivedBefore = (s.archive ?? []).length;
 const items = tidyItems(s, s.log);
 const total = items.length;
 const count = (st) => (st.decor?.length ?? 0) + (st.stored?.length ?? 0) + (st.tools?.length ?? 0) + (st.art?.length ?? 0) + (st.pictures?.length ?? 0) + (st.studio?.songs?.length ?? 0) + (st.apps?.length ?? 0) + (st.wardrobe?.length ?? 0);
@@ -29,6 +30,6 @@ assert.ok(settleChoices(items, {}).every((c) => c.choice !== 'let go' || !counte
 // Apply the fake answer: nothing disappears, it is all still somewhere.
 const choices = settleChoices(items, fakeTidy(items));
 applyTidy(s, choices);
-assert.equal(count(s) + s.archive.length, total, 'what left the room is in state.archive');
+assert.equal(count(s) + s.archive.length - archivedBefore, total, 'what left the room is in state.archive');
 for (const d of s.decor) if (d.base && !/^(desk|piano|bookshelf|bed)/.test(d.base)) assert.ok(s.decor.some((x) => x.id === String(d.base).split('#')[0]), `${d.name} still stands on something`);
 console.log(`ok  tidy: ${total} things, kept ${choices.filter((c) => c.choice === 'keep').length}, stored ${choices.filter((c) => c.choice === 'store').length}, let go ${choices.filter((c) => c.choice === 'let go').length}`);

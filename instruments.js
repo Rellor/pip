@@ -35,13 +35,14 @@ export function grantInstruments(s, now = Date.now()) {
 // What a step needs him to own: a held instrument (guitar, violin...) for play_piano and for every track of record_song,
 // and a synthesizer for the synth voices. The studio's own drums, keyboard and mixing desk need nothing.
 export const SYNTH_VOICES = ['synth', 'synthbass'];
-export function instrumentNeeds(st) {
+// pianoGone: when the piano is not in his room, the keyboard sounds (piano, organ, marimba...) need a piano he was given.
+export function instrumentNeeds(st, { pianoGone = false } = {}) {
   const d = st?.details ?? {};
   const names = st?.action === 'play_piano' ? [d.instrument] : st?.action === 'record_song' ? (Array.isArray(d.tracks) ? d.tracks.slice(0, 4).map((t) => t?.instrument) : []) : [];
   const out = [];
   for (const n of names) {
     const k = String(n ?? '').toLowerCase();
-    const need = heldKind(k) ?? (SYNTH_VOICES.includes(k) ? 'synthesizer' : null);
+    const need = heldKind(k) ?? (SYNTH_VOICES.includes(k) ? 'synthesizer' : pianoGone && k !== 'drums' ? 'piano' : null);
     if (need && !out.includes(need)) out.push(need);
   }
   return out;

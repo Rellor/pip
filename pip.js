@@ -10,6 +10,7 @@ import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPla
 
 import { archiveOverflow } from './archive.js';
 import { loadSoul } from './soul.js';
+import { applyChanges } from './changes.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject } from './projects.js';
@@ -223,6 +224,7 @@ async function loadState() {
   ensureFeelings(state);
   grantInstruments(state);
   if (HAS_STUDIO && moveMusicToStudio(state)) addMemory(state, 'I have a little house now. My piano and my music things moved into my new music studio: through the door in my bedroom, across the hall, and through the next door.', 7, 'memory', new Date().toISOString());
+  for (const note of applyChanges(state)) addMemory(state, note, 8, 'memory', new Date().toISOString()); // one-time changes from Bas
   { const back = moveMusicBack(state); if (back.length || state.musicBack === true && !state.musicBackNoted) { state.musicBackNoted = true; addMemory(state, 'The music studio is gone for now. My piano is back in my bedroom, by the window where I started.', 7, 'memory', new Date().toISOString()); } }
   keepWindowsClear(state);
   state.studio ??= { songs: [] };
@@ -1162,7 +1164,7 @@ async function wakeUp() {
   const blocked = [];
   const bag = state.tools.map((x) => ({ name: x.name, kind: x.kind }));
   const steps = redundantWalks(normalizeSteps(answer)).filter((st) => {
-    const needs = [st.needs || NEEDS[st.action] || '', ...instrumentNeeds(st)].filter(Boolean).find((n) => !bag.some((x) => fits(x, n))) || '';
+    const needs = [st.needs || NEEDS[st.action] || '', ...instrumentNeeds(st, { pianoGone: Boolean(state.furniture?.piano?.gone) })].filter(Boolean).find((n) => !bag.some((x) => fits(x, n))) || '';
     if (needs) {
       const away = toolList(state).find((x) => !x.usable && fits({ name: x.name, kind: x.kind }, needs));
       blocked.push({ st, why: away ? `my ${away.name} is ${away.where.replace('his ', 'my ')}. take_tool brings it into my inventory first, then I can play it` : `I need ${needs} in my inventory for that. If I really want to do it, I ask for it with asks_add and say why` });

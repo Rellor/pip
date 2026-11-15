@@ -79,5 +79,6 @@ export function fallbackSteps(s, moves) {
     { action: 'do', details: { what: 'look out of the window for a while' }, thought: 'I watch the sky for a bit.' },
     { action: 'do', details: { what: 'say hello to my plants through the glass' }, thought: 'Hello, little plants.' },
   ];
-  return [{ ...quiet[Math.floor(Math.random() * quiet.length)], enjoyment: 5 }];
+  const can = quiet.filter((q) => q.action !== 'play_piano' || has('play_piano'));
+  return [{ ...can[Math.floor(Math.random() * can.length)], enjoyment: 5 }];
 }
