@@ -95,7 +95,7 @@ export function plantSeed(s, d, now = Date.now()) {
   const plant = seed.name;
   seed.qty -= 1;
   s.garden.plots.push({ id: `g${now.toString(36)}${slot}`, plant, slot, plantedAt: new Date(now).toISOString(), waters: [], cut: 0, seen: 'seed' });
-  return { ok: true, plant, slot, text: `I planted ${plant} seeds in place ${slot + 1} of my greenhouse and gave them their first water.` };
+  return { ok: true, plant, slot, text: `I planted ${plant} seeds in place ${slot + 1} of my ${hs[Math.floor(slot / SLOTS_PER_GREENHOUSE)]?.name ?? 'greenhouse'} and gave them their first water.` };
 }
 
 const pick = (s, name) => {

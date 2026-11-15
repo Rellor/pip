@@ -109,4 +109,6 @@ ok('a "do" that is really planting, watering or eating becomes that move (no pre
   assert.deepEqual(a.steps.map((x) => x.action), ['plant', 'eat', 'do']);
   assert.equal(a.steps[0].details.seed, 'basil');
   assert.equal(a.steps[1].details.food, 'bread');
+  const u = toAnswer({ moves: [{ move: 'use', details: { name: 'wooden planter box', label: 'Plant basil seeds' } }, { move: 'use', details: { name: 'lamp', label: 'Switch on' } }] }, ['use']);
+  assert.deepEqual(u.steps.map((x) => x.action), ['plant', 'use']);
 });
