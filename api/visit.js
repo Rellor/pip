@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     try { v = JSON.parse(unseal(file.data.enc, key) ?? '{}'); } catch {}
     if (!v.text) return res.status(400).json({ error: 'That message could not be opened.' });
     const out = { id, at: file.data.at, status: 'approved', name: clean(v.name, MAX_NAME), text: clean(v.text, MAX_TEXT), approvedAt: new Date().toISOString() };
-    const put = await putFile(`visitors/${file.name}`, JSON.stringify(out), 'Bas let a visitor message through [skip ci]', file.sha);
+    const put = await putFile(`visitors/${file.name}`, JSON.stringify(out), 'A visitor message was let through [skip ci]', file.sha);
     return put.ok ? res.status(200).json({ ok: true }) : res.status(502).json({ error: `GitHub said ${put.status}` });
   }
 

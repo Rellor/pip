@@ -3186,7 +3186,7 @@ function renderApprovals() {
   }));
 }
 // The public mailbox: approved visitor messages and Pip's answers.
-// Messages sent from this device, so the visitor can see where theirs is: waiting for Bas, or answered.
+// Messages sent from this device, so the visitor can see where theirs is: waiting to be checked, or answered.
 let myVisits = [];
 try { myVisits = JSON.parse(store('pip-my-visits') || '[]'); } catch {}
 function renderMyVisits(s) {
@@ -3197,7 +3197,7 @@ function renderMyVisits(s) {
   fill($('myvisits'), myVisits.slice().reverse().map((m) => {
     const got = seen.find((v) => (m.id && v.id === m.id) || v.text === m.text);
     const box = el('div', null, 'myvisit');
-    box.append(el('div', `“${m.text}”`), el('div', got?.answer ? `🐣 Pip answered! Look below.` : got ? '👀 Bas said yes. Pip reads it when he wakes up.' : '⏳ Sent. Waiting for Bas to check it.', 'st'));
+    box.append(el('div', `“${m.text}”`), el('div', got?.answer ? `🐣 Pip answered! Look below.` : got ? '👀 Checked. Pip reads it when he wakes up.' : '⏳ Sent. Waiting to be checked.', 'st'));
     return box;
   }));
 }
@@ -3224,7 +3224,7 @@ $('visit').addEventListener('submit', async (e) => {
     $('visittext').value = '';
     $('visitcount').textContent = '0 / 300';
     renderMyVisits(lastState);
-    toast('Sent! Bas checks it first, then Pip reads it.');
+    toast('Sent! It gets checked first, then Pip reads it.');
   } catch (err) {
     toast(err.message);
   } finally {
