@@ -31,8 +31,13 @@
   #infocard { position:relative; width:min(440px, 100%); max-height:calc(100dvh - 32px); display:flex; flex-direction:column; overflow:hidden; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:20px; box-shadow:0 18px 50px rgba(0,0,0,.45); animation:infopop .18s ease-out; }
   @keyframes infopop { from { opacity:0; transform:translateY(10px) scale(.97); } to { opacity:1; transform:none; } }
   @keyframes infosheet { from { transform:translateY(40px); opacity:.4; } to { transform:none; opacity:1; } }
-  #info { backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
-  @media (max-width:700px) { #info { align-items:flex-end; padding:0; } #infocard { width:100%; max-height:84dvh; border-radius:22px 22px 0 0; border-bottom:0; animation:infosheet .22s ease-out; } #infocard::before { content:""; position:absolute; top:7px; left:50%; width:38px; height:4px; margin-left:-19px; border-radius:3px; background:var(--line); } #infohead { padding-top:20px; } }
+  /* The room stays visible and sharp while a card is open: no dark layer, no blur. The card floats; taps around it reach the room. */
+  #info { background:none !important; backdrop-filter:none; -webkit-backdrop-filter:none; pointer-events:none; align-items:flex-end; justify-content:flex-start; }
+  #infocard { pointer-events:auto; width:min(380px, 100%); max-height:min(70dvh, 560px); box-shadow:0 10px 34px rgba(0,0,0,.28); }
+  #picktag { position:absolute; left:0; top:0; z-index:4; pointer-events:none; padding:4px 10px; border-radius:999px; background:var(--panel); color:var(--ink); font-size:13px; font-weight:600; white-space:nowrap; box-shadow:0 3px 12px rgba(0,0,0,.25); transition:opacity .15s; }
+  #picktag::after { content:''; position:absolute; left:50%; bottom:-5px; margin-left:-5px; border:5px solid transparent; border-bottom:0; border-top-color:var(--panel); }
+  #picktag[hidden] { display:none; }
+  @media (max-width:700px) { #info { align-items:flex-end; padding:0; } #infocard { width:100%; max-height:46dvh; border-radius:22px 22px 0 0; border-bottom:0; animation:infosheet .22s ease-out; } #infocard::before { content:""; position:absolute; top:7px; left:50%; width:38px; height:4px; margin-left:-19px; border-radius:3px; background:var(--line); } #infohead { padding-top:20px; } }
   #infohead { display:flex; align-items:center; gap:12px; padding:16px 54px 10px 16px; }
   #infoicon { flex:none; width:48px; height:48px; border-radius:15px; background:var(--chip); display:grid; place-items:center; font-size:26px; }
   #infoicon.avatar { background:linear-gradient(135deg,#f6c27a,#e9855b); color:#fff; font-weight:700; font-size:24px; box-shadow:inset 0 -3px 0 rgba(0,0,0,.12); }
