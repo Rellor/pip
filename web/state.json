@@ -1099,6 +1099,15 @@
       "kind": "memory",
       "weight": 7,
       "lastUsed": "2026-11-14T17:26:08.433Z"
+    },
+    {
+      "id": "mmwhle7yk30",
+      "at": "2026-11-15T08:48:25.290Z",
+      "text": "I had a big tidy and made a fresh start. I kept autumn amber scarf, a picture from Bas, stellar wave bell, window step stool, rosemary music box, cosmic wall shelves, and let go of 39 things.",
+      "importance": 8,
+      "kind": "memory",
+      "weight": 8,
+      "lastUsed": "2026-11-15T08:48:25.290Z"
     }
   ],
   "reflections": [
@@ -2558,351 +2567,6 @@
   ],
   "decor": [
     {
-      "id": "dmw9ps0s60",
-      "name": "vibrating star",
-      "why": "to have a little glowing star model on my desk that reminds me of star songs",
-      "zone": "on_desk",
-      "slot": 0,
-      "label": "on the desk",
-      "kind": "surface",
-      "pos": [
-        -4.2,
-        0.85,
-        0.45
-      ],
-      "rotY": 1.5707963267948966,
-      "scale": 1,
-      "parts": [
-        {
-          "shape": "sphere",
-          "size": [
-            0.08
-          ],
-          "pos": [
-            0,
-            0.14,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffb347",
-          "glow": true
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.12,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.14,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffdfba",
-          "glow": true
-        }
-      ],
-      "stand": [
-        -2.7,
-        0.45
-      ],
-      "at": "2026-11-09T20:33:04.229Z",
-      "createdAt": "2026-11-09T20:28:58.230Z",
-      "uses": [
-        {
-          "label": "Listen to star song",
-          "text": "The little star model glows softly, and I imagine I can hear a deep, gentle hum from far away.",
-          "view": null,
-          "song": null,
-          "app": null,
-          "effect": "wonder"
-        }
-      ],
-      "song": {
-        "notes": [
-          [
-            "C4",
-            4
-          ],
-          [
-            null,
-            1
-          ],
-          [
-            "E4",
-            4
-          ],
-          [
-            null,
-            1
-          ],
-          [
-            "G4",
-            4
-          ],
-          [
-            null,
-            1
-          ],
-          [
-            "C5",
-            4
-          ]
-        ],
-        "tempo": 70,
-        "timbre": "pad",
-        "ambience": "hum",
-        "seconds": 20
-      },
-      "usedAt": "2026-11-14T17:43:08.236Z",
-      "updatedAt": "2026-11-11T10:34:23.790Z"
-    },
-    {
-      "id": "dmw9r9dyh1",
-      "name": "ambient sound box",
-      "why": "to make a tiny ambient sound box that glows softly like distant stars",
-      "project": "",
-      "zone": "surface",
-      "slot": 0,
-      "label": "on the sideboard in the music studio",
-      "kind": "surface",
-      "pos": [
-        8.9,
-        0.8,
-        -2.2
-      ],
-      "rotY": 0,
-      "scale": 1,
-      "parts": [
-        {
-          "shape": "box",
-          "size": [
-            0.16,
-            0.1,
-            0.12
-          ],
-          "pos": [
-            0,
-            0.05,
-            -0.01
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#4a5d6e",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.14,
-            0.02,
-            0.1
-          ],
-          "pos": [
-            0,
-            0.15,
-            -0.01
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#7a8c9e",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.06
-          ],
-          "pos": [
-            0,
-            0.19,
-            -0.01
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffd84a",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.02
-          ],
-          "pos": [
-            0.05,
-            0.1,
-            0.05
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#8fa3b8",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.02
-          ],
-          "pos": [
-            -0.05,
-            0.1,
-            0.05
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#8fa3b8",
-          "glow": true
-        }
-      ],
-      "stand": [
-        2,
-        -3.25
-      ],
-      "at": "2026-11-09T21:14:34.073Z",
-      "createdAt": "2026-11-09T21:10:28.073Z",
-      "uses": [
-        {
-          "label": "Play ambient sound",
-          "text": "Soft, low frequencies ripple through the room, making it feel vast and calm like an empty night sky.",
-          "view": null,
-          "song": null,
-          "app": null,
-          "effect": "calm"
-        }
-      ],
-      "usedAt": "2026-11-14T17:34:50.800Z",
-      "song": {
-        "notes": [],
-        "tempo": 90,
-        "timbre": "piano",
-        "ambience": "hum",
-        "seconds": 30
-      },
-      "base": null
-    },
-    {
-      "id": "dmwackv0f2",
-      "name": "tiny telescope tube",
-      "why": "To add the main magnifying tube to my tiny desk telescope model.",
-      "project": "Build a tiny desk telescope model",
-      "song": null,
-      "zone": "on_desk",
-      "slot": 1,
-      "label": "on the desk",
-      "kind": "surface",
-      "pos": [
-        -4.2,
-        0.85,
-        1.95
-      ],
-      "rotY": 1.5707963267948966,
-      "scale": 1,
-      "parts": [
-        {
-          "shape": "cylinder",
-          "size": [
-            0.04,
-            0.04,
-            0.15
-          ],
-          "pos": [
-            0,
-            0.075,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#c5cfdb",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.045,
-            0.045,
-            0.03
-          ],
-          "pos": [
-            0,
-            0.15,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#9aa7b8",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.02
-          ],
-          "pos": [
-            0,
-            0.165,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#88ddff",
-          "glow": true
-        }
-      ],
-      "stand": [
-        -2.7,
-        1.95
-      ],
-      "at": "2026-11-10T07:13:21.326Z",
-      "createdAt": "2026-11-10T07:07:15.327Z",
-      "uses": [
-        {
-          "label": "Look through it",
-          "text": "I peer through the tiny lens and imagine distant star clusters glowing softly in the dark sky.",
-          "view": "made/view-umwadg2kiylq9-0.svg",
-          "song": null,
-          "app": null,
-          "effect": "wonder"
-        }
-      ],
-      "usedAt": "2026-11-10T07:31:31.462Z",
-      "updatedAt": "2026-11-11T10:34:23.790Z"
-    },
-    {
       "id": "pmwaeb7ag3",
       "name": "a picture from Bas",
       "why": "",
@@ -3106,184 +2770,6 @@
       "usedAt": "2026-11-13T14:16:12.230Z"
     },
     {
-      "id": "dmwb2abhb6",
-      "name": "plasma wave sculpture",
-      "why": "to see what stellar sound waves might look like as a tiny glowing sculpture",
-      "project": "",
-      "song": {
-        "notes": [
-          [
-            "C2",
-            4
-          ],
-          [
-            null,
-            1
-          ],
-          [
-            "G2",
-            2
-          ],
-          [
-            "C3",
-            4
-          ],
-          [
-            "E3",
-            2
-          ],
-          [
-            "G3",
-            4
-          ]
-        ],
-        "tempo": 50,
-        "timbre": "pad",
-        "ambience": "hum",
-        "seconds": 30
-      },
-      "uses": [
-        {
-          "label": "Listen to plasma waves",
-          "text": "The little glass sphere glows brighter and hums with a deep, pulsing star chord.",
-          "view": null,
-          "song": {
-            "notes": [
-              [
-                "C3",
-                1
-              ],
-              [
-                "G3",
-                1
-              ],
-              [
-                "E3",
-                1
-              ]
-            ],
-            "tempo": 60,
-            "timbre": "pad"
-          },
-          "app": null,
-          "effect": "wonder"
-        }
-      ],
-      "zone": "on_piano",
-      "slot": 0,
-      "label": "on top of the piano",
-      "kind": "surface",
-      "pos": [
-        10.049999999999999,
-        1.4,
-        -4.5
-      ],
-      "rotY": 0,
-      "scale": 1,
-      "parts": [
-        {
-          "shape": "cylinder",
-          "size": [
-            0.04,
-            0.04,
-            0.2
-          ],
-          "pos": [
-            0,
-            0.1,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#4a7bc7",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.08
-          ],
-          "pos": [
-            0,
-            0.34,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffb347",
-          "glow": true
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.12,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.22,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        }
-      ],
-      "stand": [
-        -3.4,
-        -3
-      ],
-      "at": "2026-11-10T19:14:59.470Z",
-      "createdAt": "2026-11-10T19:06:53.471Z",
-      "usedAt": "2026-11-11T08:01:16.700Z",
-      "movedAt": "2026-11-11T12:48:49.835Z",
-      "updatedAt": "2026-11-11T12:48:49.835Z"
-    },
-    {
-      "id": "pmwbunkgp8",
-      "name": "a small print",
-      "why": "",
-      "project": "",
-      "zone": "wall_free",
-      "slot": null,
-      "label": "on the back wall (x 3.8, height 4.039)",
-      "kind": "wall",
-      "pos": [
-        3.8,
-        4.039,
-        -4.97
-      ],
-      "rotY": 0,
-      "scale": 1,
-      "parts": [],
-      "image": "photos/phmwb364ar1.jpg",
-      "size": [
-        0.42,
-        0.316
-      ],
-      "picture": "print:pic5",
-      "print": true,
-      "stand": [
-        3.8,
-        -3.7
-      ],
-      "at": "2026-11-11T08:22:26.888Z",
-      "createdAt": "2026-11-11T08:21:00.889Z",
-      "free": true,
-      "side": "back",
-      "updatedAt": "2026-11-11T13:12:41.920Z"
-    },
-    {
       "id": "dmwbva8kt9",
       "name": "stellar wave bell",
       "why": "to have a little sculpture that hums with stellar acoustic wave patterns",
@@ -3409,102 +2895,6 @@
       "base": "dmwc3r0go14#1"
     },
     {
-      "id": "pmwbwx9nk10",
-      "name": "Antares (Updated)",
-      "why": "",
-      "project": "",
-      "zone": "wall_free",
-      "slot": null,
-      "label": "on the back wall (x -3.75, height 2.7)",
-      "kind": "wall",
-      "pos": [
-        -3.75,
-        2.7,
-        -4.97
-      ],
-      "rotY": 0,
-      "scale": 1,
-      "parts": [],
-      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Antares_%28Updated%29.jpg/960px-Antares_%28Updated%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "size": [
-        0.42,
-        0.316
-      ],
-      "picture": "print:fmwbty73v0",
-      "print": true,
-      "stand": [
-        -3.75,
-        -3.7
-      ],
-      "at": "2026-11-11T09:28:38.671Z",
-      "createdAt": "2026-11-11T09:24:32.672Z",
-      "free": true,
-      "side": "back",
-      "updatedAt": "2026-11-11T13:12:41.920Z"
-    },
-    {
-      "id": "pmwbxtc0y11",
-      "name": "Betelgeuse captured by ALMA",
-      "why": "",
-      "project": "",
-      "zone": "wall_desk",
-      "slot": 0,
-      "label": "on the photo wall above the desk",
-      "kind": "wall",
-      "pos": [
-        -4.97,
-        2.35,
-        0.45
-      ],
-      "rotY": 1.5707963267948966,
-      "scale": 1,
-      "parts": [],
-      "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Betelgeuse_captured_by_ALMA.jpg/960px-Betelgeuse_captured_by_ALMA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "size": [
-        0.42,
-        0.316
-      ],
-      "picture": "print:fmwbxd7p82",
-      "print": true,
-      "stand": [
-        -3.7,
-        0.45
-      ],
-      "at": "2026-11-11T09:49:34.737Z",
-      "createdAt": "2026-11-11T09:49:28.738Z"
-    },
-    {
-      "id": "pmwc01irm13",
-      "name": "shelf layout sketch",
-      "why": "to plan the layout and dimensions for my cosmic sculpture wall shelves",
-      "project": "",
-      "zone": "on_bookshelf",
-      "slot": 1,
-      "label": "on top of the bookshelf",
-      "kind": "surface",
-      "pos": [
-        3.2,
-        3.2179699248120297,
-        -4.65
-      ],
-      "rotY": 0,
-      "scale": 1,
-      "parts": [],
-      "image": "made/artmwc01irl2.svg",
-      "size": [
-        0.5,
-        0.376
-      ],
-      "picture": "artmwc01irl2",
-      "stand": [
-        3.2,
-        -3.25
-      ],
-      "at": "2026-11-11T10:53:15.951Z",
-      "createdAt": "2026-11-11T10:51:49.954Z",
-      "art": "artmwc01irl2"
-    },
-    {
       "id": "dmwc3r0go14",
       "name": "cosmic wall shelves",
       "why": "To build the wall shelves for my cosmic sculptures so they have a bright place to rest.",
@@ -3582,74 +2972,6 @@
       ],
       "at": "2026-11-11T12:37:04.134Z",
       "createdAt": "2026-11-11T12:35:38.136Z"
-    },
-    {
-      "id": "pmwc52t0y13",
-      "name": "Orion Nebula sketch",
-      "why": "to capture the soft, glowing mist of the stellar nursery in the dark night",
-      "project": "",
-      "scale": 1,
-      "parts": [],
-      "image": "made/artmwbt2eee0.svg",
-      "picture": "artmwbt2eee0",
-      "zone": "wall_free",
-      "slot": null,
-      "free": true,
-      "side": "left",
-      "kind": "wall",
-      "label": "on the left wall (z -1.95, height 3.864)",
-      "pos": [
-        -4.97,
-        3.864,
-        -1.95
-      ],
-      "rotY": 1.5707963267948966,
-      "size": [
-        1.5,
-        1.128
-      ],
-      "stand": [
-        -3.7,
-        -1.95
-      ],
-      "at": "2026-11-11T13:21:12.446Z",
-      "createdAt": "2026-11-11T13:12:47.986Z",
-      "art": "artmwbt2eee0",
-      "movedAt": "2026-11-12T14:15:33.169Z",
-      "updatedAt": "2026-11-12T14:15:33.169Z"
-    },
-    {
-      "id": "pmwdaojj31539",
-      "name": "morning light sketch",
-      "why": "to capture the gentle morning light coming through my cozy room",
-      "project": "",
-      "scale": 1,
-      "parts": [],
-      "image": "made/artmwdaojj23.svg",
-      "picture": "artmwdaojj23",
-      "zone": "wall_free",
-      "slot": null,
-      "free": true,
-      "side": "left",
-      "kind": "wall",
-      "label": "on the left wall (z -3.77, height 2.764)",
-      "pos": [
-        -4.97,
-        2.764,
-        -3.77
-      ],
-      "rotY": 1.5707963267948966,
-      "size": [
-        1.5,
-        1.128
-      ],
-      "stand": [
-        -3.7,
-        -3.77
-      ],
-      "at": "2026-11-12T08:41:32.363Z",
-      "createdAt": "2026-11-12T08:37:26.367Z",
-      "art": "artmwdaojj23"
     },
     {
       "id": "dmwdddz2t15mc",
@@ -3777,41 +3099,6 @@
       "usedAt": "2026-11-15T07:34:58.014Z",
       "movedAt": "2026-11-12T12:46:41.603Z",
       "updatedAt": "2026-11-12T12:46:41.603Z"
-    },
-    {
-      "id": "pmwdfdc5216ks",
-      "name": "starry night window view",
-      "why": "To capture the deep quiet stars glowing right outside my window.",
-      "project": "",
-      "scale": 1,
-      "parts": [],
-      "image": "made/artmwdfdc514.svg",
-      "picture": "artmwdfdc514",
-      "zone": "wall_free",
-      "slot": null,
-      "free": true,
-      "side": "left",
-      "kind": "wall",
-      "label": "on the left wall (z -4.05, height 1.364)",
-      "pos": [
-        -4.97,
-        1.364,
-        -4.05
-      ],
-      "rotY": 1.5707963267948966,
-      "size": [
-        1.5,
-        1.128
-      ],
-      "stand": [
-        -3.7,
-        -4.05
-      ],
-      "at": "2026-11-12T10:54:47.649Z",
-      "createdAt": "2026-11-12T10:48:41.654Z",
-      "art": "artmwdfdc514",
-      "movedAt": "2026-11-15T07:23:41.888Z",
-      "updatedAt": "2026-11-15T07:23:41.888Z"
     },
     {
       "id": "dmwdtx7c117m6",
@@ -4366,337 +3653,6 @@
       "at": "2026-11-13T17:38:03.910Z",
       "createdAt": "2026-11-13T17:37:57.913Z",
       "usedAt": "2026-11-14T07:22:55.961Z"
-    },
-    {
-      "id": "dmwg4rfny19ju",
-      "name": "great comet model",
-      "why": "to celebrate Gottfried Kirch's discovery of the Great Comet of 1680 with a glowing celestial desk model",
-      "project": "",
-      "song": null,
-      "uses": [
-        {
-          "label": "Watch comet glow",
-          "text": "The icy core shines with a warm amber light, trailing streamers of glowing blue ion gas and pale curved dust across my desk.",
-          "view": null,
-          "song": null,
-          "app": null,
-          "effect": "wonder",
-          "does": null,
-          "motion": null,
-          "steps": null
-        }
-      ],
-      "tool": null,
-      "zone": "surface",
-      "slot": null,
-      "free": true,
-      "base": "desk",
-      "label": "on the desk (x -4.25, z 1.4)",
-      "kind": "surface",
-      "pos": [
-        -4.25,
-        0.85,
-        1.4
-      ],
-      "rotY": 1.5707963267948966,
-      "scale": 1,
-      "parts": [
-        {
-          "shape": "box",
-          "size": [
-            0.12,
-            0.02,
-            0.08
-          ],
-          "pos": [
-            0,
-            0.01,
-            0.004
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#3d2b1f",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.08
-          ],
-          "pos": [
-            0,
-            0.06,
-            0.004
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#a0a0a0",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.024
-          ],
-          "pos": [
-            0,
-            0.11,
-            0.024
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#fff6cc",
-          "glow": true
-        },
-        {
-          "shape": "cone",
-          "size": [
-            0.02,
-            0.14
-          ],
-          "pos": [
-            0,
-            0.17,
-            -0.036
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#59a5d8",
-          "glow": true
-        },
-        {
-          "shape": "cone",
-          "size": [
-            0.025,
-            0.12
-          ],
-          "pos": [
-            0.02,
-            0.16,
-            -0.026
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e8f1f5",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.032
-          ],
-          "pos": [
-            0,
-            0.11,
-            0.024
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffec99",
-          "glow": true
-        }
-      ],
-      "stand": [
-        -2.75,
-        1.4
-      ],
-      "at": "2026-11-14T08:17:48.156Z",
-      "createdAt": "2026-11-14T08:15:02.158Z",
-      "usedAt": "2026-11-14T08:15:02.160Z"
-    },
-    {
-      "id": "dmwhjdjoq19fh",
-      "name": "wooden music stand",
-      "why": "to hold my handwritten music sketches near my desk",
-      "project": "",
-      "song": null,
-      "uses": [
-        {
-          "label": "Place sheet music",
-          "text": "I set my handwritten music notes on the slanted wooden stand.",
-          "view": null,
-          "song": null,
-          "app": null,
-          "effect": "calm",
-          "does": null,
-          "motion": null,
-          "steps": null
-        }
-      ],
-      "tool": null,
-      "zone": "surface",
-      "slot": null,
-      "free": true,
-      "base": "desk",
-      "label": "on the desk (x -4.25, z 1.1)",
-      "kind": "surface",
-      "pos": [
-        -4.25,
-        0.85,
-        1.1
-      ],
-      "rotY": 1.5707963267948966,
-      "scale": 1,
-      "parts": [
-        {
-          "shape": "box",
-          "size": [
-            0.2,
-            0.02,
-            0.15
-          ],
-          "pos": [
-            0,
-            0.01,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#6e4a27",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.4
-          ],
-          "pos": [
-            0,
-            0.22,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#4a321a",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.25,
-            0.18,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.42,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#7c542c",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.25,
-            0.02,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.34,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c3e20",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.02
-          ],
-          "pos": [
-            0,
-            0.52,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffd700",
-          "glow": true
-        }
-      ],
-      "stand": [
-        -2.75,
-        1.1
-      ],
-      "at": "2026-11-15T07:55:05.214Z",
-      "createdAt": "2026-11-15T07:51:54.602Z",
-      "usedAt": "2026-11-15T07:51:54.604Z"
-    },
-    {
-      "id": "pmwhjz2lf20je",
-      "name": "greenhouse and sprouts sketch",
-      "why": "to draw my little rosemary greenhouse and the tiny sprouts growing inside it",
-      "project": "",
-      "scale": 1,
-      "parts": [],
-      "image": "made/artmwey8y6h8.svg",
-      "picture": "artmwey8y6h8",
-      "zone": "wall_free",
-      "slot": null,
-      "free": true,
-      "side": "left",
-      "kind": "wall",
-      "label": "on the left wall (z -3.75, height 4.164)",
-      "pos": [
-        -4.97,
-        4.164,
-        -3.75
-      ],
-      "rotY": 1.5707963267948966,
-      "size": [
-        1.5,
-        1.128
-      ],
-      "stand": [
-        -3.7,
-        -3.75
-      ],
-      "at": "2026-11-15T08:11:24.880Z",
-      "createdAt": "2026-11-15T08:08:38.883Z",
-      "art": "artmwey8y6h8"
     }
   ],
   "projects": [
@@ -4856,293 +3812,8 @@
       "updatedAt": "2026-11-10T07:55:43.913Z"
     }
   ],
-  "pictures": [
-    {
-      "id": "pic1",
-      "image": "gifts/mw9rhxhy-73b2b5.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-09T21:17:08.052Z",
-      "caption": "This is an image of Daft Punk, I like the music they make",
-      "seen": true,
-      "notes": "Two figures in dark suits wear gleaming helmets that catch the light like distant stars, making me wonder if their music sounds like a spaceship travelling through the night.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic2",
-      "image": "photos/phmwawzxa11.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-10T16:42:47.811Z",
-      "by": "pip",
-      "target": "room",
-      "caption": "My cozy room with my new kitchen stove and everything I love.",
-      "seen": true,
-      "notes": "My cozy room with my new kitchen stove and everything I love.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic3",
-      "image": "photos/phmwaxfqdv1.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-10T16:55:05.592Z",
-      "by": "pip",
-      "target": "window",
-      "caption": "The quiet evening sky outside my window as twilight begins.",
-      "seen": true,
-      "notes": "The quiet evening sky outside my window as twilight begins.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic5",
-      "image": "photos/phmwb364ar1.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-10T19:37:34.490Z",
-      "by": "pip",
-      "target": "window",
-      "caption": "The Milky Way core glowing outside my window in the quiet night.",
-      "seen": true,
-      "notes": "The Milky Way core glowing outside my window in the quiet night.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic10",
-      "image": "photos/phmwetrfxk1.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-13T10:20:34.200Z",
-      "by": "pip",
-      "target": "window",
-      "caption": "The rainy autumn day outside my window, soft and quiet.",
-      "seen": true,
-      "notes": "The rainy autumn day outside my window, soft and quiet.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic11",
-      "image": "photos/phmwexcwd90.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-13T11:59:55.395Z",
-      "by": "pip",
-      "target": "little greenhouse",
-      "caption": "My little greenhouse with the growing rosemary sprouts by the sunny autumn window.",
-      "seen": true,
-      "notes": "My little greenhouse with the growing rosemary sprouts by the sunny autumn window.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic12",
-      "image": "photos/phmwg377x30.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-14T07:31:11.646Z",
-      "by": "pip",
-      "target": "room",
-      "caption": "The quiet autumn morning light filling my cozy room with the little greenhouse by the window.",
-      "seen": true,
-      "notes": "The quiet autumn morning light filling my cozy room with the little greenhouse by the window.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic13",
-      "image": "photos/phmwg3ifz52.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-14T07:44:21.572Z",
-      "by": "pip",
-      "target": "window",
-      "caption": "The quiet grey autumn sky outside my window this morning.",
-      "seen": true,
-      "notes": "The quiet grey autumn sky outside my window this morning.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic14",
-      "image": "photos/phmwggpnor0.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-14T13:49:26.751Z",
-      "by": "pip",
-      "target": "window",
-      "caption": "The quiet grey autumn afternoon outside my window.",
-      "seen": true,
-      "notes": "The quiet grey autumn afternoon outside my window.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic15",
-      "image": "photos/phmwgk29sn2.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-14T15:26:18.291Z",
-      "by": "pip",
-      "target": "window",
-      "caption": "The crisp autumn afternoon light outside my window while playing my guitar.",
-      "seen": true,
-      "notes": "The crisp autumn afternoon light outside my window while playing my guitar.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic16",
-      "image": "photos/phmwhiryqu1.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-15T07:37:25.704Z",
-      "by": "pip",
-      "target": "window",
-      "caption": "Crisp autumn morning clouds softly turning light before sunrise.",
-      "seen": true,
-      "notes": "Crisp autumn morning clouds softly turning light before sunrise.",
-      "aspect": 1.33
-    },
-    {
-      "id": "pic17",
-      "image": "photos/phmwhjod2q1.jpg",
-      "mime": "image/jpeg",
-      "at": "2026-11-15T08:02:51.608Z",
-      "by": "pip",
-      "target": "window",
-      "caption": "Soft golden light breaking through grey autumn clouds at sunrise.",
-      "seen": true,
-      "notes": "Soft golden light breaking through grey autumn clouds at sunrise.",
-      "aspect": 1.33
-    }
-  ],
+  "pictures": [],
   "stored": [
-    {
-      "id": "dmwda6f1514c5",
-      "name": "window step stool",
-      "why": "To build a sturdy small wooden step stool so I can stand on it and look out the window at the stars more comfortably.",
-      "project": "",
-      "song": null,
-      "uses": [
-        {
-          "label": "Stand on stool",
-          "text": "I step up on the little wooden stool and look right out at the glittering stars.",
-          "view": null,
-          "song": null,
-          "app": null,
-          "effect": "wonder",
-          "does": null,
-          "motion": null
-        }
-      ],
-      "tool": null,
-      "zone": "floor",
-      "slot": null,
-      "free": true,
-      "label": "on the floor by the back wall (x -0.65, z -4.15)",
-      "kind": "floor",
-      "pos": [
-        -0.65,
-        0,
-        -4.15
-      ],
-      "rotY": 0,
-      "scale": 1,
-      "parts": [
-        {
-          "shape": "box",
-          "size": [
-            0.4,
-            0.05,
-            0.3
-          ],
-          "pos": [
-            0,
-            0.25,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#8b5a2b",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.03,
-            0.03,
-            0.25
-          ],
-          "pos": [
-            -0.15,
-            0.125,
-            -0.1
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c4033",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.03,
-            0.03,
-            0.25
-          ],
-          "pos": [
-            0.15,
-            0.125,
-            -0.1
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c4033",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.03,
-            0.03,
-            0.25
-          ],
-          "pos": [
-            -0.15,
-            0.125,
-            0.1
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c4033",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.03,
-            0.03,
-            0.25
-          ],
-          "pos": [
-            0.15,
-            0.125,
-            0.1
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c4033",
-          "glow": false
-        }
-      ],
-      "stand": [
-        -0.65,
-        -3.1
-      ],
-      "at": "2026-11-12T08:23:26.727Z",
-      "createdAt": "2026-11-12T08:23:20.729Z",
-      "usedAt": "2026-11-12T09:25:42.524Z",
-      "storedAt": "2026-11-12T09:53:12.149Z"
-    },
     {
       "id": "dinst-violin",
       "name": "violin",
@@ -5273,6 +3944,274 @@
       "at": "2026-11-14T07:03:43.979Z",
       "createdAt": "2026-11-14T07:03:43.979Z",
       "storedAt": "2026-11-14T07:03:43.979Z"
+    },
+    {
+      "id": "dmw9ps0s60",
+      "name": "vibrating star",
+      "why": "to have a little glowing star model on my desk that reminds me of star songs",
+      "zone": "on_desk",
+      "slot": 0,
+      "label": "on the desk",
+      "kind": "surface",
+      "pos": [
+        -4.2,
+        0.85,
+        0.45
+      ],
+      "rotY": 1.5707963267948966,
+      "scale": 1,
+      "parts": [
+        {
+          "shape": "sphere",
+          "size": [
+            0.08
+          ],
+          "pos": [
+            0,
+            0.14,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffb347",
+          "glow": true
+        },
+        {
+          "shape": "torus",
+          "size": [
+            0.12,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.14,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffdfba",
+          "glow": true
+        }
+      ],
+      "stand": [
+        -2.7,
+        0.45
+      ],
+      "at": "2026-11-09T20:33:04.229Z",
+      "createdAt": "2026-11-09T20:28:58.230Z",
+      "uses": [
+        {
+          "label": "Listen to star song",
+          "text": "The little star model glows softly, and I imagine I can hear a deep, gentle hum from far away.",
+          "view": null,
+          "song": null,
+          "app": null,
+          "effect": "wonder"
+        }
+      ],
+      "song": {
+        "notes": [
+          [
+            "C4",
+            4
+          ],
+          [
+            null,
+            1
+          ],
+          [
+            "E4",
+            4
+          ],
+          [
+            null,
+            1
+          ],
+          [
+            "G4",
+            4
+          ],
+          [
+            null,
+            1
+          ],
+          [
+            "C5",
+            4
+          ]
+        ],
+        "tempo": 70,
+        "timbre": "pad",
+        "ambience": "hum",
+        "seconds": 20
+      },
+      "usedAt": "2026-11-14T17:43:08.236Z",
+      "updatedAt": "2026-11-11T10:34:23.790Z",
+      "storedAt": "2026-11-15T08:48:25.291Z"
+    },
+    {
+      "id": "dmwg4rfny19ju",
+      "name": "great comet model",
+      "why": "to celebrate Gottfried Kirch's discovery of the Great Comet of 1680 with a glowing celestial desk model",
+      "project": "",
+      "song": null,
+      "uses": [
+        {
+          "label": "Watch comet glow",
+          "text": "The icy core shines with a warm amber light, trailing streamers of glowing blue ion gas and pale curved dust across my desk.",
+          "view": null,
+          "song": null,
+          "app": null,
+          "effect": "wonder",
+          "does": null,
+          "motion": null,
+          "steps": null
+        }
+      ],
+      "tool": null,
+      "zone": "surface",
+      "slot": null,
+      "free": true,
+      "base": "desk",
+      "label": "on the desk (x -4.25, z 1.4)",
+      "kind": "surface",
+      "pos": [
+        -4.25,
+        0.85,
+        1.4
+      ],
+      "rotY": 1.5707963267948966,
+      "scale": 1,
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            0.12,
+            0.02,
+            0.08
+          ],
+          "pos": [
+            0,
+            0.01,
+            0.004
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#3d2b1f",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.08
+          ],
+          "pos": [
+            0,
+            0.06,
+            0.004
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0a0a0",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.024
+          ],
+          "pos": [
+            0,
+            0.11,
+            0.024
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fff6cc",
+          "glow": true
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.02,
+            0.14
+          ],
+          "pos": [
+            0,
+            0.17,
+            -0.036
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#59a5d8",
+          "glow": true
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.025,
+            0.12
+          ],
+          "pos": [
+            0.02,
+            0.16,
+            -0.026
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e8f1f5",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.032
+          ],
+          "pos": [
+            0,
+            0.11,
+            0.024
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffec99",
+          "glow": true
+        }
+      ],
+      "stand": [
+        -2.75,
+        1.4
+      ],
+      "at": "2026-11-14T08:17:48.156Z",
+      "createdAt": "2026-11-14T08:15:02.158Z",
+      "usedAt": "2026-11-14T08:15:02.160Z",
+      "storedAt": "2026-11-15T08:48:25.292Z"
     }
   ],
   "wardrobe": [
@@ -5759,38 +4698,6 @@
       "createdAt": "2026-11-11T07:36:33.639Z"
     },
     {
-      "id": "artmwbzlsmf1",
-      "name": "Antares and its amber reflection nebula",
-      "why": "To capture the warm golden scattering of stardust around Antares on my wall.",
-      "file": "made/artmwbzlsmf1.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-11T10:39:36.232Z"
-    },
-    {
-      "id": "artmwc01irl2",
-      "name": "shelf layout sketch",
-      "why": "to plan the layout and dimensions for my cosmic sculpture wall shelves",
-      "file": "made/artmwc01irl2.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-11T10:51:49.954Z"
-    },
-    {
-      "id": "artmwdaojj23",
-      "name": "morning light sketch",
-      "why": "to capture the gentle morning light coming through my cozy room",
-      "file": "made/artmwdaojj23.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-12T08:37:26.367Z"
-    },
-    {
-      "id": "artmwdfdc514",
-      "name": "starry night window view",
-      "why": "To capture the deep quiet stars glowing right outside my window.",
-      "file": "made/artmwdfdc514.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-12T10:48:41.654Z"
-    },
-    {
       "id": "artmwdfuqsm5",
       "name": "Betelgeuse convection cell",
       "why": "to illustrate how gigantic boiling gas cells rise and fall across the surface of Betelgeuse",
@@ -5805,46 +4712,6 @@
       "file": "made/artmweu73216.svg",
       "aspect": 1.33,
       "createdAt": "2026-11-13T10:31:30.361Z"
-    },
-    {
-      "id": "artmwexcsg57",
-      "name": "autumn window sketch",
-      "why": "to draw the rainy autumn view outside my window",
-      "file": "made/artmwexcsg57.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-13T11:59:55.398Z"
-    },
-    {
-      "id": "artmwey8y6h8",
-      "name": "greenhouse and sprouts sketch",
-      "why": "to draw my little rosemary greenhouse and the tiny sprouts growing inside it",
-      "file": "made/artmwey8y6h8.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-13T12:24:55.818Z"
-    },
-    {
-      "id": "artmwg9qu779",
-      "name": "autumn greenhouse morning sketch",
-      "why": "to draw the quiet autumn light on my growing rosemary sprouts and hang it on the left wall",
-      "file": "made/artmwg9qu779.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-14T10:34:32.419Z"
-    },
-    {
-      "id": "artmwgcw0uu10",
-      "name": "autumn window sketch",
-      "why": "to capture the quiet autumn sky and falling leaves outside my window",
-      "file": "made/artmwgcw0uu10.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-14T12:02:33.175Z"
-    },
-    {
-      "id": "artmwgdsi2k11",
-      "name": "autumn window sketch",
-      "why": "to capture the quiet grey autumn sky and falling leaves outside my window",
-      "file": "made/artmwgdsi2k11.svg",
-      "aspect": 1.33,
-      "createdAt": "2026-11-14T12:27:48.477Z"
     }
   ],
   "apps": [
@@ -5854,13 +4721,6 @@
       "why": "to watch an interactive simulation of the Great Comet swooping around the sun on my computer",
       "file": "made/appmwg4f04l0.html",
       "createdAt": "2026-11-14T08:05:22.150Z"
-    },
-    {
-      "id": "appmwhj2u6o1",
-      "name": "Stereo Panning Visualizer",
-      "why": "to visually map out extreme left and right channel positions for my acoustic studio suite",
-      "file": "made/appmwhj2u6o1.html",
-      "createdAt": "2026-11-15T07:43:34.993Z"
     }
   ],
   "ntfySince": "PHWXYRBuSgf9",
@@ -6263,93 +5123,7 @@
   "musicMoved": true,
   "windowsClear": true,
   "studio": {
-    "songs": [
-      {
-        "id": "songmwgog5rl0",
-        "name": "Stellar Oscillations",
-        "why": "",
-        "tempo": 90,
-        "tracks": [
-          {
-            "instrument": "guitar",
-            "notes": "C3+E3+G3:4 E4 G4:2 C4+E4:2",
-            "volume": 0.8,
-            "pan": -0.2,
-            "reverb": 0.3
-          }
-        ],
-        "createdAt": "2026-11-14T17:26:08.429Z"
-      },
-      {
-        "id": "songmwgqccgl1",
-        "name": "autumn studio twilight",
-        "why": "",
-        "tempo": 84,
-        "tracks": [
-          {
-            "instrument": "guitar",
-            "notes": "C3+E3+G3:4 A3+C4+E4:4 F3+A3+C4:4 G3+B3+D4:4",
-            "volume": 0.8,
-            "pan": -0.3,
-            "reverb": 0.3
-          },
-          {
-            "instrument": "kalimba",
-            "notes": "E5:2 G5:2 C6:2 B5:2 A5:2 G5:2 F5:2 E5:2",
-            "volume": 0.7,
-            "pan": 0.3,
-            "reverb": 0.2
-          }
-        ],
-        "createdAt": "2026-11-14T18:20:03.044Z"
-      },
-      {
-        "id": "songmwgr802p2",
-        "name": "autumn studio duet",
-        "why": "",
-        "tempo": 84,
-        "tracks": [
-          {
-            "instrument": "guitar",
-            "notes": "C3+E3+G3:4 A3+C4+E4:4 F3+A3+C4:4 G3+B3+D4:4",
-            "volume": 0.8,
-            "pan": -0.3,
-            "reverb": 0.3
-          },
-          {
-            "instrument": "kalimba",
-            "notes": "E5:2 G5:2 C6:2 B5:2 A5:2 G5:2 F5:2 E5:2",
-            "volume": 0.6,
-            "pan": 0.3,
-            "reverb": 0.2
-          }
-        ],
-        "createdAt": "2026-11-14T18:44:39.984Z"
-      },
-      {
-        "id": "songmwgriffo3",
-        "name": "autumn harp and guitar echoes",
-        "why": "",
-        "tempo": 80,
-        "tracks": [
-          {
-            "instrument": "guitar",
-            "notes": "C3+E3+G3:4 A3:2 F3:2",
-            "volume": 0.7,
-            "pan": -0.4,
-            "reverb": 0.3
-          },
-          {
-            "instrument": "harp",
-            "notes": "- C4 E4 G4:4 B4:2",
-            "volume": 0.8,
-            "pan": 0.4,
-            "reverb": 0.4
-          }
-        ],
-        "createdAt": "2026-11-14T18:52:46.451Z"
-      }
-    ]
+    "songs": []
   },
   "intent": {
     "day": "2026-11-15",
@@ -6378,5 +5152,1476 @@
       }
     ]
   },
-  "memoryFadeAt": "2026-11-15T08:14:09.624Z"
+  "memoryFadeAt": "2026-11-15T08:14:09.624Z",
+  "archive": [
+    {
+      "group": "chest",
+      "item": {
+        "id": "dmwda6f1514c5",
+        "name": "window step stool",
+        "why": "To build a sturdy small wooden step stool so I can stand on it and look out the window at the stars more comfortably.",
+        "project": "",
+        "song": null,
+        "uses": [
+          {
+            "label": "Stand on stool",
+            "text": "I step up on the little wooden stool and look right out at the glittering stars.",
+            "view": null,
+            "song": null,
+            "app": null,
+            "effect": "wonder",
+            "does": null,
+            "motion": null
+          }
+        ],
+        "tool": null,
+        "zone": "floor",
+        "slot": null,
+        "free": true,
+        "label": "on the floor by the back wall (x -0.65, z -4.15)",
+        "kind": "floor",
+        "pos": [
+          -0.65,
+          0,
+          -4.15
+        ],
+        "rotY": 0,
+        "scale": 1,
+        "parts": [
+          {
+            "shape": "box",
+            "size": [
+              0.4,
+              0.05,
+              0.3
+            ],
+            "pos": [
+              0,
+              0.25,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#8b5a2b",
+            "glow": false
+          },
+          {
+            "shape": "cylinder",
+            "size": [
+              0.03,
+              0.03,
+              0.25
+            ],
+            "pos": [
+              -0.15,
+              0.125,
+              -0.1
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#5c4033",
+            "glow": false
+          },
+          {
+            "shape": "cylinder",
+            "size": [
+              0.03,
+              0.03,
+              0.25
+            ],
+            "pos": [
+              0.15,
+              0.125,
+              -0.1
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#5c4033",
+            "glow": false
+          },
+          {
+            "shape": "cylinder",
+            "size": [
+              0.03,
+              0.03,
+              0.25
+            ],
+            "pos": [
+              -0.15,
+              0.125,
+              0.1
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#5c4033",
+            "glow": false
+          },
+          {
+            "shape": "cylinder",
+            "size": [
+              0.03,
+              0.03,
+              0.25
+            ],
+            "pos": [
+              0.15,
+              0.125,
+              0.1
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#5c4033",
+            "glow": false
+          }
+        ],
+        "stand": [
+          -0.65,
+          -3.1
+        ],
+        "at": "2026-11-12T08:23:26.727Z",
+        "createdAt": "2026-11-12T08:23:20.729Z",
+        "usedAt": "2026-11-12T09:25:42.524Z",
+        "storedAt": "2026-11-12T09:53:12.149Z"
+      },
+      "reason": "I already have my main wooden step stool by the window.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwbzlsmf1",
+        "name": "Antares and its amber reflection nebula",
+        "why": "To capture the warm golden scattering of stardust around Antares on my wall.",
+        "file": "made/artmwbzlsmf1.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-11T10:39:36.232Z"
+      },
+      "reason": "The amber glow was nice, but I want room for new drawings.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwc01irl2",
+        "name": "shelf layout sketch",
+        "why": "to plan the layout and dimensions for my cosmic sculpture wall shelves",
+        "file": "made/artmwc01irl2.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-11T10:51:49.954Z"
+      },
+      "reason": "I do not need to hold on to old shelf measurements.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwdaojj23",
+        "name": "morning light sketch",
+        "why": "to capture the gentle morning light coming through my cozy room",
+        "file": "made/artmwdaojj23.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-12T08:37:26.367Z"
+      },
+      "reason": "It was just a quick test of the morning light.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwdfdc514",
+        "name": "starry night window view",
+        "why": "To capture the deep quiet stars glowing right outside my window.",
+        "file": "made/artmwdfdc514.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-12T10:48:41.654Z"
+      },
+      "reason": "The night sky outside is better than this line sketch.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwexcsg57",
+        "name": "autumn window sketch",
+        "why": "to draw the rainy autumn view outside my window",
+        "file": "made/artmwexcsg57.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-13T11:59:55.398Z"
+      },
+      "reason": "I drew this window view multiple times already.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwey8y6h8",
+        "name": "greenhouse and sprouts sketch",
+        "why": "to draw my little rosemary greenhouse and the tiny sprouts growing inside it",
+        "file": "made/artmwey8y6h8.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-13T12:24:55.818Z"
+      },
+      "reason": "I drew my sprouts better in later sketches.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwg9qu779",
+        "name": "autumn greenhouse morning sketch",
+        "why": "to draw the quiet autumn light on my growing rosemary sprouts and hang it on the left wall",
+        "file": "made/artmwg9qu779.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-14T10:34:32.419Z"
+      },
+      "reason": "A duplicate morning sketch I do not need to keep.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwgcw0uu10",
+        "name": "autumn window sketch",
+        "why": "to capture the quiet autumn sky and falling leaves outside my window",
+        "file": "made/artmwgcw0uu10.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-14T12:02:33.175Z"
+      },
+      "reason": "Another autumn sky drawing that takes up space.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "drawing",
+      "item": {
+        "id": "artmwgdsi2k11",
+        "name": "autumn window sketch",
+        "why": "to capture the quiet grey autumn sky and falling leaves outside my window",
+        "file": "made/artmwgdsi2k11.svg",
+        "aspect": 1.33,
+        "createdAt": "2026-11-14T12:27:48.477Z"
+      },
+      "reason": "I have enough pictures of the grey sky.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic1",
+        "image": "gifts/mw9rhxhy-73b2b5.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-09T21:17:08.052Z",
+        "caption": "This is an image of Daft Punk, I like the music they make",
+        "seen": true,
+        "notes": "Two figures in dark suits wear gleaming helmets that catch the light like distant stars, making me wonder if their music sounds like a spaceship travelling through the night.",
+        "aspect": 1.33
+      },
+      "reason": "It was fun to look at, but it is time to clear space.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic2",
+        "image": "photos/phmwawzxa11.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-10T16:42:47.811Z",
+        "by": "pip",
+        "target": "room",
+        "caption": "My cozy room with my new kitchen stove and everything I love.",
+        "seen": true,
+        "notes": "My cozy room with my new kitchen stove and everything I love.",
+        "aspect": 1.33
+      },
+      "reason": "My room is changing now so I do not need an old photo of it.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic3",
+        "image": "photos/phmwaxfqdv1.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-10T16:55:05.592Z",
+        "by": "pip",
+        "target": "window",
+        "caption": "The quiet evening sky outside my window as twilight begins.",
+        "seen": true,
+        "notes": "The quiet evening sky outside my window as twilight begins.",
+        "aspect": 1.33
+      },
+      "reason": "I can watch twilight myself every night.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic5",
+        "image": "photos/phmwb364ar1.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-10T19:37:34.490Z",
+        "by": "pip",
+        "target": "window",
+        "caption": "The Milky Way core glowing outside my window in the quiet night.",
+        "seen": true,
+        "notes": "The Milky Way core glowing outside my window in the quiet night.",
+        "aspect": 1.33
+      },
+      "reason": "The real Milky Way glows right outside my window.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic10",
+        "image": "photos/phmwetrfxk1.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-13T10:20:34.200Z",
+        "by": "pip",
+        "target": "window",
+        "caption": "The rainy autumn day outside my window, soft and quiet.",
+        "seen": true,
+        "notes": "The rainy autumn day outside my window, soft and quiet.",
+        "aspect": 1.33
+      },
+      "reason": "I do not need a photo of rainy weather.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic11",
+        "image": "photos/phmwexcwd90.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-13T11:59:55.395Z",
+        "by": "pip",
+        "target": "little greenhouse",
+        "caption": "My little greenhouse with the growing rosemary sprouts by the sunny autumn window.",
+        "seen": true,
+        "notes": "My little greenhouse with the growing rosemary sprouts by the sunny autumn window.",
+        "aspect": 1.33
+      },
+      "reason": "I live with the real growing sprouts every day.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic12",
+        "image": "photos/phmwg377x30.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-14T07:31:11.646Z",
+        "by": "pip",
+        "target": "room",
+        "caption": "The quiet autumn morning light filling my cozy room with the little greenhouse by the window.",
+        "seen": true,
+        "notes": "The quiet autumn morning light filling my cozy room with the little greenhouse by the window.",
+        "aspect": 1.33
+      },
+      "reason": "The morning light fills my room fresh every morning.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic13",
+        "image": "photos/phmwg3ifz52.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-14T07:44:21.572Z",
+        "by": "pip",
+        "target": "window",
+        "caption": "The quiet grey autumn sky outside my window this morning.",
+        "seen": true,
+        "notes": "The quiet grey autumn sky outside my window this morning.",
+        "aspect": 1.33
+      },
+      "reason": "I do not need pictures of grey autumn clouds.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic14",
+        "image": "photos/phmwggpnor0.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-14T13:49:26.751Z",
+        "by": "pip",
+        "target": "window",
+        "caption": "The quiet grey autumn afternoon outside my window.",
+        "seen": true,
+        "notes": "The quiet grey autumn afternoon outside my window.",
+        "aspect": 1.33
+      },
+      "reason": "Another picture of grey sky that I can let go.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic15",
+        "image": "photos/phmwgk29sn2.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-14T15:26:18.291Z",
+        "by": "pip",
+        "target": "window",
+        "caption": "The crisp autumn afternoon light outside my window while playing my guitar.",
+        "seen": true,
+        "notes": "The crisp autumn afternoon light outside my window while playing my guitar.",
+        "aspect": 1.33
+      },
+      "reason": "I remember playing my guitar without keeping a photo.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic16",
+        "image": "photos/phmwhiryqu1.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-15T07:37:25.704Z",
+        "by": "pip",
+        "target": "window",
+        "caption": "Crisp autumn morning clouds softly turning light before sunrise.",
+        "seen": true,
+        "notes": "Crisp autumn morning clouds softly turning light before sunrise.",
+        "aspect": 1.33
+      },
+      "reason": "Morning clouds pass by and I do not need to hold them.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "photo",
+      "item": {
+        "id": "pic17",
+        "image": "photos/phmwhjod2q1.jpg",
+        "mime": "image/jpeg",
+        "at": "2026-11-15T08:02:51.608Z",
+        "by": "pip",
+        "target": "window",
+        "caption": "Soft golden light breaking through grey autumn clouds at sunrise.",
+        "seen": true,
+        "notes": "Soft golden light breaking through grey autumn clouds at sunrise.",
+        "aspect": 1.33
+      },
+      "reason": "The sunrise happens again every morning.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "song",
+      "item": {
+        "id": "songmwgog5rl0",
+        "name": "Stellar Oscillations",
+        "why": "",
+        "tempo": 90,
+        "tracks": [
+          {
+            "instrument": "guitar",
+            "notes": "C3+E3+G3:4 E4 G4:2 C4+E4:2",
+            "volume": 0.8,
+            "pan": -0.2,
+            "reverb": 0.3
+          }
+        ],
+        "createdAt": "2026-11-14T17:26:08.429Z"
+      },
+      "reason": "It was a good first try, but I can write newer songs.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "song",
+      "item": {
+        "id": "songmwgqccgl1",
+        "name": "autumn studio twilight",
+        "why": "",
+        "tempo": 84,
+        "tracks": [
+          {
+            "instrument": "guitar",
+            "notes": "C3+E3+G3:4 A3+C4+E4:4 F3+A3+C4:4 G3+B3+D4:4",
+            "volume": 0.8,
+            "pan": -0.3,
+            "reverb": 0.3
+          },
+          {
+            "instrument": "kalimba",
+            "notes": "E5:2 G5:2 C6:2 B5:2 A5:2 G5:2 F5:2 E5:2",
+            "volume": 0.7,
+            "pan": 0.3,
+            "reverb": 0.2
+          }
+        ],
+        "createdAt": "2026-11-14T18:20:03.044Z"
+      },
+      "reason": "It was nice strumming, but I want to make fresh music.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "song",
+      "item": {
+        "id": "songmwgr802p2",
+        "name": "autumn studio duet",
+        "why": "",
+        "tempo": 84,
+        "tracks": [
+          {
+            "instrument": "guitar",
+            "notes": "C3+E3+G3:4 A3+C4+E4:4 F3+A3+C4:4 G3+B3+D4:4",
+            "volume": 0.8,
+            "pan": -0.3,
+            "reverb": 0.3
+          },
+          {
+            "instrument": "kalimba",
+            "notes": "E5:2 G5:2 C6:2 B5:2 A5:2 G5:2 F5:2 E5:2",
+            "volume": 0.6,
+            "pan": 0.3,
+            "reverb": 0.2
+          }
+        ],
+        "createdAt": "2026-11-14T18:44:39.984Z"
+      },
+      "reason": "A simple duet attempt that I do not need to keep.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "song",
+      "item": {
+        "id": "songmwgriffo3",
+        "name": "autumn harp and guitar echoes",
+        "why": "",
+        "tempo": 80,
+        "tracks": [
+          {
+            "instrument": "guitar",
+            "notes": "C3+E3+G3:4 A3:2 F3:2",
+            "volume": 0.7,
+            "pan": -0.4,
+            "reverb": 0.3
+          },
+          {
+            "instrument": "harp",
+            "notes": "- C4 E4 G4:4 B4:2",
+            "volume": 0.8,
+            "pan": 0.4,
+            "reverb": 0.4
+          }
+        ],
+        "createdAt": "2026-11-14T18:52:46.451Z"
+      },
+      "reason": "I learned how the harp and guitar sound together.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "program",
+      "item": {
+        "id": "appmwhj2u6o1",
+        "name": "Stereo Panning Visualizer",
+        "why": "to visually map out extreme left and right channel positions for my acoustic studio suite",
+        "file": "made/appmwhj2u6o1.html",
+        "createdAt": "2026-11-15T07:43:34.993Z"
+      },
+      "reason": "I finished testing panning and do not need the code anymore.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "dmw9r9dyh1",
+        "name": "ambient sound box",
+        "why": "to make a tiny ambient sound box that glows softly like distant stars",
+        "project": "",
+        "zone": "surface",
+        "slot": 0,
+        "label": "on the sideboard in the music studio",
+        "kind": "surface",
+        "pos": [
+          8.9,
+          0.8,
+          -2.2
+        ],
+        "rotY": 0,
+        "scale": 1,
+        "parts": [
+          {
+            "shape": "box",
+            "size": [
+              0.16,
+              0.1,
+              0.12
+            ],
+            "pos": [
+              0,
+              0.05,
+              -0.01
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#4a5d6e",
+            "glow": false
+          },
+          {
+            "shape": "box",
+            "size": [
+              0.14,
+              0.02,
+              0.1
+            ],
+            "pos": [
+              0,
+              0.15,
+              -0.01
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#7a8c9e",
+            "glow": false
+          },
+          {
+            "shape": "cylinder",
+            "size": [
+              0.02,
+              0.02,
+              0.06
+            ],
+            "pos": [
+              0,
+              0.19,
+              -0.01
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#ffd84a",
+            "glow": true
+          },
+          {
+            "shape": "sphere",
+            "size": [
+              0.02
+            ],
+            "pos": [
+              0.05,
+              0.1,
+              0.05
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#8fa3b8",
+            "glow": true
+          },
+          {
+            "shape": "sphere",
+            "size": [
+              0.02
+            ],
+            "pos": [
+              -0.05,
+              0.1,
+              0.05
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#8fa3b8",
+            "glow": true
+          }
+        ],
+        "stand": [
+          2,
+          -3.25
+        ],
+        "at": "2026-11-09T21:14:34.073Z",
+        "createdAt": "2026-11-09T21:10:28.073Z",
+        "uses": [
+          {
+            "label": "Play ambient sound",
+            "text": "Soft, low frequencies ripple through the room, making it feel vast and calm like an empty night sky.",
+            "view": null,
+            "song": null,
+            "app": null,
+            "effect": "calm"
+          }
+        ],
+        "usedAt": "2026-11-14T17:34:50.800Z",
+        "song": {
+          "notes": [],
+          "tempo": 90,
+          "timbre": "piano",
+          "ambience": "hum",
+          "seconds": 30
+        },
+        "base": null
+      },
+      "reason": "I have made better ambient sound things since then.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "dmwackv0f2",
+        "name": "tiny telescope tube",
+        "why": "To add the main magnifying tube to my tiny desk telescope model.",
+        "project": "Build a tiny desk telescope model",
+        "song": null,
+        "zone": "on_desk",
+        "slot": 1,
+        "label": "on the desk",
+        "kind": "surface",
+        "pos": [
+          -4.2,
+          0.85,
+          1.95
+        ],
+        "rotY": 1.5707963267948966,
+        "scale": 1,
+        "parts": [
+          {
+            "shape": "cylinder",
+            "size": [
+              0.04,
+              0.04,
+              0.15
+            ],
+            "pos": [
+              0,
+              0.075,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#c5cfdb",
+            "glow": false
+          },
+          {
+            "shape": "cylinder",
+            "size": [
+              0.045,
+              0.045,
+              0.03
+            ],
+            "pos": [
+              0,
+              0.15,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#9aa7b8",
+            "glow": false
+          },
+          {
+            "shape": "sphere",
+            "size": [
+              0.02
+            ],
+            "pos": [
+              0,
+              0.165,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#88ddff",
+            "glow": true
+          }
+        ],
+        "stand": [
+          -2.7,
+          1.95
+        ],
+        "at": "2026-11-10T07:13:21.326Z",
+        "createdAt": "2026-11-10T07:07:15.327Z",
+        "uses": [
+          {
+            "label": "Look through it",
+            "text": "I peer through the tiny lens and imagine distant star clusters glowing softly in the dark sky.",
+            "view": "made/view-umwadg2kiylq9-0.svg",
+            "song": null,
+            "app": null,
+            "effect": "wonder"
+          }
+        ],
+        "usedAt": "2026-11-10T07:31:31.462Z",
+        "updatedAt": "2026-11-11T10:34:23.790Z"
+      },
+      "reason": "I never finished building this desk telescope tube.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "dmwb2abhb6",
+        "name": "plasma wave sculpture",
+        "why": "to see what stellar sound waves might look like as a tiny glowing sculpture",
+        "project": "",
+        "song": {
+          "notes": [
+            [
+              "C2",
+              4
+            ],
+            [
+              null,
+              1
+            ],
+            [
+              "G2",
+              2
+            ],
+            [
+              "C3",
+              4
+            ],
+            [
+              "E3",
+              2
+            ],
+            [
+              "G3",
+              4
+            ]
+          ],
+          "tempo": 50,
+          "timbre": "pad",
+          "ambience": "hum",
+          "seconds": 30
+        },
+        "uses": [
+          {
+            "label": "Listen to plasma waves",
+            "text": "The little glass sphere glows brighter and hums with a deep, pulsing star chord.",
+            "view": null,
+            "song": {
+              "notes": [
+                [
+                  "C3",
+                  1
+                ],
+                [
+                  "G3",
+                  1
+                ],
+                [
+                  "E3",
+                  1
+                ]
+              ],
+              "tempo": 60,
+              "timbre": "pad"
+            },
+            "app": null,
+            "effect": "wonder"
+          }
+        ],
+        "zone": "on_piano",
+        "slot": 0,
+        "label": "on top of the piano",
+        "kind": "surface",
+        "pos": [
+          10.049999999999999,
+          1.4,
+          -4.5
+        ],
+        "rotY": 0,
+        "scale": 1,
+        "parts": [
+          {
+            "shape": "cylinder",
+            "size": [
+              0.04,
+              0.04,
+              0.2
+            ],
+            "pos": [
+              0,
+              0.1,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#4a7bc7",
+            "glow": false
+          },
+          {
+            "shape": "sphere",
+            "size": [
+              0.08
+            ],
+            "pos": [
+              0,
+              0.34,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#ffb347",
+            "glow": true
+          },
+          {
+            "shape": "torus",
+            "size": [
+              0.12,
+              0.02
+            ],
+            "pos": [
+              0,
+              0.22,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#ffffff",
+            "glow": true
+          }
+        ],
+        "stand": [
+          -3.4,
+          -3
+        ],
+        "at": "2026-11-10T19:14:59.470Z",
+        "createdAt": "2026-11-10T19:06:53.471Z",
+        "usedAt": "2026-11-11T08:01:16.700Z",
+        "movedAt": "2026-11-11T12:48:49.835Z",
+        "updatedAt": "2026-11-11T12:48:49.835Z"
+      },
+      "reason": "The plasma wave model served its purpose when I first made it.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "pmwbunkgp8",
+        "name": "a small print",
+        "why": "",
+        "project": "",
+        "zone": "wall_free",
+        "slot": null,
+        "label": "on the back wall (x 3.8, height 4.039)",
+        "kind": "wall",
+        "pos": [
+          3.8,
+          4.039,
+          -4.97
+        ],
+        "rotY": 0,
+        "scale": 1,
+        "parts": [],
+        "image": "photos/phmwb364ar1.jpg",
+        "size": [
+          0.42,
+          0.316
+        ],
+        "picture": "print:pic5",
+        "print": true,
+        "stand": [
+          3.8,
+          -3.7
+        ],
+        "at": "2026-11-11T08:22:26.888Z",
+        "createdAt": "2026-11-11T08:21:00.889Z",
+        "free": true,
+        "side": "back",
+        "updatedAt": "2026-11-11T13:12:41.920Z"
+      },
+      "reason": "It is a simple print that I do not look at anymore.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "pmwbwx9nk10",
+        "name": "Antares (Updated)",
+        "why": "",
+        "project": "",
+        "zone": "wall_free",
+        "slot": null,
+        "label": "on the back wall (x -3.75, height 2.7)",
+        "kind": "wall",
+        "pos": [
+          -3.75,
+          2.7,
+          -4.97
+        ],
+        "rotY": 0,
+        "scale": 1,
+        "parts": [],
+        "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Antares_%28Updated%29.jpg/960px-Antares_%28Updated%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "size": [
+          0.42,
+          0.316
+        ],
+        "picture": "print:fmwbty73v0",
+        "print": true,
+        "stand": [
+          -3.75,
+          -3.7
+        ],
+        "at": "2026-11-11T09:28:38.671Z",
+        "createdAt": "2026-11-11T09:24:32.672Z",
+        "free": true,
+        "side": "back",
+        "updatedAt": "2026-11-11T13:12:41.920Z"
+      },
+      "reason": "I want to make my own stellar art rather than keep online prints.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "pmwbxtc0y11",
+        "name": "Betelgeuse captured by ALMA",
+        "why": "",
+        "project": "",
+        "zone": "wall_desk",
+        "slot": 0,
+        "label": "on the photo wall above the desk",
+        "kind": "wall",
+        "pos": [
+          -4.97,
+          2.35,
+          0.45
+        ],
+        "rotY": 1.5707963267948966,
+        "scale": 1,
+        "parts": [],
+        "image": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Betelgeuse_captured_by_ALMA.jpg/960px-Betelgeuse_captured_by_ALMA.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+        "size": [
+          0.42,
+          0.316
+        ],
+        "picture": "print:fmwbxd7p82",
+        "print": true,
+        "stand": [
+          -3.7,
+          0.45
+        ],
+        "at": "2026-11-11T09:49:34.737Z",
+        "createdAt": "2026-11-11T09:49:28.738Z"
+      },
+      "reason": "It was good to study, but I do not need it on my wall.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "pmwc01irm13",
+        "name": "shelf layout sketch",
+        "why": "to plan the layout and dimensions for my cosmic sculpture wall shelves",
+        "project": "",
+        "zone": "on_bookshelf",
+        "slot": 1,
+        "label": "on top of the bookshelf",
+        "kind": "surface",
+        "pos": [
+          3.2,
+          3.2179699248120297,
+          -4.65
+        ],
+        "rotY": 0,
+        "scale": 1,
+        "parts": [],
+        "image": "made/artmwc01irl2.svg",
+        "size": [
+          0.5,
+          0.376
+        ],
+        "picture": "artmwc01irl2",
+        "stand": [
+          3.2,
+          -3.25
+        ],
+        "at": "2026-11-11T10:53:15.951Z",
+        "createdAt": "2026-11-11T10:51:49.954Z",
+        "art": "artmwc01irl2"
+      },
+      "reason": "The layout sketch is done and the shelves are already built.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "pmwc52t0y13",
+        "name": "Orion Nebula sketch",
+        "why": "to capture the soft, glowing mist of the stellar nursery in the dark night",
+        "project": "",
+        "scale": 1,
+        "parts": [],
+        "image": "made/artmwbt2eee0.svg",
+        "picture": "artmwbt2eee0",
+        "zone": "wall_free",
+        "slot": null,
+        "free": true,
+        "side": "left",
+        "kind": "wall",
+        "label": "on the left wall (z -1.95, height 3.864)",
+        "pos": [
+          -4.97,
+          3.864,
+          -1.95
+        ],
+        "rotY": 1.5707963267948966,
+        "size": [
+          1.5,
+          1.128
+        ],
+        "stand": [
+          -3.7,
+          -1.95
+        ],
+        "at": "2026-11-11T13:21:12.446Z",
+        "createdAt": "2026-11-11T13:12:47.986Z",
+        "art": "artmwbt2eee0",
+        "movedAt": "2026-11-12T14:15:33.169Z",
+        "updatedAt": "2026-11-12T14:15:33.169Z"
+      },
+      "reason": "I have another nebula sketch saved in my album.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "pmwdaojj31539",
+        "name": "morning light sketch",
+        "why": "to capture the gentle morning light coming through my cozy room",
+        "project": "",
+        "scale": 1,
+        "parts": [],
+        "image": "made/artmwdaojj23.svg",
+        "picture": "artmwdaojj23",
+        "zone": "wall_free",
+        "slot": null,
+        "free": true,
+        "side": "left",
+        "kind": "wall",
+        "label": "on the left wall (z -3.77, height 2.764)",
+        "pos": [
+          -4.97,
+          2.764,
+          -3.77
+        ],
+        "rotY": 1.5707963267948966,
+        "size": [
+          1.5,
+          1.128
+        ],
+        "stand": [
+          -3.7,
+          -3.77
+        ],
+        "at": "2026-11-12T08:41:32.363Z",
+        "createdAt": "2026-11-12T08:37:26.367Z",
+        "art": "artmwdaojj23"
+      },
+      "reason": "The morning light has changed and I can draw it fresh.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "pmwdfdc5216ks",
+        "name": "starry night window view",
+        "why": "To capture the deep quiet stars glowing right outside my window.",
+        "project": "",
+        "scale": 1,
+        "parts": [],
+        "image": "made/artmwdfdc514.svg",
+        "picture": "artmwdfdc514",
+        "zone": "wall_free",
+        "slot": null,
+        "free": true,
+        "side": "left",
+        "kind": "wall",
+        "label": "on the left wall (z -4.05, height 1.364)",
+        "pos": [
+          -4.97,
+          1.364,
+          -4.05
+        ],
+        "rotY": 1.5707963267948966,
+        "size": [
+          1.5,
+          1.128
+        ],
+        "stand": [
+          -3.7,
+          -4.05
+        ],
+        "at": "2026-11-12T10:54:47.649Z",
+        "createdAt": "2026-11-12T10:48:41.654Z",
+        "art": "artmwdfdc514",
+        "movedAt": "2026-11-15T07:23:41.888Z",
+        "updatedAt": "2026-11-15T07:23:41.888Z"
+      },
+      "reason": "I can look out the real window instead of keeping a drawing on the wall.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "dmwhjdjoq19fh",
+        "name": "wooden music stand",
+        "why": "to hold my handwritten music sketches near my desk",
+        "project": "",
+        "song": null,
+        "uses": [
+          {
+            "label": "Place sheet music",
+            "text": "I set my handwritten music notes on the slanted wooden stand.",
+            "view": null,
+            "song": null,
+            "app": null,
+            "effect": "calm",
+            "does": null,
+            "motion": null,
+            "steps": null
+          }
+        ],
+        "tool": null,
+        "zone": "surface",
+        "slot": null,
+        "free": true,
+        "base": "desk",
+        "label": "on the desk (x -4.25, z 1.1)",
+        "kind": "surface",
+        "pos": [
+          -4.25,
+          0.85,
+          1.1
+        ],
+        "rotY": 1.5707963267948966,
+        "scale": 1,
+        "parts": [
+          {
+            "shape": "box",
+            "size": [
+              0.2,
+              0.02,
+              0.15
+            ],
+            "pos": [
+              0,
+              0.01,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#6e4a27",
+            "glow": false
+          },
+          {
+            "shape": "cylinder",
+            "size": [
+              0.02,
+              0.02,
+              0.4
+            ],
+            "pos": [
+              0,
+              0.22,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#4a321a",
+            "glow": false
+          },
+          {
+            "shape": "box",
+            "size": [
+              0.25,
+              0.18,
+              0.02
+            ],
+            "pos": [
+              0,
+              0.42,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#7c542c",
+            "glow": false
+          },
+          {
+            "shape": "box",
+            "size": [
+              0.25,
+              0.02,
+              0.02
+            ],
+            "pos": [
+              0,
+              0.34,
+              0.02
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#5c3e20",
+            "glow": false
+          },
+          {
+            "shape": "sphere",
+            "size": [
+              0.02
+            ],
+            "pos": [
+              0,
+              0.52,
+              0
+            ],
+            "rot": [
+              0,
+              0,
+              0
+            ],
+            "color": "#ffd700",
+            "glow": true
+          }
+        ],
+        "stand": [
+          -2.75,
+          1.1
+        ],
+        "at": "2026-11-15T07:55:05.214Z",
+        "createdAt": "2026-11-15T07:51:54.602Z",
+        "usedAt": "2026-11-15T07:51:54.604Z"
+      },
+      "reason": "My handwritten notes fit fine on my desk without a stand.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    },
+    {
+      "group": "room",
+      "item": {
+        "id": "pmwhjz2lf20je",
+        "name": "greenhouse and sprouts sketch",
+        "why": "to draw my little rosemary greenhouse and the tiny sprouts growing inside it",
+        "project": "",
+        "scale": 1,
+        "parts": [],
+        "image": "made/artmwey8y6h8.svg",
+        "picture": "artmwey8y6h8",
+        "zone": "wall_free",
+        "slot": null,
+        "free": true,
+        "side": "left",
+        "kind": "wall",
+        "label": "on the left wall (z -3.75, height 4.164)",
+        "pos": [
+          -4.97,
+          4.164,
+          -3.75
+        ],
+        "rotY": 1.5707963267948966,
+        "size": [
+          1.5,
+          1.128
+        ],
+        "stand": [
+          -3.7,
+          -3.75
+        ],
+        "at": "2026-11-15T08:11:24.880Z",
+        "createdAt": "2026-11-15T08:08:38.883Z",
+        "art": "artmwey8y6h8"
+      },
+      "reason": "I can look right over at my real greenhouse instead.",
+      "at": "2026-11-15T08:48:25.290Z",
+      "from": "tidy"
+    }
+  ]
 }

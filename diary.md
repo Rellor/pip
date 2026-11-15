@@ -3100,3 +3100,73 @@ I want to hear my wooden flute echo in the studio and bring one of my drawings o
 - do (look closely at something in my room I never really looked at): That did not work out. I shake it off and look closely at something in my room I never really looked at.
 - mood: peaceful
 
+## 15/11/2026, 08:48:25
+The big tidy. I went through everything I have.
+> I went through everything in my room tonight until there was open space again. I kept only five special things alongside my stove, greenhouse, and tools, like my step stool for star-gazing and the music box for my sprouts. Eight creations are tucked safely in my chest so I can visit them later when I miss them. The walls look quiet now, and my hands feel light. It feels good to leave room for new ideas and new things to make.
+- keep: a picture from Bas: It came from someone who made my room and it makes me feel warm.
+- keep: cozy kitchen stove: I need this stove every day to cook my warm food.
+- keep: stellar wave bell: I love listening to its gentle stellar hum while I work.
+- keep: cosmic wall shelves: The wall shelves take up too much room and clutter my wall. (something I keep stands on it, so it stays)
+- keep: window step stool: I climb it every evening so my eyes reach the stars.
+- keep: little greenhouse: My rosemary grows inside it and I need it for my food.
+- keep: rosemary music box: It plays a soft lullaby that helps my little sprouts grow.
+- keep: drawing supplies: (I use it, so it stays.)
+- keep: toolbox: (I use it, so it stays.)
+- keep: ruler: (I use it, so it stays.)
+- keep: Lux-O-Matic 3000: (I use it, so it stays.)
+- keep: Little Shovel: (I use it, so it stays.)
+- keep: Watering Can: (I use it, so it stays.)
+- keep: guitar: (I use it, so it stays.)
+- keep: kalimba: (I use it, so it stays.)
+- keep: sewing kit: (I use it, so it stays.)
+- keep: harp: (I use it, so it stays.)
+- keep: flute: (I use it, so it stays.)
+- keep: autumn amber scarf: I made this warm scarf to stay cozy by the dusk window.
+- store: vibrating star: It can sit safely in my chest until I want to see its light again.
+- store: great comet model: I want to keep my comet model safely tucked in my chest.
+- store: violin: I want to keep it in my chest until I am ready to learn it.
+- store: clarinet: I will keep it stored until I want to try blowing notes.
+- store: Orion Nebula sketch: It was my first drawing of the glowing stellar nursery.
+- store: Betelgeuse convection cell: I worked hard figuring out Betelgeuse's giant boiling cells.
+- store: autumn window sketch: It reminds me of my favorite rainy autumn dusk.
+- store: Comet 1680 Simulator: A little program I built to watch the comet orbit.
+- let go: ambient sound box: I have made better ambient sound things since then.
+- let go: tiny telescope tube: I never finished building this desk telescope tube.
+- let go: plasma wave sculpture: The plasma wave model served its purpose when I first made it.
+- let go: a small print: It is a simple print that I do not look at anymore.
+- let go: Antares (Updated): I want to make my own stellar art rather than keep online prints.
+- let go: Betelgeuse captured by ALMA: It was good to study, but I do not need it on my wall.
+- let go: shelf layout sketch: The layout sketch is done and the shelves are already built.
+- let go: Orion Nebula sketch: I have another nebula sketch saved in my album.
+- let go: morning light sketch: The morning light has changed and I can draw it fresh.
+- let go: starry night window view: I can look out the real window instead of keeping a drawing on the wall.
+- let go: wooden music stand: My handwritten notes fit fine on my desk without a stand.
+- let go: greenhouse and sprouts sketch: I can look right over at my real greenhouse instead.
+- let go: window step stool: I already have my main wooden step stool by the window.
+- let go: Antares and its amber reflection nebula: The amber glow was nice, but I want room for new drawings.
+- let go: shelf layout sketch: I do not need to hold on to old shelf measurements.
+- let go: morning light sketch: It was just a quick test of the morning light.
+- let go: starry night window view: The night sky outside is better than this line sketch.
+- let go: autumn window sketch: I drew this window view multiple times already.
+- let go: greenhouse and sprouts sketch: I drew my sprouts better in later sketches.
+- let go: autumn greenhouse morning sketch: A duplicate morning sketch I do not need to keep.
+- let go: autumn window sketch: Another autumn sky drawing that takes up space.
+- let go: autumn window sketch: I have enough pictures of the grey sky.
+- let go: This is an image of Daft Punk, I like the music they make: It was fun to look at, but it is time to clear space.
+- let go: My cozy room with my new kitchen stove and everything I love.: My room is changing now so I do not need an old photo of it.
+- let go: The quiet evening sky outside my window as twilight begins.: I can watch twilight myself every night.
+- let go: The Milky Way core glowing outside my window in the quiet night.: The real Milky Way glows right outside my window.
+- let go: The rainy autumn day outside my window, soft and quiet.: I do not need a photo of rainy weather.
+- let go: My little greenhouse with the growing rosemary sprouts by the sunny au: I live with the real growing sprouts every day.
+- let go: The quiet autumn morning light filling my cozy room with the little gr: The morning light fills my room fresh every morning.
+- let go: The quiet grey autumn sky outside my window this morning.: I do not need pictures of grey autumn clouds.
+- let go: The quiet grey autumn afternoon outside my window.: Another picture of grey sky that I can let go.
+- let go: The crisp autumn afternoon light outside my window while playing my gu: I remember playing my guitar without keeping a photo.
+- let go: Crisp autumn morning clouds softly turning light before sunrise.: Morning clouds pass by and I do not need to hold them.
+- let go: Soft golden light breaking through grey autumn clouds at sunrise.: The sunrise happens again every morning.
+- let go: Stellar Oscillations: It was a good first try, but I can write newer songs.
+- let go: autumn studio twilight: It was nice strumming, but I want to make fresh music.
+- let go: autumn studio duet: A simple duet attempt that I do not need to keep.
+- let go: autumn harp and guitar echoes: I learned how the harp and guitar sound together.
+- let go: Stereo Panning Visualizer: I finished testing panning and do not need the code anymore.
+
