@@ -94,3 +94,20 @@ ok('he never drops below 1, and very hungry is tiring, not deadly', () => {
   assert.ok(hour(1.5).energy < hour(6).energy, 'very hungry: energy comes back slower');
   assert.ok(hour(1.5).joy < hour(6).joy, 'very hungry: he feels lower');
 });
+
+// ---- coziness: a bare room nudges him to make it his; clutter is not cozy
+const { coziness } = await import('../body.js');
+const { availableMoves } = await import('../moves.js');
+ok('coziness: bare is low, a few varied things are cozy, piles of stuff are not', () => {
+  const lamp = { name: 'lamp', pos: [0, 0, 0], zone: 'floor', parts: [{ glow: true }], uses: [{ does: 'light' }] };
+  assert.equal(coziness({ decor: [] }), 1);
+  const varied = { decor: [lamp, { name: 'fern', pos: [1, 0, 1], zone: 'floor', parts: [] }, { name: 'pic', image: 'x', pos: [0, 2, -5], kind: 'wall' }, { name: 'cup', pos: [0, 1, 0], zone: 'on_desk', parts: [] }] };
+  assert.ok(coziness(varied) >= 7);
+  assert.ok(coziness(varied, true) > coziness(varied), 'a lamp on in the dark');
+  assert.ok(coziness({ decor: Array.from({ length: 16 }, (_, i) => ({ name: `box${i}`, pos: [i, 0, 0], zone: 'floor', parts: [] })) }) < 4);
+});
+ok('a bare room offers making things a little more (not a must)', () => {
+  const base = { energy: 6, fullness: 6, calm: 5, wonder: 5, joy: 5, decor: [], tools: [], pantry: [], garden: { plots: [], seeds: [] }, projects: [], log: [], studio: { songs: [] }, art: [], apps: [], wardrobe: [], pictures: [], found: [], moves: [], cookedAt: [], stored: [] };
+  const rate = (coz) => { let n = 0; for (let i = 0; i < 400; i++) { const s = structuredClone(base); s.body = { creativity: 3, curiosity: 5, boredom: 3, loneliness: 2, tidiness: 9, coziness: coz }; s.today = { done: {} }; let k = i; if (availableMoves(s, { random: () => ((k = (k * 16807 + 7) % 2147483647) / 2147483647) }).slice(0, 4).some((m) => m.name === 'decorate')) n++; } return n; };
+  assert.ok(rate(1) > rate(8), `${rate(1)} > ${rate(8)}`);
+});
