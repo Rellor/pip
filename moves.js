@@ -35,6 +35,7 @@ const seeds = (s) => (s.garden?.seeds ?? []).filter((x) => x.qty > 0);
 const greenhouse = (s) => own(s).some(isGreenhouse); // a greenhouse or a planter
 const food = (s) => (s.pantry ?? []).filter((p) => p.qty > 0);
 const working = (s) => (s.projects ?? []).filter((p) => p.status === 'working');
+const unplanned = (s) => working(s).filter((p) => !(p.steps ?? []).length); // a project with no steps has no next step, so he goes round in circles
 const unplacedGifts = (s) => (s.pictures ?? []).filter((p) => p.by !== 'pip' && !(s.decor ?? []).some((d) => d.picture === p.id));
 const daysSince = (iso, now) => (iso ? (now - Date.parse(iso)) / DAY : Infinity);
 const lastFail = (s) => s.plan?.lastFail ?? null;
@@ -83,7 +84,8 @@ export const MOVES = [
   { name: 'cook', line: () => 'cook a dish from my pantry: {dish, ingredients: [1 to 4]}', when: (s, n) => food(s).length > 0 && kitchenIn(s.decor) && can(s, 'cook', n) && s.fullness < 7, score: (s) => 1 + (10 - s.fullness) / 3 },
   // --- body ---
   { name: 'rest', line: () => 'rest for a while: {}', when: () => true, score: (s) => 0.2 + (10 - s.energy) / 2 },
-  { name: 'do', line: () => 'do anything else I can think of, in my own words: {what}', when: () => true, score: () => 1 },
+  // A free move in his own words. It leaves nothing behind, so it is offered, but less than the moves that really make or grow something.
+  { name: 'do', line: () => 'do something small in my own words, only when no other move fits (it does not make anything): {what}', when: () => true, score: () => 0.4 },
   // --- my things ---
   { name: 'use', line: (s) => `use one of my things (${usable(s).slice(0, 3).map((d) => `"${d.name}": ${(d.uses ?? []).map((u) => u.label).slice(0, 2).join(' / ')}`).join('; ')}): {name, label}`, when: (s) => usable(s).length > 0, score: () => 0.8 },
   { name: 'take_photo', line: () => 'take a photo of something that matters to me: {target: window, room, myself or one of my things, why, camera: close, wide, low or high, caption}', when: (s, n) => left(s, 'take_photo', n) > 0, score: () => 0.5 },
@@ -100,7 +102,8 @@ export const MOVES = [
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
   { name: 'dream', line: () => 'tell Bas about a big dream, something far too big to make myself (he might build it): {what, why}', when: (s, n) => daysSince(s.bigDreamAt, n) >= 3 && s.body.creativity >= 6, score: () => 0.8 },
-  { name: 'judge_project', line: (s) => `look at my project (${names(working(s).filter((p) => (p.versions ?? []).length).map((p) => p.title))}) and say if I am proud of it: {title, proud: "yes" or "no", why}`, when: (s) => working(s).some((p) => (p.versions ?? []).length), score: (s) => 0.6 + working(s).filter((p) => (p.versions ?? []).length >= 2).length },
+  { name: 'plan_project', line: (s) => `plan my project ${names(unplanned(s).map((p) => p.title))} in 3 to 5 small steps I can really do with my moves: {title, steps: [3 to 5 short steps]}`, when: (s) => unplanned(s).length > 0, score: () => 4 },
+  { name: 'judge_project', line: (s) => `look at my project (${names(working(s).filter((p) => (p.versions ?? []).length).map((p) => p.title))}) and say if I am proud of it. Good enough is fine: a first version that works is done, I can make a new one later: {title, proud: "yes" or "no", why}`, when: (s) => working(s).some((p) => (p.versions ?? []).length), score: (s) => Math.min(5, 0.6 + Math.max(0, ...working(s).map((p) => (p.versions ?? []).length)) * 0.9 + (working(s).some((p) => (p.steps ?? []).length && p.steps.every((x) => x.done)) ? 3 : 0)) },
   { name: 'start_project', line: () => 'start a project, something to make or learn over days: {title, why, steps: [3 to 6 short steps], needs: [tools it needs, if any]}', when: (s) => working(s).length < 2, score: (s) => 0.5 + s.body.creativity / 5 + (working(s).length ? 0 : 1) },
 ];
 export const MOVE_NAMES = MOVES.map((m) => m.name);
