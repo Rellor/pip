@@ -39,11 +39,15 @@ export function patternToTracks(p) {
 }
 
 // One section rewritten. Returns the new pattern, or null when that section does not exist.
+// A new version of one section. A section name that does not exist means the first one; an instrument the song did not
+// have yet joins it (up to 4), so a sung line added to a drum song is kept instead of thrown away.
 export function reviseSection(p, name, bars) {
-  const i = p.sections.findIndex((sec) => sec.name.toLowerCase() === String(name ?? '').toLowerCase());
-  if (i < 0 || !Array.isArray(bars) || !bars.length) return null;
+  if (!Array.isArray(bars) || !bars.length || !p.sections?.length) return null;
+  const found = p.sections.findIndex((sec) => sec.name.toLowerCase() === String(name ?? '').toLowerCase());
+  const i = found < 0 ? 0 : found;
   const next = structuredClone(p);
-  next.sections[i].bars = bars.slice(0, 8).map((b) => Object.fromEntries(p.instruments.filter((k) => b && typeof b[k] === 'string').map((k) => [k, clip(b[k], 120)])));
+  for (const b of bars) for (const [k, v] of Object.entries(b ?? {})) if (typeof v === 'string' && !next.instruments.includes(k) && next.instruments.length < 4) next.instruments.push(k);
+  next.sections[i].bars = bars.slice(0, 8).map((b) => Object.fromEntries(next.instruments.filter((k) => b && typeof b[k] === 'string').map((k) => [k, clip(b[k], 120)])));
   return next;
 }
 

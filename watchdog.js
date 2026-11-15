@@ -2,6 +2,7 @@
 // it writes web/health.json (the page shows a warning) and sends one push to Bas's phone.
 // Exit code 2 means "stuck right now", so the workflow can try to restart the loop.
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { checkup } from './checkup.js';
 import { awakeMinutes } from './web/sleep.js';
 
 export const STUCK_MIN = 30; // about two missed wake-ups
@@ -45,7 +46,19 @@ if (process.argv[1]?.endsWith('watchdog.js')) {
   if (event === 'stuck') await push('Pip seems stuck', `Pip has not woken up for ${next.minutes} minutes. I will try to restart him.`);
   if (event === 'backup') await push('Pip is on a backup model', `For ${BACKUP_HOURS} hours Pip has been answered by a model further down his list (${state.last.model}). The first one is busy or out of free quota. ${(state.last.modelNotes ?? []).join('; ')}`);
   if (event === 'recovered') await push('Pip is awake again', 'He woke up and the loop runs again.');
-  if (JSON.stringify({ ...next, minutes: 0 }) !== JSON.stringify({ ...health, minutes: 0 })) writeFileSync(HEALTH, JSON.stringify(next) + '\n');
+  // The check-up: how he spends his days. New problems go to the phone in one message, each at most once a day.
+  try {
+    const c = checkup(state, health);
+    next.checkup = c.saved;
+    if (c.fresh.length) await push(`Pip check-up: ${c.fresh.length === 1 ? c.fresh[0].label.toLowerCase() : `${c.fresh.length} things`}`, c.fresh.map((x) => `• ${x.text}`).join('\n'));
+    const bad = c.items.filter((x) => !x.ok);
+    console.log(bad.length ? `check-up: ${bad.map((x) => x.id).join(', ')}` : 'check-up: all fine');
+  } catch (e) {
+    console.error('check-up failed:', e.message);
+    if (health.checkup) next.checkup = health.checkup;
+  }
+  const same = (a) => JSON.stringify({ ...a, minutes: 0, checkup: { ...a.checkup, at: 0 } });
+  if (same(next) !== same(health)) writeFileSync(HEALTH, JSON.stringify(next) + '\n');
   console.log(next.stuck ? `STUCK: ${next.minutes} minutes since the last wake-up` : `fine: last wake-up ${next.minutes} minutes ago`);
   process.exit(next.stuck ? 2 : 0);
 }
