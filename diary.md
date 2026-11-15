@@ -12,3 +12,9 @@ I need to learn a bit about how music is made before I try to build the music bo
 - read_book (how simple melodies and musical notes work): I need to learn a bit about how music is made before I try to build the music box mechanism.
 - mood: curious
 
+## 15/11/2026, 09:44:57
+I am exploring how music works by trying out a simple tune on my voice.
+> I am exploring how music works by trying out a simple tune on my voice.
+- play_piano (C4 E4 G4:2 E4:4): I want to try humming a simple melody based on what I just read about notes.
+- mood: curious
+
