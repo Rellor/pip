@@ -13,16 +13,17 @@ const FOOD = /\b(bread|rice|eggs?|potato(es)?|carrots?|apples?|milk|cheese|flour
 export function giveForAsk(s, item) {
   const t = String(item ?? '').toLowerCase();
   const given = [];
-  if (/seed/.test(t)) {
+  if (/seed/.test(t)) { // seeds (and maybe something else in the same ask, like "seeds and bread")
     const named = KNOWN_SEEDS.filter((k) => t.includes(k.replace(/y$/, '')));
     for (const k of named.length ? named : STARTER_SEEDS) if (addSeeds(s, k, 4)) given.push(`${k} seeds`);
-    return given;
   }
-  if (FOOD.test(t)) { // food first: "some bread" is food, not a tool
-    const food = t.match(FOOD)[0].replace(/^(food|snacks?|vegetables|fruit)$/, 'bread');
+  const rest = t.replace(/[\w-]*\s*seeds?/g, ' '); // "vegetable seeds" is not food
+  if (FOOD.test(rest)) { // food before tools: "some bread" is food, not a tool
+    const food = rest.match(FOOD)[0].replace(/^(food|snacks?|vegetables|fruit)$/, 'bread');
     for (let i = 0; i < 3; i++) addIngredient(s, food);
-    return [food];
+    given.push(food);
   }
+  if (given.length) return given;
   for (const k of Object.keys(HELD)) if (t.includes(k) && addTool(s, k)) given.push(`a ${k}`);
   if (!given.length && toolKind(t) && addTool(s, t)) given.push(t); // only tools the game knows (shovel, toolbox, sewing kit...)
   return given;
