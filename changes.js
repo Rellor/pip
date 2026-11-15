@@ -29,6 +29,15 @@ const CHANGES = [
       return 'My piano and my instruments are gone for now, and my greenhouse stands by the window where the piano was. If I want to play music, I can ask Bas for an instrument.';
     },
   },
+  {
+    id: '2026-11-15 old clothes put away',
+    run(s, at) {
+      const clothes = [...(s.wardrobe ?? [])];
+      for (const c of clothes) (s.archive ??= []).push({ group: 'clothes', item: c, reason: 'My old clothes did not show; I start fresh.', at, from: 'bas' });
+      s.wardrobe = [];
+      return clothes.length ? `My old clothes are put away (${clothes.map((c) => c.name).join(', ')}). If I want something to wear, I can make something new.` : null;
+    },
+  },
 ];
 
 // Runs the changes this state has not had yet. Returns the memories they leave.
