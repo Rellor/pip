@@ -1,5 +1,6 @@
 // How Pip feels: five bars from 0 to 10.
-//   fullness  like hunger (it slowly drops, he can eat) and like being satisfied (learning, making and finishing things fill him)
+//   fullness  hunger: it slowly drops, and only eating fills it (food he grew, cooked, found or was given: it never appears by itself).
+//             It never goes below 1: very hungry makes him tired and low, it never harms him for good.
 //   energy    drops with activity, comes back with rest
 //   wonder    rises with discoveries and new things, fades with repetition
 //   joy       follows how much he enjoys what he does, and what people do for him
@@ -34,8 +35,10 @@ export function passTime(s, now = Date.now()) {
   if (!Number.isFinite(now)) now = Date.now();
   const gone = (now - Date.parse(s.feelAt || now)) / 60_000;
   const minutes = Number.isFinite(gone) ? Math.min(180, Math.max(0, gone)) : 0;
-  s.fullness = clamp(s.fullness - minutes / 50);
-  s.energy = clamp(s.energy + minutes * 0.12); // he slowly gets his energy back between wake-ups too, so he is not always tired
+  s.fullness = Math.max(1, clamp(s.fullness - minutes / 50)); // never below 1: hunger never harms him for good
+  const starving = s.fullness <= 2;
+  s.energy = clamp(s.energy + minutes * (starving ? 0.04 : 0.12)); // he slowly gets his energy back between wake-ups too; very hungry, much slower
+  if (starving) s.joy = clamp(s.joy - minutes / 120);
   s.wonder = clamp(s.wonder + (3 - s.wonder) * 0.2); // wonder needs new things to stay up
   s.joy = clamp(s.joy + (5 - s.joy) * 0.3); // joy and calm settle back toward the middle
   s.calm = clamp(s.calm + (5 - s.calm) * 0.22);
@@ -60,11 +63,9 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'search_web':
     case 'read_book':
       s.wonder += 1.2 / (1 + Math.max(0, looks) * 0.5);
-      s.fullness += 0.05;
       break;
     case 'decorate':
       s.wonder += 1;
-      s.fullness += 0.6;
       s.joy += 0.4;
       break;
     case 'draw':
@@ -77,13 +78,12 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'change_thing':
     case 'update_app':
       s.wonder += 0.8;
-      s.fullness += 0.5;
       s.joy += 0.5;
       break;
     case 'do':
       s.joy += 0.3;
       s.wonder += 0.3;
-      if (BARS.includes(bar)) s[bar] += 0.4;
+      if (BARS.includes(bar) && bar !== 'fullness') s[bar] += 0.4; // pretending to eat fills nothing
       break;
     case 'request_ability':
       s.wonder += 0.2;
@@ -104,7 +104,6 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
       break;
     case 'write_diary':
       s.calm += 0.3;
-      s.fullness += 0.05;
       break;
     case 'walk_to':
       s.calm += 0.05;
@@ -161,7 +160,7 @@ const EVENTS = {
   message: { joy: 1.5, calm: 0.3 }, // Bas wrote (also settles him, see felt)
   wrote: { joy: 0.5 }, // he wrote to Bas
   projectStart: { wonder: 0.8 },
-  projectDone: { joy: 2, fullness: 1 },
+  projectDone: { joy: 2, wonder: 1 },
 };
 export function felt(s, event) {
   for (const [bar, gain] of Object.entries(EVENTS[event] ?? {})) s[bar] = clamp(s[bar] + gain);

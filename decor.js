@@ -1072,7 +1072,7 @@ const WALL_FIXED = {
     { n: 'the window', a0: -1.05, a1: 1.65, y0: 1.6, y1: 4.2 },
     { n: 'the framed photo', a0: -3.1, a1: -1.3, y0: 2.1, y1: 3.4 },
   ],
-  left: [{ n: 'the photo wall above the desk', a0: 0.2, a1: 2.2, y0: 2.1, y1: 3.1 }, { n: 'the window in the left wall', a0: 3.9, a1: 5.0, y0: 1.15, y1: 3.65 }], // where his prints go, and the side window
+  left: [{ n: 'the photo wall above the desk', a0: 0.2, a1: 2.2, y0: 2.1, y1: 3.1 }, { n: 'the window in the left wall', a0: -3.75, a1: -1.05, y0: 1.6, y1: 4.2 }], // where his prints go, and the side window
 };
 const WALL_TOP = 4.8;
 const FURN_CLEAR = 0.5; // room above a shelf, a desk, a piano: things stand on it

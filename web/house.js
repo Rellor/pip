@@ -5,7 +5,8 @@ export const HAS_STUDIO = false;
 export const DOOR_Z = 0.4;
 export const DOOR_W = 1.2;
 export const WALLS_X = HAS_STUDIO ? [5.15, 8.45] : [5.15]; // the walls with doors: bedroom|hall, and hall|studio
-export const HALL_END_X = 8.45; // the hall's right wall (a plain outside wall when there is no studio)
+export const HALL_END_X = 8.45;
+export const LEFT_WINDOW = { x: -5.0, z: -2.4 }; // the bedroom's square side window (middle), the same size as the back window // the hall's right wall (a plain outside wall when there is no studio)
 export const ROOM_X = HAS_STUDIO ? { bedroom: [-5, 5], hall: [5.3, 8.3], studio: [8.6, 16.6] } : { bedroom: [-5, 5], hall: [5.3, 8.3] };
 export const FOCUS_X = { bedroom: 0, hall: 6.8, studio: 12.6, house: 5.9 };
 export const roomOf = (x) => (x < WALLS_X[0] ? 'bedroom' : !HAS_STUDIO || x < WALLS_X[1] ? 'hall' : 'studio');
@@ -492,8 +493,10 @@ export function buildHouse(THREE, scene) {
   if (HAS_STUDIO) house.add(studioLight);
 
   // the bedroom's left wall has a window too (the wall itself is drawn here, with the hole)
-  sideWall(house, -5.15, -5.0, 5.0, 0xefcfb6, [{ a0: 4.15, a1: 4.85, y0: 1.3, y1: 3.5 }]);
-  windowOn('left', 4.5, 1.3, 3.5, 0.7);
+  // A square window like the one in the back wall: the same size (2.0 x 1.8) and height (2.0 to 3.8), in the free part of
+  // the left wall between the back corner and the desk. (It was a narrow window by the chest.)
+  sideWall(house, -5.15, -5.0, 5.0, 0xefcfb6, [{ a0: LEFT_WINDOW.z - 1.0, a1: LEFT_WINDOW.z + 1.0, y0: 2.0, y1: 3.8 }]);
+  windowOn('left', LEFT_WINDOW.z, 2.0, 3.8, 2.0);
   const refreshViews = (hour) => views.forEach((v) => { paintView(v.cv, hour); v.tex.needsUpdate = true; });
   refreshViews(13);
   return {
