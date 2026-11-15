@@ -7,8 +7,8 @@ export const FORMATS = {
   draw: '{"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\\"0 0 400 300\\">...</svg>"}',
   make_app: '{"name": "...", "why": "...", "html": "<!doctype html>..."}',
   update_app: '{"name": "the exact name of the app", "html": "<!doctype html>..."}',
-  record_song: '{"name": "...", "tempo": 90, "instruments": ["piano", "guitar", "drums"], "form": ["A", "A", "B", "A"], "sections": [{"name": "A", "bars": [{"piano": "C4 E4 G4 E4", "guitar": "C3+E3+G3:4", "drums": "kick hat snare hat"}]}, {"name": "B", "bars": [...]}]}',
-  revise_song: '{"section": "the name of the ONE section I rewrite", "bars": [{"piano": "...", "guitar": "..."}], "why": "what I changed and why"}',
+  record_song: '{"name": "...", "tempo": 90, "instruments": ["one of my instruments", "drums"], "form": ["A", "A", "B", "A"], "sections": [{"name": "A", "bars": [{"piano": "C4 E4 G4 E4", "guitar": "C3+E3+G3:4", "drums": "kick hat snare hat"}]}, {"name": "B", "bars": [...]}]}',
+  revise_song: '{"section": "the name of the ONE section I rewrite", "bars": [{"<instrument>": "..."}], "why": "what I changed and why"}',
   make_clothes: '{"name": "...", "slot": "head, face, neck, body or back", "why": "...", "parts": [...]}',
   make_move: '{"name": "...", "why": "...", "duration": 2, "frames": [{"at": 0, ...}, {"at": 0.5, ...}]}',
   blueprint: '{"name": "...", "goal": "...", "research": "...", "mechanisms": [{"part": "...", "how": "...", "uses": "..."}], "tools": [...]}',
@@ -25,7 +25,7 @@ I AM MAKING THIS NOW
 ${asked || 'something new'}${d.why ? `\nWhy: ${d.why}` : ''}
 
 ${ctx.room?.length ? `MY ROOM NOW\n${ctx.room.map((x) => `- ${x}`).join('\n')}\n\n` : ''}HOW MAKING WORKS
-${ctx.rules}${ctx.skill ? `\n\nMY SKILL: ${ctx.skill}` : ''}
+${ctx.rules}${ctx.have ? `\n\nWHAT I HAVE TO MAKE IT WITH: ${ctx.have}` : ''}${ctx.skill ? `\n\nMY SKILL: ${ctx.skill}` : ''}
 
 I make it my own way. A first try may be clumsy; that is fine.
 ${ctx.current ? `THE SONG AS IT IS NOW\n${ctx.current}\nI rewrite ONE section of it, and keep the rest.\n\n` : ''}Answer in JSON with exactly this shape: ${FORMATS[ctx.current ? 'revise_song' : ctx.step.action] ?? '{}'}`;
@@ -41,7 +41,8 @@ export function applyMade(step, reply, limits = {}) {
 
 // A song: the maker's pattern (or one revised section of an old one) becomes tracks the site can play.
 import { cleanPattern, patternToTracks, reviseSection } from './music.js';
-export function finishSong(step, reply, { songs = [], maxBars = 16 } = {}) {
+export function finishSong(step, reply, { songs = [], maxBars = 16, allowed = null } = {}) {
+  if (allowed && Array.isArray(reply?.instruments)) reply = { ...reply, instruments: reply.instruments.filter((i) => allowed.includes(String(i).toLowerCase())) }; // only what he has
   const old = step.details?.revise ? [...songs].reverse().find((x) => x.pattern && x.name.toLowerCase() === String(step.details.revise).toLowerCase()) : null;
   const pattern = old ? reviseSection(old.pattern, reply?.section, reply?.bars) : cleanPattern({ ...reply, name: reply?.name ?? step.details?.what }, maxBars);
   if (!pattern) return { ...step, details: { ...step.details, name: step.details?.what ?? step.details?.revise, tracks: [] }, make: false, made_by_maker: true };

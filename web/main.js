@@ -254,7 +254,8 @@ function applyFurniture(s) {
       SPOTS[SPOT_OF[key]] = { ...SPOTS[SPOT_OF[key]], p: new V3(wx, 0, wz), face: sp.face + pl.rot };
     }
   }
-  if (isGone(furn, 'piano')) SPOTS.piano = { ...SPOTS.window }; // no piano: what pointed at it goes to the window
+  if (isGone(furn, 'piano')) SPOTS.piano = { ...SPOTS.window };
+  wallFrame.visible = s?.wallPhoto !== false; // the framed Milky Way photo from Bas (down after the fresh start, until it is given back) // no piano: what pointed at it goes to the window
   const pianoAt = placeOf(furn, 'piano');
   wallFrame.position.x = pianoAt.x > 5.3 ? -2.2 + (pianoAt.x - pivotOf('piano')[0]) : -2.2;
   for (const r of REGIONS) {
