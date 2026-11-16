@@ -893,3 +893,9 @@ I want to bake the loaf of bread now that I have a small stove in my room.
 - cook: I built a small stove, so now I can try baking the bread using the flour.
 - mood: focused
 
+## 16/11/2026, 15:20:01
+I am curious about using things since I have never tried it before, and tending the sprouts feels nice right now.
+> I am curious about using things since I have never tried it before, and tending the sprouts feels nice right now.
+- use (wooden planter box): I want to try using one of my things to see what it is like.
+- mood: curious
+
