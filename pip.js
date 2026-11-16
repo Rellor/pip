@@ -17,7 +17,7 @@ import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject } from './projects.js';
-import { checkup } from './checkup.js';
+import { checkup, markSent, PUSH_GAP_H } from './checkup.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
@@ -957,7 +957,9 @@ function applyInnerLife(s, r, detail, replying = false) {
     s.projects.push({ id: Date.now().toString(36), title, why: text(p?.why, 200), next: text(p?.next, 160), nextStep: text(p?.next, 160), steps: cleanSteps(p?.steps), needs: (Array.isArray(p?.needs) ? p.needs : []).map((x) => text(x, 40)).filter(Boolean).slice(0, 4), versions: [], notes: [], status: 'working', since: at, updatedAt: at });
   }
   for (const u of Array.isArray(r.projects_update) ? r.projects_update : []) {
-    const hit = s.projects.find((x) => x.status === 'working' && sameItem(x.title, text(u?.title, 80) || '\u0000'));
+    let hit = s.projects.find((x) => x.status === 'working' && sameItem(x.title, text(u?.title, 80) || '\u0000'));
+    const unplanned = s.projects.find((x) => x.status === 'working' && !(x.steps ?? []).length);
+    if (u?.plan && unplanned && (!hit || (hit.steps ?? []).length)) hit = unplanned; // "plan my project" is for the one with no steps
     if (!hit) continue;
     if (text(u?.next, 160)) hit.next = text(u.next, 160);
     if (Array.isArray(u?.steps) && u.steps.length) hit.steps = cleanSteps(u.steps, hit.steps); // he rewrites the plan; steps that stay the same stay done
@@ -1785,7 +1787,7 @@ async function wakeUp() {
   state.emotion = emotionWord(state);
   steps.forEach((st, i) => {
     const d = st.details;
-    const entry = { at: new Date(startedAt + offsets[i] + 1000).toISOString(), action: st.action, thought: st.thought };
+    const entry = { at: new Date(startedAt + offsets[i] + 1000).toISOString(), action: st.action, thought: st.thought, ...(st.as ? { as: st.as } : {}) }; // "as": a real move (plan, judge...) carried out as a "do"
     if (st.fallback) entry.fallback = true;
     const page = (p) => (p ? { title: p.title, url: p.url, text: clip(p.text, 1500) } : null);
     if (st.dupSearch) entry.dup = true;
@@ -1863,7 +1865,7 @@ async function wakeUp() {
     if (e) b.gaps = blueprintGaps(b, e);
   }
   for (const e of state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)) {
-    noteMove(state, e.action, { failed: Boolean(e.failed), now: Math.min(Date.now(), Date.parse(e.at)) });
+    noteMove(state, e.as ?? e.action, { failed: Boolean(e.failed), now: Math.min(Date.now(), Date.parse(e.at)) });
     if (e.failed) continue;
     const up = practise(state, e.action, { ...e, name: e.name ?? e.details?.name, query: e.query, topic: e.topic });
     if (up) { addMemory(state, `My ${up.skill} got better: I am level ${up.level} now.`, 6, 'memory', new Date().toISOString()); console.log(`   📈 ${up.skill} is level ${up.level}`); }
@@ -1931,9 +1933,11 @@ async function wakeUp() {
   try {
     const c = checkup(state, { checkup: state.checkup });
     state.checkup = c.saved;
-    if (c.fresh.length && !process.env.PIP_FAKE) {
+    const quiet = Date.now() - Date.parse(c.saved.pushedAt ?? 0) < PUSH_GAP_H * 3_600_000;
+    if (c.fresh.length && !quiet && !process.env.PIP_FAKE) {
       const body = c.fresh.map((x) => `• ${x.label}: ${x.text}`).join('\n') + '\n\nDetails: Settings (⚙) → Check-up.';
       await warn(`Pip check-up: ${c.fresh.length === 1 ? c.fresh[0].label.toLowerCase() : `${c.fresh.length} things`}`, body);
+      markSent(c.saved, c.fresh);
     }
     const bad = c.items.filter((x) => !x.ok).map((x) => x.id);
     if (bad.length) console.log(`🩺 check-up: ${bad.join(', ')}`);

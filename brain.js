@@ -4,6 +4,15 @@
 import { MOVE_NAMES, MAKER_MOVES } from './moves.js';
 
 export const MAX_PICK = 3;
+// Is he proud? "yes", or a reason that says it is good enough ("that is enough for a first try") counts as yes,
+// unless it also says it is not ready. Before, a clear "it is enough" with proud left empty kept the project open forever.
+export function proudOf(proud, why) {
+  const p = String(proud ?? '').trim().toLowerCase();
+  if (/^(yes|true|proud|y\b)/.test(p)) return true;
+  if (/^(no|false|not)\b/.test(p) && !/\b(enough|good enough|finished|done)\b/i.test(String(why ?? ''))) return false;
+  const w = String(why ?? '').toLowerCase();
+  return /\b(enough|good enough|i am proud|i'm proud|finished|it works|works now|happy with it|done)\b/.test(w) && !/\b(not (yet|enough|good|ready|done|finished)|isn't|is not|doesn't|does not|still needs|needs more)\b/.test(w);
+}
 const clip = (t, n) => (typeof t === 'string' ? t.trim().slice(0, n) : '');
 const list = (items, none = 'nothing') => (items.length ? items.map((x) => `- ${x}`).join('\n') : none);
 
@@ -75,7 +84,7 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       const st = (Array.isArray(d.steps) ? d.steps : []).map((x) => clip(x, 120)).filter(Boolean).slice(0, 8);
       const needs = (Array.isArray(d.needs) ? d.needs : []).map((x) => clip(x, 40)).filter(Boolean).slice(0, 4);
       if (clip(d.title, 80)) answer.projects_add.push({ title: clip(d.title, 80), why: clip(d.why, 160), next: st[0] ?? '', steps: st, needs });
-      steps.push({ action: 'do', details: { what: `plan my new project: ${clip(d.title, 80)}` }, thought, enjoyment: 7 });
+      steps.push({ action: 'do', as: 'start_project', details: { what: `plan my new project: ${clip(d.title, 80)}` }, thought, enjoyment: 7 });
       continue;
     }
     if (name === 'answer_visitor') {
@@ -85,18 +94,18 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
     }
     if (name === 'dream') {
       if (clip(d.what, 140)) answer.asks_add.push({ item: `Dream: ${clip(d.what, 130)}`, why: clip(d.why, 200), big: true });
-      steps.push({ action: 'do', details: { what: `dream about ${clip(d.what, 100)}` }, thought, enjoyment: 7 });
+      steps.push({ action: 'do', as: 'dream', details: { what: `dream about ${clip(d.what, 100)}` }, thought, enjoyment: 7 });
       continue;
     }
     if (name === 'plan_project') {
       const st = (Array.isArray(d.steps) ? d.steps : []).map((x) => clip(x, 120)).filter(Boolean).slice(0, 6);
-      if (clip(d.title ?? d.project, 80) && st.length) answer.projects_update.push({ title: clip(d.title ?? d.project, 80), steps: st, next: st[0] });
-      steps.push({ action: 'do', details: { what: `plan the steps of my project ${clip(d.title ?? d.project, 60)}` }, thought, enjoyment: 6 });
+      if (clip(d.title ?? d.project, 80) && st.length) answer.projects_update.push({ title: clip(d.title ?? d.project, 80), steps: st, next: st[0], plan: true });
+      steps.push({ action: 'do', as: 'plan_project', details: { what: `plan the steps of my project ${clip(d.title ?? d.project, 60)}` }, thought, enjoyment: 6 });
       continue;
     }
     if (name === 'judge_project') {
-      answer.project_judged = { title: clip(d.title ?? d.project, 80), proud: /^(yes|true|proud)/i.test(String(d.proud ?? '')), why: clip(d.why, 200) };
-      steps.push({ action: 'do', details: { what: `look closely at my project ${clip(d.title ?? d.project, 60)}` }, thought, enjoyment: 6 });
+      answer.project_judged = { title: clip(d.title ?? d.project, 80), proud: proudOf(d.proud, d.why), why: clip(d.why, 200) };
+      steps.push({ action: 'do', as: 'judge_project', details: { what: `look closely at my project ${clip(d.title ?? d.project, 60)}` }, thought, enjoyment: 6 });
       continue;
     }
     // "do" is for anything else: when it is really planting, watering, harvesting, eating or cooking, it becomes that move,

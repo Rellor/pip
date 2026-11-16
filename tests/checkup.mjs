@@ -1,7 +1,7 @@
 // The check-up spots circling, stuck projects, failing moves and pretending, and sends each problem once a day.
 // Run: node tests/checkup.mjs
 import assert from 'node:assert/strict';
-import { checkup } from '../checkup.js';
+import { checkup, markSent } from '../checkup.js';
 
 const now = Date.parse('2026-11-15T21:00:00Z');
 const ago = (h) => new Date(now - h * 3_600_000).toISOString();
@@ -17,7 +17,8 @@ const off = r.items.filter((x) => !x.ok).map((x) => x.id);
 assert.deepEqual(off, ['circling', 'project', 'failing', 'pretend']);
 assert.match(r.items.find((x) => x.id === 'circling').text, /gears/);
 assert.doesNotMatch(r.items.find((x) => x.id === 'failing').text, /[{[]/, 'no code in the message');
-assert.equal(r.fresh.length, 4);
+assert.deepEqual(r.fresh.map((x) => x.id), ['project', 'failing'], 'only problems Bas can act on go to the phone');
+markSent(r.saved, r.fresh, now);
 assert.equal(checkup(bad, { checkup: r.saved }, now + 600_000).fresh.length, 0, 'the same problems are not sent twice a day');
 
 const fine = { thoughts: [], projects: [], today: { tried: { decorate: 3 }, done: { decorate: 3 } }, fullness: 6, pantry: [], asks: [], errors: [] };
