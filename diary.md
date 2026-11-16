@@ -953,3 +953,9 @@ It is dark in my room and I want to make a simple glowing lamp so I can see and 
 - decorate (small clay lamp): I need to make a lamp to see in the dark room.
 - mood: energetic
 
+## 16/11/2026, 16:53:50
+It is dark in my room, so I want to figure out how to build a reading lamp.
+> It is dark in my room, so I want to figure out how to build a reading lamp.
+- search_web (how to make a simple reading lamp): I want to see how lamps are made before I build one.
+- mood: energetic
+
