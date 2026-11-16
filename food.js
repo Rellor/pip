@@ -55,7 +55,7 @@ export function cook(s, d, now = Date.now()) {
   const dish = clean(d?.dish ?? d?.name, 60);
   const wanted = (Array.isArray(d?.ingredients) ? d.ingredients : []).map((x) => clean(x, 40)).filter(Boolean).slice(0, 4);
   if (!dish || !wanted.length) return { failed: 'a dish needs a name and 1 to 4 ingredients' };
-  if (!kitchenIn(s.decor)) return { failed: 'I have no kitchen in my room yet' };
+  if (!kitchenIn(s.decor)) return { failed: 'I have no kitchen in my room yet. I can build one myself first: a small stove or oven, with decorate (name it a stove, oven or kitchen), and then cook' };
   if (s.cookedAt.filter((t) => now - Date.parse(t) < 86_400_000).length >= MAX_COOKS_PER_DAY) return { failed: `I already cooked ${MAX_COOKS_PER_DAY} times today` };
   const used = [];
   for (const w of wanted) {

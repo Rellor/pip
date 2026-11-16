@@ -13,6 +13,14 @@ export function proudOf(proud, why) {
   const w = String(why ?? '').toLowerCase();
   return /\b(enough|good enough|i am proud|i'm proud|finished|it works|works now|happy with it|done)\b/.test(w) && !/\b(not (yet|enough|good|ready|done|finished)|isn't|is not|doesn't|does not|still needs|needs more)\b/.test(w);
 }
+// "mix flour, water and salt", "bake the bread", "cook some soup": a real cook move, with the dish and the ingredients
+// named in it (bread is made from flour). Without a kitchen it fails with a reason, which becomes a lesson.
+const INGREDIENTS = ['flour', 'rice', 'eggs', 'potatoes', 'carrots', 'apples', 'milk', 'cheese', 'butter', 'onions', 'tomatoes', 'basil', 'mint', 'strawberries'];
+function cookDetails(w) {
+  const dish = (w.match(/\b(bread|loaf|soup|pancakes?|porridge|pie|cake|salad|stew|omelette|tea)\b/) ?? [])[1] ?? (w.replace(/^.*\b(cook|bake|make)\s*(some|a|an|the|my)?\s*/, '').slice(0, 40) || 'something warm');
+  const named = INGREDIENTS.filter((x) => w.includes(x.replace(/s$/, '')));
+  return { dish: dish === 'loaf' ? 'bread' : dish, ingredients: named.length ? named.slice(0, 4) : /bread|loaf|dough|pancake|cake|pie/.test(dish) ? ['flour'] : [] };
+}
 const clip = (t, n) => (typeof t === 'string' ? t.trim().slice(0, n) : '');
 const list = (items, none = 'nothing') => (items.length ? items.map((x) => `- ${x}`).join('\n') : none);
 
@@ -116,7 +124,9 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       const real = /\b(plant|sow)\b/.test(w) && /seed|soil|planter|pot|greenhouse|basil|mint|strawberr/.test(w) ? { action: 'plant', details: { seed: seedName ?? '' } }
         : /\bwater\b/.test(w) && /plant|seed|sprout|planter|garden|basil|mint/.test(w) ? { action: 'water', details: {} }
         : /\b(harvest|pick)\b/.test(w) && /plant|basil|mint|strawberr|herb|leaves|fruit|tomato/.test(w) ? { action: 'harvest', details: {} }
-        : /\bcook\b/.test(w) ? { action: 'cook', details: { dish: w.replace(/^.*\bcook\s*/, '').slice(0, 40) || 'something warm', ingredients: [] } }
+        : /\b(cook|bake|knead)\b|\b(mix|stir)\b.*\b(flour|dough|batter)\b|\bmake (some |a |my )?(bread|loaf|dough|soup|pancakes?|porridge)\b/.test(w) ? { action: 'cook', details: cookDetails(w) }
+        : name === 'do' && /^(look up|search (for|online)|research|find out)\b/.test(w) ? { action: 'search_web', details: { query: w.replace(/^(look up|search (for|online)|research|find out)\s*(about|how)?\s*/, '').slice(0, 80) || w.slice(0, 80) } }
+        : name === 'do' && /^read (about|up on)\b/.test(w) ? { action: 'read_book', details: { topic: w.replace(/^read (about|up on)\s*/, '').slice(0, 80) } }
         : /\b(eat|have a bite of|munch)\b/.test(w) ? { action: 'eat', details: { food: w.replace(/^.*\b(eat|have a bite of|munch)\s*(some|a|an|the|my)?\s*/, '').slice(0, 40) } }
         : null;
       if (real) { steps.push({ ...real, thought, enjoyment: 6, needs: '' }); continue; }
