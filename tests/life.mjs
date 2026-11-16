@@ -108,7 +108,7 @@ ok('coziness: bare is low, a few varied things are cozy, piles of stuff are not'
 });
 ok('a bare room offers making things a little more (not a must)', () => {
   const base = { energy: 6, fullness: 6, calm: 5, wonder: 5, joy: 5, decor: [], tools: [], pantry: [], garden: { plots: [], seeds: [] }, projects: [], log: [], studio: { songs: [] }, art: [], apps: [], wardrobe: [], pictures: [], found: [], moves: [], cookedAt: [], stored: [] };
-  const rate = (coz) => { let n = 0; for (let i = 0; i < 400; i++) { const s = structuredClone(base); s.body = { creativity: 3, curiosity: 5, boredom: 3, loneliness: 2, tidiness: 9, coziness: coz }; s.today = { done: {} }; let k = i; if (availableMoves(s, { random: () => ((k = (k * 16807 + 7) % 2147483647) / 2147483647) }).slice(0, 4).some((m) => m.name === 'decorate')) n++; } return n; };
+  const rate = (coz) => { let n = 0; for (let i = 0; i < 400; i++) { const s = structuredClone(base); s.body = { creativity: 3, curiosity: 5, boredom: 3, loneliness: 2, tidiness: 9, coziness: coz }; s.today = { done: {} }; let k = i; if (availableMoves(s, { now: Date.parse('2026-11-16T12:00:00Z'), random: () => ((k = (k * 16807 + 7) % 2147483647) / 2147483647) }).slice(0, 4).some((m) => m.name === 'decorate')) n++; } return n; };
   assert.ok(rate(1) > rate(8), `${rate(1)} > ${rate(8)}`);
 });
 

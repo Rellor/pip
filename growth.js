@@ -102,3 +102,23 @@ export function freshLines(s, offered = [], now = Date.now()) {
   if (never.length) out.push(`Something I have never tried: ${MOVE_WORDS[never[0]]}. I wonder what it is like.`);
   return out;
 }
+
+// ---- Light: he notices when the places he uses are dark (evening, a grey day), and that a lamp of his own would help.
+// Plain code from the light model (real time, weather, windows, his lamps). Dim is cozy; only really dark places count.
+import { lightAt, placeFor, isLamp, levelWord } from './web/lighting.js';
+import { handsOn } from './sizes.js';
+const DARK = 0.2;
+export function darkSpots(s, now = Date.now()) {
+  if (s.last?.sleeping) return [];
+  const spots = ['desk', 'bed', 'bookshelf', 'middle of the room'].map((w) => placeFor(s, w)).filter(Boolean);
+  for (const d of (s.decor ?? []).filter((x) => handsOn(x) && x.pos)) spots.push({ name: d.name, x: d.pos[0], z: d.pos[2] });
+  return spots.map((p) => ({ name: p.name.replace(/^the /, ''), level: lightAt(s, p.x, p.z, now).level })).filter((p) => p.level < DARK).sort((a, b) => a.level - b.level);
+}
+export const roomIsDark = (s, now = Date.now()) => darkSpots(s, now).length >= 2;
+export function darkLines(s, now = Date.now()) {
+  const dark = darkSpots(s, now);
+  if (dark.length < 2) return [];
+  const lamps = (s.decor ?? []).filter(isLamp).length;
+  const where = dark.slice(0, 3).map((p) => `${p.name} is ${levelWord(p.level)} (${Math.round(p.level * 100)}%)`).join(', ');
+  return [`It is dark in my room: ${where}. ${lamps ? 'My lamps do not reach there.' : 'I have no lamp of my own yet.'} A lamp I make myself (a part that glows, and a use that does light) would let me see and make it cozy.`];
+}

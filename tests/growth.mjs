@@ -66,3 +66,12 @@ ok(`D. a pattern seen on ${PATTERN_DAYS} days can become a soul line`, () => {
   assert.equal(patterns([day('a'), day('b')]).length, 0);
   assert.ok(patterns([day('a'), day('b'), day('c')]).some((p) => p.key === 'lifted:decorate'));
 });
+
+ok('light: in the evening he notices dark places and that a lamp would help; at noon he does not', async () => {
+  const { darkLines } = await import('../growth.js');
+  const s = { decor: [], furniture: {}, weather: { kind: 'clear' } };
+  const noon = Date.parse('2026-11-16T12:00:00Z');
+  const evening = Date.parse('2026-11-16T19:00:00Z');
+  assert.equal(darkLines(s, noon).length, 0);
+  assert.match(darkLines(s, evening)[0] ?? '', /dark.*lamp/);
+});
