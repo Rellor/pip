@@ -2,6 +2,8 @@
 // so the live loop applies it itself (no need to pause him). Nothing is deleted: what goes, goes to s.archive.
 import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
+import { makeDecor } from './decor.js';
+import { handsOn, PIP } from './sizes.js';
 
 const CHANGES = [
   {
@@ -96,6 +98,21 @@ const CHANGES = [
     run(s) { // a bug moved the bread plan onto the finished music box; the bread project keeps its own steps
       for (const p of (s.projects ?? []).filter((x) => x.status === 'done' && /music box/i.test(x.title))) if ((p.steps ?? []).some((x) => /flour|dough|loaf/i.test(x.text))) p.steps = [];
       return null;
+    },
+  },
+  {
+    id: '2026-11-16 things he works at come down within reach',
+    run(s, at) { // his stove hung at 2.9 m on the back wall: things he works at with his hands now stand on the floor by that wall
+      const moved = [];
+      for (const old of [...(s.decor ?? [])].filter((d) => handsOn(d) && d.pos && d.kind === 'wall' && d.pos[1] > PIP.reach)) {
+        const rest = s.decor.filter((d) => d !== old);
+        const side = old.side ?? (Math.abs(old.pos[2] + 4.97) < 0.2 ? 'back' : 'left');
+        const r = makeDecor(rest, { name: old.name, why: old.why, project: old.project, parts: old.parts, uses: old.uses, wall: side, along: side === 'back' ? old.pos[0] : old.pos[2] }, Date.parse(at) - 60_000, Date.parse(at));
+        if (!r?.entry) continue;
+        s.decor[s.decor.indexOf(old)] = { ...r.entry, id: old.id, at: old.at, uses: old.uses, ...(old.auto ? { auto: old.auto } : {}), movedAt: at };
+        moved.push(old.name);
+      }
+      return moved.length ? `My ${moved.join(' and ')} hung too high to use. Now it stands on the floor, where my hands can reach it.` : null;
     },
   },
 ];

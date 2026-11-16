@@ -69,3 +69,11 @@ ok('revising a drum song with a sung line keeps the voice (and odd names still w
     assert.ok(song.details.tracks.some((t) => t.instrument === 'voice'), 'the voice was thrown away');
   }
 });
+
+ok('things he works at with his hands stand within reach, not high on a wall', async () => {
+  const { makeDecor } = await import('../decor.js');
+  const parts = [{ shape: 'box', size: [0.6, 0.8, 0.5], pos: [0, 0.4, 0], color: '#9e4e31' }, { shape: 'box', size: [0.3, 0.2, 0.02], pos: [0, 0.4, 0.26], color: '#ff4500', glow: true }];
+  const stove = makeDecor([], { name: 'small stove', parts, uses: [{ label: 'Bake a loaf', text: 'warm' }], wall: 'back', along: 1, height: 2.9 }, Date.now());
+  assert.equal(stove.entry?.kind, 'floor', JSON.stringify(stove).slice(0, 200));
+  assert.equal(stove.entry.pos[1], 0);
+});

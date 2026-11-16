@@ -2,7 +2,9 @@
 // His own size comes from his body on the page: ears reach 1.35 m and his eyes sit at 0.8 m. The window is part of the back wall.
 import { FURNITURE } from './web/furniture.js';
 
-export const PIP = { height: 1.35, eyes: 0.8 };
+export const PIP = { height: 1.35, eyes: 0.8, reach: 1.1 }; // reach: how high his hands can work
+// Things he works at with his hands: they must be within arm's length, so they stand on the floor (or a low surface).
+export const handsOn = (o) => !o?.image && (/\b(stove|oven|kitchen|cooker|hob|sink|counter|worktop|workbench|work bench|table|chair|stool|bench|easel|loom|kettle|planter|greenhouse|flower ?pot|seed tray|potter'?s wheel|anvil)\b/i.test(String(o?.name ?? '')) || (o?.uses ?? []).some((u) => /\b(bake|cook|brew|boil|fry|wash|knead|stir|sit|plant|water|sew|paint|carve)\b/i.test(`${u?.label ?? ''}`)));
 export const WINDOW = { from: 1.7, to: 4.1 };
 export const STEP_FOR_WINDOW = Math.round((WINDOW.from - PIP.eyes) * 100) / 100; // how high he must stand to look out
 
@@ -12,7 +14,7 @@ const r2 = (n) => Math.round(n * 100) / 100;
 export const sizesGuide = () => {
   const furn = Object.values(FURNITURE).filter((f) => !f.flat).flatMap((f) => f.rects.map((r) => `${r.n.replace(/^the /, '')} ${r2(r.h)}`)).join(', ');
   return `SIZES (in metres; the "[w x h x d m]" after the things I made is width x height x depth)
-I am about ${PIP.height} m tall and my eyes are ${PIP.eyes} m above the floor. The window starts ${WINDOW.from} m above the floor and goes up to ${WINDOW.to} m. To look out of it my eyes must be higher than ${WINDOW.from} m, so I must stand on something at least ${STEP_FOR_WINDOW} m high. Heights of what is already in my room: ${furn}. When I make something for a reason, I think about how high or big it has to be for that, and I can measure things with a ruler (measure).
+I am about ${PIP.height} m tall and my eyes are ${PIP.eyes} m above the floor. My hands reach up to about ${PIP.reach} m, so things I work at with my hands (a stove, a table, a planter, a workbench) stand on the floor or a low surface, never high on a wall. The window starts ${WINDOW.from} m above the floor and goes up to ${WINDOW.to} m. To look out of it my eyes must be higher than ${WINDOW.from} m, so I must stand on something at least ${STEP_FOR_WINDOW} m high. Heights of what is already in my room: ${furn}. When I make something for a reason, I think about how high or big it has to be for that, and I can measure things with a ruler (measure).
 `;
 };
 
