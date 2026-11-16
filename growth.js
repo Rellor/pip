@@ -120,5 +120,23 @@ export function darkLines(s, now = Date.now()) {
   if (dark.length < 2) return [];
   const lamps = (s.decor ?? []).filter(isLamp).length;
   const where = dark.slice(0, 3).map((p) => `${p.name} is ${levelWord(p.level)} (${Math.round(p.level * 100)}%)`).join(', ');
-  return [`It is dark in my room: ${where}. ${lamps ? 'My lamps do not reach there.' : 'I have no lamp of my own yet.'} A lamp I make myself (a part that glows, and a use that does light) would let me see and make it cozy.`];
+  const research = lookedUpLight(s) ? '' : ' I could first look up how a standing lamp, a reading lamp or a lantern is made (search_web), so mine looks right and really gives light.';
+  return [`It is dark in my room: ${where}. ${lamps ? 'My lamps do not reach there.' : 'I have no lamp of my own yet.'} A lamp I make myself (a part that glows, and a use that does light) would let me see and make it cozy.${research}`];
 }
+
+// ---- Notebook: what he looked up stays with him, so it helps when he makes something about it (learn, then make).
+export function noteResearch(s, { query, page, at = new Date().toISOString() }) {
+  const text = String(page?.text ?? '').replace(/\s+/g, ' ').trim();
+  if (!query || !text) return null;
+  s.notebook ??= [];
+  const n = { at, query: String(query).slice(0, 100), title: String(page.title ?? '').slice(0, 80), text: text.slice(0, 500) };
+  s.notebook = [...s.notebook.filter((x) => x.title !== n.title), n].slice(-20);
+  return n;
+}
+// For the maker: up to 2 notes that share words with what he is making.
+export function notesFor(s, what) {
+  const want = new Set(words(what));
+  if (!want.size) return [];
+  return (s.notebook ?? []).map((n) => ({ n, k: words(`${n.query} ${n.title}`).filter((w) => want.has(w) || want.has(w.replace(/s$/, ''))).length })).filter((x) => x.k > 0).sort((a, b) => b.k - a.k || b.n.at.localeCompare(a.n.at)).slice(0, 2).map(({ n }) => `I looked up "${n.query}" and read about ${n.title}: ${n.text}`);
+}
+const lookedUpLight = (s) => (s.notebook ?? []).some((n) => /\b(lamp|lamps|lantern|light|lighting|candle)\b/i.test(`${n.query} ${n.title}`));

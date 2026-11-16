@@ -4,6 +4,7 @@ import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
 import { makeDecor } from './decor.js';
 import { handsOn, PIP } from './sizes.js';
+import { noteResearch } from './growth.js';
 
 const CHANGES = [
   {
@@ -113,6 +114,12 @@ const CHANGES = [
         moved.push(old.name);
       }
       return moved.length ? `My ${moved.join(' and ')} hung too high to use. Now it stands on the floor, where my hands can reach it.` : null;
+    },
+  },  {
+    id: '2026-11-16 notebook from what he looked up',
+    run(s) { // what he already looked up goes in his new notebook, so it helps when he makes something about it
+      for (const e of (s.log ?? []).filter((x) => ['search_web', 'read_book'].includes(x.action) && x.opened)) noteResearch(s, { query: e.query ?? e.topic, page: e.opened, at: e.at });
+      return null;
     },
   },
 ];
