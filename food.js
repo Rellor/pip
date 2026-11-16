@@ -34,7 +34,7 @@ export function kitchenIn(decor) {
 }
 
 export function pantryText(s) {
-  const dishes = (s.pantry ?? []).filter((p) => p.kind === 'dish' && p.qty > 0).map((p) => `${p.name} x${p.qty} (a dish I cooked)`);
+  const dishes = (s.pantry ?? []).filter((p) => p.kind === 'dish' && p.qty > 0).map((p) => `${p.name} x${p.qty} (${p.from === 'bas' ? 'a gift from Bas, I did not make it' : 'a dish I cooked'})`);
   const stuff = (s.pantry ?? []).filter((p) => p.kind === 'ingredient' && p.qty > 0).map((p) => `${p.name} x${p.qty}`);
   const kitchen = kitchenIn(s.decor);
   return `${[...dishes, ...stuff].map((x) => `- ${x}`).join('\n') || '- nothing right now'}\n${kitchen ? `My kitchen: ${kitchen.name}. I can cook with it.` : 'I have no kitchen yet. I can build one myself with decorate and then cook.'}`;

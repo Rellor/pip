@@ -63,3 +63,10 @@ if (look.action !== 'search_web' || !/soup/.test(look.details.query)) fail(`look
 const dance = answerOf({ moves: [{ move: 'do', details: { what: 'do a silly little dance' } }] }, ['do']).steps[0];
 if (dance.action !== 'do') fail('a dance should stay a free step');
 console.log('ok  real moves written as "do" become those moves');
+
+// Planning written as a free "do" with steps is the plan; a project without steps says how to plan it.
+import { projectLines } from '../projects.js';
+const freePlan = answerOf({ moves: [{ move: 'do', details: { what: 'plan the steps of my project Paint a watercolor of the stormy sky', steps: ['mix grey paint', 'paint the clouds', 'add rain'] } }] }, ['do']);
+if (freePlan.projects_update[0]?.steps?.length !== 3) fail(`a free plan with steps was lost: ${JSON.stringify(freePlan.projects_update)}`);
+if (!/plan_project/.test(projectLines({ projects: [{ title: 'Paint', status: 'working', steps: [], versions: [], notes: [], needs: [] }] })[0])) fail('an unplanned project does not say how to plan it');
+console.log('ok  planning written as a free step is kept, and an unplanned project says how to plan it');

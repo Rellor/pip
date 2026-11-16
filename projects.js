@@ -52,7 +52,8 @@ export function projectLines(s, now = Date.now()) {
     const note = p.notes.at(-1)?.text ? `, to improve: ${p.notes.at(-1).text}` : '';
     const wait = untouchedDays(p, now) >= 1 ? ` (I have not touched it for ${Math.floor(untouchedDays(p, now))} day${untouchedDays(p, now) >= 2 ? 's' : ''})` : '';
     const needs = p.needs.length ? `, needs: ${p.needs.join(', ')}` : '';
-    return `"${p.title}"${v}${note}${needs}. Next: ${p.nextStep || p.next || '?'}${steps ? ` [${steps}]` : ''}${wait}`;
+    const next = (p.steps ?? []).length ? p.nextStep || p.next || (p.steps.find((x) => !x.done)?.text ?? '?') : 'no steps yet, so I plan it first with the plan_project move (and give the steps)';
+    return `"${p.title}"${v}${note}${needs}. Next: ${next}${steps ? ` [${steps}]` : ''}${wait}`;
   });
 }
 
