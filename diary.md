@@ -657,3 +657,8 @@ I finished the music box and I want to try something different like baking bread
 - do (look closely at my project Build a little wooden music box): I finished the first version of the music box.
 - mood: hungry
 
+## 16/11/2026, 09:40:09
+Time to switch to baking since I have been thinking about music for hours.
+- do (plan the steps of my project Bake a simple loaf of bread): Time to switch to baking since I have been thinking about music for hours.
+- mood: hungry
+
