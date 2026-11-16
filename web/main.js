@@ -2832,6 +2832,35 @@ function growMul(st) {
   const next = { seed: 0.3, sprout: 0.6, young: 1, grown: 1 }[st.stage];
   return st.stage === 'seed' ? 0.6 + 0.4 * p : (now + (next - now) * p) / now;
 }
+// Where a slot is on THIS planter: measured from the thing he built (its size in its own frame), so plants sit on the soil
+// of a low planter box as well as on the bench of a tall greenhouse. Before, every planter used the greenhouse spots
+// (0.56 m up, 0.9 m wide), so in a small planter box the plants floated in the air beside it.
+function slotIn(hg, slot) {
+  if (!hg.userData.slotFrame) {
+    const box = new THREE.Box3();
+    hg.updateMatrixWorld(true);
+    const inv = hg.matrixWorld.clone().invert();
+    const m = new THREE.Matrix4();
+    const inPlant = (o) => { for (let x = o; x && x !== hg; x = x.parent) if (x.userData.plant) return true; return false; };
+    hg.traverse((o) => {
+      if (!o.isMesh || inPlant(o) || !o.geometry) return;
+      o.geometry.computeBoundingBox();
+      box.union(o.geometry.boundingBox.clone().applyMatrix4(m.multiplyMatrices(inv, o.matrixWorld)));
+    });
+    if (box.isEmpty()) return slotSpot(slot);
+    const size = box.getSize(new THREE.Vector3());
+    const tall = size.y > 0.75; // a greenhouse: the bench inside; a planter: the soil just under the rim
+    const y = tall ? box.min.y + Math.min(0.56, size.y * 0.45) : box.max.y - Math.min(0.03, size.y * 0.15);
+    const alongX = size.x >= size.z;
+    hg.userData.slotFrame = { box, y, alongX };
+  }
+  const { box, y, alongX } = hg.userData.slotFrame;
+  const t = (slot + 0.5) / 4;
+  const lerp = (a, b, k) => a + (b - a) * (0.12 + 0.76 * k); // keep the plants inside the rim
+  const cx = (box.min.x + box.max.x) / 2;
+  const cz = (box.min.z + box.max.z) / 2;
+  return alongX ? [lerp(box.min.x, box.max.x, t), y, cz] : [cx, y, lerp(box.min.z, box.max.z, t)];
+}
 function refreshGarden() {
   const garden = lastState?.garden;
   const houses = (lastState?.decor || []).filter(isGreenhouse).filter((d) => Date.parse(d.at) <= Date.now());
@@ -2848,8 +2877,9 @@ function refreshGarden() {
     if (!v || v.key !== key) {
       if (v) v.group.parent?.remove(v.group);
       v = { group: buildPlant(st.sp, st), key, phase: Math.random() * 6, wilted: st.wilted, mul: growMul(st), mulTarget: growMul(st) };
-      const [x, y, z] = slotSpot(p.slot % 4);
+      const [x, y, z] = slotIn(hg, p.slot % 4);
       v.group.position.set(x, y, z);
+      v.group.userData.plant = true;
       v.born = performance.now();
       hg.add(v.group);
       plantViews.set(p.id, v);
