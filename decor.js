@@ -1184,7 +1184,7 @@ const baseKeyOf = (o) => o.base ?? ZONE_BASE[o.zone];
 
 // What he can put things on: the furniture, or a thing he made on the floor (a shelf, a closet, a table).
 // Things he makes for a purpose have to work for it. Something to put things on (a shelf, a table, a stand) needs a flat top things can stand on.
-const SUPPORT_WORDS = /\b(shelf|shelves|table|stand|rack|ledge|counter|platform|bench|desk|dresser|mantel|pedestal|display|nightstand|workbench)\b/i;
+const SUPPORT_WORDS = /\b(shelf|shelves|bookshelf|bookshelves|bookcase|shelving|cabinet|cupboard|cubby|cubbies|rack|table|stand|ledge|counter|platform|bench|desk|dresser|mantel|pedestal|display|nightstand|workbench|sideboard|hutch)\b/i;
 export const holdsThings = (o) => !o.image && !o.art && o.kind !== 'surface' && (SUPPORT_WORDS.test(o.name ?? '') || /\b(put|place|hold|display|keep|stand)\b[^.]{0,40}\bon (it|top)\b/i.test(o.why ?? ''));
 // The boards of something on the wall (a shelf): every flat part is a level things can stand on, from the lowest up.
 function wallLevels(o) {
@@ -1199,10 +1199,14 @@ function wallLevels(o) {
   return boards
     .map((p) => {
       const [dx, dz] = turn([p.pos[0] * sc, p.pos[2] * sc], o.rotY || 0);
-      return { ...rectAt([(p.size[0] / 2) * sc, (p.size[2] / 2) * sc], o.pos[0] + dx, o.pos[2] + dz, o.rotY || 0), y: r3(o.pos[1] + (p.pos[1] + p.size[1] / 2) * sc) };
+      return { ...rectAt([(p.size[0] / 2) * sc, (p.size[2] / 2) * sc], o.pos[0] + dx, o.pos[2] + dz, o.rotY || 0), y: r3(o.pos[1] + (p.pos[1] + p.size[1] / 2) * sc), thick: p.size[1] * sc };
     })
-    .sort((a, b) => a.y - b.y);
+    .sort((a, b) => a.y - b.y)
+    .filter((l, i, all) => i === 0 || l.y - all[i - 1].y > 0.08) // two boards at one height are one level
+    .map((l, i, all) => ({ ...l, clear: i < all.length - 1 ? r3(all[i + 1].y - all[i + 1].thick - l.y) : 0.6 })); // free height up to the board above
 }
+// Every board of a bookshelf, cabinet or rack on the floor is a level too (only the top counted before).
+const floorLevels = (o) => (o.kind === 'floor' && holdsThings(o) ? wallLevels(o).filter((l) => l.clear >= 0.08) : []);
 // null when a thing works for what it is meant for, otherwise what is missing.
 export function purposeProblem(o) {
   const b = behaviorProblem(o) ?? reachProblem(o, sizeOf);
@@ -1222,8 +1226,8 @@ function baseByKey(decor, key) {
   if (FURNITURE[key]) return surfaceOf(key) ? { key, ...surfaceOf(key) } : null;
   const [wid, lv] = String(key).split('#');
   if (lv !== undefined) {
-    const w = decor.find((x) => x.id === wid && x.kind === 'wall' && x.pos);
-    const L = w ? wallLevels(w)[Number(lv)] : null;
+    const w = decor.find((x) => x.id === wid && (x.kind === 'wall' || x.kind === 'floor') && x.pos);
+    const L = w ? (w.kind === 'floor' ? floorLevels(w) : wallLevels(w))[Number(lv)] : null;
     return L ? { key, n: `${w.name} (level ${Number(lv) + 1})`, ...L, rotY: w.rotY || 0, stand: w.stand, from: w.pos } : null;
   }
   const o = decor.find((x) => x.id === key && x.kind === 'floor' && x.pos);
@@ -1240,7 +1244,11 @@ export function supportsInfo(decor) {
   for (const o of decor) {
     if (o.image || o.art || !o.pos) continue;
     if (o.kind === 'wall' && !o.image) { const L = wallLevels(o); L.forEach((lv, i) => bases.push({ label: `${o.name}${L.length > 1 ? ` (level ${i + 1})` : ''}`, key: `${o.id}#${i}`, ...lv })); }
-    else if (o.kind === 'floor' && holdsThings(o) && !purposeProblem(o)) { const b = baseByKey(decor, o.id); if (b) bases.push({ label: o.name, ...b }); }
+    else if (o.kind === 'floor' && holdsThings(o) && !purposeProblem(o)) {
+      const FL = floorLevels(o);
+      if (FL.length > 1) FL.forEach((lv, i) => bases.push({ label: `${o.name} (level ${i + 1})`, ...baseByKey(decor, `${o.id}#${i}`) }));
+      else { const b = baseByKey(decor, o.id); if (b) bases.push({ label: o.name, ...b }); }
+    }
   }
   return bases.filter((b) => b.key && Number.isFinite(b.x0)).map((b) => {
     const on = decor.filter((o) => o.kind === 'surface' && o.pos && baseKeyOf(o) === b.key);
@@ -1264,6 +1272,16 @@ function findBase(decor, on, pick = {}) {
     return baseByKey(decor, `${sh.id}#${i}`);
   }
   const mine = decor.find((x) => x.kind === 'floor' && !x.image && x.pos && x.name.toLowerCase() === w) ?? decor.find((x) => x.kind === 'floor' && !x.image && x.pos && (x.name.toLowerCase().includes(w) || w.includes(x.name.toLowerCase())));
+  const FL = mine ? floorLevels(mine) : [];
+  if (FL.length > 1) {
+    const txt = String(pick.level ?? '').toLowerCase();
+    const h = num2(pick.height);
+    const asked = Number.isInteger(Number(txt)) && txt !== '' ? Math.min(FL.length, Math.max(1, Number(txt))) - 1 : /bottom|lower|low/.test(txt) ? 0 : /middle/.test(txt) ? Math.floor((FL.length - 1) / 2) : /top|upper|high/.test(txt) ? FL.length - 1 : h !== null ? FL.reduce((b, l, k) => (Math.abs(l.y - h) < Math.abs(FL[b].y - h) ? k : b), 0) : null;
+    if (asked !== null) return baseByKey(decor, `${mine.id}#${asked}`);
+    // the most comfortable height first (around his chest), then the boards above and below
+    const open = FL.map((l, i) => i).sort((a, b) => Math.abs(FL[a].y - 0.9) - Math.abs(FL[b].y - 0.9)).find((i) => { const b = baseByKey(decor, `${mine.id}#${i}`); return b && reachable(b) && surfaceOthers(decor, b.key, null).length < maxOn(b); });
+    return baseByKey(decor, `${mine.id}#${open ?? 0}`);
+  }
   if (mine) return baseByKey(decor, mine.id);
   const k = /desk|computer|table/.test(w) ? 'desk' : /piano/.test(w) ? 'piano' : /book/.test(w) ? 'bookshelf' : /bed/.test(w) ? 'bed' : null;
   return k ? baseByKey(decor, k) : null;
@@ -1279,7 +1297,9 @@ function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   if (!reachable(base)) return { failed: `the top of ${base.n} is ${r3(base.y)} m high, and I can only reach up to ${PIP.reachUp} m. I put it somewhere lower, or build a shelf or table within reach`, hinted: true };
   if (already >= maxOn(base)) return { failed: `${base.n} is full: ${already} things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there`, hinted: true };
   const sq = Math.max(0.15, Math.min(base.x1 - base.x0, base.z1 - base.z0) - 0.1);
-  const scale = fit(parts, 'surface', { w: sq, d: sq });
+  let scale = fit(parts, 'surface', { w: sq, d: sq });
+  const tall = Math.max(0.01, ...parts.map((p) => (p.pos?.[1] ?? 0) + ((p.shape === 'sphere' ? p.size[0] * 2 : p.size[1]) ?? 0) / 2));
+  if (base.clear && tall * scale > base.clear - 0.02) scale = Math.max(0.2, (base.clear - 0.02) / tall); // it has to fit under the board above
   const [hw, hd] = halfFoot(parts, scale);
   const others = surfaceOthers(decor, base.key, null);
   const fitsAt = (x, z) => {

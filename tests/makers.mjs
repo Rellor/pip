@@ -100,3 +100,18 @@ ok('a too-full desk feels messy, and moving a thing onto his shelf is offered', 
   assert.ok(mv.slice(0, 4).some((m) => m.name === 'move_thing'), mv.map((m) => m.name).join());
   assert.match(mv.find((m) => m.name === 'move_thing').line, /too full.*small wooden shelf/);
 });
+
+ok('a bookshelf he builds works: every board within reach holds things, things fit under the board above', async () => {
+  const { makeDecor, supportsInfo } = await import('../decor.js');
+  const board = (y) => ({ shape: 'box', size: [0.8, 0.03, 0.3], pos: [0, y, 0], rot: [0, 0, 0], color: '#8b5a2b' });
+  const side = (x) => ({ shape: 'box', size: [0.03, 1.8, 0.3], pos: [x, 0.9, 0], rot: [0, 0, 0], color: '#6b4423' });
+  const decor = [];
+  const bs = makeDecor(decor, { name: 'tall bookshelf', why: 'for my things', parts: [board(0.05), board(0.45), board(0.85), board(1.25), board(1.79), side(-0.4), side(0.4)], x: 2, z: -3 }, Date.now());
+  decor.push(bs.entry);
+  const levels = supportsInfo(decor).filter((b) => /tall bookshelf/.test(b.label));
+  assert.equal(levels.length, 5);
+  assert.equal(levels.filter((b) => !b.high).length, 4, 'the 1.8 m top is out of reach');
+  const vase = makeDecor(decor, { name: 'tall vase', parts: [{ shape: 'box', size: [0.12, 0.6, 0.12], pos: [0, 0.3, 0], rot: [0, 0, 0], color: '#ccc' }], on: 'tall bookshelf' }, Date.now());
+  assert.ok(vase.entry && vase.entry.pos[1] > 0.5 && vase.entry.pos[1] < 1.3, JSON.stringify(vase.entry?.pos ?? vase.failed));
+  assert.ok(0.6 * vase.entry.scale <= 0.4, 'it fits under the board above');
+});
