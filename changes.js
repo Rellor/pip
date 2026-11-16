@@ -75,6 +75,22 @@ const CHANGES = [
       return 'Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.';
     },
   },
+  {
+    id: '2026-11-16 flour, bread and apples from Bas',
+    run(s, at) { // Bas answers his ask for flour (for his bread project) and brings food, because he is very hungry.
+      s.pantry ??= [];
+      const add = (name, qty) => {
+        const have = s.pantry.find((p) => p.kind === 'ingredient' && p.name === name);
+        if (have) have.qty += qty;
+        else s.pantry.push({ name, kind: 'ingredient', qty });
+      };
+      add('flour', 3);
+      add('apples', 3);
+      s.pantry.push({ name: 'bread', kind: 'dish', qty: 1, ingredients: ['bread'], madeAt: at, from: 'bas' });
+      for (const a of (s.asks ?? []).filter((x) => x.status === 'open' && /flour/i.test(x.item))) Object.assign(a, { status: 'done', doneAt: at, given: ['flour'] });
+      return 'Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.';
+    },
+  },
 ];
 
 // What was removed is also forgotten: the studio, the piano, the instruments, the old clothes and what he let go in the tidy.
