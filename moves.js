@@ -9,6 +9,7 @@
 import { dayLimits } from './limits.js';
 import { missingTool, NEEDS } from './tools.js';
 import { kitchenIn } from './food.js';
+import { supportsInfo } from './decor.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
 import { kindOf } from './body.js';
@@ -41,6 +42,13 @@ const needsKitchen = (s) => !kitchenIn(s.decor) && (food(s).some((p) => p.kind =
 // Projects whose next step he can do now (a step that needs a tool he lacks waits for the tool).
 const workable = (s) => working(s).filter((p) => { const st = workStep(s, p.title); return st && !missingTool(s, st.action) && findProjectTitle(st) === p.title; });
 const findProjectTitle = (st) => st.forStep?.project;
+// A surface with too much on it, and a place of his with room: what to move where (or null).
+const tidyUp = (s) => {
+  const info = supportsInfo(s.decor ?? []);
+  const full = info.find((b) => !b.high && b.on.length > (b.label === 'desk' ? 3 : 4));
+  const free = info.find((b) => !b.full && !b.high && b.room > 0 && !/^(desk|piano)$/.test(b.label));
+  return full && free ? { full: full.label, thing: full.on[full.on.length - 1], to: free.label.replace(/ \(level \d+\)$/, '') } : null;
+};
 const unplanned = (s) => working(s).filter((p) => !(p.steps ?? []).length); // a project with no steps has no next step, so he goes round in circles
 const unplacedGifts = (s) => (s.pictures ?? []).filter((p) => p.by !== 'pip' && !(s.decor ?? []).some((d) => d.picture === p.id));
 const daysSince = (iso, now) => (iso ? (now - Date.parse(iso)) / DAY : Infinity);
@@ -108,7 +116,7 @@ export const MOVES = [
   { name: 'use', line: (s) => `use one of my things (${usable(s).slice(0, 3).map((d) => `"${d.name}": ${(d.uses ?? []).map((u) => u.label).slice(0, 2).join(' / ')}`).join('; ')}): {name, label}`, when: (s) => usable(s).length > 0, score: () => 0.8 },
   { name: 'take_photo', line: () => 'take a photo of something that matters to me: {target: window, room, myself or one of my things, why, camera: close, wide, low or high, caption}', when: (s, n) => left(s, 'take_photo', n) > 0, score: () => 0.5 },
   { name: 'place_picture', line: (s) => `hang a picture I was given (${names(unplacedGifts(s).map((p) => p.id))}): {id, wall}`, when: (s) => unplacedGifts(s).length > 0, score: () => 1.5 },
-  { name: 'move_thing', line: (s) => `move something in my room (${names(own(s).map((d) => d.name))}): {name, next_to}`, when: (s, n) => own(s).length > 0 && left(s, 'move_thing', n) > 0, score: (s) => 0.3 + (s.tasks ?? []).filter((t) => t.status === 'accepted').length },
+  { name: 'move_thing', line: (s) => { const t = tidyUp(s); return `move something in my room (${names(own(s).map((d) => d.name))})${t ? ` (my ${t.full} is too full: I can put ${t.thing} on my ${t.to})` : ''}: {name, next_to, or on: "the thing to put it on"}`; }, when: (s, n) => own(s).length > 0 && left(s, 'move_thing', n) > 0, score: (s) => 0.3 + (s.tasks ?? []).filter((t) => t.status === 'accepted').length + (tidyUp(s) ? 2.5 : 0) },
   { name: 'remove_decoration', line: (s) => `put something away in my chest (${names(own(s).map((d) => d.name))}): {name}`, when: (s) => own(s).length > 0, score: (s) => (10 - s.body.tidiness) / 3 },
   { name: 'take_out', line: (s) => `take something out of my chest (${names((s.stored ?? []).map((d) => d.name))}): {name}`, when: (s) => (s.stored ?? []).length > 0, score: () => 0.3 },
   { name: 'take_tool', line: () => 'pick up a tool or instrument so I can use it: {name}', when: (s) => /take_tool|inventory/.test(lastFail(s)?.why ?? ''), score: () => 3 },

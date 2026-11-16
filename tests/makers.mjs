@@ -88,3 +88,15 @@ ok('surfaces have a limit and must be within reach; shelves for things hang with
   const shelf = makeDecor(decor, { name: 'wooden shelf', why: 'to put my cups on', parts: [{ shape: 'box', size: [0.6, 0.04, 0.2], pos: [0, 0, 0], color: '#a0522d' }], wall: 'left', along: -1, height: 2.8 }, Date.now());
   assert.ok(shelf.entry && shelf.entry.pos[1] <= 1.4, JSON.stringify(shelf.entry?.pos ?? shelf.failed));
 });
+
+ok('a too-full desk feels messy, and moving a thing onto his shelf is offered', async () => {
+  const { availableMoves } = await import('../moves.js');
+  const { clutter } = await import('../body.js');
+  const thing = (name, i) => ({ id: `t${i}`, name, kind: 'surface', base: 'desk', pos: [-4.3, 0.85, 0.4 + i * 0.3], parts: [{ shape: 'box', size: [0.1, 0.1, 0.1], pos: [0, 0.05, 0], rot: [0, 0, 0], color: '#fff' }] });
+  const shelf = { id: 'sh', name: 'small wooden shelf', kind: 'wall', side: 'left', pos: [-4.97, 1.1, -3], rotY: Math.PI / 2, why: 'to put things on', parts: [{ shape: 'box', size: [0.6, 0.04, 0.2], pos: [0, 0, 0], rot: [0, 0, 0], color: '#a0522d' }] };
+  const s = { found: [], art: [], apps: [], wardrobe: [], moves: [], studio: { songs: [] }, log: [], stored: [], pictures: [], body: { creativity: 3, curiosity: 3, boredom: 3, loneliness: 3, tidiness: 5, coziness: 5 }, calm: 5, energy: 6, joy: 5, wonder: 5, fullness: 6, tools: [], projects: [], recent: { moves: [] }, today: { done: {} }, furniture: {}, decor: [...['a', 'b', 'c', 'd'].map(thing), shelf] };
+  assert.ok(clutter(s) >= 1.5);
+  const mv = availableMoves(s, { random: () => 0.5 });
+  assert.ok(mv.slice(0, 4).some((m) => m.name === 'move_thing'), mv.map((m) => m.name).join());
+  assert.match(mv.find((m) => m.name === 'move_thing').line, /too full.*small wooden shelf/);
+});
