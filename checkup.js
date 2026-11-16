@@ -3,6 +3,14 @@
 // Each problem has: text (what is wrong, plain words), look (where the cause usually is) and debug (the raw facts, to paste
 // to whoever fixes it).
 const HOUR = 3_600_000;
+export const PUSH = ['failing', 'project', 'models', 'needs'];
+export const PUSH_GAP_H = 3; // at most one check-up message every 3 hours (new problems wait and come together)
+// After a message went out: these problems count as sent today.
+export function markSent(saved, items, now = Date.now()) {
+  const day = new Date(now).toISOString().slice(0, 10);
+  for (const x of items) saved.sent[x.id] = day;
+  saved.pushedAt = new Date(now).toISOString();
+}
 const DAY = 24 * HOUR;
 const MOVE_WORDS = { record_song: 'recording a song', change_thing: 'changing something he made', move_thing: 'moving something', decorate: 'making something', draw: 'drawing', make_app: 'making a program', make_clothes: 'sewing', plant: 'planting', cook: 'cooking', eat: 'eating', search_web: 'looking things up', read_book: 'reading', extend_thing: 'adding to something he made', place_picture: 'hanging a picture', use: 'using something' };
 // Words that show up in any thought, so they do not count as "the same topic".
@@ -89,10 +97,10 @@ export function checkup(s, health = {}, now = Date.now()) {
   }
   const failures = Object.values(groups).sort((a, b) => b.count - a.count || b.last.localeCompare(a.last)).slice(0, 8);
 
-  // What to send: problems not sent yet today. A problem that goes away and comes back the same day stays quiet.
+  // What to send to the phone: only problems Bas can or should act on (a bug, a stuck project, the models, his needs),
+  // each at most once a day. Going in circles and pretending are only shown in Settings: Pip works those out himself.
   const day = new Date(now).toISOString().slice(0, 10);
   const sent = Object.fromEntries(Object.entries(health.checkup?.sent ?? {}).filter(([, d]) => d === day));
-  const fresh = out.filter((x) => !x.ok && !sent[x.id]);
-  for (const x of fresh) sent[x.id] = day;
-  return { items: out, fresh, failures, saved: { at: new Date(now).toISOString(), items: out, failures, sent } };
+  const fresh = out.filter((x) => !x.ok && PUSH.includes(x.id) && !sent[x.id]);
+  return { items: out, fresh, failures, saved: { at: new Date(now).toISOString(), items: out, failures, sent, pushedAt: health.checkup?.pushedAt ?? null } };
 }

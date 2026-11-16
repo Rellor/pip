@@ -1,11 +1,10 @@
 // Warnings to Bas's phone: the ntfy topic with "-checkup" at the end (no new secret needed), so they do not mix with
-// Pip's own messages (Pip only reads the main topic). Until BOTH_UNTIL they also go to the old topic.
-const BOTH_UNTIL = Date.parse('2026-11-17T00:00:00Z');
+// Pip's own messages (Pip only reads the main topic).
 
 export async function warn(title, body, { tags = 'warning' } = {}) {
   const topic = process.env.NTFY_TOPIC;
   if (!topic) return;
-  for (const t of [`${topic}-checkup`, ...(Date.now() < BOTH_UNTIL ? [topic] : [])]) {
+  for (const t of [`${topic}-checkup`]) {
     try {
       await fetch(`https://ntfy.sh/${encodeURIComponent(t)}`, {
         method: 'POST',
