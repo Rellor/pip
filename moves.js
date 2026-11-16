@@ -36,6 +36,8 @@ const seeds = (s) => (s.garden?.seeds ?? []).filter((x) => x.qty > 0);
 const greenhouse = (s) => own(s).some(isGreenhouse); // a greenhouse or a planter
 const food = (s) => (s.pantry ?? []).filter((p) => p.qty > 0);
 const working = (s) => (s.projects ?? []).filter((p) => p.status === 'working');
+// He has ingredients or a food project, but nothing to cook on: building a stove is the way forward.
+const needsKitchen = (s) => !kitchenIn(s.decor) && (food(s).some((p) => p.kind === 'ingredient') || working(s).some((p) => /bread|bake|cook|soup|kitchen|food|meal/i.test(p.title)));
 const unplanned = (s) => working(s).filter((p) => !(p.steps ?? []).length); // a project with no steps has no next step, so he goes round in circles
 const unplacedGifts = (s) => (s.pictures ?? []).filter((p) => p.by !== 'pip' && !(s.decor ?? []).some((d) => d.picture === p.id));
 const daysSince = (iso, now) => (iso ? (now - Date.parse(iso)) / DAY : Infinity);
@@ -63,7 +65,7 @@ export function askReason(s, now = Date.now()) {
 
 export const MOVES = [
   // --- making (a maker fills in the design) ---
-  { name: 'decorate', maker: true, line: (s) => `make a sculpture, a piece of furniture or a thing for my room from simple shapes: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s) => 1 + s.body.creativity / 3 },
+  { name: 'decorate', maker: true, line: (s) => `make a sculpture, a piece of furniture or a thing for my room from simple shapes${needsKitchen(s) ? ' (I have no kitchen yet: a small stove or oven would let me cook)' : ''}: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s) => 1 + s.body.creativity / 3 + (needsKitchen(s) ? 1.5 : 0) },
   { name: 'draw', maker: true, line: (s) => `draw a picture: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'draw', n), score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'record_song', maker: true, line: (s) => `write and record a song (with ${instruments(s).join(', ')}${instruments(s).length ? ' and drums' : ''}): {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'record_song', n) && instruments(s).length > 0, score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'make_app', maker: true, line: (s) => `write a little program on my computer: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'make_app', n), score: (s) => 0.4 + s.body.creativity / 6 },

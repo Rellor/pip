@@ -53,3 +53,13 @@ if (!proudOf('yes', '')) fail('yes was not proud');
 if (proudOf('no', 'The lid is still crooked.')) fail('no became proud');
 if (proudOf('', 'It is not good enough yet.')) fail('"not good enough yet" became proud');
 console.log('ok  "good enough" counts as proud, "not yet" does not');
+
+// Real moves written as "do": baking becomes cooking (with flour), looking up becomes a search.
+import { toAnswer as answerOf } from '../brain.js';
+const bake = answerOf({ moves: [{ move: 'do', details: { what: 'Mix flour, water, and a pinch of salt in my small bowl' } }] }, ['do']).steps[0];
+if (bake.action !== 'cook' || !bake.details.ingredients.includes('flour')) fail(`mixing flour did not become cooking: ${JSON.stringify(bake)}`);
+const look = answerOf({ moves: [{ move: 'do', details: { what: 'Look up a simple recipe for a vegetable soup' } }] }, ['do']).steps[0];
+if (look.action !== 'search_web' || !/soup/.test(look.details.query)) fail(`looking up did not become a search: ${JSON.stringify(look)}`);
+const dance = answerOf({ moves: [{ move: 'do', details: { what: 'do a silly little dance' } }] }, ['do']).steps[0];
+if (dance.action !== 'do') fail('a dance should stay a free step');
+console.log('ok  real moves written as "do" become those moves');

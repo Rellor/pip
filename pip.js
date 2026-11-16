@@ -17,7 +17,7 @@ import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject } from './projects.js';
-import { checkup, markSent, PUSH_GAP_H } from './checkup.js';
+import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
@@ -502,6 +502,8 @@ Things need room to be used. I stand somewhere to use each thing (the spot where
 `;
 
 // What the brain gets to see (brain.js turns it into a short prompt). Only what matters now.
+// Which project steps a real move can tick: the step's verb fits the move (and they share a word).
+const STEP_VERBS = { cook: /\b(mix|knead|bake|cook|stir|boil|fry|dough|loaf)\b/i, search_web: /\b(look up|find out|learn|research|read|study)\b/i, read_book: /\b(read|learn|study)\b/i, plant: /\b(plant|sow)\b/i, water: /\bwater\b/i, harvest: /\b(harvest|pick)\b/i, decorate: /\b(build|make|carve|shape|craft|put together)\b/i, change_thing: /\b(fix|improve|change|smooth|paint|polish|adjust)\b/i, extend_thing: /\b(add|attach|extend)\b/i, record_song: /\b(record|compose|write|sing)\b.*\b(song|melody|tune)\b/i, play_piano: /\b(hum|play|practi[cs]e|try out)\b/i, take_photo: /\b(photo|picture)\b/i, draw: /\b(draw|paint|sketch)\b/i, make_app: /\b(program|app|code)\b/i };
 const findProjectAny = (s, title) => (s.projects ?? []).find((p) => p.title === title) ?? null;
 function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
   const when = new Date().toLocaleString('en-GB', { timeZone: TZ, weekday: 'long', hour: '2-digit', minute: '2-digit' });
@@ -1879,6 +1881,19 @@ async function wakeUp() {
     console.log(`   🧩 ${v.project}: v${v.v}`);
     const step = !ticked && findProject(state, v.project)?.steps?.find((x) => !x.done);
     if (step) { step.done = true; ticked = true; console.log(`   ✓ step done: ${step.text}`); }
+  }
+  // Real work that matches a project's next step ticks it (cooking "mix flour" for "mix flour, water and salt",
+  // looking up "how to knead dough" for "learn how to knead"). Pretend "do" steps and walking never count.
+  if (!ticked) for (const st of steps) {
+    if (ticked || ['do', 'walk_to', 'rest', 'tell', 'eat'].includes(st.action) || !st.made || st.made.failed) continue;
+    const did = new Set(words(`${st.action.replace(/_/g, ' ')} ${['what', 'name', 'dish', 'query', 'topic', 'seed', 'plant', 'change', 'add'].map((k) => st.details?.[k] ?? '').join(' ')} ${(st.details?.ingredients ?? []).join(' ')}`));
+    for (const p of state.projects.filter((x) => x.status === 'working')) {
+      const next = (p.steps ?? []).find((x) => !x.done);
+      const want = next ? words(next.text) : [];
+      const shared = want.filter((w) => did.has(w) || did.has(w.replace(/s$/, '')) || did.has(`${w}s`));
+      const fits = STEP_VERBS[st.action]?.test(next?.text ?? '');
+      if (next && (shared.length >= Math.min(2, want.length) || (fits && shared.length >= 1) || (fits && st.action === 'record_song'))) { next.done = true; p.updatedAt = new Date().toISOString(); ticked = true; console.log(`   ✓ step done (${st.action}): ${next.text}`); break; }
+    }
   }
   // Growing: a failed move becomes a lesson, a move that works counts as learned, and a thing that worked goes in the recipe book.
   for (const e of state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)) {
