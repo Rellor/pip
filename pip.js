@@ -16,8 +16,9 @@ import { giveForAsk } from './gifts.js';
 import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
-import { ensureProjects, projectLines, addVersion, judgeProject, findProject } from './projects.js';
+import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
+import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, noteResearch, notesFor } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
@@ -25,7 +26,7 @@ import { ensureIntentions, markIntentions } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
 import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep } from './night.js';
 import { availableMoves, instruments } from './moves.js';
-import { brainPrompt, brainSchema, toAnswer, fakeReply } from './brain.js';
+import { brainPrompt, brainSchema, toAnswer, fakeReply, cookDetails } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
 import { makerPrompt, applyMade, fakeMade, finishSong } from './maker.js';
 import { describePattern } from './music.js';
@@ -504,6 +505,18 @@ Things need room to be used. I stand somewhere to use each thing (the spot where
 // What the brain gets to see (brain.js turns it into a short prompt). Only what matters now.
 // Which project steps a real move can tick: the step's verb fits the move (and they share a word).
 const STEP_VERBS = { cook: /\b(mix|knead|bake|cook|stir|boil|fry|dough|loaf)\b/i, search_web: /\b(look up|find out|learn|research|read|study)\b/i, read_book: /\b(read|learn|study)\b/i, plant: /\b(plant|sow)\b/i, water: /\bwater\b/i, harvest: /\b(harvest|pick)\b/i, decorate: /\b(build|make|carve|shape|craft|put together)\b/i, change_thing: /\b(fix|improve|change|smooth|paint|polish|adjust)\b/i, extend_thing: /\b(add|attach|extend)\b/i, record_song: /\b(record|compose|write|sing)\b.*\b(song|melody|tune)\b/i, play_piano: /\b(hum|play|practi[cs]e|try out)\b/i, take_photo: /\b(photo|picture)\b/i, draw: /\b(draw|paint|sketch)\b/i, make_app: /\b(program|app|code)\b/i };
+// "work on my project": the game turns it into the real move for the project's next step (once per wake-up).
+function projectSteps(s, steps) {
+  let done = false;
+  return steps.flatMap((st) => {
+    if (st.action !== 'work_on_project') return [st];
+    if (done) return [];
+    done = true;
+    const lastTune = [...(s.studio?.songs ?? [])].reverse().find((x) => x.tracks?.[0]?.notes)?.tracks[0].notes;
+    const real = workStep(s, st.details?.title, { cookDetails, seeds: (s.garden?.seeds ?? []).filter((x) => x.qty > 0).map((x) => x.name), tune: lastTune });
+    return real ? [{ ...real, thought: st.thought || real.thought }] : [];
+  });
+}
 const findProjectAny = (s, title) => (s.projects ?? []).find((p) => p.title === title) ?? null;
 function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
   const when = new Date().toLocaleString('en-GB', { timeZone: TZ, weekday: 'long', hour: '2-digit', minute: '2-digit' });
@@ -581,7 +594,7 @@ async function makeIt(s, soul, system, st) {
     const current = old ? describePattern(old.pattern) : null;
     const lessons = lessonsFor(s, st.action);
     const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
-    const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`);
+    const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`, st.details?.project);
     const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
     if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl), allowed: [...instruments(s), 'drums'] });
     return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
@@ -691,17 +704,17 @@ async function readArticle(title) {
   return { title: page.title, url: pageUrl(page.title), text: clip(page.extract, 2400) };
 }
 async function lookUp(query) {
-  const found = await wikiGet(`action=query&list=search&srlimit=3&srsearch=${encodeURIComponent(query)}`);
-  const hits = found.query?.search ?? [];
+  const found = await wikiGet(`action=query&list=search&srlimit=8&srsearch=${encodeURIComponent(query)}`);
+  const hits = bestHits(query, found.query?.search ?? []); // the best fit first, not just Wikipedia's first
   if (!hits.length) return null;
   return {
-    results: hits.map((h) => ({ title: h.title, snippet: clip(plain(h.snippet), 160), url: pageUrl(h.title) })),
+    results: hits.slice(0, 3).map((h) => ({ title: h.title, snippet: clip(plain(h.snippet), 160), url: pageUrl(h.title) })),
     opened: await readArticle(hits[0].title),
   };
 }
 async function readAbout(topic) {
-  const found = await wikiGet(`action=query&list=search&srlimit=1&srsearch=${encodeURIComponent(topic)}`);
-  const hit = found.query?.search?.[0];
+  const found = await wikiGet(`action=query&list=search&srlimit=6&srsearch=${encodeURIComponent(topic)}`);
+  const hit = bestHits(topic, found.query?.search ?? [])[0];
   return hit ? readArticle(hit.title) : null;
 }
 
@@ -1184,6 +1197,7 @@ async function wakeUp() {
       if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, prompt);
       const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
+      answer.steps = projectSteps(state, answer.steps);
       via = 'brain';
     } catch (e) {
       // No answer (out of quota, a broken or cut-off answer, a network error): he carries on without the model this time,
@@ -1797,7 +1811,7 @@ async function wakeUp() {
     if (st.sameTune) entry.sameTune = st.sameTune;
     if (st.action === 'search_web') Object.assign(entry, { query: text(d.query, 160), results: st.search?.results ?? [], opened: page(st.search?.opened) });
     if (st.action === 'read_book') Object.assign(entry, { topic: text(d.topic, 160), opened: page(st.read) });
-    if (['search_web', 'read_book'].includes(st.action) && entry.opened) noteResearch(state, { query: entry.query ?? entry.topic, page: entry.opened, at: entry.at }); // his notebook
+    if (['search_web', 'read_book'].includes(st.action) && entry.opened) noteResearch(state, { query: entry.query ?? entry.topic, page: entry.opened, at: entry.at, project: st.details?.project ?? st.forStep?.project }); // his notebook
     if (st.action === 'play_piano') Object.assign(entry, { notes: text(d.notes, 200), style: text(d.style, 80), instrument: [...TIMBRES, 'voice'].includes(String(d.instrument ?? '').toLowerCase()) ? String(d.instrument).toLowerCase() : undefined });
     if (st.action === 'write_diary') entry.text = text(d.text, 800);
     if (st.action === 'walk_to') entry.object = text(d.object, 60);
@@ -1883,6 +1897,18 @@ async function wakeUp() {
     console.log(`   🧩 ${v.project}: v${v.v}`);
     const step = !ticked && findProject(state, v.project)?.steps?.find((x) => !x.done);
     if (step) { step.done = true; ticked = true; console.log(`   ✓ step done: ${step.text}`); }
+  }
+  // A step the game did for a project (work_on_project) is ticked off when it really worked (waiting always works).
+  for (const st of steps) {
+    if (!st.forStep) continue;
+    const worked = st.waits ? true // waiting is time passing
+      : ['search_web', 'read_book'].includes(st.action) ? Boolean(st.search?.opened ?? st.read) // he found something to read
+      : st.action === 'play_piano' ? !st.made?.failed
+      : Boolean(st.made) && !st.made.failed;
+    if (!worked) continue;
+    const p = findProject(state, st.forStep.project);
+    const step = p?.steps?.find((x) => !x.done && x.text === st.forStep.text);
+    if (step) { step.done = true; p.updatedAt = new Date().toISOString(); ticked = true; console.log(`   ✓ ${p.title}: ${step.text}`); }
   }
   // Real work that matches a project's next step ticks it (cooking "mix flour" for "mix flour, water and salt",
   // looking up "how to knead dough" for "learn how to knead"). Pretend "do" steps and walking never count.

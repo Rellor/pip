@@ -3770,6 +3770,14 @@ function renderMind(s) {
       if (p.why) body.append(`\n${p.why}`);
       li.append(m, body);
       const steps = p.steps || [];
+      const extra = () => { // what he made for it, and what he found out for it
+        const made = (p.versions || []).map((v) => `v${v.v} ${v.name || ''}`.trim());
+        if (made.length) { const d = el('div', null, 'pmade'); d.append(el('b', 'What he made for it'), el('span', made.join(' · '))); li.append(d); }
+        const found = (lastState?.notebook || []).filter((n) => n.project === p.title);
+        if (found.length) { const d = el('div', null, 'pfound'); d.append(el('b', 'What he found out')); for (const n of found.slice(-3)) d.append(el('p', `🔎 ${n.title}: ${n.text.slice(0, 160)}…`)); li.append(d); }
+        const note = (p.notes || []).at(-1)?.text;
+        if (note && p.status === 'working') li.append(el('p', `To make it better: ${note}`, 'muted'));
+      };
       if (steps.length) {
         const doneN = steps.filter((x) => x.done).length;
         const prog = el('div', null, 'pprog');
@@ -3783,7 +3791,8 @@ function renderMind(s) {
         const current = steps.findIndex((x) => !x.done);
         steps.forEach((x, i) => list.append(el('li', `${x.done ? '✓' : i === current && p.status === 'working' ? '➜' : '○'} ${x.text}`, x.done ? 'done' : '')));
         li.append(prog, list);
-      } else if (p.next && p.status === 'working') li.append(el('p', `Next: ${p.next}`, 'next'));
+      } else if (p.status === 'working') li.append(el('p', 'No steps yet: he plans them first.', 'next'));
+      extra();
       return li;
     })
     : empty('None yet. When Pip learns something that excites him, he can turn it into a project.'));
@@ -3826,7 +3835,7 @@ function renderMind(s) {
   const interests = s.interests || [];
   fill($('interests'), interests.length ? interests.map((i) => el('span', i, 'chip')) : [el('span', 'none yet', 'muted')]);
   // Parts of his mind with nothing in them yet are left out, so the page stays short.
-  const has = { reflections: (s.reflections || []).length, wants: wants.length, questions: qs.length, fulfilled: done.length, interests: interests.length, projects: projects.length, thoughts: thoughts.length };
+  const has = { reflections: (s.reflections || []).length, wants: wants.length, questions: qs.length, fulfilled: done.length, interests: interests.length, thoughts: thoughts.length };
   for (const [id, n] of Object.entries(has)) $(id).closest('.msec').hidden = !n;
 }
 
@@ -4227,7 +4236,8 @@ function renderTiles() {
   for (const sec of document.querySelectorAll('.lifesec')) {
     const ids = (sec.dataset.count || '').split(',').filter(Boolean);
     const real = (root) => [...root.querySelectorAll('li:not(.muted), .pic')];
-    const items = ids.length ? ids.flatMap((id) => real($(id))) : real(sec);
+    const top = (root) => [...root.querySelectorAll(':scope > li:not(.muted)')]; // a list's own items, not the steps inside them
+    const items = ids.length ? ids.flatMap((id) => top($(id)).length || !$(id).querySelector('li') ? top($(id)) : real($(id))) : real(sec);
     const imgs = [...sec.querySelectorAll('.pic img')].slice(0, 4);
     const text = items.map((x) => (sec.dataset.sec === 'mind' && x.querySelector('p') ? x.querySelector('p').textContent : [...x.children].length > 1 ? [...x.children].map((c) => c.textContent.trim()).filter(Boolean).join(' · ') : x.textContent).replace(/\s+/g, ' ').trim()).filter(Boolean);
     if (!items.length && sec.dataset.sec !== 'story') { emptyNames.push(sec.dataset.title); continue; }
