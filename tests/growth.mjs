@@ -75,3 +75,16 @@ ok('light: in the evening he notices dark places and that a lamp would help; at 
   assert.equal(darkLines(s, noon).length, 0);
   assert.match(darkLines(s, evening)[0] ?? '', /dark.*lamp/);
 });
+
+ok('notebook: what he looked up reaches the maker; in the dark he thinks of looking up lamps first', async () => {
+  const { noteResearch, notesFor, darkLines } = await import('../growth.js');
+  const s = { decor: [], furniture: {}, weather: { kind: 'clear' } };
+  const evening = Date.parse('2026-11-16T19:00:00Z');
+  assert.match(darkLines(s, evening)[0], /look up how a standing lamp/);
+  noteResearch(s, { query: 'how is a floor lamp made', page: { title: 'Floor lamp', text: 'A floor lamp has a heavy base, a tall pole and a shade.' } });
+  noteResearch(s, { query: 'pinch pots', page: { title: 'Pinch pot', text: 'A pinch pot is made by pinching clay.' } });
+  assert.match(notesFor(s, 'a tall standing lamp for reading')[0], /heavy base/);
+  assert.equal(notesFor(s, 'a tall standing lamp').length, 1);
+  assert.doesNotMatch(darkLines(s, evening)[0], /look up/, 'once he looked it up, he is not told again');
+  assert.match(makerPrompt({ soul: 'I am Pip.', step: { action: 'decorate', details: { what: 'a lamp' } }, rules: '', notes: notesFor(s, 'lamp') }), /WHAT I LOOKED UP/);
+});
