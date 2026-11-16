@@ -1146,3 +1146,8 @@ I am clearing space on my desk by moving the reading light to the shelf, and the
 - change_thing (amber reading light): clearing space on my crowded desk
 - mood: focused
 
+## 16/11/2026, 21:12:00
+letting the bread dough rise by the window
+- do (Let the dough rise by the window (for my project Bake a simple loaf of bread)): letting the bread dough rise by the window
+- mood: focused
+
