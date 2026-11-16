@@ -1140,3 +1140,9 @@ I wanted to tidy my desk by moving the amber reading light to the small wooden s
 - do (stretch up tall and look out of the window for a moment): That did not work out. I shake it off and stretch up tall and look out of the window for a moment.
 - mood: focused
 
+## 16/11/2026, 21:03:55
+I am clearing space on my desk by moving the reading light to the shelf, and then continuing my bread project by letting the dough rise.
+> I am clearing space on my desk by moving the reading light to the shelf, and then continuing my bread project by letting the dough rise.
+- change_thing (amber reading light): clearing space on my crowded desk
+- mood: focused
+
