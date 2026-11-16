@@ -91,6 +91,13 @@ const CHANGES = [
       return 'Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.';
     },
   },
+  {
+    id: '2026-11-16 music box steps back to none',
+    run(s) { // a bug moved the bread plan onto the finished music box; the bread project keeps its own steps
+      for (const p of (s.projects ?? []).filter((x) => x.status === 'done' && /music box/i.test(x.title))) if ((p.steps ?? []).some((x) => /flour|dough|loaf/i.test(x.text))) p.steps = [];
+      return null;
+    },
+  },
 ];
 
 // What was removed is also forgotten: the studio, the piano, the instruments, the old clothes and what he let go in the tidy.

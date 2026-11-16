@@ -105,6 +105,11 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       steps.push({ action: 'do', as: 'dream', details: { what: `dream about ${clip(d.what, 100)}` }, thought, enjoyment: 7 });
       continue;
     }
+    if (name === 'do' && Array.isArray(d.steps) && d.steps.length && /\bplan\b/i.test(String(d.what ?? ''))) { // planning written as a free step, with the steps: it is the plan
+      const st = d.steps.map((x) => clip(x, 120)).filter(Boolean).slice(0, 6);
+      const title = clip(d.title ?? d.project ?? String(d.what).replace(/^.*\bproject\s*/i, ''), 80);
+      if (title && st.length) { answer.projects_update.push({ title, steps: st, next: st[0], plan: true }); steps.push({ action: 'do', as: 'plan_project', details: { what: `plan the steps of my project ${title.slice(0, 60)}` }, thought, enjoyment: 6 }); continue; }
+    }
     if (name === 'plan_project') {
       const st = (Array.isArray(d.steps) ? d.steps : []).map((x) => clip(x, 120)).filter(Boolean).slice(0, 6);
       if (clip(d.title ?? d.project, 80) && st.length) answer.projects_update.push({ title: clip(d.title ?? d.project, 80), steps: st, next: st[0], plan: true });

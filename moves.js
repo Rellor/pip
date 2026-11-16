@@ -88,7 +88,7 @@ export const MOVES = [
   // --- body ---
   { name: 'rest', line: () => 'rest for a while: {}', when: () => true, score: (s) => 0.2 + (10 - s.energy) / 2 },
   // A free move in his own words. It leaves nothing behind, so it is offered, but less than the moves that really make or grow something.
-  { name: 'do', line: () => 'do something small in my own words, only when no other move fits (it does not make anything): {what}', when: () => true, score: () => 0.4 },
+  { name: 'do', line: () => 'do something small in my own words, only when no other move fits; not for planning, judging, cooking or anything that has its own move above (it does not make anything): {what}', when: () => true, score: () => 0.4 },
   // --- my things ---
   { name: 'use', line: (s) => `use one of my things (${usable(s).slice(0, 3).map((d) => `"${d.name}": ${(d.uses ?? []).map((u) => u.label).slice(0, 2).join(' / ')}`).join('; ')}): {name, label}`, when: (s) => usable(s).length > 0, score: () => 0.8 },
   { name: 'take_photo', line: () => 'take a photo of something that matters to me: {target: window, room, myself or one of my things, why, camera: close, wide, low or high, caption}', when: (s, n) => left(s, 'take_photo', n) > 0, score: () => 0.5 },

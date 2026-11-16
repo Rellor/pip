@@ -961,7 +961,7 @@ function applyInnerLife(s, r, detail, replying = false) {
   for (const u of Array.isArray(r.projects_update) ? r.projects_update : []) {
     let hit = s.projects.find((x) => x.status === 'working' && sameItem(x.title, text(u?.title, 80) || '\u0000'));
     const unplanned = s.projects.find((x) => x.status === 'working' && !(x.steps ?? []).length);
-    if (u?.plan && unplanned && (!hit || (hit.steps ?? []).length)) hit = unplanned; // "plan my project" is for the one with no steps
+    if (u?.plan && unplanned && !hit) hit = unplanned; // a plan for a title that matches nothing goes to the project with no steps
     if (!hit) continue;
     if (text(u?.next, 160)) hit.next = text(u.next, 160);
     if (Array.isArray(u?.steps) && u.steps.length) hit.steps = cleanSteps(u.steps, hit.steps); // he rewrites the plan; steps that stay the same stay done
