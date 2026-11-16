@@ -18,7 +18,7 @@ import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } f
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
-import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines } from './growth.js';
+import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
@@ -527,7 +527,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     goals: (s.intent?.items ?? []).map((i) => `[${i.done ? 'x' : ' '}] ${i.text}`),
     skills: skillLine(s),
     moves: offered,
-    fresh: freshLines(s, offered.map((m) => m.name)),
+    fresh: [...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),

@@ -12,7 +12,7 @@ import { kitchenIn } from './food.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
 import { kindOf } from './body.js';
-import { noveltyBoost } from './growth.js';
+import { noveltyBoost, roomIsDark } from './growth.js';
 import { missingForProject } from './projects.js';
 import { hasTool } from './tools.js';
 
@@ -65,7 +65,7 @@ export function askReason(s, now = Date.now()) {
 
 export const MOVES = [
   // --- making (a maker fills in the design) ---
-  { name: 'decorate', maker: true, line: (s) => `make a sculpture, a piece of furniture or a thing for my room from simple shapes${needsKitchen(s) ? ' (I have no kitchen yet: a small stove or oven would let me cook)' : ''}: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s) => 1 + s.body.creativity / 3 + (needsKitchen(s) ? 1.5 : 0) },
+  { name: 'decorate', maker: true, line: (s, n) => `make a sculpture, a piece of furniture or a thing for my room from simple shapes${needsKitchen(s) ? ' (I have no kitchen yet: a small stove or oven would let me cook)' : roomIsDark(s, n) ? ' (my room is dark: a lamp of my own would help)' : ''}: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s, n) => 1 + s.body.creativity / 3 + (needsKitchen(s) ? 1.5 : 0) + (roomIsDark(s, n) ? 0.6 : 0) },
   { name: 'draw', maker: true, line: (s) => `draw a picture: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'draw', n), score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'record_song', maker: true, line: (s) => `write and record a song (with ${instruments(s).join(', ')}${instruments(s).length ? ' and drums' : ''}): {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'record_song', n) && instruments(s).length > 0, score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'make_app', maker: true, line: (s) => `write a little program on my computer: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'make_app', n), score: (s) => 0.4 + s.body.creativity / 6 },
@@ -133,9 +133,13 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
   }
   scored.sort((a, b) => b.score - a.score);
   const pick = scored.slice(0, MAX_MOVES);
-  for (const must of ['do', 'tell', 'ask_for']) { // always a free move; and when someone wrote or something is missing, a way to say so
+  const MUST = ['do', 'tell', 'ask_for']; // always a free move; and when someone wrote or something is missing, a way to say so
+  for (const must of MUST) {
     const hit = scored.find((x) => x.m.name === must);
-    if (hit && !pick.includes(hit)) pick[pick.length - 1] = hit;
+    if (!hit || pick.includes(hit)) continue;
+    const out = pick.findLastIndex((x) => !MUST.includes(x.m.name)); // one must-have never pushes out another
+    if (out >= 0) pick[out] = hit;
+    else pick.push(hit);
   }
   while (pick.length < MIN_MOVES && scored.length > pick.length) pick.push(scored[pick.length]);
   return pick.map(({ m }) => ({ name: m.name, line: m.line(s, now), maker: Boolean(m.maker) }));
