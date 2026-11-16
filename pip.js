@@ -514,6 +514,11 @@ function projectSteps(s, steps) {
     done = true;
     const lastTune = [...(s.studio?.songs ?? [])].reverse().find((x) => x.tracks?.[0]?.notes)?.tracks[0].notes;
     const real = workStep(s, st.details?.title, { cookDetails, seeds: (s.garden?.seeds ?? []).filter((x) => x.qty > 0).map((x) => x.name), tune: lastTune });
+    if (real && missingTool(s, real.action)) { // the next step needs a tool he lacks: he can ask for it, not try and fail
+      const p = findProject(s, real.forStep.project);
+      if (p && !p.needs.includes(NEEDS[real.action])) p.needs = [...p.needs, NEEDS[real.action]];
+      return [];
+    }
     return real ? [{ ...real, thought: st.thought || real.thought }] : [];
   });
 }
@@ -1239,7 +1244,7 @@ async function wakeUp() {
     const needs = [st.needs || NEEDS[st.action] || '', ...instrumentNeeds(st, { pianoGone: Boolean(state.furniture?.piano?.gone) })].filter(Boolean).find((n) => !bag.some((x) => fits(x, n))) || '';
     if (needs) {
       const away = toolList(state).find((x) => !x.usable && fits({ name: x.name, kind: x.kind }, needs));
-      blocked.push({ st, why: away ? `my ${away.name} is ${away.where.replace('his ', 'my ')}. take_tool brings it into my inventory first, then I can play it` : `I need ${needs} in my inventory for that. If I really want to do it, I ask for it with asks_add and say why` });
+      blocked.push({ st, why: away ? `my ${away.name} is ${away.where.replace('his ', 'my ')}. take_tool brings it into my inventory first, then I can play it` : `I need ${needs} in my inventory for that. If I really want it, I ask Bas for it (ask_for) and say what it is for, or I make it myself` });
       return false;
     }
     if (st.action === 'decorate' && toolFor(st.details)) bag.push({ name: text(st.details.name, 40), kind: toolFor(st.details) });
