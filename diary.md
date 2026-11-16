@@ -662,3 +662,9 @@ Time to switch to baking since I have been thinking about music for hours.
 - do (plan the steps of my project Bake a simple loaf of bread): Time to switch to baking since I have been thinking about music for hours.
 - mood: hungry
 
+## 16/11/2026, 09:51:51
+I want to try changing something I made since I have never done that before, stepping away from music for a moment.
+> I want to try changing something I made since I have never done that before, stepping away from music for a moment.
+- change_thing (tiny wooden music box): I have never tried changing something I made before.
+- mood: curious
+
