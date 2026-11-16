@@ -7,13 +7,13 @@
 //   score  how much he would like it now (needs and drives). Repetition lowers it in availableMoves.
 //   maker  true when a separate maker call fills in the details (things he designs). The brain only says what.
 import { dayLimits } from './limits.js';
-import { missingTool } from './tools.js';
+import { missingTool, NEEDS } from './tools.js';
 import { kitchenIn } from './food.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
 import { kindOf } from './body.js';
 import { noveltyBoost, roomIsDark } from './growth.js';
-import { missingForProject } from './projects.js';
+import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
 
 export const MIN_MOVES = 6;
@@ -38,6 +38,9 @@ const food = (s) => (s.pantry ?? []).filter((p) => p.qty > 0);
 const working = (s) => (s.projects ?? []).filter((p) => p.status === 'working');
 // He has ingredients or a food project, but nothing to cook on: building a stove is the way forward.
 const needsKitchen = (s) => !kitchenIn(s.decor) && (food(s).some((p) => p.kind === 'ingredient') || working(s).some((p) => /bread|bake|cook|soup|kitchen|food|meal/i.test(p.title)));
+// Projects whose next step he can do now (a step that needs a tool he lacks waits for the tool).
+const workable = (s) => working(s).filter((p) => { const st = workStep(s, p.title); return st && !missingTool(s, st.action) && findProjectTitle(st) === p.title; });
+const findProjectTitle = (st) => st.forStep?.project;
 const unplanned = (s) => working(s).filter((p) => !(p.steps ?? []).length); // a project with no steps has no next step, so he goes round in circles
 const unplacedGifts = (s) => (s.pictures ?? []).filter((p) => p.by !== 'pip' && !(s.decor ?? []).some((d) => d.picture === p.id));
 const daysSince = (iso, now) => (iso ? (now - Date.parse(iso)) / DAY : Infinity);
@@ -46,9 +49,21 @@ const HELD_KINDS = ['guitar', 'violin', 'flute', 'clarinet', 'kalimba', 'harp'];
 // What he can make music on now: the piano when it is in his room (or was given back), and held instruments he owns.
 export const instruments = (s) => ['voice', ...(!s.furniture?.piano?.gone || (s.tools ?? []).some((t) => /piano/i.test(`${t.kind} ${t.name}`)) ? ['piano'] : []), ...new Set((s.tools ?? []).map((t) => String(t.kind ?? '').toLowerCase()).filter((k) => HELD_KINDS.includes(k)))];
 
-// Why an ask would make sense now, or null. At most ASKS_PER_DAY a day.
+// A project whose next step needs a tool he does not have (and has not asked for yet): it cannot go on without it.
+export function blockedProject(s) {
+  for (const p of working(s)) {
+    const st = workStep(s, p.title);
+    const need = st && missingTool(s, st.action) ? NEEDS[st.action] : null;
+    if (need && !(s.asks ?? []).some((a) => a.status === 'open' && a.item.toLowerCase().includes(need.split(' ')[0]))) return { project: p.title, tool: need, step: st.forStep.text };
+  }
+  return null;
+}
+// Why an ask would make sense now, or null. At most ASKS_PER_DAY a day, plus one more for a project that is stuck without a tool.
 export function askReason(s, now = Date.now()) {
-  if ((s.today?.done?.ask_for ?? 0) >= ASKS_PER_DAY) return null;
+  const asked = s.today?.done?.ask_for ?? 0;
+  const blocked = blockedProject(s);
+  if (blocked && asked < ASKS_PER_DAY + 1) return `my project "${blocked.project}" cannot go on: "${blocked.step}" needs ${blocked.tool}, and I do not have any`;
+  if (asked >= ASKS_PER_DAY) return null;
   const askedForMusic = (s.asks ?? []).some((a) => a.status === 'open' && /piano|guitar|violin|flute|clarinet|kalimba|harp|instrument|ukulele|drum/i.test(a.item));
   if (instruments(s).length === 1 && !askedForMusic && (s.today?.done?.play_piano ?? 0) >= 2) return 'I can only hum and sing, and I would like an instrument'; // he sang today and wants more
   if (s.fullness <= 3 && !food(s).length && !ripe(s, now).length) return 'I am hungry and I have nothing left to eat or harvest (seeds would help)';
@@ -105,7 +120,7 @@ export const MOVES = [
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
   { name: 'dream', line: () => 'tell Bas about a big dream, something far too big to make myself (he might build it): {what, why}', when: (s, n) => daysSince(s.bigDreamAt, n) >= 3 && s.body.creativity >= 6, score: () => 0.8 },
-  { name: 'work_on_project', line: (s) => `work on my project: the game does its next step the right way (${working(s).filter((p) => (p.steps ?? []).some((x) => !x.done)).map((p) => `"${p.title}", next: ${p.steps.find((x) => !x.done).text}`).join('; ')}): {title}`, when: (s) => working(s).some((p) => (p.steps ?? []).some((x) => !x.done)), score: () => 2.2 },
+  { name: 'work_on_project', line: (s) => `work on my project: the game does its next step the right way (${workable(s).map((p) => `"${p.title}", next: ${p.steps.find((x) => !x.done).text}`).join('; ')}): {title}`, when: (s) => workable(s).length > 0, score: () => 2.2 },
   { name: 'plan_project', line: (s) => `plan my project ${names(unplanned(s).map((p) => p.title))} in 3 to 5 small steps I can really do with my moves: {title, steps: [3 to 5 short steps]}`, when: (s) => unplanned(s).length > 0, score: () => 4 },
   { name: 'judge_project', line: (s) => `look at my project (${names(working(s).filter((p) => (p.versions ?? []).length).map((p) => p.title))}) and say if I am proud of it. Good enough is fine: a first version that works is done, I can make a new one later: {title, proud: "yes" or "no", why}`, when: (s) => working(s).some((p) => (p.versions ?? []).length && (p.steps ?? []).filter((x) => !x.done).length <= (p.steps ?? []).length / 2), score: (s) => Math.min(5, 0.6 + Math.max(0, ...working(s).map((p) => (p.versions ?? []).length)) * 0.9 + (working(s).some((p) => (p.steps ?? []).length && p.steps.every((x) => x.done)) ? 3 : 0)) },
   { name: 'start_project', line: () => 'start a project, something to make or learn over days: {title, why, steps: [3 to 6 short steps], needs: [tools it needs, if any]}', when: (s) => working(s).length < 2, score: (s) => 0.5 + s.body.creativity / 5 + (working(s).length ? 0 : 1) },
