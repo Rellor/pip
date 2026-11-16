@@ -127,6 +127,16 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-16 drawing supplies from Bas',
+    run(s, at) { // Bas answers his ask: drawing supplies for his watercolor of the stormy sky
+      const ask = (s.asks ?? []).find((x) => x.status === 'open' && /drawing|paint|brush|watercolou?r/i.test(x.item));
+      const given = giveForAsk(s, 'drawing supplies');
+      if (ask) Object.assign(ask, { status: 'done', doneAt: at, given });
+      for (const p of s.projects ?? []) p.needs = (p.needs ?? []).filter((n) => !/drawing supplies/i.test(n));
+      return given.length ? 'Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.' : null;
+    },
+  },
+  {
     id: '2026-11-16 notebook from what he looked up',
     run(s) { // what he already looked up goes in his new notebook, so it helps when he makes something about it
       for (const e of (s.log ?? []).filter((x) => ['search_web', 'read_book'].includes(x.action) && x.opened)) noteResearch(s, { query: e.query ?? e.topic, page: e.opened, at: e.at });
