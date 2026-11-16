@@ -140,3 +140,23 @@ export function notesFor(s, what, project = null) {
   return (s.notebook ?? []).map((n) => ({ n, k: words(`${n.query} ${n.title}`).filter((w) => want.has(w) || want.has(w.replace(/s$/, ''))).length + (project && n.project === project ? 5 : 0) })).filter((x) => x.k > 0).sort((a, b) => b.k - a.k || b.n.at.localeCompare(a.n.at)).slice(0, 2).map(({ n }) => `I looked up "${n.query}" and read about ${n.title}: ${n.text}`);
 }
 const lookedUpLight = (s) => (s.notebook ?? []).some((n) => /\b(lamp|lamps|lantern|light|lighting|candle)\b/i.test(`${n.query} ${n.title}`));
+
+// ---- Room for his things: when the surfaces he can reach are full, he notices it, and that he can build storage.
+import { supportsInfo } from './decor.js';
+const roomFor = (s) => {
+  const info = supportsInfo(s.decor ?? []);
+  return { full: info.filter((b) => b.full && !b.high), free: info.filter((b) => !b.full && !b.high && b.room > 0 && !/^(desk|piano)$/.test(b.label)) };
+};
+// Full surfaces, and nowhere else to put things: then building storage is the way.
+export function storageFull(s) {
+  const { full, free } = roomFor(s);
+  return full.length && !free.length ? full : null;
+}
+export function storageLines(s) {
+  const { full, free } = roomFor(s);
+  if (!full.length) return [];
+  const b = full[0];
+  const what = `${b.on.slice(0, 4).join(', ')}${b.on.length > 4 ? ' and more' : ''}`;
+  if (free.length) return [`My ${b.label} is full (${what}). My ${free[0].label.replace(/ \(level \d+\)$/, '')} has room: I can move some things there (move_thing, on: "${free[0].label.replace(/ \(level \d+\)$/, '')}").`];
+  return [`My ${b.label} is full: ${what}. There is no room for anything else. A shelf within my reach, a small table or a stand would give my things a place (then I can move some there).`];
+}

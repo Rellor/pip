@@ -2,7 +2,7 @@
 // so the live loop applies it itself (no need to pause him). Nothing is deleted: what goes, goes to s.archive.
 import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
-import { makeDecor } from './decor.js';
+import { makeDecor, holdsThings } from './decor.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
 
@@ -134,6 +134,21 @@ const CHANGES = [
       if (ask) Object.assign(ask, { status: 'done', doneAt: at, given });
       for (const p of s.projects ?? []) p.needs = (p.needs ?? []).filter((n) => !/drawing supplies/i.test(n));
       return given.length ? 'Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.' : null;
+    },
+  },
+  {
+    id: '2026-11-16 shelves come down within reach',
+    run(s, at) { // his shelf hung at 2.8 m: shelves for his things hang where he can reach them (the rest of the wall stays as it is)
+      const moved = [];
+      for (const old of [...(s.decor ?? [])].filter((d) => d.kind === 'wall' && !d.image && d.pos && d.pos[1] > PIP.reachUp - 0.3 && holdsThings(d))) {
+        const rest = s.decor.filter((d) => d !== old);
+        const side = old.side ?? (Math.abs(old.pos[2] + 4.97) < 0.2 ? 'back' : 'left');
+        const r = makeDecor(rest, { name: old.name, why: old.why, project: old.project, parts: old.parts, uses: old.uses, wall: side, along: side === 'back' ? old.pos[0] : old.pos[2], height: 1.1 }, Date.parse(at) - 60_000, Date.parse(at));
+        if (!r?.entry) continue;
+        s.decor[s.decor.indexOf(old)] = { ...r.entry, id: old.id, at: old.at, uses: old.uses, movedAt: at };
+        moved.push(old.name);
+      }
+      return moved.length ? `My ${moved.join(' and ')} hung too high to put things on. Now it hangs where I can reach it.` : null;
     },
   },
   {

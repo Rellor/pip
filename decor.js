@@ -1173,7 +1173,7 @@ function placeWall(decor, spec, parts, side, want, atMs, now, moving = false) {
 // The top of a piece of furniture, where it stands now.
 function surfaceOf(key) {
   const f = FURNITURE[key];
-  if (!f.top) return null;
+  if (!f.top || furnNow?.[key]?.gone) return null; // furniture that was taken out (the piano) is no place to put things
   const pl = placeOf(furnNow, key);
   const r = worldRect(key, pl, { n: f.n, x: f.top.x, z: f.top.z, h: 0 });
   const [ox, oz] = turn(f.top.off, pl.rot);
@@ -1246,7 +1246,7 @@ export function supportsInfo(decor) {
     const on = decor.filter((o) => o.kind === 'surface' && o.pos && baseKeyOf(o) === b.key);
     const area = (b.x1 - b.x0) * (b.z1 - b.z0);
     const used = on.reduce((t, o) => { const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY); return t + (r.x1 - r.x0) * (r.z1 - r.z0); }, 0);
-    return { label: b.label, on: on.map((o) => o.name), room: Math.max(0, Math.floor((area - used * 1.4) / 0.05)) };
+    return { label: b.label, on: on.map((o) => o.name), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
   });
 }
 // Small things that stand loose on the floor (not furniture he can sit in or use).
@@ -1270,7 +1270,14 @@ function findBase(decor, on, pick = {}) {
 }
 const surfaceOthers = (decor, key, skip) => decor.filter((o) => o !== skip && o.kind === 'surface' && o.pos && baseKeyOf(o) === key).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }));
 
+// How many things fit on a surface before it is cluttered: the desk keeps room for his computer; his own shelves and
+// tables by their size. And it must be within reach: he cannot put things on top of the 3 m bookshelf.
+export const maxOn = (base) => (base.key === 'desk' ? 3 : Math.max(2, Math.min(6, Math.round(((base.x1 - base.x0) * (base.z1 - base.z0)) / 0.08))));
+export const reachable = (base) => (base.y ?? 0) <= PIP.reachUp;
 function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
+  const already = surfaceOthers(decor, base.key, null).length;
+  if (!reachable(base)) return { failed: `the top of ${base.n} is ${r3(base.y)} m high, and I can only reach up to ${PIP.reachUp} m. I put it somewhere lower, or build a shelf or table within reach`, hinted: true };
+  if (already >= maxOn(base)) return { failed: `${base.n} is full: ${already} things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there`, hinted: true };
   const sq = Math.max(0.15, Math.min(base.x1 - base.x0, base.z1 - base.z0) - 0.1);
   const scale = fit(parts, 'surface', { w: sq, d: sq });
   const [hw, hd] = halfFoot(parts, scale);
@@ -1373,7 +1380,8 @@ function placeWhereRaw(decor, spec, parts, want, atMs, now) {
     const side = wallSide ?? 'back';
     const slot = want && ZONES[want].kind === 'wall' ? ZONES[want].slots[0] : null;
     const along = num2(spec.along) ?? (slot ? (side === 'back' ? slot[0] : slot[2]) : null);
-    const height = num2(spec.height) ?? (slot ? slot[1] : null);
+    let height = num2(spec.height) ?? (slot ? slot[1] : null);
+    if (holdsThings(spec)) height = Math.min(height ?? 1.1, PIP.reachUp - 0.3); // a shelf for his things hangs where he can reach it
     return placeWall(decor, spec, parts, side, along !== null || height !== null ? [along ?? 0, height ?? 2.6] : null, atMs, now);
   }
   const onWhat = spec.on || (want && ZONES[want].kind === 'surface' ? Object.entries(ZONE_BASE).find(([k]) => k === want)?.[1] ?? 'desk' : '');

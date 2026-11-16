@@ -2,7 +2,7 @@
 // His own size comes from his body on the page: ears reach 1.35 m and his eyes sit at 0.8 m. The window is part of the back wall.
 import { FURNITURE } from './web/furniture.js';
 
-export const PIP = { height: 1.35, eyes: 0.8, reach: 1.1 }; // reach: how high his hands can work
+export const PIP = { height: 1.35, eyes: 0.8, reach: 1.1, reachUp: 1.6 }; // reach: how high his hands can work; reachUp: the highest he can put something
 // Things he works at with his hands: they must be within arm's length, so they stand on the floor (or a low surface).
 export const handsOn = (o) => !o?.image && (/\b(stove|oven|kitchen|cooker|hob|sink|counter|worktop|workbench|work bench|table|chair|stool|bench|easel|loom|kettle|planter|greenhouse|flower ?pot|seed tray|potter'?s wheel|anvil)\b/i.test(String(o?.name ?? '')) || (o?.uses ?? []).some((u) => /\b(bake|cook|brew|boil|fry|wash|knead|stir|sit|plant|water|sew|paint|carve)\b/i.test(`${u?.label ?? ''}`)));
 export const WINDOW = { from: 1.7, to: 4.1 };

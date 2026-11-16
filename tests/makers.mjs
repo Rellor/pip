@@ -77,3 +77,14 @@ ok('things he works at with his hands stand within reach, not high on a wall', a
   assert.equal(stove.entry?.kind, 'floor', JSON.stringify(stove).slice(0, 200));
   assert.equal(stove.entry.pos[1], 0);
 });
+
+ok('surfaces have a limit and must be within reach; shelves for things hang within reach', async () => {
+  const { makeDecor } = await import('../decor.js');
+  const small = (name) => ({ name, parts: [{ shape: 'box', size: [0.1, 0.1, 0.1], pos: [0, 0.05, 0], color: '#fff' }], on: 'desk' });
+  const decor = [];
+  for (let i = 0; i < 3; i++) { const r = makeDecor(decor, small(`cup ${i}`), Date.now()); assert.ok(r.entry, r.failed); decor.push(r.entry); }
+  assert.match(makeDecor(decor, small('cup 4'), Date.now()).failed ?? '', /desk is full/);
+  assert.match(makeDecor(decor, { ...small('book'), on: 'bookshelf' }, Date.now()).failed ?? '', /can only reach/);
+  const shelf = makeDecor(decor, { name: 'wooden shelf', why: 'to put my cups on', parts: [{ shape: 'box', size: [0.6, 0.04, 0.2], pos: [0, 0, 0], color: '#a0522d' }], wall: 'left', along: -1, height: 2.8 }, Date.now());
+  assert.ok(shelf.entry && shelf.entry.pos[1] <= 1.4, JSON.stringify(shelf.entry?.pos ?? shelf.failed));
+});
