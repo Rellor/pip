@@ -994,3 +994,9 @@ I am in the middle of my watercolor project and setting up my supplies will help
 - rest: I could not do what I planned, so I rest a moment.
 - mood: cozy
 
+## 16/11/2026, 17:55:47
+I want to continue with my bread baking project by letting the dough rise by the window.
+> I want to continue with my bread baking project by letting the dough rise by the window.
+- do (Let the dough rise by the window (for my project Bake a simple loaf of bread)): I need to let the dough rise by the window next.
+- mood: cozy
+
