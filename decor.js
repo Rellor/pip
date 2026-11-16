@@ -1,4 +1,4 @@
-import { reachProblem } from './sizes.js';
+import { reachProblem, handsOn, PIP } from './sizes.js';
 import { cleanSong } from './songs.js';
 import { storedUses } from './uses.js';
 import { toolKind } from './tools.js';
@@ -1349,6 +1349,15 @@ function placeWhereRaw(decor, spec, parts, want, atMs, now) {
   // A thing that stands on the floor does not hang on a wall: "by the window" means on the floor in front of it.
   if (want && ZONES[want]?.kind === 'floor' && sideOf(spec.wall) && num2(spec.x) === null && num2(spec.z) === null) {
     spec = { ...spec, wall: undefined, along: undefined, height: undefined };
+  }
+  // Something he works at with his hands (a stove, a table, a planter) cannot hang high on a wall: it stands on the floor
+  // against that wall instead, within arm's length. (His first stove hung at 2.9 m, where he could never bake.)
+  const wantsWall = sideOf(spec.wall) || (want && ZONES[want]?.kind === 'wall' && !ZONES[want].prints) || num2(spec.height) !== null;
+  if (handsOn(spec) && wantsWall) {
+    const side = sideOf(spec.wall) ?? (want && ZONES[want]?.side === 'left' ? 'left' : 'back');
+    const along = num2(spec.along) ?? 0;
+    spec = { ...spec, wall: undefined, along: undefined, height: undefined, x: side === 'back' ? along : -4.4, z: side === 'back' ? -4.4 : along };
+    want = null;
   }
   if (spec.wall && !sideOf(spec.wall)) {
     // There is no wall to hang things on at the right or the front of the room. What he means is a thing that stands against that side: on the floor.
