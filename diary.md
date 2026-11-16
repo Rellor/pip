@@ -679,3 +679,9 @@ I have never tried planting before and it feels fresh.
 - plant (basil): I have never tried planting before and it feels fresh.
 - mood: curious
 
+## 16/11/2026, 10:16:17
+I finished my music box project and want to judge it, then start a new project to bake bread.
+> I finished my music box project and want to judge it, then start a new project to bake bread.
+- do (look closely at my project Build a little wooden music box): I should judge my music box project since I finished the planning and built v2.
+- mood: curious
+
