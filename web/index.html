@@ -223,6 +223,9 @@
   .checkup .bad b { color:var(--accent); }
   .checkup details { margin-top:4px; font-size:13px; }
   .checkup pre.debug { white-space:pre-wrap; word-break:break-word; font-size:12px; background:var(--chip); border-radius:8px; padding:8px; margin:6px 0; max-height:220px; overflow:auto; }
+  .pmade, .pfound { margin:8px 0 0; font-size:14px; }
+  .pmade b, .pfound b { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:2px; }
+  .pfound p { margin:2px 0 6px; color:var(--muted); }
   .stillempty { font-size:13px; margin:10px 2px 0; }
   .tiles { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; grid-auto-flow:dense; }
   .tile { min-width:0; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; text-align:left; color:var(--ink); font:inherit; font-size:15px; display:block; width:100%; }
@@ -412,8 +415,8 @@
       </div>
       <div id="lifeopen" hidden>
         <button class="small" id="lifeback" type="button">← Pip</button>
+        <div class="lifesec" data-sec="projects" data-icon="🧩" data-title="Projects" data-count="projects" hidden><h2>Pip's projects</h2><p class="muted">What he is working on, step by step: what he made for it and what he found out. Finished ones are below.</p><ul id="projects"></ul></div>
         <div class="lifesec" data-sec="mind" data-icon="🧠" data-title="His mind" data-count="thoughts" hidden>
-          <div class="msec"><h2>What Pip is working toward</h2><ul id="projects"></ul></div>
           <div class="msec"><h2>What Pip is thinking about</h2><ul id="thoughts"></ul></div>
           <div class="msec"><h2>What Pip realized</h2><ul id="reflections"></ul></div>
           <div class="msec"><h2>Pip wants</h2><ul id="wants"></ul></div>

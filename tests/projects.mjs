@@ -44,6 +44,7 @@ for (let i = 0; i < 40 && !versions; i++) {
   versions = Math.max(0, ...(s.projects ?? []).map((p) => (p.versions ?? []).length));
 }
 if (!versions) fail('nothing made for a project became a version in 40 ticks');
+{ const s = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8')); if (!(s.projects ?? []).some((p) => (p.steps ?? []).some((x) => x.done))) fail('no project step was ticked off'); }
 console.log(`ok  plan_project offered and gives steps; judge_project first with versions; a made thing became v${versions}`);
 
 // "That is enough for a first try" means done, even when proud was left empty; "not yet" stays open.
@@ -70,3 +71,21 @@ const freePlan = answerOf({ moves: [{ move: 'do', details: { what: 'plan the ste
 if (freePlan.projects_update[0]?.steps?.length !== 3) fail(`a free plan with steps was lost: ${JSON.stringify(freePlan.projects_update)}`);
 if (!/plan_project/.test(projectLines({ projects: [{ title: 'Paint', status: 'working', steps: [], versions: [], notes: [], needs: [] }] })[0])) fail('an unplanned project does not say how to plan it');
 console.log('ok  planning written as a free step is kept, and an unplanned project says how to plan it');
+
+// "work on my project": the game turns the next step into the right move.
+import { workStep } from '../projects.js';
+import { cookDetails } from '../brain.js';
+const proj = { projects: [{ title: 'Bake bread', status: 'working', steps: ['Look up how bread dough is kneaded', 'Mix flour and water', 'Let the dough rise by the window', 'Paint a little sign for it', 'Build a wooden bread board', 'Polish the bread board'].map((text) => ({ text, done: false })), versions: [], notes: [], needs: [] }] };
+const routes = [];
+for (let i = 0; i < 6; i++) { const w = workStep(proj, 'Bake bread', { cookDetails }); routes.push(w.action + (w.waits ? '(wait)' : '')); proj.projects[0].steps[i].done = true; if (w.action === 'decorate') proj.projects[0].versions.push({ v: 1, kind: 'decorate', name: 'bread board' }); }
+if (routes.join() !== 'search_web,cook,do(wait),draw,decorate,change_thing') fail(`routes: ${routes}`);
+if (workStep(proj, 'Bake bread') !== null) fail('a finished plan still gave a step');
+console.log('ok  work_on_project: look up → search, mix → cook, let rise → wait, paint → draw, build → make, polish → change');
+
+// "Good enough" needs most of the plan done.
+import { judgeProject } from '../projects.js';
+const jp = { projects: [{ title: 'Bread', status: 'working', steps: [{ text: 'a', done: true }, { text: 'b', done: false }, { text: 'c', done: false }, { text: 'd', done: false }], versions: [{ v: 1 }], notes: [], needs: [] }] };
+if (judgeProject(jp, 'Bread', { proud: true, why: 'enough' }).done) fail('a project with 1 of 4 steps was finished');
+jp.projects[0].steps.forEach((x, i) => { if (i < 3) x.done = true; });
+if (!judgeProject(jp, 'Bread', { proud: true, why: 'enough' }).done) fail('a project with 3 of 4 steps could not be finished');
+console.log('ok  "good enough" needs most of the steps done');

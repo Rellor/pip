@@ -116,6 +116,17 @@ const CHANGES = [
       return moved.length ? `My ${moved.join(' and ')} hung too high to use. Now it stands on the floor, where my hands can reach it.` : null;
     },
   },  {
+    id: '2026-11-16 bread is not done yet',
+    run(s, at) { // his bread project was called done after 1 of 4 steps (only the stove was made): it opens again
+      const p = (s.projects ?? []).find((x) => x.status === 'done' && /bread/i.test(x.title) && (x.steps ?? []).filter((y) => !y.done).length > (x.steps ?? []).length / 2);
+      if (!p) return null;
+      Object.assign(p, { status: 'working', proud: false, updatedAt: at });
+      delete p.doneAt;
+      s.projects = [...s.projects.filter((x) => x.status === 'working'), ...s.projects.filter((x) => x.status !== 'working')];
+      return 'My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.';
+    },
+  },
+  {
     id: '2026-11-16 notebook from what he looked up',
     run(s) { // what he already looked up goes in his new notebook, so it helps when he makes something about it
       for (const e of (s.log ?? []).filter((x) => ['search_web', 'read_book'].includes(x.action) && x.opened)) noteResearch(s, { query: e.query ?? e.topic, page: e.opened, at: e.at });

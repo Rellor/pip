@@ -16,7 +16,7 @@ export function proudOf(proud, why) {
 // "mix flour, water and salt", "bake the bread", "cook some soup": a real cook move, with the dish and the ingredients
 // named in it (bread is made from flour). Without a kitchen it fails with a reason, which becomes a lesson.
 const INGREDIENTS = ['flour', 'rice', 'eggs', 'potatoes', 'carrots', 'apples', 'milk', 'cheese', 'butter', 'onions', 'tomatoes', 'basil', 'mint', 'strawberries'];
-function cookDetails(w) {
+export function cookDetails(w) {
   const dish = (w.match(/\b(bread|loaf|soup|pancakes?|porridge|pie|cake|salad|stew|omelette|tea)\b/) ?? [])[1] ?? (w.replace(/^.*\b(cook|bake|make)\s*(some|a|an|the|my)?\s*/, '').slice(0, 40) || 'something warm');
   const named = INGREDIENTS.filter((x) => w.includes(x.replace(/s$/, '')));
   return { dish: dish === 'loaf' ? 'bread' : dish, ingredients: named.length ? named.slice(0, 4) : /bread|loaf|dough|pancake|cake|pie/.test(dish) ? ['flour'] : [] };
@@ -109,6 +109,10 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       const st = d.steps.map((x) => clip(x, 120)).filter(Boolean).slice(0, 6);
       const title = clip(d.title ?? d.project ?? String(d.what).replace(/^.*\bproject\s*/i, ''), 80);
       if (title && st.length) { answer.projects_update.push({ title, steps: st, next: st[0], plan: true }); steps.push({ action: 'do', as: 'plan_project', details: { what: `plan the steps of my project ${title.slice(0, 60)}` }, thought, enjoyment: 6 }); continue; }
+    }
+    if (name === 'work_on_project') { // the game takes the project's next step and does it the right way
+      steps.push({ action: 'work_on_project', details: { title: clip(d.title ?? d.project ?? d.name, 80) }, thought, enjoyment: 7 });
+      continue;
     }
     if (name === 'plan_project') {
       const st = (Array.isArray(d.steps) ? d.steps : []).map((x) => clip(x, 120)).filter(Boolean).slice(0, 6);
