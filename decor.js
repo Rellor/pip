@@ -1428,6 +1428,9 @@ function placeWhereRaw(decor, spec, parts, want, atMs, now) {
     spec = { ...spec, wall: undefined, along: undefined, height: undefined, x: side === 'back' ? along : -4.4, z: side === 'back' ? -4.4 : along };
     want = null;
   }
+  if (spec.wall && !sideOf(spec.wall) && decor.some((d) => !d.image && d.name.toLowerCase() === String(spec.wall).toLowerCase().trim())) {
+    spec = { ...spec, on: spec.wall, wall: undefined, along: undefined, height: undefined }; // "wall: my shelf" means on the shelf
+  }
   if (spec.wall && !sideOf(spec.wall)) {
     // There is no wall to hang things on at the right or the front of the room. What he means is a thing that stands against that side: on the floor.
     if (/right|front/i.test(String(spec.wall))) {

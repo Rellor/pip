@@ -56,7 +56,7 @@ export function projectLines(s, now = Date.now()) {
   ensureProjects(s);
   return s.projects.filter((p) => p.status === 'working').map((p) => {
     const steps = (p.steps ?? []).map((x, i) => `${i + 1}. ${x.text}${x.done ? ' ✓' : ''}`).join('; ');
-    const how = (p.steps ?? []).some((x) => !x.done) ? ' (work_on_project does the next step)' : '';
+    const how = p.stuck?.n >= 2 && p.stuck.text === (p.steps ?? []).find((x) => !x.done)?.text ? ' (this step did not work twice: I write my steps again with plan_project, in other words)' : (p.steps ?? []).some((x) => !x.done) ? ' (work_on_project does the next step)' : '';
     const v = p.versions.length ? `, I made v${p.versions.length}` : '';
     const note = p.notes.at(-1)?.text ? `, to improve: ${p.notes.at(-1).text}` : '';
     const wait = untouchedDays(p, now) >= 1 ? ` (I have not touched it for ${Math.floor(untouchedDays(p, now))} day${untouchedDays(p, now) >= 2 ? 's' : ''})` : '';
@@ -85,11 +85,11 @@ export function missingForProject(s, hasTool) {
 const ROUTES = [
   ['wait', /\b(let (it|the \w+) (rise|rest|dry|cool|set|soak|grow)|wait|leave it to)\b/i],
   ['search_web', /\b(look up|find out|research|learn|read|study|search|ask myself)\b/i],
-  ['cook', /\b(mix|knead|bake|cook|stir|boil|fry|dough|batter)\b/i],
+  ['cook', /\b(knead|bake|cook|boil|fry|dough|batter)\b|\b(mix|stir|whisk)\b.*\b(flour|water|salt|sugar|eggs?|milk|butter|yeast|oats|rice|soup|tea)\b/i], // mixing paint is not cooking
   ['plant', /\b(plant|sow)\b/i],
   ['water', /\bwater\b/i],
   ['harvest', /\b(harvest|pick)\b/i],
-  ['draw', /\b(draw|paint|sketch|watercolou?r|colour in|color in)\b/i],
+  ['draw', /\b(draw|paint|sketch|watercolou?r|colou?rs?|colour in|color in|brush(es)?|canvas|blues?|gr[ae]ys?|shades?)\b/i],
   ['record_song', /\b(record|compose)\b|\b(write|make)\b.*\b(song|melody|tune)\b/i],
   ['play_piano', /\b(hum|sing|play|practi[cs]e|try out)\b/i],
   ['take_photo', /\b(photo|photograph|picture of)\b/i],
@@ -108,7 +108,9 @@ export function workStep(s, title, ctx = {}) {
   const step = p?.steps?.find((x) => !x.done);
   if (!step) return null;
   const t = step.text;
-  let route = (ROUTES.find(([, re]) => re.test(t)) ?? ['decorate'])[0];
+  // The step's own words first; a step that says nothing clear ("mix them") goes by what the project is about.
+  const vague = /^\s*(mix|stir|blend|combine|prepare|continue|finish|work on|keep going|try)\b/i.test(t);
+  let route = (ROUTES.find(([, re]) => re.test(t)) ?? (vague ? ROUTES.find(([k, re]) => k !== 'wait' && re.test(p.title)) : null) ?? ['decorate'])[0];
   if (['change_thing', 'extend_thing'].includes(route) && !lastMade(p)) route = 'decorate'; // nothing made yet to change
   const base = { thought: `I work on my project "${p.title}": ${t}`, enjoyment: 7, needs: '', forStep: { project: p.title, text: t } };
   const project = p.title;

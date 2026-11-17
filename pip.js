@@ -1914,8 +1914,12 @@ async function wakeUp() {
       : ['search_web', 'read_book'].includes(st.action) ? Boolean(st.search?.opened ?? st.read) // he found something to read
       : st.action === 'play_piano' ? !st.made?.failed
       : Boolean(st.made) && !st.made.failed;
-    if (!worked) continue;
     const p = findProject(state, st.forStep.project);
+    if (!worked) { // the same step failing again and again: after 2 tries it waits, and he plans it again
+      if (p) p.stuck = p.stuck?.text === st.forStep.text ? { text: st.forStep.text, n: p.stuck.n + 1 } : { text: st.forStep.text, n: 1 };
+      continue;
+    }
+    if (p) p.stuck = null;
     const step = p?.steps?.find((x) => !x.done && x.text === st.forStep.text);
     if (step) { step.done = true; p.updatedAt = new Date().toISOString(); ticked = true; console.log(`   ✓ ${p.title}: ${step.text}`); }
   }

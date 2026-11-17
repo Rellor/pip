@@ -41,7 +41,8 @@ const working = (s) => (s.projects ?? []).filter((p) => p.status === 'working');
 // He has ingredients or a food project, but nothing to cook on: building a stove is the way forward.
 const needsKitchen = (s) => !kitchenIn(s.decor) && (food(s).some((p) => p.kind === 'ingredient') || working(s).some((p) => /bread|bake|cook|soup|kitchen|food|meal/i.test(p.title)));
 // Projects whose next step he can do now (a step that needs a tool he lacks waits for the tool).
-const workable = (s) => working(s).filter((p) => { const st = workStep(s, p.title); return st && !missingTool(s, st.action) && findProjectTitle(st) === p.title; });
+const stuckStep = (p) => p.stuck?.n >= 2 && (p.steps ?? []).find((x) => !x.done)?.text === p.stuck.text; // the game's way failed twice: he plans it again
+const workable = (s) => working(s).filter((p) => { const st = workStep(s, p.title); return st && !stuckStep(p) && !missingTool(s, st.action) && findProjectTitle(st) === p.title; });
 const findProjectTitle = (st) => st.forStep?.project;
 // A surface with too much on it, and a place of his with room: what to move where (or null).
 const tidyUp = (s) => {
@@ -50,7 +51,7 @@ const tidyUp = (s) => {
   const free = info.find((b) => !b.full && !b.high && b.room > 0 && !/^(desk|piano)$/.test(b.label));
   return full && free ? { full: full.label, thing: full.on[full.on.length - 1], to: free.label.replace(/ \(level \d+\)$/, '') } : null;
 };
-const unplanned = (s) => working(s).filter((p) => !(p.steps ?? []).length); // a project with no steps has no next step, so he goes round in circles
+const unplanned = (s) => working(s).filter((p) => !(p.steps ?? []).length || stuckStep(p)); // a project with no steps has no next step, so he goes round in circles
 const unplacedGifts = (s) => (s.pictures ?? []).filter((p) => p.by !== 'pip' && !(s.decor ?? []).some((d) => d.picture === p.id));
 const daysSince = (iso, now) => (iso ? (now - Date.parse(iso)) / DAY : Infinity);
 const lastFail = (s) => s.plan?.lastFail ?? null;

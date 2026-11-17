@@ -100,3 +100,16 @@ if (availableMoves(paint, { random: () => 0.5 }).some((m) => m.name === 'work_on
 paint.today.done.ask_for = 3;
 if (askReason(paint)) fail('more than one extra ask a day');
 console.log('ok  a project stuck without a tool: he asks for it (one extra ask), and does not keep trying');
+
+// Mixing paint is painting, not cooking; a step whose way keeps failing waits, and he plans it again.
+{
+  const paintP = { projects: [{ title: 'Paint a watercolor of the stormy sky', status: 'working', steps: [{ text: 'Mix soft blues and grays for the stormy clouds', done: false }], versions: [], notes: [], needs: [] }] };
+  if (workStep(paintP, 'Paint a watercolor of the stormy sky').action !== 'draw') fail('mixing paint became cooking');
+  const breadP = { projects: [{ title: 'Bake bread', status: 'working', steps: [{ text: 'Mix flour, water, and a pinch of salt', done: false }], versions: [], notes: [], needs: [] }] };
+  if (workStep(breadP, 'Bake bread', { cookDetails }).action !== 'cook') fail('mixing flour is no longer cooking');
+  const stuck = { ...paint, today: { done: {} }, tools: [{ name: 'drawing supplies', kind: 'drawing supplies' }], projects: [{ title: 'Paint the sky', status: 'working', steps: [{ text: 'Paint the grey clouds', done: false }], versions: [], notes: [], needs: [], stuck: { text: 'Paint the grey clouds', n: 2 } }] };
+  const names = availableMoves(stuck, { random: () => 0.5 }).map((m) => m.name);
+  if (names.includes('work_on_project')) fail('a step that failed twice is tried again');
+  if (!names.includes('plan_project')) fail('he is not offered to plan it again');
+  console.log('ok  mixing paint is painting; a step that failed twice waits and he plans it again');
+}
