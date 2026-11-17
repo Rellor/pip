@@ -19,6 +19,7 @@ import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
 import { roomScale } from './scale.js';
+import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
 import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, noteResearch, notesFor } from './growth.js';
@@ -90,7 +91,7 @@ const ROOM = [
   'bed',
   'a framed photo on the wall above the piano: the Milky Way over a very dark sky full of stars, with two people in silhouette looking up from a railing',
 ];
-const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -341,6 +342,21 @@ async function loadTasks(state) {
 }
 // Someone showed him which side is the front of a thing (fronts/*.json from the website). Saved as fronts[thing] = [x, z], the front in the thing's own frame.
 const FRONTS_DIR = 'fronts';
+// Light commands Bas sent from the phone on the page (with the key): lights/*.json, applied at the wake-up, then removed.
+async function loadLights(state) {
+  const names = (await readdir('lights').catch(() => [])).filter((n) => n.endsWith('.json')).sort();
+  for (const name of names) {
+    try {
+      const m = JSON.parse(await readFile(`lights/${name}`, 'utf8'));
+      const r = applyLight(state, m.cmd ?? {}, { who: 'Bas', now: Date.parse(m.at) || Date.now() });
+      if (r.ok) console.log(`💡 ${r.text}`);
+    } catch {}
+  }
+  return names;
+}
+async function clearLights(names) {
+  for (const n of names) await unlink(`lights/${n}`).catch(() => {});
+}
 async function loadFronts(state) {
   let files = [];
   try {
@@ -773,6 +789,7 @@ function describe(a) {
     case 'measure':
     case 'lamp_auto':
     case 'request_ability': return d.name;
+    case 'phone': return d.app ? `opened ${d.app}` : d.lamp;
     case 'check_light': return d.where;
     case 'plant': return d.seed;
     case 'water':
@@ -1135,6 +1152,7 @@ async function wakeUp() {
   const visitorFiles = await loadVisitors(state);
   inbox.added += taskFiles.added;
   const frontFiles = await loadFronts(state);
+  const lightFiles = await loadLights(state);
   setFronts(state.fronts);
   if (isNight() && !process.env.PIP_AWAKE) {
     await goToSleep(state);
@@ -1146,6 +1164,7 @@ async function wakeUp() {
     await clearTasks(taskFiles.names);
   await clearVisitors(visitorFiles);
     await clearFronts(frontFiles.names);
+  await clearLights(lightFiles);
     return;
   }
   state.lastError = null;
@@ -1430,6 +1449,13 @@ async function wakeUp() {
       const need = missingTool(state, 'check_light');
       st.made = need ? { failed: need } : checkLight(state, st.details.where ?? st.details.name, stepStart, { weather: state.weather });
       if (st.made.ok) state.notes.push(`Light meter: ${st.made.text}`);
+    }
+    if (st.action === 'phone') { // his phone: the Lights app, or one of his own apps
+      if (!state.phone) st.made = { failed: 'I do not have a phone' };
+      else if (st.details.app && !st.details.lamp) {
+        const a = (state.apps ?? []).find((x) => x.name.toLowerCase().includes(String(st.details.app).toLowerCase().trim()));
+        st.made = a ? { opened: a.name, text: `I opened ${a.name} on my phone` } : { failed: `there is no app called "${text(st.details.app, 40)}" on my phone. My apps: Lights${(state.apps ?? []).map((x) => `, ${x.name}`).join('')}` };
+      } else st.made = applyLight(state, { ...st.details, timer: st.details.timer && typeof st.details.timer === 'object' ? st.details.timer : null }, { who: 'Pip', now: stepStart });
     }
     if (st.action === 'lamp_auto') {
       const n = String(st.details.name ?? '').toLowerCase().trim();
@@ -1854,6 +1880,7 @@ async function wakeUp() {
     if (st.action === 'request_ability') Object.assign(entry, { name: text(d.name, 40), result: st.made?.request?.what ?? null, failed: st.made?.failed ?? null });
     if (['plant', 'water', 'harvest'].includes(st.action)) Object.assign(entry, { name: st.made?.plant ?? text(d.seed ?? d.plant, 40), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'check_light') Object.assign(entry, { where: st.made?.where ?? text(d.where ?? d.name, 60), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'phone') Object.assign(entry, { lamp: text(d.lamp, 60), app: text(d.app, 60), result: st.made?.text ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'lamp_auto') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), mode: st.made?.mode ?? null, failed: st.made?.failed ?? null });
     if (st.dark) entry.dark = st.dark;
     if (st.litUp) entry.litUp = st.litUp;
@@ -2005,6 +2032,7 @@ async function wakeUp() {
   await clearTasks(taskFiles.names);
   await clearVisitors(visitorFiles);
   await clearFronts(frontFiles.names);
+  await clearLights(lightFiles);
   const planLines = steps.map((st, i) => `- ${st.action}${results[i].detail ? ` (${results[i].detail})` : ''}${st.thought ? `: ${st.thought}` : ''}`).join('\n');
   await appendFile(
     DIARY_FILE,

@@ -14,7 +14,8 @@ import { allMisplaced } from './placement.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
 import { kindOf } from './body.js';
-import { noveltyBoost, roomIsDark, storageFull } from './growth.js';
+import { noveltyBoost, roomIsDark, storageFull, darkLampOff } from './growth.js';
+import { lampsOf, lampName, lampNow } from './web/lights.js';
 import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
 
@@ -115,6 +116,7 @@ export const MOVES = [
   // A free move in his own words. It leaves nothing behind, so it is offered, but less than the moves that really make or grow something.
   { name: 'do', line: () => 'do something small in my own words, only when no other move fits; not for planning, judging, cooking or anything that has its own move above (it does not make anything): {what}', when: () => true, score: () => 0.4 },
   // --- my things ---
+  { name: 'phone', line: (s) => `use my phone: Lights (${lampsOf(s).slice(0, 3).map((e) => `"${lampName(e)}" ${lampNow(e).on ? `on ${lampNow(e).level}%` : 'off'}`).join(', ')}) or an app: {lamp, switch, level 25/50/75/100, color, name, timer: {at, do}} or {app}`, when: (s) => Boolean(s.phone) && (lampsOf(s).length > 0 || (s.apps ?? []).length > 0), score: (s, n) => 0.5 + (darkLampOff(s, n) ? 2.5 : 0) },
   { name: 'use', line: (s) => `use one of my things (${usable(s).slice(0, 3).map((d) => `"${d.name}": ${(d.uses ?? []).map((u) => u.label).slice(0, 2).join(' / ')}`).join('; ')}): {name, label}`, when: (s) => usable(s).length > 0, score: () => 0.8 },
   { name: 'take_photo', line: () => 'take a photo of something that matters to me: {target: window, room, myself or one of my things, why, camera: close, wide, low or high, caption}', when: (s, n) => left(s, 'take_photo', n) > 0, score: () => 0.5 },
   { name: 'place_picture', line: (s) => `hang a picture I was given (${names(unplacedGifts(s).map((p) => p.id))}): {id, wall}`, when: (s) => unplacedGifts(s).length > 0, score: () => 1.5 },
@@ -130,7 +132,7 @@ export const MOVES = [
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
   { name: 'dream', line: () => 'tell Bas about a big dream, something far too big to make myself (he might build it): {what, why}', when: (s, n) => daysSince(s.bigDreamAt, n) >= 3 && s.body.creativity >= 6, score: () => 0.8 },
-  { name: 'work_on_project', line: (s) => `work on my project: the game does its next step the right way (${workable(s).map((p) => `"${p.title}", next: ${p.steps.find((x) => !x.done).text}`).join('; ')}): {title}`, when: (s) => workable(s).length > 0, score: () => 2.2 },
+  { name: 'work_on_project', line: (s) => `work on my project: the game does its next step the right way (${workable(s).slice(0, 2).map((p) => `"${p.title.slice(0, 40)}", next: ${p.steps.find((x) => !x.done).text.slice(0, 40)}`).join('; ')}): {title}`, when: (s) => workable(s).length > 0, score: () => 2.2 },
   { name: 'plan_project', line: (s) => `plan my project ${names(unplanned(s).map((p) => p.title))} in 3 to 5 small steps I can really do with my moves: {title, steps: [3 to 5 short steps]}`, when: (s) => unplanned(s).length > 0, score: () => 4 },
   { name: 'judge_project', line: (s) => `look at my project (${names(working(s).filter((p) => (p.versions ?? []).length).map((p) => p.title))}) and say if I am proud of it. Good enough is fine: a first version that works is done, I can make a new one later: {title, proud: "yes" or "no", why}`, when: (s) => working(s).some((p) => (p.versions ?? []).length && (p.steps ?? []).filter((x) => !x.done).length <= (p.steps ?? []).length / 2), score: (s) => Math.min(5, 0.6 + Math.max(0, ...working(s).map((p) => (p.versions ?? []).length)) * 0.9 + (working(s).some((p) => (p.steps ?? []).length && p.steps.every((x) => x.done)) ? 3 : 0)) },
   { name: 'start_project', line: () => 'start a project, something to make or learn over days: {title, why, steps: [3 to 6 short steps], needs: [tools it needs, if any]}', when: (s) => working(s).length < 2, score: (s) => 0.5 + s.body.creativity / 5 + (working(s).length ? 0 : 1) },
