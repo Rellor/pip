@@ -144,7 +144,7 @@ export function notesFor(s, what, project = null) {
 const lookedUpLight = (s) => (s.notebook ?? []).some((n) => /\b(lamp|lamps|lantern|light|lighting|candle)\b/i.test(`${n.query} ${n.title}`));
 
 // ---- Room for his things: when the surfaces he can reach are full, he notices it, and that he can build storage.
-import { supportsInfo } from './decor.js';
+import { supportsInfo, onDeskGear } from './decor.js';
 const roomFor = (s) => {
   const info = supportsInfo(s.decor ?? []);
   return { full: info.filter((b) => b.full && !b.high), free: info.filter((b) => !b.full && !b.high && b.room > 0 && !/^(desk|piano)$/.test(b.label)) };
@@ -192,6 +192,7 @@ export function roomLines(s, now = Date.now()) {
   const furniture = ['my bed', 'my desk (with my computer, the keyboard, a mug and the photo printer on it)', 'the big bookshelf full of books (its top is too high for me)', 'my chest', 'a big plant', 'a round rug', 'two windows with curtains', ...(gone('piano') ? [] : ['the piano'])];
   const lines = [`Furniture: ${furniture.join(', ')}.`];
   for (const b of supportsInfo(s.decor ?? []).filter((x) => x.on.length)) lines.push(`On ${b.label === 'desk' ? 'my desk' : `my ${b.label}`}: ${b.on.join(', ')}${b.full ? ' (full)' : ''}.`);
+  for (const x of onDeskGear(s.decor)) lines.push(`My ${x.name} stands on ${x.on}: it is in the way when I work. I move it (move_thing).`);
   const mine = (s.decor ?? []).filter((d) => !d.image && d.kind !== 'surface').map((d) => `${d.name} (${String(d.label ?? '').replace(/ \(.*\)$/, '')})`);
   if (mine.length) lines.push(`My things: ${mine.slice(0, 8).join(', ')}${mine.length > 8 ? ' and more' : ''}.`);
   const pics = (s.decor ?? []).filter((d) => d.image).length;

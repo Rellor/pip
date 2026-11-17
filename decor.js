@@ -1302,6 +1302,25 @@ const surfaceOthers = (decor, key, skip) => decor.filter((o) => o !== skip && o.
 // tables by their size. And it must be within reach: he cannot put things on top of the 3 m bookshelf.
 // The desk already has his computer, keyboard, a mug and the photo printer on it: room for 2 more of his things.
 export const DESK_ITEMS = ['my computer', 'my keyboard', 'a mug', 'my photo printer'];
+// Where those stand (as drawn in web/props.js and web/main.js), in the room's own coordinates before the desk is moved.
+// Nothing he puts on the desk may stand on them.
+const DESK_GEAR = [
+  { n: 'my computer', x: [-4.78, -4.42], z: [0.6, 1.8] },
+  { n: 'my keyboard', x: [-4.2, -3.8], z: [0.76, 1.64] },
+  { n: 'my mouse', x: [-4.02, -3.88], z: [1.72, 1.88] },
+  { n: 'a mug', x: [-3.92, -3.78], z: [1.93, 2.1] },
+  { n: 'my photo printer', x: [-3.99, -3.7], z: [0.33, 0.67] },
+];
+export const deskGear = () => (furnNow?.desk?.gone ? [] : DESK_GEAR.map((r) => worldRect('desk', placeOf(furnNow, 'desk'), r)));
+// His things on the desk that stand on his computer, keyboard, mouse, mug or printer: [{ name, on }].
+export function onDeskGear(decor) {
+  const gear = deskGear();
+  return (decor ?? []).filter((o) => o.kind === 'surface' && o.pos && baseKeyOf(o) === 'desk').map((o) => {
+    const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
+    const g = gear.find((x) => r.x0 < x.x1 && r.x1 > x.x0 && r.z0 < x.z1 && r.z1 > x.z0);
+    return g ? { name: o.name, on: g.n } : null;
+  }).filter(Boolean);
+}
 export const maxOn = (base) => (base.key === 'desk' ? 2 : Math.max(2, Math.min(6, Math.round(((base.x1 - base.x0) * (base.z1 - base.z0)) / 0.08))));
 // Hanging things are not held to his height the same way: he stretches up for a shelf on the wall (up to 2.2 m).
 export const WALL_SHELF_TOP = 2.0;
@@ -1315,7 +1334,7 @@ function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   const tall = Math.max(0.01, ...parts.map((p) => (p.pos?.[1] ?? 0) + ((p.shape === 'sphere' ? p.size[0] * 2 : p.size[1]) ?? 0) / 2));
   if (base.clear && tall * scale > base.clear - 0.02) scale = Math.max(0.2, (base.clear - 0.02) / tall); // it has to fit under the board above
   const [hw, hd] = halfFoot(parts, scale);
-  const others = surfaceOthers(decor, base.key, null);
+  const others = [...surfaceOthers(decor, base.key, null), ...(base.key === 'desk' ? deskGear() : [])]; // on the desk: not on his computer, keyboard, mouse, mug or printer
   const fitsAt = (x, z) => {
     const r = rectAt([hw, hd], x, z, base.rotY);
     return r.x0 >= base.x0 && r.x1 <= base.x1 && r.z0 >= base.z0 && r.z1 <= base.z1 && !others.some((o) => r.x0 < o.x1 + 0.05 && r.x1 + 0.05 > o.x0 && r.z0 < o.z1 + 0.05 && r.z1 + 0.05 > o.z0);

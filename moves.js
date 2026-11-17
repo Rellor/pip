@@ -9,7 +9,7 @@
 import { dayLimits } from './limits.js';
 import { missingTool, NEEDS } from './tools.js';
 import { kitchenIn } from './food.js';
-import { supportsInfo } from './decor.js';
+import { supportsInfo, onDeskGear } from './decor.js';
 import { allMisplaced } from './placement.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
@@ -49,8 +49,10 @@ const findProjectTitle = (st) => st.forStep?.project;
 // A surface with too much on it, and a place of his with room: what to move where (or null).
 const tidyUp = (s) => {
   const info = supportsInfo(s.decor ?? []);
-  const full = info.find((b) => !b.high && b.on.length > (b.label === 'desk' ? 2 : 4)); // the desk: his computer, keyboard, mug and printer take most of it
   const free = info.find((b) => !b.full && !b.high && b.room > 0 && !/^(desk|piano)$/.test(b.label));
+  const messy = onDeskGear(s.decor)[0]; // something standing on his keyboard or screen is in the way, however few things are on the desk
+  if (messy && free) return { full: 'desk', thing: messy.name, to: free.label.replace(/ \(level \d+\)$/, ''), why: `stands on ${messy.on}` };
+  const full = info.find((b) => !b.high && b.on.length > (b.label === 'desk' ? 2 : 4)); // the desk: his computer, keyboard, mug and printer take most of it
   return full && free ? { full: full.label, thing: full.on[full.on.length - 1], to: free.label.replace(/ \(level \d+\)$/, '') } : null;
 };
 const unplanned = (s) => working(s).filter((p) => !(p.steps ?? []).length || stuckStep(p)); // a project with no steps has no next step, so he goes round in circles
@@ -121,7 +123,7 @@ export const MOVES = [
   { name: 'use', line: (s) => `use one of my things (${usable(s).slice(0, 3).map((d) => `"${d.name}": ${(d.uses ?? []).map((u) => u.label).slice(0, 2).join(' / ')}`).join('; ')}): {name, label}`, when: (s) => usable(s).length > 0, score: () => 0.8 },
   { name: 'take_photo', line: () => 'take a photo of something that matters to me: {target: window, room, myself or one of my things, why, camera: close, wide, low or high, caption}', when: (s, n) => left(s, 'take_photo', n) > 0, score: () => 0.5 },
   { name: 'place_picture', line: (s) => `hang a picture I was given (${names(unplacedGifts(s).map((p) => p.id))}): {id, wall}`, when: (s) => unplacedGifts(s).length > 0, score: () => 1.5 },
-  { name: 'move_thing', line: (s) => { const t = tidyUp(s); const p = allMisplaced(s)[0]; return `move something in my room (${names(own(s).map((d) => d.name))})${t ? ` (my ${t.full} is too full: I can put ${t.thing} on my ${t.to})` : p ? ` (my ${p.e.name} would be better ${p.m.better})` : ''}: {name, next_to / on / wall / where: "ceiling"}`; }, when: (s, n) => own(s).length > 0 && left(s, 'move_thing', n) > 0, score: (s) => 0.3 + (s.tasks ?? []).filter((t) => t.status === 'accepted').length + (tidyUp(s) ? 2.5 : allMisplaced(s).length ? 1.5 : 0) },
+  { name: 'move_thing', line: (s) => { const t = tidyUp(s); const p = allMisplaced(s)[0]; return `move something in my room (${names(own(s).map((d) => d.name))})${t ? (t.why ? ` (my ${t.thing} ${t.why}: I can put it on my ${t.to})` : ` (my ${t.full} is too full: I can put ${t.thing} on my ${t.to})`) : p ? ` (my ${p.e.name} would be better ${p.m.better})` : ''}: {name, next_to / on / wall / where: "ceiling"}`; }, when: (s, n) => own(s).length > 0 && left(s, 'move_thing', n) > 0, score: (s) => 0.3 + (s.tasks ?? []).filter((t) => t.status === 'accepted').length + (tidyUp(s) ? 2.5 : allMisplaced(s).length ? 1.5 : 0) },
   { name: 'remove_decoration', line: (s) => `put something away in my chest (${names(own(s).map((d) => d.name))}): {name}`, when: (s) => own(s).length > 0, score: (s) => (10 - s.body.tidiness) / 3 },
   { name: 'take_out', line: (s) => `take something out of my chest (${names((s.stored ?? []).map((d) => d.name))}): {name}`, when: (s) => (s.stored ?? []).length > 0, score: () => 0.3 },
   { name: 'take_tool', line: () => 'pick up a tool or instrument so I can use it: {name}', when: (s) => /take_tool|inventory/.test(lastFail(s)?.why ?? ''), score: () => 3 },
