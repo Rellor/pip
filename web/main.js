@@ -4543,6 +4543,8 @@ function phoneOpen(open) {
 }
 $('phonebtn').addEventListener('click', () => phoneOpen($('phone').hidden));
 $('phclose').addEventListener('click', () => phoneOpen(false));
+$('phone').addEventListener('click', (e) => { if (e.target === $('phone')) phoneOpen(false); }); // a tap next to the phone closes it
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('phone').hidden) phoneOpen(false); });
 async function phoneSend(cmd) {
   if (!phoneKey()) { toast('Add your key in Settings (⚙) to change his lights.'); return; }
   const r = applyLight(lastState, cmd, { who: 'Bas' }); // shown at once; Pip gets it at his next wake-up
@@ -4624,7 +4626,7 @@ function renderPhone(s) {
     const send = (cmd) => phoneSend({ lamp: e.id, ...cmd });
     const pill = (label, sel, go) => { const b = el('button', label, `ph-pill${sel ? ' sel' : ''}`); b.type = 'button'; b.disabled = !canEdit; b.addEventListener('click', go); return b; };
     v.append(el('div', 'Light', 'ph-sec'));
-    const onoff = el('div', null, 'ph-row');
+    const onoff = el('div', null, 'ph-steps'); // on/off and the 4 dim steps on one row
     onoff.append(pill(st.on ? 'On' : 'Off', st.on, () => send({ switch: st.on ? 'off' : 'on' })), ...LEVELS.map((lv) => pill(`${lv}%`, st.on && st.level === lv, () => send({ level: lv }))));
     v.append(onoff);
     v.append(el('div', 'Colour', 'ph-sec'));
