@@ -6,7 +6,7 @@ import { makeProps } from './props.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { autoLampOn, lightAt, levelWord, isLamp, placeFor } from './lighting.js';
 import { isGreenhouse, plantState, slotSpot } from './gardening.js';
-import { lampsOf, lampName, lampNow, PRESETS, LEVELS, timerWords, applyLight } from './lights.js';
+import { lampsOf, lampName, lampNow, PRESETS, LEVELS, timerWords, applyLight, fixedLamp } from './lights.js';
 import { buildHouse, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects, isGone } from './furniture.js';
 
@@ -111,6 +111,7 @@ scene.add(lamp);
   shade.scale.set(1, 0.7, 1);
   shade.position.set(-2, 3.82, -1);
   scene.add(cord, shade);
+  lamp.userData.shade = shade;
 }
 
 const mat = (color, opts = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...opts });
@@ -384,6 +385,20 @@ function scheduleDue(s) {
 // ---- What things DO when they are used (light, drive, spin). The data says what it does; the page plays it.
 // A lamp is lit unless Pip switched it off. Before his switch is due (litAt) it still shows the old state.
 const litOf = (d) => (d.auto === 'dark' && lastState ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : d.timers?.length || d.setAt ? lampNow(d).on : (d.auto === 'dark' && lastState ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : d.litAt && Date.parse(d.litAt) > Date.now() ? d.lit === false : d.lit !== false)); // a lamp set to "dark" follows the real light and the weather; timers from his phone
+// The lamps that came with the house (the room lamp and the hall lamp) follow his phone too: on, off, dimmed, a colour.
+function syncFixedLamps(s) {
+  if (!s) return;
+  for (const [id, light, bulb, base] of [['room-lamp', lamp, lamp.userData.shade, null], ['hall-lamp', home?.hallLight, home?.hallBulb, 9]]) {
+    const f = fixedLamp(s, id);
+    if (!f || !light) continue;
+    const st = lampNow(f);
+    const k = st.on ? st.level / 100 : 0;
+    if (base === null) light.userData.k = k; // the room lamp's strength also follows the time of day (look.js)
+    else light.intensity = base * k;
+    if (f.color || f.mode) light.color.set(st.color);
+    if (bulb?.material) { bulb.material.emissiveIntensity = 0.9 * (st.on ? 0.35 + 0.65 * k : 0); if (f.color) bulb.material.emissive?.set(st.color); }
+  }
+}
 // How his lamps light the room: a soft glow that reaches across the room and fades slowly, not a bright spot that stops
 // suddenly (they were 3 strong with a steep fall-off: blinding at the desk, dark a little further). ?lamp=power,reach,decay to try others.
 const LAMP = (() => { const [power, reach, decay] = (lookParams.get('lamp') || '').split(',').map(Number); return { power: power || 1.1, reach: reach || 7, decay: decay || 1.3 }; })();
@@ -2930,6 +2945,7 @@ function loop(now) {
   if (now > autoAt && lastState) { // lamps set to "dark" switch by themselves when the real light changes
     autoAt = now + 2000;
     for (const d of lastState.decor || []) if (d.auto === 'dark' || d.timers?.length) { const g = decorGroups.get(d.id); if (g) setLit(g, litOf(d), d); } // timers switch at their time, also between wake-ups
+    syncFixedLamps(lastState);
   }
   updateSlides(now, dt);
   frame(now, dt);
@@ -3929,6 +3945,7 @@ function renderStatus(s) {
 }
 function render(s) {
   renderPhone(s);
+  syncFixedLamps(s);
   $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);
   renderNow();
@@ -4553,6 +4570,7 @@ async function phoneSend(cmd) {
   const r = applyLight(lastState, cmd, { who: 'Bas' }); // shown at once; Pip gets it at his next wake-up
   if (r.failed) { toast(r.failed); return; }
   for (const d of lampsOf(lastState)) { const g = decorGroups.get(d.id); if (g) setLit(g, litOf(d), d); }
+  syncFixedLamps(lastState);
   renderPhone(lastState);
   try {
     const res = await fetch('/api/lights', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: phoneKey(), cmd }) });

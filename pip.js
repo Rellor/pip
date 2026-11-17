@@ -22,7 +22,7 @@ import { roomScale } from './scale.js';
 import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
 import { bestHits } from './research.js';
-import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, noteResearch, notesFor } from './growth.js';
+import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
@@ -563,6 +563,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     goals: (s.intent?.items ?? []).map((i) => `[${i.done ? 'x' : ' '}] ${i.text}`),
     skills: skillLine(s),
     moves: offered,
+    room: roomLines(s),
     fresh: [...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),

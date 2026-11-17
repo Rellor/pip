@@ -1264,7 +1264,7 @@ export function supportsInfo(decor) {
     const on = decor.filter((o) => o.kind === 'surface' && o.pos && baseKeyOf(o) === b.key);
     const area = (b.x1 - b.x0) * (b.z1 - b.z0);
     const used = on.reduce((t, o) => { const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY); return t + (r.x1 - r.x0) * (r.z1 - r.z0); }, 0);
-    return { label: b.label, cx: r3((b.x0 + b.x1) / 2), cz: r3((b.z0 + b.z1) / 2), on: on.map((o) => o.name), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
+    return { label: b.label, cx: r3((b.x0 + b.x1) / 2), cz: r3((b.z0 + b.z1) / 2), on: on.map((o) => o.name), ...(b.key === 'desk' ? { fixed: DESK_ITEMS } : {}), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
   });
 }
 // Small things that stand loose on the floor (not furniture he can sit in or use).
@@ -1300,7 +1300,9 @@ const surfaceOthers = (decor, key, skip) => decor.filter((o) => o !== skip && o.
 
 // How many things fit on a surface before it is cluttered: the desk keeps room for his computer; his own shelves and
 // tables by their size. And it must be within reach: he cannot put things on top of the 3 m bookshelf.
-export const maxOn = (base) => (base.key === 'desk' ? 3 : Math.max(2, Math.min(6, Math.round(((base.x1 - base.x0) * (base.z1 - base.z0)) / 0.08))));
+// The desk already has his computer, keyboard, a mug and the photo printer on it: room for 2 more of his things.
+export const DESK_ITEMS = ['my computer', 'my keyboard', 'a mug', 'my photo printer'];
+export const maxOn = (base) => (base.key === 'desk' ? 2 : Math.max(2, Math.min(6, Math.round(((base.x1 - base.x0) * (base.z1 - base.z0)) / 0.08))));
 // Hanging things are not held to his height the same way: he stretches up for a shelf on the wall (up to 2.2 m).
 export const WALL_SHELF_TOP = 2.0;
 export const reachable = (base) => (base.y ?? 0) <= (base.hung ? 2.2 : PIP.reachUp);
