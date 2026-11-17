@@ -99,7 +99,7 @@ ok('he never drops below 1, and very hungry is tiring, not deadly', () => {
 const { coziness } = await import('../body.js');
 const { availableMoves } = await import('../moves.js');
 ok('coziness: bare is low, a few varied things are cozy, piles of stuff are not', () => {
-  const lamp = { name: 'lamp', pos: [0, 0, 0], zone: 'floor', parts: [{ glow: true }], uses: [{ does: 'light' }] };
+  const lamp = { name: 'floor lamp', pos: [0, 0, 0], zone: 'floor', parts: [{ glow: true }], uses: [{ does: 'light' }] };
   assert.equal(coziness({ decor: [] }), 1);
   const varied = { decor: [lamp, { name: 'fern', pos: [1, 0, 1], zone: 'floor', parts: [] }, { name: 'pic', image: 'x', pos: [0, 2, -5], kind: 'wall' }, { name: 'cup', pos: [0, 1, 0], zone: 'on_desk', parts: [] }] };
   assert.ok(coziness(varied) >= 7);

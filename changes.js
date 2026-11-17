@@ -2,7 +2,8 @@
 // so the live loop applies it itself (no need to pause him). Nothing is deleted: what goes, goes to s.archive.
 import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
-import { makeDecor, holdsThings } from './decor.js';
+import { makeDecor, holdsThings, sizeOf } from './decor.js';
+import { roomFactors, scaleParts } from './scale.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
 
@@ -149,6 +150,47 @@ const CHANGES = [
         moved.push(old.name);
       }
       return moved.length ? `My ${moved.join(' and ')} hung too high to put things on. Now it hangs where I can reach it.` : null;
+    },
+  },
+  {
+    id: '2026-11-17 his things at the size of his room',
+    run(s, at) { // everything he made grows to the room's size (1.6x; work tops only as far as he can reach), and stays where it was
+      const atMs = Date.parse(at) - 60_000;
+      const deg = (r) => Math.round(((r ?? 0) * 180) / Math.PI);
+      const mine = (s.decor ?? []).filter((d) => !d.image && !d.art && d.parts?.length && !d.roomScaled);
+      const order = [...mine.filter((d) => d.kind !== 'surface'), ...mine.filter((d) => d.kind === 'surface')]; // shelves and tables first, then what stands on them
+      const grown = [];
+      for (const old of order) {
+        const f = roomFactors(old.parts, old);
+        const rest = s.decor.filter((d) => d !== old);
+        const side = old.side ?? (old.pos && Math.abs(old.pos[2] + 4.97) < 0.2 ? 'back' : 'left');
+        const baseKey = old.base ?? '';
+        const [bid, lv] = String(baseKey).split('#');
+        const holder = lv !== undefined ? s.decor.find((d) => d.id === bid) : null;
+        const where = old.kind === 'floor' ? { x: old.pos[0], z: old.pos[2], turn: deg(old.rotY) }
+          : old.kind === 'wall' ? { wall: side, along: side === 'back' ? old.pos[0] : old.pos[2], height: old.pos[1] }
+          : holder ? { on: holder.name, level: String(Number(lv) + 1) } : { on: baseKey || 'desk' };
+        // It keeps its place: as big as fits right there (1.6 times, or a bit less where there is no more room).
+        let r = null;
+        for (let k = 1; k >= 0; k -= 0.1) {
+          const wide = 1 + (f.wide - 1) * k;
+          const high = 1 + (f.high - 1) * k;
+          let at2 = where;
+          if (old.kind === 'floor') { // against a wall: the middle moves out from it by half of what it grows, so its back stays at the wall
+            const [w0, , d0] = sizeOf(old) ?? [0, 0, 0];
+            const grow = Math.max(w0, d0) * (wide - 1) / 2;
+            const off = (v) => (v < -3.9 ? grow : v > 3.9 ? -grow : 0);
+            at2 = { ...where, x: Math.round((old.pos[0] + off(old.pos[0])) * 1000) / 1000, z: Math.round((old.pos[2] + off(old.pos[2])) * 1000) / 1000 };
+          }
+          const t = makeDecor(rest, { name: old.name, why: old.why, project: old.project, parts: scaleParts(old.parts, wide, high), uses: old.uses, keep: true, ...at2 }, atMs, Date.parse(at));
+          const room = old.kind === 'floor' ? 0.45 : 0.12; // on the floor: the same spot against the same wall (a little out from it as it grows)
+          if (t?.entry && Math.hypot(t.entry.pos[0] - old.pos[0], t.entry.pos[2] - old.pos[2]) <= room) { r = t; break; }
+        }
+        if (!r?.entry) { old.roomScaled = true; continue; } // it stays as it is
+        s.decor[s.decor.indexOf(old)] = { ...r.entry, id: old.id, at: old.at, createdAt: old.createdAt ?? r.entry.createdAt, uses: old.uses, ...(old.auto ? { auto: old.auto } : {}), ...(old.lit !== undefined ? { lit: old.lit } : {}), roomScaled: true };
+        grown.push(old.name);
+      }
+      return grown.length ? `My room is big, and the things I made were very small in it. Now they are the right size: ${grown.slice(0, 4).join(', ')}${grown.length > 4 ? ' and more' : ''}.` : null;
     },
   },
   {
