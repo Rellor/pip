@@ -1471,3 +1471,9 @@ I want to continue making progress on my stormy sky watercolor now that I have s
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: creative
 
+## 17/11/2026, 14:02:05
+I am continuing with my bread project by letting the dough rise as planned.
+> I am continuing with my bread project by letting the dough rise as planned.
+- do (Let the dough rise by the window (for my project Bake a simple loaf of bread)): I will let the dough rise by the window now.
+- mood: creative
+
