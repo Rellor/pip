@@ -7,7 +7,7 @@ const CAMEL = { viewbox: 'viewBox', gradienttransform: 'gradientTransform', grad
 const MAX_CHARS = 12_000;
 const SAFE_VALUE = /^[\w\s#.,;:%()\-+°'/]*$/; // no < > & " or backslashes
 
-export const MAX_ART_PER_DAY = 3;
+export const MAX_ART_PER_DAY = 5; // a painting project can need several drawing steps in one day
 
 // Returns { svg, aspect } or null.
 export function cleanSvg(raw, maxChars = MAX_CHARS) {

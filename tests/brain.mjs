@@ -112,3 +112,8 @@ ok('a "do" that is really planting, watering or eating becomes that move (no pre
   const u = toAnswer({ moves: [{ move: 'use', details: { name: 'wooden planter box', label: 'Plant basil seeds' } }, { move: 'use', details: { name: 'lamp', label: 'Switch on' } }] }, ['use']);
   assert.deepEqual(u.steps.map((x) => x.action), ['plant', 'use']);
 });
+
+ok('every place word a move asks for can be answered (on, where, x, z, level...)', () => {
+  const p = brainSchema(['move_thing']).properties.moves.items.properties.details.properties;
+  for (const k of ['on', 'where', 'x', 'z', 'level', 'wall', 'along', 'height', 'next_to', 'side', 'turn']) assert.ok(k in p, `the answer form has no "${k}"`);
+});

@@ -114,9 +114,10 @@ console.log('ok  a project stuck without a tool: he asks for it (one extra ask),
   console.log('ok  mixing paint is painting; a step that failed twice waits and he plans it again');
 }
 
+import { MAX_ART_PER_DAY } from '../art.js';
 // A step whose move is used up for today is not offered (it was dropped in advance, and he filled the time with pretend steps).
 {
-  const s = { ...paint, art: Array.from({ length: 3 }, () => ({ createdAt: new Date().toISOString() })), apps: [], wardrobe: [], moves: [], found: [], pictures: [], log: [], studio: { songs: [] }, today: { done: {} }, tools: [{ name: 'drawing supplies', kind: 'drawing supplies' }], projects: [{ title: 'Paint the sky', status: 'working', steps: [{ text: 'Paint the grey clouds', done: false }], versions: [], notes: [], needs: [] }] };
+  const s = { ...paint, art: Array.from({ length: MAX_ART_PER_DAY }, () => ({ createdAt: new Date().toISOString() })), apps: [], wardrobe: [], moves: [], found: [], pictures: [], log: [], studio: { songs: [] }, today: { done: {} }, tools: [{ name: 'drawing supplies', kind: 'drawing supplies' }], projects: [{ title: 'Paint the sky', status: 'working', steps: [{ text: 'Paint the grey clouds', done: false }], versions: [], notes: [], needs: [] }] };
   if (availableMoves(s, { random: () => 0.5 }).some((m) => m.name === 'work_on_project')) fail('work_on_project offered while drawing is used up for today');
   console.log('ok  a project step whose move is used up for today waits until tomorrow');
 }
