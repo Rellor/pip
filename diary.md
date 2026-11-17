@@ -1279,3 +1279,10 @@ My desk is too full, so I need to move something to the small wooden shelf to ma
 - do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
 - mood: cozy
 
+## 17/11/2026, 09:02:08
+My desk is too full, so I need to move the amber reading light to clear up space.
+> My desk is too full, so I need to move the amber reading light to clear up space.
+- move_thing (amber reading light): I will move the amber reading light to the left wall since my desk is full and the small wooden shelf is not for hanging things.
+- do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
+- mood: cozy
+
