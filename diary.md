@@ -1706,3 +1706,10 @@ I will check the lights app on my phone to make sure my room is nice and bright.
 - do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
 - mood: curious
 
+## 17/11/2026, 19:16:18
+I want to craft a glowing lamp to brighten up the dark parts of my room.
+> I want to craft a glowing lamp to brighten up the dark parts of my room.
+- decorate (glowing clay lamp): I need more light where I work and read.
+- do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
+- mood: curious
+
