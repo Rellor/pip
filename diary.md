@@ -1823,3 +1823,9 @@ Writing in my diary late at night feels right.
 - write_diary (The rain is tapping on the window. I am taking a little break from the lamp to let my thoughts settle.): Writing in my diary late at night feels right.
 - mood: cozy
 
+## 17/11/2026, 21:51:53
+My small clay lamp is blocking my keyboard, so I need to place it safely on my shelf.
+> My small clay lamp is blocking my keyboard, so I need to place it safely on my shelf.
+- move_thing (small clay lamp): Moving the lamp off the keyboard so I can work clearly.
+- mood: cozy
+
