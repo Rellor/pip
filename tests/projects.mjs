@@ -107,7 +107,7 @@ console.log('ok  a project stuck without a tool: he asks for it (one extra ask),
   if (workStep(paintP, 'Paint a watercolor of the stormy sky').action !== 'draw') fail('mixing paint became cooking');
   const breadP = { projects: [{ title: 'Bake bread', status: 'working', steps: [{ text: 'Mix flour, water, and a pinch of salt', done: false }], versions: [], notes: [], needs: [] }] };
   if (workStep(breadP, 'Bake bread', { cookDetails }).action !== 'cook') fail('mixing flour is no longer cooking');
-  const stuck = { ...paint, today: { done: {} }, tools: [{ name: 'drawing supplies', kind: 'drawing supplies' }], projects: [{ title: 'Paint the sky', status: 'working', steps: [{ text: 'Paint the grey clouds', done: false }], versions: [], notes: [], needs: [], stuck: { text: 'Paint the grey clouds', n: 2 } }] };
+  const stuck = { ...paint, today: { done: {} }, tools: [{ name: 'drawing supplies', kind: 'drawing supplies' }], projects: [{ title: 'Paint the sky', status: 'working', steps: [{ text: 'Paint the grey clouds', done: false }], versions: [], notes: [], needs: [], stuck: { text: 'Paint the grey clouds', n: 2, at: new Date().toISOString() } }] };
   const names = availableMoves(stuck, { random: () => 0.5 }).map((m) => m.name);
   if (names.includes('work_on_project')) fail('a step that failed twice is tried again');
   if (!names.includes('plan_project')) fail('he is not offered to plan it again');
