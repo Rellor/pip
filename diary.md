@@ -1694,3 +1694,9 @@ My desk is full of things so I am going to build a small side table to keep thin
 - decorate (small side table): I will build a little table to hold my things since the desk is crowded.
 - mood: curious
 
+## 17/11/2026, 19:00:08
+I want to move my cozy brass gas bulb lamp to the desk to read and write more comfortably, and use my phone's Lights app to adjust everything.
+> I want to move my cozy brass gas bulb lamp to the desk to read and write more comfortably, and use my phone's Lights app to adjust everything.
+- phone (cozy brass gas bulb lamp): I want my cozy brass gas bulb lamp near my desk so I can see better.
+- mood: curious
+
