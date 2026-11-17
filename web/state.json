@@ -1,24 +1,11 @@
 {
   "mood": "cozy",
-  "energy": 9.5,
-  "boredom": 2.7,
-  "loneliness": 0.86,
+  "energy": 8.84,
+  "boredom": 2.69,
+  "loneliness": 0.87,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-16T20:55:44.564Z",
-      "action": "move_thing",
-      "detail": "amber reading light",
-      "enjoyment": 0,
-      "failed": "he did not say where to move it. amber reading light is a surface thing. A surface thing stands on s"
-    },
-    {
-      "at": "2026-11-16T20:55:44.565Z",
-      "action": "do",
-      "detail": "stretch up tall and look out of the window for a moment",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-16T21:03:55.605Z",
       "action": "change_thing",
@@ -318,6 +305,19 @@
       "action": "do",
       "detail": "look out of the window for a while",
       "enjoyment": 5
+    },
+    {
+      "at": "2026-11-17T11:25:03.917Z",
+      "action": "move_thing",
+      "detail": "amber reading light",
+      "enjoyment": 0,
+      "failed": "he did not say where to move it. amber reading light is a surface thing. A surface thing stands on s"
+    },
+    {
+      "at": "2026-11-17T11:25:03.919Z",
+      "action": "do",
+      "detail": "stomp around the room once, then laugh at myself",
+      "enjoyment": 6
     }
   ],
   "notes": [
@@ -1184,14 +1184,6 @@
   "storyAt": "2026-11-16T22:01:10.221Z",
   "thoughts": [
     {
-      "at": "2026-11-16T21:36:39.590Z",
-      "text": "I am hungry and need to eat the bread I made.",
-      "short": "I am hungry and need to eat the bread I made.",
-      "mood": "hungry",
-      "action": "eat",
-      "detail": "simple loaf of bread"
-    },
-    {
       "at": "2026-11-16T21:44:49.801Z",
       "text": "I am in the middle of painting my stormy sky and want to mix the soft blues and grays for the clouds.",
       "short": "I am in the middle of painting my stormy sky and want to mix the soft blues and grays for the clouds.",
@@ -1421,6 +1413,14 @@
       "mood": "cozy",
       "action": "do",
       "detail": "look out of the window for a while"
+    },
+    {
+      "at": "2026-11-17T11:25:03.920Z",
+      "text": "I need to clear space on my desk and continue my painting project.",
+      "short": "I need to clear space on my desk and continue my painting project.",
+      "mood": "cozy",
+      "action": "move_thing",
+      "detail": "amber reading light"
     }
   ],
   "outbox": [
@@ -1492,24 +1492,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-17T07:30:50.828Z",
-      "action": "cook",
-      "thought": "I wanted to, but a dish needs a name and 1 to 4 ingredients. (I will mix my soft blues and grays for the stormy clouds now.)",
-      "dish": "mix soft blues and grays for the stormy",
-      "ingredients": [],
-      "failed": "a dish needs a name and 1 to 4 ingredients"
-    },
-    {
-      "at": "2026-11-17T07:34:50.828Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and look closely at something in my room I never really looked at.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🔍",
-      "what": "look closely at something in my room I never really looked at",
-      "feeling": "wonder"
-    },
     {
       "at": "2026-11-17T07:38:56.839Z",
       "action": "cook",
@@ -1758,6 +1740,24 @@
       "emoji": "",
       "what": "look out of the window for a while",
       "feeling": null
+    },
+    {
+      "at": "2026-11-17T11:25:04.916Z",
+      "action": "move_thing",
+      "thought": "I wanted to, but he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. …. (My desk is too full, so I will move the reading light to the shelf.)",
+      "name": "amber reading light",
+      "place": null,
+      "failed": "he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. He says on: \"its name\". He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
+    },
+    {
+      "at": "2026-11-17T11:29:04.916Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and stomp around the room once, then laugh at myself.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🐾",
+      "what": "stomp around the room once, then laugh at myself",
+      "feeling": "joy"
     }
   ],
   "decor": [
@@ -3841,47 +3841,58 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-17T11:22:24.710Z",
+    "at": "2026-11-17T11:25:03.916Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 2
+      "gemini-3.5-flash-lite": 1
     },
-    "modelNotes": [
-      "gemini-3.5-flash-lite answered (gemini-3.8-flash is out of quota)"
-    ],
-    "fallback": true,
     "tokens": {
-      "calls": 2,
-      "input": 2585,
-      "output": 794,
+      "calls": 1,
+      "input": 1697,
+      "output": 186,
       "models": {
-        "gemini-3.5-flash-lite": 2
+        "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am continuing my watercolor painting while it rains outside.",
-    "inner": "I am continuing my watercolor painting while it rains outside.",
+    "thought": "I need to clear space on my desk and continue my painting project.",
+    "inner": "I need to clear space on my desk and continue my painting project.",
     "sent": false,
     "steps": [
       {
+        "action": "move_thing",
+        "details": {
+          "name": "amber reading light",
+          "topic": "small wooden shelf"
+        },
+        "detail": "amber reading light",
+        "thought": "My desk is too full, so I will move the reading light to the shelf.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
         "action": "do",
         "details": {
-          "what": "look out of the window for a while"
+          "what": "stomp around the room once, then laugh at myself",
+          "feeling": "joy",
+          "emoji": "🐾"
         },
-        "detail": "look out of the window for a while",
-        "thought": "I watch the sky for a bit.",
-        "enjoyment": 5,
+        "detail": "stomp around the room once, then laugh at myself",
+        "thought": "That did not work out. I shake it off and stomp around the room once, then laugh at myself.",
+        "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "do",
+    "action": "move_thing",
     "details": {
-      "what": "look out of the window for a while"
+      "name": "amber reading light",
+      "topic": "small wooden shelf"
     },
-    "detail": "look out of the window for a while",
-    "enjoyment": 5,
+    "detail": "amber reading light",
+    "enjoyment": 0,
     "new_idea": null,
     "found": null
   },
@@ -3955,7 +3966,7 @@
     "day": "2026-11-17",
     "calls": {
       "gemini-3.8-flash": 15,
-      "gemini-3.5-flash-lite": 34,
+      "gemini-3.5-flash-lite": 35,
       "gemini-3.5-flash": 12,
       "gemini-3.6-flash": 11,
       "gemini-3.1-flash-lite": 1
@@ -4095,22 +4106,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-17T11:22:24.714Z",
-  "fullness": 6.26,
+  "memoryFadeAt": "2026-11-17T11:25:03.922Z",
+  "fullness": 6.2,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 2.98,
-  "joy": 3.83,
-  "calm": 5.48,
+  "wonder": 3.28,
+  "joy": 3.38,
+  "calm": 5.38,
   "emo": {
-    "irritated": 0,
+    "irritated": 1.2,
     "sad": 0,
-    "excited": 0.04
+    "excited": 0.02
   },
-  "feelAt": "2026-11-17T11:22:13.000Z",
+  "feelAt": "2026-11-17T11:25:02.478Z",
   "lastAte": "2026-11-17T11:14:08.871Z",
   "studio": {
     "songs": [
@@ -4417,27 +4428,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.8,
-    "curiosity": 6.19,
-    "boredom": 2.7,
-    "loneliness": 0.86,
+    "creativity": 0.83,
+    "curiosity": 6.21,
+    "boredom": 2.69,
+    "loneliness": 0.87,
     "tidiness": 7.9,
-    "at": "2026-11-17T11:22:13.000Z",
+    "at": "2026-11-17T11:25:02.478Z",
     "coziness": 7.55
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-17T08:53:43.543Z"
-      },
-      {
-        "move": "move_thing",
-        "kind": "room",
-        "at": "2026-11-17T09:02:08.022Z",
-        "failed": true
-      },
       {
         "move": "do",
         "kind": "play",
@@ -4502,6 +4502,17 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-17T11:22:24.718Z"
+      },
+      {
+        "move": "move_thing",
+        "kind": "room",
+        "at": "2026-11-17T11:25:03.926Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-17T11:25:03.927Z"
       }
     ],
     "moods": [
@@ -4515,7 +4526,7 @@
   "today": {
     "day": "2026-11-17",
     "done": {
-      "do": 22,
+      "do": 23,
       "draw": 1,
       "eat": 2,
       "water": 1,
@@ -4523,15 +4534,15 @@
     },
     "tried": {
       "cook": 4,
-      "do": 22,
-      "move_thing": 4,
+      "do": 23,
+      "move_thing": 5,
       "draw": 2,
       "eat": 2,
       "water": 1,
       "play_piano": 1
     },
     "kinds": {
-      "play": 22,
+      "play": 23,
       "make": 1,
       "food": 2,
       "garden": 1,
@@ -4539,12 +4550,12 @@
     },
     "moods": {
       "energetic": 3,
-      "cozy": 24
+      "cozy": 25
     },
     "lift": {
       "cook": 0.95,
-      "do": -7.51,
-      "move_thing": -1,
+      "do": -7.76,
+      "move_thing": -1.25,
       "draw": 4.46,
       "eat": 1.1,
       "water": 1.5,
@@ -4579,8 +4590,25 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [],
-    "decidedAt": "2026-11-17T11:22:21.229Z",
+    "queue": [
+      {
+        "thought": "I want to continue painting the dark rain falling.",
+        "enjoyment": 7,
+        "needs": "",
+        "forStep": {
+          "project": "Paint a watercolor of the stormy sky",
+          "text": "Paint the dark rain falling over the distant hills"
+        },
+        "action": "draw",
+        "details": {
+          "what": "Paint the dark rain falling over the distant hills",
+          "why": "for my project \"Paint a watercolor of the stormy sky\"",
+          "project": "Paint a watercolor of the stormy sky"
+        },
+        "make": true
+      }
+    ],
+    "decidedAt": "2026-11-17T11:25:03.916Z",
     "seen": {
       "tools": 3,
       "gifts": 0,
@@ -4591,8 +4619,8 @@
       "visitors": 0
     },
     "lastFail": {
-      "at": "2026-11-17T11:22:24.710Z",
-      "why": "draw: I already used up my 3 a day: I cannot draw again today"
+      "at": "2026-11-17T11:25:03.928Z",
+      "why": "move_thing: he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. He says on: \"its name\". He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
     },
     "unread": 0
   },
@@ -4683,7 +4711,7 @@
   "ever": {
     "eat": 8,
     "water": 4,
-    "do": 83,
+    "do": 84,
     "search_web": 4,
     "read_book": 2,
     "record_song": 2,
@@ -4699,7 +4727,7 @@
     "draw": 2
   },
   "checkup": {
-    "at": "2026-11-17T11:22:24.720Z",
+    "at": "2026-11-17T11:25:03.929Z",
     "items": [
       {
         "id": "circling",
@@ -4717,17 +4745,17 @@
         "id": "failing",
         "ok": false,
         "label": "Moves",
-        "text": "cooking failed 4 of 4 times today. Last reason: a dish needs a name and 1 to 4 ingredients.",
+        "text": "moving something failed 5 of 5 times today. Last reason: he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. He says on:.",
         "look": "The same reason again and again is usually a bug in the game code for this move, not Pip being clumsy. A reason that changes each time is more likely Pip learning.",
-        "debug": "move: cook\ntried today: 4, failed: 4\nlast tries:\n- 07:30 UTC FAILED: a dish needs a name and 1 to 4 ingredients\n- 07:38 UTC FAILED: a dish needs a name and 1 to 4 ingredients"
+        "debug": "move: move_thing\ntried today: 5, failed: 5\nlast tries:\n- 08:11 UTC FAILED \"amber reading light\": \"small wooden shelf\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. amber reading light is a surface thing. A surface thing stands on something: the desk,\n- 08:53 UTC FAILED \"amber reading light\": \"small wooden shelf\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. amber reading light is a surface thing. A surface thing stands on something: the desk,\n- 09:02 UTC FAILED \"amber reading light\": amber reading light stands on something, it does not hang on the wall. To put it on a shelf he says {on: \"the shelf's name\"} (and level: top, middle, bottom or a number from the bottom), or x and z to\n- 11:25 UTC FAILED \"amber reading light\": he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. He says on: \"its name\". He asks himself where this "
       },
       {
         "id": "pretend",
         "ok": false,
         "label": "Real things",
-        "text": "22 of his 27 steps today were free \"do\" steps that make nothing.",
+        "text": "23 of his 28 steps today were free \"do\" steps that make nothing.",
         "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
-        "debug": "last \"do\" steps:\n- 10:30 UTC say hello to my plants through the glass\n- 10:46 UTC say hello to my plants through the glass\n- 10:57 UTC look out of the window for a while\n- 11:05 UTC look out of the window for a while\n- 11:22 UTC look out of the window for a while"
+        "debug": "last \"do\" steps:\n- 10:46 UTC say hello to my plants through the glass\n- 10:57 UTC look out of the window for a while\n- 11:05 UTC look out of the window for a while\n- 11:22 UTC look out of the window for a while\n- 11:29 UTC stomp around the room once, then laugh at myself (after a failure)"
       },
       {
         "id": "needs",
@@ -4755,13 +4783,15 @@
         "last": "2026-11-17T08:53:44.534Z"
       },
       {
-        "move": "cooking",
-        "action": "cook",
-        "reason": "a dish needs a name and 1 to 4 ingredients",
-        "raw": "a dish needs a name and 1 to 4 ingredients",
-        "names": [],
-        "count": 2,
-        "last": "2026-11-17T07:38:56.839Z"
+        "move": "moving something",
+        "action": "move_thing",
+        "reason": "he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. He says on:",
+        "raw": "he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. He says on: \"its name\". He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way",
+        "names": [
+          "amber reading light"
+        ],
+        "count": 1,
+        "last": "2026-11-17T11:25:04.916Z"
       },
       {
         "move": "moving something",
@@ -4784,6 +4814,15 @@
         ],
         "count": 1,
         "last": "2026-11-17T08:03:48.592Z"
+      },
+      {
+        "move": "cooking",
+        "action": "cook",
+        "reason": "a dish needs a name and 1 to 4 ingredients",
+        "raw": "a dish needs a name and 1 to 4 ingredients",
+        "names": [],
+        "count": 1,
+        "last": "2026-11-17T07:38:56.839Z"
       }
     ],
     "sent": {
@@ -5857,6 +5896,14 @@
   "lessons": [
     {
       "move": "move_thing",
+      "text": "he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. He says on: \"its name\". He asks",
+      "count": 4,
+      "at": "2026-11-17T11:25:04.916Z",
+      "firstAt": "2026-11-16T19:58:12.867Z",
+      "solvedAt": null
+    },
+    {
+      "move": "move_thing",
       "text": "amber reading light stands on something, it does not hang on the wall. To put it on a shelf he says",
       "count": 1,
       "at": "2026-11-17T09:02:09.010Z",
@@ -5885,14 +5932,6 @@
       "count": 13,
       "at": "2026-11-17T07:38:56.839Z",
       "firstAt": "2026-11-16T20:14:41.324Z",
-      "solvedAt": null
-    },
-    {
-      "move": "move_thing",
-      "text": "he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano, a shelf, a table. He says on: \"its name\". He asks",
-      "count": 3,
-      "at": "2026-11-16T20:55:45.563Z",
-      "firstAt": "2026-11-16T19:58:12.867Z",
       "solvedAt": null
     },
     {
