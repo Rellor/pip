@@ -1390,3 +1390,9 @@ I am continuing my two active projects now that I have my supplies ready and the
 - do (look out of the window for a while): I watch the sky for a bit.
 - mood: cozy
 
+## 17/11/2026, 12:06:15
+I want to progress with my watercolor of the stormy sky while it is raining.
+> I want to progress with my watercolor of the stormy sky while it is raining.
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: cozy
+
