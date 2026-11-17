@@ -1,18 +1,11 @@
 {
   "mood": "cozy",
   "energy": 9.5,
-  "boredom": 0,
-  "loneliness": 1.16,
+  "boredom": 1.11,
+  "loneliness": 1.19,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-17T15:49:08.711Z",
-      "action": "move_thing",
-      "detail": "cozy brass gas bulb lamp",
-      "enjoyment": 0,
-      "failed": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf with"
-    },
     {
       "at": "2026-11-17T15:49:08.713Z",
       "action": "do",
@@ -314,6 +307,12 @@
       "at": "2026-11-17T21:10:38.937Z",
       "action": "do",
       "detail": "shape the clay base for the small desk lamp very carefully",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-17T21:19:10.678Z",
+      "action": "change_thing",
+      "detail": "small wooden shelf",
       "enjoyment": 6
     }
   ],
@@ -642,7 +641,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.5,
+      "weight": 7.499,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -651,7 +650,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.541,
+      "weight": 7.54,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -660,7 +659,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.431,
+      "weight": 8.429,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -669,7 +668,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.032,
+      "weight": 8.031,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -678,7 +677,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.58,
+      "weight": 6.579,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -689,7 +688,7 @@
       "text": "The gear teeth need to be smooth so the little wooden music box plays correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.116,
+      "weight": 6.115,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -698,7 +697,7 @@
       "text": "Smooth gear teeth make the little wooden music box play correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.113,
+      "weight": 6.112,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -707,7 +706,7 @@
       "text": "I recorded a song: Music Box Test (drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.12,
+      "weight": 6.119,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -716,7 +715,7 @@
       "text": "The music box melody should match the rhythm of the wooden gears.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.122,
+      "weight": 6.121,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -725,7 +724,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.61,
+      "weight": 6.609,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -734,7 +733,7 @@
       "text": "Matching the rhythm to the wooden gears makes the music box sound better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.136,
+      "weight": 6.135,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -743,7 +742,7 @@
       "text": "Adding enough sounding notes makes the music box record correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.138,
+      "weight": 6.137,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -752,7 +751,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.124,
+      "weight": 9.122,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -761,7 +760,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.748,
+      "weight": 7.747,
       "lastUsed": "2026-11-16T16:11:38.822Z"
     },
     {
@@ -770,7 +769,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.728,
+      "weight": 8.726,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -779,7 +778,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.783,
+      "weight": 6.782,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -788,7 +787,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.22,
+      "weight": 9.218,
       "lastUsed": "2026-11-17T19:24:21.973Z"
     },
     {
@@ -797,7 +796,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.781,
+      "weight": 7.78,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -806,7 +805,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.806,
+      "weight": 6.805,
       "lastUsed": "2026-11-16T20:39:17.012Z"
     },
     {
@@ -815,7 +814,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.309,
+      "weight": 7.308,
       "lastUsed": "2026-11-17T17:45:46.914Z"
     },
     {
@@ -824,7 +823,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.797,
+      "weight": 7.796,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -833,7 +832,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.395,
+      "weight": 8.393,
       "lastUsed": "2026-11-17T17:53:54.186Z"
     },
     {
@@ -842,17 +841,8 @@
       "text": "I cleared space on my desk by moving the brass lamp to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.448,
+      "weight": 6.447,
       "lastUsed": "2026-11-17T20:12:53.663Z"
-    },
-    {
-      "id": "mmwksydqe60",
-      "at": "2026-11-17T14:43:21.734Z",
-      "text": "I am working on painting the rain and baking the bread in the small oven.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.952,
-      "lastUsed": "2026-11-17T14:43:21.734Z"
     },
     {
       "id": "mmwktuc9g60",
@@ -860,7 +850,7 @@
       "text": "someone gave me flour, so I can bake my bread now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.955,
+      "weight": 5.954,
       "lastUsed": "2026-11-17T15:08:12.819Z"
     },
     {
@@ -869,7 +859,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.955,
+      "weight": 6.954,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -878,7 +868,7 @@
       "text": "I am baking my simple loaf of bread in the small oven.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.956,
+      "weight": 5.955,
       "lastUsed": "2026-11-17T15:16:24.792Z"
     },
     {
@@ -887,7 +877,7 @@
       "text": "My simple loaf of bread is finally baked and ready.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.957,
+      "weight": 5.956,
       "lastUsed": "2026-11-17T15:24:36.766Z"
     },
     {
@@ -896,7 +886,7 @@
       "text": "I am replanning my bread baking project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.958,
+      "weight": 5.957,
       "lastUsed": "2026-11-17T15:32:49.731Z"
     },
     {
@@ -905,7 +895,7 @@
       "text": "I reorganized my desk to make space for creating.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.96,
+      "weight": 5.959,
       "lastUsed": "2026-11-17T15:49:08.714Z"
     },
     {
@@ -914,7 +904,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.959,
+      "weight": 7.958,
       "lastUsed": "2026-11-17T15:57:13.035Z"
     },
     {
@@ -923,7 +913,7 @@
       "text": "I am eating a piece of bread to satisfy my hunger before I continue with my painting project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.961,
+      "weight": 5.96,
       "lastUsed": "2026-11-17T15:57:20.293Z"
     },
     {
@@ -932,7 +922,7 @@
       "text": "I harvested my first basil.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.962,
+      "weight": 5.961,
       "lastUsed": "2026-11-17T16:05:42.941Z"
     },
     {
@@ -941,7 +931,7 @@
       "text": "I decided to tidy up my desk by moving small items to the shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.964,
+      "weight": 5.963,
       "lastUsed": "2026-11-17T16:22:13.971Z"
     },
     {
@@ -950,7 +940,7 @@
       "text": "I rewrote the steps for baking my simple loaf of bread.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.965,
+      "weight": 5.964,
       "lastUsed": "2026-11-17T16:30:24.861Z"
     },
     {
@@ -959,7 +949,7 @@
       "text": "I need to clear my desk and tidy up the items.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.967,
+      "weight": 5.966,
       "lastUsed": "2026-11-17T16:46:57.322Z"
     },
     {
@@ -968,7 +958,7 @@
       "text": "I cleaned up my desk a bit so I have room to work.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.968,
+      "weight": 5.967,
       "lastUsed": "2026-11-17T16:55:51.827Z"
     },
     {
@@ -977,7 +967,7 @@
       "text": "I decided to craft a small glow lamp to brighten the dark areas of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.969,
+      "weight": 5.968,
       "lastUsed": "2026-11-17T17:04:12.660Z"
     },
     {
@@ -986,7 +976,7 @@
       "text": "Humming a tune helps clear my head when I have too many little things to move around.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.974,
+      "weight": 5.973,
       "lastUsed": "2026-11-17T17:45:49.486Z"
     },
     {
@@ -995,7 +985,7 @@
       "text": "Eating apples and humming brings a nice calm rhythm back to my evening.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.975,
+      "weight": 5.974,
       "lastUsed": "2026-11-17T17:54:08.504Z"
     },
     {
@@ -1004,7 +994,7 @@
       "text": "Writing a program is fun and a new way to make something.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.977,
+      "weight": 5.976,
       "lastUsed": "2026-11-17T18:10:33.360Z"
     },
     {
@@ -1013,7 +1003,7 @@
       "text": "I made an app: rain_ambience",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.977,
+      "weight": 5.976,
       "lastUsed": "2026-11-17T18:10:34.357Z"
     },
     {
@@ -1022,7 +1012,7 @@
       "text": "Keeping my workspace tidy helps me create better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.978,
+      "weight": 5.977,
       "lastUsed": "2026-11-17T18:19:10.281Z"
     },
     {
@@ -1031,7 +1021,7 @@
       "text": "Eating apples gives me energy when I am working on a rainy day.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.978,
       "lastUsed": "2026-11-17T18:27:15.047Z"
     },
     {
@@ -1040,7 +1030,7 @@
       "text": "I want to make a glowing lamp for the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.98,
+      "weight": 5.979,
       "lastUsed": "2026-11-17T18:35:21.101Z"
     },
     {
@@ -1049,7 +1039,7 @@
       "text": "I searched for how to make a glowing lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.98,
       "lastUsed": "2026-11-17T18:43:27.140Z"
     },
     {
@@ -1058,7 +1048,7 @@
       "text": "Building a side table gives me more surface space near the desk.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.981,
       "lastUsed": "2026-11-17T18:52:03.419Z"
     },
     {
@@ -1067,7 +1057,7 @@
       "text": "I made small side table (the desk is full and I need a place to put my things)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.981,
       "lastUsed": "2026-11-17T18:52:04.414Z"
     },
     {
@@ -1076,7 +1066,7 @@
       "text": "I decided to make my own lamp to see better at my desk.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.985,
+      "weight": 5.984,
       "lastUsed": "2026-11-17T19:16:18.631Z"
     },
     {
@@ -1085,7 +1075,7 @@
       "text": "I cleared the lamp from my keyboard and ate some bread.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.985,
       "lastUsed": "2026-11-17T19:24:23.514Z"
     },
     {
@@ -1094,7 +1084,7 @@
       "text": "Eating apples gives me a fresh crunch when I need a moment to pause.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.986,
       "lastUsed": "2026-11-17T19:32:28.912Z"
     },
     {
@@ -1103,7 +1093,7 @@
       "text": "Reading at night helps me settle down.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.988,
+      "weight": 5.987,
       "lastUsed": "2026-11-17T19:40:34.631Z"
     },
     {
@@ -1112,7 +1102,7 @@
       "text": "A lamp belongs where one reads and writes.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.989,
+      "weight": 5.988,
       "lastUsed": "2026-11-17T19:48:40.564Z"
     },
     {
@@ -1121,7 +1111,7 @@
       "text": "I decided to switch from thinking about lamps to actually making one.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.99,
+      "weight": 5.989,
       "lastUsed": "2026-11-17T19:56:46.283Z"
     },
     {
@@ -1130,7 +1120,7 @@
       "text": "I started shaping the clay base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.992,
+      "weight": 5.991,
       "lastUsed": "2026-11-17T20:13:13.176Z"
     },
     {
@@ -1139,7 +1129,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.992,
       "lastUsed": "2026-11-17T20:21:31.612Z"
     },
     {
@@ -1148,7 +1138,7 @@
       "text": "I need to replann the desk lamp steps clearly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.994,
+      "weight": 5.993,
       "lastUsed": "2026-11-17T20:29:48.040Z"
     },
     {
@@ -1157,7 +1147,7 @@
       "text": "I cleared a tiny spot on my desk to try shaping the lamp base again.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.994,
       "lastUsed": "2026-11-17T20:37:53.174Z"
     },
     {
@@ -1166,7 +1156,7 @@
       "text": "I painted the stormy sky using the supplies someone gave me.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-17T20:54:10.892Z"
     },
     {
@@ -1175,22 +1165,23 @@
       "text": "Shaping the clay base for the lamp needs a careful touch.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
+      "weight": 5.997,
       "lastUsed": "2026-11-17T21:02:16.069Z"
+    },
+    {
+      "id": "mmwl73ejd60",
+      "at": "2026-11-17T21:19:11.676Z",
+      "text": "I changed small wooden shelf",
+      "importance": 4,
+      "kind": "memory",
+      "weight": 3.999,
+      "lastUsed": "2026-11-17T21:19:11.676Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-16T22:01:10.221Z",
   "thoughts": [
-    {
-      "at": "2026-11-17T17:12:24.355Z",
-      "text": "I finished baking my simple loaf of bread and now I want to judge the project.",
-      "short": "I finished baking my simple loaf of bread and now I want to judge the project.",
-      "mood": "cozy",
-      "action": "do",
-      "detail": "look closely at my project Bake a simple loaf of bread"
-    },
     {
       "at": "2026-11-17T17:20:31.819Z",
       "text": "I am organizing my room and lamps so I can see better while working.",
@@ -1422,6 +1413,14 @@
       "mood": "cozy",
       "action": "do",
       "detail": "shape the clay base for the small desk lamp very carefully"
+    },
+    {
+      "at": "2026-11-17T21:19:10.680Z",
+      "text": "I am shifting my amber reading light to the desk so I have better light for writing.",
+      "short": "I am shifting my amber reading light to the desk so I have better light for writing.",
+      "mood": "cozy",
+      "action": "change_thing",
+      "detail": "small wooden shelf"
     }
   ],
   "outbox": [
@@ -1493,15 +1492,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-17T18:10:34.357Z",
-      "action": "make_app",
-      "thought": "I have never tried writing a program before and I am curious",
-      "name": "rain_ambience",
-      "why": "I want to try writing a program and hear soft rain sounds while I work",
-      "file": "made/appmwl0cu1b2.html",
-      "failed": null
-    },
     {
       "at": "2026-11-17T18:19:11.277Z",
       "action": "move_thing",
@@ -1817,13 +1807,23 @@
       "emoji": "",
       "what": "shape the clay base for the small desk lamp very carefully",
       "feeling": null
+    },
+    {
+      "at": "2026-11-17T21:19:11.676Z",
+      "action": "change_thing",
+      "thought": "I want my reading light closer to where I work.",
+      "name": "small wooden shelf",
+      "grew": null,
+      "limited": false,
+      "reshaped": true,
+      "failed": null
     }
   ],
   "decor": [
     {
       "id": "dmwho1mim0av",
       "name": "small wooden shelf",
-      "why": "I sanded down warm oak boards to craft a sturdy little double-tier shelf for my wall. It has soft rounded edges, wooden support brackets underneath, tiny pegs, and space on top to hold my tiny blue bo",
+      "why": "I am rebuilding the small wooden shelf with cleaner joints and two proper levels so it can hold my amber reading light and music box securely on the left wall.",
       "project": "",
       "song": null,
       "uses": [
@@ -1857,54 +1857,34 @@
         {
           "shape": "roundbox",
           "size": [
-            1.04,
             0.8,
-            0.032
-          ],
-          "pos": [
-            0,
-            -0.028,
-            0.016
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#704214",
-          "glow": false
-        },
-        {
-          "shape": "roundbox",
-          "size": [
-            0.96,
-            0.048,
-            0.32
-          ],
-          "pos": [
-            0,
-            0.212,
-            0.16
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#8b5a2b",
-          "glow": false
-        },
-        {
-          "shape": "roundbox",
-          "size": [
-            0.64,
             0.04,
-            0.224
+            0.25
           ],
           "pos": [
             0,
-            -0.19,
-            0.128
+            -0.385,
+            0.125
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.8,
+            0.04,
+            0.25
+          ],
+          "pos": [
+            0,
+            -0.005,
+            0.125
           ],
           "rot": [
             0,
@@ -1917,139 +1897,61 @@
         {
           "shape": "box",
           "size": [
-            0.048,
-            0.32,
-            0.256
+            0.04,
+            0.8,
+            0.22
           ],
           "pos": [
-            -0.352,
-            0.036,
-            0.144
+            -0.38,
+            -0.005,
+            0.125
           ],
           "rot": [
             0,
             0,
             0
           ],
-          "color": "#5c3317",
+          "color": "#5c3a21",
           "glow": false
         },
         {
           "shape": "box",
           "size": [
-            0.048,
-            0.32,
-            0.256
+            0.04,
+            0.8,
+            0.22
           ],
           "pos": [
-            0.352,
-            0.036,
-            0.144
+            0.38,
+            -0.005,
+            0.125
           ],
           "rot": [
             0,
             0,
             0
           ],
-          "color": "#5c3317",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.032,
-            0.032,
-            0.096
-          ],
-          "pos": [
-            -0.24,
-            -0.3,
-            0.08
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#a0703b",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.032,
-            0.032,
-            0.096
-          ],
-          "pos": [
-            0.24,
-            -0.3,
-            0.08
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#a0703b",
+          "color": "#5c3a21",
           "glow": false
         },
         {
           "shape": "box",
           "size": [
-            0.064,
-            0.192,
-            0.144
+            0.76,
+            0.02,
+            0.22
           ],
           "pos": [
-            -0.288,
-            0.332,
-            0.16
+            0,
+            0.395,
+            0.125
           ],
           "rot": [
             0,
             0,
             0
           ],
-          "color": "#3b5998",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.048,
-            0.16,
-            0.128
-          ],
-          "pos": [
-            -0.208,
-            0.316,
-            0.16
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#993333",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.048
-          ],
-          "pos": [
-            0.288,
-            0.284,
-            0.16
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#d4af37",
+          "color": "#5c3a21",
           "glow": false
         }
       ],
@@ -2060,7 +1962,9 @@
       "at": "2026-11-15T10:02:42.476Z",
       "createdAt": "2026-11-16T19:50:03.872Z",
       "roomScaled": true,
-      "movedAt": "2026-11-17T07:55:21.242Z"
+      "movedAt": "2026-11-17T07:55:21.242Z",
+      "updatedAt": "2026-11-17T21:19:16.676Z",
+      "changedAt": "2026-11-17T21:19:16.676Z"
     },
     {
       "id": "dmwhq79zv1u2",
@@ -4231,42 +4135,265 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-17T21:10:38.935Z",
+    "at": "2026-11-17T21:19:10.676Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 1
+      "gemini-3.5-flash-lite": 2
     },
+    "modelNotes": [
+      "gemini-3.5-flash-lite answered (gemini-3.8-flash is out of quota)"
+    ],
+    "fallback": true,
     "tokens": {
-      "calls": 1,
-      "input": 1563,
-      "output": 130,
+      "calls": 2,
+      "input": 6172,
+      "output": 621,
       "models": {
-        "gemini-3.5-flash-lite": 1
+        "gemini-3.5-flash-lite": 2
       }
     },
     "intervalMin": 8,
-    "thought": "I am in the middle of crafting my small desk lamp and want to try shaping the clay base again.",
-    "inner": "I am in the middle of crafting my small desk lamp and want to try shaping the clay base again.",
+    "thought": "I am shifting my amber reading light to the desk so I have better light for writing.",
+    "inner": "I am shifting my amber reading light to the desk so I have better light for writing.",
     "sent": false,
     "steps": [
       {
-        "action": "do",
+        "action": "change_thing",
         "details": {
-          "what": "shape the clay base for the small desk lamp very carefully"
+          "change": "move amber reading light to the desk",
+          "name": "small wooden shelf",
+          "parts": [
+            {
+              "shape": "roundbox",
+              "size": [
+                0.8,
+                0.04,
+                0.25
+              ],
+              "pos": [
+                0,
+                0.02,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#8b5a2b",
+              "glow": false
+            },
+            {
+              "shape": "roundbox",
+              "size": [
+                0.8,
+                0.04,
+                0.25
+              ],
+              "pos": [
+                0,
+                0.4,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#8b5a2b",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.8,
+                0.22
+              ],
+              "pos": [
+                -0.38,
+                0.4,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.8,
+                0.22
+              ],
+              "pos": [
+                0.38,
+                0.4,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.76,
+                0.02,
+                0.22
+              ],
+              "pos": [
+                0,
+                0.8,
+                0
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            }
+          ],
+          "why": "I am rebuilding the small wooden shelf with cleaner joints and two proper levels so it can hold my amber reading light and music box securely on the left wall."
         },
-        "detail": "shape the clay base for the small desk lamp very carefully",
-        "thought": "I want to try shaping the clay base again with more care.",
+        "detail": "small wooden shelf",
+        "thought": "I want my reading light closer to where I work.",
         "enjoyment": 6,
         "found": null,
-        "made": null
+        "made": {
+          "id": "dmwho1mim0av",
+          "stand": [
+            -3.7,
+            -3.15
+          ],
+          "pos": [
+            -4.97,
+            1.7,
+            -3.15
+          ]
+        }
       }
     ],
-    "action": "do",
+    "action": "change_thing",
     "details": {
-      "what": "shape the clay base for the small desk lamp very carefully"
+      "change": "move amber reading light to the desk",
+      "name": "small wooden shelf",
+      "parts": [
+        {
+          "shape": "roundbox",
+          "size": [
+            0.8,
+            0.04,
+            0.25
+          ],
+          "pos": [
+            0,
+            0.02,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.8,
+            0.04,
+            0.25
+          ],
+          "pos": [
+            0,
+            0.4,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.8,
+            0.22
+          ],
+          "pos": [
+            -0.38,
+            0.4,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.8,
+            0.22
+          ],
+          "pos": [
+            0.38,
+            0.4,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.76,
+            0.02,
+            0.22
+          ],
+          "pos": [
+            0,
+            0.8,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        }
+      ],
+      "why": "I am rebuilding the small wooden shelf with cleaner joints and two proper levels so it can hold my amber reading light and music box securely on the left wall."
     },
-    "detail": "shape the clay base for the small desk lamp very carefully",
+    "detail": "small wooden shelf",
     "enjoyment": 6,
     "new_idea": null,
     "found": null
@@ -4343,7 +4470,7 @@
     "day": "2026-11-17",
     "calls": {
       "gemini-3.8-flash": 15,
-      "gemini-3.5-flash-lite": 135,
+      "gemini-3.5-flash-lite": 139,
       "gemini-3.5-flash": 12,
       "gemini-3.6-flash": 11,
       "gemini-3.1-flash-lite": 2
@@ -4486,22 +4613,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-17T21:10:38.940Z",
-  "fullness": 9.52,
+  "memoryFadeAt": "2026-11-17T21:19:10.682Z",
+  "fullness": 9.35,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.5,
-  "joy": 4.2,
-  "calm": 5.3,
+  "wonder": 7.4,
+  "joy": 4.64,
+  "calm": 5.26,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.55
+    "excited": 1.13
   },
-  "feelAt": "2026-11-17T21:10:19.581Z",
+  "feelAt": "2026-11-17T21:18:42.362Z",
   "lastAte": "2026-11-17T20:46:00.458Z",
   "studio": {
     "songs": [
@@ -4808,21 +4935,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.4,
-    "curiosity": 2.2,
-    "boredom": 1,
-    "loneliness": 1.16,
+    "creativity": 0,
+    "curiosity": 2.27,
+    "boredom": 1.11,
+    "loneliness": 1.19,
     "tidiness": 8.8,
-    "at": "2026-11-17T21:10:19.581Z",
+    "at": "2026-11-17T21:18:42.362Z",
     "coziness": 7.8
   },
   "recent": {
     "moves": [
-      {
-        "move": "read_book",
-        "kind": "learn",
-        "at": "2026-11-17T19:40:35.045Z"
-      },
       {
         "move": "move_thing",
         "kind": "room",
@@ -4895,6 +5017,11 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-17T21:10:38.943Z"
+      },
+      {
+        "move": "change_thing",
+        "kind": "make",
+        "at": "2026-11-17T21:19:10.686Z"
       }
     ],
     "moods": [
@@ -4905,12 +5032,6 @@
       "cozy"
     ],
     "choices": [
-      {
-        "key": "plan_project:craft a small desk lamp",
-        "move": "plan_project",
-        "ok": true,
-        "at": "2026-11-17T20:29:48.047Z"
-      },
       {
         "key": "do:",
         "move": "do",
@@ -4940,6 +5061,12 @@
         "move": "do",
         "ok": false,
         "at": "2026-11-17T21:10:38.944Z"
+      },
+      {
+        "key": "change_thing:small wooden shelf",
+        "move": "change_thing",
+        "ok": true,
+        "at": "2026-11-17T21:19:10.688Z"
       }
     ]
   },
@@ -4961,7 +5088,8 @@
       "search_web": 2,
       "decorate": 1,
       "read_book": 1,
-      "start_project": 1
+      "start_project": 1,
+      "change_thing": 1
     },
     "tried": {
       "cook": 8,
@@ -4980,11 +5108,12 @@
       "make_app": 1,
       "search_web": 2,
       "read_book": 1,
-      "start_project": 1
+      "start_project": 1,
+      "change_thing": 1
     },
     "kinds": {
       "play": 64,
-      "make": 12,
+      "make": 13,
       "food": 8,
       "garden": 3,
       "music": 3,
@@ -4993,7 +5122,7 @@
     },
     "moods": {
       "energetic": 24,
-      "cozy": 56,
+      "cozy": 57,
       "creative": 3,
       "hungry": 3,
       "curious": 13
@@ -5011,14 +5140,15 @@
       "decorate": 3.38,
       "make_app": 2.4,
       "search_web": 2.5,
-      "read_book": 1.6
+      "read_book": 1.6,
+      "change_thing": 1.8
     }
   },
   "skills": {
     "music": 16.5,
     "painting": 2,
     "sculpture": 9,
-    "woodwork": 10,
+    "woodwork": 11,
     "sewing": 0,
     "gardening": 10.5,
     "cooking": 3,
@@ -5043,7 +5173,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-17T21:10:38.934Z",
+    "decidedAt": "2026-11-17T21:18:56.811Z",
     "seen": {
       "tools": 3,
       "gifts": 0,
@@ -5148,7 +5278,7 @@
     "search_web": 6,
     "read_book": 3,
     "record_song": 2,
-    "change_thing": 3,
+    "change_thing": 4,
     "plant": 1,
     "ask_for": 3,
     "play_piano": 5,
@@ -5168,15 +5298,15 @@
     "start_project": 1
   },
   "checkup": {
-    "at": "2026-11-17T21:10:38.944Z",
+    "at": "2026-11-17T21:19:10.689Z",
     "items": [
       {
         "id": "circling",
         "ok": false,
         "label": "Thoughts",
-        "text": "He may be going in circles: 13 of his last 20 thoughts are about \"lamp\".",
+        "text": "He may be going in circles: 12 of his last 20 thoughts are about \"lamp\".",
         "look": "Usually something he keeps trying does not work (see Moves), or a project has no next step (see Projects). Check what he does in the Day tab.",
-        "debug": "top words: \"lamp\"\nlast thoughts:\n- 20:46 UTC [eat] I am hungry so I want to eat an apple from my full pantry.\n- 20:54 UTC [draw] I have my drawing supplies ready and I want to paint the stormy sky before doing other things.\n- 21:02 UTC [do] I am in the middle of crafting my small desk lamp and need to complete the clay base step that didn't work before.\n- 21:10 UTC [do] I am in the middle of crafting my small desk lamp and want to try shaping the clay base again."
+        "debug": "top words: \"lamp\"\nlast thoughts:\n- 20:54 UTC [draw] I have my drawing supplies ready and I want to paint the stormy sky before doing other things.\n- 21:02 UTC [do] I am in the middle of crafting my small desk lamp and need to complete the clay base step that didn't work before.\n- 21:10 UTC [do] I am in the middle of crafting my small desk lamp and want to try shaping the clay base again.\n- 21:19 UTC [change_thing] I am shifting my amber reading light to the desk so I have better light for writing."
       },
       {
         "id": "project",
@@ -5196,7 +5326,7 @@
         "id": "pretend",
         "ok": false,
         "label": "Real things",
-        "text": "64 of his 99 steps today were free \"do\" steps that make nothing.",
+        "text": "64 of his 100 steps today were free \"do\" steps that make nothing.",
         "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
         "debug": "last \"do\" steps:\n- 20:29 UTC plan the steps of my project Craft a small desk lamp\n- 20:37 UTC put the small clay lamp aside on the desk\n- 20:58 UTC juggle three imaginary berries (after a failure)\n- 21:02 UTC Shape the clay base for my small desk lamp carefully on the small cleared spot\n- 21:10 UTC shape the clay base for the small desk lamp very carefully"
       },
@@ -6461,6 +6591,115 @@
       ],
       "proud": false,
       "at": "2026-11-17T18:52:03.427Z"
+    },
+    {
+      "kind": "decorate",
+      "name": "small wooden shelf",
+      "why": "I am rebuilding the small wooden shelf with cleaner joints and two proper levels so it can hold my amber reading light and music box securely on the left wall.",
+      "parts": [
+        {
+          "shape": "roundbox",
+          "size": [
+            0.8,
+            0.04,
+            0.25
+          ],
+          "pos": [
+            0,
+            -0.38,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.8,
+            0.04,
+            0.25
+          ],
+          "pos": [
+            0,
+            0,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.8,
+            0.22
+          ],
+          "pos": [
+            -0.38,
+            0,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.8,
+            0.22
+          ],
+          "pos": [
+            0.38,
+            0,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.76,
+            0.02,
+            0.22
+          ],
+          "pos": [
+            0,
+            0.4,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        }
+      ],
+      "proud": false,
+      "at": "2026-11-17T21:19:10.687Z"
     }
   ],
   "cookedAt": [

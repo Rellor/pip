@@ -1800,3 +1800,9 @@ I am in the middle of crafting my small desk lamp and want to try shaping the cl
 - do (shape the clay base for the small desk lamp very carefully): I want to try shaping the clay base again with more care.
 - mood: cozy
 
+## 17/11/2026, 21:19:10
+I am shifting my amber reading light to the desk so I have better light for writing.
+> I am shifting my amber reading light to the desk so I have better light for writing.
+- change_thing (small wooden shelf): I want my reading light closer to where I work.
+- mood: cozy
+
