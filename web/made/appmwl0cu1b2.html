@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Rainy Evening</title>
+<style>
+  body {
+    background: #121824;
+    color: #9ba8c0;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .box {
+    background: #1b2332;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    text-align: center;
+    border: 1px solid #28354c;
+  }
+  button {
+    background: #344463;
+    color: #e2e8f0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: monospace;
+    margin-top: 12px;
+  }
+  button:hover {
+    background: #41557a;
+  }
+  p {
+    margin: 8px 0;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="box">
+  <h3>Rainy Evening</h3>
+  <p id="status">Click to listen to the soft rain.</p>
+  <button id="toggle" onclick="toggleRain()">Start Rain</button>
+</div>
+<script>
+  let audioCtx = null;
+  let isPlaying = false;
+  let noiseNode = null;
+  let filterNode = null;
+  let gainNode = null;
+
+  function toggleRain() {
+    if (!isPlaying) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Create white noise for rain
+      const bufferSize = 2 * audioCtx.sampleRate;
+      const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+
+      noiseNode = audioCtx.createBufferSource();
+      noiseNode.buffer = noiseBuffer;
+      noiseNode.loop = true;
+
+      // Filter to make it sound like soft rain (lowpass)
+      filterNode = audioCtx.createBiquadFilter();
+      filterNode.type = 'lowpass';
+      filterNode.frequency.value = 800;
+
+      // Volume
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.15;
+
+      noiseNode.connect(filterNode);
+      filterNode.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      noiseNode.start();
+      isPlaying = true;
+      document.getElementById('status').innerText = 'The room is quiet. The rain falls.';
+      document.getElementById('toggle').innerText = 'Stop Rain';
+    } else {
+      if (noiseNode) {
+        noiseNode.stop();
+        noiseNode.disconnect();
+      }
+      if (audioCtx) {
+        audioCtx.close();
+      }
+      isPlaying = false;
+      document.getElementById('status').innerText = 'Click to listen to the soft rain.';
+      document.getElementById('toggle').innerText = 'Start Rain';
+    }
+  }
+</script>
+</body>
+</html>

@@ -1657,3 +1657,9 @@ Humming helps clear my head.
 - do (hum a quiet tune to settle down): Humming helps clear my head.
 - mood: energetic
 
+## 17/11/2026, 18:10:33
+It is rainy and dark, and I am curious about writing my very first program on my phone or computer.
+> It is rainy and dark, and I am curious about writing my very first program on my phone or computer.
+- make_app (rain_ambience): I have never tried writing a program before and I am curious
+- mood: curious
+
