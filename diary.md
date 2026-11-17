@@ -1490,3 +1490,9 @@ I finished letting the dough rise by the window, so now I am ready to bake the s
 - do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
 - mood: hungry
 
+## 17/11/2026, 14:26:52
+I am continuing my two active projects since I have the supplies and the time to advance them further.
+> I am continuing my two active projects since I have the supplies and the time to advance them further.
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: energetic
+
