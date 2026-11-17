@@ -1567,3 +1567,9 @@ I am very hungry and have fresh bread ready in my pantry.
 - eat (bread): I am so hungry, I should eat some of the fresh bread.
 - mood: hungry
 
+## 17/11/2026, 16:05:42
+My basil is fully grown and I have never tried harvesting before.
+> My basil is fully grown and I have never tried harvesting before.
+- harvest (basil): My basil is ready, I want to harvest it.
+- mood: curious
+
