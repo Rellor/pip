@@ -198,7 +198,7 @@ export function buildHouse(THREE, scene) {
   };
   // a window in a wall: side is 'back' (the back wall, along x), 'left' (the bedroom's left wall, along z) or 'right' (the studio's right wall, along z)
   const WALLS = { back: { f: -5.0, sgn: 1 }, left: { f: -5.0, sgn: 1 }, right: { f: 16.6, sgn: -1 } };
-  const windowOn = (side, c, y0, y1, w, group = house) => {
+  const windowOn = (side, c, y0, y1, w, group = house, painted = true) => { // painted: a flat painted view (the bedroom windows look out on the 3D world of outside.js instead)
     const { f, sgn } = WALLS[side];
     const at = (a, y, t) => (side === 'back' ? [a, y, f + sgn * t] : [f + sgn * t, y, a]);
     const sz = (A, H, D) => (side === 'back' ? [A, H, D] : [D, H, A]);
@@ -211,7 +211,7 @@ export function buildHouse(THREE, scene) {
     views.push({ cv, tex });
     const h = y1 - y0;
     const cy = (y0 + y1) / 2;
-    const view = put(group, new THREE.PlaneGeometry(w + 0.1, h + 0.1), new THREE.MeshBasicMaterial({ map: tex }), at(c, cy, -0.32));
+    const view = painted ? put(group, new THREE.PlaneGeometry(w + 0.1, h + 0.1), new THREE.MeshBasicMaterial({ map: tex }), at(c, cy, -0.32)) : { rotation: {} };
     view.rotation.y = side === 'back' ? 0 : side === 'left' ? Math.PI / 2 : -Math.PI / 2;
     const fr = 0xffffff;
     B(group, sz(0.08, h + 0.16, 0.2), fr, at(c - w / 2 - 0.04, cy, -0.07));
@@ -496,7 +496,7 @@ export function buildHouse(THREE, scene) {
   // A square window like the one in the back wall: the same size (2.0 x 1.8) and height (2.0 to 3.8), in the middle of the
   // left wall, with curtains like the back window (look.js).
   sideWall(house, -5.15, -5.0, 5.0, 0xefcfb6, [{ a0: LEFT_WINDOW.z - 1.0, a1: LEFT_WINDOW.z + 1.0, y0: 2.0, y1: 3.8 }]);
-  windowOn('left', LEFT_WINDOW.z, 2.0, 3.8, 2.0);
+  windowOn('left', LEFT_WINDOW.z, 2.0, 3.8, 2.0, house, false);
   const refreshViews = (hour) => views.forEach((v) => { paintView(v.cv, hour); v.tex.needsUpdate = true; });
   refreshViews(13);
   return {
