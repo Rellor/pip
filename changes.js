@@ -6,6 +6,7 @@ import { makeDecor, holdsThings, sizeOf } from './decor.js';
 import { roomFactors, scaleParts } from './scale.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
+import { addIngredient } from './food.js';
 
 const CHANGES = [
   {
@@ -225,6 +226,17 @@ const CHANGES = [
       if (s.phone) return null;
       s.phone = { since: at, from: 'a gift' };
       return 'I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.';
+    },
+  },
+  {
+    id: '2026-11-17 food from Bas',
+    run(s) { // he was very hungry with an empty pantry: Bas brings him food
+      s.pantry ??= [];
+      for (const name of ['bread', 'apples', 'eggs', 'cheese', 'carrots', 'potatoes', 'milk', 'butter']) for (let i = 0; i < 2; i++) addIngredient(s, name);
+      const soup = s.pantry.find((p) => p.kind === 'dish' && p.name === 'vegetable soup');
+      if (soup) soup.qty += 3;
+      else s.pantry.push({ name: 'vegetable soup', kind: 'dish', qty: 3, from: 'bas' });
+      return 'Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.';
     },
   },
   {
