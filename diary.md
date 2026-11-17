@@ -1477,3 +1477,9 @@ I am continuing with my bread project by letting the dough rise as planned.
 - do (Let the dough rise by the window (for my project Bake a simple loaf of bread)): I will let the dough rise by the window now.
 - mood: creative
 
+## 17/11/2026, 14:10:22
+I want to clear some space on my crowded desk by moving the lamp to the shelf.
+> I want to clear some space on my crowded desk by moving the lamp to the shelf.
+- move_thing (cozy brass gas bulb lamp): My desk is too full, so I'll move the brass lamp to the shelf.
+- mood: creative
+
