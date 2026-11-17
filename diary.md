@@ -1248,3 +1248,9 @@ I need to clear space on my desk by moving a lamp to the shelf, and then continu
 - do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
 - mood: cozy
 
+## 17/11/2026, 08:20:01
+My desk is full and someone asked me to clean it up, so I am moving the reading light to the shelf.
+> My desk is full and someone asked me to clean it up, so I am moving the reading light to the shelf.
+- do (move amber reading light on small wooden shelf): I need to clear my desk.
+- mood: cozy
+
