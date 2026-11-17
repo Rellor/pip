@@ -6,7 +6,7 @@ import { seasonInfo, amsterdamHour } from './season.js';
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const ROOM_LAMP = { x: -2, z: -1 }; // the big lamp that is always on
-const LAMP_RANGE = 4;
+const LAMP_RANGE = 6; // his lamps give a soft light that reaches across the room (the page draws them the same way)
 export const DARK_BELOW = 0.3; // lamps on "dark" switch on when their place is darker than this
 
 import { isLamp, lampNow } from './lights.js';
@@ -49,7 +49,7 @@ export function lightAt(s, x, z, now = Date.now(), o = {}) {
     } else on = l.timers?.length || l.setAt ? lampNow(l, now).on : litNow(l, now); // timers from his phone
     if (!on) continue;
     const dim = (lampNow(l, now).level ?? 100) / 100; // dimmed on his phone: less light
-    const add = 0.5 * dim * Math.pow(clamp(1 - Math.hypot(x - l.pos[0], z - l.pos[2]) / LAMP_RANGE, 0, 1), 1.3);
+    const add = 0.42 * dim * Math.pow(clamp(1 - Math.hypot(x - l.pos[0], z - l.pos[2]) / LAMP_RANGE, 0, 1), 1.1);
     if (add > 0.02) { level += add; helped.push(l.name); }
   }
   return { level: clamp(level, 0, 1), window: b.window, roomLamp: b.roomLamp, lamps: helped, day, kind, hour: h };
