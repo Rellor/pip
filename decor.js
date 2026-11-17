@@ -43,8 +43,8 @@ export const ZONES = {
   on_desk: { label: 'on the desk', kind: 'surface', lim: { w: 1.0, d: 1.3 }, rotY: Math.PI / 2, off: [1.5, 0], slots: [[-4.2, 0.85, 0.45], [-4.2, 0.85, 1.95]] },
   on_bed: { label: 'on the bed', kind: 'surface', lim: { w: 0.9, d: 0.9 }, rotY: 0, off: [-1.5, 0], slots: [[3.1, 0.7, 4.0], [3.9, 0.7, 3.4]] },
   wall_back: { label: 'on the back wall (left of the photo, above it, or above the bookshelf)', kind: 'wall', rotY: 0, side: 'back', slots: [[-4.2, 2.9, -4.97], [-2.2, 4.2, -4.97], [2.6, 3.9, -4.97]] },
-  wall_desk: { label: 'on the photo wall above the desk', kind: 'wall', prints: true, rotY: Math.PI / 2, side: 'left', slots: [[-4.97, 2.35, 0.45], [-4.97, 2.35, 0.95], [-4.97, 2.35, 1.45], [-4.97, 2.35, 1.95], [-4.97, 2.85, 0.45], [-4.97, 2.85, 0.95], [-4.97, 2.85, 1.45], [-4.97, 2.85, 1.95]] }, // only for the small prints from his photo printer
-  wall_left: { label: 'on the left wall', kind: 'wall', rotY: Math.PI / 2, side: 'left', slots: [[-4.97, 2.7, -3.0], [-4.97, 2.7, -1.2], [-4.97, 3.2, 1.2]] },
+  wall_desk: { label: 'on the photo wall above the desk', kind: 'wall', prints: true, rotY: Math.PI / 2, side: 'left', slots: [[-4.97, 2.35, 1.55], [-4.97, 2.35, 2.05], [-4.97, 2.35, 2.55], [-4.97, 2.35, 3.05], [-4.97, 2.85, 1.55], [-4.97, 2.85, 2.05], [-4.97, 2.85, 2.55], [-4.97, 2.85, 3.05]] }, // only for the small prints from his photo printer
+  wall_left: { label: 'on the left wall', kind: 'wall', rotY: Math.PI / 2, side: 'left', slots: [[-4.97, 2.7, -3.0], [-4.97, 2.7, -2.0], [-4.97, 2.7, 3.7]] },
 };
 
 const num = (v, lo, hi, fallback) => {
@@ -1082,7 +1082,7 @@ const WALL_FIXED = {
     { n: 'the window', a0: -1.05, a1: 1.65, y0: 1.6, y1: 4.2 },
     { n: 'the framed photo', a0: -3.1, a1: -1.3, y0: 2.1, y1: 3.4 },
   ],
-  left: [{ n: 'the photo wall above the desk', a0: 0.2, a1: 2.2, y0: 2.1, y1: 3.1 }, { n: 'the window in the left wall', a0: -3.75, a1: -1.05, y0: 1.6, y1: 4.2 }], // where his prints go, and the side window
+  left: [{ n: 'the photo wall above the desk', a0: 1.3, a1: 3.3, y0: 2.1, y1: 3.1 }, { n: 'the window in the left wall (with its curtains)', a0: -1.35, a1: 1.35, y0: 1.6, y1: 4.3 }], // where his prints go, and the side window
 };
 const WALL_TOP = 4.8;
 const FURN_CLEAR = 0.5; // room above a shelf, a desk, a piano: things stand on it
@@ -1237,7 +1237,7 @@ function baseByKey(decor, key) {
   if (lv !== undefined) {
     const w = decor.find((x) => x.id === wid && (x.kind === 'wall' || x.kind === 'floor') && x.pos);
     const L = w ? (w.kind === 'floor' ? floorLevels(w) : wallLevels(w))[Number(lv)] : null;
-    return L ? { key, n: `${w.name} (level ${Number(lv) + 1})`, ...L, rotY: w.rotY || 0, stand: w.stand, from: w.pos } : null;
+    return L ? { key, n: `${w.name} (level ${Number(lv) + 1})`, ...L, rotY: w.rotY || 0, stand: w.stand, from: w.pos, hung: w.kind === 'wall' } : null;
   }
   const o = decor.find((x) => x.id === key && x.kind === 'floor' && x.pos);
   if (!o) return null;
@@ -1252,7 +1252,7 @@ export function supportsInfo(decor) {
   if (pianoTop) bases.push({ label: 'piano', ...pianoTop });
   for (const o of decor) {
     if (o.image || o.art || !o.pos) continue;
-    if (o.kind === 'wall' && !o.image) { const L = wallLevels(o); L.forEach((lv, i) => bases.push({ label: `${o.name}${L.length > 1 ? ` (level ${i + 1})` : ''}`, key: `${o.id}#${i}`, ...lv })); }
+    if (o.kind === 'wall' && !o.image) { const L = wallLevels(o); L.forEach((lv, i) => bases.push({ label: `${o.name}${L.length > 1 ? ` (level ${i + 1})` : ''}`, key: `${o.id}#${i}`, ...lv, hung: true })); }
     else if (o.kind === 'floor' && holdsThings(o) && !purposeProblem(o)) {
       const FL = floorLevels(o);
       if (FL.length > 1) FL.forEach((lv, i) => bases.push({ label: `${o.name} (level ${i + 1})`, ...baseByKey(decor, `${o.id}#${i}`) }));
@@ -1300,10 +1300,12 @@ const surfaceOthers = (decor, key, skip) => decor.filter((o) => o !== skip && o.
 // How many things fit on a surface before it is cluttered: the desk keeps room for his computer; his own shelves and
 // tables by their size. And it must be within reach: he cannot put things on top of the 3 m bookshelf.
 export const maxOn = (base) => (base.key === 'desk' ? 3 : Math.max(2, Math.min(6, Math.round(((base.x1 - base.x0) * (base.z1 - base.z0)) / 0.08))));
-export const reachable = (base) => (base.y ?? 0) <= PIP.reachUp;
+// Hanging things are not held to his height the same way: he stretches up for a shelf on the wall (up to 2.2 m).
+export const WALL_SHELF_TOP = 2.0;
+export const reachable = (base) => (base.y ?? 0) <= (base.hung ? 2.2 : PIP.reachUp);
 function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   const already = surfaceOthers(decor, base.key, null).length;
-  if (!reachable(base)) return { failed: `the top of ${base.n} is ${r3(base.y)} m high, and I can only reach up to ${PIP.reachUp} m. I put it somewhere lower, or build a shelf or table within reach`, hinted: true };
+  if (!reachable(base)) return { failed: `the top of ${base.n} is ${r3(base.y)} m high, and I can only reach up to ${base.hung ? 2.2 : PIP.reachUp} m. I put it somewhere lower, or build a shelf or table within reach`, hinted: true };
   if (!spec.keep && already >= maxOn(base)) return { failed: `${base.n} is full: ${already} things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there`, hinted: true };
   const sq = Math.max(0.15, Math.min(base.x1 - base.x0, base.z1 - base.z0) - 0.1);
   let scale = fit(parts, 'surface', { w: sq, d: sq });
@@ -1446,7 +1448,7 @@ function placeWhereRaw(decor, spec, parts, want, atMs, now) {
     const slot = want && ZONES[want].kind === 'wall' ? ZONES[want].slots[0] : null;
     const along = num2(spec.along) ?? (slot ? (side === 'back' ? slot[0] : slot[2]) : null);
     let height = num2(spec.height) ?? (slot ? slot[1] : null);
-    if (holdsThings(spec)) height = Math.min(height ?? 1.1, PIP.reachUp - 0.3); // a shelf for his things hangs where he can reach it
+    if (holdsThings(spec)) height = Math.min(height ?? 1.7, WALL_SHELF_TOP); // a shelf hangs at a normal shelf height (he stretches for it), not up near the ceiling
     return placeWall(decor, spec, parts, side, along !== null || height !== null ? [along ?? 0, height ?? 2.6] : null, atMs, now);
   }
   const onWhat = spec.on || (want && ZONES[want].kind === 'surface' ? Object.entries(ZONE_BASE).find(([k]) => k === want)?.[1] ?? 'desk' : '');
