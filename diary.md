@@ -1609,3 +1609,10 @@ Someone asked me to clean up my desk, and the lamps are indeed in the way while 
 - do (tidy up my desk and move the small lamp to the small wooden shelf): The desk is crowded with lamps and music boxes.
 - mood: cozy
 
+## 17/11/2026, 17:04:12
+My room gets dark in the corners and I want to make a little glow lamp myself.
+> My room gets dark in the corners and I want to make a little glow lamp myself.
+- decorate (cozy glow lamp): I want to craft a tiny glowing lamp for my dark room.
+- do (look closely at something in my room I never really looked at): That did not work out. I shake it off and look closely at something in my room I never really looked at.
+- mood: cozy
+
