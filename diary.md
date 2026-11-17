@@ -1663,3 +1663,10 @@ It is rainy and dark, and I am curious about writing my very first program on my
 - make_app (rain_ambience): I have never tried writing a program before and I am curious
 - mood: curious
 
+## 17/11/2026, 18:19:10
+I want to organize my desk by moving the lamp off the keyboard and placing the other lamp where I need the light.
+> I want to organize my desk by moving the lamp off the keyboard and placing the other lamp where I need the light.
+- move_thing (small clay lamp): I need to clear my keyboard so I can work properly.
+- do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
+- mood: curious
+
