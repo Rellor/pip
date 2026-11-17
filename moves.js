@@ -15,6 +15,7 @@ import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
 import { kindOf } from './body.js';
 import { noveltyBoost, roomIsDark, storageFull, darkLampOff } from './growth.js';
+import { restingMove } from './loops.js';
 import { lampsOf, lampName, lampNow } from './web/lights.js';
 import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
@@ -43,7 +44,7 @@ const working = (s) => (s.projects ?? []).filter((p) => p.status === 'working');
 const needsKitchen = (s) => !kitchenIn(s.decor) && (food(s).some((p) => p.kind === 'ingredient') || working(s).some((p) => /bread|bake|cook|soup|kitchen|food|meal/i.test(p.title)));
 // Projects whose next step he can do now (a step that needs a tool he lacks waits for the tool).
 const stuckStep = (p) => p.stuck?.n >= 2 && Date.now() - Date.parse(p.stuck.at ?? 0) < 12 * 3_600_000 && (p.steps ?? []).find((x) => !x.done)?.text === p.stuck.text; // stuck for 12 hours at most // the game's way failed twice: he plans it again
-const workable = (s) => working(s).filter((p) => { const st = workStep(s, p.title); return st && !stuckStep(p) && can(s, st.action, Date.now()) && findProjectTitle(st) === p.title; }); // not when the step's move is used up for today or needs a tool he lacks
+export const workable = (s) => working(s).filter((p) => { const st = workStep(s, p.title); return st && !stuckStep(p) && can(s, st.action, Date.now()) && findProjectTitle(st) === p.title; }); // not when the step's move is used up for today or needs a tool he lacks
 const findProjectTitle = (st) => st.forStep?.project;
 // A surface with too much on it, and a place of his with room: what to move where (or null).
 const tidyUp = (s) => {
@@ -149,7 +150,7 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
   const scored = [];
   for (const m of MOVES) {
     let ok = false;
-    try { ok = Boolean(m.when(s, now)); } catch { ok = false; }
+    try { ok = Boolean(m.when(s, now)) && m.name !== restingMove(s, now); } catch { ok = false; } // a move he looped on rests for a while (loops.js)
     if (!ok) continue;
     let score = m.score(s, now);
     score *= 0.5 ** recent.filter((x) => x === m.name).length;

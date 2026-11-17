@@ -170,9 +170,11 @@ export function fakeReply(moves, random = Math.random) {
   const pool = moves.filter((m) => m.name !== 'tell');
   const forced = process.env.PIP_FAKE_MOVE && moves.find((m) => m.name === process.env.PIP_FAKE_MOVE); // tests: always this move when it is offered
   if (forced) return { moves: [{ move: forced.name, details: { title: process.env.PIP_FAKE_TITLE ?? '' }, thought: '(fake) I want to.' }], reason: '(fake) test', mood: 'calm', remember: null };
+  if (process.env.PIP_FAKE_STYLE === 'greedy') pool.splice(0, pool.length, ...pool.filter((m) => m.name !== 'ask_for').slice(0, random() < 0.75 ? 1 : 2).slice(-1)); // like the real model: (almost) always the top move
   const n = 1 + Math.floor(random() * MAX_PICK);
   const picked = [];
   for (let i = 0; i < n && pool.length; i++) picked.push(pool.splice(Math.floor(random() * pool.length), 1)[0]);
   const fill = { project: '(fake) Learn about bees', proud: 'no', query: 'how do bees make honey', topic: 'bees', text: '(fake) a quiet day.', what: 'a small wooden bee', why: '(fake) because I want to', notes: 'C4 E4 G4:2', instrument: 'voice', food: 'bread', dish: 'toast', ingredients: ['bread'], plant: 'rosemary', seed: 'rosemary', target: 'window', caption: '(fake) the window', item: 'a small saw', title: '(fake) Learn about bees', steps: ['read about bees', 'make a bee', 'write a bee song'] };
-  return { moves: picked.map((m) => ({ move: m.name, details: fill, thought: '(fake) I want to.' })), reason: '(fake) This feels right now.', mood: ['curious', 'calm', 'happy', 'restless', 'proud'][Math.floor(random() * 5)], remember: null };
+  const named = (m) => /"([^"]+)"/.exec(m.line ?? '')?.[1]; // a thing the move names (the real model picks real things)
+  return { moves: picked.map((m) => ({ move: m.name, details: named(m) && ['move_thing', 'change_thing', 'extend_thing', 'use', 'add_use', 'compose', 'remove_decoration'].includes(m.name) ? { ...fill, name: named(m) } : fill, thought: '(fake) I want to.' })), reason: '(fake) This feels right now.', mood: ['curious', 'calm', 'happy', 'restless', 'proud'][Math.floor(random() * 5)], remember: null };
 }

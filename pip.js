@@ -1,3 +1,4 @@
+import './clock.js'; // tests only: a moved clock (PIP_CLOCK_SHIFT_MIN)
 import { readFile, writeFile, appendFile, readdir, unlink, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 
@@ -19,6 +20,7 @@ import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
 import { roomScale } from './scale.js';
+import { choiceOf, gotSomewhere, noteChoice, restingLines } from './loops.js';
 import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
 import { bestHits } from './research.js';
@@ -28,7 +30,7 @@ import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } 
 import { ensureIntentions, markIntentions } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
 import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep } from './night.js';
-import { availableMoves, instruments } from './moves.js';
+import { availableMoves, instruments, workable } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply, cookDetails } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
 import { makerPrompt, applyMade, fakeMade, finishSong } from './maker.js';
@@ -531,7 +533,9 @@ function projectSteps(s, steps) {
     if (done) return [];
     done = true;
     const lastTune = [...(s.studio?.songs ?? [])].reverse().find((x) => x.tracks?.[0]?.notes)?.tracks[0].notes;
-    const real = workStep(s, st.details?.title, { cookDetails, seeds: (s.garden?.seeds ?? []).filter((x) => x.qty > 0).map((x) => x.name), tune: lastTune });
+    const can = workable(s); // a project whose next step can happen now (not used up today, no tool missing)
+    const title = can.some((p) => p.title === findProject(s, st.details?.title)?.title) ? st.details?.title : can[0]?.title ?? st.details?.title;
+    const real = workStep(s, title, { cookDetails, seeds: (s.garden?.seeds ?? []).filter((x) => x.qty > 0).map((x) => x.name), tune: lastTune });
     if (real && missingTool(s, real.action)) { // the next step needs a tool he lacks: he can ask for it, not try and fail
       const p = findProject(s, real.forStep.project);
       if (p && !p.needs.includes(NEEDS[real.action])) p.needs = [...p.needs, NEEDS[real.action]];
@@ -564,7 +568,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...restingLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
@@ -1218,6 +1222,7 @@ async function wakeUp() {
   const offered = availableMoves(state);
   const reasons = wakeReasons(state, { unread: unread.length, woke: wokeNow });
   let answer = null;
+  let choice = null;
   let via = 'autopilot';
   const queued = reasons.length ? null : nextQueued(state);
   if (queued) answer = { thought: queued.find((x) => x.thought)?.thought ?? '', inner: '', steps: queued, mood_after: state.mood, new_idea: null };
@@ -1229,6 +1234,7 @@ async function wakeUp() {
       const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
       answer.steps = projectSteps(state, answer.steps);
+      choice = choiceOf(reply); // for the loop breaker
       via = 'brain';
     } catch (e) {
       // No answer (out of quota, a broken or cut-off answer, a network error): he carries on without the model this time,
@@ -1256,6 +1262,7 @@ async function wakeUp() {
       const p = findProject(state, b.st.forStep.project);
       if (p) p.stuck = p.stuck?.text === b.st.forStep.text ? { text: b.st.forStep.text, n: p.stuck.n + 1, at: new Date().toISOString() } : { text: b.st.forStep.text, n: 1, at: new Date().toISOString() };
     }
+    console.log(`⛔ dropped: ${impossible.map((b) => `${b.st.action}: ${String(b.why).slice(0, 90)}`).join(" | ")}`);
     const drop = new Set(impossible.map((b) => b.st));
     const keep = answer.steps.filter((st) => !drop.has(st));
     answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
@@ -1992,6 +1999,10 @@ async function wakeUp() {
   noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state));
   const failedNow = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 && x.failed).at(-1);
   if (failedNow) state.plan.lastFail = { at: new Date().toISOString(), why: `${failedNow.action}: ${failedNow.failed}` };
+  { // the loop breaker: the same choice 3 times with nothing to show rests that move for a while
+    const rested = noteChoice(state, choice, gotSomewhere(state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)), state.plan.lastFail?.why);
+    if (rested) console.log(`🛑 loop: ${rested.key} chose 3 times with nothing to show; it rests until ${rested.until}`);
+  }
   state.last = {
     at: new Date(startedAt).toISOString(),
     via,
