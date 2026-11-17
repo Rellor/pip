@@ -384,6 +384,9 @@ function scheduleDue(s) {
 // ---- What things DO when they are used (light, drive, spin). The data says what it does; the page plays it.
 // A lamp is lit unless Pip switched it off. Before his switch is due (litAt) it still shows the old state.
 const litOf = (d) => (d.auto === 'dark' && lastState ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : d.timers?.length || d.setAt ? lampNow(d).on : (d.auto === 'dark' && lastState ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : d.litAt && Date.parse(d.litAt) > Date.now() ? d.lit === false : d.lit !== false)); // a lamp set to "dark" follows the real light and the weather; timers from his phone
+// How his lamps light the room: a soft glow that reaches across the room and fades slowly, not a bright spot that stops
+// suddenly (they were 3 strong with a steep fall-off: blinding at the desk, dark a little further). ?lamp=power,reach,decay to try others.
+const LAMP = (() => { const [power, reach, decay] = (lookParams.get('lamp') || '').split(',').map(Number); return { power: power || 1.1, reach: reach || 7, decay: decay || 1.3 }; })();
 // A lamp on or off, in the colour and brightness set on his phone (d: the lamp, for its colour and dim level).
 function setLit(g, on, d = null) {
   const list = g.userData.glow;
@@ -398,13 +401,13 @@ function setLit(g, on, d = null) {
     if (color) { x.mat.color.set(color); x.mat.emissive?.set(color); }
   }
   if (!g.userData.lamp) {
-    const l = new THREE.PointLight(new THREE.Color(list[0].color), 0, 4.5);
+    const l = new THREE.PointLight(new THREE.Color(list[0].color), 0, LAMP.reach, LAMP.decay);
     l.position.copy(list[0].at);
     g.add(l);
     g.userData.lamp = l;
   }
   if (color) g.userData.lamp.color.set(color);
-  g.userData.lamp.intensity = on ? 3 * level : 0;
+  g.userData.lamp.intensity = on ? LAMP.power * level : 0;
 }
 const behaviors = new Map(); // thing id -> what it is doing now
 // Is this spot in the way? goal = where he is heading: a thing that already covers the goal (the bed he walks onto, the piano he walks up to) does not count.
