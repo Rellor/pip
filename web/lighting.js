@@ -19,7 +19,7 @@ const GLOOM = { storm: 0.6, rain: 0.45, snow: 0.3, fog: 0.4 };
 function base(s, x, z, ctx) {
   if (x > 5.3) return { window: 0, roomLamp: 0.55, ambient: 0.1 }; // the hall and the studio have their own ceiling lamps
   const wd = Math.hypot(x - 0.3, z + 5); // the back window
-  const sd = Math.hypot(x + 5, z + 2.4); // the square side window in the left wall
+  const sd = Math.hypot(x + 5, z); // the square side window in the middle of the left wall
   const window = ctx.sky * 0.9 * Math.max(Math.pow(clamp(1 - wd / 7, 0, 1), 1.3), Math.pow(clamp(1 - sd / 7, 0, 1), 1.3));
   const roomLamp = 0.5 * Math.pow(clamp(1 - Math.hypot(x - ROOM_LAMP.x, z - ROOM_LAMP.z) / 6, 0, 1), 1.4);
   return { window, roomLamp, ambient: ctx.sky * 0.25 + 0.04 };

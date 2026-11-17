@@ -206,6 +206,20 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-17 shelf up to a normal height',
+    run(s, at) { // Bas: hanging things do not have to be at his height; his shelf goes up to a normal shelf height, beside the stove
+      const shelf = (s.decor ?? []).find((d) => d.kind === 'wall' && /shelf/i.test(d.name) && d.pos && d.pos[1] < 1.4);
+      if (!shelf) return null;
+      const rest = s.decor.filter((d) => d !== shelf);
+      const side = shelf.side ?? 'left';
+      const r = makeDecor(rest, { name: shelf.name, why: shelf.why, project: shelf.project, parts: shelf.parts, uses: shelf.uses, wall: side, along: side === 'back' ? shelf.pos[0] : shelf.pos[2], height: 1.7, keep: true }, Date.parse(at) - 60_000, Date.parse(at));
+      if (!r?.entry) return null;
+      for (const d of s.decor) if (String(d.base ?? '').startsWith(`${shelf.id}#`)) d.pos = [d.pos[0], d.pos[1] + (r.entry.pos[1] - shelf.pos[1]), d.pos[2]]; // what stands on it goes up with it
+      s.decor[s.decor.indexOf(shelf)] = { ...r.entry, id: shelf.id, at: shelf.at, createdAt: shelf.createdAt ?? r.entry.createdAt, uses: shelf.uses, roomScaled: shelf.roomScaled, movedAt: at };
+      return null;
+    },
+  },
+  {
     id: '2026-11-16 notebook from what he looked up',
     run(s) { // what he already looked up goes in his new notebook, so it helps when he makes something about it
       for (const e of (s.log ?? []).filter((x) => ['search_web', 'read_book'].includes(x.action) && x.opened)) noteResearch(s, { query: e.query ?? e.topic, page: e.opened, at: e.at });

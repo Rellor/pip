@@ -47,7 +47,7 @@ export function applyLook(mode, ctx) {
   const cool = new THREE.PointLight(0xbcd4ff, 1.6, 16, 1.6);
   cool.position.set(0.3, 3.2, -4.4); // just inside the back window
   const side = new THREE.PointLight(0xbcd4ff, 1.2, 14, 1.6);
-  side.position.set(-4.4, 3.0, -2.4); // just inside the square window in the left wall
+  side.position.set(-4.4, 3.0, 0); // just inside the square window in the left wall
   const bounce = new THREE.PointLight(0xffc89a, 0, 7, 1.6);
   scene.add(bounce, cool, side);
 
@@ -249,6 +249,20 @@ export function applyLook(mode, ctx) {
     rod.position.set(0.3, 4.2, -4.84); // as wide as the window and its curtains
     scene.add(rod);
     for (const x of [-1.15, 1.75]) { const f = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), rod.material); f.position.set(x, 4.2, -4.84); scene.add(f); }
+    // the same curtains and rod at the square window in the middle of the left wall
+    for (const [z0, dirz] of [[-1.08, -1], [1.08, 1]]) {
+      for (let i = 0; i < 3; i++) {
+        const fold = new THREE.Mesh(new THREE.BoxGeometry(0.07, 2.15, 0.09), cm[i % 2]);
+        fold.position.set(-4.86 + (i % 2) * 0.04, 3.1, z0 + dirz * (0.045 + i * 0.065));
+        fold.castShadow = true;
+        scene.add(fold);
+      }
+    }
+    const rod2 = rod.clone();
+    rod2.rotation.set(Math.PI / 2, 0, 0);
+    rod2.position.set(-4.84, 4.2, 0);
+    scene.add(rod2);
+    for (const z of [-1.45, 1.45]) { const f = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), rod.material); f.position.set(-4.84, 4.2, z); scene.add(f); }
     // soft darkening where the walls meet the floor and the ceiling
     const edge = (w, h, x, y, z, ry, flip) => {
       const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: canvasTex(4, 64, (g, ww, hh) => { const gr = g.createLinearGradient(0, flip ? 0 : hh, 0, flip ? hh : 0); gr.addColorStop(0, 'rgba(60,30,15,0.3)'); gr.addColorStop(1, 'rgba(60,30,15,0)'); g.fillStyle = gr; g.fillRect(0, 0, ww, hh); }), transparent: true, depthWrite: false }));
