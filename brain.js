@@ -168,6 +168,8 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
 // For tests: a brain that picks from the offered moves without a model.
 export function fakeReply(moves, random = Math.random) {
   const pool = moves.filter((m) => m.name !== 'tell');
+  const forced = process.env.PIP_FAKE_MOVE && moves.find((m) => m.name === process.env.PIP_FAKE_MOVE); // tests: always this move when it is offered
+  if (forced) return { moves: [{ move: forced.name, details: { title: process.env.PIP_FAKE_TITLE ?? '' }, thought: '(fake) I want to.' }], reason: '(fake) test', mood: 'calm', remember: null };
   const n = 1 + Math.floor(random() * MAX_PICK);
   const picked = [];
   for (let i = 0; i < n && pool.length; i++) picked.push(pool.splice(Math.floor(random() * pool.length), 1)[0]);

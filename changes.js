@@ -228,6 +228,13 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-17 painting not stuck',
+    run(s) { // his painting only waited for tomorrow's drawings (a daily limit), it was never stuck
+      for (const p of s.projects ?? []) delete p.stuck;
+      return null;
+    },
+  },
+  {
     id: '2026-11-16 notebook from what he looked up',
     run(s) { // what he already looked up goes in his new notebook, so it helps when he makes something about it
       for (const e of (s.log ?? []).filter((x) => ['search_web', 'read_book'].includes(x.action) && x.opened)) noteResearch(s, { query: e.query ?? e.topic, page: e.opened, at: e.at });

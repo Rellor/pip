@@ -56,7 +56,7 @@ export function projectLines(s, now = Date.now()) {
   ensureProjects(s);
   return s.projects.filter((p) => p.status === 'working').map((p) => {
     const steps = (p.steps ?? []).map((x, i) => `${i + 1}. ${x.text}${x.done ? ' ✓' : ''}`).join('; ');
-    const how = p.stuck?.n >= 2 && p.stuck.text === (p.steps ?? []).find((x) => !x.done)?.text ? ' (this step did not work twice: I write my steps again with plan_project, in other words)' : (p.steps ?? []).some((x) => !x.done) ? ' (work_on_project does the next step)' : '';
+    const how = p.stuck?.n >= 2 && Date.now() - Date.parse(p.stuck.at ?? 0) < 12 * 3_600_000 && p.stuck.text === (p.steps ?? []).find((x) => !x.done)?.text ? ' (this step did not work twice: I write my steps again with plan_project, in other words)' : (p.steps ?? []).some((x) => !x.done) ? ' (work_on_project does the next step)' : '';
     const v = p.versions.length ? `, I made v${p.versions.length}` : '';
     const note = p.notes.at(-1)?.text ? `, to improve: ${p.notes.at(-1).text}` : '';
     const wait = untouchedDays(p, now) >= 1 ? ` (I have not touched it for ${Math.floor(untouchedDays(p, now))} day${untouchedDays(p, now) >= 2 ? 's' : ''})` : '';

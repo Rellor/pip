@@ -835,6 +835,10 @@ function normalizeSteps(a) {
     working_on: text(x.working_on, 80),
     needs: text(x.needs, 60),
     enjoyment: x.enjoyment,
+    // what the game knows about the step: which project step it does (to tick it off), that it is waiting, the move it really is
+    ...(x.forStep ? { forStep: x.forStep } : {}),
+    ...(x.waits ? { waits: true } : {}),
+    ...(x.as ? { as: x.as } : {}),
   }));
 }
 
@@ -1248,9 +1252,9 @@ async function wakeUp() {
   const impossible = preflight(state, answer.steps);
   if (impossible.length) {
     state.plan.lastFail = { at: new Date().toISOString(), why: `${impossible[0].st.action}: ${impossible[0].why}` };
-    for (const b of impossible.filter((x) => x.st.forStep)) { // a project step that cannot even start counts as a try (after 2 the project waits)
+    for (const b of impossible.filter((x) => x.st.forStep && !/used up|enough|today/i.test(x.why))) { // a project step that cannot even start counts as a try (after 2 the project waits); a daily limit is only waiting for tomorrow
       const p = findProject(state, b.st.forStep.project);
-      if (p) p.stuck = p.stuck?.text === b.st.forStep.text ? { text: b.st.forStep.text, n: p.stuck.n + 1 } : { text: b.st.forStep.text, n: 1 };
+      if (p) p.stuck = p.stuck?.text === b.st.forStep.text ? { text: b.st.forStep.text, n: p.stuck.n + 1, at: new Date().toISOString() } : { text: b.st.forStep.text, n: 1, at: new Date().toISOString() };
     }
     const drop = new Set(impossible.map((b) => b.st));
     const keep = answer.steps.filter((st) => !drop.has(st));
@@ -1948,7 +1952,7 @@ async function wakeUp() {
       : Boolean(st.made) && !st.made.failed;
     const p = findProject(state, st.forStep.project);
     if (!worked) { // the same step failing again and again: after 2 tries it waits, and he plans it again
-      if (p) p.stuck = p.stuck?.text === st.forStep.text ? { text: st.forStep.text, n: p.stuck.n + 1 } : { text: st.forStep.text, n: 1 };
+      if (p) p.stuck = p.stuck?.text === st.forStep.text ? { text: st.forStep.text, n: p.stuck.n + 1, at: new Date().toISOString() } : { text: st.forStep.text, n: 1, at: new Date().toISOString() };
       continue;
     }
     if (p) p.stuck = null;
