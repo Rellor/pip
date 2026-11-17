@@ -1688,3 +1688,9 @@ It is dark in the room and I want to figure out how to build my own glowing lamp
 - search_web (how to make a glowing lamp craft DIY): I want to learn how to make a glowing lamp for the dark corners of my room.
 - mood: curious
 
+## 17/11/2026, 18:52:03
+My desk is full of things so I am going to build a small side table to keep things on.
+> My desk is full of things so I am going to build a small side table to keep things on.
+- decorate (small side table): I will build a little table to hold my things since the desk is crowded.
+- mood: curious
+
