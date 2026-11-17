@@ -153,6 +153,18 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-17 shelf beside the stove',
+    run(s, at) { // Bas: the shelf hung right above the stove, so the stove could not grow; it moves along the wall to beside it
+      const shelf = (s.decor ?? []).find((d) => d.kind === 'wall' && /shelf/i.test(d.name) && d.pos && Math.abs(d.pos[2] + 4.15) < 0.3);
+      if (!shelf) return null;
+      const rest = s.decor.filter((d) => d !== shelf);
+      const r = makeDecor(rest, { name: shelf.name, why: shelf.why, project: shelf.project, parts: shelf.parts, uses: shelf.uses, wall: 'left', along: -3.1, height: shelf.pos[1], keep: true }, Date.parse(at) - 60_000, Date.parse(at));
+      if (!r?.entry) return null;
+      s.decor[s.decor.indexOf(shelf)] = { ...r.entry, id: shelf.id, at: shelf.at, createdAt: shelf.createdAt ?? r.entry.createdAt, uses: shelf.uses, movedAt: at };
+      return null;
+    },
+  },
+  {
     id: '2026-11-17 his things at the size of his room',
     run(s, at) { // everything he made grows to the room's size (1.6x; work tops only as far as he can reach), and stays where it was
       const atMs = Date.parse(at) - 60_000;
