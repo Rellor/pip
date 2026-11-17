@@ -4,8 +4,9 @@ import { createOutside } from './outside.js';
 import { applyLook } from './look.js';
 import { makeProps } from './props.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import { autoLampOn, lightAt, levelWord, isLamp } from './lighting.js';
+import { autoLampOn, lightAt, levelWord, isLamp, placeFor } from './lighting.js';
 import { isGreenhouse, plantState, slotSpot } from './gardening.js';
+import { lampsOf, lampName, lampNow, PRESETS, LEVELS, timerWords, applyLight } from './lights.js';
 import { buildHouse, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects, isGone } from './furniture.js';
 
@@ -351,7 +352,7 @@ function updateDecor(s) {
       scene.remove(have);
       decorGroups.delete(d.id);
     } else if (have) {
-      setLit(have, litOf(d)); // a lamp Pip switched
+      setLit(have, litOf(d), d); // a lamp Pip switched
       continue;
     }
     const g = buildDecor(d);
@@ -362,7 +363,7 @@ function updateDecor(s) {
       slideTo(g, d.pos[0], d.pos[2], d.rotY || 0, true);
     }
     g.userData.lit = true;
-    setLit(g, litOf(d));
+    setLit(g, litOf(d), d);
     g.userData.rev = d.updatedAt || null;
     if (d.updatedAt && Date.parse(d.updatedAt) > Date.now()) g.userData.rev = null;
     g.userData.born = performance.now() - Math.min(Date.now() - Date.parse(d.at), 5000); // old things are simply there
@@ -382,19 +383,28 @@ function scheduleDue(s) {
 }
 // ---- What things DO when they are used (light, drive, spin). The data says what it does; the page plays it.
 // A lamp is lit unless Pip switched it off. Before his switch is due (litAt) it still shows the old state.
-const litOf = (d) => (d.auto === 'dark' && lastState ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : d.litAt && Date.parse(d.litAt) > Date.now() ? d.lit === false : d.lit !== false); // a lamp set to "dark" follows the real light and the weather
-function setLit(g, on) {
+const litOf = (d) => (d.auto === 'dark' && lastState ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : d.timers?.length || d.setAt ? lampNow(d).on : (d.auto === 'dark' && lastState ? autoLampOn(lastState, d, Date.now(), { hour: forceLook.hour, weather: { kind: forceLook.weather || land.state.weather, cloud: land.state.cloud } }) : d.litAt && Date.parse(d.litAt) > Date.now() ? d.lit === false : d.lit !== false)); // a lamp set to "dark" follows the real light and the weather; timers from his phone
+// A lamp on or off, in the colour and brightness set on his phone (d: the lamp, for its colour and dim level).
+function setLit(g, on, d = null) {
   const list = g.userData.glow;
-  if (!list || g.userData.lit === on) return;
-  g.userData.lit = on;
-  for (const x of list) x.mat.emissiveIntensity = on ? 0.9 : 0;
+  const st = d && (d.color || d.level || d.timers?.length) ? lampNow(d) : null;
+  const color = st?.color ?? null;
+  const level = (st?.level ?? 100) / 100;
+  const key = `${on}|${color}|${level}`;
+  if (!list || g.userData.lit === key) return;
+  g.userData.lit = key;
+  for (const x of list) {
+    x.mat.emissiveIntensity = on ? 0.9 * (0.35 + 0.65 * level) : 0;
+    if (color) { x.mat.color.set(color); x.mat.emissive?.set(color); }
+  }
   if (!g.userData.lamp) {
     const l = new THREE.PointLight(new THREE.Color(list[0].color), 0, 4.5);
     l.position.copy(list[0].at);
     g.add(l);
     g.userData.lamp = l;
   }
-  g.userData.lamp.intensity = on ? 3 : 0;
+  if (color) g.userData.lamp.color.set(color);
+  g.userData.lamp.intensity = on ? 3 * level : 0;
 }
 const behaviors = new Map(); // thing id -> what it is doing now
 // Is this spot in the way? goal = where he is heading: a thing that already covers the goal (the bed he walks onto, the piano he walks up to) does not count.
@@ -1564,6 +1574,7 @@ function planFor(last) {
     case 'move_thing':
     case 'extend_thing': return { at: 'center', anim: 'look' };
     case 'check_light': return { at: resolveSpot(d.where || d.name), anim: 'look' };
+    case 'phone': return { at: resolveSpot(d.lamp || 'middle'), anim: 'look' }; // he uses his phone near the lamp he switches
     case 'plant':
     case 'water':
     case 'harvest': {
@@ -2915,7 +2926,7 @@ function loop(now) {
   }
   if (now > autoAt && lastState) { // lamps set to "dark" switch by themselves when the real light changes
     autoAt = now + 2000;
-    for (const d of lastState.decor || []) if (d.auto === 'dark') { const g = decorGroups.get(d.id); if (g) setLit(g, litOf(d)); }
+    for (const d of lastState.decor || []) if (d.auto === 'dark' || d.timers?.length) { const g = decorGroups.get(d.id); if (g) setLit(g, litOf(d), d); } // timers switch at their time, also between wake-ups
   }
   updateSlides(now, dt);
   frame(now, dt);
@@ -3350,6 +3361,7 @@ function headlineBase(st) {
     case 'measure': return ['📏', `Measuring ${d.name || st.name || 'something'}`];
     case 'take_tool': return ['🎒', `Putting ${d.name || st.name || 'a tool'} in his inventory`];
     case 'check_light': return ['💡', `Checking how bright it is at ${d.where || d.name || 'a place'}`];
+    case 'phone': return ['📱', d.app ? `Opening ${d.app} on his phone` : `Using the Lights app on his phone${d.lamp ? ` (${d.lamp})` : ''}`];
     case 'plant': return ['🌱', `Planting ${d.seed || 'seeds'}`];
     case 'water': return ['💧', `Watering ${d.plant || 'the plants'}`];
     case 'harvest': return ['🧺', d.clear ? `Clearing out ${d.plant || 'a plant'}` : `Harvesting ${d.plant || 'a plant'}`];
@@ -3565,6 +3577,8 @@ function dayCard(e) {
       card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.result || '', 'muted'));
     } else if (e.action === 'check_light') {
       card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.result || '', 'muted'));
+    } else if (e.action === 'phone') {
+      card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : (e.result || '').replace(/^I /, 'He '), 'muted'));
     } else if (e.action === 'lamp_auto') {
       card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.mode === 'dark' ? `${e.name} now switches itself on when it gets dark.` : `${e.name} is back in his own hands.`, 'muted'));
     } else if (e.action === 'extend_thing') {
@@ -3911,6 +3925,7 @@ function renderStatus(s) {
     : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
 }
 function render(s) {
+  renderPhone(s);
   $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);
   renderNow();
@@ -4516,3 +4531,160 @@ window.__debug = { pip, getTask: () => task, decorGroups, view, setMode, pickAt,
     applyOrbit();
   }
 }
+
+// ---- Pip's phone (a gift): Lights (names, on/off, colour in warm or RGB mode, dim in steps, timers), Timers, and his apps.
+// Everyone can look. With the key, Bas can change things too: they show here at once and reach Pip at his next wake-up.
+let phoneAt = 'home';
+let phoneLamp = null;
+const phoneKey = () => store('pip-key') || '';
+function phoneOpen(open) {
+  $('phone').hidden = !open;
+  if (open) renderPhone(lastState);
+}
+$('phonebtn').addEventListener('click', () => phoneOpen($('phone').hidden));
+$('phclose').addEventListener('click', () => phoneOpen(false));
+async function phoneSend(cmd) {
+  if (!phoneKey()) { toast('Add your key in Settings (⚙) to change his lights.'); return; }
+  const r = applyLight(lastState, cmd, { who: 'Bas' }); // shown at once; Pip gets it at his next wake-up
+  if (r.failed) { toast(r.failed); return; }
+  for (const d of lampsOf(lastState)) { const g = decorGroups.get(d.id); if (g) setLit(g, litOf(d), d); }
+  renderPhone(lastState);
+  try {
+    const res = await fetch('/api/lights', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: phoneKey(), cmd }) });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'It did not save.');
+    toast('Saved. Pip sees it at his next wake-up.');
+  } catch (e) { toast(e.message); }
+}
+function phoneHead(title, sub, back) {
+  const hd = el('div', null, 'ph-hd');
+  if (back) { const b = el('button', '‹'); b.type = 'button'; b.setAttribute('aria-label', 'Back'); b.addEventListener('click', () => { phoneAt = back; renderPhone(lastState); }); hd.append(b); }
+  const t = el('div'); t.append(el('b', title)); if (sub) t.append(el('small', sub)); hd.append(t);
+  return hd;
+}
+function renderPhone(s) {
+  $('phonebtn').hidden = !s?.phone;
+  if (!s?.phone || $('phone').hidden) return;
+  $('phclock').textContent = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' });
+  const v = $('phview');
+  v.textContent = '';
+  const screen = v.parentElement;
+  screen.classList.toggle('home', phoneAt === 'home');
+  const lamps = lampsOf(s);
+  const canEdit = Boolean(phoneKey());
+  if (phoneAt === 'home') {
+    const grid = el('div', null, 'ph-grid');
+    const app = (icon, bg, name, go) => { const b = el('button', null, 'ph-app'); b.type = 'button'; const ic = el('div', icon, 'ph-ic'); ic.style.background = bg; b.append(ic, el('div', name)); b.addEventListener('click', go); grid.append(b); };
+    app('💡', '#ffd46b', 'Lights', () => { phoneAt = 'lights'; renderPhone(lastState); });
+    app('⏰', '#9fd3c7', 'Timers', () => { phoneAt = 'timers'; renderPhone(lastState); });
+    const colors = ['#c9b6f2', '#f7a8a0', '#a8d8f7', '#b8e0a8', '#f7d38a'];
+    (s.apps || []).forEach((a, i) => app('📱', colors[i % colors.length], a.name, () => openApp(a)));
+    v.append(grid);
+    if (!(s.apps || []).length) v.append(el('p', 'Apps Pip writes himself show up here too.', 'ph-note'));
+    return;
+  }
+  if (phoneAt === 'lights') {
+    v.append(phoneHead('💡 Lights', `${lamps.length} lamp${lamps.length === 1 ? '' : 's'} · ${lamps.filter((e) => lampNow(e).on).length} on`, 'home'));
+    // a tip: a place he uses is dark, and a lamp is right there and off
+    for (const w of ['bed', 'desk', 'bookshelf']) {
+      const p = placeFor(s, w);
+      if (!p) continue;
+      const lv = lightAt(s, p.x, p.z).level;
+      const off = lv < 0.2 && lamps.find((e) => e.pos && !lampNow(e).on && Math.hypot(e.pos[0] - p.x, e.pos[2] - p.z) <= 3);
+      if (off) { const tip = el('div', null, 'ph-tip'); tip.append(`🌙 The ${w} is dark (${Math.round(lv * 100)}%). `, el('b', lampName(off)), ' could help.'); v.append(tip); break; }
+    }
+    if (!lamps.length) v.append(el('p', 'No lamps yet. When Pip makes a lamp (a glowing part and a use that gives light), it shows up here.', 'ph-note'));
+    for (const e of lamps) {
+      const st = lampNow(e);
+      const row = el('button', null, 'ph-lamp');
+      row.type = 'button';
+      const bulb = el('div', null, `ph-bulb${st.on ? ' on' : ''}`);
+      if (st.on) { bulb.style.background = st.color; bulb.style.opacity = String(0.4 + 0.6 * st.level / 100); }
+      const ln = el('div', null, 'ph-ln');
+      const extra = e.auto === 'dark' ? 'on when dark' : (e.timers || []).length ? `⏰ ${timerWords(e.timers[0])}` : (e.label || '').replace(/ \(.*\)$/, '');
+      ln.append(el('b', lampName(e)), el('small', `${e.nick ? `${e.name} · ` : ''}${st.on ? `${st.level}%` : 'off'} · ${extra}`));
+      const tog = el('button', null, `ph-tog${st.on ? ' y' : ''}`);
+      tog.type = 'button';
+      tog.disabled = !canEdit;
+      tog.setAttribute('aria-label', st.on ? 'Turn off' : 'Turn on');
+      tog.addEventListener('click', (ev) => { ev.stopPropagation(); phoneSend({ lamp: e.id, switch: st.on ? 'off' : 'on' }); });
+      row.append(bulb, ln, tog);
+      row.addEventListener('click', () => { phoneAt = 'lamp'; phoneLamp = e.id; renderPhone(lastState); });
+      v.append(row);
+    }
+    const last = lamps.filter((e) => e.lightBy).sort((a, b) => b.lightBy.at.localeCompare(a.lightBy.at))[0];
+    if (last) v.append(el('p', `Last: ${last.lightBy.who} ${last.lightBy.what} (${lampName(last)}), ${when(last.lightBy.at)}`, 'ph-note'));
+    if (!canEdit) v.append(el('p', '🔒 You can look. With the key you can switch them too.', 'ph-note'));
+    return;
+  }
+  if (phoneAt === 'lamp') {
+    const e = lamps.find((x) => x.id === phoneLamp);
+    if (!e) { phoneAt = 'lights'; renderPhone(s); return; }
+    const st = lampNow(e);
+    v.append(phoneHead(lampName(e), `${e.nick ? `${e.name} · ` : ''}${(e.label || '').replace(/ \(.*\)$/, '')}`, 'lights'));
+    const send = (cmd) => phoneSend({ lamp: e.id, ...cmd });
+    const pill = (label, sel, go) => { const b = el('button', label, `ph-pill${sel ? ' sel' : ''}`); b.type = 'button'; b.disabled = !canEdit; b.addEventListener('click', go); return b; };
+    v.append(el('div', 'Light', 'ph-sec'));
+    const onoff = el('div', null, 'ph-row');
+    onoff.append(pill(st.on ? 'On' : 'Off', st.on, () => send({ switch: st.on ? 'off' : 'on' })), ...LEVELS.map((lv) => pill(`${lv}%`, st.on && st.level === lv, () => send({ level: lv }))));
+    v.append(onoff);
+    v.append(el('div', 'Colour', 'ph-sec'));
+    const modes = el('div', null, 'ph-row');
+    modes.append(pill('Warm', (e.mode ?? 'warm') === 'warm', () => send({ mode: 'warm' })), pill('RGB', e.mode === 'rgb', () => send({ mode: 'rgb' })));
+    v.append(modes);
+    const sw = el('div', null, 'ph-row');
+    sw.style.marginTop = '8px';
+    if (e.mode === 'rgb') {
+      const pick = el('input');
+      pick.type = 'color';
+      pick.value = st.color;
+      pick.disabled = !canEdit;
+      pick.addEventListener('change', () => send({ color: pick.value }));
+      sw.append(pick, el('small', st.color));
+    } else for (const p of PRESETS) {
+      const b = el('button', null, `ph-sw${st.color === p.hex ? ' sel' : ''}`);
+      b.type = 'button'; b.title = p.key; b.style.background = p.hex; b.disabled = !canEdit;
+      b.addEventListener('click', () => send({ color: p.key }));
+      sw.append(b);
+    }
+    v.append(sw);
+    v.append(el('div', 'Timers', 'ph-sec'));
+    if (e.auto === 'dark') { const row = el('div', null, 'ph-timer'); row.append(el('span', '🌑 On when it is dark'), el('small', 'by itself')); v.append(row); }
+    for (const tm of e.timers || []) {
+      const row = el('div', null, 'ph-timer');
+      row.append(el('span', `${tm.do === 'on' ? '🌅' : tm.do === 'off' ? '🌙' : tm.do === 'dim' ? '🔅' : '🎨'} ${timerWords(tm)}`), el('small', tm.by === 'Bas' ? 'by Bas' : 'by Pip'));
+      if (canEdit) { const x = el('button', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'Remove this timer'); x.addEventListener('click', () => send({ remove_timer: tm.id })); row.append(x); }
+      v.append(row);
+    }
+    if (!e.auto && !(e.timers || []).length) v.append(el('p', 'No timers yet.', 'ph-note'));
+    if (canEdit) {
+      const f = el('form', null, 'ph-form');
+      const time = el('input'); time.type = 'time'; time.value = '21:00'; time.required = true;
+      const what = el('select');
+      for (const [val, label] of [['on', 'On'], ['off', 'Off'], ['dim', 'Dim'], ['color', 'Colour'], ['dark', 'On when dark']]) { const o = el('option', label); o.value = val; what.append(o); }
+      const lvl = el('select'); for (const lv of LEVELS) { const o = el('option', `${lv}%`); o.value = String(lv); lvl.append(o); }
+      const col = el('select'); for (const p of PRESETS) { const o = el('option', p.key); o.value = p.key; col.append(o); }
+      const sync = () => { lvl.hidden = what.value !== 'dim'; col.hidden = what.value !== 'color'; time.hidden = what.value === 'dark'; };
+      what.addEventListener('change', sync); sync();
+      const add = el('button', '+ Add', 'ph-pill'); add.type = 'submit';
+      f.append(time, what, lvl, col, add);
+      f.addEventListener('submit', (ev) => { ev.preventDefault(); send({ timer: { at: time.value, do: what.value, level: lvl.value, color: col.value } }); });
+      v.append(f);
+      const rename = el('form', null, 'ph-form');
+      const nm = el('input'); nm.placeholder = 'Give it a name'; nm.maxLength = 30; nm.value = e.nick || '';
+      const ok = el('button', 'Rename', 'ph-pill'); ok.type = 'submit';
+      rename.append(nm, ok);
+      rename.addEventListener('submit', (ev) => { ev.preventDefault(); if (nm.value.trim()) send({ name: nm.value.trim() }); });
+      v.append(rename);
+    } else v.append(el('p', '🔒 You can look. With the key you can change it too.', 'ph-note'));
+    if (e.lightBy) v.append(el('p', `Last: ${e.lightBy.who} ${e.lightBy.what}, ${when(e.lightBy.at)}`, 'ph-note'));
+    return;
+  }
+  if (phoneAt === 'timers') {
+    v.append(phoneHead('⏰ Timers', 'every lamp, by time of day', 'home'));
+    const all = lamps.flatMap((e) => (e.timers || []).map((tm) => ({ e, tm }))).sort((a, b) => a.tm.at.localeCompare(b.tm.at));
+    for (const { e, tm } of all) { const row = el('div', null, 'ph-timer'); row.append(el('span', `${tm.at} · ${lampName(e)}`), el('small', timerWords(tm).replace(/ at .*$/, ''))); v.append(row); }
+    for (const e of lamps.filter((x) => x.auto === 'dark')) { const row = el('div', null, 'ph-timer'); row.append(el('span', `🌑 ${lampName(e)}`), el('small', 'on when dark')); v.append(row); }
+    if (!all.length && !lamps.some((x) => x.auto === 'dark')) v.append(el('p', 'No timers yet. Open a lamp in Lights to add one.', 'ph-note'));
+  }
+}
+setInterval(() => { if (lastState && !$('phone').hidden) $('phclock').textContent = new Date().toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' }); }, 30_000);

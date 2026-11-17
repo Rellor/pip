@@ -220,6 +220,14 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-17 a phone as a gift',
+    run(s, at) { // a gift (not from anyone in particular): a phone with a Lights app, and his own apps on it
+      if (s.phone) return null;
+      s.phone = { since: at, from: 'a gift' };
+      return 'I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.';
+    },
+  },
+  {
     id: '2026-11-16 notebook from what he looked up',
     run(s) { // what he already looked up goes in his new notebook, so it helps when he makes something about it
       for (const e of (s.log ?? []).filter((x) => ['search_web', 'read_book'].includes(x.action) && x.opened)) noteResearch(s, { query: e.query ?? e.topic, page: e.opened, at: e.at });

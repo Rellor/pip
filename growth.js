@@ -116,6 +116,8 @@ export function darkSpots(s, now = Date.now()) {
 }
 export const roomIsDark = (s, now = Date.now()) => darkSpots(s, now).length >= 2;
 export function darkLines(s, now = Date.now()) {
+  const off = s.phone ? darkLampOff(s, now) : null;
+  if (off) return [`It is dark at the ${off.spot.name} (${Math.round(off.spot.level * 100)}%), but my ${lampName(off.lamp)} is right there and off: I can switch it on with my phone.`];
   const dark = darkSpots(s, now);
   if (dark.length < 2) return [];
   const lamps = (s.decor ?? []).filter(isLamp).length;
@@ -169,4 +171,16 @@ export function placeLines(s) {
   const { e, m } = first;
   const how = m.kind === 'ceiling' ? '(move_thing with where: "ceiling")' : m.kind === 'wall' ? `(move_thing with wall${m.near ? ` near ${m.near}` : ''})` : m.kind === 'surface' ? `(move_thing with on: "${m.near && m.near !== 'bed' ? m.near : 'desk'}")` : `(move_thing with next_to: "${m.near ?? 'the wall'}")`;
   return [`My ${e.name} would be better ${m.better}: ${m.why}. I could move it there ${how}.`];
+}
+
+// ---- Dark, but a lamp of his is right there and off: switching it on (his phone) comes before making a new one.
+import { lampsOf, lampName, lampNow } from './web/lights.js';
+export function darkLampOff(s, now = Date.now()) {
+  for (const spot of darkSpots(s, now)) {
+    const p = placeFor(s, spot.name) ?? null;
+    if (!p) continue;
+    const lamp = lampsOf(s).find((e) => e.pos && !lampNow(e, now).on && Math.hypot(e.pos[0] - p.x, e.pos[2] - p.z) <= 3);
+    if (lamp) return { spot, lamp };
+  }
+  return null;
 }

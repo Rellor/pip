@@ -9,7 +9,8 @@ const ROOM_LAMP = { x: -2, z: -1 }; // the big lamp that is always on
 const LAMP_RANGE = 4;
 export const DARK_BELOW = 0.3; // lamps on "dark" switch on when their place is darker than this
 
-export const isLamp = (d) => !d.image && (d.parts ?? []).some((p) => p.glow) && (d.uses ?? []).some((u) => u.does === 'light');
+import { isLamp, lampNow } from './lights.js';
+export { isLamp };
 const litNow = (l, now) => (l.litAt && Date.parse(l.litAt) > now ? l.lit === false : l.lit !== false); // a switch shows its old state until it is done
 
 // What the weather does to the daylight.
@@ -45,9 +46,10 @@ export function lightAt(s, x, z, now = Date.now(), o = {}) {
     else if (l.auto === 'dark') {
       const lb = base(s, l.pos[0], l.pos[2], ctx);
       on = !s.last?.sleeping && lb.window + lb.roomLamp + lb.ambient < DARK_BELOW;
-    } else on = litNow(l, now);
+    } else on = l.timers?.length || l.setAt ? lampNow(l, now).on : litNow(l, now); // timers from his phone
     if (!on) continue;
-    const add = 0.5 * Math.pow(clamp(1 - Math.hypot(x - l.pos[0], z - l.pos[2]) / LAMP_RANGE, 0, 1), 1.3);
+    const dim = (lampNow(l, now).level ?? 100) / 100; // dimmed on his phone: less light
+    const add = 0.5 * dim * Math.pow(clamp(1 - Math.hypot(x - l.pos[0], z - l.pos[2]) / LAMP_RANGE, 0, 1), 1.3);
     if (add > 0.02) { level += add; helped.push(l.name); }
   }
   return { level: clamp(level, 0, 1), window: b.window, roomLamp: b.roomLamp, lamps: helped, day, kind, hour: h };

@@ -27,7 +27,7 @@ const list = (items, none = 'nothing') => (items.length ? items.map((x) => `- ${
 const S = { type: 'STRING' };
 const SA = { type: 'ARRAY', items: S };
 // One flat set of detail fields for all moves; each move uses the ones its line names.
-const DETAILS = { type: 'OBJECT', properties: Object.fromEntries(['what', 'why', 'name', 'label', 'query', 'topic', 'text', 'notes', 'instrument', 'food', 'dish', 'plant', 'seed', 'target', 'caption', 'id', 'wall', 'next_to', 'item', 'title', 'change', 'add', 'project', 'proud', 'section', 'camera', 'id'].map((k) => [k, S]).concat([['ingredients', SA], ['steps', SA], ['needs', SA]])) };
+const DETAILS = { type: 'OBJECT', properties: Object.fromEntries(['what', 'why', 'name', 'label', 'query', 'topic', 'text', 'notes', 'instrument', 'food', 'dish', 'plant', 'seed', 'target', 'caption', 'id', 'wall', 'next_to', 'item', 'title', 'change', 'add', 'project', 'proud', 'section', 'camera', 'id', 'lamp', 'switch', 'level', 'mode', 'color', 'app'].map((k) => [k, S]).concat([['ingredients', SA], ['steps', SA], ['needs', SA], ['timer', { type: 'OBJECT', properties: { at: S, do: S, color: S, level: S } }]])) };
 export const brainSchema = (names = MOVE_NAMES) => ({
   type: 'OBJECT',
   properties: {
@@ -109,6 +109,10 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       const st = d.steps.map((x) => clip(x, 120)).filter(Boolean).slice(0, 6);
       const title = clip(d.title ?? d.project ?? String(d.what).replace(/^.*\bproject\s*/i, ''), 80);
       if (title && st.length) { answer.projects_update.push({ title, steps: st, next: st[0], plan: true }); steps.push({ action: 'do', as: 'plan_project', details: { what: `plan the steps of my project ${title.slice(0, 60)}` }, thought, enjoyment: 6 }); continue; }
+    }
+    if (name === 'phone') { // his phone: Lights, or one of his apps
+      steps.push({ action: 'phone', details: { lamp: clip(d.lamp ?? d.name, 60), app: clip(d.app, 60), switch: clip(d.switch, 10).toLowerCase(), level: clip(String(d.level ?? ''), 4), color: clip(d.color, 20), mode: clip(d.mode, 6).toLowerCase(), name: d.lamp ? clip(d.name, 30) : '', timer: d.timer && typeof d.timer === 'object' ? { at: clip(d.timer.at, 5), do: clip(d.timer.do, 6).toLowerCase(), color: clip(d.timer.color, 20), level: clip(String(d.timer.level ?? ''), 4) } : null }, thought, enjoyment: 6 });
+      continue;
     }
     if (name === 'work_on_project') { // the game takes the project's next step and does it the right way
       steps.push({ action: 'work_on_project', details: { title: clip(d.title ?? d.project ?? d.name, 80) }, thought, enjoyment: 7 });
