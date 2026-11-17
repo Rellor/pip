@@ -158,7 +158,7 @@ export function storageLines(s) {
   const { full, free } = roomFor(s);
   if (!full.length) return [];
   const b = full[0];
-  const what = `${b.on.slice(0, 4).join(', ')}${b.on.length > 4 ? ' and more' : ''}`;
+  const what = `${[...(b.fixed ?? []), ...b.on].slice(0, 7).join(', ')}${(b.fixed ?? []).length + b.on.length > 7 ? ' and more' : ''}`;
   if (free.length) return [`My ${b.label} is full (${what}). My ${free[0].label.replace(/ \(level \d+\)$/, '')} has room: I can move some things there (move_thing, on: "${free[0].label.replace(/ \(level \d+\)$/, '')}").`];
   return [`My ${b.label} is full: ${what}. There is no room for anything else. A shelf within my reach, a small table or a stand would give my things a place (then I can move some there).`];
 }
@@ -183,4 +183,20 @@ export function darkLampOff(s, now = Date.now()) {
     if (lamp) return { spot, lamp };
   }
   return null;
+}
+
+// ---- What he sees around him: the furniture, what stands on it, his own things and the lamps (a few short lines).
+import { lampsOf as allLamps, lampName as nameOfLamp, lampNow as lampStateNow } from './web/lights.js';
+export function roomLines(s, now = Date.now()) {
+  const gone = (k) => s.furniture?.[k]?.gone;
+  const furniture = ['my bed', 'my desk (with my computer, the keyboard, a mug and the photo printer on it)', 'the big bookshelf full of books (its top is too high for me)', 'my chest', 'a big plant', 'a round rug', 'two windows with curtains', ...(gone('piano') ? [] : ['the piano'])];
+  const lines = [`Furniture: ${furniture.join(', ')}.`];
+  for (const b of supportsInfo(s.decor ?? []).filter((x) => x.on.length)) lines.push(`On ${b.label === 'desk' ? 'my desk' : `my ${b.label}`}: ${b.on.join(', ')}${b.full ? ' (full)' : ''}.`);
+  const mine = (s.decor ?? []).filter((d) => !d.image && d.kind !== 'surface').map((d) => `${d.name} (${String(d.label ?? '').replace(/ \(.*\)$/, '')})`);
+  if (mine.length) lines.push(`My things: ${mine.slice(0, 8).join(', ')}${mine.length > 8 ? ' and more' : ''}.`);
+  const pics = (s.decor ?? []).filter((d) => d.image).length;
+  if (pics) lines.push(`On my walls: ${pics} picture${pics > 1 ? 's' : ''}.`);
+  const lamps = allLamps(s).map((e) => { const st = lampStateNow(e, now); return `${nameOfLamp(e)} ${st.on ? `on${st.level < 100 ? ` ${st.level}%` : ''}` : 'off'}`; });
+  if (lamps.length) lines.push(`Lamps: ${lamps.join(', ')}.`);
+  return lines;
 }

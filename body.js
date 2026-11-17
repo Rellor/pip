@@ -57,7 +57,7 @@ export function clutter(s) {
   // a surface with more on it than fits nicely (the desk holds 3) feels messy too: 1.5 for each thing too many
   const on = {};
   for (const d of s.decor ?? []) if (d.kind === 'surface' && d.base) on[d.base] = (on[d.base] ?? 0) + 1;
-  const crowded = Object.entries(on).reduce((t, [k, n]) => t + Math.max(0, n - (k === 'desk' ? 3 : 4)), 0);
+  const crowded = Object.entries(on).reduce((t, [k, n]) => t + Math.max(0, n - (k === 'desk' ? 2 : 4)), 0); // the desk also holds his computer, keyboard, mug and printer
   return Math.max(0, own - 6) * 0.6 + Math.max(0, pics - 4) * 0.4 + crowded * 1.5;
 }
 

@@ -9,7 +9,7 @@ const ROOM_LAMP = { x: -2, z: -1 }; // the big lamp that is always on
 const LAMP_RANGE = 6; // his lamps give a soft light that reaches across the room (the page draws them the same way)
 export const DARK_BELOW = 0.3; // lamps on "dark" switch on when their place is darker than this
 
-import { isLamp, lampNow } from './lights.js';
+import { isLamp, lampNow, fixedLamp } from './lights.js';
 export { isLamp };
 const litNow = (l, now) => (l.litAt && Date.parse(l.litAt) > now ? l.lit === false : l.lit !== false); // a switch shows its old state until it is done
 
@@ -18,11 +18,12 @@ const GLOOM = { storm: 0.6, rain: 0.45, snow: 0.3, fog: 0.4 };
 
 // The light that is there without any lamp of his: the daylight (through the window and the walls) and the big room lamp.
 function base(s, x, z, ctx) {
-  if (x > 5.3) return { window: 0, roomLamp: 0.55, ambient: 0.1 }; // the hall and the studio have their own ceiling lamps
+  const k = (id) => { const f = fixedLamp(s, id); const st = f ? lampNow(f, ctx.now ?? Date.now()) : { on: true, level: 100 }; return st.on ? st.level / 100 : 0; }; // the house's own lamps follow his phone
+  if (x > 5.3) return { window: 0, roomLamp: 0.55 * k('hall-lamp'), ambient: 0.1 }; // the hall and the studio have their own ceiling lamps
   const wd = Math.hypot(x - 0.3, z + 5); // the back window
   const sd = Math.hypot(x + 5, z); // the square side window in the middle of the left wall
   const window = ctx.sky * 0.9 * Math.max(Math.pow(clamp(1 - wd / 7, 0, 1), 1.3), Math.pow(clamp(1 - sd / 7, 0, 1), 1.3));
-  const roomLamp = 0.5 * Math.pow(clamp(1 - Math.hypot(x - ROOM_LAMP.x, z - ROOM_LAMP.z) / 6, 0, 1), 1.4);
+  const roomLamp = 0.5 * k('room-lamp') * Math.pow(clamp(1 - Math.hypot(x - ROOM_LAMP.x, z - ROOM_LAMP.z) / 6, 0, 1), 1.4);
   return { window, roomLamp, ambient: ctx.sky * 0.25 + 0.04 };
 }
 
@@ -35,7 +36,7 @@ export function lightAt(s, x, z, now = Date.now(), o = {}) {
   const w = o.weather ?? s.weather;
   const kind = w?.kind ?? 'clear';
   const gloom = GLOOM[kind] ?? (kind === 'cloudy' ? 0.12 + 0.3 * (w?.cloud ?? 0.5) : 0);
-  const ctx = { sky: day * (1 - gloom * 0.6), day, kind, h };
+  const ctx = { sky: day * (1 - gloom * 0.6), day, kind, h, now };
   const b = base(s, x, z, ctx);
   let level = b.window + b.roomLamp + b.ambient;
   const helped = [];

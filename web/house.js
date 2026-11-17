@@ -339,8 +339,8 @@ export function buildHouse(THREE, scene) {
   B(hall, [0.14, 0.45, 0.1], 0x3b5bdb, [7.85, 1.3, -4.55]);
   S(hall, 0.12, 0xd9534f, [8.07, 1.62, -4.55], {}, [1.2, 0.6, 1.2]);
   C(hall, [0.01, 0.01, 1.2], 0x222222, [6.8, 4.4, 0]);
-  S(hall, 0.28, 0xfff1d0, [6.8, 3.75, 0], glow(0xffd98a, 0.9), [1, 0.7, 1]);
-  const hallLight = new THREE.PointLight(0xffe2b8, 9, 9);
+  const hallBulb = S(hall, 0.28, 0xfff1d0, [6.8, 3.75, 0], glow(0xffd98a, 0.9), [1, 0.7, 1]);
+  const hallLight = new THREE.PointLight(0xffe2b8, 9, 9); // switched and dimmed on Pip's phone (main.js syncFixedLamps)
   hallLight.position.set(6.8, 3.6, 0);
   house.add(hallLight);
   // what hangs on the hall's side walls (only when the walls are full height)
@@ -500,7 +500,7 @@ export function buildHouse(THREE, scene) {
   const refreshViews = (hour) => views.forEach((v) => { paintView(v.cv, hour); v.tex.needsUpdate = true; });
   refreshViews(13);
   return {
-    house, low, full, roof, hall, studio,
+    house, low, full, roof, hall, studio, hallLight, hallBulb,
     faders, knobs, leds, screen, drawScreen: draw, recMat, kit, refreshViews,
     // call each frame with the time, and whether he is mixing: the faders slide, the lights blink and the red light glows
     update(t, active) {

@@ -22,7 +22,19 @@ export const MAX_TIMERS = 6;
 const HEX = /^#[0-9a-f]{6}$/i;
 const clean = (t, n) => String(t ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
 
-export const lampsOf = (s) => (s.decor ?? []).filter((d) => isLamp(d));
+// The lamps that came with the house: the big room lamp hanging in the bedroom and the lamp in the hall. They are on his
+// phone too, like the lamps he made (kept in s.fixedLamps, made the first time they are needed).
+export const FIXED_LAMPS = [
+  { id: 'room-lamp', name: 'room lamp', label: 'hanging in the middle of the bedroom', pos: [-2, 3.5, -1], color: '#ffb066' },
+  { id: 'hall-lamp', name: 'hall lamp', label: 'hanging in the hall', pos: [6.8, 3.6, 0], color: '#ffe2b8' },
+];
+export function fixedLampsOf(s) {
+  s.fixedLamps ??= [];
+  for (const f of FIXED_LAMPS) if (!s.fixedLamps.some((x) => x.id === f.id)) s.fixedLamps.push({ id: f.id, name: f.name, label: f.label, pos: f.pos, fixed: true, lit: true, parts: [{ glow: true, color: f.color }], uses: [{ label: 'Switch', does: 'light' }] });
+  return s.fixedLamps;
+}
+export const fixedLamp = (s, id) => fixedLampsOf(s).find((x) => x.id === id);
+export const lampsOf = (s) => [...fixedLampsOf(s), ...(s.decor ?? []).filter((d) => isLamp(d))];
 export const lampName = (e) => e.nick || e.name;
 // The colour it was made with (its glowing part), when he never picked one.
 export const madeColor = (e) => (e.parts ?? []).find((p) => p.glow)?.color ?? PRESETS[0].hex;

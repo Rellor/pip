@@ -236,7 +236,7 @@ export function applyLook(mode, ctx) {
     trim(0.04, 0.05, 10, -4.98, 1.1, 0, 0xf0e2d2);
     // curtains: pleated panels either side of the window, and a rod
     const cm = [new THREE.MeshStandardMaterial({ color: 0xc66a4c, roughness: 0.95 }), new THREE.MeshStandardMaterial({ color: 0xb35a40, roughness: 0.95 })];
-    for (const [x0, dirx] of [[-0.78, -1], [1.38, 1]]) {
+    for (const [x0, dirx] of [[-0.86, -1], [1.46, 1]]) { // just outside the window frame (it reaches x -0.8 and 1.4), so they do not cut into it
       for (let i = 0; i < 3; i++) { // drawn to the side and held back, so they stay clear of the furniture next to the window
         const fold = new THREE.Mesh(new THREE.BoxGeometry(0.09, 2.15, 0.07), cm[i % 2]);
         fold.position.set(x0 + dirx * (0.045 + i * 0.065), 3.1, -4.86 + (i % 2) * 0.04);
@@ -244,13 +244,13 @@ export function applyLook(mode, ctx) {
         scene.add(fold);
       }
     }
-    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 2.9, 10), new THREE.MeshStandardMaterial({ color: 0x5a3b24, roughness: 0.5, metalness: 0.2 }));
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 3.1, 10), new THREE.MeshStandardMaterial({ color: 0x5a3b24, roughness: 0.5, metalness: 0.2 }));
     rod.rotation.z = Math.PI / 2;
     rod.position.set(0.3, 4.2, -4.84); // as wide as the window and its curtains
     scene.add(rod);
-    for (const x of [-1.15, 1.75]) { const f = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), rod.material); f.position.set(x, 4.2, -4.84); scene.add(f); }
+    for (const x of [-1.25, 1.85]) { const f = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), rod.material); f.position.set(x, 4.2, -4.84); scene.add(f); }
     // the same curtains and rod at the square window in the middle of the left wall
-    for (const [z0, dirz] of [[-1.08, -1], [1.08, 1]]) {
+    for (const [z0, dirz] of [[-1.16, -1], [1.16, 1]]) { // outside the frame and the sill (they reach 1.08 and 1.14)
       for (let i = 0; i < 3; i++) {
         const fold = new THREE.Mesh(new THREE.BoxGeometry(0.07, 2.15, 0.09), cm[i % 2]);
         fold.position.set(-4.86 + (i % 2) * 0.04, 3.1, z0 + dirz * (0.045 + i * 0.065));
@@ -262,7 +262,7 @@ export function applyLook(mode, ctx) {
     rod2.rotation.set(Math.PI / 2, 0, 0);
     rod2.position.set(-4.84, 4.2, 0);
     scene.add(rod2);
-    for (const z of [-1.45, 1.45]) { const f = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), rod.material); f.position.set(-4.84, 4.2, z); scene.add(f); }
+    for (const z of [-1.55, 1.55]) { const f = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), rod.material); f.position.set(-4.84, 4.2, z); scene.add(f); }
     // soft darkening where the walls meet the floor and the ceiling
     const edge = (w, h, x, y, z, ry, flip) => {
       const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: canvasTex(4, 64, (g, ww, hh) => { const gr = g.createLinearGradient(0, flip ? 0 : hh, 0, flip ? hh : 0); gr.addColorStop(0, 'rgba(60,30,15,0.3)'); gr.addColorStop(1, 'rgba(60,30,15,0)'); g.fillStyle = gr; g.fillRect(0, 0, ww, hh); }), transparent: true, depthWrite: false }));
@@ -362,7 +362,7 @@ export function applyLook(mode, ctx) {
       lerpColor(hemi.color, 0x9fb0f0, 0xfff0e0, 1 - nightK);
       lerpColor(hemi.groundColor, 0x5a4a6a, 0xb88f6c, 1 - nightK);
       sun.intensity = 0;
-      lamp.intensity = 13 - 3 * day;
+      lamp.intensity = (13 - 3 * day) * (lamp.userData.k ?? 1); // k: on, off or dimmed on Pip's phone
       cool.intensity = 0.15 + 2.8 * day; // daylight comes in even when it is grey
       side.intensity = 0.1 + 2.2 * day;
       lerpColor(cool.color, 0x7f98ff, 0xbcd4ff, 1 - nightK);

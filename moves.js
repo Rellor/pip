@@ -48,7 +48,7 @@ const findProjectTitle = (st) => st.forStep?.project;
 // A surface with too much on it, and a place of his with room: what to move where (or null).
 const tidyUp = (s) => {
   const info = supportsInfo(s.decor ?? []);
-  const full = info.find((b) => !b.high && b.on.length > (b.label === 'desk' ? 3 : 4));
+  const full = info.find((b) => !b.high && b.on.length > (b.label === 'desk' ? 2 : 4)); // the desk: his computer, keyboard, mug and printer take most of it
   const free = info.find((b) => !b.full && !b.high && b.room > 0 && !/^(desk|piano)$/.test(b.label));
   return full && free ? { full: full.label, thing: full.on[full.on.length - 1], to: free.label.replace(/ \(level \d+\)$/, '') } : null;
 };
