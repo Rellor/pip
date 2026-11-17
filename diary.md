@@ -1286,3 +1286,9 @@ My desk is too full, so I need to move the amber reading light to clear up space
 - do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
 - mood: cozy
 
+## 17/11/2026, 09:18:57
+I finished mixing the blues and grays, so the next step for my watercolor project is to paint the rain.
+> I finished mixing the blues and grays, so the next step for my watercolor project is to paint the rain.
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: cozy
+
