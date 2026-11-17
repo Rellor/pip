@@ -3,6 +3,7 @@ import { cleanSong } from './songs.js';
 import { storedUses } from './uses.js';
 import { toolKind } from './tools.js';
 import { behaviorProblem } from './behaviors.js';
+import { settle } from './build.js';
 import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pivotOf, frontWorld, ownSides, SIDE_VECTORS, sideOfVector } from './web/furniture.js';
 
 // Pip's decorations.
@@ -395,6 +396,38 @@ export function composeSong(decor, name, rawSong) {
   return { name: e.name, song };
 }
 
+// After something that holds things changed shape (new boards, a new top, grown to the side): what stood on it moves along
+// onto its boards as they are now, so nothing floats where an old board was. He does not have to move them himself.
+// Returns { moved: [names], fell: [names] } (fell: no longer fits on it; it stays where it was).
+export function reseat(decor, e, levelsBefore = null, now = Date.now()) {
+  const riders = decor.filter((o) => o.kind === 'surface' && o.pos && (o.base === e.id || String(o.base ?? '').startsWith(`${e.id}#`)));
+  const out = { moved: [], fell: [] };
+  if (!riders.length) return out;
+  const levels = e.kind === 'wall' ? wallLevels(e) : floorLevels(e).length > 1 ? floorLevels(e) : null;
+  const keys = levels ? levels.map((l, i) => `${e.id}#${i}`) : [e.id];
+  const yOf = (i) => baseByKey(decor, keys[i])?.y ?? Infinity;
+  for (const o of riders) {
+    const was = String(o.base).includes('#') ? Number(String(o.base).split('#')[1]) : 0;
+    const same = levelsBefore === keys.length && was < keys.length; // as many boards as before: the same board
+    const order = keys.map((k, i) => i).sort((a, b) => (same ? (a === was ? -1 : b === was ? 1 : 0) : 0) || Math.abs(yOf(a) - o.pos[1]) - Math.abs(yOf(b) - o.pos[1]));
+    let done = false;
+    for (const i of order) {
+      const base = baseByKey(decor, keys[i]);
+      if (!base || !reachable(base)) continue;
+      const r = placeOn(decor.filter((x) => x !== o), { ...o, keep: true }, o.parts, base, { x: o.pos[0], z: o.pos[2] }, Date.parse(e.updatedAt ?? '') - 6000 || now, now, true);
+      if (r.failed) continue;
+      const n = r.entry;
+      Object.assign(o, { pos: n.pos, base: n.base, label: n.label, scale: Math.min(o.scale || 1, n.scale || 1), rotY: n.rotY, stand: n.stand, updatedAt: e.updatedAt ?? new Date(now).toISOString() });
+      out.moved.push(o.name);
+      done = true;
+      break;
+    }
+    if (!done) out.fell.push(o.name);
+  }
+  return out;
+}
+export const levelCountOf = (e) => (e.kind === 'wall' ? wallLevels(e).length : floorLevels(e).length > 1 ? floorLevels(e).length : 1);
+
 // ---- Changing something he already made: new shapes (it keeps its place, uses and song), or a new reason.
 export const MAX_UPDATES_PER_DAY = 6;
 
@@ -406,7 +439,9 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   if (!e && n) e = decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (!e) return { failed: 'there is nothing with that name in his room' };
   if (decor.filter((x) => x.changedAt && now - Date.parse(x.changedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
-  const parts = cleanParts(d.parts);
+  const built = settle(cleanParts(d.parts), { kind: e.kind }); // the builder makes it hold together (build.js)
+  const parts = cleanParts(d.parts) ? built.parts : null;
+  const boards = levelCountOf(e);
   const why = str(d.why, 200);
   const grow = Number(d.bigger ?? d.scale);
   const factor = !parts && Number.isFinite(grow) && grow > 0 ? Math.min(2, Math.max(0.5, grow)) : null; // "make it bigger" without drawing it again
@@ -428,7 +463,8 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   if (why) e.why = why;
   e.updatedAt = new Date(atMs + 6000).toISOString(); // the page shows the change a few seconds into his step
   e.changedAt = e.updatedAt; // only real changes count toward the daily limit, not moves
-  return { name: e.name, entry: e, reshaped: Boolean(parts || factor), grew: factor, limited, label: ZONES[e.zone].label };
+  const seat = parts || factor ? reseat(decor, e, boards, now) : { moved: [], fell: [] };
+  return { name: e.name, entry: e, reshaped: Boolean(parts || factor), grew: factor, limited, label: ZONES[e.zone].label, fixes: parts ? built.fixes : [], reseated: seat.moved, ...(seat.fell.length ? { warn: `${seat.fell.join(', ')} no longer fit${seat.fell.length > 1 ? '' : 's'} on it; I find ${seat.fell.length > 1 ? 'them' : 'it'} a new place` } : {}) };
 }
 
 // ---- Moving things. His chest is a piece of furniture he can move too (decor never overlaps it by much, but it is not checked).
@@ -714,13 +750,14 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
   if (other && decor.some((x) => x.base === other.id || String(x.base ?? '').startsWith(`${other.id}#`))) return { failed: `there are still things standing on ${other.name}. He takes them off first` };
   if ((side || other) && !(side in OPPOSITE)) return { failed: 'he says which side of it the new part goes on: "side": "left", "right", "front" or "back" (left and right as he sees it standing in front of it)' };
   if ((side || other) && (e.kind !== 'floor' || (other && other.kind !== 'floor'))) return { failed: 'only things that stand on the floor can be joined side by side' };
-  if (side && decor.some((x) => x.base === e.id || String(x.base ?? '').startsWith(`${e.id}#`))) return { failed: 'there are things standing on it. He takes them off first, because the whole thing shifts when it grows to the side' };
   let parts = null;
   if (other) {
     const sc = other.scale || 1;
     parts = other.parts.map((p) => ({ ...p, size: p.size.map((v) => r3(v * sc)), pos: p.pos.map((v) => r3(v * sc)) }));
   } else parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the new shapes did not work out' };
+  const boards = levelCountOf(e);
+  let fixes = [];
   const room = MAX_TOTAL_PARTS - e.parts.length;
   if (room <= 0) return { failed: `it already has the most parts a thing can have (${MAX_TOTAL_PARTS})` };
   const Z = ZONES[e.zone];
@@ -738,6 +775,9 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
       all = all.map((p) => ({ ...p, pos: [r3(p.pos[0] - shift[0]), p.pos[1], r3(p.pos[2] - shift[1])] }));
       added = added.map((p) => ({ ...p, pos: [r3(p.pos[0] - shift[0]), p.pos[1], r3(p.pos[2] - shift[1])] }));
     } else all = [...e.parts, ...added];
+    const built = settle(all, { kind: e.kind, only: all.map((p, i) => i).filter((i) => i >= e.parts.length) }); // new parts snap onto the old ones
+    all = built.parts;
+    fixes = built.fixes;
     e.scale = fit(all, Z.kind, Z.lim);
     e.parts = all;
     if (sd) { // the middle moved by `shift` in its own frame: its place in the room and the spot he stands at move along
@@ -773,7 +813,8 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
   }
   e.updatedAt = new Date(atMs + 6000).toISOString();
   e.changedAt = e.updatedAt;
-  return { name: e.name, entry: e, added: r.added.length, total: e.parts.length, side: used, joined: other?.name ?? null };
+  const seat = reseat(decor, e, boards, now);
+  return { name: e.name, entry: e, added: r.added.length, total: e.parts.length, side: used, joined: other?.name ?? null, fixes, reseated: seat.moved, ...(seat.fell.length ? { warn: `${seat.fell.join(', ')} no longer fit${seat.fell.length > 1 ? '' : 's'} on it; I find ${seat.fell.length > 1 ? 'them' : 'it'} a new place` } : {}) };
 }
 
 // ---- Free floor space: Pip puts things where he wants. They only have to fit: not into furniture, not into each other, not through a wall.
@@ -1325,6 +1366,21 @@ export const maxOn = (base) => (base.key === 'desk' ? 2 : Math.max(2, Math.min(6
 // Hanging things are not held to his height the same way: he stretches up for a shelf on the wall (up to 2.2 m).
 export const WALL_SHELF_TOP = 2.0;
 export const reachable = (base) => (base.y ?? 0) <= (base.hung ? 2.2 : PIP.reachUp);
+// The parts of a shelf or table that rise up from a board (its sides, posts, a back rail): nothing can stand inside them.
+function holderWalls(decor, base) {
+  const id = String(base.key ?? '').split('#')[0];
+  const o = decor.find((x) => x.id === id && x.parts && x.pos);
+  if (!o) return [];
+  const sc = o.scale || 1;
+  return o.parts.flatMap((p) => {
+    const [hx, hy, hz] = halfSize(p).map((v) => v * sc);
+    const y0 = o.pos[1] + p.pos[1] * sc - hy;
+    const y1 = o.pos[1] + p.pos[1] * sc + hy;
+    if (!(y0 <= base.y + 0.02 && y1 > base.y + 0.03)) return [];
+    const [dx, dz] = turn([p.pos[0] * sc, p.pos[2] * sc], o.rotY || 0);
+    return [{ n: `the side of ${o.name}`, ...rectAt([hx, hz], o.pos[0] + dx, o.pos[2] + dz, o.rotY || 0) }];
+  });
+}
 function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   const already = surfaceOthers(decor, base.key, null).length;
   if (!reachable(base)) return { failed: `the top of ${base.n} is ${r3(base.y)} m high, and I can only reach up to ${base.hung ? 2.2 : PIP.reachUp} m. I put it somewhere lower, or build a shelf or table within reach`, hinted: true };
@@ -1334,7 +1390,7 @@ function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   const tall = Math.max(0.01, ...parts.map((p) => (p.pos?.[1] ?? 0) + ((p.shape === 'sphere' ? p.size[0] * 2 : p.size[1]) ?? 0) / 2));
   if (base.clear && tall * scale > base.clear - 0.02) scale = Math.max(0.2, (base.clear - 0.02) / tall); // it has to fit under the board above
   const [hw, hd] = halfFoot(parts, scale);
-  const others = [...surfaceOthers(decor, base.key, null), ...(base.key === 'desk' ? deskGear() : [])]; // on the desk: not on his computer, keyboard, mouse, mug or printer
+  const others = [...surfaceOthers(decor, base.key, null), ...(base.key === 'desk' ? deskGear() : []), ...holderWalls(decor, base)]; // on the desk: not on his computer, keyboard, mouse, mug or printer; on a shelf: not in its side walls
   const fitsAt = (x, z) => {
     const r = rectAt([hw, hd], x, z, base.rotY);
     return r.x0 >= base.x0 && r.x1 <= base.x1 && r.z0 >= base.z0 && r.z1 <= base.z1 && !others.some((o) => r.x0 < o.x1 + 0.05 && r.x1 + 0.05 > o.x0 && r.z0 < o.z1 + 0.05 && r.z1 + 0.05 > o.z0);

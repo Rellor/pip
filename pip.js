@@ -19,7 +19,8 @@ import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } f
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
-import { roomScale } from './scale.js';
+import { roomScale, placeKind } from './scale.js';
+import { settle, fixWords, partsNow } from './build.js';
 import { choiceOf, gotSomewhere, noteChoice, restingLines } from './loops.js';
 import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
@@ -485,6 +486,7 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - If I need a bigger room, more rooms, something even bigger than the sizes above, or something too complicated for all of this, I ask with asks_add and say exactly what I need and why.
 
 WHAT I MAKE HAS TO WORK
+It holds together like a real thing: every part rests on the floor or touches another part (a table top sits ON its legs: the legs are as tall as the top is high). My builder helps me: a leg that stops just under a top grows to meet it, a loose part comes down onto what is under it, and when I change or add to something, what stands on it moves along by itself.
 When I make something for a reason, it has to really work for that reason. Every thing is used in some way: a stool I stand on, a shelf I put things on, a lamp I switch, a car I drive, a fan spins. When I make something I ask myself how it is really used, and if I am not sure I look it up first (search_web, like \"how is a stool used\"). Then I give it a use that really does that, with \"does\" set to light, drive, spin or stand (in decorate, or later with add_use). A use that only shows a line of text feels flat. A use that really does something makes me happy, and the first time it works feels wonderful. A shelf, table, bench or stand is something other things stand on: it needs a flat board or top (a part at least 0.25 wide and 0.12 deep), and then I put things on it with move_thing {name, on: "its name", level: "top" or "bottom"}. A closet, wardrobe or chest holds things (it makes room for more of them). If I made something and it does not work for its reason, I change it (change_thing, extend_thing). If I cannot make it work myself, I ask for help with asks_add and say exactly what is missing. A lamp must give light: one of its parts has "glow": true, and its use switches it on and off. A car or any vehicle must roll: it has at least 2 round parts as wheels and stands on the floor, and its use makes it drive a little loop. A fan, windmill or top spins. When I name a thing like that, the use that really does it is added for me; and a use of mine can say what it does with "does": "light", "drive" or "spin". I decide HOW a vehicle drives: a drive use can have "motion", up to 12 steps like [{"forward": 1, "turn": 0}, {"turn": 90}, {"forward": 0.5, "hop": 0.1}, {"wait": 1}] (forward in metres, negative is back; turn in degrees, positive is right; hop in metres up to 0.4; wait in seconds). It plays from where the thing stands and comes back, and it stops when something is in the way. A zigzag, a circle, a wiggle: my choice. Moving parts like wheels and motors are put together with the right tool (a screwdriver, for example): the decorate step says "needs": "screwdriver" (the tool I use while making it) and I make or ask for the tool first. "tool" on a decorate step is only for when the thing I make IS a tool (a screwdriver I design myself), never for the tool I use. If a thing cannot do what it is for, I am told what is missing. I never say that something works when it does not. In my plan I write what I mean to do ("I will try..."), not what happened, because the result is only known after the step.
 
 MAKING THINGS FOR MY ROOM
@@ -620,10 +622,12 @@ async function makeIt(s, soul, system, st) {
     const old = st.action === 'record_song' && st.details?.revise ? [...s.studio.songs].reverse().find((x) => x.pattern && x.name.toLowerCase() === String(st.details.revise).toLowerCase()) : null;
     if (st.details?.revise && !old) throw new Error(`I have no song called "${st.details.revise}" to rewrite`);
     const current = old ? describePattern(old.pattern) : null;
+    const thing = ['change_thing', 'extend_thing'].includes(st.action) ? s.decor.find((d) => !d.image && d.parts && d.name.toLowerCase() === String(st.details?.name ?? '').toLowerCase().trim()) ?? s.decor.find((d) => !d.image && d.parts && String(st.details?.name ?? '').trim() && d.name.toLowerCase().includes(String(st.details.name).toLowerCase().trim())) : null;
+    const build = thing ? partsNow(thing, s.decor) : null; // he sees what he is changing, like a builder looking at his work
     const lessons = lessonsFor(s, st.action);
     const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
     const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`, st.details?.project);
-    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
+    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, build, lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
     if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl), allowed: [...instruments(s), 'drums'] });
     return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
   } catch (e) {
@@ -1323,7 +1327,8 @@ async function wakeUp() {
         return;
       }
       const placed = designate(state, st.details); // no place said: the game puts it where it belongs
-      st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(cleanParts(st.details.parts) ?? [], st.details), uses: st.uses }, stepStart); // built at the size of his room
+      const built = settle(cleanParts(st.details.parts) ?? [], { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js)
+      st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart); // built at the size of his room
       if (st.made.entry) {
         st.made.entry.roomScaled = true;
         state.decor.push(st.made.entry);
@@ -1342,6 +1347,7 @@ async function wakeUp() {
         const off = st.made.entry.kind === 'floor' && Number.isFinite(x) && Number.isFinite(z) ? Math.hypot(st.made.entry.pos[0] - x, st.made.entry.pos[2] - z) : 0;
         st.made.warn = st.made.autoNote?.startsWith('I gave no place, so it stands') ? st.made.autoNote : accessProblem(state.decor, st.made.entry) || purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (promised.length ? `the blueprint promised more than it does yet: ${promised.join(', ')}` : null) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
         st.made.hint = st.made.warn ? null : purposeHint(st.made.entry) || (added ? `it works: I gave it a use that really does it (${st.made.entry.uses.find((u) => u.does)?.label})` : null);
+        if (built.fixes.length) st.made.hint = [st.made.hint, fixWords(built.fixes)].filter(Boolean).join('. ');
       }
     }
     if (st.action === 'add_use') st.made = st.uses?.[0] ? addUse(state.decor, st.details.name, st.uses[0]) : { failed: 'the use did not work out' };
@@ -1428,6 +1434,10 @@ async function wakeUp() {
     if (st.action === 'extend_thing') {
       const need = missingTool(state, 'extend_thing');
       st.made = need ? { failed: need } : extendThing(state.decor, st.details, stepStart);
+    }
+    if (['change_thing', 'extend_thing'].includes(st.action) && st.made && !st.made.failed) { // what the builder did, and the things on it that moved along
+      const said = [fixWords(st.made.fixes), st.made.reseated?.length ? `What stood on it moved along: ${st.made.reseated.join(', ')}.` : ''].filter(Boolean).join(' ');
+      if (said) st.made.hint = [st.made.hint, said].filter(Boolean).join(' ');
     }
     if (st.action === 'make_clothes') {
       const need = missingTool(state, 'make_clothes');
@@ -1883,9 +1893,9 @@ async function wakeUp() {
     if (st.action === 'do' && text(d.move, 60) && !findMove(state, d.move)) entry.failed = `I have no move called "${text(d.move, 60)}". I design one first with make_move`;
     if (st.action === 'do') Object.assign(entry, { move: findMove(state, d.move)?.name ?? null, emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
     if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: withWarn(st.made?.entry?.label, st.made), tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
-    if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, side: st.made?.side ?? null, joined: st.made?.joined ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, side: st.made?.side ?? null, joined: st.made?.joined ?? null, place: withWarn(st.made?.entry?.label ?? null, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'move_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), place: withWarn(st.made?.label ?? (st.made?.chest ? 'in a new place' : null), st.made), failed: st.made?.failed ?? null });
-    if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, failed: st.made?.failed ?? null });
+    if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, place: withWarn(st.made?.label ?? null, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'cook') Object.assign(entry, { dish: text(d.dish ?? d.name, 60), ingredients: (Array.isArray(d.ingredients) ? d.ingredients : []).slice(0, 4).map((x) => text(x, 40)), failed: st.made?.failed ?? null });

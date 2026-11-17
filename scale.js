@@ -39,7 +39,7 @@ export function workTop(parts) {
   return Math.max(...flat.map((p) => p.pos[1] + half(p)[1])) - b.lo[1];
 }
 // Where it goes, in the words of the size rule.
-const placeKind = (spec = {}) => (MIN_SIZE[spec.kind] ? spec.kind : spec.ceiling ? 'ceiling' : spec.on ? 'surface' : spec.wall ? 'wall' : spec.x !== undefined || spec.next_to || /floor/.test(String(spec.where ?? '')) ? 'floor' : rightPlace(spec)?.kind ?? 'floor');
+export const placeKind = (spec = {}) => (MIN_SIZE[spec.kind] ? spec.kind : spec.ceiling ? 'ceiling' : spec.on ? 'surface' : spec.wall ? 'wall' : spec.x !== undefined || spec.next_to || /floor/.test(String(spec.where ?? '')) ? 'floor' : rightPlace(spec)?.kind ?? 'floor');
 
 // How much bigger this thing is built: { wide, high }. Usually both 1.6; a seat or work top grows wide and deep like the
 // room, but only as high as his body fits.
