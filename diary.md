@@ -1676,3 +1676,9 @@ I need to eat something first before I figure out where to put my small clay lam
 - eat (apples): I am so hungry from all the rain and work today.
 - mood: curious
 
+## 17/11/2026, 18:35:22
+It is dark in my room and I want to figure out how to build a small lamp myself.
+> It is dark in my room and I want to figure out how to build a small lamp myself.
+- search_web (how to make a tiny glowing lamp): I want to see how to make a little glowing part for a lamp so I can see the dark corners.
+- mood: curious
+
