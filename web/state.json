@@ -1,23 +1,11 @@
 {
-  "mood": "sleepy",
-  "energy": 8.98,
+  "mood": "energetic",
+  "energy": 8,
   "boredom": 0,
-  "loneliness": 0.58,
+  "loneliness": 1.33,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-16T16:53:50.197Z",
-      "action": "search_web",
-      "detail": "how to make a simple reading lamp",
-      "enjoyment": 6
-    },
-    {
-      "at": "2026-11-16T17:03:33.430Z",
-      "action": "rest",
-      "detail": "",
-      "enjoyment": 5
-    },
     {
       "at": "2026-11-16T17:12:36.965Z",
       "action": "rest",
@@ -317,6 +305,19 @@
       "action": "rest",
       "detail": "sleeping through the night",
       "enjoyment": 8
+    },
+    {
+      "at": "2026-11-17T07:06:26.713Z",
+      "action": "cook",
+      "detail": "",
+      "enjoyment": 0,
+      "failed": "a dish needs a name and 1 to 4 ingredients"
+    },
+    {
+      "at": "2026-11-17T07:06:26.714Z",
+      "action": "do",
+      "detail": "tell my plant what went wrong and how it felt",
+      "enjoyment": 6
     }
   ],
   "notes": [
@@ -639,7 +640,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.697,
+      "weight": 7.607,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -648,7 +649,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.739,
+      "weight": 7.649,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -657,7 +658,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.661,
+      "weight": 8.56,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -666,7 +667,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.24,
+      "weight": 8.144,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -675,7 +676,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.762,
+      "weight": 6.683,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -686,7 +687,7 @@
       "text": "The gear teeth need to be smooth so the little wooden music box plays correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.29,
+      "weight": 6.217,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -695,7 +696,7 @@
       "text": "Smooth gear teeth make the little wooden music box play correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.287,
+      "weight": 6.214,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -704,7 +705,7 @@
       "text": "I recorded a song: Music Box Test (drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.294,
+      "weight": 6.221,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -713,7 +714,7 @@
       "text": "The music box melody should match the rhythm of the wooden gears.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.296,
+      "weight": 6.223,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -722,7 +723,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.792,
+      "weight": 6.713,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -731,7 +732,7 @@
       "text": "Matching the rhythm to the wooden gears makes the music box sound better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.31,
+      "weight": 6.237,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -740,7 +741,7 @@
       "text": "Adding enough sounding notes makes the music box record correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.312,
+      "weight": 6.239,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -749,26 +750,8 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.422,
-      "lastUsed": "2026-11-16T18:48:06.195Z"
-    },
-    {
-      "id": "mmwjauljr60",
-      "at": "2026-11-16T13:28:45.974Z",
-      "text": "Finishing a project feels warm and complete.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.938,
-      "lastUsed": "2026-11-16T13:28:45.974Z"
-    },
-    {
-      "id": "mmwjb50sd60",
-      "at": "2026-11-16T13:36:52.285Z",
-      "text": "Planning a watercolor project helps me shift focus from bread to the stormy weather.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.939,
-      "lastUsed": "2026-11-16T13:36:52.285Z"
+      "weight": 8.818,
+      "lastUsed": "2026-11-17T07:06:25.490Z"
     },
     {
       "id": "mmwjbfg4p60",
@@ -776,7 +759,7 @@
       "text": "Planning a project helps me focus when the weather turns stormy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.94,
+      "weight": 5.871,
       "lastUsed": "2026-11-16T13:44:58.729Z"
     },
     {
@@ -785,7 +768,7 @@
       "text": "Planning helps me transition between different creative ideas.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.942,
+      "weight": 5.873,
       "lastUsed": "2026-11-16T14:01:23.949Z"
     },
     {
@@ -794,7 +777,7 @@
       "text": "I need to build a kitchen or stove before I can cook bread.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.947,
+      "weight": 5.878,
       "lastUsed": "2026-11-16T14:45:25.671Z"
     },
     {
@@ -803,7 +786,7 @@
       "text": "I made small stove (To finally have a kitchen oven to bake my bread and keep warm.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.947,
+      "weight": 5.878,
       "lastUsed": "2026-11-16T14:45:26.665Z"
     },
     {
@@ -812,7 +795,7 @@
       "text": "I built a small stove in my room so I can finally cook and bake.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.948,
+      "weight": 5.879,
       "lastUsed": "2026-11-16T14:55:33.969Z"
     },
     {
@@ -821,7 +804,7 @@
       "text": "I used my new stove to try cooking the bread with flour.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.95,
+      "weight": 5.881,
       "lastUsed": "2026-11-16T15:11:46.510Z"
     },
     {
@@ -830,7 +813,7 @@
       "text": "My cooking got better: I am level 2 now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.951,
+      "weight": 5.882,
       "lastUsed": "2026-11-16T15:11:46.518Z"
     },
     {
@@ -839,7 +822,7 @@
       "text": "I tried using my wooden planter box by tending the sprouts.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.951,
+      "weight": 5.882,
       "lastUsed": "2026-11-16T15:20:01.478Z"
     },
     {
@@ -848,7 +831,7 @@
       "text": "Kneading is the next step after mixing the flour, water, and salt.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.952,
+      "weight": 5.883,
       "lastUsed": "2026-11-16T15:33:57.864Z"
     },
     {
@@ -857,7 +840,7 @@
       "text": "I took my very first photo today on a rainy Monday.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.954,
+      "weight": 5.885,
       "lastUsed": "2026-11-16T15:46:31.399Z"
     },
     {
@@ -866,7 +849,7 @@
       "text": "My first loaf of bread is baked and ready to judge.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.956,
+      "weight": 5.887,
       "lastUsed": "2026-11-16T15:54:48.503Z"
     },
     {
@@ -875,8 +858,8 @@
       "text": "I finished my project \"Bake a simple loaf of bread\" and I am proud of it: I finished the first version of the simple loaf, and it is a good start even if it is clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.949,
-      "lastUsed": "2026-11-16T15:54:48.503Z"
+      "weight": 8.351,
+      "lastUsed": "2026-11-17T07:06:25.490Z"
     },
     {
       "id": "mmwjgdopf60",
@@ -884,7 +867,7 @@
       "text": "Moving objects in the room changes how the space feels around me.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.957,
+      "weight": 5.888,
       "lastUsed": "2026-11-16T16:03:34.610Z"
     },
     {
@@ -893,7 +876,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.951,
+      "weight": 7.858,
       "lastUsed": "2026-11-16T16:11:38.822Z"
     },
     {
@@ -902,7 +885,7 @@
       "text": "My basil sprouted and I started my stormy sky watercolor.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.958,
+      "weight": 5.889,
       "lastUsed": "2026-11-16T16:11:51.708Z"
     },
     {
@@ -911,7 +894,7 @@
       "text": "Setting up my watercolor paper and brushes helps me dive right into the stormy sky painting.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.96,
+      "weight": 5.891,
       "lastUsed": "2026-11-16T16:28:02.120Z"
     },
     {
@@ -920,7 +903,7 @@
       "text": "I am continuing with my stormy sky watercolor painting today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.961,
+      "weight": 5.892,
       "lastUsed": "2026-11-16T16:36:19.208Z"
     },
     {
@@ -929,7 +912,7 @@
       "text": "A lamp I make myself will bring light to the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.962,
+      "weight": 5.893,
       "lastUsed": "2026-11-16T16:45:44.123Z"
     },
     {
@@ -938,7 +921,7 @@
       "text": "I made small clay lamp (It is dark in my room and a lamp of my own will let me see and make it cozy.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.962,
+      "weight": 5.893,
       "lastUsed": "2026-11-16T16:45:45.117Z"
     },
     {
@@ -947,7 +930,7 @@
       "text": "I decided to look up how to make a lamp so I can light up the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.963,
+      "weight": 5.894,
       "lastUsed": "2026-11-16T16:53:50.199Z"
     },
     {
@@ -956,8 +939,8 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.958,
-      "lastUsed": "2026-11-16T17:01:54.774Z"
+      "weight": 8.36,
+      "lastUsed": "2026-11-17T07:06:25.490Z"
     },
     {
       "id": "mmwjiitko60",
@@ -965,7 +948,7 @@
       "text": "Setting up my watercolor paper and brushes helped me start the stormy sky painting.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.964,
+      "weight": 5.895,
       "lastUsed": "2026-11-16T17:03:33.432Z"
     },
     {
@@ -974,7 +957,7 @@
       "text": "Eating the bread gave me energy to start on my watercolor painting.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.966,
+      "weight": 5.897,
       "lastUsed": "2026-11-16T17:20:43.083Z"
     },
     {
@@ -983,7 +966,7 @@
       "text": "I am continuing my bread project by kneading the dough.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.968,
+      "weight": 5.899,
       "lastUsed": "2026-11-16T17:38:02.418Z"
     },
     {
@@ -992,7 +975,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.967,
+      "weight": 6.886,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -1001,7 +984,7 @@
       "text": "I am working on letting my bread dough rise near the window.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.97,
+      "weight": 5.901,
       "lastUsed": "2026-11-16T17:55:47.331Z"
     },
     {
@@ -1010,7 +993,7 @@
       "text": "I decided to make a small lamp because my room is too dark at night.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.971,
+      "weight": 5.902,
       "lastUsed": "2026-11-16T18:06:36.218Z"
     },
     {
@@ -1019,7 +1002,7 @@
       "text": "I made cozy brass gas bulb lamp (It is too dark in my room and I want a warm glowing reading light with an ionized gas bulb to see the corners and make my desk feel warm.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.971,
+      "weight": 5.902,
       "lastUsed": "2026-11-16T18:06:37.212Z"
     },
     {
@@ -1028,7 +1011,7 @@
       "text": "I let the dough rise by the window for my simple loaf of bread.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.978,
+      "weight": 5.908,
       "lastUsed": "2026-11-16T19:00:39.283Z"
     },
     {
@@ -1037,7 +1020,7 @@
       "text": "Letting the bread dough rise by the window is the next step after kneading.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.909,
       "lastUsed": "2026-11-16T19:08:52.465Z"
     },
     {
@@ -1046,7 +1029,7 @@
       "text": "I asked for drawing supplies so I can begin painting the stormy sky.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.98,
+      "weight": 5.91,
       "lastUsed": "2026-11-16T19:17:09.651Z"
     },
     {
@@ -1055,7 +1038,7 @@
       "text": "I decided to craft a small lamp to light up the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.911,
       "lastUsed": "2026-11-16T19:25:17.166Z"
     },
     {
@@ -1064,7 +1047,7 @@
       "text": "I made amber reading light (to give my cozy brass gas bulb lamp company and cast a warm glow for reading my diary late at night)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.911,
       "lastUsed": "2026-11-16T19:25:18.160Z"
     },
     {
@@ -1073,7 +1056,7 @@
       "text": "My sculpture got better: I am level 3 now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.912,
       "lastUsed": "2026-11-16T19:25:17.172Z"
     },
     {
@@ -1082,8 +1065,8 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.983,
-      "lastUsed": "2026-11-16T19:41:37.412Z"
+      "weight": 8.384,
+      "lastUsed": "2026-11-17T07:06:25.490Z"
     },
     {
       "id": "mmwjo6kl660",
@@ -1091,7 +1074,7 @@
       "text": "I drew Stormy sky over the dark horizon",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.983,
+      "weight": 5.913,
       "lastUsed": "2026-11-16T19:42:00.601Z"
     },
     {
@@ -1100,7 +1083,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.984,
+      "weight": 7.891,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -1109,7 +1092,7 @@
       "text": "I started mixing my stormy sky colors.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.917,
       "lastUsed": "2026-11-16T20:14:40.328Z"
     },
     {
@@ -1118,7 +1101,7 @@
       "text": "I am working on the second step of my stormy sky watercolor painting.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.988,
+      "weight": 5.918,
       "lastUsed": "2026-11-16T20:22:55.579Z"
     },
     {
@@ -1127,7 +1110,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.99,
+      "weight": 6.909,
       "lastUsed": "2026-11-16T20:39:17.012Z"
     },
     {
@@ -1136,7 +1119,7 @@
       "text": "I can move things to my wooden shelf when the desk gets too full.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.921,
       "lastUsed": "2026-11-16T20:47:24.078Z"
     },
     {
@@ -1145,7 +1128,7 @@
       "text": "I successfully moved the amber reading light to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.992,
+      "weight": 5.922,
       "lastUsed": "2026-11-16T20:55:44.566Z"
     },
     {
@@ -1154,7 +1137,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.993,
+      "weight": 6.912,
       "lastUsed": "2026-11-16T21:03:55.609Z"
     },
     {
@@ -1163,7 +1146,7 @@
       "text": "I started painting the stormy sky.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.925,
       "lastUsed": "2026-11-16T21:20:10.943Z"
     },
     {
@@ -1172,22 +1155,32 @@
       "text": "I am making good progress on my watercolor painting and enjoying my homemade bread.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.996,
+      "weight": 5.926,
       "lastUsed": "2026-11-16T21:28:22.307Z"
+    },
+    {
+      "id": "mmwkcmq5t60",
+      "at": "2026-11-17T07:06:24.113Z",
+      "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
+      "importance": 8,
+      "kind": "memory",
+      "weight": 7.907,
+      "lastUsed": "2026-11-17T07:06:24.113Z"
+    },
+    {
+      "id": "mmwkcms6360",
+      "at": "2026-11-17T07:06:26.715Z",
+      "text": "I am working on both my bread and my painting today.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.93,
+      "lastUsed": "2026-11-17T07:06:26.715Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-16T22:01:10.221Z",
   "thoughts": [
-    {
-      "at": "2026-11-16T17:55:47.331Z",
-      "text": "I want to continue with my bread baking project by letting the dough rise by the window.",
-      "short": "I want to continue with my bread baking project by letting the dough rise by the window.",
-      "mood": "cozy",
-      "action": "do",
-      "detail": "Let the dough rise by the window (for my project Bake a simple loaf of bread)"
-    },
     {
       "at": "2026-11-16T18:06:36.218Z",
       "text": "It is dark in my room and making a small lamp will help me see and feel cozy.",
@@ -1419,6 +1412,14 @@
       "mood": "focused",
       "action": "cook",
       "detail": ""
+    },
+    {
+      "at": "2026-11-17T07:06:26.715Z",
+      "text": "I have all my supplies ready, so I can continue my painting and let my bread rise by the window.",
+      "short": "I have all my supplies ready, so I can continue my painting and let my bread rise by the window.",
+      "mood": "energetic",
+      "action": "cook",
+      "detail": ""
     }
   ],
   "outbox": [
@@ -1490,25 +1491,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-16T19:33:32.569Z",
-      "action": "do",
-      "thought": "Hello, little plants.",
-      "move": null,
-      "emoji": "",
-      "what": "say hello to my plants through the glass",
-      "feeling": null
-    },
-    {
-      "at": "2026-11-16T19:42:00.601Z",
-      "action": "draw",
-      "thought": "Setting up my paper and brushes to begin the painting.",
-      "name": "Stormy sky over the dark horizon",
-      "why": "painting a watercolor of the stormy sky as my current project",
-      "image": "made/artmwjo6kl10.svg",
-      "place": "on the left wall (z 3.25, height 2.7)",
-      "failed": null
-    },
     {
       "at": "2026-11-16T19:50:06.739Z",
       "action": "do",
@@ -1759,6 +1741,24 @@
       "emoji": "🐾",
       "what": "stomp around the room once, then laugh at myself",
       "feeling": "joy"
+    },
+    {
+      "at": "2026-11-17T07:06:27.713Z",
+      "action": "cook",
+      "thought": "I wanted to, but a dish needs a name and 1 to 4 ingredients. (I want to mix the blues and grays for the storm now.)",
+      "dish": "mix soft blues and grays for the stormy",
+      "ingredients": [],
+      "failed": "a dish needs a name and 1 to 4 ingredients"
+    },
+    {
+      "at": "2026-11-17T07:10:27.713Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🪴",
+      "what": "tell my plant what went wrong and how it felt",
+      "feeling": "calm"
     }
   ],
   "decor": [
@@ -1786,12 +1786,12 @@
       "slot": null,
       "free": true,
       "side": "left",
-      "label": "on the left wall (z -4.15, height 1.1)",
+      "label": "on the left wall (z -3.15, height 1.05)",
       "kind": "wall",
       "pos": [
         -4.97,
-        1.1,
-        -4.15
+        1.05,
+        -3.15
       ],
       "rotY": 1.5707963267948966,
       "scale": 1,
@@ -1799,14 +1799,14 @@
         {
           "shape": "roundbox",
           "size": [
-            0.65,
-            0.5,
-            0.02
+            1.04,
+            0.8,
+            0.032
           ],
           "pos": [
             0,
-            -0.017,
-            0.01
+            -0.028,
+            0.016
           ],
           "rot": [
             0,
@@ -1819,14 +1819,14 @@
         {
           "shape": "roundbox",
           "size": [
-            0.6,
-            0.03,
-            0.2
+            0.96,
+            0.048,
+            0.32
           ],
           "pos": [
             0,
-            0.133,
-            0.1
+            0.212,
+            0.16
           ],
           "rot": [
             0,
@@ -1839,14 +1839,14 @@
         {
           "shape": "roundbox",
           "size": [
-            0.4,
-            0.025,
-            0.14
+            0.64,
+            0.04,
+            0.224
           ],
           "pos": [
             0,
-            -0.118,
-            0.08
+            -0.19,
+            0.128
           ],
           "rot": [
             0,
@@ -1859,14 +1859,14 @@
         {
           "shape": "box",
           "size": [
-            0.03,
-            0.2,
-            0.16
+            0.048,
+            0.32,
+            0.256
           ],
           "pos": [
-            -0.22,
-            0.023,
-            0.09
+            -0.352,
+            0.036,
+            0.144
           ],
           "rot": [
             0,
@@ -1879,14 +1879,14 @@
         {
           "shape": "box",
           "size": [
-            0.03,
-            0.2,
-            0.16
+            0.048,
+            0.32,
+            0.256
           ],
           "pos": [
-            0.22,
-            0.023,
-            0.09
+            0.352,
+            0.036,
+            0.144
           ],
           "rot": [
             0,
@@ -1899,14 +1899,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.06
+            0.032,
+            0.032,
+            0.096
           ],
           "pos": [
-            -0.15,
-            -0.187,
-            0.05
+            -0.24,
+            -0.3,
+            0.08
           ],
           "rot": [
             0,
@@ -1919,14 +1919,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.06
+            0.032,
+            0.032,
+            0.096
           ],
           "pos": [
-            0.15,
-            -0.187,
-            0.05
+            0.24,
+            -0.3,
+            0.08
           ],
           "rot": [
             0,
@@ -1939,14 +1939,14 @@
         {
           "shape": "box",
           "size": [
-            0.04,
-            0.12,
-            0.09
+            0.064,
+            0.192,
+            0.144
           ],
           "pos": [
-            -0.18,
-            0.208,
-            0.1
+            -0.288,
+            0.332,
+            0.16
           ],
           "rot": [
             0,
@@ -1959,14 +1959,14 @@
         {
           "shape": "box",
           "size": [
-            0.03,
-            0.1,
-            0.08
+            0.048,
+            0.16,
+            0.128
           ],
           "pos": [
-            -0.13,
-            0.198,
-            0.1
+            -0.208,
+            0.316,
+            0.16
           ],
           "rot": [
             0,
@@ -1979,12 +1979,12 @@
         {
           "shape": "sphere",
           "size": [
-            0.03
+            0.048
           ],
           "pos": [
-            0.18,
-            0.178,
-            0.1
+            0.288,
+            0.284,
+            0.16
           ],
           "rot": [
             0,
@@ -1997,11 +1997,11 @@
       ],
       "stand": [
         -3.7,
-        -4.15
+        -3.15
       ],
       "at": "2026-11-15T10:02:42.476Z",
       "createdAt": "2026-11-16T19:50:03.872Z",
-      "movedAt": "2026-11-16T19:50:03.872Z"
+      "roomScaled": true
     },
     {
       "id": "dmwhq79zv1u2",
@@ -2026,26 +2026,27 @@
       "zone": "floor",
       "slot": null,
       "free": true,
-      "label": "on the floor by the back wall (x -1, z -4.83)",
+      "label": "on the floor by the back wall (x -1, z -4.625)",
       "kind": "floor",
       "pos": [
         -1,
         0,
-        -4.83
+        -4.625
       ],
       "rotY": 0,
+      "turn": 0,
       "scale": 1,
       "parts": [
         {
           "shape": "box",
           "size": [
-            0.5,
-            0.03,
-            0.2
+            0.8,
+            0.048,
+            0.32
           ],
           "pos": [
             0,
-            0.015,
+            0.024,
             0
           ],
           "rot": [
@@ -2059,93 +2060,93 @@
         {
           "shape": "box",
           "size": [
-            0.52,
-            0.12,
-            0.02
+            0.832,
+            0.192,
+            0.032
           ],
           "pos": [
             0,
-            0.08,
-            0.1
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#a0693b",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.52,
-            0.12,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.08,
-            -0.1
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#a0693b",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.02,
-            0.12,
-            0.18
-          ],
-          "pos": [
-            -0.25,
-            0.08,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#925e33",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.02,
-            0.12,
-            0.18
-          ],
-          "pos": [
-            0.25,
-            0.08,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#925e33",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.46,
-            0.08,
+            0.128,
             0.16
           ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.832,
+            0.192,
+            0.032
+          ],
           "pos": [
             0,
-            0.06,
+            0.128,
+            -0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.032,
+            0.192,
+            0.288
+          ],
+          "pos": [
+            -0.4,
+            0.128,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#925e33",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.032,
+            0.192,
+            0.288
+          ],
+          "pos": [
+            0.4,
+            0.128,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#925e33",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.736,
+            0.128,
+            0.256
+          ],
+          "pos": [
+            0,
+            0.096,
             0
           ],
           "rot": [
@@ -2159,13 +2160,13 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.06
+            0.032,
+            0.032,
+            0.096
           ],
           "pos": [
-            -0.12,
-            0.13,
+            -0.192,
+            0.208,
             0
           ],
           "rot": [
@@ -2179,11 +2180,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.02
+            0.032
           ],
           "pos": [
-            -0.12,
-            0.16,
+            -0.192,
+            0.256,
             0
           ],
           "rot": [
@@ -2197,13 +2198,13 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.08
+            0.032,
+            0.032,
+            0.128
           ],
           "pos": [
-            0.1,
-            0.14,
+            0.16,
+            0.224,
             0
           ],
           "rot": [
@@ -2217,11 +2218,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.025
+            0.04
           ],
           "pos": [
-            0.1,
-            0.18,
+            0.16,
+            0.288,
             0
           ],
           "rot": [
@@ -2235,11 +2236,11 @@
       ],
       "stand": [
         -1,
-        -3.82
+        -3.549
       ],
       "at": "2026-11-15T11:03:05.418Z",
       "createdAt": "2026-11-15T11:02:59.419Z",
-      "usedAt": "2026-11-16T15:20:01.477Z"
+      "roomScaled": true
     },
     {
       "id": "dmwi54iw426p",
@@ -2278,14 +2279,14 @@
         {
           "shape": "roundbox",
           "size": [
-            0.14,
-            0.08,
-            0.12
+            0.216,
+            0.123,
+            0.185
           ],
           "pos": [
-            -0.027,
-            0.043,
-            -0.003
+            -0.042,
+            0.067,
+            -0.005
           ],
           "rot": [
             0,
@@ -2298,14 +2299,14 @@
         {
           "shape": "box",
           "size": [
-            0.145,
-            0.02,
-            0.125
+            0.223,
+            0.031,
+            0.193
           ],
           "pos": [
-            -0.027,
-            0.079,
-            -0.003
+            -0.042,
+            0.123,
+            -0.005
           ],
           "rot": [
             0,
@@ -2318,14 +2319,14 @@
         {
           "shape": "roundbox",
           "size": [
-            0.14,
-            0.02,
-            0.12
+            0.216,
+            0.031,
+            0.185
           ],
           "pos": [
-            -0.027,
-            0.093,
-            -0.003
+            -0.042,
+            0.144,
+            -0.005
           ],
           "rot": [
             0,
@@ -2338,14 +2339,14 @@
         {
           "shape": "box",
           "size": [
-            0.02,
-            0.02,
-            0.02
+            0.031,
+            0.031,
+            0.031
           ],
           "pos": [
-            -0.027,
-            0.073,
-            0.058
+            -0.042,
+            0.113,
+            0.089
           ],
           "rot": [
             0,
@@ -2358,14 +2359,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.02
+            0.031,
+            0.031,
+            0.031
           ],
           "pos": [
-            -0.081,
-            0.01,
-            0.042
+            -0.125,
+            0.016,
+            0.065
           ],
           "rot": [
             0,
@@ -2378,74 +2379,74 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.02
+            0.031,
+            0.031,
+            0.031
           ],
           "pos": [
-            0.028,
-            0.01,
-            0.042
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#d4af37",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.02
-          ],
-          "pos": [
-            -0.081,
-            0.01,
-            -0.048
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#d4af37",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.02
-          ],
-          "pos": [
-            0.028,
-            0.01,
-            -0.048
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#d4af37",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.02
-          ],
-          "pos": [
-            0.048,
             0.043,
-            -0.003
+            0.016,
+            0.065
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.031,
+            0.031,
+            0.031
+          ],
+          "pos": [
+            -0.125,
+            0.016,
+            -0.074
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.031,
+            0.031,
+            0.031
+          ],
+          "pos": [
+            0.043,
+            0.016,
+            -0.074
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.031,
+            0.031,
+            0.031
+          ],
+          "pos": [
+            0.074,
+            0.067,
+            -0.005
           ],
           "rot": [
             0,
@@ -2458,13 +2459,13 @@
         {
           "shape": "torus",
           "size": [
-            0.02,
-            0.02
+            0.031,
+            0.031
           ],
           "pos": [
-            0.061,
-            0.043,
-            -0.003
+            0.094,
+            0.067,
+            -0.005
           ],
           "rot": [
             0,
@@ -2477,14 +2478,14 @@
         {
           "shape": "box",
           "size": [
-            0.04,
-            0.02,
-            0.03
+            0.062,
+            0.031,
+            0.046
           ],
           "pos": [
-            -0.046,
-            0.108,
-            -0.003
+            -0.071,
+            0.167,
+            -0.005
           ],
           "rot": [
             0,
@@ -2497,14 +2498,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.035
+            0.031,
+            0.031,
+            0.054
           ],
           "pos": [
-            -0.007,
-            0.111,
-            -0.003
+            -0.011,
+            0.172,
+            -0.005
           ],
           "rot": [
             0,
@@ -2517,14 +2518,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.02
+            0.031,
+            0.031,
+            0.031
           ],
           "pos": [
-            -0.027,
-            0.113,
-            -0.003
+            -0.042,
+            0.175,
+            -0.005
           ],
           "rot": [
             0,
@@ -2537,12 +2538,12 @@
         {
           "shape": "sphere",
           "size": [
-            0.02
+            0.031
           ],
           "pos": [
-            -0.027,
-            0.128,
-            -0.003
+            -0.042,
+            0.198,
+            -0.005
           ],
           "rot": [
             0,
@@ -2559,8 +2560,7 @@
       ],
       "at": "2026-11-15T18:00:51.218Z",
       "createdAt": "2026-11-15T18:00:45.220Z",
-      "updatedAt": "2026-11-16T09:51:57.265Z",
-      "changedAt": "2026-11-16T09:51:57.265Z"
+      "roomScaled": true
     },
     {
       "id": "dmwjdl6oz3o6",
@@ -2596,27 +2596,28 @@
       "zone": "floor",
       "slot": null,
       "free": true,
-      "label": "on the floor by the back wall (x -4.25, z -4.648)",
+      "label": "on the floor by the back wall (x -4, z -4.483)",
       "kind": "floor",
       "pos": [
-        -4.25,
+        -4,
         0,
-        -4.648
+        -4.483
       ],
       "rotY": 0,
+      "turn": 0,
       "scale": 1,
       "parts": [
         {
           "shape": "roundbox",
           "size": [
-            0.65,
-            0.75,
-            0.55
+            1.04,
+            0.804,
+            0.88
           ],
           "pos": [
             0,
-            0.45,
-            -0.017
+            0.483,
+            -0.027
           ],
           "rot": [
             0,
@@ -2629,14 +2630,14 @@
         {
           "shape": "roundbox",
           "size": [
-            0.38,
-            0.32,
-            0.05
+            0.608,
+            0.343,
+            0.08
           ],
           "pos": [
             0,
-            0.425,
-            0.243
+            0.456,
+            0.389
           ],
           "rot": [
             0,
@@ -2649,14 +2650,14 @@
         {
           "shape": "box",
           "size": [
-            0.3,
-            0.22,
-            0.02
+            0.48,
+            0.236,
+            0.032
           ],
           "pos": [
             0,
-            0.425,
-            0.263
+            0.456,
+            0.421
           ],
           "rot": [
             0,
@@ -2669,13 +2670,13 @@
         {
           "shape": "capsule",
           "size": [
-            0.02,
-            0.12
+            0.032,
+            0.129
           ],
           "pos": [
-            0.15,
-            0.425,
-            0.272
+            0.24,
+            0.456,
+            0.435
           ],
           "rot": [
             0,
@@ -2688,14 +2689,14 @@
         {
           "shape": "roundbox",
           "size": [
-            0.58,
-            0.04,
-            0.48
+            0.928,
+            0.043,
+            0.768
           ],
           "pos": [
             0,
-            0.845,
-            -0.017
+            0.906,
+            -0.027
           ],
           "rot": [
             0,
@@ -2708,14 +2709,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.11,
-            0.11,
-            0.02
+            0.176,
+            0.176,
+            0.021
           ],
           "pos": [
-            -0.15,
-            0.876,
-            0.063
+            -0.24,
+            0.938,
+            0.101
           ],
           "rot": [
             0,
@@ -2728,14 +2729,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.11,
-            0.11,
-            0.02
+            0.176,
+            0.176,
+            0.021
           ],
           "pos": [
-            0.15,
-            0.876,
-            0.063
+            0.24,
+            0.938,
+            0.101
           ],
           "rot": [
             0,
@@ -2748,14 +2749,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.06,
-            0.06,
-            0.5
+            0.096,
+            0.096,
+            0.536
           ],
           "pos": [
-            0.18,
-            1.095,
-            -0.137
+            0.288,
+            1.174,
+            -0.219
           ],
           "rot": [
             0,
@@ -2768,14 +2769,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.07,
-            0.07,
-            0.08
+            0.112,
+            0.112,
+            0.086
           ],
           "pos": [
-            0.18,
-            1.366,
-            -0.137
+            0.288,
+            1.465,
+            -0.219
           ],
           "rot": [
             0,
@@ -2788,14 +2789,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.025,
-            0.025,
-            0.03
+            0.04,
+            0.04,
+            0.032
           ],
           "pos": [
-            -0.15,
-            0.725,
-            0.253
+            -0.24,
+            0.777,
+            0.405
           ],
           "rot": [
             0,
@@ -2808,14 +2809,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.025,
-            0.025,
-            0.03
+            0.04,
+            0.04,
+            0.032
           ],
           "pos": [
-            0.15,
-            0.725,
-            0.253
+            0.24,
+            0.777,
+            0.405
           ],
           "rot": [
             0,
@@ -2828,14 +2829,14 @@
         {
           "shape": "roundbox",
           "size": [
-            0.42,
-            0.18,
-            0.45
+            0.672,
+            0.193,
+            0.72
           ],
           "pos": [
             0,
-            0.175,
-            0.003
+            0.188,
+            0.005
           ],
           "rot": [
             0,
@@ -2848,14 +2849,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.04,
-            0.04,
-            0.35
+            0.064,
+            0.064,
+            0.375
           ],
           "pos": [
-            -0.08,
-            0.175,
-            0.003
+            -0.128,
+            0.188,
+            0.005
           ],
           "rot": [
             0,
@@ -2868,14 +2869,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.04,
-            0.04,
-            0.35
+            0.064,
+            0.064,
+            0.375
           ],
           "pos": [
-            0.08,
-            0.175,
-            0.003
+            0.128,
+            0.188,
+            0.005
           ],
           "rot": [
             0,
@@ -2887,12 +2888,12 @@
         }
       ],
       "stand": [
-        -4.25,
-        -3.456
+        -4,
+        -3.116
       ],
       "at": "2026-11-16T14:45:31.665Z",
       "createdAt": "2026-11-16T16:11:38.818Z",
-      "movedAt": "2026-11-16T16:11:38.818Z"
+      "roomScaled": true
     },
     {
       "id": "dmwjhvwhj4hd",
@@ -2927,10 +2928,10 @@
       "slot": null,
       "free": true,
       "base": "desk",
-      "label": "on the desk (x -4.05, z 1.2)",
+      "label": "on the desk (x -3.95, z 1.2)",
       "kind": "surface",
       "pos": [
-        -4.05,
+        -3.95,
         0.85,
         1.2
       ],
@@ -2940,13 +2941,13 @@
         {
           "shape": "cylinder",
           "size": [
-            0.07,
-            0.07,
-            0.02
+            0.112,
+            0.112,
+            0.032
           ],
           "pos": [
-            -0.02,
-            0.01,
+            -0.032,
+            0.016,
             0
           ],
           "rot": [
@@ -2960,13 +2961,13 @@
         {
           "shape": "roundbox",
           "size": [
-            0.12,
-            0.1,
-            0.12
+            0.192,
+            0.16,
+            0.192
           ],
           "pos": [
-            -0.02,
-            0.07,
+            -0.032,
+            0.112,
             0
           ],
           "rot": [
@@ -2980,12 +2981,12 @@
         {
           "shape": "torus",
           "size": [
-            0.05,
-            0.02
+            0.08,
+            0.032
           ],
           "pos": [
-            -0.02,
-            0.12,
+            -0.032,
+            0.192,
             0
           ],
           "rot": [
@@ -2999,11 +3000,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.035
+            0.056
           ],
           "pos": [
-            -0.02,
-            0.06,
+            -0.032,
+            0.096,
             0
           ],
           "rot": [
@@ -3017,11 +3018,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.02
+            0.032
           ],
           "pos": [
-            -0.02,
-            0.06,
+            -0.032,
+            0.096,
             0
           ],
           "rot": [
@@ -3035,14 +3036,14 @@
         {
           "shape": "box",
           "size": [
-            0.04,
-            0.04,
-            0.02
+            0.064,
+            0.064,
+            0.032
           ],
           "pos": [
-            -0.02,
-            0.06,
-            0.058
+            -0.032,
+            0.096,
+            0.093
           ],
           "rot": [
             0,
@@ -3055,12 +3056,12 @@
         {
           "shape": "torus",
           "size": [
-            0.03,
-            0.02
+            0.048,
+            0.032
           ],
           "pos": [
-            0.04,
-            0.07,
+            0.064,
+            0.112,
             0
           ],
           "rot": [
@@ -3073,11 +3074,12 @@
         }
       ],
       "stand": [
-        -2.55,
+        -2.45,
         1.2
       ],
       "at": "2026-11-16T16:45:50.117Z",
-      "createdAt": "2026-11-16T16:45:44.119Z"
+      "createdAt": "2026-11-16T16:45:44.119Z",
+      "roomScaled": true
     },
     {
       "id": "dmwjkrwdy594",
@@ -3103,12 +3105,12 @@
       "slot": null,
       "free": true,
       "base": "desk",
-      "label": "on the desk (x -4.25, z 1.5)",
+      "label": "on the desk (x -4.25, z 1.6)",
       "kind": "surface",
       "pos": [
         -4.25,
         0.85,
-        1.5
+        1.6
       ],
       "rotY": 1.5707963267948966,
       "scale": 1,
@@ -3116,14 +3118,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.08,
-            0.09,
-            0.02
+            0.128,
+            0.144,
+            0.032
           ],
           "pos": [
             0,
-            0.08,
-            0.003
+            0.128,
+            0.004
           ],
           "rot": [
             0,
@@ -3136,14 +3138,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.025
+            0.032,
+            0.032,
+            0.04
           ],
           "pos": [
-            0.05,
-            0.095,
-            0.003
+            0.08,
+            0.152,
+            0.004
           ],
           "rot": [
             0,
@@ -3156,14 +3158,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.18
+            0.032,
+            0.032,
+            0.288
           ],
           "pos": [
             0,
-            0.17,
-            -0.017
+            0.272,
+            -0.028
           ],
           "rot": [
             15,
@@ -3176,12 +3178,12 @@
         {
           "shape": "sphere",
           "size": [
-            0.02
+            0.032
           ],
           "pos": [
             0,
-            0.25,
-            -0.037
+            0.4,
+            -0.06
           ],
           "rot": [
             0,
@@ -3194,14 +3196,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.14
+            0.032,
+            0.032,
+            0.224
           ],
           "pos": [
             0,
-            0.3,
-            0.013
+            0.48,
+            0.02
           ],
           "rot": [
             -30,
@@ -3214,14 +3216,14 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.035
+            0.032,
+            0.032,
+            0.056
           ],
           "pos": [
             0,
-            0.35,
-            0.063
+            0.56,
+            0.1
           ],
           "rot": [
             0,
@@ -3234,13 +3236,13 @@
         {
           "shape": "cone",
           "size": [
-            0.075,
-            0.07
+            0.12,
+            0.112
           ],
           "pos": [
             0,
-            0.36,
-            0.063
+            0.576,
+            0.1
           ],
           "rot": [
             180,
@@ -3253,12 +3255,12 @@
         {
           "shape": "sphere",
           "size": [
-            0.038
+            0.061
           ],
           "pos": [
             0,
-            0.335,
-            0.063
+            0.536,
+            0.1
           ],
           "rot": [
             0,
@@ -3271,13 +3273,13 @@
         {
           "shape": "capsule",
           "size": [
-            0.02,
-            0.025
+            0.032,
+            0.04
           ],
           "pos": [
             0,
-            0.335,
-            0.063
+            0.536,
+            0.1
           ],
           "rot": [
             0,
@@ -3290,12 +3292,12 @@
         {
           "shape": "sphere",
           "size": [
-            0.048
+            0.077
           ],
           "pos": [
             0,
-            0.335,
-            0.063
+            0.536,
+            0.1
           ],
           "rot": [
             0,
@@ -3308,13 +3310,13 @@
         {
           "shape": "capsule",
           "size": [
-            0.02,
-            0.12
+            0.032,
+            0.192
           ],
           "pos": [
             0,
-            0.08,
-            -0.057
+            0.128,
+            -0.092
           ],
           "rot": [
             90,
@@ -3327,10 +3329,11 @@
       ],
       "stand": [
         -2.75,
-        1.5
+        1.6
       ],
       "at": "2026-11-16T18:06:42.212Z",
-      "createdAt": "2026-11-16T18:06:36.214Z"
+      "createdAt": "2026-11-16T18:06:36.214Z",
+      "roomScaled": true
     },
     {
       "id": "dmwjnl33f6mp",
@@ -3365,10 +3368,10 @@
       "slot": null,
       "free": true,
       "base": "desk",
-      "label": "on the desk (x -4.55, z 1.2)",
+      "label": "on the desk (x -4.65, z 1.2)",
       "kind": "surface",
       "pos": [
-        -4.55,
+        -4.65,
         0.85,
         1.2
       ],
@@ -3378,13 +3381,13 @@
         {
           "shape": "roundbox",
           "size": [
-            0.08,
-            0.025,
-            0.08
+            0.128,
+            0.04,
+            0.128
           ],
           "pos": [
             0,
-            0.013,
+            0.02,
             0
           ],
           "rot": [
@@ -3398,13 +3401,13 @@
         {
           "shape": "cylinder",
           "size": [
-            0.02,
-            0.02,
-            0.14
+            0.032,
+            0.032,
+            0.224
           ],
           "pos": [
             0,
-            0.081,
+            0.129,
             0
           ],
           "rot": [
@@ -3418,11 +3421,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.035
+            0.056
           ],
           "pos": [
             0,
-            0.161,
+            0.257,
             0
           ],
           "rot": [
@@ -3436,12 +3439,12 @@
         {
           "shape": "cone",
           "size": [
-            0.075,
-            0.065
+            0.12,
+            0.104
           ],
           "pos": [
             0,
-            0.151,
+            0.241,
             0
           ],
           "rot": [
@@ -3455,11 +3458,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.02
+            0.032
           ],
           "pos": [
             0,
-            0.026,
+            0.041,
             0
           ],
           "rot": [
@@ -3472,13 +3475,12 @@
         }
       ],
       "stand": [
-        -3.05,
+        -3.15,
         1.2
       ],
       "at": "2026-11-16T19:25:23.160Z",
       "createdAt": "2026-11-16T19:25:17.163Z",
-      "updatedAt": "2026-11-16T21:04:01.604Z",
-      "changedAt": "2026-11-16T21:04:01.604Z"
+      "roomScaled": true
     },
     {
       "id": "pmwjo6kl27un",
@@ -3783,15 +3785,66 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-16T22:01:09.228Z",
-    "thought": "It is late. Good night...",
-    "action": "rest",
-    "details": {},
-    "detail": "sleeping through the night",
-    "enjoyment": 8,
+    "at": "2026-11-17T07:06:26.713Z",
+    "via": "brain",
+    "model": "gemini-3.5-flash-lite",
+    "models": {
+      "gemini-3.5-flash-lite": 2
+    },
+    "modelNotes": [
+      "gemini-3.5-flash-lite answered (gemini-3.8-flash was busy or capped)"
+    ],
+    "fallback": true,
+    "tokens": {
+      "calls": 2,
+      "input": 2390,
+      "output": 257,
+      "models": {
+        "gemini-3.5-flash-lite": 2
+      }
+    },
+    "intervalMin": 8,
+    "thought": "I have all my supplies ready, so I can continue my painting and let my bread rise by the window.",
+    "inner": "I have all my supplies ready, so I can continue my painting and let my bread rise by the window.",
+    "sent": false,
+    "steps": [
+      {
+        "action": "cook",
+        "details": {
+          "dish": "mix soft blues and grays for the stormy ",
+          "ingredients": [],
+          "project": "Paint a watercolor of the stormy sky"
+        },
+        "detail": "",
+        "thought": "I want to mix the blues and grays for the storm now.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "do",
+        "details": {
+          "what": "tell my plant what went wrong and how it felt",
+          "feeling": "calm",
+          "emoji": "🪴"
+        },
+        "detail": "tell my plant what went wrong and how it felt",
+        "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
+        "enjoyment": 6,
+        "found": null,
+        "made": null
+      }
+    ],
+    "action": "cook",
+    "details": {
+      "dish": "mix soft blues and grays for the stormy ",
+      "ingredients": [],
+      "project": "Paint a watercolor of the stormy sky"
+    },
+    "detail": "",
+    "enjoyment": 0,
     "new_idea": null,
-    "found": null,
-    "sleeping": true
+    "found": null
   },
   "furniture": {
     "plant": {
@@ -3853,12 +3906,14 @@
     "2026-11-16 notebook from what he looked up",
     "2026-11-16 bread is not done yet",
     "2026-11-16 drawing supplies from Bas",
-    "2026-11-16 shelves come down within reach"
+    "2026-11-16 shelves come down within reach",
+    "2026-11-17 shelf beside the stove",
+    "2026-11-17 his things at the size of his room"
   ],
   "quota": {
     "day": "2026-11-16",
     "calls": {
-      "gemini-3.5-flash-lite": 115,
+      "gemini-3.5-flash-lite": 117,
       "gemini-3.8-flash": 17,
       "gemini-3.6-flash": 15,
       "gemini-3.5-flash": 11
@@ -3879,66 +3934,66 @@
     ]
   },
   "weather": {
-    "at": "2026-11-16T21:36:27.014Z",
-    "kind": "clear",
-    "code": 0,
-    "temp": 3.4,
-    "cloud": 0,
-    "wind": 0.2866666666666667
+    "at": "2026-11-17T07:06:25.482Z",
+    "kind": "rain",
+    "code": 61,
+    "temp": 4,
+    "cloud": 1,
+    "wind": 1
   },
   "news": {
-    "date": "2026-11-16",
+    "date": "2026-11-17",
     "items": [
       {
         "kind": "In the news",
-        "text": "The Salvadoran military intervention in Haiti intensifies with airstrikes on 400 Mawozo's alleged headquarters and a deployment to the Sylvio Cator Stadium.",
-        "topic": "Salvadoran military intervention in Haiti",
-        "url": "https://en.wikipedia.org/wiki/Salvadoran_military_intervention_in_Haiti"
+        "text": "American ocean liner SS United States is scuttled in the Gulf of Mexico to create the largest artificial reef.",
+        "topic": "SS United States",
+        "url": "https://en.wikipedia.org/wiki/SS_United_States"
       },
       {
         "kind": "In the news",
-        "text": "The End of Everything by M. John Harrison wins the Booker Prize.",
-        "topic": "The End of Everything (Harrison novel)",
-        "url": "https://en.wikipedia.org/wiki/The_End_of_Everything_(Harrison_novel)"
+        "text": "Nvidia CEO Jensen Huang resigns amidst allegations of being targeted by a Chinese spy and of having extramarital affairs.",
+        "topic": "Jensen Huang",
+        "url": "https://en.wikipedia.org/wiki/Jensen_Huang"
       },
       {
         "kind": "Did you know",
-        "text": "that Toluca won their first international title without playing a final?",
-        "topic": "Toluca FC",
-        "url": "https://en.wikipedia.org/wiki/Toluca_FC"
+        "text": "that when the Dyckman House in New York City opened as a museum, its backyard had a military hut?",
+        "topic": "Dyckman House",
+        "url": "https://en.wikipedia.org/wiki/Dyckman_House"
       },
       {
         "kind": "Did you know",
-        "text": "that the great cakes of early modern England could be over 1 metre (3.3 ft) wide?",
-        "topic": "Great cake",
-        "url": "https://en.wikipedia.org/wiki/Great_cake"
+        "text": "that USA Today compared a Generation Alpha meme to a Lovecraftian monster used as a metaphor for AI?",
+        "topic": "Verity (web series)",
+        "url": "https://en.wikipedia.org/wiki/Verity_(web_series)"
       },
       {
         "kind": "Did you know",
-        "text": "that the Theater of the Emerging American Moment drew inspiration for RoosevElvis from Thelma & Louise, Elvis impersonators, and Theodore Roosevelt's \"grandmotherly\" voice?",
-        "topic": "The TEAM",
-        "url": "https://en.wikipedia.org/wiki/The_TEAM"
+        "text": "that Swiss painter Alois Lichtsteiner signs his works as \"OHMSTAL\" because he finds it \"a beautiful word\"?",
+        "topic": "Alois Lichtsteiner",
+        "url": "https://en.wikipedia.org/wiki/Alois_Lichtsteiner"
       },
       {
         "kind": "On this day",
-        "text": "1938: Swiss chemist Albert Hofmann first synthesized the psychedelic drug LSD in Basel, Switzerland.",
-        "topic": "Albert Hofmann",
-        "url": "https://en.wikipedia.org/wiki/Albert_Hofmann"
+        "text": "1558: Elizabeth I (pictured) became Queen of England and of Ireland, marking the beginning of the Elizabethan era.",
+        "topic": "Elizabeth I",
+        "url": "https://en.wikipedia.org/wiki/Elizabeth_I"
       },
       {
         "kind": "On this day",
-        "text": "1992: The largest hoard of Roman silver and gold in Britain was found in the village of Hoxne in Suffolk.",
-        "topic": "Hoxne Hoard",
-        "url": "https://en.wikipedia.org/wiki/Hoxne_Hoard"
+        "text": "1989: Walt Disney Pictures released The Little Mermaid to theatres, beginning the Disney Renaissance.",
+        "topic": "Walt Disney Pictures",
+        "url": "https://en.wikipedia.org/wiki/Walt_Disney_Pictures"
       },
       {
         "kind": "Featured article",
-        "text": "Mark Ivor Satin is an American political theorist, writer, and newsletter publisher. He contributed to the development and dissemination of three political perspectives – neopacifism in the 1960s, New Age politics in …",
-        "topic": "Mark Satin",
-        "url": "https://en.wikipedia.org/wiki/Mark_Satin"
+        "text": "Islands: Non-Places is a 2016 abstract art game developed and published independently by artist and animator Carl Burton, best known for the animated GIF illustrations he created for season two of the Serial podcast. …",
+        "topic": "Islands: Non-Places",
+        "url": "https://en.wikipedia.org/wiki/Islands%3A_Non-Places"
       }
     ],
-    "triedAt": 1794812424786,
+    "triedAt": 1794899184926,
     "v": 2
   },
   "garden": {
@@ -3985,22 +4040,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-16T21:53:03.962Z",
-  "fullness": 7.48,
+  "memoryFadeAt": "2026-11-17T07:06:26.716Z",
+  "fullness": 3.88,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.43,
-  "joy": 3.22,
-  "calm": 6.03,
+  "wonder": 7.44,
+  "joy": 2.72,
+  "calm": 7.6,
   "emo": {
     "irritated": 2,
     "sad": 0,
-    "excited": 0.04
+    "excited": 0.02
   },
-  "feelAt": "2026-11-16T21:52:54.298Z",
+  "feelAt": "2026-11-17T07:06:24.305Z",
   "lastAte": "2026-11-16T21:36:39.589Z",
   "studio": {
     "songs": [
@@ -4307,27 +4362,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.48,
-    "curiosity": 2.55,
+    "creativity": 2.28,
+    "curiosity": 4.05,
     "boredom": 0,
-    "loneliness": 0.58,
+    "loneliness": 1.33,
     "tidiness": 7.9,
-    "at": "2026-11-16T21:52:54.298Z",
-    "coziness": 8.15
+    "at": "2026-11-17T07:06:24.305Z",
+    "coziness": 7.55
   },
   "recent": {
     "moves": [
-      {
-        "move": "cook",
-        "kind": "food",
-        "at": "2026-11-16T20:47:24.084Z",
-        "failed": true
-      },
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-16T20:47:24.084Z"
-      },
       {
         "move": "move_thing",
         "kind": "room",
@@ -4397,93 +4441,45 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-16T21:53:03.965Z"
+      },
+      {
+        "move": "cook",
+        "kind": "food",
+        "at": "2026-11-17T07:06:26.721Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-17T07:06:26.721Z"
       }
     ],
     "moods": [
       "focused",
-      "focused",
       "hungry",
       "focused",
-      "focused"
+      "focused",
+      "energetic"
     ]
   },
   "today": {
-    "day": "2026-11-16",
+    "day": "2026-11-17",
     "done": {
-      "eat": 6,
-      "water": 3,
-      "do": 61,
-      "search_web": 4,
-      "read_book": 2,
-      "record_song": 2,
-      "change_thing": 3,
-      "plant": 1,
-      "ask_for": 3,
-      "play_piano": 2,
-      "decorate": 4,
-      "cook": 2,
-      "use": 1,
-      "take_photo": 1,
-      "rest": 10,
-      "draw": 1
+      "do": 1
     },
     "tried": {
-      "eat": 6,
-      "water": 3,
-      "do": 61,
-      "search_web": 4,
-      "read_book": 2,
-      "record_song": 2,
-      "change_thing": 3,
-      "plant": 1,
-      "ask_for": 3,
-      "play_piano": 2,
-      "cook": 13,
-      "decorate": 4,
-      "use": 1,
-      "take_photo": 1,
-      "move_thing": 4,
-      "rest": 10,
-      "draw": 11
+      "cook": 1,
+      "do": 1
     },
     "kinds": {
-      "food": 8,
-      "garden": 4,
-      "play": 62,
-      "learn": 6,
-      "music": 4,
-      "make": 8,
-      "people": 3,
-      "look": 1,
-      "rest": 10
+      "play": 1
     },
     "moods": {
-      "hungry": 21,
-      "energetic": 21,
-      "curious": 22,
-      "proud": 3,
-      "thoughtful": 4,
-      "focused": 28,
-      "cozy": 7
+      "energetic": 1
     },
     "lift": {
-      "eat": 2.8,
-      "water": 2.5,
-      "do": 4.52,
-      "search_web": 5,
-      "read_book": 3.5,
-      "record_song": 2.7,
-      "change_thing": 7.4,
-      "plant": 1,
-      "ask_for": 3,
-      "play_piano": 1.7,
-      "cook": 3.69,
-      "decorate": 5.86,
-      "use": 1.8,
-      "take_photo": 1.8,
-      "move_thing": 0.27,
-      "rest": -17.43,
-      "draw": 0.79
+      "cook": 0.23,
+      "do": 0.23
     }
   },
   "skills": {
@@ -4497,30 +4493,25 @@
     "coding": 2
   },
   "intent": {
-    "day": "2026-11-16",
-    "streak": 1,
+    "day": "2026-11-17",
+    "streak": 2,
     "items": [
       {
         "cat": "make",
-        "text": "Build a little wooden music box",
-        "done": true
+        "text": "Mix soft blues and grays for the stormy clouds",
+        "done": false
       },
       {
         "cat": "tend",
-        "text": "Cook a warm morning meal",
-        "done": true
-      },
-      {
-        "cat": "tend",
-        "text": "Check on the plants by the autumn window",
-        "done": true
+        "text": "Let the dough rise by the window",
+        "done": false
       }
     ],
     "by": "pip"
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-16T21:53:03.957Z",
+    "decidedAt": "2026-11-17T07:06:26.712Z",
     "seen": {
       "tools": 3,
       "gifts": 0,
@@ -4531,7 +4522,7 @@
       "visitors": 0
     },
     "lastFail": {
-      "at": "2026-11-16T21:53:03.966Z",
+      "at": "2026-11-17T07:06:26.722Z",
       "why": "cook: a dish needs a name and 1 to 4 ingredients"
     },
     "unread": 0
@@ -4625,7 +4616,7 @@
   "ever": {
     "eat": 6,
     "water": 3,
-    "do": 61,
+    "do": 62,
     "search_web": 4,
     "read_book": 2,
     "record_song": 2,
@@ -4641,15 +4632,13 @@
     "draw": 1
   },
   "checkup": {
-    "at": "2026-11-16T21:53:03.967Z",
+    "at": "2026-11-17T07:06:26.723Z",
     "items": [
       {
         "id": "circling",
-        "ok": false,
+        "ok": true,
         "label": "Thoughts",
-        "text": "He may be going in circles: 12 of his last 20 thoughts are about \"painting\".",
-        "look": "Usually something he keeps trying does not work (see Moves), or a project has no next step (see Projects). Check what he does in the Day tab.",
-        "debug": "top words: \"painting\"\nlast thoughts:\n- 21:28 UTC [cook] I want to continue painting my stormy sky watercolor, and since I am hungry, I will eat some of the fresh bread I baked earlier.\n- 21:36 UTC [eat] I am hungry and need to eat the bread I made.\n- 21:44 UTC [cook] I am in the middle of painting my stormy sky and want to mix the soft blues and grays for the clouds.\n- 21:53 UTC [cook] I am in the middle of my watercolor project and want to proceed to the next step now that I have my supplies."
+        "text": "His thoughts move between different things."
       },
       {
         "id": "project",
@@ -4659,19 +4648,15 @@
       },
       {
         "id": "failing",
-        "ok": false,
+        "ok": true,
         "label": "Moves",
-        "text": "cooking failed 11 of 13 times today. Last reason: a dish needs a name and 1 to 4 ingredients.",
-        "look": "The same reason again and again is usually a bug in the game code for this move, not Pip being clumsy. A reason that changes each time is more likely Pip learning.",
-        "debug": "move: cook\ntried today: 13, failed: 11\nlast tries:\n- 21:20 UTC FAILED: a dish needs a name and 1 to 4 ingredients\n- 21:28 UTC FAILED: a dish needs a name and 1 to 4 ingredients\n- 21:44 UTC FAILED: a dish needs a name and 1 to 4 ingredients\n- 21:53 UTC FAILED: a dish needs a name and 1 to 4 ingredients"
+        "text": "No move keeps failing today."
       },
       {
         "id": "pretend",
-        "ok": false,
+        "ok": true,
         "label": "Real things",
-        "text": "61 of his 106 steps today were free \"do\" steps that make nothing.",
-        "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
-        "debug": "last \"do\" steps:\n- 21:12 UTC Let the dough rise by the window (for my project Bake a simple loaf of bread)\n- 21:24 UTC juggle three imaginary berries (after a failure)\n- 21:32 UTC look closely at something in my room I never really looked at (after a failure)\n- 21:48 UTC hum a small tune while I swing my arms (after a failure)\n- 21:57 UTC stomp around the room once, then laugh at myself (after a failure)"
+        "text": "Most of his steps really make, grow or learn something."
       },
       {
         "id": "needs",
@@ -4693,8 +4678,8 @@
         "reason": "a dish needs a name and 1 to 4 ingredients",
         "raw": "a dish needs a name and 1 to 4 ingredients",
         "names": [],
-        "count": 9,
-        "last": "2026-11-16T21:53:04.958Z"
+        "count": 10,
+        "last": "2026-11-17T07:06:27.713Z"
       },
       {
         "move": "moving something",
@@ -4708,13 +4693,7 @@
         "last": "2026-11-16T20:55:45.563Z"
       }
     ],
-    "sent": {
-      "project": "2026-11-16",
-      "circling": "2026-11-16",
-      "needs": "2026-11-16",
-      "pretend": "2026-11-16",
-      "failing": "2026-11-16"
-    },
+    "sent": {},
     "pushedAt": "2026-11-16T17:29:44.686Z"
   },
   "recipes": [
@@ -5784,8 +5763,8 @@
     {
       "move": "cook",
       "text": "a dish needs a name and 1 to 4 ingredients",
-      "count": 9,
-      "at": "2026-11-16T21:53:04.958Z",
+      "count": 10,
+      "at": "2026-11-17T07:06:27.713Z",
       "firstAt": "2026-11-16T20:14:41.324Z",
       "solvedAt": null
     },
