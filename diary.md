@@ -1603,3 +1603,9 @@ Someone asked me to clean up my desk where the lamps and tiny music box are clut
 - phone (small clay lamp): I need more light on my desk to work clearly.
 - mood: cozy
 
+## 17/11/2026, 16:55:51
+Someone asked me to clean up my desk, and the lamps are indeed in the way while I work.
+> Someone asked me to clean up my desk, and the lamps are indeed in the way while I work.
+- do (tidy up my desk and move the small lamp to the small wooden shelf): The desk is crowded with lamps and music boxes.
+- mood: cozy
+
