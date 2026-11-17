@@ -1272,3 +1272,10 @@ I am in the middle of painting the stormy sky and I want to continue with the ne
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: cozy
 
+## 17/11/2026, 08:53:43
+My desk is too full, so I need to move something to the small wooden shelf to make some room.
+> My desk is too full, so I need to move something to the small wooden shelf to make some room.
+- move_thing (amber reading light): My desk is too full, so I am moving the amber reading light to the shelf.
+- do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
+- mood: cozy
+
