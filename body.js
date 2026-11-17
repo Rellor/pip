@@ -10,6 +10,7 @@
 // It also remembers his last 15 moves and last 5 moods, and counts what he did today.
 import { passTime } from './feelings.js';
 import { isLamp } from './web/lighting.js';
+import { allMisplaced } from './placement.js';
 
 const clamp = (n) => Math.round(Math.max(0, Math.min(10, Number.isFinite(n) ? n : 5)) * 100) / 100;
 export const DRIVES = ['creativity', 'curiosity', 'boredom', 'loneliness', 'tidiness'];
@@ -76,7 +77,8 @@ export function coziness(s, dark = false) {
     own.some((d) => /plant|flower|greenhouse|herb|tree|fern|cactus|moss/i.test(d.name)) || (s.garden?.plots ?? []).length > 0,
   ].filter(Boolean).length;
   const lit = dark && own.some((d) => isLamp(d) && d.lit !== false) ? 0.6 : 0;
-  const v = 1 + Math.min(items.length, 6) * 0.6 + kinds * 0.8 + lit - clutter(s) * 0.5;
+  const off = Math.min(1.2, allMisplaced(s).length * 0.4); // a thing in a place it does not belong feels a little off
+  const v = 1 + Math.min(items.length, 6) * 0.6 + kinds * 0.8 + lit - clutter(s) * 0.5 - off;
   return clamp(v);
 }
 

@@ -18,8 +18,10 @@ import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } f
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
+import { roomScale } from './scale.js';
+import { designate } from './placement.js';
 import { bestHits } from './research.js';
-import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, noteResearch, notesFor } from './growth.js';
+import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, noteResearch, notesFor } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
@@ -545,7 +547,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     goals: (s.intent?.items ?? []).map((i) => `[${i.done ? 'x' : ' '}] ${i.text}`),
     skills: skillLine(s),
     moves: offered,
-    fresh: [...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
@@ -1285,8 +1287,10 @@ async function wakeUp() {
         st.made = craftTool(state, st.details, kind, parts);
         return;
       }
-      st.made = makeDecor(state.decor, { ...st.details, uses: st.uses }, stepStart);
+      const placed = designate(state, st.details); // no place said: the game puts it where it belongs
+      st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(cleanParts(st.details.parts) ?? [], st.details), uses: st.uses }, stepStart); // built at the size of his room
       if (st.made.entry) {
+        st.made.entry.roomScaled = true;
         state.decor.push(st.made.entry);
         const promised = st.details.blueprint ? markBuilt(state, st.details.blueprint, new Date(stepStart).toISOString(), st.made.entry) : [];
         const added = ensureBehaviors(st.made.entry);

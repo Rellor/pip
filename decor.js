@@ -68,12 +68,12 @@ export function cleanParts(raw) {
     if (!p || typeof p !== 'object' || typeof p.shape !== 'string' || !Object.hasOwn(SHAPES, p.shape)) continue;
     const need = SHAPES[p.shape];
     const k = Number.isFinite(Number(p.scale)) ? Math.min(4, Math.max(0.1, Number(p.scale))) : 1; // an optional scale grows or shrinks the whole shape
-    const size = (Array.isArray(p.size) ? p.size : []).slice(0, need).map((v) => num(Number(v) * k, 0.02, 2, 0.1));
+    const size = (Array.isArray(p.size) ? p.size : []).slice(0, need).map((v) => num(Number(v) * k, 0.02, 3.2, 0.1)); // up to 3.2 m: things are built at the room's size (scale.js)
     while (size.length < need) size.push(size[0] ?? 0.1); // a missing number copies the first one
     parts.push({
       shape: p.shape,
       size,
-      pos: triple(p.pos, -2, 3),
+      pos: triple(p.pos, -3.5, 5),
       rot: triple(p.rot, -360, 360),
       color: typeof p.color === 'string' && /^#[0-9a-fA-F]{6}$/.test(p.color) ? p.color : '#cccccc',
       glow: p.glow === true,
@@ -157,7 +157,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (decor.length >= capOf(decor)) return { failed: FULL };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn, ceiling: d.ceiling, next_to: d.next_to, level: d.level, keep: d.keep === true }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -475,6 +475,15 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   let d = details && typeof details === 'object' ? details : {};
   const n = str(d.name, 60).toLowerCase();
   if (!n) return { failed: 'he did not say what to move' };
+  if (d.ceiling === true || /\b(ceiling|roof)\b/i.test(String(d.where ?? ''))) { // up to the ceiling (a lamp that should hang)
+    const e = decor.find((x) => !x.image && x.name.toLowerCase() === n) ?? decor.find((x) => !x.image && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+    if (!e) return { failed: 'there is nothing with that name in his room' };
+    if (decor.some((x) => x.base === e.id || String(x.base ?? '').startsWith(`${e.id}#`))) return { failed: 'there are still things standing on it. He takes them off first' };
+    const r = placeCeiling(decor.filter((x) => x !== e), { ...e, x: num2(d.x) ?? e.pos?.[0], z: num2(d.z) ?? e.pos?.[2] }, e.parts.map((p) => ({ ...p, size: p.size.map((v) => v * (e.scale || 1)), pos: p.pos.map((v) => v * (e.scale || 1)), rot: [...p.rot] })), atMs, now);
+    if (!r.entry) return r;
+    Object.assign(e, { ...r.entry, id: e.id, at: e.at, createdAt: e.createdAt, uses: e.uses, base: undefined, movedAt: new Date(atMs + 6000).toISOString() });
+    return { name: e.name, entry: e, label: e.label };
+  }
   const dx = Math.min(2, Math.max(-2, Number(d.dx) || 0));
   const dz = Math.min(2, Math.max(-2, Number(d.dz) || 0));
   const want = findZone(d.where);
@@ -1254,7 +1263,7 @@ export function supportsInfo(decor) {
     const on = decor.filter((o) => o.kind === 'surface' && o.pos && baseKeyOf(o) === b.key);
     const area = (b.x1 - b.x0) * (b.z1 - b.z0);
     const used = on.reduce((t, o) => { const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY); return t + (r.x1 - r.x0) * (r.z1 - r.z0); }, 0);
-    return { label: b.label, on: on.map((o) => o.name), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
+    return { label: b.label, cx: r3((b.x0 + b.x1) / 2), cz: r3((b.z0 + b.z1) / 2), on: on.map((o) => o.name), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
   });
 }
 // Small things that stand loose on the floor (not furniture he can sit in or use).
@@ -1295,7 +1304,7 @@ export const reachable = (base) => (base.y ?? 0) <= PIP.reachUp;
 function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   const already = surfaceOthers(decor, base.key, null).length;
   if (!reachable(base)) return { failed: `the top of ${base.n} is ${r3(base.y)} m high, and I can only reach up to ${PIP.reachUp} m. I put it somewhere lower, or build a shelf or table within reach`, hinted: true };
-  if (already >= maxOn(base)) return { failed: `${base.n} is full: ${already} things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there`, hinted: true };
+  if (!spec.keep && already >= maxOn(base)) return { failed: `${base.n} is full: ${already} things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there`, hinted: true };
   const sq = Math.max(0.15, Math.min(base.x1 - base.x0, base.z1 - base.z0) - 0.1);
   let scale = fit(parts, 'surface', { w: sq, d: sq });
   const tall = Math.max(0.01, ...parts.map((p) => (p.pos?.[1] ?? 0) + ((p.shape === 'sphere' ? p.size[0] * 2 : p.size[1]) ?? 0) / 2));
@@ -1372,7 +1381,40 @@ function placeWhere(decor, spec, parts, want, atMs, now) {
   }
   return r;
 }
+// ---- The ceiling (5 m up): a lamp, a mobile, a chime hangs with its top against it, above a spot on the floor.
+export const CEILING = 5.0;
+function placeCeiling(decor, spec, parts, atMs, now) {
+  const scale = fit(parts, 'floor', { w: 2, d: 2, h: 2.4 });
+  const top = Math.max(...parts.map((p) => p.pos[1] + halfSize(p)[1]));
+  const x = r3(Math.min(4.4, Math.max(-4.4, num2(spec.x) ?? 0)));
+  const z = r3(Math.min(4.4, Math.max(-4.4, num2(spec.z) ?? 0.8)));
+  const near = decor.find((o) => o.kind === 'ceiling' && o.pos && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
+  if (near) return { failed: `${near.name} already hangs there. I hang it a bit further away (another x and z)`, hinted: true };
+  return {
+    entry: {
+      id: `d${now.toString(36)}${decor.length}${rid()}`, name: spec.name, why: spec.why, project: spec.project, song: spec.song ?? null,
+      uses: storedUses(spec.uses), tool: spec.tool ?? null, zone: 'ceiling', slot: null, free: true, kind: 'ceiling',
+      label: `hanging from the ceiling (x ${x}, z ${z})`, pos: [x, r3(CEILING - top * scale), z], rotY: 0, scale, parts,
+      stand: [x, z], at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString(),
+    },
+  };
+}
 function placeWhereRaw(decor, spec, parts, want, atMs, now) {
+  if (spec.ceiling === true || /\b(ceiling|roof)\b/i.test(String(spec.where ?? ''))) return placeCeiling(decor, spec, parts, atMs, now);
+  // "next to" something on the floor: the nearest free side of it
+  if (spec.next_to && num2(spec.x) === null && !spec.on && !spec.wall) {
+    const [hw, hd] = halfFoot(parts, 1);
+    const t = nextToSpot(decor, spec, null, hw * 2, hd * 2);
+    if (!t.failed) {
+      let last = null;
+      for (const [ax, az] of t.alts) {
+        const r = placeWhereRaw(decor, { ...spec, next_to: undefined, x: ax, z: az }, parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] })), null, atMs, now);
+        if (r?.entry) return r;
+        last ??= r;
+      }
+      if (last) return last;
+    }
+  }
   // A thing that stands on the floor does not hang on a wall: "by the window" means on the floor in front of it.
   if (want && ZONES[want]?.kind === 'floor' && sideOf(spec.wall) && num2(spec.x) === null && num2(spec.z) === null) {
     spec = { ...spec, wall: undefined, along: undefined, height: undefined };

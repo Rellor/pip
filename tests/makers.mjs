@@ -115,3 +115,22 @@ ok('a bookshelf he builds works: every board within reach holds things, things f
   assert.ok(vase.entry && vase.entry.pos[1] > 0.5 && vase.entry.pos[1] < 1.3, JSON.stringify(vase.entry?.pos ?? vase.failed));
   assert.ok(0.6 * vase.entry.scale <= 0.4, 'it fits under the board above');
 });
+
+ok('things go where they belong when he does not say; somewhere else is allowed, and he notices it', async () => {
+  const { makeDecor } = await import('../decor.js');
+  const { designate, misplaced, rightPlace } = await import('../placement.js');
+  const box = (h = 0.3) => [{ shape: 'box', size: [0.25, h, 0.25], pos: [0, h / 2, 0], rot: [0, 0, 0], color: '#888' }];
+  const s = { decor: [], furniture: {} };
+  assert.equal(rightPlace({ name: 'floor lamp' }).kind, 'floor');
+  assert.equal(rightPlace({ name: 'reading lamp' }).kind, 'surface');
+  const ceil = makeDecor(s.decor, { name: 'paper ceiling lamp', parts: box(), ...designate(s, { name: 'paper ceiling lamp' }) }, Date.now());
+  assert.equal(ceil.entry?.kind, 'ceiling', JSON.stringify(ceil).slice(0, 200));
+  assert.ok(ceil.entry.pos[1] > 4, 'it hangs high, top against the ceiling');
+  const chair = makeDecor(s.decor, { name: 'wooden chair', parts: box(0.5), ...designate(s, { name: 'wooden chair' }) }, Date.now());
+  assert.equal(chair.entry?.kind, 'floor');
+  assert.equal(misplaced(s, chair.entry), null, 'a thing in its right place is fine');
+  const odd = makeDecor(s.decor, { name: 'paper ceiling lamp 2', parts: box(), on: 'desk' }, Date.now()); // his own choice: on the desk
+  assert.equal(odd.entry?.kind, 'surface');
+  assert.match(misplaced(s, odd.entry)?.better ?? '', /ceiling/);
+  assert.deepEqual(designate(s, { name: 'clock', wall: 'back' }), {}, 'when he says where, his choice is used');
+});

@@ -160,3 +160,13 @@ export function storageLines(s) {
   if (free.length) return [`My ${b.label} is full (${what}). My ${free[0].label.replace(/ \(level \d+\)$/, '')} has room: I can move some things there (move_thing, on: "${free[0].label.replace(/ \(level \d+\)$/, '')}").`];
   return [`My ${b.label} is full: ${what}. There is no room for anything else. A shelf within my reach, a small table or a stand would give my things a place (then I can move some there).`];
 }
+
+// ---- Things in the right place: he notices one thing that would be better somewhere else (his choice, but he likes it right).
+import { allMisplaced } from './placement.js';
+export function placeLines(s) {
+  const first = allMisplaced(s)[0];
+  if (!first) return [];
+  const { e, m } = first;
+  const how = m.kind === 'ceiling' ? '(move_thing with where: "ceiling")' : m.kind === 'wall' ? `(move_thing with wall${m.near ? ` near ${m.near}` : ''})` : m.kind === 'surface' ? `(move_thing with on: "${m.near && m.near !== 'bed' ? m.near : 'desk'}")` : `(move_thing with next_to: "${m.near ?? 'the wall'}")`;
+  return [`My ${e.name} would be better ${m.better}: ${m.why}. I could move it there ${how}.`];
+}
