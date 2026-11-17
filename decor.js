@@ -473,6 +473,7 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
 }
 function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   let d = details && typeof details === 'object' ? details : {};
+  if (d.wall && !sideOf(d.wall) && decor.some((x) => !x.image && x.name.toLowerCase() === String(d.wall).toLowerCase().trim())) d = { ...d, on: d.wall, wall: undefined }; // "wall: my shelf" means on the shelf
   const n = str(d.name, 60).toLowerCase();
   if (!n) return { failed: 'he did not say what to move' };
   if (d.ceiling === true || /\b(ceiling|roof)\b/i.test(String(d.where ?? ''))) { // up to the ceiling (a lamp that should hang)

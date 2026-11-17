@@ -1247,6 +1247,10 @@ async function wakeUp() {
   const impossible = preflight(state, answer.steps);
   if (impossible.length) {
     state.plan.lastFail = { at: new Date().toISOString(), why: `${impossible[0].st.action}: ${impossible[0].why}` };
+    for (const b of impossible.filter((x) => x.st.forStep)) { // a project step that cannot even start counts as a try (after 2 the project waits)
+      const p = findProject(state, b.st.forStep.project);
+      if (p) p.stuck = p.stuck?.text === b.st.forStep.text ? { text: b.st.forStep.text, n: p.stuck.n + 1 } : { text: b.st.forStep.text, n: 1 };
+    }
     const drop = new Set(impossible.map((b) => b.st));
     const keep = answer.steps.filter((st) => !drop.has(st));
     answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
