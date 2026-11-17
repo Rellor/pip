@@ -1806,3 +1806,9 @@ I am shifting my amber reading light to the desk so I have better light for writ
 - change_thing (small wooden shelf): I want my reading light closer to where I work.
 - mood: cozy
 
+## 17/11/2026, 21:27:31
+I decided to step back from the lamp project for a bit and read about clay to gather fresh ideas.
+> I decided to step back from the lamp project for a bit and read about clay to gather fresh ideas.
+- read_book (small clay crafts and drying techniques): I need to learn more about shaping clay properly before trying the desk lamp again.
+- mood: cozy
+
