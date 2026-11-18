@@ -2,7 +2,8 @@
 // so the live loop applies it itself (no need to pause him). Nothing is deleted: what goes, goes to s.archive.
 import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
-import { makeDecor, holdsThings, sizeOf } from './decor.js';
+import { makeDecor, holdsThings, sizeOf, reseat, levelCountOf } from './decor.js';
+import { settle } from './build.js';
 import { roomFactors, scaleParts } from './scale.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
@@ -226,6 +227,19 @@ const CHANGES = [
       if (s.phone) return null;
       s.phone = { since: at, from: 'a gift' };
       return 'I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.';
+    },
+  },
+  {
+    id: '2026-11-18 builder: things hold together',
+    run(s) { // the new builder (build.js) fixes what he built before: legs reach their tops, and what stands on his shelves sits on the boards as they are now
+      const fixed = [];
+      for (const d of (s.decor ?? []).filter((x) => !x.image && Array.isArray(x.parts))) {
+        const r = settle(d.parts, { kind: d.kind });
+        if (r.fixes.length) { d.parts = r.parts; d.updatedAt = new Date().toISOString(); fixed.push(d.name); }
+      }
+      const moved = [];
+      for (const d of (s.decor ?? []).filter((x) => !x.image && Array.isArray(x.parts))) moved.push(...reseat(s.decor, d, levelCountOf(d)).moved);
+      return fixed.length || moved.length ? `I got a builder's eye: ${[fixed.length ? `the legs of my ${fixed.join(' and ')} now reach the top` : '', moved.length ? `${moved.join(', ')} sit on the shelf boards again` : ''].filter(Boolean).join(', and ')}. Now my things hold together, and when I change something, what stands on it moves along.` : null;
     },
   },
   {

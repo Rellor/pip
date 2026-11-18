@@ -7,7 +7,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 import { autoLampOn, lightAt, levelWord, isLamp, placeFor } from './lighting.js';
 import { isGreenhouse, plantState, slotSpot } from './gardening.js';
 import { lampsOf, lampName, lampNow, PRESETS, LEVELS, timerWords, applyLight, fixedLamp } from './lights.js';
-import { buildHouse, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
+import { buildHouse, LEFT_WINDOW, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects, isGone } from './furniture.js';
 
 const $ = (id) => document.getElementById(id);
@@ -172,6 +172,13 @@ const land = createOutside(THREE);
 land.root.position.set(0.3, 2.9, -5.3);
 land.mask.position.set(0.3, 2.9, -5.15);
 scene.add(land.root, land.mask);
+// The square window in the left wall looks out on the same kind of world (its own hole, the same weather, the sun where it really is).
+const sideLand = createOutside(THREE, { ref: 2, turn: Math.PI / 2, state: land.state });
+sideLand.root.rotation.y = Math.PI / 2;
+sideLand.mask.rotation.y = Math.PI / 2;
+sideLand.root.position.set(-5.3, 2.9, LEFT_WINDOW.z);
+sideLand.mask.position.set(-5.15, 2.9, LEFT_WINDOW.z);
+scene.add(sideLand.root, sideLand.mask);
 const lookParams = new URLSearchParams(location.search); // ?hour=21&weather=rain shows another time or weather (for checking)
 const forceLook = { hour: lookParams.has('hour') ? Number(lookParams.get('hour')) : undefined, weather: lookParams.get('weather') || undefined, day: lookParams.has('day') ? Number(lookParams.get('day')) : undefined };
 
@@ -2935,6 +2942,7 @@ function loop(now) {
   }
   prev = now;
   land.update(now, forceLook);
+  sideLand.update(now, forceLook);
   if (now > gardenAt && lastState) { gardenAt = now + 3000; refreshGarden(); }
   for (const v of plantViews.values()) { // the plants sway a little and pop up when they grow
     const k = Math.min(1, (now - v.born) / 800);

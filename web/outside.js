@@ -24,21 +24,24 @@ const DAY = [
   [24, '#060b1d', '#17254a', '#6c7fc0', 0.35, '#12261f', '#16273a'],
 ];
 
-export function createOutside(THREE) {
+// opts: ref (the stencil number of this window's hole, so two windows each show only their own view), turn (how far the
+// window is turned from the back wall, in radians: the sun and moon stay in the same place in the real sky), state (share the
+// weather of another window instead of asking for it again).
+export function createOutside(THREE, { ref = 1, turn = 0, state: shared = null } = {}) {
   const root = new THREE.Group(); // put this at the outer face of the wall, at the window's middle
   const C = (hex) => new THREE.Color(hex);
 
   // Everything here is only drawn where the mask (the hole in the wall) has been drawn.
   const inHole = (m) => {
     m.stencilWrite = true;
-    m.stencilRef = 1;
+    m.stencilRef = ref;
     m.stencilFunc = THREE.EqualStencilFunc;
     m.stencilFail = m.stencilZFail = m.stencilZPass = THREE.KeepStencilOp;
     return m;
   };
   const mask = new THREE.Mesh(
     new THREE.PlaneGeometry(2, 1.8),
-    new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, stencilWrite: true, stencilRef: 1, stencilFunc: THREE.AlwaysStencilFunc, stencilZPass: THREE.ReplaceStencilOp })
+    new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, stencilWrite: true, stencilRef: ref, stencilFunc: THREE.AlwaysStencilFunc, stencilZPass: THREE.ReplaceStencilOp })
   );
   mask.renderOrder = -100;
 
@@ -392,15 +395,17 @@ export function createOutside(THREE) {
   add(fallLeaves);
 
   // --- the weather and the time
-  const state = { hour: null, weather: 'clear', cloud: 0.25, wind: 0.3, flash: 0 };
+  const state = shared ?? { hour: null, weather: 'clear', cloud: 0.25, wind: 0.3, flash: 0 };
   async function loadWeather() {
     try {
       const w = await fetchWeather();
       Object.assign(state, { weather: w.kind, cloud: w.cloud, wind: w.wind, temp: w.temp });
     } catch {}
   }
-  loadWeather();
-  setInterval(loadWeather, 15 * 60_000);
+  if (!shared) {
+    loadWeather();
+    setInterval(loadWeather, 15 * 60_000);
+  }
 
   const keyAt = (h) => {
     let i = 0;
@@ -487,7 +492,8 @@ export function createOutside(THREE) {
 
     // sun and moon sit in the direction the window light comes from (see skyAim)
     const aim = skyAim(forcedDay ? new Date(d.getFullYear(), 0, forcedDay) : d, forced ?? null);
-    const V = aimVector(aim);
+    const W = aimVector(aim); // as seen from the back window; this window is turned by `turn`
+    const V = [W[0] * Math.cos(turn) - W[2] * Math.sin(turn), W[1], W[0] * Math.sin(turn) + W[2] * Math.cos(turn)];
     sun.visible = aim.body === 'sun' && aim.t > 0.01 && aim.t < 0.99;
     sun.position.set(V[0] * 400, V[1] * 400, V[2] * 400);
     sun.material.opacity = clamp(1 - gloom * 2.5, 0, 1);
