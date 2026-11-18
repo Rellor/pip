@@ -39,10 +39,27 @@ function nearestNeed(s, rp, from) {
 }
 
 // For a new thing he did not say a place for: where the game puts it (the details makeDecor understands).
+// "on the floor" says nothing about WHERE on the floor: the game still finds it a good spot.
+const GENERIC = /^\s*(on\s+)?(the\s+)?(floor|ground|floor_free|free)\s*$/i;
+// A good free spot on the floor, the way people furnish a room: near where it is used, with its back to a wall, and not in
+// the middle of the room (that stays free to walk, and for the rug). Returns { near_xz: [x, z] } (where the search starts).
+export function floorSpot(s, spec, rp = rightPlace(spec)) {
+  if (rp?.near?.[0] === 'middle of the room') return { near_xz: [0, 0.8] };
+  const need = nearestNeed(s, rp);
+  const busy = [...(s.decor ?? []).filter((d) => d.kind === 'floor' && d.pos).map((d) => [d.pos[0], d.pos[2]]), ...['desk', 'bed', 'bookshelf', 'chest', 'plant', 'piano'].map((w) => spotOf(s, w)).filter(Boolean).map((p) => [p.x, p.z])];
+  const spots = [];
+  for (let t = -3.9; t <= 3.91; t += 0.6) spots.push([-4.1, t], [4.1, t], [t, -4.1], [t, 4.1]);
+  const score = ([x, z]) => (need ? Math.hypot(x - need.x, z - need.z) : 0) + busy.filter(([bx, bz]) => Math.hypot(bx - x, bz - z) < 1.4).length * 2;
+  const best = spots.sort((a, b) => score(a) - score(b))[0];
+  return { near_xz: best.map((v) => Math.round(v * 100) / 100) };
+}
+
 export function designate(s, spec) {
-  const said = ['where', 'on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some((k) => spec?.[k] !== undefined && spec?.[k] !== null && spec?.[k] !== '');
+  const said = ['where', 'on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some((k) => spec?.[k] !== undefined && spec?.[k] !== null && spec?.[k] !== '' && !(k === 'where' && GENERIC.test(String(spec.where))));
   const rp = rightPlace(spec);
-  if (said || !rp) return {};
+  if (said) return {};
+  if (!rp) return { where: 'floor', ...floorSpot(s, spec, null) }; // nothing known about it: a free spot by a wall
+  if (rp.kind === 'floor' && !rp.near?.length) return { where: 'floor', ...floorSpot(s, spec, rp) };
   const at = nearestNeed(s, rp);
   if (rp.kind === 'ceiling') return { ceiling: true, x: at?.x ?? 0, z: at?.z ?? 0.8 };
   if (rp.kind === 'wall') {
@@ -59,14 +76,22 @@ export function designate(s, spec) {
   }
   const word = at?.name?.replace(/^the /, '');
   if (word === 'window') return { where: 'floor_under_window' };
-  if (word === 'middle of the room' || !word) return { where: rp.near?.[0] === 'middle of the room' ? 'floor_middle' : 'floor' };
+  if (word === 'middle of the room') return { where: 'floor_middle' };
+  if (!word) return { where: 'floor', ...floorSpot(s, spec, rp) };
   return { next_to: word };
 }
 
 // Is this thing somewhere it does not belong? { better, why } or null. Pip's own choice is allowed; this is what he notices.
+// The middle of the room stays free to walk (the rug lies there). Things that belong there: a rug, a mat, a big table people sit around.
+const MIDDLE_OK = /\b(rug|mat|carpet|cushion|pillow|beanbag|pouf|mobile|chandelier|(dining|long|big|large|round) table)\b/i;
+export const inTheMiddle = (e) => e?.kind === 'floor' && e.pos && Math.abs(e.pos[0]) < 2 && Math.abs(e.pos[2] - 0.8) < 2 && !MIDDLE_OK.test(String(e.name ?? ''));
 export function misplaced(s, e) {
   if (!e || e.image || e.art || !e.pos) return null;
   const rp = rightPlace(e);
+  if (inTheMiddle(e) && rp?.near?.[0] !== 'middle of the room') { // in the way, wherever else it might go
+    const at = nearestNeed(s, rp, [e.pos[0], e.pos[2]]);
+    return { better: at ? `near ${at.name}, against a wall` : 'against a wall', why: 'it stands in the middle of the room, in the way where I walk', kind: 'floor', near: at?.name?.replace(/^the /, '') ?? null };
+  }
   if (!rp) return null;
   const kind = e.kind ?? (/^on_|surface/.test(e.zone ?? '') ? 'surface' : /^wall/.test(e.zone ?? '') ? 'wall' : /^floor/.test(e.zone ?? '') ? 'floor' : e.zone);
   const sameKind = kind === rp.kind || (rp.kind === 'surface' && kind === 'wall' && /shelf/i.test(String(e.base ?? '') + e.label)) || (rp.kind === 'floor' && kind === 'floor');
