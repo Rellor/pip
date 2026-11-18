@@ -17,7 +17,7 @@ import { giveForAsk } from './gifts.js';
 import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
-import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep } from './projects.js';
+import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
 import { roomScale, placeKind } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
@@ -1959,6 +1959,8 @@ async function wakeUp() {
     console.log(`   🧩 ${v.project}: v${v.v}`);
     const step = !ticked && findProject(state, v.project)?.steps?.find((x) => !x.done);
     if (step) { step.done = true; ticked = true; console.log(`   ✓ step done: ${step.text}`); }
+    const fin = finishDone(state, v.project);
+    if (fin) { addMemory(state, `My project "${fin.title}" is finished: all my steps are done and I made it ${fin.versions.length} times. It works, and I can start something new.`, 7, 'memory', new Date().toISOString()); console.log(`   🏁 project done: ${fin.title}`); }
   }
   // A step the game did for a project (work_on_project) is ticked off when it really worked (waiting always works).
   for (const st of steps) {

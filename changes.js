@@ -4,6 +4,7 @@ import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
 import { makeDecor, holdsThings, sizeOf, reseat, levelCountOf } from './decor.js';
 import { settle } from './build.js';
+import { finishDone } from './projects.js';
 import { roomFactors, scaleParts } from './scale.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
@@ -227,6 +228,24 @@ const CHANGES = [
       if (s.phone) return null;
       s.phone = { since: at, from: 'a gift' };
       return 'I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.';
+    },
+  },
+  {
+    id: '2026-11-18 the lamp project is done',
+    run(s, at) { // all its steps were done and he had made it twice, but he kept making one more lamp
+      const done = (s.projects ?? []).filter((p) => p.status === 'working').map((p) => finishDone(s, p.title, at)).filter(Boolean);
+      return done.length ? `My project "${done[0].title}" is finished: all my steps are done and I made it ${done[0].versions.length} times. It works. I have enough lamps now, so I can start something new.` : null;
+    },
+  },
+  {
+    id: '2026-11-18 duplicate lamps put away',
+    run(s, at) { // three copies of his clay desk lamp, made one after another for his lamp project, stood on the floor by the rug
+      const ids = ['dmwlueu5g1049', 'dmwlupvwl11hq', 'dmwlvl4ns12vt'];
+      const gone = (s.decor ?? []).filter((d) => ids.includes(d.id) && !(s.decor ?? []).some((o) => String(o.base ?? '').startsWith(d.id)));
+      if (!gone.length) return null;
+      s.decor = s.decor.filter((d) => !gone.includes(d));
+      for (const d of gone) (s.archive ??= []).push({ group: 'decor', item: d, reason: 'a copy of my clay desk lamp', at, from: 'bas' });
+      return `Bas put away ${gone.length} copies of my clay desk lamp (${gone.map((d) => d.name).join(', ')}). I already have my small clay lamp on the desk, my brass lamp and my amber reading light: that is enough lamps.`;
     },
   },
   {

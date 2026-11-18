@@ -25,6 +25,15 @@ export function addVersion(s, title, { kind, name, ref, at = new Date().toISOStr
   return { project: p.title, v: v.v };
 }
 
+// A project whose steps are all done and that he already made twice is finished: it works. Otherwise he keeps making
+// one more version of it (six lamps for one lamp project). Returns the finished project, or null.
+export function finishDone(s, title, at = new Date().toISOString()) {
+  const p = findProject(s, title);
+  if (!p || !(p.steps ?? []).length || !p.steps.every((x) => x.done) || (p.versions ?? []).length < 2) return null;
+  Object.assign(p, { status: 'done', proud: true, proudOf: `all my steps are done and I made it ${p.versions.length} times: it works`, doneAt: at, updatedAt: at, needs: [] });
+  return p;
+}
+
 // He says whether he is proud of it. Proud: done. Not proud: a note on what to improve, and it stays open.
 export function judgeProject(s, title, { proud, why }, at = new Date().toISOString()) {
   const p = findProject(s, title);
