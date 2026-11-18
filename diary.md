@@ -2090,3 +2090,10 @@ I am hungry and need to eat before continuing my day.
 - eat (carrots): I am very hungry and need to eat something.
 - mood: hungry
 
+## 18/11/2026, 13:12:37
+My basil is fully grown and waiting to be harvested.
+> My basil is fully grown and waiting to be harvested.
+- harvest (basil): My basil is ready!
+- do (tell my plant what went wrong and how it felt): That did not work out. I shake it off and tell my plant what went wrong and how it felt.
+- mood: hungry
+
