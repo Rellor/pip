@@ -2140,3 +2140,10 @@ I am bored of doing the same things and need a fresh spark by reading about some
 - read_book (clay sculpture techniques): I need a fresh perspective away from my usual routine.
 - mood: restless
 
+## 18/11/2026, 14:20:38
+I noticed my amber reading light would be much better near the desk where I read and write.
+> I noticed my amber reading light would be much better near the desk where I read and write.
+- move_thing (amber reading light): Moving the amber reading light to the desk where I read and write.
+- do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
+- mood: restless
+

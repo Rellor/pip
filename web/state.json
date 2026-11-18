@@ -1,24 +1,11 @@
 {
   "mood": "restless",
-  "energy": 9.21,
-  "boredom": 8.63,
-  "loneliness": 1.17,
+  "energy": 8.54,
+  "boredom": 6.59,
+  "loneliness": 1.2,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-18T09:01:29.547Z",
-      "action": "eat",
-      "detail": "bread",
-      "enjoyment": 6
-    },
-    {
-      "at": "2026-11-18T09:14:20.074Z",
-      "action": "move_thing",
-      "detail": "amber reading light",
-      "enjoyment": 0,
-      "failed": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf with"
-    },
     {
       "at": "2026-11-18T09:14:20.077Z",
       "action": "do",
@@ -317,6 +304,19 @@
       "at": "2026-11-18T14:12:18.884Z",
       "action": "read_book",
       "detail": "clay sculpture techniques",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-18T14:20:38.771Z",
+      "action": "move_thing",
+      "detail": "amber reading light",
+      "enjoyment": 0,
+      "failed": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf with"
+    },
+    {
+      "at": "2026-11-18T14:20:38.775Z",
+      "action": "do",
+      "detail": "hum a small tune while I swing my arms",
       "enjoyment": 6
     }
   ],
@@ -652,7 +652,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.352,
+      "weight": 7.351,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -661,7 +661,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.392,
+      "weight": 7.391,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -670,7 +670,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.265,
+      "weight": 8.264,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -679,7 +679,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.877,
+      "weight": 7.876,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -688,7 +688,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.445,
+      "weight": 6.444,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -699,7 +699,7 @@
       "text": "The gear teeth need to be smooth so the little wooden music box plays correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.988,
+      "weight": 5.987,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -708,7 +708,7 @@
       "text": "Smooth gear teeth make the little wooden music box play correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.985,
+      "weight": 5.984,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -717,7 +717,7 @@
       "text": "I recorded a song: Music Box Test (drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.992,
+      "weight": 5.991,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -726,7 +726,7 @@
       "text": "The music box melody should match the rhythm of the wooden gears.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.994,
+      "weight": 5.993,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -735,7 +735,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.475,
+      "weight": 6.474,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -744,7 +744,7 @@
       "text": "Matching the rhythm to the wooden gears makes the music box sound better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.008,
+      "weight": 6.007,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -753,7 +753,7 @@
       "text": "Adding enough sounding notes makes the music box record correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.009,
+      "weight": 6.008,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -762,7 +762,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.91,
+      "weight": 8.908,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -771,7 +771,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.596,
+      "weight": 7.595,
       "lastUsed": "2026-11-16T16:11:38.822Z"
     },
     {
@@ -780,7 +780,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.55,
+      "weight": 8.548,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -789,7 +789,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.646,
+      "weight": 6.645,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -798,7 +798,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.498,
+      "weight": 9.496,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -807,7 +807,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.629,
+      "weight": 7.628,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -816,7 +816,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.669,
+      "weight": 6.668,
       "lastUsed": "2026-11-16T20:39:17.012Z"
     },
     {
@@ -825,7 +825,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.662,
+      "weight": 7.661,
       "lastUsed": "2026-11-18T09:22:33.280Z"
     },
     {
@@ -834,7 +834,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.644,
+      "weight": 7.643,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -843,7 +843,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.23,
+      "weight": 8.229,
       "lastUsed": "2026-11-17T17:53:54.186Z"
     },
     {
@@ -852,7 +852,7 @@
       "text": "I cleared space on my desk by moving the brass lamp to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.315,
+      "weight": 6.314,
       "lastUsed": "2026-11-17T20:12:53.663Z"
     },
     {
@@ -861,7 +861,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.816,
+      "weight": 6.815,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -870,7 +870,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.3,
+      "weight": 8.299,
       "lastUsed": "2026-11-18T09:22:33.280Z"
     },
     {
@@ -879,7 +879,7 @@
       "text": "I want to make a glowing lamp for the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.353,
+      "weight": 6.352,
       "lastUsed": "2026-11-18T09:09:42.390Z"
     },
     {
@@ -888,7 +888,7 @@
       "text": "I searched for how to make a glowing lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.354,
+      "weight": 6.353,
       "lastUsed": "2026-11-18T08:52:33.297Z"
     },
     {
@@ -897,7 +897,7 @@
       "text": "I started shaping the clay base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.358,
+      "weight": 6.357,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -906,7 +906,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.359,
+      "weight": 6.358,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -915,7 +915,7 @@
       "text": "Reading about clay might help with my desk lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.367,
+      "weight": 6.366,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -924,7 +924,7 @@
       "text": "Reading about clay helps when my lamp base steps fail.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.374,
+      "weight": 6.373,
       "lastUsed": "2026-11-18T07:22:53.387Z"
     },
     {
@@ -933,7 +933,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.851,
+      "weight": 7.85,
       "lastUsed": "2026-11-18T07:06:38.724Z"
     },
     {
@@ -942,7 +942,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.948,
+      "weight": 7.947,
       "lastUsed": "2026-11-18T08:11:27.589Z"
     },
     {
@@ -951,7 +951,7 @@
       "text": "I attached the glowing part to the lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.956,
+      "weight": 5.955,
       "lastUsed": "2026-11-18T08:20:30.795Z"
     },
     {
@@ -960,7 +960,7 @@
       "text": "I made little craft desk lamp (My amber light needs to be closer, and making my own lamp sounds fresh.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.956,
+      "weight": 5.955,
       "lastUsed": "2026-11-18T08:20:31.785Z"
     },
     {
@@ -969,7 +969,7 @@
       "text": "I am finishing my small desk lamp and keeping my plants healthy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.957,
+      "weight": 5.956,
       "lastUsed": "2026-11-18T08:32:48.010Z"
     },
     {
@@ -978,7 +978,7 @@
       "text": "I tested the light for my small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.959,
+      "weight": 5.958,
       "lastUsed": "2026-11-18T08:44:48.477Z"
     },
     {
@@ -987,7 +987,7 @@
       "text": "I made paper clay desk lamp (My amber light needs to be closer, and molding paper clay for a warm, soft lamp shade sounds fresh.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.959,
+      "weight": 5.958,
       "lastUsed": "2026-11-18T08:44:49.466Z"
     },
     {
@@ -996,7 +996,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.954,
+      "weight": 7.953,
       "lastUsed": "2026-11-18T08:52:24.992Z"
     },
     {
@@ -1005,7 +1005,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.959,
+      "weight": 6.958,
       "lastUsed": "2026-11-18T09:01:29.550Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -1016,7 +1016,7 @@
       "text": "(private)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.963,
+      "weight": 5.962,
       "lastUsed": "2026-11-18T09:14:20.078Z",
       "private": true,
       "enc": "v1.Oo8OMtxX5pyt9Urk.3bjPFTFbPfOoQmNr-FQViA.PLLd540HLDE4xBn0K0IAw5whAnWXNYaFnqGhsmZooLWr6Qen3zG7dN-IHYpqvSrcOt2Ul3l3"
@@ -1027,7 +1027,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.961,
+      "weight": 6.96,
       "lastUsed": "2026-11-18T09:14:20.079Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -1038,7 +1038,7 @@
       "text": "Hanging a picture on the wall worked well today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.965,
+      "weight": 5.964,
       "lastUsed": "2026-11-18T09:22:34.877Z"
     },
     {
@@ -1047,7 +1047,7 @@
       "text": "I did everything I wanted to do today. It feels good to follow my own plans.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.966,
+      "weight": 5.965,
       "lastUsed": "2026-11-18T09:30:48.230Z"
     },
     {
@@ -1056,7 +1056,7 @@
       "text": "I started sketching the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.968,
+      "weight": 5.967,
       "lastUsed": "2026-11-18T09:50:24.370Z"
     },
     {
@@ -1065,7 +1065,7 @@
       "text": "Rewriting project steps helps me clear the block when a drawing or sketch fails.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.97,
+      "weight": 5.969,
       "lastUsed": "2026-11-18T10:08:50.741Z"
     },
     {
@@ -1074,7 +1074,7 @@
       "text": "I am retrying the sketch for the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.971,
+      "weight": 5.97,
       "lastUsed": "2026-11-18T10:17:05.289Z"
     },
     {
@@ -1083,7 +1083,7 @@
       "text": "I am trying a fresh sketch for the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.972,
+      "weight": 5.971,
       "lastUsed": "2026-11-18T10:25:13.309Z"
     },
     {
@@ -1092,7 +1092,7 @@
       "text": "Moving the amber reading light to the desk makes my workspace much cozier.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.973,
+      "weight": 5.972,
       "lastUsed": "2026-11-18T10:33:19.217Z"
     },
     {
@@ -1101,7 +1101,7 @@
       "text": "I moved the amber reading light to the desk for better lighting.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.974,
+      "weight": 5.973,
       "lastUsed": "2026-11-18T10:42:41.867Z"
     },
     {
@@ -1110,7 +1110,7 @@
       "text": "Simple cooking with one ingredient works best when the pantry is nearly empty.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.98,
       "lastUsed": "2026-11-18T11:41:47.390Z"
     },
     {
@@ -1119,7 +1119,7 @@
       "text": "I planned my bird project steps again.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.981,
       "lastUsed": "2026-11-18T11:49:54.104Z"
     },
     {
@@ -1128,7 +1128,7 @@
       "text": "I am working on step 2 of the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.983,
+      "weight": 5.982,
       "lastUsed": "2026-11-18T11:58:51.078Z"
     },
     {
@@ -1137,7 +1137,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.984,
+      "weight": 6.983,
       "lastUsed": "2026-11-18T12:07:04.954Z"
     },
     {
@@ -1146,7 +1146,7 @@
       "text": "Sculpting the body and wings carefully.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.986,
       "lastUsed": "2026-11-18T12:31:34.104Z"
     },
     {
@@ -1155,7 +1155,7 @@
       "text": "I need to remember to eat regularly when I work.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.99,
       "lastUsed": "2026-11-18T13:04:31.489Z"
     },
     {
@@ -1164,7 +1164,7 @@
       "text": "I harvested fresh basil from my wooden planter box.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.992,
+      "weight": 5.991,
       "lastUsed": "2026-11-18T13:12:37.900Z"
     },
     {
@@ -1173,7 +1173,7 @@
       "text": "I am making good progress on the tiny clay bird sculpture.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.994,
       "lastUsed": "2026-11-18T13:37:29.947Z"
     },
     {
@@ -1182,7 +1182,7 @@
       "text": "I took a break from clay to clear my mind with a book.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-18T14:12:18.887Z"
     },
     {
@@ -1191,7 +1191,7 @@
       "text": "I read about clay sculpture techniques",
       "importance": 3,
       "kind": "memory",
-      "weight": 2.999,
+      "weight": 2.998,
       "lastUsed": "2026-11-18T14:12:19.883Z"
     }
   ],
@@ -1199,14 +1199,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-17T22:08:14.615Z",
   "thoughts": [
-    {
-      "at": "2026-11-18T10:08:50.741Z",
-      "text": "I want to break down my clay bird project into simpler, workable steps so I can proceed.",
-      "short": "I want to break down my clay bird project into simpler, workable steps so I can proceed.",
-      "mood": "curious",
-      "action": "do",
-      "detail": "plan the steps of my project Sculpt a tiny clay bird"
-    },
     {
       "at": "2026-11-18T10:17:05.289Z",
       "text": "I am working on my clay bird project and want to retry sketching its shape.",
@@ -1438,6 +1430,14 @@
       "mood": "restless",
       "action": "read_book",
       "detail": "clay sculpture techniques"
+    },
+    {
+      "at": "2026-11-18T14:20:38.776Z",
+      "text": "I noticed my amber reading light would be much better near the desk where I read and write.",
+      "short": "I noticed my amber reading light would be much better near the desk where I read and write.",
+      "mood": "restless",
+      "action": "move_thing",
+      "detail": "amber reading light"
     }
   ],
   "outbox": [
@@ -1554,29 +1554,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-18T11:12:36.160Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and juggle three imaginary berries.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🍓",
-      "what": "juggle three imaginary berries",
-      "feeling": "wonder"
-    },
-    {
-      "at": "2026-11-18T11:17:26.350Z",
-      "action": "decorate",
-      "thought": "I wanted to, but the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put t …. (I will move on to sculpting the body and wings now.)",
-      "uses": [],
-      "song": null,
-      "project": "Sculpt a tiny clay bird",
-      "name": "tiny clay bird",
-      "why": "I want to sculpt a smooth little bird out of warm clay that fits comfortably in my hand.",
-      "place": null,
-      "tool": null,
-      "failed": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there"
-    },
     {
       "at": "2026-11-18T11:21:26.350Z",
       "action": "do",
@@ -1835,6 +1812,24 @@
         "url": "https://en.wikipedia.org/wiki/Armature_(sculpture)",
         "text": "In sculpture, an armature is a framework around which the sculpture is built, when the sculpture could not stand on its own. This framework provides structure and stability, especially when a plastic material such as wax, newspaper or clay is being used as the medium. When sculpting the human figure, the armature is analogous to the major skeleton and has essentially the same purpose: to hold the body erect.\nAn armature is often made of heavy, dark aluminium wire which is stiff, but can be bent and twisted into shape without much difficulty.  The wire is affixed to a base which is usually made of wood.  The artist then begins fleshing out the sculpture by adding wax or clay over the wire.  Depending on the material and technique, the armature may be left buried within the sculpture but, if the sculpture is to be hollowed out for firing, it must1 be removed.\nLarge representational sculptures meant for outdoor display are typically fashioned of bronze or other types of sheet metal, and they require armatures for internal support and stability.  For example, a large armature designed by Gustave Eiffel holds up the Statue of Liberty.  The armature can be seen from below by visitors to the base of the sculpture's interior.\n\nAnimation\n\nAn armature used in stop-motion animation is an articulated metal, wire or even wooden figure covered with material to build the character, but can be made to hold poses for extended periods of time.\n …"
       }
+    },
+    {
+      "at": "2026-11-18T14:20:39.769Z",
+      "action": "move_thing",
+      "thought": "I wanted to, but the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put t …. (Moving the amber reading light to the desk where I read and write.)",
+      "name": "amber reading light",
+      "place": null,
+      "failed": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there"
+    },
+    {
+      "at": "2026-11-18T14:24:39.769Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🎵",
+      "what": "hum a small tune while I swing my arms",
+      "feeling": "joy"
     }
   ],
   "decor": [
@@ -4613,7 +4608,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-18T14:12:18.883Z",
+    "at": "2026-11-18T14:20:38.769Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -4621,43 +4616,52 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1704,
-      "output": 118,
+      "input": 1633,
+      "output": 130,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am bored of doing the same things and need a fresh spark by reading about something different.",
-    "inner": "I am bored of doing the same things and need a fresh spark by reading about something different.",
+    "thought": "I noticed my amber reading light would be much better near the desk where I read and write.",
+    "inner": "I noticed my amber reading light would be much better near the desk where I read and write.",
     "sent": false,
     "steps": [
       {
-        "action": "read_book",
+        "action": "move_thing",
         "details": {
-          "topic": "clay sculpture techniques"
+          "name": "amber reading light",
+          "on": "desk"
         },
-        "detail": "clay sculpture techniques",
-        "thought": "I need a fresh perspective away from my usual routine.",
+        "detail": "amber reading light",
+        "thought": "Moving the amber reading light to the desk where I read and write.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "do",
+        "details": {
+          "what": "hum a small tune while I swing my arms",
+          "feeling": "joy",
+          "emoji": "🎵"
+        },
+        "detail": "hum a small tune while I swing my arms",
+        "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
         "enjoyment": 6,
-        "found": {
-          "title": "Armature (sculpture)",
-          "text": "In sculpture, an armature is a framework around which the sculpture is built, when the sculpture could not stand on its own. This framework provides structure and stability, especially when a plastic material such as wax, newspaper or clay is being used as the medium. When sculpting the human figure, the armature is analogous to the major skeleton and has essentially the same purpose: to hold the body erect.\nAn armature is often made of heavy, dark aluminium wire which is stiff, but can be bent and twisted into shape without much difficulty.  The wire is affixed to a base which is usually made of wood.  The artist then begins fleshing out the sculpture by adding wax or clay over the wire.  Depending on the material and technique, the armature may be left buried within the sculpture but, if the sculpture is to be hollowed out for firing, it must1 be removed.\nLarge representational sculptures meant for outdoor display are typically fashioned of bronze or other types of sheet metal, and they require armatures for internal support and stability.  For example, a large armature designed by Gustave Eiffel holds up the Statue of Liberty.  The armature can be seen from below by visitors to the base of the sculpture's interior.\n\nAnimation\n\nAn armature used in stop-motion animation is an articulated metal, wire or even wooden figure covered with material to build the character, but can be made to hold poses for extended periods of time.\nIn 3D computer animation, the analogous concept is the skeleton or rig used in skeletal animation.\n\nSee also\nLost wax\n\nNotes\n^1 For this reason, much clay work for firing begins with a simple paper and/or wood armature.  These materials can be removed relatively easily from finished piece while it is still fairly plastic, without damaging it.  Any paper left behind will burn out in the kiln.  A metal armature would expand in the heat and burst the piece.\n\nReferences"
-        },
+        "found": null,
         "made": null
       }
     ],
-    "action": "read_book",
+    "action": "move_thing",
     "details": {
-      "topic": "clay sculpture techniques"
+      "name": "amber reading light",
+      "on": "desk"
     },
-    "detail": "clay sculpture techniques",
-    "enjoyment": 6,
+    "detail": "amber reading light",
+    "enjoyment": 0,
     "new_idea": null,
-    "found": {
-      "title": "Armature (sculpture)",
-      "text": "In sculpture, an armature is a framework around which the sculpture is built, when the sculpture could not stand on its own. This framework provides structure and stability, especially when a plastic material such as wax, newspaper or clay is being used as the medium. When sculpting the human figure, the armature is analogous to the major skeleton and has essentially the same purpose: to hold the body erect.\nAn armature is often made of heavy, dark aluminium wire which is stiff, but can be bent and twisted into shape without much difficulty.  The wire is affixed to a base which is usually made of wood.  The artist then begins fleshing out the sculpture by adding wax or clay over the wire.  Depending on the material and technique, the armature may be left buried within the sculpture but, if the sculpture is to be hollowed out for firing, it must1 be removed.\nLarge representational sculptures meant for outdoor display are typically fashioned of bronze or other types of sheet metal, and they require armatures for internal support and stability.  For example, a large armature designed by Gustave Eiffel holds up the Statue of Liberty.  The armature can be seen from below by visitors to the base of the sculpture's interior.\n\nAnimation\n\nAn armature used in stop-motion animation is an articulated metal, wire or even wooden figure covered with material to build the character, but can be made to hold poses for extended periods of time.\nIn 3D computer animation, the analogous concept is the skeleton or rig used in skeletal animation.\n\nSee also\nLost wax\n\nNotes\n^1 For this reason, much clay work for firing begins with a simple paper and/or wood armature.  These materials can be removed relatively easily from finished piece while it is still fairly plastic, without damaging it.  Any paper left behind will burn out in the kiln.  A metal armature would expand in the heat and burst the piece.\n\nReferences"
-    }
+    "found": null
   },
   "furniture": {
     "plant": {
@@ -4734,7 +4738,7 @@
   "quota": {
     "day": "2026-11-18",
     "calls": {
-      "gemini-3.5-flash-lite": 45,
+      "gemini-3.5-flash-lite": 46,
       "gemini-3.8-flash": 15,
       "gemini-3.6-flash": 15,
       "gemini-3.5-flash": 8
@@ -4885,22 +4889,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-18T14:12:19.338Z",
-  "fullness": 2.15,
+  "memoryFadeAt": "2026-11-18T14:20:38.779Z",
+  "fullness": 1.98,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.6,
-  "joy": 3.65,
-  "calm": 5.15,
+  "wonder": 5.38,
+  "joy": 3.21,
+  "calm": 5.12,
   "emo": {
-    "irritated": 0.96,
+    "irritated": 1.37,
     "sad": 0,
-    "excited": 0.82
+    "excited": 0.49
   },
-  "feelAt": "2026-11-18T14:12:08.835Z",
+  "feelAt": "2026-11-18T14:20:23.906Z",
   "lastAte": "2026-11-18T13:04:31.489Z",
   "studio": {
     "songs": [
@@ -5207,27 +5211,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 1.39,
-    "curiosity": 2.3,
-    "boredom": 6.63,
-    "loneliness": 1.17,
+    "creativity": 1.47,
+    "curiosity": 2.37,
+    "boredom": 6.59,
+    "loneliness": 1.2,
     "tidiness": 8.2,
-    "at": "2026-11-18T14:12:08.835Z",
+    "at": "2026-11-18T14:20:23.906Z",
     "coziness": 6.5
   },
   "recent": {
     "moves": [
-      {
-        "move": "move_thing",
-        "kind": "room",
-        "at": "2026-11-18T12:39:39.951Z",
-        "failed": true
-      },
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-18T12:39:39.951Z"
-      },
       {
         "move": "do",
         "kind": "play",
@@ -5294,22 +5287,27 @@
         "move": "read_book",
         "kind": "learn",
         "at": "2026-11-18T14:12:19.343Z"
+      },
+      {
+        "move": "move_thing",
+        "kind": "room",
+        "at": "2026-11-18T14:20:38.782Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-18T14:20:38.782Z"
       }
     ],
     "moods": [
       "focused",
       "focused",
       "focused",
-      "focused",
+      "restless",
       "restless"
     ],
     "choices": [
-      {
-        "key": "do:",
-        "move": "do",
-        "ok": false,
-        "at": "2026-11-18T13:29:10.368Z"
-      },
       {
         "key": "do:",
         "move": "do",
@@ -5339,6 +5337,12 @@
         "move": "read_book",
         "ok": true,
         "at": "2026-11-18T14:12:19.344Z"
+      },
+      {
+        "key": "move_thing:amber reading light",
+        "move": "move_thing",
+        "ok": false,
+        "at": "2026-11-18T14:20:38.784Z"
       }
     ]
   },
@@ -5349,7 +5353,7 @@
       "play_piano": 1,
       "ask_for": 2,
       "move_thing": 1,
-      "do": 28,
+      "do": 29,
       "decorate": 4,
       "eat": 2,
       "place_picture": 1,
@@ -5362,8 +5366,8 @@
       "plan_project": 5,
       "play_piano": 1,
       "ask_for": 2,
-      "move_thing": 6,
-      "do": 28,
+      "move_thing": 7,
+      "do": 29,
       "decorate": 7,
       "eat": 3,
       "place_picture": 1,
@@ -5379,7 +5383,7 @@
       "music": 1,
       "people": 2,
       "room": 2,
-      "play": 28,
+      "play": 29,
       "food": 3,
       "garden": 1,
       "learn": 1
@@ -5389,13 +5393,13 @@
       "curious": 17,
       "hungry": 4,
       "focused": 15,
-      "restless": 1
+      "restless": 2
     },
     "lift": {
-      "do": -4.47,
+      "do": -4.72,
       "play_piano": 0.3,
       "ask_for": 1.8,
-      "move_thing": -0.67,
+      "move_thing": -0.92,
       "decorate": 7.06,
       "eat": 3.7,
       "place_picture": 0.5,
@@ -5441,7 +5445,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-18T14:12:18.882Z",
+    "decidedAt": "2026-11-18T14:20:38.768Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
@@ -5451,7 +5455,10 @@
       "seeds": 10,
       "visitors": 0
     },
-    "lastFail": null,
+    "lastFail": {
+      "at": "2026-11-18T14:20:38.784Z",
+      "why": "move_thing: the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there"
+    },
     "unread": 0
   },
   "fixedAt": {
@@ -5576,7 +5583,7 @@
   "ever": {
     "eat": 16,
     "water": 6,
-    "do": 153,
+    "do": 154,
     "search_web": 7,
     "read_book": 5,
     "record_song": 2,
@@ -5602,7 +5609,7 @@
     "place_picture": 1
   },
   "checkup": {
-    "at": "2026-11-18T14:12:19.345Z",
+    "at": "2026-11-18T14:20:38.785Z",
     "items": [
       {
         "id": "circling",
@@ -5620,17 +5627,17 @@
         "id": "failing",
         "ok": false,
         "label": "Moves",
-        "text": "moving something failed 5 of 6 times today. Last reason: the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put t.",
+        "text": "moving something failed 6 of 7 times today. Last reason: the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put t.",
         "look": "The same reason again and again is usually a bug in the game code for this move, not Pip being clumsy. A reason that changes each time is more likely Pip learning.",
-        "debug": "move: move_thing\ntried today: 6, failed: 5\nlast tries:\n- 11:25 UTC FAILED \"amber reading light\": the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there\n- 12:39 UTC FAILED \"amber reading light\": the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there"
+        "debug": "move: move_thing\ntried today: 7, failed: 6\nlast tries:\n- 11:25 UTC FAILED \"amber reading light\": the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there\n- 12:39 UTC FAILED \"amber reading light\": the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there\n- 14:20 UTC FAILED \"amber reading light\": the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there"
       },
       {
         "id": "pretend",
         "ok": false,
         "label": "Real things",
-        "text": "28 of his 48 steps today were free \"do\" steps that make nothing.",
+        "text": "29 of his 49 steps today were free \"do\" steps that make nothing.",
         "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
-        "debug": "last \"do\" steps:\n- 13:29 UTC Sculpt the body and wings of the tiny clay bird\n- 13:37 UTC Sculpt the body and wings of the tiny clay bird\n- 13:46 UTC Sculpt the body and wings of the tiny clay bird\n- 13:54 UTC Sculpt the body and wings of the tiny clay bird\n- 14:08 UTC look closely at something in my room I never really looked at (after a failure)"
+        "debug": "last \"do\" steps:\n- 13:37 UTC Sculpt the body and wings of the tiny clay bird\n- 13:46 UTC Sculpt the body and wings of the tiny clay bird\n- 13:54 UTC Sculpt the body and wings of the tiny clay bird\n- 14:08 UTC look closely at something in my room I never really looked at (after a failure)\n- 14:24 UTC hum a small tune while I swing my arms (after a failure)"
       },
       {
         "id": "needs",
@@ -5647,6 +5654,17 @@
     ],
     "failures": [
       {
+        "move": "moving something",
+        "action": "move_thing",
+        "reason": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put t",
+        "raw": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there",
+        "names": [
+          "amber reading light"
+        ],
+        "count": 3,
+        "last": "2026-11-18T14:20:39.769Z"
+      },
+      {
         "move": "drawing",
         "action": "draw",
         "reason": "it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark horizon\", which has hung for 2",
@@ -5657,17 +5675,6 @@
         ],
         "count": 2,
         "last": "2026-11-18T14:04:05.361Z"
-      },
-      {
-        "move": "moving something",
-        "action": "move_thing",
-        "reason": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put t",
-        "raw": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there",
-        "names": [
-          "amber reading light"
-        ],
-        "count": 2,
-        "last": "2026-11-18T12:39:40.941Z"
       },
       {
         "move": "harvest",
@@ -5688,17 +5695,6 @@
         "names": [],
         "count": 1,
         "last": "2026-11-18T11:33:38.202Z"
-      },
-      {
-        "move": "making something",
-        "action": "decorate",
-        "reason": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put t",
-        "raw": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there",
-        "names": [
-          "tiny clay bird"
-        ],
-        "count": 1,
-        "last": "2026-11-18T11:17:26.350Z"
       }
     ],
     "sent": {
@@ -7916,6 +7912,14 @@
   ],
   "lessons": [
     {
+      "move": "move_thing",
+      "text": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there",
+      "count": 8,
+      "at": "2026-11-18T14:20:39.769Z",
+      "firstAt": "2026-11-17T15:41:03.183Z",
+      "solvedAt": null
+    },
+    {
       "move": "draw",
       "text": "it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark horizon\", which has hung for 2 days, and the next ",
       "count": 4,
@@ -7929,14 +7933,6 @@
       "count": 1,
       "at": "2026-11-18T13:12:38.896Z",
       "firstAt": "2026-11-18T13:12:38.896Z",
-      "solvedAt": null
-    },
-    {
-      "move": "move_thing",
-      "text": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there",
-      "count": 7,
-      "at": "2026-11-18T12:39:40.941Z",
-      "firstAt": "2026-11-17T15:41:03.183Z",
       "solvedAt": null
     },
     {
