@@ -10,6 +10,8 @@ const KNOWN_SEEDS = ['rosemary', 'lavender', 'basil', 'mint', 'thyme', 'parsley'
 export const STARTER_SEEDS = ['basil', 'mint', 'strawberry'];
 const FOOD = /\b(bread|rice|eggs?|potato(es)?|carrots?|apples?|milk|cheese|flour|butter|onions?|tomato(es)?|berr(y|ies)|soup|pasta|beans|fruit|vegetables|food|snacks?|honey|oats)\b/i;
 
+// Not things you can hand over: these are answered in other ways (more room, a new ability, time).
+const NOT_THINGS = /\b(space|room|time|help|ability|abilit|permission|advice|idea|answer|walk|visit|attention|hug)\b/i;
 export function giveForAsk(s, item) {
   const t = String(item ?? '').toLowerCase();
   const given = [];
@@ -25,6 +27,8 @@ export function giveForAsk(s, item) {
   }
   if (given.length) return given;
   for (const k of Object.keys(HELD)) if (t.includes(k) && addTool(s, k)) given.push(`a ${k}`);
-  if (!given.length && toolKind(t) && addTool(s, t)) given.push(t); // only tools the game knows (shovel, toolbox, sewing kit...)
+  if (!given.length && toolKind(t) && addTool(s, t)) given.push(t); // tools the game knows (shovel, toolbox, sewing kit...)
+  const thing = t.replace(/^\s*(some|a|an|the|more|my|new)\s+/, '').trim();
+  if (!given.length && thing && !NOT_THINGS.test(thing) && addTool(s, thing)) given.push(thing); // any other thing to make with (clay, wire, wood): it goes with his tools
   return given;
 }

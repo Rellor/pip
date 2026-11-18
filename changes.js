@@ -230,6 +230,15 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-18 clay from Bas',
+    run(s, at) { // he asked for clay for the base of his desk lamp
+      const ask = (s.asks ?? []).find((a) => a.status === 'open' && /clay/i.test(a.item));
+      const given = giveForAsk(s, 'clay');
+      if (ask) Object.assign(ask, { status: 'done', doneAt: at, given });
+      return given.length ? 'Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.' : null;
+    },
+  },
+  {
     id: '2026-11-18 builder: things hold together',
     run(s) { // the new builder (build.js) fixes what he built before: legs reach their tops, and what stands on his shelves sits on the boards as they are now
       const fixed = [];
