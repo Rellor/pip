@@ -1956,3 +1956,9 @@ I want to break down my clay bird project into simpler, workable steps so I can 
 - do (plan the steps of my project Sculpt a tiny clay bird): I need to rewrite my steps for the tiny clay bird since my first sketch attempt didn't work.
 - mood: curious
 
+## 18/11/2026, 10:17:05
+I am working on my clay bird project and want to retry sketching its shape.
+> I am working on my clay bird project and want to retry sketching its shape.
+- do (Sketch the shape of the little bird on a fresh piece of paper with my pencil): I will try sketching the tiny bird again with clearer steps.
+- mood: curious
+
