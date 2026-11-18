@@ -1975,3 +1975,9 @@ I want to improve my workspace by moving the amber reading light to the desk whe
 - do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
 - mood: curious
 
+## 18/11/2026, 10:42:41
+I am moving my amber reading light to the desk so I have better light for reading and writing.
+> I am moving my amber reading light to the desk so I have better light for reading and writing.
+- change_thing (small wooden shelf): I should place my amber reading light closer to where I read and write.
+- mood: curious
+
