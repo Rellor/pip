@@ -2394,3 +2394,9 @@ I am moving the reading light to my desk as I noticed it would be better there.
 - do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
 - mood: focused
 
+## 18/11/2026, 20:02:36
+I want to improve the lighting near my desk so I can see clearly when I write and read.
+> I want to improve the lighting near my desk so I can see clearly when I write and read.
+- do (move the amber reading light closer to the desk): My amber reading light would be better near the desk.
+- mood: focused
+
