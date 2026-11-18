@@ -3,7 +3,7 @@
 // Each problem has: text (what is wrong, plain words), look (where the cause usually is) and debug (the raw facts, to paste
 // to whoever fixes it).
 const HOUR = 3_600_000;
-export const PUSH = ['failing', 'project', 'models', 'needs'];
+export const PUSH = ['failing', 'project', 'models', 'needs', 'pretend']; // pretending a lot is a sign of a loop: Bas hears it too
 export const PUSH_GAP_H = 3; // at most one check-up message every 3 hours (new problems wait and come together)
 // After a message went out: these problems count as sent today.
 export function markSent(saved, items, now = Date.now()) {
@@ -12,7 +12,7 @@ export function markSent(saved, items, now = Date.now()) {
   saved.pushedAt = new Date(now).toISOString();
 }
 const DAY = 24 * HOUR;
-const MOVE_WORDS = { record_song: 'recording a song', change_thing: 'changing something he made', move_thing: 'moving something', decorate: 'making something', draw: 'drawing', make_app: 'making a program', make_clothes: 'sewing', plant: 'planting', cook: 'cooking', eat: 'eating', search_web: 'looking things up', read_book: 'reading', extend_thing: 'adding to something he made', place_picture: 'hanging a picture', use: 'using something' };
+const MOVE_WORDS = { record_song: 'recording a song', change_thing: 'changing something he made', move_thing: 'moving something', decorate: 'making something', draw: 'drawing', make_app: 'making a program', make_clothes: 'sewing', plant: 'planting', cook: 'cooking', eat: 'eating', search_web: 'looking things up', browse: 'browsing the web', read_book: 'reading', extend_thing: 'adding to something he made', place_picture: 'hanging a picture', use: 'using something' };
 // Words that show up in any thought, so they do not count as "the same topic".
 const COMMON = new Set('that this with have want just then from what will some them they need make made making about would could should still more next step steps project projects little small really little first last again before after work working keep going feel feels like into over time today here there when your mine very also been being because finished finish start started trying tried test testing done good back sure right nice well'.split(' '));
 
@@ -63,7 +63,10 @@ export function checkup(s, health = {}, now = Date.now()) {
   // 4. Too much pretending: free "do" steps make nothing.
   const total = Object.values(done).reduce((a, b) => a + b, 0);
   const pretend = (done.do ?? 0) / Math.max(1, total);
-  add('pretend', !(total >= 20 && pretend >= 0.4), 'Real things', total >= 20 && pretend >= 0.4 ? `${done.do} of his ${total} steps today were free "do" steps that make nothing.` : 'Most of his steps really make, grow or learn something.', {
+  const lately = (s.log ?? []).filter((e) => now - Date.parse(e.at) < 3 * HOUR && Date.parse(e.at) <= now);
+  const lateDo = lately.filter((e) => e.action === 'do' && !e.as).length;
+  const loopy = lately.length >= 12 && lateDo / lately.length >= 0.6; // most of the last 3 hours were free "do" steps: a loop
+  add('pretend', !(total >= 20 && pretend >= 0.4) && !loopy, 'Real things', loopy ? `${lateDo} of his last ${lately.length} steps (3 hours) were free "do" steps that make nothing: probably a loop.` : total >= 20 && pretend >= 0.4 ? `${done.do} of his ${total} steps today were free "do" steps that make nothing.` : 'Most of his steps really make, grow or learn something.', {
     look: 'He picks "do" when the real moves he wants are not offered or keep failing. Check which "do" steps he takes: each is a move he is missing.',
     debug: `last "do" steps:\n${(s.log ?? []).filter((e) => e.action === 'do').slice(-5).map((e) => `- ${at(e.at)} ${String(e.what ?? (e.sealed ? '(private)' : e.thought) ?? '').slice(0, 120)}${e.fallback ? ' (after a failure)' : ''}`).join('\n')}`,
   });
@@ -71,8 +74,9 @@ export function checkup(s, health = {}, now = Date.now()) {
   // 5. Needs: hungry with nothing to eat, or an ask waiting for days.
   const food = (s.pantry ?? []).some((p) => p.qty > 0);
   const hungry = Number.isFinite(s.fullness) && s.fullness <= 2 && !food;
+  const notEating = Number.isFinite(s.fullness) && s.fullness <= 1.5 && food; // food there, but he does not eat
   const oldAsk = (s.asks ?? []).find((a) => a.status === 'open' && now - Date.parse(a.since ?? a.at ?? now) > 2 * DAY);
-  add('needs', !hungry && !oldAsk, 'Needs', hungry ? 'He is hungry and has nothing to eat.' : oldAsk ? `He asked for "${oldAsk.item}" more than 2 days ago.` : 'He has food, and no ask is waiting long.', {
+  add('needs', !hungry && !notEating && !oldAsk, 'Needs', hungry ? 'He is hungry and has nothing to eat.' : notEating ? 'He is very hungry, but does not eat (there is food in his pantry).' : oldAsk ? `He asked for "${oldAsk.item}" more than 2 days ago.` : 'He has food, and no ask is waiting long.', {
     look: hungry ? 'He needs seeds and a place to grow, or food from you. Check his garden and pantry in the Pip tab.' : 'Answer the ask in the Asks tab (give it, or say no).',
     debug: `fullness: ${s.fullness}\npantry: ${JSON.stringify(s.pantry ?? [])}\nplots: ${(s.garden?.plots ?? []).length}, seeds: ${JSON.stringify(s.garden?.seeds ?? [])}${oldAsk ? `\nask: ${JSON.stringify(oldAsk)}` : ''}`,
   });
@@ -103,4 +107,27 @@ export function checkup(s, health = {}, now = Date.now()) {
   const sent = Object.fromEntries(Object.entries(health.checkup?.sent ?? {}).filter(([, d]) => d === day));
   const fresh = out.filter((x) => !x.ok && PUSH.includes(x.id) && !sent[x.id]);
   return { items: out, fresh, failures, saved: { at: new Date(now).toISOString(), items: out, failures, sent, pushedAt: health.checkup?.pushedAt ?? null } };
+}
+
+// The day in a few lines, for Bas's phone once an evening: what kind of things he did, what he made and learned, and what
+// went wrong. So a loop or a dull day shows up without anyone having to look.
+const KIND_NAMES = { make: 'making', learn: 'learning', music: 'music', garden: 'garden', food: 'food', rest: 'rest', write: 'writing', people: 'talking', room: 'room', look: 'photos', play: 'free "do"', clothes: 'clothes', walk: 'walking' };
+export function dayReport(s, kindOf, now = Date.now()) {
+  const day = (s.log ?? []).filter((e) => now - Date.parse(e.at) < DAY && Date.parse(e.at) <= now);
+  if (!day.length) return null;
+  const kinds = {};
+  for (const e of day) { const k = e.action === 'do' && !e.as ? 'play' : kindOf(e.as ?? e.action); kinds[k] = (kinds[k] ?? 0) + 1; }
+  const mix = Object.entries(kinds).sort((a, b) => b[1] - a[1]).map(([k, n]) => `${KIND_NAMES[k] ?? k} ${Math.round((n / day.length) * 100)}%`).join(', ');
+  const made = [...new Set(day.filter((e) => !e.failed && ['decorate', 'draw', 'record_song', 'make_app', 'make_clothes', 'cook'].includes(e.action)).map((e) => e.name ?? e.dish).filter(Boolean))].slice(0, 4);
+  const learned = [...new Set(day.filter((e) => !e.failed && ['search_web', 'read_book', 'browse'].includes(e.action)).map((e) => e.opened?.title ?? e.found ?? e.query ?? e.topic).filter((x) => typeof x === 'string'))].slice(0, 4);
+  const failed = day.filter((e) => e.failed).length;
+  const into = (s.curious?.interests ?? []).filter((i) => i.score >= 3).map((i) => i.topic).slice(0, 3);
+  return [
+    `${day.length} steps: ${mix}.`,
+    made.length ? `Made: ${made.join(', ')}.` : 'Made nothing new.',
+    learned.length ? `Learned about: ${learned.join(', ')}.` : 'Did not look anything up.',
+    into.length ? `Into lately: ${into.join(', ')}.` : '',
+    failed ? `${failed} steps did not work.` : '',
+    `Fullness ${Math.round(s.fullness ?? 0)}/10, mood ${s.mood ?? '?'}.`,
+  ].filter(Boolean).join('\n');
 }

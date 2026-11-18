@@ -21,7 +21,7 @@ export const RECENT_MOODS = 5;
 export const KIND = {
   decorate: 'make', change_thing: 'make', extend_thing: 'make', draw: 'make', make_app: 'make', update_app: 'make', make_clothes: 'make', add_use: 'make', blueprint: 'make', make_move: 'make',
   play_piano: 'music', compose: 'music', record_song: 'music',
-  search_web: 'learn', read_book: 'learn', find_picture: 'learn', measure: 'learn', check_light: 'learn',
+  search_web: 'learn', read_book: 'learn', browse: 'learn', find_picture: 'learn', measure: 'learn', check_light: 'learn',
   plant: 'garden', water: 'garden', harvest: 'garden',
   eat: 'food', cook: 'food',
   rest: 'rest',

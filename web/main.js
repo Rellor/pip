@@ -1584,6 +1584,7 @@ function planFor(last) {
     case 'record_song': return HAS_STUDIO ? { at: 'studio_desk', anim: 'mix', song: trackSong(d) } : { at: 'computer', anim: 'write', song: trackSong(d) };
     case 'read_book': return { at: /music|chord|scale|rhythm|melody|harmony|synth|mix|song|instrument|sound|beat|bass|drum/i.test(String(d.topic || '')) ? 'studio_books' : 'bookshelf', anim: 'read' };
     case 'search_web': return { at: 'computer', anim: 'search' };
+    case 'browse': return { at: 'computer', anim: 'search' };
     case 'write_diary': return { at: 'center', anim: 'write' };
     case 'rest': return { at: 'bed', anim: 'rest' };
     case 'ask_for': return { at: 'center', anim: 'ask' };
@@ -2983,7 +2984,7 @@ fitCamera();
 requestAnimationFrame(loop);
 
 // ---------------------------------------------------------------- panel + polling
-const ICON = { record_song: '🎛️', play_piano: '🎶', read_book: '📖', search_web: '🌐', write_diary: '✍️', rest: '💤', ask_for: '🙏', walk_to: '🚶' };
+const ICON = { record_song: '🎛️', play_piano: '🎶', read_book: '📖', search_web: '🌐', browse: '🧭', write_diary: '✍️', rest: '💤', ask_for: '🙏', walk_to: '🚶' };
 function el(tag, text, cls) {
   const e = document.createElement(tag);
   if (text != null) e.textContent = text;
@@ -3374,6 +3375,7 @@ function headlineBase(st) {
   const d = st.details || {};
   switch (st.action) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
+    case 'browse': return ['🧭', 'Browsing the web, to see what he comes across'];
     case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
     case 'record_song': return ['🎛️', `Recording “${d.name || st.name || 'a song'}”`];
     case 'play_piano': return [playedOf(st)[0], `Playing ${playedOf(st)[1]}${d.style ? ` (${d.style})` : ''}`];
@@ -3420,7 +3422,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', play_piano: 'piano', record_song: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', browse: 'read', play_piano: 'piano', record_song: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Music'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
