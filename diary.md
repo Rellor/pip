@@ -1968,3 +1968,10 @@ I am retrying the sketch for my tiny clay bird project so I can get the shape ri
 - do (sketch the tiny clay bird again with light lines): I will try sketching the little bird once more.
 - mood: curious
 
+## 18/11/2026, 10:33:19
+I want to improve my workspace by moving the amber reading light to the desk where I read and write.
+> I want to improve my workspace by moving the amber reading light to the desk where I read and write.
+- move_thing (amber reading light): I will move the reading light to my desk so I have proper light for writing.
+- do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
+- mood: curious
+
