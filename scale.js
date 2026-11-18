@@ -18,7 +18,7 @@ const SIT = /\b(sit|seat|chair|stool|bench|sofa|couch|armchair|pouf)\b/i;
 
 const r3 = (n) => Math.round(n * 1000) / 1000;
 const half = (p) => (p.shape === 'sphere' ? [p.size[0], p.size[0], p.size[0]] : p.shape === 'cylinder' || p.shape === 'cone' ? [p.size[0], (p.size[2] ?? p.size[1]) / 2, p.size[0]] : p.shape === 'torus' ? [p.size[0] + p.size[1], p.size[1], p.size[0] + p.size[1]] : [p.size[0] / 2, (p.size[1] ?? p.size[0]) / 2, (p.size[2] ?? p.size[0]) / 2]);
-function box(parts) {
+export function box(parts) {
   const lo = [Infinity, Infinity, Infinity];
   const hi = [-Infinity, -Infinity, -Infinity];
   for (const p of parts ?? []) {

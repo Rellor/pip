@@ -3,7 +3,8 @@
 // wall. When Pip does not say where a new thing goes, it goes to its right place. He may put it somewhere else (it is his
 // room), but then he notices it would be better elsewhere, and putting it right is offered to him.
 import { placeFor } from './web/lighting.js';
-import { supportsInfo } from './decor.js';
+import { supportsInfo, sizeOf } from './decor.js';
+import { box } from './scale.js';
 
 // Checked in order: the first match wins, so "floor lamp" comes before "lamp".
 const RULES = [
@@ -54,10 +55,26 @@ export function floorSpot(s, spec, rp = rightPlace(spec)) {
   return { near_xz: best.map((v) => Math.round(v * 100) / 100) };
 }
 
+// A small thing (a figure, a model, a little box): it stands on a shelf, a table or the desk, not on the floor.
+export const SMALL_THING = 0.5; // its biggest side in his design (everyday size), in metres
+const smallThing = (spec) => { const b = box(spec?.parts); return Boolean(b) && Math.max(...b.size) < SMALL_THING; };
+// A free top to put a small thing on: the desk if it has room, else one of his shelves or tables (near where it is needed).
+function freeTop(s, rp) {
+  const needs = (rp?.near ?? []).map((w) => spotOf(s, w)).filter(Boolean);
+  const close = (b) => !needs.length || needs.some((n) => Math.hypot(n.x - b.cx, n.z - b.cz) <= 3);
+  const free = supportsInfo(s.decor ?? []).filter((b) => !b.full && !b.high && b.room > 0 && !/^piano$/.test(b.label) && close(b));
+  const pick = free.find((b) => b.label === 'desk') ?? free[0];
+  return pick ? { on: pick.label.replace(/ \(level \d+\)$/, ''), ...(/level (\d+)/.test(pick.label) ? { level: pick.label.match(/level (\d+)/)[1] } : {}) } : null;
+}
 export function designate(s, spec) {
-  const said = ['where', 'on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some((k) => spec?.[k] !== undefined && spec?.[k] !== null && spec?.[k] !== '' && !(k === 'where' && GENERIC.test(String(spec.where))));
+  const given = (k) => spec?.[k] !== undefined && spec?.[k] !== null && spec?.[k] !== '';
+  const said = ['where', 'on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some((k) => given(k) && !(k === 'where' && GENERIC.test(String(spec.where))));
   const rp = rightPlace(spec);
-  if (said) return {};
+  if (said) { // his own choice. Only "where" without an exact spot: the search for room starts at a good spot, not the middle
+    const exact = ['on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some(given);
+    return exact ? {} : floorSpot(s, spec, rp);
+  }
+  if (smallThing(spec) && (!rp || rp.kind === 'surface')) { const top = freeTop(s, rp); if (top) return top; } // small things stand on something
   if (!rp) return { where: 'floor', ...floorSpot(s, spec, null) }; // nothing known about it: a free spot by a wall
   if (rp.kind === 'floor' && !rp.near?.length) return { where: 'floor', ...floorSpot(s, spec, rp) };
   const at = nearestNeed(s, rp);
@@ -88,6 +105,8 @@ export const inTheMiddle = (e) => e?.kind === 'floor' && e.pos && Math.abs(e.pos
 export function misplaced(s, e) {
   if (!e || e.image || e.art || !e.pos) return null;
   const rp = rightPlace(e);
+  const sz = e.kind === 'floor' ? sizeOf(e) : null;
+  if (sz && Math.max(...sz) < SMALL_THING * 1.6 && (!rp || rp.kind !== 'floor')) return { better: 'on a shelf, a table or the desk', why: 'it is small: on the floor it gets lost and is in the way', kind: 'surface', near: null }; // (built 1.6 times bigger)
   if (inTheMiddle(e) && rp?.near?.[0] !== 'middle of the room') { // in the way, wherever else it might go
     const at = nearestNeed(s, rp, [e.pos[0], e.pos[2]]);
     return { better: at ? `near ${at.name}, against a wall` : 'against a wall', why: 'it stands in the middle of the room, in the way where I walk', kind: 'floor', near: at?.name?.replace(/^the /, '') ?? null };

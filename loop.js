@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
 // One long GitHub job that keeps Pip alive: wake him every few minutes, save his state, repeat.
 // Messages from Bas never wake him. He reads them at his next normal wake-up and decides himself if he answers.
@@ -25,13 +26,15 @@ function wakeAndSave() {
   console.error(`[${stamp()}] could not push Pip's state`);
 }
 
+const wakeSoonAt = () => { try { return Date.parse(JSON.parse(readFileSync('web/state.json', 'utf8')).wakeSoon?.at ?? '') || null; } catch { return null; } };
 console.log(`[${stamp()}] Pip's loop starts: a wake-up every ${EVERY_MIN} min for ${LOOP_MIN} min`);
 const start = Date.now();
 let lastWake = 0;
 while ((Date.now() - start) / 60_000 < LOOP_MIN) {
   if (!git('pull', '--rebase', '--autostash', '-q')) git('rebase', '--abort');
-  if ((Date.now() - lastWake) / 60_000 >= EVERY_MIN) {
-    console.log(`[${stamp()}] waking Pip`);
+  const soon = wakeSoonAt(); // something did not work: he wakes early to try another way (retry.js)
+  if ((Date.now() - lastWake) / 60_000 >= EVERY_MIN || (soon && Date.now() >= soon)) {
+    console.log(`[${stamp()}] waking Pip${soon && Date.now() >= soon ? ' early (a second try)' : ''}`);
     wakeAndSave();
     lastWake = Date.now();
   }

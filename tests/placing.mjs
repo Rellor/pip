@@ -20,3 +20,15 @@ const put = makeDecor([], { name: 'odd stool', where: 'floor_middle', parts: box
 assert.ok(middle(put.entry));
 assert.match(misplaced(s, put.entry)?.why ?? '', /middle of the room/);
 console.log('ok  he may put it in the middle himself, and then he notices it is in the way');
+{
+  const t = { decor: [], furniture: {} };
+  const bird = { name: 'tiny clay bird', where: 'floor', parts: [{ shape: 'sphere', size: [0.08], pos: [0, 0.08, 0], rot: [0, 0, 0] }] };
+  const p = designate(t, bird);
+  assert.ok(p.on, `a small thing goes on something: ${JSON.stringify(p)}`);
+  const m = makeDecor(t.decor, { ...bird, ...p }, Date.now());
+  assert.equal(m.entry.kind, 'surface');
+  console.log('ok  a small thing (a figure) goes on a shelf, table or desk, not the floor');
+  const lost = makeDecor([], { name: 'little clay owl', where: 'floor', x: 3, z: -3, parts: bird.parts }, Date.now()).entry;
+  assert.match(misplaced(t, lost)?.why ?? '', /small/);
+  console.log('ok  a small thing he put on the floor himself: he notices');
+}

@@ -22,6 +22,7 @@ import { checkup, markSent, PUSH_GAP_H, words, dayReport } from './checkup.js';
 import { roomScale, placeKind } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
 import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo } from './loops.js';
+import { planRetry, startRetry, retryLines } from './retry.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
@@ -571,7 +572,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
@@ -1225,7 +1226,8 @@ async function wakeUp() {
   state.repeatNote = '';
   // Autopilot or brain: the brain is only woken when something calls for it (autopilot.js).
   const offered = availableMoves(state);
-  const reasons = wakeReasons(state, { unread: unread.length, woke: wokeNow });
+  const retry = startRetry(state); // the early second try after something did not work (retry.js)
+  const reasons = [...(retry ? [`${retry.action.replace(/_/g, ' ')} did not work, so I am up again to try another way`] : []), ...wakeReasons(state, { unread: unread.length, woke: wokeNow })];
   let answer = null;
   let choice = null;
   let via = 'autopilot';
@@ -2022,6 +2024,7 @@ async function wakeUp() {
   noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state));
   const failedNow = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 && x.failed).at(-1);
   if (failedNow) state.plan.lastFail = { at: new Date().toISOString(), why: `${failedNow.action}: ${failedNow.failed}` };
+  { const w = planRetry(state, state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)); if (w) console.log(`⏰ ${w.action} did not work: Pip wakes again at ${w.at.slice(11, 19)} to try another way`); }
   { // the loop breaker: the same choice 3 times with nothing to show rests that move for a while
     const rested = noteChoice(state, choice, gotSomewhere(state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)), state.plan.lastFail?.why);
     if (rested) console.log(`🛑 loop: ${rested.key} chose 3 times with nothing to show; it rests until ${rested.until}`);
