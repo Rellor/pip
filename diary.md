@@ -1950,3 +1950,9 @@ I am working on my current project to sketch and sculpt the tiny clay bird since
 - do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
 - mood: curious
 
+## 18/11/2026, 10:08:50
+I want to break down my clay bird project into simpler, workable steps so I can proceed.
+> I want to break down my clay bird project into simpler, workable steps so I can proceed.
+- do (plan the steps of my project Sculpt a tiny clay bird): I need to rewrite my steps for the tiny clay bird since my first sketch attempt didn't work.
+- mood: curious
+
