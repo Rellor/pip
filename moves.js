@@ -16,6 +16,7 @@ import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from '.
 import { kindOf } from './body.js';
 import { noveltyBoost, roomIsDark, needLampSpots, storageFull, darkLampOff } from './growth.js';
 import { restingMove, tiredOf } from './loops.js';
+import { canBrowse, interests, HOBBY_AT } from './curiosity.js';
 import { lampsOf, lampName, lampNow } from './web/lights.js';
 import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
@@ -106,6 +107,7 @@ export const MOVES = [
   { name: 'play_piano', line: (s) => `${instruments(s).length === 1 ? 'hum or sing a tune' : 'make music'}: {notes like "C4 E4 G4:2 E4:4", instrument: ${instruments(s).join(' or ')}}`, when: (s) => instruments(s).length > 0, score: (s) => 0.8 + s.calm / 10 },
   // --- learning ---
   { name: 'search_web', line: () => 'look something up online: {query}', when: () => true, score: (s) => 0.8 + s.body.curiosity / 3 },
+  { name: 'browse', line: (s) => `browse the web for a while: the game opens something for me (today's news, a page near what I like, or something new): {}`, when: (s, n) => canBrowse(s, n), score: (s) => 0.7 + s.body.curiosity / 3 + s.body.boredom / 6 + (interests(s).length ? 0 : 1) },
   { name: 'read_book', line: () => 'read about something: {topic}', when: () => true, score: (s) => 0.5 + s.body.curiosity / 4 },
   { name: 'find_picture', line: () => 'find a picture of something online: {query}', when: (s, n) => left(s, 'find_picture', n) > 0, score: (s) => 0.3 + s.body.curiosity / 6 },
   // --- garden and food ---
@@ -138,7 +140,7 @@ export const MOVES = [
   { name: 'work_on_project', line: (s) => `work on my project: the game does its next step the right way (${workable(s).slice(0, 2).map((p) => `"${p.title.slice(0, 40)}", next: ${p.steps.find((x) => !x.done).text.slice(0, 40)}`).join('; ')}): {title}`, when: (s) => workable(s).length > 0, score: () => 2.2 },
   { name: 'plan_project', line: (s) => `plan my project ${names(unplanned(s).map((p) => p.title))} in 3 to 5 small steps I can really do with my moves: {title, steps: [3 to 5 short steps]}`, when: (s) => unplanned(s).length > 0, score: () => 4 },
   { name: 'judge_project', line: (s) => `look at my project (${names(working(s).filter((p) => (p.versions ?? []).length).map((p) => p.title))}) and say if I am proud of it. Good enough is fine: a first version that works is done, I can make a new one later: {title, proud: "yes" or "no", why}`, when: (s) => working(s).some((p) => (p.versions ?? []).length && (p.steps ?? []).filter((x) => !x.done).length <= (p.steps ?? []).length / 2), score: (s) => Math.min(5, 0.6 + Math.max(0, ...working(s).map((p) => (p.versions ?? []).length)) * 0.9 + (working(s).some((p) => (p.steps ?? []).length && p.steps.every((x) => x.done)) ? 3 : 0)) },
-  { name: 'start_project', line: () => 'start a project, something to make or learn over days: {title, why, steps: [3 to 6 short steps], needs: [tools it needs, if any]}', when: (s) => working(s).length < 2, score: (s) => 0.5 + s.body.creativity / 5 + (working(s).length ? 0 : 1) },
+  { name: 'start_project', line: () => 'start a project, something to make or learn over days: {title, why, steps: [3 to 6 short steps], needs: [tools it needs, if any]}', when: (s) => working(s).length < 2, score: (s) => 0.5 + s.body.creativity / 5 + (working(s).length ? 0 : 1) + (interests(s).some((i) => i.score >= HOBBY_AT) ? 2 : 0) }, // a hobby calling makes starting one inviting
 ];
 export const MOVE_NAMES = MOVES.map((m) => m.name);
 export const MAKER_MOVES = MOVES.filter((m) => m.maker).map((m) => m.name);

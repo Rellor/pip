@@ -31,3 +31,12 @@ t.recent.moves.push({ move: 'read_book', kind: 'learn' }, { move: 'water', kind:
 t.tired = null;
 assert.equal(tiredOf(t, now), null, 'after other things, making is fine again');
 console.log('ok  after hours of making, he wants something different for an hour');
+
+import { noteChoice, choiceOf, dropRestingDo, restingMove } from '../loops.js';
+const l = { recent: {} };
+const doIt = { moves: [{ move: 'do', details: { what: 'Sculpt the body and wings' } }] };
+for (let i = 0; i < 3; i++) noteChoice(l, choiceOf(doIt), false, 'it made nothing');
+assert.equal(l.resting?.move, 'do');
+assert.equal(restingMove(l), null, '"do" itself stays offered');
+assert.deepEqual(dropRestingDo(l, [{ action: 'do', details: { what: 'Sculpt the body and wings' } }, { action: 'do', details: { what: 'hum' } }]).map((x) => x.details.what), ['hum']);
+console.log('ok  the same pretend step 3 times: that one rests, other "do" steps are fine');

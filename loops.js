@@ -3,14 +3,14 @@
 // A real result: a step that worked and is not a free "do" (a waiting step of a project counts). Plain code, no model.
 export const LOOP_TRIES = 3;
 export const LOOP_REST_H = 2;
-const NEVER = ['do', 'tell', 'rest', 'eat']; // the free move and the needs are never put to rest
+const NEVER = ['tell', 'rest', 'eat']; // "do" counts too, by what he does (the same pretend step 3 times) // the free move and the needs are never put to rest
 
 // The move he chose this time, in a few words: "work_on_project:bake a simple loaf of bread".
 export const choiceOf = (reply) => {
   const m = (Array.isArray(reply?.moves) ? reply.moves : [])[0];
   if (!m?.move) return null;
   const d = m.details ?? {};
-  return { move: String(m.move), key: `${m.move}:${String(d.title ?? d.name ?? d.lamp ?? d.app ?? d.query ?? d.dish ?? '').toLowerCase().trim().slice(0, 40)}` };
+  return { move: String(m.move), key: `${m.move}:${String(d.title ?? d.name ?? d.lamp ?? d.app ?? d.query ?? d.dish ?? d.what ?? '').toLowerCase().trim().slice(0, 40)}` };
 };
 // Did this wake-up's steps (its log entries) really do something?
 export const gotSomewhere = (entries) => entries.some((e) => !e.failed && !e.fallback && (e.action !== 'do' || e.as));
@@ -26,7 +26,14 @@ export function noteChoice(s, choice, ok, why = '', now = Date.now()) {
   s.recent.choices = [];
   return s.resting;
 }
-export const restingMove = (s, now = Date.now()) => (s.resting && Date.parse(s.resting.until) > now ? s.resting.move : null);
+export const restingMove = (s, now = Date.now()) => (s.resting && Date.parse(s.resting.until) > now && s.resting.move !== 'do' ? s.resting.move : null); // "do" stays offered (it is his free move): only the same thing rests
+// A free "do" of the very thing he looped on is left out while it rests (he does it for real, or something else).
+export function dropRestingDo(s, steps, now = Date.now()) {
+  const r = s.resting && Date.parse(s.resting.until) > now && s.resting.move === 'do' ? s.resting.key : null;
+  if (!r) return steps;
+  const same = (st) => st.action === 'do' && !st.as && choiceOf({ moves: [{ move: 'do', details: st.details }] })?.key === r;
+  return steps.filter((st) => !same(st));
+}
 export function restingLines(s, now = Date.now()) {
   if (!restingMove(s, now)) return [];
   return [`I chose "${s.resting.move.replace(/_/g, ' ')}" ${LOOP_TRIES} times in a row and nothing came of it (${s.resting.why}). I leave it for a while and do something else.`];

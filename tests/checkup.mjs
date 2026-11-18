@@ -17,7 +17,7 @@ const off = r.items.filter((x) => !x.ok).map((x) => x.id);
 assert.deepEqual(off, ['circling', 'project', 'failing', 'pretend']);
 assert.match(r.items.find((x) => x.id === 'circling').text, /gears/);
 assert.doesNotMatch(r.items.find((x) => x.id === 'failing').text, /[{[]/, 'no code in the message');
-assert.deepEqual(r.fresh.map((x) => x.id), ['project', 'failing'], 'only problems Bas can act on go to the phone');
+assert.deepEqual(r.fresh.map((x) => x.id), ['project', 'failing', 'pretend'], 'problems Bas can act on go to the phone (pretending a lot is a loop); going in circles only in Settings');
 markSent(r.saved, r.fresh, now);
 assert.equal(checkup(bad, { checkup: r.saved }, now + 600_000).fresh.length, 0, 'the same problems are not sent twice a day');
 

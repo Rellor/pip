@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs';
 
 import { join } from 'node:path';
 import { FURNITURE, MOVABLE } from './web/furniture.js';
-import { fetchWeather, weatherText } from './web/season.js';
+import { fetchWeather, weatherText, amsterdamHour } from './web/season.js';
 import { checkLight, darkNote, lightAt, isLamp } from './web/lighting.js';
 import { redundantWalks, loopRepeating, sameTune, duplicateSearch, agoText } from './habits.js';
 import { ensureGarden, grantGarden, addSeeds, plantSeed, waterPlants, harvestPlant, growthNotes } from './garden.js';
@@ -18,10 +18,11 @@ import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone, realProjectWork } from './projects.js';
-import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
+import { checkup, markSent, PUSH_GAP_H, words, dayReport } from './checkup.js';
 import { roomScale, placeKind } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
-import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines } from './loops.js';
+import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo } from './loops.js';
+import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
 import { bestHits } from './research.js';
@@ -29,7 +30,7 @@ import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud,
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
-import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf } from './body.js';
+import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf, kindOf } from './body.js';
 import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep } from './night.js';
 import { availableMoves, instruments, workable } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply, cookDetails } from './brain.js';
@@ -94,7 +95,7 @@ const ROOM = [
   'bed',
   'a framed photo on the wall above the piano: the Milky Way over a very dark sky full of stars, with two people in silhouette looking up from a railing',
 ];
-const ACTION_NAMES = ['walk_to', 'do', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'browse', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -570,7 +571,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
@@ -1238,7 +1239,7 @@ async function wakeUp() {
       const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
       answer.steps = projectSteps(state, realProjectWork(state, answer.steps)); // pretending to do a project step ("do: sculpt the body") becomes the real step
-      answer.steps = hungerFirst(state, answer.steps, offered);
+      answer.steps = hungerFirst(state, dropRestingDo(state, answer.steps), offered);
       choice = choiceOf(reply); // for the loop breaker
       via = 'brain';
     } catch (e) {
@@ -1839,6 +1840,12 @@ async function wakeUp() {
         const o = st.search?.opened;
         state.notes.push(o ? `Searched "${q}" and read about ${o.title}: ${clip(o.text, 500)}` : `Searched "${q}" but found nothing.`);
       }
+      if (st.action === 'browse') { // he browses: the game opens something, and it leaves a spark (curiosity.js)
+        lookups++;
+        st.browsed = await browse(state, { wiki: wikiGet, read: readArticle });
+        if (st.browsed?.failed) st.made = { failed: st.browsed.failed };
+        else state.notes.push(`Browsing the web I came across ${st.browsed.title}${st.browsed.via ? ` (near ${st.browsed.via})` : ''}: ${clip(st.browsed.text, 300)}`);
+      }
       if (st.action === 'read_book' && st.details.topic) {
         lookups++;
         const topic = String(st.details.topic);
@@ -1849,6 +1856,7 @@ async function wakeUp() {
       console.error('⚠️  lookup:', e.message);
     }
     st.found = st.search?.opened ?? st.read ?? null;
+    if (st.found && ['search_web', 'read_book'].includes(st.action)) noteSpark(state, { topic: st.found.title, text: st.found.text, url: st.found.url, from: st.action === 'search_web' ? 'search' : 'read' });
   }
   state.notes = state.notes.slice(-30);
 
@@ -1872,6 +1880,7 @@ async function wakeUp() {
     const page = (p) => (p ? { title: p.title, url: p.url, text: clip(p.text, 1500) } : null);
     if (st.dupSearch) entry.dup = true;
     if (st.sameTune) entry.sameTune = st.sameTune;
+    if (st.action === 'browse') Object.assign(entry, { topic: st.browsed?.via ?? null, opened: st.browsed?.title ? { title: st.browsed.title, url: st.browsed.url, text: st.browsed.text } : null, failed: st.made?.failed ?? null });
     if (st.action === 'search_web') Object.assign(entry, { query: text(d.query, 160), results: st.search?.results ?? [], opened: page(st.search?.opened) });
     if (st.action === 'read_book') Object.assign(entry, { topic: text(d.topic, 160), opened: page(st.read) });
     if (['search_web', 'read_book'].includes(st.action) && entry.opened) noteResearch(state, { query: entry.query ?? entry.topic, page: entry.opened, at: entry.at, project: st.details?.project ?? st.forStep?.project }); // his notebook
@@ -2046,6 +2055,13 @@ async function wakeUp() {
     for (const st of state.last.steps ?? []) { sealFields(st, ['thought', 'detail']); if (st.details) sealFields(st.details, ['text', 'what', 'query', 'topic']); }
     state.last.private = true;
   }
+  // Curiosity: what caught him (his "spark" answer) grows into interests and hobbies; old interests fade (curiosity.js).
+  fadeInterests(state);
+  if (answer.spark?.topic) {
+    const f = feel(state, answer.spark.topic, answer.spark.how);
+    if (f?.became === 'interest') { addInterest(state, f.topic); addMemory(state, `I am getting into ${f.topic}. I want to know more about it.`, 7, 'memory', new Date().toISOString()); console.log(`   ✨ new interest: ${f.topic}`); }
+    if (f?.became === 'hobby') { addMemory(state, `${f.topic} has become something I love. I could make it a hobby.`, 8, 'memory', new Date().toISOString()); console.log(`   💛 a hobby is calling: ${f.topic}`); }
+  }
   // The check-up (plain code, no model): new problems go to Bas's warning channel, each at most once a day.
   try {
     const c = checkup(state, { checkup: state.checkup });
@@ -2055,6 +2071,12 @@ async function wakeUp() {
       const body = c.fresh.map((x) => `• ${x.label}: ${x.text}`).join('\n') + '\n\nDetails: Settings (⚙) → Check-up.';
       await warn(`Pip check-up: ${c.fresh.length === 1 ? c.fresh[0].label.toLowerCase() : `${c.fresh.length} things`}`, body);
       markSent(c.saved, c.fresh);
+    }
+    const today = dayOf();
+    if (amsterdamHour(new Date()) >= 21 && state.reportDay !== today && !process.env.PIP_FAKE) { // once an evening: his day in a few lines
+      const rep = dayReport(state, kindOf);
+      state.reportDay = today;
+      if (rep) await warn('Pip today', rep, { tags: 'bird' });
     }
     const bad = c.items.filter((x) => !x.ok).map((x) => x.id);
     if (bad.length) console.log(`🩺 check-up: ${bad.join(', ')}`);

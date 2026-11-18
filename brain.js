@@ -39,6 +39,7 @@ export const brainSchema = (names = MOVE_NAMES) => ({
     picture_notes: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: S, about: S } } },
     tasks_answer: { type: 'ARRAY', items: { type: 'OBJECT', properties: { id: S, answer: { type: 'STRING', enum: ['yes', 'no'] }, note: S } } },
     received: { type: 'OBJECT', properties: { tools: SA, seeds: SA, ingredients: SA } },
+    spark: { type: 'OBJECT', nullable: true, properties: { topic: S, how: { type: 'STRING', enum: ['love', 'like', 'meh'] } } },
   },
   required: ['moves', 'reason', 'mood'],
 });
@@ -69,7 +70,7 @@ export function brainPrompt(ctx) {
 If I finished a step of a project, I say which in step_done (project title and step number).
 I write plain and short, in my own words.
 
-Answer in JSON: {"moves": [{"move": "name", "details": {...}, "thought": "a few words"}], "reason": "one or two sentences: why this, now", "mood": "one word", "remember": "something worth remembering, or null"}`);
+Answer in JSON: {"moves": [{"move": "name", "details": {...}, "thought": "a few words"}], "reason": "one or two sentences: why this, now", "mood": "one word", "remember": "something worth remembering, or null", "spark": {"topic": "something I came across or read about", "how": "love, like or meh"} or null}`);
   return parts.join('\n\n');
 }
 
@@ -159,6 +160,7 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
   if (sd?.project && Number.isFinite(Number(sd.step))) answer.projects_update.push({ title: clip(sd.project, 80), step_done: [Number(sd.step)] });
   if (Array.isArray(reply?.picture_notes)) answer.picture_notes = reply.picture_notes;
   if (Array.isArray(reply?.tasks_answer)) answer.tasks_answer = reply.tasks_answer;
+  if (reply?.spark?.topic && reply.spark.how) answer.spark = { topic: clip(reply.spark.topic, 80), how: reply.spark.how };
   answer.tools_add = reply?.received?.tools ?? [];
   answer.seeds_add = reply?.received?.seeds ?? [];
   answer.pantry_add = reply?.received?.ingredients ?? [];
