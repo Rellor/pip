@@ -69,3 +69,9 @@ ok('adding parts: new parts snap on, old parts stay', () => {
   assert.equal(JSON.stringify(m.entry.parts.slice(0, 5)), old);
   assert.ok(r.fixes.length, 'the block came down onto the top');
 });
+ok('a big table says how many it is for; a small one too', async () => {
+  const { capacityText } = await import('../sizes.js');
+  assert.match(capacityText({ name: 'long dining table' }, [4.3, 0.95, 1.9]), /10 of me can sit at it \(4 on each side, 1 at each end\)/);
+  assert.match(capacityText({ name: 'small side table' }, [0.96, 0.95, 0.8]), /about 3 small things fit/);
+  assert.equal(capacityText({ name: 'a vase' }, [0.3, 0.5, 0.3]), '');
+});

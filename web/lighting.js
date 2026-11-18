@@ -43,13 +43,14 @@ export function lightAt(s, x, z, now = Date.now(), o = {}) {
   for (const l of s.decor ?? []) {
     if (!isLamp(l) || !l.pos) continue;
     let on;
-    if (o.lampOverride?.id === l.id) on = o.lampOverride.on;
+    if (o.allOn) on = true; // what his lamps could do: every lamp on, at full strength (its reach counts even when it is off)
+    else if (o.lampOverride?.id === l.id) on = o.lampOverride.on;
     else if (l.auto === 'dark') {
       const lb = base(s, l.pos[0], l.pos[2], ctx);
       on = !s.last?.sleeping && lb.window + lb.roomLamp + lb.ambient < DARK_BELOW;
     } else on = l.timers?.length || l.setAt ? lampNow(l, now).on : litNow(l, now); // timers from his phone
     if (!on) continue;
-    const dim = (lampNow(l, now).level ?? 100) / 100; // dimmed on his phone: less light
+    const dim = o.allOn ? 1 : (lampNow(l, now).level ?? 100) / 100; // dimmed on his phone: less light
     const add = 0.42 * dim * Math.pow(clamp(1 - Math.hypot(x - l.pos[0], z - l.pos[2]) / LAMP_RANGE, 0, 1), 1.1);
     if (add > 0.02) { level += add; helped.push(l.name); }
   }
