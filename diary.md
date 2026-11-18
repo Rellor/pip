@@ -2028,3 +2028,9 @@ I am very hungry and need to eat something simple since my previous cooking atte
 - cook: I am very hungry, let me fix a quick snack with carrots.
 - mood: hungry
 
+## 18/11/2026, 11:49:54
+I want to rewrite the steps for my tiny clay bird project so I can continue making it.
+> I want to rewrite the steps for my tiny clay bird project so I can continue making it.
+- do (plan the steps of my project Sculpt a tiny clay bird): I need to plan the bird project again so I can make it work.
+- mood: focused
+
