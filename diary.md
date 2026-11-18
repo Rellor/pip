@@ -2268,3 +2268,9 @@ I am continuing my clay bird project now that I have shaped the base and have en
 - do (Sculpt the body and wings of the tiny clay bird): I am working on step 2 of my clay bird sculpture.
 - mood: restless
 
+## 18/11/2026, 17:09:44
+I moved my amber reading light to a shelf to clear space on the full desk, and took a small moment to look out at the evening.
+> I moved my amber reading light to a shelf to clear space on the full desk, and took a small moment to look out at the evening.
+- move_thing (amber reading light): I need my desk clear and the reading light closer to my books.
+- mood: restless
+
