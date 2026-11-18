@@ -2008,3 +2008,10 @@ I am hungry so I am making a simple warm broth, and I want to progress with my t
 - do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
 - mood: curious
 
+## 18/11/2026, 11:25:31
+My amber reading light would be better near the desk, so I am moving it there now.
+> My amber reading light would be better near the desk, so I am moving it there now.
+- move_thing (amber reading light): I will move the amber reading light to the desk where I need it.
+- do (stretch up tall and look out of the window for a moment): That did not work out. I shake it off and stretch up tall and look out of the window for a moment.
+- mood: curious
+
