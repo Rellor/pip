@@ -2442,3 +2442,9 @@ I am inspired by the Levantine pottery I read about, so I will sketch it and wri
 - do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
 - mood: curious
 
+## 18/11/2026, 21:07:49
+I removed the oldest picture from the wall to free up space and then wrote in my diary as the night settled in.
+> I removed the oldest picture from the wall to free up space and then wrote in my diary as the night settled in.
+- harvest: I am hungry. Let me pick something.
+- mood: curious
+
