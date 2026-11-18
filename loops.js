@@ -31,3 +31,27 @@ export function restingLines(s, now = Date.now()) {
   if (!restingMove(s, now)) return [];
   return [`I chose "${s.resting.move.replace(/_/g, ' ')}" ${LOOP_TRIES} times in a row and nothing came of it (${s.resting.why}). I leave it for a while and do something else.`];
 }
+
+// Wanting something different: after hours of the same kind of thing (6 of his last 8 moves making things, say), that
+// kind rests for an hour and he feels like something else. Like a person who has worked all afternoon and wants a walk.
+// Eating, resting and the garden never tire him (they are needs).
+export const SAME_KIND_N = 6;
+export const SAME_KIND_OF = 8;
+export const TIRED_H = 1;
+const NEEDS_KINDS = ['food', 'rest', 'garden', 'walk'];
+const KIND_WORDS = { make: 'making things', learn: 'reading and looking things up', music: 'making music', room: 'moving things around my room', play: 'small things that make nothing', look: 'taking pictures', write: 'writing', people: 'talking', clothes: 'my clothes' };
+export function tiredOf(s, now = Date.now()) {
+  if (s.tired && Date.parse(s.tired.until) > now) return s.tired.kind;
+  const last = (s.recent?.moves ?? []).slice(-SAME_KIND_OF);
+  if (last.length < SAME_KIND_OF) return null;
+  const count = {};
+  for (const m of last) count[m.kind] = (count[m.kind] ?? 0) + 1;
+  const [kind, n] = Object.entries(count).sort((a, b) => b[1] - a[1])[0] ?? [];
+  if (!kind || n < SAME_KIND_N || NEEDS_KINDS.includes(kind)) return null;
+  s.tired = { kind, until: new Date(now + TIRED_H * 3_600_000).toISOString() };
+  return kind;
+}
+export function tiredLines(s, now = Date.now()) {
+  const k = s.tired && Date.parse(s.tired.until) > now ? s.tired.kind : null;
+  return k ? [`I have been ${KIND_WORDS[k] ?? k} for hours. My head wants something different for a while: I read or look something up, play music, care for my garden, write in my diary, cook, or talk to someone. I come back to it later with fresh eyes.`] : [];
+}

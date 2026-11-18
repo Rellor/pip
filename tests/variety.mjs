@@ -1,0 +1,33 @@
+// Not only making: pretending a project step makes it real, hunger comes first, and after hours of one kind of thing he wants something else.
+import assert from 'node:assert/strict';
+import { realProjectWork } from '../projects.js';
+import { hungerFirst } from '../food.js';
+import { tiredOf, tiredLines } from '../loops.js';
+import { availableMoves } from '../moves.js';
+import { kindOf } from '../body.js';
+import fs from 'node:fs';
+import { tickBody } from '../body.js';
+const fresh = () => { const s = JSON.parse(fs.readFileSync(new URL('../web/state.json', import.meta.url), 'utf8')); delete s.body; delete s.recent; delete s.today; delete s.plan; delete s.tired; tickBody(s); return s; };
+
+const s = { projects: [{ title: 'Sculpt a tiny clay bird', status: 'working', steps: [{ text: 'Sketch the shape', done: true }, { text: 'Sculpt the body and wings', done: false }] }] };
+const out = realProjectWork(s, [{ action: 'do', details: { what: 'Sculpt the body and wings of the tiny clay bird' } }, { action: 'do', details: { what: 'hum a little tune' } }]);
+assert.deepEqual(out.map((x) => x.action), ['work_on_project', 'do']);
+assert.equal(out[0].details.title, 'Sculpt a tiny clay bird');
+console.log('ok  pretending to do a project step becomes the real step');
+
+const h = { fullness: 1, pantry: [{ name: 'bread', kind: 'ingredient', qty: 2 }, { name: 'soup', kind: 'dish', qty: 1 }] };
+assert.deepEqual(hungerFirst(h, [{ action: 'draw' }], [{ name: 'eat' }]).map((x) => [x.action, x.details?.food]), [['eat', 'soup'], ['draw', undefined]]);
+assert.equal(hungerFirst({ ...h, fullness: 5 }, [{ action: 'draw' }], [{ name: 'eat' }]).length, 1);
+console.log('ok  very hungry with food: he eats first');
+
+const t = fresh();
+const now = Date.now();
+t.recent = { ...t.recent, moves: Array.from({ length: 8 }, (_, i) => ({ move: i % 2 ? 'decorate' : 'change_thing', kind: 'make', at: new Date(now - (8 - i) * 6e5).toISOString() })) };
+assert.equal(tiredOf(t, now), 'make');
+assert.ok(!availableMoves(t, { now }).some((m) => kindOf(m.name) === 'make'), 'no making for a while');
+assert.match(tiredLines(t, now)[0], /something different/);
+assert.equal(tiredOf(t, now + 2 * 3_600_000 + 1), 'make', 'still the same 8 moves: tired again');
+t.recent.moves.push({ move: 'read_book', kind: 'learn' }, { move: 'water', kind: 'garden' }, { move: 'tell', kind: 'people' });
+t.tired = null;
+assert.equal(tiredOf(t, now), null, 'after other things, making is fine again');
+console.log('ok  after hours of making, he wants something different for an hour');

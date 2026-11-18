@@ -15,7 +15,7 @@ import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
 import { kindOf } from './body.js';
 import { noveltyBoost, roomIsDark, needLampSpots, storageFull, darkLampOff } from './growth.js';
-import { restingMove } from './loops.js';
+import { restingMove, tiredOf } from './loops.js';
 import { lampsOf, lampName, lampNow } from './web/lights.js';
 import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
@@ -147,12 +147,13 @@ export const byName = (name) => MOVES.find((m) => m.name === name) ?? null;
 // The moves that make sense now: 6 to 10, best first, each with one line.
 // Repetition lowers a move: each time in his last 15 moves halves it, and 4 or more times today cuts it hard.
 export function availableMoves(s, { now = Date.now(), random = Math.random } = {}) {
+  const tired = tiredOf(s, now); // after hours of one kind of thing, that kind rests for an hour (loops.js)
   const recent = (s.recent?.moves ?? []).map((m) => m.move);
   const recentKinds = (s.recent?.moves ?? []).slice(-5).map((m) => m.kind);
   const scored = [];
   for (const m of MOVES) {
     let ok = false;
-    try { ok = Boolean(m.when(s, now)) && m.name !== restingMove(s, now); } catch { ok = false; } // a move he looped on rests for a while (loops.js)
+    try { ok = Boolean(m.when(s, now)) && m.name !== restingMove(s, now) && !(tired && kindOf(m.name) === tired && !['do', 'tell', 'ask_for'].includes(m.name)); } catch { ok = false; } // a move he looped on rests for a while (loops.js)
     if (!ok) continue;
     let score = m.score(s, now);
     score *= 0.5 ** recent.filter((x) => x === m.name).length;

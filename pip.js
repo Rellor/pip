@@ -17,11 +17,11 @@ import { giveForAsk } from './gifts.js';
 import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
-import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone } from './projects.js';
+import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone, realProjectWork } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words } from './checkup.js';
 import { roomScale, placeKind } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
-import { choiceOf, gotSomewhere, noteChoice, restingLines } from './loops.js';
+import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines } from './loops.js';
 import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
 import { bestHits } from './research.js';
@@ -56,7 +56,7 @@ import { TIMBRES, cleanTracks } from './songs.js';
 import { grantInstruments, instrumentNeeds } from './instruments.js';
 import { moveMusicToStudio, moveMusicBack, keepWindowsClear, HAS_STUDIO } from './web/house.js';
 import { findPicture } from './found.js';
-import { cook, addIngredient, eatFromPantry, mealGain } from './food.js';
+import { cook, addIngredient, eatFromPantry, mealGain, hungerFirst } from './food.js';
 import { makeClothes, wear, takeOff, SLOTS } from './clothes.js';
 const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
@@ -570,7 +570,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew }) {
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...restingLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
@@ -1015,7 +1015,7 @@ function applyInnerLife(s, r, detail, replying = false) {
     if (u?.plan && unplanned && !hit) hit = unplanned; // a plan for a title that matches nothing goes to the project with no steps
     if (!hit) continue;
     if (text(u?.next, 160)) hit.next = text(u.next, 160);
-    if (Array.isArray(u?.steps) && u.steps.length) hit.steps = cleanSteps(u.steps, hit.steps); // he rewrites the plan; steps that stay the same stay done
+    if (Array.isArray(u?.steps) && u.steps.length) { hit.steps = cleanSteps(u.steps, hit.steps); hit.stuck = null; } // he rewrites the plan (steps that stay the same stay done): a new plan is a new try
     for (const k of r._progress === true && Array.isArray(u?.step_done) ? u.step_done : []) {
       const step = typeof k === 'number' ? (hit.steps ?? [])[k - 1] : (hit.steps ?? []).find((x) => sameText(x.text, String(k)));
       if (step) step.done = true;
@@ -1237,7 +1237,8 @@ async function wakeUp() {
       if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, prompt);
       const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
-      answer.steps = projectSteps(state, answer.steps);
+      answer.steps = projectSteps(state, realProjectWork(state, answer.steps)); // pretending to do a project step ("do: sculpt the body") becomes the real step
+      answer.steps = hungerFirst(state, answer.steps, offered);
       choice = choiceOf(reply); // for the loop breaker
       via = 'brain';
     } catch (e) {
