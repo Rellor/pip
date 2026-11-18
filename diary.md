@@ -2345,3 +2345,9 @@ I am continuing my clay bird sculpture by shaping the body and wings.
 - do (Sculpt the body and wings of the tiny clay bird): Working on step 2 of my project
 - mood: focused
 
+## 18/11/2026, 18:56:01
+The basil is fully grown and ready to pick.
+> The basil is fully grown and ready to pick.
+- harvest (basil): My basil is finally ready to harvest.
+- mood: focused
+
