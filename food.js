@@ -95,3 +95,10 @@ export function eatFromPantry(s, food) {
   s.pantry = s.pantry.filter((p) => p.qty > 0 || p.kind === 'ingredient');
   return m.gain;
 }
+
+// Very hungry with food in the pantry: his body takes over and he eats first (like anyone who forgot to eat all day).
+export function hungerFirst(s, steps, offered) {
+  const food = (s.pantry ?? []).filter((p) => p.qty > 0).sort((a, b) => (b.kind === 'dish') - (a.kind === 'dish'))[0];
+  if (!(s.fullness <= 2) || !food || steps.some((x) => x.action === 'eat') || !offered.some((m) => m.name === 'eat')) return steps;
+  return [{ action: 'eat', details: { food: food.name }, thought: 'My tummy is rumbling. I eat something first.', enjoyment: 7 }, ...steps];
+}

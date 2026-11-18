@@ -142,3 +142,15 @@ export function workStep(s, title, ctx = {}) {
   }[route];
   return { ...base, ...d };
 }
+
+// A free "do" that is really the next step of one of his projects ("Sculpt the body and wings") is done for real: the
+// game does the step the right way (work_on_project). Pretending makes nothing, and he would try again and again.
+const wordsOf = (t) => String(t ?? '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter((w) => w.length >= 4);
+export function realProjectWork(s, steps) {
+  return steps.map((st) => {
+    if (st.action !== 'do' || st.as) return st;
+    const what = wordsOf(st.details?.what);
+    const p = (s.projects ?? []).find((x) => x.status === 'working' && (() => { const next = wordsOf((x.steps ?? []).find((y) => !y.done)?.text); return next.length && next.filter((w) => what.includes(w)).length >= Math.min(2, next.length); })());
+    return p ? { ...st, action: 'work_on_project', details: { title: p.title } } : st;
+  });
+}
