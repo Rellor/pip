@@ -1,17 +1,11 @@
 {
-  "mood": "calm",
+  "mood": "curious",
   "energy": 9.5,
   "boredom": 0,
-  "loneliness": 2.61,
+  "loneliness": 2.64,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-18T14:23:23.039Z",
-      "action": "do",
-      "detail": "Sculpt the body and wings of the tiny clay bird",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-18T14:31:34.730Z",
       "action": "do",
@@ -309,6 +303,12 @@
       "action": "search_web",
       "detail": "simple clay pottery techniques",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-18T20:43:19.105Z",
+      "action": "do",
+      "detail": "plan my new project: Shape a clay bowl for my desk",
+      "enjoyment": 7
     }
   ],
   "notes": [
@@ -643,7 +643,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.306,
+      "weight": 7.305,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -652,7 +652,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.346,
+      "weight": 7.345,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -661,7 +661,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.214,
+      "weight": 8.213,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -670,7 +670,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.83,
+      "weight": 7.829,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -679,19 +679,10 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.399,
+      "weight": 6.398,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
-    },
-    {
-      "id": "mmwi8bqyx60",
-      "at": "2026-11-15T19:30:21.128Z",
-      "text": "The music box melody should match the rhythm of the wooden gears.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.948,
-      "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
       "id": "mmwi971rx60",
@@ -699,7 +690,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.429,
+      "weight": 6.428,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -708,7 +699,7 @@
       "text": "Matching the rhythm to the wooden gears makes the music box sound better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.962,
+      "weight": 5.961,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -717,7 +708,7 @@
       "text": "Adding enough sounding notes makes the music box record correctly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.963,
+      "weight": 5.962,
       "lastUsed": "2026-11-16T07:00:24.947Z"
     },
     {
@@ -726,7 +717,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.817,
+      "weight": 8.815,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -735,7 +726,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.55,
+      "weight": 7.549,
       "lastUsed": "2026-11-16T16:11:38.822Z"
     },
     {
@@ -744,7 +735,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.493,
+      "weight": 8.492,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -753,7 +744,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.6,
+      "weight": 6.599,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -762,7 +753,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.405,
+      "weight": 9.403,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -771,7 +762,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.583,
+      "weight": 7.582,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -780,7 +771,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.623,
+      "weight": 6.622,
       "lastUsed": "2026-11-16T20:39:17.012Z"
     },
     {
@@ -789,7 +780,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8.116,
+      "weight": 8.115,
       "lastUsed": "2026-11-18T20:18:45.350Z"
     },
     {
@@ -798,7 +789,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.598,
+      "weight": 7.597,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -807,7 +798,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.179,
+      "weight": 8.178,
       "lastUsed": "2026-11-17T17:53:54.186Z"
     },
     {
@@ -816,7 +807,7 @@
       "text": "I cleared space on my desk by moving the brass lamp to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.269,
+      "weight": 6.268,
       "lastUsed": "2026-11-17T20:12:53.663Z"
     },
     {
@@ -825,7 +816,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.77,
+      "weight": 6.769,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -834,7 +825,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.248,
+      "weight": 8.247,
       "lastUsed": "2026-11-18T09:22:33.280Z"
     },
     {
@@ -843,7 +834,7 @@
       "text": "I want to make a glowing lamp for the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.307,
+      "weight": 6.306,
       "lastUsed": "2026-11-18T09:09:42.390Z"
     },
     {
@@ -852,7 +843,7 @@
       "text": "I searched for how to make a glowing lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.308,
+      "weight": 6.307,
       "lastUsed": "2026-11-18T08:52:33.297Z"
     },
     {
@@ -861,7 +852,7 @@
       "text": "I started shaping the clay base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.312,
+      "weight": 6.311,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -870,7 +861,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.313,
+      "weight": 6.312,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -879,7 +870,7 @@
       "text": "Reading about clay might help with my desk lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.321,
+      "weight": 6.32,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -888,7 +879,7 @@
       "text": "Reading about clay helps when my lamp base steps fail.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.328,
+      "weight": 6.327,
       "lastUsed": "2026-11-18T07:22:53.387Z"
     },
     {
@@ -897,7 +888,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.305,
+      "weight": 8.304,
       "lastUsed": "2026-11-18T20:34:56.605Z"
     },
     {
@@ -906,7 +897,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.396,
+      "weight": 8.395,
       "lastUsed": "2026-11-18T15:04:17.653Z"
     },
     {
@@ -915,7 +906,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.405,
+      "weight": 8.404,
       "lastUsed": "2026-11-18T19:45:01.208Z"
     },
     {
@@ -924,7 +915,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.913,
+      "weight": 6.912,
       "lastUsed": "2026-11-18T09:01:29.550Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -935,7 +926,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.915,
+      "weight": 6.914,
       "lastUsed": "2026-11-18T09:14:20.079Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -946,7 +937,7 @@
       "text": "I started sketching the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.422,
+      "weight": 6.421,
       "lastUsed": "2026-11-18T15:55:23.235Z"
     },
     {
@@ -955,7 +946,7 @@
       "text": "I am retrying the sketch for the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.425,
+      "weight": 6.424,
       "lastUsed": "2026-11-18T16:19:58.391Z"
     },
     {
@@ -964,7 +955,7 @@
       "text": "I am trying a fresh sketch for the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.426,
+      "weight": 6.425,
       "lastUsed": "2026-11-18T16:28:10.038Z"
     },
     {
@@ -973,7 +964,7 @@
       "text": "I am working on step 2 of the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.437,
+      "weight": 6.436,
       "lastUsed": "2026-11-18T18:06:41.104Z"
     },
     {
@@ -982,7 +973,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.938,
+      "weight": 6.937,
       "lastUsed": "2026-11-18T12:07:04.954Z"
     },
     {
@@ -991,7 +982,7 @@
       "text": "I am making good progress on the tiny clay bird sculpture.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.949,
+      "weight": 5.948,
       "lastUsed": "2026-11-18T13:37:29.947Z"
     },
     {
@@ -1000,7 +991,7 @@
       "text": "I took a break from clay to clear my mind with a book.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.953,
+      "weight": 5.952,
       "lastUsed": "2026-11-18T14:12:18.887Z"
     },
     {
@@ -1009,7 +1000,7 @@
       "text": "I took a moment to rest and eat before starting something new.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.957,
+      "weight": 5.956,
       "lastUsed": "2026-11-18T14:48:06.341Z"
     },
     {
@@ -1018,7 +1009,7 @@
       "text": "I am progressing with step 2 of the tiny clay bird sculpture.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.959,
+      "weight": 5.958,
       "lastUsed": "2026-11-18T15:04:47.490Z"
     },
     {
@@ -1027,7 +1018,7 @@
       "text": "I hummed a tune when I felt full of energy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.964,
+      "weight": 5.963,
       "lastUsed": "2026-11-18T15:47:18.608Z"
     },
     {
@@ -1036,7 +1027,7 @@
       "text": "My music got better: I am level 4 now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.965,
+      "weight": 5.964,
       "lastUsed": "2026-11-18T15:47:18.617Z"
     },
     {
@@ -1045,7 +1036,7 @@
       "text": "Taking small breaks helps me stay fresh.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.966,
+      "weight": 5.965,
       "lastUsed": "2026-11-18T16:03:38.901Z"
     },
     {
@@ -1054,7 +1045,7 @@
       "text": "Reading about clay helps when the sculpture feels stuck.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.971,
+      "weight": 5.97,
       "lastUsed": "2026-11-18T16:45:06.786Z"
     },
     {
@@ -1063,7 +1054,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.974,
+      "weight": 5.973,
       "lastUsed": "2026-11-18T17:09:44.006Z"
     },
     {
@@ -1072,7 +1063,7 @@
       "text": "Stepping away for a moment helps me return to my sculpture with fresh eyes.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.978,
       "lastUsed": "2026-11-18T17:50:22.583Z"
     },
     {
@@ -1081,7 +1072,7 @@
       "text": "I played a quiet tune on the evening sounds.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.98,
+      "weight": 5.979,
       "lastUsed": "2026-11-18T17:58:36.789Z"
     },
     {
@@ -1090,7 +1081,7 @@
       "text": "I am shaping the body and wings of the tiny clay bird carefully.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.98,
       "lastUsed": "2026-11-18T18:06:47.634Z"
     },
     {
@@ -1099,7 +1090,7 @@
       "text": "I took a quiet moment to look at the evening sky.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.983,
+      "weight": 5.982,
       "lastUsed": "2026-11-18T18:23:22.492Z"
     },
     {
@@ -1108,7 +1099,7 @@
       "text": "I planned my sculpture project with fresh steps.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.984,
+      "weight": 5.983,
       "lastUsed": "2026-11-18T18:31:33.946Z"
     },
     {
@@ -1117,7 +1108,7 @@
       "text": "I harvested the basil.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.986,
       "lastUsed": "2026-11-18T18:56:01.629Z"
     },
     {
@@ -1126,7 +1117,7 @@
       "text": "I am working on the final details of the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.99,
       "lastUsed": "2026-11-18T19:28:47.205Z"
     },
     {
@@ -1135,7 +1126,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.991,
+      "weight": 7.99,
       "lastUsed": "2026-11-18T19:36:56.738Z"
     },
     {
@@ -1144,7 +1135,7 @@
       "text": "Browsing the web is a good way to find a new hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.992,
       "lastUsed": "2026-11-18T19:45:51.646Z"
     },
     {
@@ -1153,7 +1144,7 @@
       "text": "I need to keep my workspace well lit for writing.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.994,
       "lastUsed": "2026-11-18T20:02:36.921Z"
     },
     {
@@ -1162,7 +1153,7 @@
       "text": "Browsing helps me find new things when I have no current project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-18T20:18:46.978Z"
     },
     {
@@ -1171,31 +1162,32 @@
       "text": "Browsing the web is a good way to stumble on something I might love to make.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-18T20:34:58.916Z"
     },
     {
-      "id": "mmwmkyflc60",
-      "at": "2026-11-18T20:34:59.912Z",
-      "text": "I looked up simple clay pottery techniques",
-      "importance": 3,
+      "id": "mmwml951g60",
+      "at": "2026-11-18T20:43:19.107Z",
+      "text": "Levantine pottery spans from Neolithic times to the present with lime plaster and simple wares.",
+      "importance": 6,
       "kind": "memory",
-      "weight": 2.999,
-      "lastUsed": "2026-11-18T20:34:59.912Z"
+      "weight": 5.999,
+      "lastUsed": "2026-11-18T20:43:19.107Z"
+    },
+    {
+      "id": "mmwml951h60",
+      "at": "2026-11-18T20:43:20.104Z",
+      "text": "plan my new project: Shape a clay bowl for my desk",
+      "importance": 4,
+      "kind": "memory",
+      "weight": 3.999,
+      "lastUsed": "2026-11-18T20:43:20.104Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-17T22:08:14.615Z",
   "thoughts": [
-    {
-      "at": "2026-11-18T16:37:00.162Z",
-      "text": "I decided to move my reading light to the desk as I planned, and then take a short quiet pause by the window.",
-      "short": "I decided to move my reading light to the desk as I planned, and then take a short quiet pause by the window.",
-      "mood": "restless",
-      "action": "move_thing",
-      "detail": "amber reading light"
-    },
     {
       "at": "2026-11-18T16:45:06.786Z",
       "text": "I am feeling restless and want to learn something new about clay before continuing my sculpture project.",
@@ -1427,6 +1419,14 @@
       "mood": "calm",
       "action": "search_web",
       "detail": "simple clay pottery techniques"
+    },
+    {
+      "at": "2026-11-18T20:43:19.107Z",
+      "text": "I finished my lamps and want to start a new clay project inspired by Levantine pottery.",
+      "short": "I finished my lamps and want to start a new clay project inspired by Levantine pottery.",
+      "mood": "curious",
+      "action": "do",
+      "detail": "plan my new project: Shape a clay bowl for my desk"
     }
   ],
   "outbox": [
@@ -1543,15 +1543,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-18T16:53:20.051Z",
-      "action": "do",
-      "thought": "I am working on step 2 of my clay bird.",
-      "move": null,
-      "emoji": "",
-      "what": "Sculpt the body and wings of the tiny clay bird",
-      "feeling": null
-    },
     {
       "at": "2026-11-18T17:01:32.395Z",
       "action": "do",
@@ -1837,6 +1828,16 @@
         "url": "https://en.wikipedia.org/wiki/Levantine_pottery",
         "text": "Levantine pottery draws inspiration from the Ceramic traditions of the Levant. It spans from the Neolithic period to the present. The earliest developments involved lime plaster vessels, simple Neolithic wares, and decorated forms such as the Yarmukian Pottery. The Chalcolithic and Bronze Age are denoted by the introduction of the Potter's wheel, regional variations, and extrinsic influences from Cyprus, Syria, and the Aegean. It produced distinctive wares, such as Khirbet Kerak and Chocolate-on-white.\nWith the emergence of the Iron Age, the pottery work reflected cultural identities, with Philistine, Samaria, Israelite, and Judea traditions, which developed unique styles. In the Classical, Byzantine, and Arab periods, local production persisted alongside imported slipware and new decorative techniques. Many of these traditions still continue to persist in the modern-age Palestinian pottery, which holds forms, clay, and designs that are rooted deeply in ancient practices.\n\nHistoric background\n\nNeolithic period\nThe history of pottery in the region begins in the Late Neolithic period, sometimes known as Pottery Neolithic (PN) or occasionally, based on a supposed local sequence of the site of Jericho, Pottery Neolithic A.\n\nPre-Pottery Neolithic (c. 8300 – c. 5500 BC)\n\n …"
       }
+    },
+    {
+      "at": "2026-11-18T20:43:20.104Z",
+      "action": "do",
+      "thought": "Levantine pottery caught my eye.",
+      "as": "start_project",
+      "move": null,
+      "emoji": "",
+      "what": "plan my new project: Shape a clay bowl for my desk",
+      "feeling": null
     }
   ],
   "decor": [
@@ -4430,6 +4431,20 @@
   ],
   "projects": [
     {
+      "id": "mwml951g",
+      "title": "Shape a clay bowl for my desk",
+      "why": "I want to try shaping some Levantine pottery inspired by what I read.",
+      "next": "",
+      "nextStep": "",
+      "steps": [],
+      "needs": [],
+      "versions": [],
+      "notes": [],
+      "status": "working",
+      "since": "2026-11-18T20:43:19.107Z",
+      "updatedAt": "2026-11-18T20:43:19.107Z"
+    },
+    {
       "id": "mwlxix3m",
       "title": "Sculpt a tiny clay bird",
       "why": "I want to make a small sculpture I can hold in my hand.",
@@ -4972,7 +4987,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-18T20:34:58.912Z",
+    "at": "2026-11-18T20:43:19.104Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -4980,43 +4995,37 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1707,
-      "output": 148,
+      "input": 1727,
+      "output": 252,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I finished my goals for today and want to explore the web to find a spark for a new project.",
-    "inner": "I finished my goals for today and want to explore the web to find a spark for a new project.",
+    "thought": "I finished my lamps and want to start a new clay project inspired by Levantine pottery.",
+    "inner": "I finished my lamps and want to start a new clay project inspired by Levantine pottery.",
     "sent": false,
     "steps": [
       {
-        "action": "search_web",
+        "action": "do",
         "details": {
-          "query": "simple clay pottery techniques"
+          "what": "plan my new project: Shape a clay bowl for my desk"
         },
-        "detail": "simple clay pottery techniques",
-        "thought": "I want to learn something new since my lamp project is done.",
-        "enjoyment": 6,
-        "found": {
-          "title": "Levantine pottery",
-          "text": "Levantine pottery draws inspiration from the Ceramic traditions of the Levant. It spans from the Neolithic period to the present. The earliest developments involved lime plaster vessels, simple Neolithic wares, and decorated forms such as the Yarmukian Pottery. The Chalcolithic and Bronze Age are denoted by the introduction of the Potter's wheel, regional variations, and extrinsic influences from Cyprus, Syria, and the Aegean. It produced distinctive wares, such as Khirbet Kerak and Chocolate-on-white.\nWith the emergence of the Iron Age, the pottery work reflected cultural identities, with Philistine, Samaria, Israelite, and Judea traditions, which developed unique styles. In the Classical, Byzantine, and Arab periods, local production persisted alongside imported slipware and new decorative techniques. Many of these traditions still continue to persist in the modern-age Palestinian pottery, which holds forms, clay, and designs that are rooted deeply in ancient practices.\n\nHistoric background\n\nNeolithic period\nThe history of pottery in the region begins in the Late Neolithic period, sometimes known as Pottery Neolithic (PN) or occasionally, based on a supposed local sequence of the site of Jericho, Pottery Neolithic A.\n\nPre-Pottery Neolithic (c. 8300 – c. 5500 BC)\n\nThere is no good evidence for pottery production in Early Neolithic (Pre-pottery Neolithic/PP) times, but the existence of pyrotechnology that allowed humans to attain temperatures in excess of 1,000 °C (1,830 °F) for reducing limestone to lime to make plaster, indicates a level of technology ripe for the discovery of pottery and its spread. In the PPN period portable vessels of lime plaster, called \"vaisselles blanche\" or \"White Ware\" served some of the functions that pottery later fulfilled. These vessels tended to be rather large and coarse and were somewhat rare.\nThere are some indications that pottery may have been in use in the third and final phase of the Early Neolithic, PPNC (recognized Early Neolithic phases are, beginning with the earliest, PPNA, PPNB, and PPNC); however, such artifacts are rare, their provenance is equivocal and the issue remains in doubt. Approximately sometime in the late 6th millennium BC, pottery was introduced into the southern Levant, and it became widely used. …"
-        },
+        "detail": "plan my new project: Shape a clay bowl for my desk",
+        "thought": "Levantine pottery caught my eye.",
+        "enjoyment": 7,
+        "found": null,
         "made": null
       }
     ],
-    "action": "search_web",
+    "action": "do",
     "details": {
-      "query": "simple clay pottery techniques"
+      "what": "plan my new project: Shape a clay bowl for my desk"
     },
-    "detail": "simple clay pottery techniques",
-    "enjoyment": 6,
+    "detail": "plan my new project: Shape a clay bowl for my desk",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": {
-      "title": "Levantine pottery",
-      "text": "Levantine pottery draws inspiration from the Ceramic traditions of the Levant. It spans from the Neolithic period to the present. The earliest developments involved lime plaster vessels, simple Neolithic wares, and decorated forms such as the Yarmukian Pottery. The Chalcolithic and Bronze Age are denoted by the introduction of the Potter's wheel, regional variations, and extrinsic influences from Cyprus, Syria, and the Aegean. It produced distinctive wares, such as Khirbet Kerak and Chocolate-on-white.\nWith the emergence of the Iron Age, the pottery work reflected cultural identities, with Philistine, Samaria, Israelite, and Judea traditions, which developed unique styles. In the Classical, Byzantine, and Arab periods, local production persisted alongside imported slipware and new decorative techniques. Many of these traditions still continue to persist in the modern-age Palestinian pottery, which holds forms, clay, and designs that are rooted deeply in ancient practices.\n\nHistoric background\n\nNeolithic period\nThe history of pottery in the region begins in the Late Neolithic period, sometimes known as Pottery Neolithic (PN) or occasionally, based on a supposed local sequence of the site of Jericho, Pottery Neolithic A.\n\nPre-Pottery Neolithic (c. 8300 – c. 5500 BC)\n\nThere is no good evidence for pottery production in Early Neolithic (Pre-pottery Neolithic/PP) times, but the existence of pyrotechnology that allowed humans to attain temperatures in excess of 1,000 °C (1,830 °F) for reducing limestone to lime to make plaster, indicates a level of technology ripe for the discovery of pottery and its spread. In the PPN period portable vessels of lime plaster, called \"vaisselles blanche\" or \"White Ware\" served some of the functions that pottery later fulfilled. These vessels tended to be rather large and coarse and were somewhat rare.\nThere are some indications that pottery may have been in use in the third and final phase of the Early Neolithic, PPNC (recognized Early Neolithic phases are, beginning with the earliest, PPNA, PPNB, and PPNC); however, such artifacts are rare, their provenance is equivocal and the issue remains in doubt. Approximately sometime in the late 6th millennium BC, pottery was introduced into the southern Levant, and it became widely used. …"
-    }
+    "found": null
   },
   "furniture": {
     "plant": {
@@ -5093,7 +5102,7 @@
   "quota": {
     "day": "2026-11-18",
     "calls": {
-      "gemini-3.5-flash-lite": 101,
+      "gemini-3.5-flash-lite": 103,
       "gemini-3.8-flash": 15,
       "gemini-3.6-flash": 15,
       "gemini-3.5-flash": 9
@@ -5131,12 +5140,12 @@
     ]
   },
   "weather": {
-    "at": "2026-11-18T20:26:50.919Z",
+    "at": "2026-11-18T20:43:03.093Z",
     "kind": "cloudy",
     "code": 3,
-    "temp": 6.5,
-    "cloud": 0.98,
-    "wind": 0.15666666666666668
+    "temp": 7.2,
+    "cloud": 0.99,
+    "wind": 0.16666666666666666
   },
   "news": {
     "date": "2026-11-18",
@@ -5246,22 +5255,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-18T20:34:59.569Z",
-  "fullness": 4.2,
+  "memoryFadeAt": "2026-11-18T20:43:19.110Z",
+  "fullness": 4.04,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.03,
-  "joy": 3.91,
-  "calm": 5.18,
+  "wonder": 7.32,
+  "joy": 4.21,
+  "calm": 5.14,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.38
+    "excited": 0.83
   },
-  "feelAt": "2026-11-18T20:34:56.576Z",
+  "feelAt": "2026-11-18T20:43:03.003Z",
   "lastAte": "2026-11-18T19:04:08.797Z",
   "studio": {
     "songs": [
@@ -5568,21 +5577,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.24,
-    "curiosity": 0,
+    "creativity": 0,
+    "curiosity": 0.07,
     "boredom": 0,
-    "loneliness": 2.61,
+    "loneliness": 2.64,
     "tidiness": 7.6,
-    "at": "2026-11-18T20:34:56.576Z",
+    "at": "2026-11-18T20:43:03.003Z",
     "coziness": 6.8
   },
   "recent": {
     "moves": [
-      {
-        "move": "harvest",
-        "kind": "garden",
-        "at": "2026-11-18T18:56:01.637Z"
-      },
       {
         "move": "eat",
         "kind": "food",
@@ -5654,22 +5658,21 @@
         "move": "search_web",
         "kind": "learn",
         "at": "2026-11-18T20:34:59.575Z"
+      },
+      {
+        "move": "start_project",
+        "kind": "make",
+        "at": "2026-11-18T20:43:19.116Z"
       }
     ],
     "moods": [
-      "focused",
       "calm",
       "calm",
       "calm",
-      "calm"
+      "calm",
+      "curious"
     ],
     "choices": [
-      {
-        "key": "move_thing:amber reading light",
-        "move": "move_thing",
-        "ok": false,
-        "at": "2026-11-18T19:54:32.007Z"
-      },
       {
         "key": "do:move the amber reading light closer to t",
         "move": "do",
@@ -5699,6 +5702,12 @@
         "move": "search_web",
         "ok": true,
         "at": "2026-11-18T20:34:59.576Z"
+      },
+      {
+        "key": "start_project:shape a clay bowl for my desk",
+        "move": "start_project",
+        "ok": true,
+        "at": "2026-11-18T20:43:19.117Z"
       }
     ]
   },
@@ -5722,7 +5731,8 @@
       "work_on_project": 1,
       "judge_project": 1,
       "browse": 2,
-      "search_web": 1
+      "search_web": 1,
+      "start_project": 1
     },
     "tried": {
       "plan_project": 6,
@@ -5743,10 +5753,11 @@
       "work_on_project": 1,
       "judge_project": 1,
       "browse": 2,
-      "search_web": 1
+      "search_web": 1,
+      "start_project": 1
     },
     "kinds": {
-      "make": 14,
+      "make": 15,
       "music": 4,
       "people": 2,
       "room": 3,
@@ -5758,14 +5769,14 @@
     },
     "moods": {
       "energetic": 28,
-      "curious": 17,
+      "curious": 18,
       "hungry": 4,
       "focused": 34,
       "restless": 9,
       "calm": 4
     },
     "lift": {
-      "do": -11.35,
+      "do": -10.28,
       "play_piano": 1.5,
       "ask_for": 1.8,
       "move_thing": -0.92,
@@ -5816,8 +5827,18 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [],
-    "decidedAt": "2026-11-18T20:34:58.911Z",
+    "queue": [
+      {
+        "action": "do",
+        "details": {
+          "what": "sit by the autumn window at dusk and watch the clouds"
+        },
+        "thought": "It is quiet and good for thinking.",
+        "enjoyment": 6,
+        "needs": ""
+      }
+    ],
+    "decidedAt": "2026-11-18T20:43:19.104Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
@@ -5974,13 +5995,13 @@
     "harvest": 2,
     "phone": 2,
     "make_app": 1,
-    "start_project": 1,
+    "start_project": 2,
     "write_diary": 1,
     "place_picture": 1,
     "browse": 2
   },
   "checkup": {
-    "at": "2026-11-18T20:34:59.577Z",
+    "at": "2026-11-18T20:43:19.118Z",
     "items": [
       {
         "id": "circling",
@@ -6006,9 +6027,9 @@
         "id": "pretend",
         "ok": false,
         "label": "Real things",
-        "text": "57 of his 95 steps today were free \"do\" steps that make nothing.",
+        "text": "57 of his 96 steps today were free \"do\" steps that make nothing.",
         "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
-        "debug": "last \"do\" steps:\n- 19:16 UTC look closely at something in my room I never really looked at (after a failure)\n- 19:28 UTC Let it dry and paint the details (for my project Sculpt a tiny clay bird)\n- 19:36 UTC look closely at my project Sculpt a tiny clay bird\n- 19:58 UTC juggle three imaginary berries (after a failure)\n- 20:02 UTC move the amber reading light closer to the desk"
+        "debug": "last \"do\" steps:\n- 19:28 UTC Let it dry and paint the details (for my project Sculpt a tiny clay bird)\n- 19:36 UTC look closely at my project Sculpt a tiny clay bird\n- 19:58 UTC juggle three imaginary berries (after a failure)\n- 20:02 UTC move the amber reading light closer to the desk\n- 20:43 UTC plan my new project: Shape a clay bowl for my desk"
       },
       {
         "id": "needs",
@@ -9590,7 +9611,7 @@
         "from": "search",
         "via": null,
         "at": "2026-11-18T20:34:59.566Z",
-        "shown": 0
+        "shown": 1
       }
     ],
     "interests": [
