@@ -2134,3 +2134,9 @@ I am working on the next step of my tiny clay bird project.
 - do (look closely at something in my room I never really looked at): That did not work out. I shake it off and look closely at something in my room I never really looked at.
 - mood: focused
 
+## 18/11/2026, 14:12:19
+I am bored of doing the same things and need a fresh spark by reading about something different.
+> I am bored of doing the same things and need a fresh spark by reading about something different.
+- read_book (clay sculpture techniques): I need a fresh perspective away from my usual routine.
+- mood: restless
+
