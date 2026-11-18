@@ -2001,3 +2001,10 @@ I want to set my reading light closer to my desk and continue working on my tiny
 - do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
 - mood: curious
 
+## 18/11/2026, 11:17:25
+I am hungry so I am making a simple warm broth, and I want to progress with my tiny clay bird project by working on the body and wings.
+> I am hungry so I am making a simple warm broth, and I want to progress with my tiny clay bird project by working on the body and wings.
+- decorate (tiny clay bird): I will move on to sculpting the body and wings now.
+- do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
+- mood: curious
+
