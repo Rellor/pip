@@ -1981,3 +1981,9 @@ I am moving my amber reading light to the desk so I have better light for readin
 - change_thing (small wooden shelf): I should place my amber reading light closer to where I read and write.
 - mood: curious
 
+## 18/11/2026, 10:51:24
+I am back to working on my tiny clay bird project after sketching it before.
+> I am back to working on my tiny clay bird project after sketching it before.
+- decorate (tiny clay bird): I will sketch the little bird carefully this time.
+- mood: curious
+
