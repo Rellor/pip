@@ -108,26 +108,28 @@ export function freshLines(s, offered = [], now = Date.now()) {
 import { lightAt, placeFor, isLamp, levelWord } from './web/lighting.js';
 import { handsOn } from './sizes.js';
 const DARK = 0.2;
-export function darkSpots(s, now = Date.now()) {
+export function darkSpots(s, now = Date.now(), o = {}) {
   if (s.last?.sleeping) return [];
   const spots = ['desk', 'bed', 'bookshelf', 'middle of the room'].map((w) => placeFor(s, w)).filter(Boolean);
   for (const d of (s.decor ?? []).filter((x) => handsOn(x) && x.pos)) spots.push({ name: d.name, x: d.pos[0], z: d.pos[2] });
-  return spots.map((p) => ({ name: p.name.replace(/^the /, ''), level: lightAt(s, p.x, p.z, now).level })).filter((p) => p.level < DARK).sort((a, b) => a.level - b.level);
+  return spots.map((p) => ({ name: p.name.replace(/^the /, ''), level: lightAt(s, p.x, p.z, now, o).level, x: p.x, z: p.z })).filter((p) => p.level < DARK).sort((a, b) => a.level - b.level);
 }
-// Enough lamps of his own: then a dark corner is a reason to move one or switch it on, not to make yet another.
-export const ENOUGH_LAMPS = 2;
+// Where a lamp is needed: places that stay dark even with every lamp he has switched on (the game knows how far each
+// lamp reaches, on or off). A dark place that one of his lamps reaches only needs that lamp switched on (or moved), not a new one.
+export const needLampSpots = (s, now = Date.now()) => darkSpots(s, now, { allOn: true });
+export const roomIsDark = (s, now = Date.now()) => needLampSpots(s, now).length > 0;
 const ownLamps = (s) => (s.decor ?? []).filter(isLamp).length;
-export const roomIsDark = (s, now = Date.now()) => ownLamps(s) < ENOUGH_LAMPS && darkSpots(s, now).length >= 2;
 export function darkLines(s, now = Date.now()) {
   const off = s.phone ? darkLampOff(s, now) : null;
   if (off) return [`It is dark at the ${off.spot.name} (${Math.round(off.spot.level * 100)}%), but my ${lampName(off.lamp)} is right there and off: I can switch it on with my phone.`];
-  const dark = darkSpots(s, now);
-  if (dark.length < 2) return [];
-  const lamps = ownLamps(s);
-  const where = dark.slice(0, 3).map((p) => `${p.name} is ${levelWord(p.level)} (${Math.round(p.level * 100)}%)`).join(', ');
-  if (lamps >= ENOUGH_LAMPS) return [`It is dark in my room: ${where}. I have ${lamps} lamps already: I can move one there (move_thing) or switch them on with my phone. I do not need another lamp.`];
+  const need = needLampSpots(s, now);
+  if (!need.length) {
+    const dark = darkSpots(s, now);
+    return dark.length >= 2 ? [`It is dark at the ${dark.slice(0, 2).map((p) => p.name).join(' and ')}, but my lamps reach there: I switch them on with my phone (or brighter). I do not need a new lamp.`] : [];
+  }
+  const where = need.slice(0, 2).map((p) => `the ${p.name}`).join(' and ');
   const research = lookedUpLight(s) ? '' : ' I could first look up how a standing lamp, a reading lamp or a lantern is made (search_web), so mine looks right and really gives light.';
-  return [`It is dark in my room: ${where}. ${lamps ? 'My lamps do not reach there.' : 'I have no lamp of my own yet.'} A lamp I make myself (a part that glows, and a use that does light) would let me see and make it cozy.${research}`];
+  return [`It stays dark at ${where}, even with all my lamps on: ${ownLamps(s) ? 'none of them reaches there' : 'I have no lamp of my own yet'}. A lamp there (a new one, or one of mine moved there) would let me see and make it cozy.${research}`];
 }
 
 // ---- Notebook: what he looked up stays with him, so it helps when he makes something about it (learn, then make).

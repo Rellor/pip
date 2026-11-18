@@ -1,4 +1,4 @@
-import { reachProblem, handsOn, PIP } from './sizes.js';
+import { reachProblem, handsOn, PIP, thingsFit } from './sizes.js';
 import { cleanSong } from './songs.js';
 import { storedUses } from './uses.js';
 import { toolKind } from './tools.js';
@@ -14,7 +14,7 @@ import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pi
 const SHAPES = { box: 3, roundbox: 3, sphere: 1, cylinder: 3, cone: 2, torus: 2, capsule: 2 }; // how many numbers each shape needs
 // Biggest size by kind. Spots with less room (next to a wall, on a small table) have their own smaller `lim`.
 const LIMITS = {
-  floor: { w: 2.6, h: 3.2, d: 2.4 },
+  floor: { w: 4.8, h: 3.2, d: 3.0 }, // a long table for many of him fits
   surface: { w: 1.0, h: 0.9, d: 1.0 }, // on top of furniture
   wall: { w: 2.0, h: 1.6, d: 0.4 }, // flat things on a wall
 };
@@ -1362,7 +1362,7 @@ export function onDeskGear(decor) {
     return g ? { name: o.name, on: g.n } : null;
   }).filter(Boolean);
 }
-export const maxOn = (base) => (base.key === 'desk' ? 2 : Math.max(2, Math.min(6, Math.round(((base.x1 - base.x0) * (base.z1 - base.z0)) / 0.08))));
+export const maxOn = (base) => (base.key === 'desk' ? 2 : thingsFit((base.x1 - base.x0) * (base.z1 - base.z0))); // the same count he is told (sizes.js)
 // Hanging things are not held to his height the same way: he stretches up for a shelf on the wall (up to 2.2 m).
 export const WALL_SHELF_TOP = 2.0;
 export const reachable = (base) => (base.y ?? 0) <= (base.hung ? 2.2 : PIP.reachUp);
