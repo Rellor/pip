@@ -158,7 +158,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (decor.length >= capOf(decor)) return { failed: FULL };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn, ceiling: d.ceiling, next_to: d.next_to, level: d.level, keep: d.keep === true }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, near_xz: d.near_xz, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn, ceiling: d.ceiling, next_to: d.next_to, level: d.level, keep: d.keep === true }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -1535,7 +1535,7 @@ function placeWhereRaw(decor, spec, parts, want, atMs, now) {
     if (!base) return { failed: `he cannot put anything on "${str(onWhat, 40)}": the desk, piano, bookshelf, bed, a thing he made on the floor, or a shelf on the wall (a wall thing with flat boards) will do` };
     return placeOn(decor, spec, parts, base, x !== null && z !== null ? { x, z } : null, atMs, now);
   }
-  const anchor = x !== null && z !== null ? [x, z] : want && ZONES[want].kind === 'floor' && ZONES[want].slots[0] ? [ZONES[want].slots[0][0], ZONES[want].slots[0][2]] : [0, 0];
+  const anchor = x !== null && z !== null ? [x, z] : want && ZONES[want].kind === 'floor' && ZONES[want].slots[0] ? [ZONES[want].slots[0][0], ZONES[want].slots[0][2]] : Array.isArray(spec.near_xz) ? spec.near_xz.map(Number) : [0, 0]; // near_xz: the good spot the game found (placement.js)
   return placeFloor(decor, spec, parts, x !== null && z !== null ? { x, z } : null, anchor, atMs, now);
 }
 

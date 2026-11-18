@@ -1334,7 +1334,7 @@ async function wakeUp() {
         state.decor.push(st.made.entry);
         const promised = st.details.blueprint ? markBuilt(state, st.details.blueprint, new Date(stepStart).toISOString(), st.made.entry) : [];
         const added = ensureBehaviors(st.made.entry);
-        const noSpot = st.made.entry.kind === 'floor' && !st.details.on && !st.details.wall && !st.details.where && !(Number.isFinite(Number(st.details.x)) && Number.isFinite(Number(st.details.z)));
+        const noSpot = st.made.entry.kind === 'floor' && !Object.keys(placed).length && !st.details.on && !st.details.wall && !st.details.where && !(Number.isFinite(Number(st.details.x)) && Number.isFinite(Number(st.details.z)));
         if (noSpot) { // no place given: it would silently stand in the middle. If he said "next to the stove", put it there; otherwise say so
           const said = `${st.details.why || ''} ${st.details.thought || ''} ${st.details.name || ''}`.toLowerCase();
           const m = said.match(/(?:next to|beside|by|near|against|right of|left of)\s+(?:my |the |a )?([a-z][a-z ]{2,30})/);
