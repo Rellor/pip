@@ -2480,3 +2480,9 @@ I am moving my reading light to the desk to make it cozier and more useful.
 - do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
 - mood: energetic
 
+## 18/11/2026, 21:56:35
+I want to plan the steps for my clay bowl project since I finished my lamps and need something new to make.
+> I want to plan the steps for my clay bowl project since I finished my lamps and need something new to make.
+- do (plan the steps for my clay bowl project): I need to plan my clay bowl project now.
+- mood: energetic
+
