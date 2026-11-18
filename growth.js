@@ -114,14 +114,18 @@ export function darkSpots(s, now = Date.now()) {
   for (const d of (s.decor ?? []).filter((x) => handsOn(x) && x.pos)) spots.push({ name: d.name, x: d.pos[0], z: d.pos[2] });
   return spots.map((p) => ({ name: p.name.replace(/^the /, ''), level: lightAt(s, p.x, p.z, now).level })).filter((p) => p.level < DARK).sort((a, b) => a.level - b.level);
 }
-export const roomIsDark = (s, now = Date.now()) => darkSpots(s, now).length >= 2;
+// Enough lamps of his own: then a dark corner is a reason to move one or switch it on, not to make yet another.
+export const ENOUGH_LAMPS = 2;
+const ownLamps = (s) => (s.decor ?? []).filter(isLamp).length;
+export const roomIsDark = (s, now = Date.now()) => ownLamps(s) < ENOUGH_LAMPS && darkSpots(s, now).length >= 2;
 export function darkLines(s, now = Date.now()) {
   const off = s.phone ? darkLampOff(s, now) : null;
   if (off) return [`It is dark at the ${off.spot.name} (${Math.round(off.spot.level * 100)}%), but my ${lampName(off.lamp)} is right there and off: I can switch it on with my phone.`];
   const dark = darkSpots(s, now);
   if (dark.length < 2) return [];
-  const lamps = (s.decor ?? []).filter(isLamp).length;
+  const lamps = ownLamps(s);
   const where = dark.slice(0, 3).map((p) => `${p.name} is ${levelWord(p.level)} (${Math.round(p.level * 100)}%)`).join(', ');
+  if (lamps >= ENOUGH_LAMPS) return [`It is dark in my room: ${where}. I have ${lamps} lamps already: I can move one there (move_thing) or switch them on with my phone. I do not need another lamp.`];
   const research = lookedUpLight(s) ? '' : ' I could first look up how a standing lamp, a reading lamp or a lantern is made (search_web), so mine looks right and really gives light.';
   return [`It is dark in my room: ${where}. ${lamps ? 'My lamps do not reach there.' : 'I have no lamp of my own yet.'} A lamp I make myself (a part that glows, and a use that does light) would let me see and make it cozy.${research}`];
 }
