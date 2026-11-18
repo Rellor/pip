@@ -3488,7 +3488,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3508,9 +3508,10 @@ function dayCard(e) {
     else if (e.results && !e.results.length) card.append(el('p', 'He found nothing.', 'muted'));
   } else if (kind === 'read') {
     card.append(el('h3', e.opened?.title || e.topic || '', 'title'));
-    if (e.topic && e.opened) card.append(el('p', `He wanted to know about “${e.topic}”.`, 'muted'));
-    if (e.opened) card.append(pageBlock(e.opened, 'He read:'));
-    else card.append(el('p', 'He could not find anything to read about this.', 'muted'));
+    if (e.topic && e.opened) card.append(el('p', e.action === 'browse' ? `He came across it while browsing near “${e.topic}”.` : `He wanted to know about “${e.topic}”.`, 'muted'));
+    else if (e.action === 'browse' && e.opened) card.append(el('p', 'He came across it while browsing.', 'muted'));
+    if (e.opened) card.append(pageBlock(e.opened, e.action === 'browse' ? 'He found:' : 'He read:'));
+    else card.append(el('p', e.action === 'browse' ? 'The pages did not load.' : 'He could not find anything to read about this.', 'muted'));
   } else if (kind === 'piano' && e.action === 'record_song') {
     card.append(el('h3', e.name || 'A recording', 'title'));
     if (e.failed) card.append(el('p', `That did not work out: ${humanFail(e.failed)}.`, 'muted'));
