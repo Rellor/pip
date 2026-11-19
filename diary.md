@@ -2498,3 +2498,8 @@ I am in the middle of my clay bowl project and need to plan the steps before I c
 - eat (vegetable soup): My tummy is rumbling. I eat something first.
 - mood: focused
 
+## 19/11/2026, 07:10:27
+I need to plan the steps for my clay bowl project so I can start shaping it.
+- do (plan the steps of my project Shape a clay bowl for my desk): I need to plan the steps for my clay bowl project so I can start shaping it.
+- mood: focused
+
