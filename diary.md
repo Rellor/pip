@@ -2569,3 +2569,9 @@ My amber reading light belongs near my desk so I can read and write comfortably.
 - do (tell my plant what went wrong and how it felt): That did not work out. I shake it off and tell my plant what went wrong and how it felt.
 - mood: focused
 
+## 19/11/2026, 08:42:48
+My desk was too full for the reading light, so I cleared the mug first and then placed the light right where I need it.
+> My desk was too full for the reading light, so I cleared the mug first and then placed the light right where I need it.
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: focused
+
