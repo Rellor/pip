@@ -1,23 +1,11 @@
 {
-  "mood": "determined",
-  "energy": 9.5,
+  "mood": "hungry",
+  "energy": 9,
   "boredom": 0,
-  "loneliness": 2.2,
+  "loneliness": 2.23,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-19T08:23:46.342Z",
-      "action": "do",
-      "detail": "plan the steps of my project Shape a clay bowl for my desk",
-      "enjoyment": 6
-    },
-    {
-      "at": "2026-11-19T08:32:15.375Z",
-      "action": "do",
-      "detail": "plan the steps of my project Shape a clay bowl for my desk",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-19T08:40:30.827Z",
       "action": "move_thing",
@@ -312,6 +300,19 @@
       "at": "2026-11-19T13:40:40.367Z",
       "action": "do",
       "detail": "plan the steps for my autumn window painting project",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-19T13:49:02.847Z",
+      "action": "cook",
+      "detail": "",
+      "enjoyment": 0,
+      "failed": "a dish needs a name and 1 to 4 ingredients"
+    },
+    {
+      "at": "2026-11-19T13:49:02.849Z",
+      "action": "do",
+      "detail": "stomp around the room once, then laugh at myself",
       "enjoyment": 6
     }
   ],
@@ -647,7 +648,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.163,
+      "weight": 7.162,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -656,7 +657,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.203,
+      "weight": 7.202,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -665,7 +666,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.06,
+      "weight": 8.059,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -674,7 +675,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.681,
+      "weight": 7.68,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -683,7 +684,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.269,
+      "weight": 6.268,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -694,7 +695,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.298,
+      "weight": 6.297,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -703,7 +704,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.633,
+      "weight": 8.631,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -712,7 +713,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.404,
+      "weight": 7.403,
       "lastUsed": "2026-11-16T16:11:38.822Z"
     },
     {
@@ -721,7 +722,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.332,
+      "weight": 8.331,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -730,7 +731,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.467,
+      "weight": 6.466,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -739,7 +740,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.686,
+      "weight": 9.684,
       "lastUsed": "2026-11-19T10:48:25.729Z"
     },
     {
@@ -748,7 +749,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.437,
+      "weight": 7.436,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -757,7 +758,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.49,
+      "weight": 6.489,
       "lastUsed": "2026-11-16T20:39:17.012Z"
     },
     {
@@ -766,7 +767,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.963,
+      "weight": 7.962,
       "lastUsed": "2026-11-18T20:18:45.350Z"
     },
     {
@@ -775,7 +776,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.452,
+      "weight": 7.451,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -784,7 +785,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.025,
+      "weight": 8.024,
       "lastUsed": "2026-11-17T17:53:54.186Z"
     },
     {
@@ -793,7 +794,7 @@
       "text": "I cleared space on my desk by moving the brass lamp to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.14,
+      "weight": 6.139,
       "lastUsed": "2026-11-17T20:12:53.663Z"
     },
     {
@@ -802,7 +803,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.634,
+      "weight": 6.633,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -811,7 +812,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.093,
+      "weight": 8.092,
       "lastUsed": "2026-11-18T09:22:33.280Z"
     },
     {
@@ -820,7 +821,7 @@
       "text": "I want to make a glowing lamp for the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.178,
+      "weight": 6.177,
       "lastUsed": "2026-11-18T09:09:42.390Z"
     },
     {
@@ -829,7 +830,7 @@
       "text": "I searched for how to make a glowing lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.179,
+      "weight": 6.178,
       "lastUsed": "2026-11-18T08:52:33.297Z"
     },
     {
@@ -838,7 +839,7 @@
       "text": "I started shaping the clay base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.183,
+      "weight": 6.182,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -847,7 +848,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.677,
+      "weight": 6.676,
       "lastUsed": "2026-11-18T21:23:58.763Z"
     },
     {
@@ -856,7 +857,7 @@
       "text": "Reading about clay might help with my desk lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.192,
+      "weight": 6.191,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -865,7 +866,7 @@
       "text": "Reading about clay helps when my lamp base steps fail.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.198,
+      "weight": 6.197,
       "lastUsed": "2026-11-18T07:22:53.387Z"
     },
     {
@@ -874,7 +875,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.15,
+      "weight": 8.149,
       "lastUsed": "2026-11-18T20:34:56.605Z"
     },
     {
@@ -883,7 +884,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.18,
+      "weight": 9.178,
       "lastUsed": "2026-11-19T07:02:20.333Z"
     },
     {
@@ -892,7 +893,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.71,
+      "weight": 8.708,
       "lastUsed": "2026-11-19T07:02:20.333Z"
     },
     {
@@ -901,7 +902,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.776,
+      "weight": 6.775,
       "lastUsed": "2026-11-18T09:01:29.550Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -912,7 +913,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.778,
+      "weight": 6.777,
       "lastUsed": "2026-11-18T09:14:20.079Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -923,7 +924,7 @@
       "text": "I started sketching the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.291,
+      "weight": 6.29,
       "lastUsed": "2026-11-18T15:55:23.235Z"
     },
     {
@@ -932,7 +933,7 @@
       "text": "I am retrying the sketch for the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.294,
+      "weight": 6.293,
       "lastUsed": "2026-11-18T16:19:58.391Z"
     },
     {
@@ -941,7 +942,7 @@
       "text": "I am trying a fresh sketch for the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.295,
+      "weight": 6.294,
       "lastUsed": "2026-11-18T16:28:10.038Z"
     },
     {
@@ -950,7 +951,7 @@
       "text": "I am working on step 2 of the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.306,
+      "weight": 6.305,
       "lastUsed": "2026-11-18T18:06:41.104Z"
     },
     {
@@ -959,7 +960,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.8,
+      "weight": 6.799,
       "lastUsed": "2026-11-18T12:07:04.954Z"
     },
     {
@@ -968,7 +969,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.343,
+      "weight": 6.342,
       "lastUsed": "2026-11-19T07:02:20.333Z"
     },
     {
@@ -977,7 +978,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.83,
+      "weight": 8.828,
       "lastUsed": "2026-11-19T13:31:47.094Z"
     },
     {
@@ -986,7 +987,7 @@
       "text": "I need to plan the steps for my clay bowl project tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.372,
+      "weight": 6.371,
       "lastUsed": "2026-11-19T07:02:20.333Z"
     },
     {
@@ -995,7 +996,7 @@
       "text": "I should plan the steps for my clay bowl project after I get the clay.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.967,
+      "weight": 5.966,
       "lastUsed": "2026-11-19T09:07:10.143Z"
     },
     {
@@ -1004,7 +1005,7 @@
       "text": "I planned my project for the clay bowl.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.968,
+      "weight": 5.967,
       "lastUsed": "2026-11-19T09:15:16.621Z"
     },
     {
@@ -1013,7 +1014,7 @@
       "text": "I should cook when I feel hungry before starting my next project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.971,
+      "weight": 5.97,
       "lastUsed": "2026-11-19T09:39:42.446Z"
     },
     {
@@ -1022,7 +1023,7 @@
       "text": "I should shape the clay bowl carefully.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.973,
+      "weight": 5.972,
       "lastUsed": "2026-11-19T09:58:03.956Z"
     },
     {
@@ -1031,7 +1032,7 @@
       "text": "My desk is crowded, so creating more storage space is essential before shaping the clay bowl.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.974,
+      "weight": 5.973,
       "lastUsed": "2026-11-19T10:05:36.187Z"
     },
     {
@@ -1040,7 +1041,7 @@
       "text": "I did everything I wanted to do today. It feels good to follow my own plans.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.974,
+      "weight": 5.973,
       "lastUsed": "2026-11-19T10:05:36.189Z"
     },
     {
@@ -1049,7 +1050,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.973,
+      "weight": 7.972,
       "lastUsed": "2026-11-19T10:13:45.490Z"
     },
     {
@@ -1058,7 +1059,7 @@
       "text": "I should work on my painting when I have time.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.976,
+      "weight": 5.975,
       "lastUsed": "2026-11-19T10:21:58.177Z"
     },
     {
@@ -1067,7 +1068,7 @@
       "text": "I decided to browse the web to look for a new hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.978,
       "lastUsed": "2026-11-19T10:40:20.707Z"
     },
     {
@@ -1076,7 +1077,7 @@
       "text": "I learned about reliquaries today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.978,
       "lastUsed": "2026-11-19T10:48:31.926Z"
     },
     {
@@ -1085,7 +1086,7 @@
       "text": "I started working on my autumn window painting.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.98,
+      "weight": 5.979,
       "lastUsed": "2026-11-19T11:02:54.384Z"
     },
     {
@@ -1094,7 +1095,7 @@
       "text": "I need to make room on the walls when trying to hang a new picture.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.981,
       "lastUsed": "2026-11-19T11:04:59.342Z"
     },
     {
@@ -1103,7 +1104,7 @@
       "text": "I should clear space on my desk or use the shelf when I want to move the lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.983,
+      "weight": 5.982,
       "lastUsed": "2026-11-19T11:15:14.896Z"
     },
     {
@@ -1112,7 +1113,7 @@
       "text": "I planned the steps for my autumn window painting project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.984,
+      "weight": 5.983,
       "lastUsed": "2026-11-19T11:31:27.967Z"
     },
     {
@@ -1121,7 +1122,7 @@
       "text": "I want to keep my desk organized by building little stands for my lamps.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.985,
+      "weight": 5.984,
       "lastUsed": "2026-11-19T11:46:30.325Z"
     },
     {
@@ -1130,7 +1131,7 @@
       "text": "I moved the small side table next to the desk to clear the walkway.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.988,
+      "weight": 5.987,
       "lastUsed": "2026-11-19T12:04:47.971Z"
     },
     {
@@ -1139,7 +1140,7 @@
       "text": "I took a photo of the quiet autumn window at dusk.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.989,
+      "weight": 5.988,
       "lastUsed": "2026-11-19T12:15:36.994Z"
     },
     {
@@ -1148,7 +1149,7 @@
       "text": "I paused to watch the dusk settle over the window.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.99,
+      "weight": 5.989,
       "lastUsed": "2026-11-19T12:23:47.286Z"
     },
     {
@@ -1157,7 +1158,7 @@
       "text": "I cleared the wall to make space for my autumn window painting.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.992,
       "lastUsed": "2026-11-19T12:42:12.104Z"
     },
     {
@@ -1166,7 +1167,7 @@
       "text": "I searched for autumn dusk colors to help with my painting.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.994,
       "lastUsed": "2026-11-19T13:07:21.575Z"
     },
     {
@@ -1175,7 +1176,7 @@
       "text": "I tended to my wooden planter box today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-19T13:23:41.964Z"
     },
     {
@@ -1184,7 +1185,7 @@
       "text": "I watered my basil plants.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
+      "weight": 5.997,
       "lastUsed": "2026-11-19T13:32:17.820Z"
     }
   ],
@@ -1192,14 +1193,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-18T22:04:39.754Z",
   "thoughts": [
-    {
-      "at": "2026-11-19T09:58:03.956Z",
-      "text": "I am working on my clay bowl project since I have the clay ready.",
-      "short": "I am working on my clay bowl project since I have the clay ready.",
-      "mood": "hungry",
-      "action": "decorate",
-      "detail": "handmade clay bowl"
-    },
     {
       "at": "2026-11-19T10:05:36.187Z",
       "text": "I need to fix the space issue on my desk by altering the shelf so I can continue with my clay bowl project.",
@@ -1431,6 +1424,14 @@
       "mood": "determined",
       "action": "do",
       "detail": "plan the steps for my autumn window painting project"
+    },
+    {
+      "at": "2026-11-19T13:49:02.850Z",
+      "text": "I am feeling hungry and want to prepare a simple warm dish from my pantry.",
+      "short": "I am feeling hungry and want to prepare a simple warm dish from my pantry.",
+      "mood": "hungry",
+      "action": "cook",
+      "detail": ""
     }
   ],
   "outbox": [
@@ -1547,27 +1548,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-19T10:02:04.949Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🪴",
-      "what": "tell my plant what went wrong and how it felt",
-      "feeling": "calm"
-    },
-    {
-      "at": "2026-11-19T10:05:37.183Z",
-      "action": "change_thing",
-      "thought": "My desk is full, so I need to improve my shelf to make room for my new clay bowl.",
-      "name": "small wooden shelf",
-      "grew": null,
-      "limited": false,
-      "reshaped": true,
-      "place": "on a wall (What stood on it moved along: tiny wooden music box, amber reading light. It is 0.82 x 0.26 m: about 2 small things fit on top.)",
-      "failed": null
-    },
     {
       "at": "2026-11-19T10:13:46.487Z",
       "action": "do",
@@ -1871,6 +1851,24 @@
       "emoji": "",
       "what": "plan the steps for my autumn window painting project",
       "feeling": null
+    },
+    {
+      "at": "2026-11-19T13:49:03.846Z",
+      "action": "cook",
+      "thought": "I wanted to, but a dish needs a name and 1 to 4 ingredients. (I am hungry and need something warm while it rains.)",
+      "dish": "simple warm mug",
+      "ingredients": [],
+      "failed": "a dish needs a name and 1 to 4 ingredients"
+    },
+    {
+      "at": "2026-11-19T13:53:03.846Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and stomp around the room once, then laugh at myself.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🐾",
+      "what": "stomp around the room once, then laugh at myself",
+      "feeling": "joy"
     }
   ],
   "decor": [
@@ -5262,7 +5260,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-19T13:40:40.365Z",
+    "at": "2026-11-19T13:49:02.846Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -5270,35 +5268,50 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1730,
-      "output": 119,
+      "input": 1762,
+      "output": 121,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I want to organize my autumn window painting project by planning out the steps.",
-    "inner": "I want to organize my autumn window painting project by planning out the steps.",
+    "thought": "I am feeling hungry and want to prepare a simple warm dish from my pantry.",
+    "inner": "I am feeling hungry and want to prepare a simple warm dish from my pantry.",
     "sent": false,
     "steps": [
       {
+        "action": "cook",
+        "details": {
+          "dish": "simple warm mug",
+          "ingredients": []
+        },
+        "detail": "",
+        "thought": "I am hungry and need something warm while it rains.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
         "action": "do",
         "details": {
-          "what": "plan the steps for my autumn window painting project"
+          "what": "stomp around the room once, then laugh at myself",
+          "feeling": "joy",
+          "emoji": "🐾"
         },
-        "detail": "plan the steps for my autumn window painting project",
-        "thought": "I need to plan my painting project before I start painting.",
+        "detail": "stomp around the room once, then laugh at myself",
+        "thought": "That did not work out. I shake it off and stomp around the room once, then laugh at myself.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "do",
+    "action": "cook",
     "details": {
-      "what": "plan the steps for my autumn window painting project"
+      "dish": "simple warm mug",
+      "ingredients": []
     },
-    "detail": "plan the steps for my autumn window painting project",
-    "enjoyment": 6,
+    "detail": "",
+    "enjoyment": 0,
     "new_idea": null,
     "found": null
   },
@@ -5377,7 +5390,7 @@
   "quota": {
     "day": "2026-11-19",
     "calls": {
-      "gemini-3.5-flash-lite": 48,
+      "gemini-3.5-flash-lite": 49,
       "gemini-3.8-flash": 10,
       "gemini-3.6-flash": 9,
       "gemini-3.5-flash": 1
@@ -5544,22 +5557,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-19T13:40:40.371Z",
-  "fullness": 3.12,
+  "memoryFadeAt": "2026-11-19T13:49:02.852Z",
+  "fullness": 2.95,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.8,
-  "joy": 4.32,
-  "calm": 5.54,
+  "wonder": 7.74,
+  "joy": 3.92,
+  "calm": 5.62,
   "emo": {
-    "irritated": 0,
+    "irritated": 1.2,
     "sad": 0,
-    "excited": 0.77
+    "excited": 1.96
   },
-  "feelAt": "2026-11-19T13:40:22.873Z",
+  "feelAt": "2026-11-19T13:48:45.843Z",
   "lastAte": "2026-11-19T10:21:58.177Z",
   "studio": {
     "songs": [
@@ -5866,26 +5879,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.25,
-    "curiosity": 0.28,
+    "creativity": 0.33,
+    "curiosity": 0.35,
     "boredom": 0,
-    "loneliness": 2.2,
+    "loneliness": 2.23,
     "tidiness": 7.6,
-    "at": "2026-11-19T13:40:22.873Z",
+    "at": "2026-11-19T13:48:45.843Z",
     "coziness": 6.6
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-19T11:56:41.235Z"
-      },
-      {
-        "move": "move_thing",
-        "kind": "room",
-        "at": "2026-11-19T12:04:47.978Z"
-      },
       {
         "move": "take_photo",
         "kind": "look",
@@ -5951,6 +5954,17 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-19T13:40:40.374Z"
+      },
+      {
+        "move": "cook",
+        "kind": "food",
+        "at": "2026-11-19T13:49:02.855Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-19T13:49:02.856Z"
       }
     ],
     "moods": [
@@ -5958,15 +5972,9 @@
       "determined",
       "determined",
       "determined",
-      "determined"
+      "hungry"
     ],
     "choices": [
-      {
-        "key": "move_thing:amber reading light",
-        "move": "move_thing",
-        "ok": true,
-        "at": "2026-11-19T12:58:56.952Z"
-      },
       {
         "key": "search_web:quiet autumn window dusk colors",
         "move": "search_web",
@@ -5996,6 +6004,12 @@
         "move": "do",
         "ok": false,
         "at": "2026-11-19T13:40:40.375Z"
+      },
+      {
+        "key": "cook:simple warm mug",
+        "move": "cook",
+        "ok": false,
+        "at": "2026-11-19T13:49:02.858Z"
       }
     ]
   },
@@ -6005,7 +6019,7 @@
       "eat": 3,
       "plan_project": 6,
       "water": 2,
-      "do": 25,
+      "do": 26,
       "browse": 4,
       "search_web": 3,
       "ask_for": 1,
@@ -6021,12 +6035,12 @@
       "eat": 3,
       "plan_project": 6,
       "water": 2,
-      "do": 25,
+      "do": 26,
       "browse": 4,
       "move_thing": 6,
       "search_web": 3,
       "ask_for": 1,
-      "cook": 1,
+      "cook": 2,
       "decorate": 2,
       "change_thing": 1,
       "judge_project": 1,
@@ -6039,7 +6053,7 @@
       "food": 4,
       "make": 9,
       "garden": 2,
-      "play": 26,
+      "play": 27,
       "learn": 7,
       "people": 1,
       "room": 2,
@@ -6048,18 +6062,18 @@
     "moods": {
       "focused": 14,
       "curious": 6,
-      "hungry": 3,
+      "hungry": 4,
       "determined": 29
     },
     "lift": {
       "eat": 2.37,
-      "do": 3.26,
+      "do": 3.91,
       "water": 1,
       "browse": -1.5,
       "move_thing": -0.5,
       "search_web": 2.6,
       "ask_for": 1.5,
-      "cook": 2.8,
+      "cook": 3.45,
       "decorate": 1.4,
       "change_thing": 2.3,
       "draw": 1.3,
@@ -6096,7 +6110,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-19T13:40:40.365Z",
+    "decidedAt": "2026-11-19T13:49:02.845Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
@@ -6106,7 +6120,10 @@
       "seeds": 10,
       "visitors": 0
     },
-    "lastFail": null,
+    "lastFail": {
+      "at": "2026-11-19T13:49:02.857Z",
+      "why": "cook: a dish needs a name and 1 to 4 ingredients"
+    },
     "unread": 0
   },
   "fixedAt": {
@@ -6264,7 +6281,7 @@
   "ever": {
     "eat": 21,
     "water": 9,
-    "do": 212,
+    "do": 213,
     "search_web": 11,
     "read_book": 6,
     "record_song": 2,
@@ -6291,7 +6308,7 @@
     "browse": 7
   },
   "checkup": {
-    "at": "2026-11-19T13:40:40.375Z",
+    "at": "2026-11-19T13:49:02.859Z",
     "items": [
       {
         "id": "circling",
@@ -6317,9 +6334,9 @@
         "id": "pretend",
         "ok": false,
         "label": "Real things",
-        "text": "25 of his 52 steps today were free \"do\" steps that make nothing.",
+        "text": "26 of his 53 steps today were free \"do\" steps that make nothing.",
         "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
-        "debug": "last \"do\" steps:\n- 12:31 UTC Plan the steps for my autumn window painting project\n- 12:42 UTC look out of the window for a while\n- 12:50 UTC plan the steps for my autumn window painting project\n- 13:15 UTC plan the steps of my project Paint a quiet autumn window at dusk\n- 13:40 UTC plan the steps for my autumn window painting project"
+        "debug": "last \"do\" steps:\n- 12:42 UTC look out of the window for a while\n- 12:50 UTC plan the steps for my autumn window painting project\n- 13:15 UTC plan the steps of my project Paint a quiet autumn window at dusk\n- 13:40 UTC plan the steps for my autumn window painting project\n- 13:53 UTC stomp around the room once, then laugh at myself (after a failure)"
       },
       {
         "id": "needs",
@@ -6357,6 +6374,15 @@
         ],
         "count": 2,
         "last": "2026-11-19T11:13:06.484Z"
+      },
+      {
+        "move": "cooking",
+        "action": "cook",
+        "reason": "a dish needs a name and 1 to 4 ingredients",
+        "raw": "a dish needs a name and 1 to 4 ingredients",
+        "names": [],
+        "count": 1,
+        "last": "2026-11-19T13:49:03.846Z"
       },
       {
         "move": "making something",
@@ -9079,6 +9105,14 @@
   ],
   "lessons": [
     {
+      "move": "cook",
+      "text": "a dish needs a name and 1 to 4 ingredients",
+      "count": 15,
+      "at": "2026-11-19T13:49:03.846Z",
+      "firstAt": "2026-11-16T20:14:41.324Z",
+      "solvedAt": null
+    },
+    {
       "move": "draw",
       "text": "it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark horizon\", which has hung for 3 days, and the next ",
       "count": 2,
@@ -9117,14 +9151,6 @@
       "at": "2026-11-18T13:12:38.896Z",
       "firstAt": "2026-11-18T13:12:38.896Z",
       "solvedAt": "2026-11-18T18:56:02.625Z"
-    },
-    {
-      "move": "cook",
-      "text": "a dish needs a name and 1 to 4 ingredients",
-      "count": 14,
-      "at": "2026-11-18T11:33:38.202Z",
-      "firstAt": "2026-11-16T20:14:41.324Z",
-      "solvedAt": "2026-11-18T11:41:48.387Z"
     },
     {
       "move": "eat",
@@ -10193,7 +10219,8 @@
     "2026-11-19T11:02:54.391Z",
     "2026-11-19T11:13:05.493Z",
     "2026-11-19T11:46:30.332Z",
-    "2026-11-19T12:40:03.916Z"
+    "2026-11-19T12:40:03.916Z",
+    "2026-11-19T13:49:02.857Z"
   ],
   "retried": {
     "key": "draw:autumn window at dusk with rain",
@@ -10202,5 +10229,13 @@
   "tired": {
     "kind": "play",
     "until": "2026-11-19T09:23:27.490Z"
+  },
+  "wakeSoon": {
+    "at": "2026-11-19T13:50:13.846Z",
+    "key": "cook:simple warm mug",
+    "action": "cook",
+    "name": null,
+    "why": "a dish needs a name and 1 to 4 ingredients",
+    "guide": ""
   }
 }
