@@ -2816,3 +2816,9 @@ I am feeling hungry and want to prepare a simple warm dish from my pantry.
 - do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
 - mood: hungry
 
+## 19/11/2026, 13:51:23
+I am hungry and my previous cooking attempt failed because I missed the dish name and ingredient format. I will try cooking a simple warm drink now.
+> I am hungry and my previous cooking attempt failed because I missed the dish name and ingredient format. I will try cooking a simple warm drink now.
+- cook: I am hungry and need a simple warm drink to keep going.
+- mood: hungry
+
