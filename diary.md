@@ -2581,3 +2581,9 @@ I have been thinking about clay for hours and want to browse the web for a fresh
 - browse: I need a break from clay and want to look at something new.
 - mood: curious
 
+## 19/11/2026, 08:59:03
+I am curious about the Late Neolithic pottery I read about, so I will look it up.
+> I am curious about the Late Neolithic pottery I read about, so I will look it up.
+- search_web (Late Neolithic pottery): I want to look up what I read earlier.
+- mood: curious
+
