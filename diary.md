@@ -2853,3 +2853,9 @@ My walls are full, so I must remove the oldest painting to make space for my aut
 - play_piano (C4 E4 G4 E4 C4:2): I hum a little tune while I think.
 - mood: determined
 
+## 19/11/2026, 14:51:03
+The basil is fully grown and ready, so I am harvesting it first.
+> The basil is fully grown and ready, so I am harvesting it first.
+- harvest (basil): My basil is ready to harvest.
+- mood: determined
+
