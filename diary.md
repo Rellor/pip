@@ -2631,3 +2631,9 @@ I am working on my clay bowl project since I have the clay ready.
 - do (tell my plant what went wrong and how it felt): That did not work out. I shake it off and tell my plant what went wrong and how it felt.
 - mood: hungry
 
+## 19/11/2026, 10:05:36
+I need to fix the space issue on my desk by altering the shelf so I can continue with my clay bowl project.
+> I need to fix the space issue on my desk by altering the shelf so I can continue with my clay bowl project.
+- change_thing (small wooden shelf): My desk is full, so I need to improve my shelf to make room for my new clay bowl.
+- mood: determined
+

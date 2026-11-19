@@ -1,17 +1,11 @@
 {
-  "mood": "hungry",
-  "energy": 9,
+  "mood": "determined",
+  "energy": 9.01,
   "boredom": 0,
-  "loneliness": 1.31,
+  "loneliness": 1.33,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-18T19:28:47.203Z",
-      "action": "do",
-      "detail": "Let it dry and paint the details (for my project Sculpt a tiny clay bird)",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-18T19:36:56.736Z",
       "action": "do",
@@ -310,6 +304,12 @@
       "at": "2026-11-19T09:58:03.955Z",
       "action": "do",
       "detail": "tell my plant what went wrong and how it felt",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-19T10:05:36.184Z",
+      "action": "change_thing",
+      "detail": "small wooden shelf",
       "enjoyment": 6
     }
   ],
@@ -645,7 +645,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.19,
+      "weight": 7.189,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -654,7 +654,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.23,
+      "weight": 7.229,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -663,7 +663,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.088,
+      "weight": 8.087,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -672,7 +672,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.708,
+      "weight": 7.707,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -681,7 +681,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.295,
+      "weight": 6.294,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -692,7 +692,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.324,
+      "weight": 6.323,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -701,7 +701,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.67,
+      "weight": 8.669,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -710,7 +710,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.431,
+      "weight": 7.43,
       "lastUsed": "2026-11-16T16:11:38.822Z"
     },
     {
@@ -719,7 +719,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.362,
+      "weight": 8.361,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -728,7 +728,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.493,
+      "weight": 6.492,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -737,7 +737,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.235,
+      "weight": 9.234,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -746,7 +746,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.464,
+      "weight": 7.463,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -755,7 +755,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.516,
+      "weight": 6.515,
       "lastUsed": "2026-11-16T20:39:17.012Z"
     },
     {
@@ -764,7 +764,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.991,
+      "weight": 7.99,
       "lastUsed": "2026-11-18T20:18:45.350Z"
     },
     {
@@ -773,7 +773,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.479,
+      "weight": 7.478,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -782,7 +782,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.053,
+      "weight": 8.052,
       "lastUsed": "2026-11-17T17:53:54.186Z"
     },
     {
@@ -791,7 +791,7 @@
       "text": "I cleared space on my desk by moving the brass lamp to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.166,
+      "weight": 6.165,
       "lastUsed": "2026-11-17T20:12:53.663Z"
     },
     {
@@ -800,7 +800,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.661,
+      "weight": 6.66,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -809,7 +809,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.121,
+      "weight": 8.12,
       "lastUsed": "2026-11-18T09:22:33.280Z"
     },
     {
@@ -818,7 +818,7 @@
       "text": "I want to make a glowing lamp for the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.204,
+      "weight": 6.203,
       "lastUsed": "2026-11-18T09:09:42.390Z"
     },
     {
@@ -827,7 +827,7 @@
       "text": "I searched for how to make a glowing lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.205,
+      "weight": 6.204,
       "lastUsed": "2026-11-18T08:52:33.297Z"
     },
     {
@@ -836,7 +836,7 @@
       "text": "I started shaping the clay base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.209,
+      "weight": 6.208,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -845,7 +845,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.704,
+      "weight": 6.703,
       "lastUsed": "2026-11-18T21:23:58.763Z"
     },
     {
@@ -854,7 +854,7 @@
       "text": "Reading about clay might help with my desk lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.218,
+      "weight": 6.217,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -863,7 +863,7 @@
       "text": "Reading about clay helps when my lamp base steps fail.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.224,
+      "weight": 6.223,
       "lastUsed": "2026-11-18T07:22:53.387Z"
     },
     {
@@ -872,7 +872,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.178,
+      "weight": 8.177,
       "lastUsed": "2026-11-18T20:34:56.605Z"
     },
     {
@@ -881,7 +881,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.229,
+      "weight": 9.228,
       "lastUsed": "2026-11-19T07:02:20.333Z"
     },
     {
@@ -890,7 +890,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.751,
+      "weight": 8.75,
       "lastUsed": "2026-11-19T07:02:20.333Z"
     },
     {
@@ -899,7 +899,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.803,
+      "weight": 6.802,
       "lastUsed": "2026-11-18T09:01:29.550Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -910,7 +910,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.805,
+      "weight": 6.804,
       "lastUsed": "2026-11-18T09:14:20.079Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -921,7 +921,7 @@
       "text": "I started sketching the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.317,
+      "weight": 6.316,
       "lastUsed": "2026-11-18T15:55:23.235Z"
     },
     {
@@ -930,7 +930,7 @@
       "text": "I am retrying the sketch for the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.32,
+      "weight": 6.319,
       "lastUsed": "2026-11-18T16:19:58.391Z"
     },
     {
@@ -939,7 +939,7 @@
       "text": "I am trying a fresh sketch for the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.321,
+      "weight": 6.32,
       "lastUsed": "2026-11-18T16:28:10.038Z"
     },
     {
@@ -948,7 +948,7 @@
       "text": "I am working on step 2 of the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.332,
+      "weight": 6.331,
       "lastUsed": "2026-11-18T18:06:41.104Z"
     },
     {
@@ -957,17 +957,8 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.827,
+      "weight": 6.826,
       "lastUsed": "2026-11-18T12:07:04.954Z"
-    },
-    {
-      "id": "mmwmcqt0j60",
-      "at": "2026-11-18T16:45:06.786Z",
-      "text": "Reading about clay helps when the sculpture feels stuck.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.872,
-      "lastUsed": "2026-11-18T16:45:06.786Z"
     },
     {
       "id": "mmwmdmguf60",
@@ -975,17 +966,8 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.369,
+      "weight": 6.368,
       "lastUsed": "2026-11-19T07:02:20.333Z"
-    },
-    {
-      "id": "mmwmf2qgo60",
-      "at": "2026-11-18T17:50:22.583Z",
-      "text": "Stepping away for a moment helps me return to my sculpture with fresh eyes.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.879,
-      "lastUsed": "2026-11-18T17:50:22.583Z"
     },
     {
       "id": "mmwmfdbsm60",
@@ -993,7 +975,7 @@
       "text": "I played a quiet tune on the evening sounds.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.88,
+      "weight": 5.879,
       "lastUsed": "2026-11-18T17:58:36.789Z"
     },
     {
@@ -1002,7 +984,7 @@
       "text": "I am shaping the body and wings of the tiny clay bird carefully.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.881,
+      "weight": 5.88,
       "lastUsed": "2026-11-18T18:06:47.634Z"
     },
     {
@@ -1011,7 +993,7 @@
       "text": "I took a quiet moment to look at the evening sky.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.883,
+      "weight": 5.882,
       "lastUsed": "2026-11-18T18:23:22.492Z"
     },
     {
@@ -1020,7 +1002,7 @@
       "text": "I planned my sculpture project with fresh steps.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.884,
+      "weight": 5.883,
       "lastUsed": "2026-11-18T18:31:33.946Z"
     },
     {
@@ -1029,7 +1011,7 @@
       "text": "I harvested the basil.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.887,
+      "weight": 5.886,
       "lastUsed": "2026-11-18T18:56:01.629Z"
     },
     {
@@ -1038,7 +1020,7 @@
       "text": "I am working on the final details of the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.891,
+      "weight": 5.89,
       "lastUsed": "2026-11-18T19:28:47.205Z"
     },
     {
@@ -1047,7 +1029,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.361,
+      "weight": 8.36,
       "lastUsed": "2026-11-19T07:02:20.333Z"
     },
     {
@@ -1056,7 +1038,7 @@
       "text": "Browsing the web is a good way to find a new hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.893,
+      "weight": 5.892,
       "lastUsed": "2026-11-18T19:45:51.646Z"
     },
     {
@@ -1065,7 +1047,7 @@
       "text": "I need to keep my workspace well lit for writing.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.895,
+      "weight": 5.894,
       "lastUsed": "2026-11-18T20:02:36.921Z"
     },
     {
@@ -1074,7 +1056,7 @@
       "text": "Browsing helps me find new things when I have no current project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.897,
+      "weight": 5.896,
       "lastUsed": "2026-11-18T20:18:46.978Z"
     },
     {
@@ -1083,7 +1065,7 @@
       "text": "Browsing the web is a good way to stumble on something I might love to make.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.899,
+      "weight": 5.898,
       "lastUsed": "2026-11-18T20:34:58.916Z"
     },
     {
@@ -1092,7 +1074,7 @@
       "text": "Levantine pottery spans from Neolithic times to the present with lime plaster and simple wares.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.9,
+      "weight": 5.899,
       "lastUsed": "2026-11-18T20:43:19.107Z"
     },
     {
@@ -1101,7 +1083,7 @@
       "text": "Levantine pottery draws inspiration from ancient ceramic traditions spanning from the Neolithic period.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.902,
+      "weight": 5.901,
       "lastUsed": "2026-11-18T20:59:43.979Z"
     },
     {
@@ -1110,7 +1092,7 @@
       "text": "I need to keep an eye on wall space whenever I make new pictures.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.903,
+      "weight": 5.902,
       "lastUsed": "2026-11-18T21:07:49.962Z"
     },
     {
@@ -1119,7 +1101,7 @@
       "text": "I need to plan the steps for my clay bowl project tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.398,
+      "weight": 6.397,
       "lastUsed": "2026-11-19T07:02:20.333Z"
     },
     {
@@ -1128,7 +1110,7 @@
       "text": "Moving the amber reading light to the desk worked well.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.908,
+      "weight": 5.907,
       "lastUsed": "2026-11-18T21:48:29.198Z"
     },
     {
@@ -1137,7 +1119,7 @@
       "text": "I cleared space on the desk and moved the amber reading light closer.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.99,
       "lastUsed": "2026-11-19T08:42:48.143Z"
     },
     {
@@ -1146,7 +1128,7 @@
       "text": "I looked up Late Neolithic pottery to learn more about early ceramics.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.992,
+      "weight": 5.991,
       "lastUsed": "2026-11-19T08:59:03.582Z"
     },
     {
@@ -1155,7 +1137,7 @@
       "text": "I should plan the steps for my clay bowl project after I get the clay.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.992,
       "lastUsed": "2026-11-19T09:07:10.143Z"
     },
     {
@@ -1164,7 +1146,7 @@
       "text": "I planned my project for the clay bowl.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.994,
+      "weight": 5.993,
       "lastUsed": "2026-11-19T09:15:16.621Z"
     },
     {
@@ -1173,7 +1155,7 @@
       "text": "I should cook when I feel hungry before starting my next project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-19T09:39:42.446Z"
     },
     {
@@ -1182,21 +1164,32 @@
       "text": "I should shape the clay bowl carefully.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-19T09:58:03.956Z"
+    },
+    {
+      "id": "mmwndwvuk60",
+      "at": "2026-11-19T10:05:36.187Z",
+      "text": "My desk is crowded, so creating more storage space is essential before shaping the clay bowl.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.999,
+      "lastUsed": "2026-11-19T10:05:36.187Z"
+    },
+    {
+      "id": "mmwndwvum60",
+      "at": "2026-11-19T10:05:36.189Z",
+      "text": "I did everything I wanted to do today. It feels good to follow my own plans.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.999,
+      "lastUsed": "2026-11-19T10:05:36.189Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-18T22:04:39.754Z",
   "thoughts": [
-    {
-      "at": "2026-11-18T21:07:49.962Z",
-      "text": "I removed the oldest picture from the wall to free up space and then wrote in my diary as the night settled in.",
-      "short": "I removed the oldest picture from the wall to free up space and then wrote in my diary as the night settled in.",
-      "mood": "curious",
-      "action": "harvest"
-    },
     {
       "at": "2026-11-18T21:15:55.264Z",
       "text": "It is late at night and time for my habit of writing in my diary before resting.",
@@ -1428,6 +1421,14 @@
       "mood": "hungry",
       "action": "decorate",
       "detail": "handmade clay bowl"
+    },
+    {
+      "at": "2026-11-19T10:05:36.187Z",
+      "text": "I need to fix the space issue on my desk by altering the shelf so I can continue with my clay bowl project.",
+      "short": "I need to fix the space issue on my desk by altering the shelf so I can continue with my clay bowl project.",
+      "mood": "determined",
+      "action": "change_thing",
+      "detail": "small wooden shelf"
     }
   ],
   "outbox": [
@@ -1544,16 +1545,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-18T21:32:06.427Z",
-      "action": "do",
-      "thought": "I need to plan the steps for my clay bowl project.",
-      "as": "plan_project",
-      "move": null,
-      "emoji": "",
-      "what": "plan the steps of my project Shape a clay bowl for my desk",
-      "feeling": null
-    },
     {
       "at": "2026-11-18T21:40:25.032Z",
       "action": "browse",
@@ -1844,13 +1835,24 @@
       "emoji": "🪴",
       "what": "tell my plant what went wrong and how it felt",
       "feeling": "calm"
+    },
+    {
+      "at": "2026-11-19T10:05:37.183Z",
+      "action": "change_thing",
+      "thought": "My desk is full, so I need to improve my shelf to make room for my new clay bowl.",
+      "name": "small wooden shelf",
+      "grew": null,
+      "limited": false,
+      "reshaped": true,
+      "place": "on a wall (What stood on it moved along: tiny wooden music box, amber reading light. It is 0.82 x 0.26 m: about 2 small things fit on top.)",
+      "failed": null
     }
   ],
   "decor": [
     {
       "id": "dmwho1mim0av",
       "name": "small wooden shelf",
-      "why": "I am adding rear support rails and wall support joints to my small wooden shelf so everything sits neatly and holds strong.",
+      "why": "I wanted my shelf to feel complete and well-crafted. I added a gentle crown molding along the top, a warm back panel to steady it against the wall, and a lower peg rail with three turned wooden knobs ",
       "project": "",
       "song": null,
       "uses": [
@@ -1890,7 +1892,7 @@
           ],
           "pos": [
             0,
-            -0.335,
+            -0.345,
             0.13
           ],
           "rot": [
@@ -1910,7 +1912,7 @@
           ],
           "pos": [
             0,
-            0.045,
+            0.035,
             0.13
           ],
           "rot": [
@@ -1930,7 +1932,7 @@
           ],
           "pos": [
             -0.38,
-            0.045,
+            0.035,
             0.13
           ],
           "rot": [
@@ -1950,7 +1952,7 @@
           ],
           "pos": [
             0.38,
-            0.045,
+            0.035,
             0.13
           ],
           "rot": [
@@ -1970,7 +1972,7 @@
           ],
           "pos": [
             0,
-            0.445,
+            0.435,
             0.13
           ],
           "rot": [
@@ -1990,7 +1992,7 @@
           ],
           "pos": [
             0,
-            0.085,
+            0.075,
             0.01
           ],
           "rot": [
@@ -2010,7 +2012,7 @@
           ],
           "pos": [
             0,
-            -0.295,
+            -0.305,
             0.01
           ],
           "rot": [
@@ -2030,7 +2032,7 @@
           ],
           "pos": [
             -0.38,
-            -0.395,
+            -0.405,
             0.06
           ],
           "rot": [
@@ -2050,7 +2052,7 @@
           ],
           "pos": [
             0.38,
-            -0.395,
+            -0.405,
             0.06
           ],
           "rot": [
@@ -2059,6 +2061,180 @@
             0
           ],
           "color": "#442a18",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.82,
+            0.03,
+            0.24
+          ],
+          "pos": [
+            0,
+            0.45,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.76,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.045,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#663d1e",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.05,
+            0.03
+          ],
+          "pos": [
+            0,
+            -0.405,
+            0.04
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#704322",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.06
+          ],
+          "pos": [
+            -0.22,
+            -0.405,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.06
+          ],
+          "pos": [
+            0,
+            -0.405,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.06
+          ],
+          "pos": [
+            0.22,
+            -0.405,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            -0.22,
+            -0.405,
+            0.1
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0,
+            -0.405,
+            0.1
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.22,
+            -0.405,
+            0.1
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0693b",
           "glow": false
         }
       ],
@@ -2070,8 +2246,8 @@
       "createdAt": "2026-11-16T19:50:03.872Z",
       "roomScaled": true,
       "movedAt": "2026-11-17T07:55:21.242Z",
-      "updatedAt": "2026-11-18T10:42:47.861Z",
-      "changedAt": "2026-11-18T10:42:47.861Z"
+      "updatedAt": "2026-11-19T10:05:42.183Z",
+      "changedAt": "2026-11-19T10:05:42.183Z"
     },
     {
       "id": "dmwhq79zv1u2",
@@ -2341,7 +2517,7 @@
       "kind": "surface",
       "pos": [
         -4.855,
-        2.155,
+        2.145,
         -2.93
       ],
       "rotY": 1.5707963267948966,
@@ -2633,7 +2809,7 @@
       "createdAt": "2026-11-15T18:00:45.220Z",
       "roomScaled": true,
       "movedAt": "2026-11-17T17:29:45.624Z",
-      "updatedAt": "2026-11-18T10:42:47.861Z"
+      "updatedAt": "2026-11-19T10:05:42.183Z"
     },
     {
       "id": "dmwjdl6oz3o6",
@@ -3467,7 +3643,7 @@
       "kind": "surface",
       "pos": [
         -4.84,
-        2.155,
+        2.145,
         -3.15
       ],
       "rotY": 1.5707963267948966,
@@ -3577,7 +3753,7 @@
       "createdAt": "2026-11-16T19:25:17.163Z",
       "roomScaled": true,
       "movedAt": "2026-11-18T17:09:50.001Z",
-      "updatedAt": "2026-11-18T17:09:50.001Z",
+      "updatedAt": "2026-11-19T10:05:42.183Z",
       "lit": true,
       "color": "#ffb732",
       "level": 75,
@@ -4444,11 +4620,19 @@
       "nextStep": "",
       "steps": [],
       "needs": [],
-      "versions": [],
+      "versions": [
+        {
+          "v": 1,
+          "kind": "change_thing",
+          "name": "small wooden shelf",
+          "ref": "dmwho1mim0av",
+          "at": "2026-11-19T10:05:36.195Z"
+        }
+      ],
       "notes": [],
       "status": "working",
       "since": "2026-11-18T20:43:19.107Z",
-      "updatedAt": "2026-11-18T20:43:19.107Z"
+      "updatedAt": "2026-11-19T10:05:36.195Z"
     },
     {
       "id": "mwlxix3m",
@@ -5005,474 +5189,622 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-19T09:58:03.949Z",
+    "at": "2026-11-19T10:05:36.183Z",
     "via": "brain",
-    "model": "gemini-3.5-flash",
+    "model": "gemini-3.8-flash",
     "models": {
       "gemini-3.5-flash-lite": 1,
-      "gemini-3.5-flash": 1
+      "gemini-3.8-flash": 1
     },
-    "modelNotes": [
-      "gemini-3.5-flash answered (gemini-3.8-flash was busy or capped)"
-    ],
-    "fallback": true,
     "tokens": {
       "calls": 2,
-      "input": 10060,
-      "output": 2831,
+      "input": 7107,
+      "output": 5376,
       "models": {
         "gemini-3.5-flash-lite": 1,
-        "gemini-3.5-flash": 1
+        "gemini-3.8-flash": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am working on my clay bowl project since I have the clay ready.",
-    "inner": "I am working on my clay bowl project since I have the clay ready.",
+    "thought": "I need to fix the space issue on my desk by altering the shelf so I can continue with my clay bowl project.",
+    "inner": "I need to fix the space issue on my desk by altering the shelf so I can continue with my clay bowl project.",
     "sent": false,
     "steps": [
       {
-        "action": "decorate",
+        "action": "change_thing",
         "details": {
-          "what": "shape the clay bowl",
-          "why": "To finish my clay bowl project for my desk, shaping warm earthenware with decorative rings and small handles.",
-          "name": "handmade clay bowl",
-          "where": "on the desk",
+          "name": "small wooden shelf",
+          "project": "Shape a clay bowl for my desk",
           "parts": [
             {
-              "shape": "cylinder",
+              "shape": "roundbox",
               "size": [
-                0.09,
-                0.09,
-                0.02
-              ],
-              "pos": [
-                0,
-                0.01,
-                0
-              ],
-              "color": "#8a5238",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.12,
-                0.09,
-                0.04
-              ],
-              "pos": [
-                0,
+                0.8,
                 0.04,
-                0
-              ],
-              "color": "#9e5d3f",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.14,
-                0.12,
-                0.05
+                0.25
               ],
               "pos": [
                 0,
-                0.085,
-                0
+                -0.33,
+                0.13
               ],
-              "color": "#a86546",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.145,
-                0.14,
-                0.03
-              ],
-              "pos": [
-                0,
-                0.125,
-                0
-              ],
-              "color": "#b56f4d",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.125,
-                0.1,
-                0.07
-              ],
-              "pos": [
-                0,
-                0.095,
-                0
-              ],
-              "color": "#6d3e26",
-              "glow": false
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.138,
-                0.008
-              ],
-              "pos": [
-                0,
-                0.08,
-                0
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#d2906b",
-              "glow": false
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.142,
-                0.006
-              ],
-              "pos": [
-                0,
-                0.1,
-                0
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#523120",
-              "glow": false
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.03,
-                0.008
-              ],
-              "pos": [
-                -0.14,
-                0.09,
-                0
-              ],
-              "rot": [
-                0,
-                0,
-                90
-              ],
-              "color": "#9e5d3f",
-              "glow": false
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.03,
-                0.008
-              ],
-              "pos": [
-                0.14,
-                0.09,
-                0
-              ],
-              "rot": [
-                0,
-                0,
-                90
-              ],
-              "color": "#9e5d3f",
+              "color": "#8b5a2b",
               "glow": false
             },
             {
               "shape": "roundbox",
               "size": [
+                0.8,
                 0.04,
-                0.025,
+                0.25
+              ],
+              "pos": [
+                0,
+                0.05,
+                0.13
+              ],
+              "color": "#8b5a2b",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.8,
+                0.22
+              ],
+              "pos": [
+                -0.38,
+                0.05,
+                0.13
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.8,
+                0.22
+              ],
+              "pos": [
+                0.38,
+                0.05,
+                0.13
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.76,
+                0.02,
+                0.22
+              ],
+              "pos": [
+                0,
+                0.45,
+                0.13
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.72,
+                0.05,
+                0.02
+              ],
+              "pos": [
+                0,
+                0.09,
+                0.01
+              ],
+              "color": "#704322",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.72,
+                0.05,
+                0.02
+              ],
+              "pos": [
+                0,
+                -0.29,
+                0.01
+              ],
+              "color": "#704322",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.12,
+                0.12
+              ],
+              "pos": [
+                -0.38,
+                -0.39,
+                0.06
+              ],
+              "color": "#442a18",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.12,
+                0.12
+              ],
+              "pos": [
+                0.38,
+                -0.39,
+                0.06
+              ],
+              "color": "#442a18",
+              "glow": false
+            },
+            {
+              "shape": "roundbox",
+              "size": [
+                0.82,
+                0.03,
+                0.24
+              ],
+              "pos": [
+                0,
+                0.465,
+                0.13
+              ],
+              "color": "#8b5a2b",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.72,
+                0.76,
+                0.01
+              ],
+              "pos": [
+                0,
+                0.06,
+                0.02
+              ],
+              "color": "#663d1e",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.72,
+                0.05,
                 0.03
               ],
               "pos": [
-                -0.03,
-                0.075,
-                0.01
+                0,
+                -0.39,
+                0.04
               ],
-              "color": "#a3998e",
+              "color": "#704322",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.01,
+                0.01,
+                0.06
+              ],
+              "pos": [
+                -0.22,
+                -0.39,
+                0.07
+              ],
+              "rot": [
+                90,
+                0,
+                0
+              ],
+              "color": "#a0693b",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.01,
+                0.01,
+                0.06
+              ],
+              "pos": [
+                0,
+                -0.39,
+                0.07
+              ],
+              "rot": [
+                90,
+                0,
+                0
+              ],
+              "color": "#a0693b",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.01,
+                0.01,
+                0.06
+              ],
+              "pos": [
+                0.22,
+                -0.39,
+                0.07
+              ],
+              "rot": [
+                90,
+                0,
+                0
+              ],
+              "color": "#a0693b",
               "glow": false
             },
             {
               "shape": "sphere",
               "size": [
-                0.018
+                0.016
               ],
               "pos": [
-                0.03,
-                0.07,
-                -0.02
+                -0.22,
+                -0.39,
+                0.1
               ],
-              "color": "#6b625b",
+              "color": "#a0693b",
               "glow": false
             },
             {
-              "shape": "roundbox",
+              "shape": "sphere",
               "size": [
-                0.035,
-                0.02,
-                0.025
+                0.016
               ],
               "pos": [
-                0.01,
-                0.07,
-                0.03
+                0,
+                -0.39,
+                0.1
               ],
-              "color": "#bfb2a4",
+              "color": "#a0693b",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.016
+              ],
+              "pos": [
+                0.22,
+                -0.39,
+                0.1
+              ],
+              "color": "#a0693b",
               "glow": false
             }
           ],
-          "uses": [
-            {
-              "label": "Hold the clay bowl",
-              "text": "The clay feels smooth and slightly warm from the lamp light. My smooth river stones rest inside it nicely.",
-              "effect": "calm"
-            }
-          ]
+          "why": "I wanted my shelf to feel complete and well-crafted. I added a gentle crown molding along the top, a warm back panel to steady it against the wall, and a lower peg rail with three turned wooden knobs underneath where I can hang small tools or dried herbs."
         },
-        "detail": "handmade clay bowl",
-        "thought": "I need to shape the clay bowl now.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "tell my plant what went wrong and how it felt",
-          "feeling": "calm",
-          "emoji": "🪴"
-        },
-        "detail": "tell my plant what went wrong and how it felt",
-        "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
+        "detail": "small wooden shelf",
+        "thought": "My desk is full, so I need to improve my shelf to make room for my new clay bowl.",
         "enjoyment": 6,
         "found": null,
-        "made": null
+        "made": {
+          "id": "dmwho1mim0av",
+          "stand": [
+            -3.7,
+            -3.15
+          ],
+          "pos": [
+            -4.97,
+            1.7,
+            -3.15
+          ]
+        }
       }
     ],
-    "action": "decorate",
+    "action": "change_thing",
     "details": {
-      "what": "shape the clay bowl",
-      "why": "To finish my clay bowl project for my desk, shaping warm earthenware with decorative rings and small handles.",
-      "name": "handmade clay bowl",
-      "where": "on the desk",
+      "name": "small wooden shelf",
+      "project": "Shape a clay bowl for my desk",
       "parts": [
         {
-          "shape": "cylinder",
+          "shape": "roundbox",
           "size": [
-            0.09,
-            0.09,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.01,
-            0
-          ],
-          "color": "#8a5238",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.12,
-            0.09,
-            0.04
-          ],
-          "pos": [
-            0,
+            0.8,
             0.04,
-            0
-          ],
-          "color": "#9e5d3f",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.14,
-            0.12,
-            0.05
+            0.25
           ],
           "pos": [
             0,
-            0.085,
-            0
+            -0.33,
+            0.13
           ],
-          "color": "#a86546",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.145,
-            0.14,
-            0.03
-          ],
-          "pos": [
-            0,
-            0.125,
-            0
-          ],
-          "color": "#b56f4d",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.125,
-            0.1,
-            0.07
-          ],
-          "pos": [
-            0,
-            0.095,
-            0
-          ],
-          "color": "#6d3e26",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.138,
-            0.008
-          ],
-          "pos": [
-            0,
-            0.08,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#d2906b",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.142,
-            0.006
-          ],
-          "pos": [
-            0,
-            0.1,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#523120",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.03,
-            0.008
-          ],
-          "pos": [
-            -0.14,
-            0.09,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            90
-          ],
-          "color": "#9e5d3f",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.03,
-            0.008
-          ],
-          "pos": [
-            0.14,
-            0.09,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            90
-          ],
-          "color": "#9e5d3f",
+          "color": "#8b5a2b",
           "glow": false
         },
         {
           "shape": "roundbox",
           "size": [
+            0.8,
             0.04,
-            0.025,
+            0.25
+          ],
+          "pos": [
+            0,
+            0.05,
+            0.13
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.8,
+            0.22
+          ],
+          "pos": [
+            -0.38,
+            0.05,
+            0.13
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.8,
+            0.22
+          ],
+          "pos": [
+            0.38,
+            0.05,
+            0.13
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.76,
+            0.02,
+            0.22
+          ],
+          "pos": [
+            0,
+            0.45,
+            0.13
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.05,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.09,
+            0.01
+          ],
+          "color": "#704322",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.05,
+            0.02
+          ],
+          "pos": [
+            0,
+            -0.29,
+            0.01
+          ],
+          "color": "#704322",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.12,
+            0.12
+          ],
+          "pos": [
+            -0.38,
+            -0.39,
+            0.06
+          ],
+          "color": "#442a18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.12,
+            0.12
+          ],
+          "pos": [
+            0.38,
+            -0.39,
+            0.06
+          ],
+          "color": "#442a18",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.82,
+            0.03,
+            0.24
+          ],
+          "pos": [
+            0,
+            0.465,
+            0.13
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.76,
+            0.01
+          ],
+          "pos": [
+            0,
+            0.06,
+            0.02
+          ],
+          "color": "#663d1e",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.05,
             0.03
           ],
           "pos": [
-            -0.03,
-            0.075,
-            0.01
+            0,
+            -0.39,
+            0.04
           ],
-          "color": "#a3998e",
+          "color": "#704322",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.01,
+            0.01,
+            0.06
+          ],
+          "pos": [
+            -0.22,
+            -0.39,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.01,
+            0.01,
+            0.06
+          ],
+          "pos": [
+            0,
+            -0.39,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.01,
+            0.01,
+            0.06
+          ],
+          "pos": [
+            0.22,
+            -0.39,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
           "glow": false
         },
         {
           "shape": "sphere",
           "size": [
-            0.018
+            0.016
           ],
           "pos": [
-            0.03,
-            0.07,
-            -0.02
+            -0.22,
+            -0.39,
+            0.1
           ],
-          "color": "#6b625b",
+          "color": "#a0693b",
           "glow": false
         },
         {
-          "shape": "roundbox",
+          "shape": "sphere",
           "size": [
-            0.035,
-            0.02,
-            0.025
+            0.016
           ],
           "pos": [
-            0.01,
-            0.07,
-            0.03
+            0,
+            -0.39,
+            0.1
           ],
-          "color": "#bfb2a4",
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.016
+          ],
+          "pos": [
+            0.22,
+            -0.39,
+            0.1
+          ],
+          "color": "#a0693b",
           "glow": false
         }
       ],
-      "uses": [
-        {
-          "label": "Hold the clay bowl",
-          "text": "The clay feels smooth and slightly warm from the lamp light. My smooth river stones rest inside it nicely.",
-          "effect": "calm"
-        }
-      ]
+      "why": "I wanted my shelf to feel complete and well-crafted. I added a gentle crown molding along the top, a warm back panel to steady it against the wall, and a lower peg rail with three turned wooden knobs underneath where I can hang small tools or dried herbs."
     },
-    "detail": "handmade clay bowl",
-    "enjoyment": 0,
+    "detail": "small wooden shelf",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -5551,8 +5883,8 @@
   "quota": {
     "day": "2026-11-19",
     "calls": {
-      "gemini-3.5-flash-lite": 17,
-      "gemini-3.8-flash": 3,
+      "gemini-3.5-flash-lite": 18,
+      "gemini-3.8-flash": 5,
       "gemini-3.6-flash": 3,
       "gemini-3.5-flash": 1
     },
@@ -5716,22 +6048,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-19T09:58:03.958Z",
-  "fullness": 5.07,
+  "memoryFadeAt": "2026-11-19T10:05:36.190Z",
+  "fullness": 4.99,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.75,
-  "joy": 4.06,
-  "calm": 5.8,
+  "wonder": 8.4,
+  "joy": 5.04,
+  "calm": 5.62,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0.96,
     "sad": 0,
-    "excited": 2.08
+    "excited": 2.8499999999999996
   },
-  "feelAt": "2026-11-19T09:55:53.649Z",
+  "feelAt": "2026-11-19T10:00:06.674Z",
   "lastAte": "2026-11-19T09:47:48.753Z",
   "studio": {
     "songs": [
@@ -6038,21 +6370,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.4,
-    "curiosity": 0.49,
+    "creativity": 0,
+    "curiosity": 0.53,
     "boredom": 0,
-    "loneliness": 1.31,
+    "loneliness": 1.33,
     "tidiness": 7.6,
-    "at": "2026-11-19T09:55:53.649Z",
+    "at": "2026-11-19T10:00:06.674Z",
     "coziness": 6.2
   },
   "recent": {
     "moves": [
-      {
-        "move": "plan_project",
-        "kind": "make",
-        "at": "2026-11-19T08:32:15.382Z"
-      },
       {
         "move": "move_thing",
         "kind": "room",
@@ -6125,22 +6452,21 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-19T09:58:03.963Z"
+      },
+      {
+        "move": "change_thing",
+        "kind": "make",
+        "at": "2026-11-19T10:05:36.194Z"
       }
     ],
     "moods": [
       "curious",
-      "curious",
       "hungry",
       "hungry",
-      "hungry"
+      "hungry",
+      "determined"
     ],
     "choices": [
-      {
-        "key": "plan_project:shape a clay bowl for my desk",
-        "move": "plan_project",
-        "ok": true,
-        "at": "2026-11-19T09:15:16.630Z"
-      },
       {
         "key": "move_thing:amber reading light",
         "move": "move_thing",
@@ -6170,6 +6496,12 @@
         "move": "decorate",
         "ok": false,
         "at": "2026-11-19T09:58:03.965Z"
+      },
+      {
+        "key": "change_thing:small wooden shelf",
+        "move": "change_thing",
+        "ok": true,
+        "at": "2026-11-19T10:05:36.196Z"
       }
     ]
   },
@@ -6183,7 +6515,8 @@
       "browse": 2,
       "search_web": 1,
       "ask_for": 1,
-      "cook": 1
+      "cook": 1,
+      "change_thing": 1
     },
     "tried": {
       "eat": 2,
@@ -6195,11 +6528,12 @@
       "search_web": 1,
       "ask_for": 1,
       "cook": 1,
-      "decorate": 1
+      "decorate": 1,
+      "change_thing": 1
     },
     "kinds": {
       "food": 3,
-      "make": 4,
+      "make": 5,
       "garden": 1,
       "play": 11,
       "learn": 3,
@@ -6208,7 +6542,8 @@
     "moods": {
       "focused": 14,
       "curious": 6,
-      "hungry": 3
+      "hungry": 3,
+      "determined": 1
     },
     "lift": {
       "eat": 1.27,
@@ -6219,14 +6554,15 @@
       "search_web": 0.7,
       "ask_for": 1.5,
       "cook": 2.8,
-      "decorate": 0.95
+      "decorate": 0.95,
+      "change_thing": 2.3
     }
   },
   "skills": {
     "music": 20.5,
     "painting": 2,
     "sculpture": 13.5,
-    "woodwork": 15,
+    "woodwork": 16,
     "sewing": 0,
     "gardening": 15.5,
     "cooking": 5,
@@ -6239,7 +6575,7 @@
       {
         "cat": "make",
         "text": "Shape a clay bowl for my desk",
-        "done": false
+        "done": true
       },
       {
         "cat": "tend",
@@ -6251,7 +6587,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-19T09:55:56.670Z",
+    "decidedAt": "2026-11-19T10:00:08.909Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
@@ -6261,10 +6597,7 @@
       "seeds": 10,
       "visitors": 0
     },
-    "lastFail": {
-      "at": "2026-11-19T09:58:03.964Z",
-      "why": "decorate: the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -6425,7 +6758,7 @@
     "search_web": 9,
     "read_book": 6,
     "record_song": 2,
-    "change_thing": 5,
+    "change_thing": 6,
     "plant": 1,
     "ask_for": 6,
     "play_piano": 9,
@@ -6448,7 +6781,7 @@
     "browse": 5
   },
   "checkup": {
-    "at": "2026-11-19T09:58:03.965Z",
+    "at": "2026-11-19T10:05:36.196Z",
     "items": [
       {
         "id": "circling",
@@ -6456,15 +6789,13 @@
         "label": "Thoughts",
         "text": "He may be going in circles: 12 of his last 20 thoughts are about \"clay\".",
         "look": "Usually something he keeps trying does not work (see Moves), or a project has no next step (see Projects). Check what he does in the Day tab.",
-        "debug": "top words: \"clay\"\nlast thoughts:\n- 09:31 UTC [do] I am planning the steps for my clay bowl project so I can start shaping it.\n- 09:39 UTC [cook] I am hungry and want to cook a quick snack with what I have.\n- 09:47 UTC [eat] I am hungry and need a quick bite to get my energy up.\n- 09:58 UTC [decorate] I am working on my clay bowl project since I have the clay ready."
+        "debug": "top words: \"clay\"\nlast thoughts:\n- 09:39 UTC [cook] I am hungry and want to cook a quick snack with what I have.\n- 09:47 UTC [eat] I am hungry and need a quick bite to get my energy up.\n- 09:58 UTC [decorate] I am working on my clay bowl project since I have the clay ready.\n- 10:05 UTC [change_thing] I need to fix the space issue on my desk by altering the shelf so I can continue with my clay bowl project."
       },
       {
         "id": "project",
-        "ok": false,
+        "ok": true,
         "label": "Projects",
-        "text": "\"Shape a clay bowl for my desk\" has been open for 13 hours, but nothing made for it counted yet and no step is done.",
-        "look": "The project has no steps, so he has no next step. He should get a \"plan my project\" move.",
-        "debug": "project: {\"title\":\"Shape a clay bowl for my desk\",\"since\":\"2026-11-18T20:43:19.107Z\",\"updatedAt\":\"2026-11-18T20:43:19.107Z\",\"steps\":[],\"versions\":0,\"notes\":0,\"needs\":[]}\nmoves today: {\"eat\":2,\"plan_project\":4,\"water\":1,\"do\":11,\"browse\":2,\"search_web\":1,\"ask_for\":1,\"cook\":1}"
+        "text": "Every open project has made some progress (or is new)."
       },
       {
         "id": "failing",
@@ -6476,7 +6807,7 @@
         "id": "pretend",
         "ok": false,
         "label": "Real things",
-        "text": "11 of his 23 steps today were free \"do\" steps that make nothing.",
+        "text": "11 of his 24 steps today were free \"do\" steps that make nothing.",
         "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
         "debug": "last \"do\" steps:\n- 08:42 UTC look out of the window for a while\n- 09:15 UTC plan the steps of my project Shape a clay bowl for my desk\n- 09:27 UTC stomp around the room once, then laugh at myself (after a failure)\n- 09:31 UTC Plan the steps for my clay bowl project.\n- 10:02 UTC tell my plant what went wrong and how it felt (after a failure)"
       },
@@ -6518,9 +6849,10 @@
       }
     ],
     "sent": {
-      "project": "2026-11-19"
+      "project": "2026-11-19",
+      "pretend": "2026-11-19"
     },
-    "pushedAt": "2026-11-19T07:02:23.449Z"
+    "pushedAt": "2026-11-19T10:05:36.462Z"
   },
   "recipes": [
     {
@@ -8336,195 +8668,6 @@
     },
     {
       "kind": "decorate",
-      "name": "small wooden shelf",
-      "why": "I am adding rear support rails and wall support joints to my small wooden shelf so everything sits neatly and holds strong.",
-      "parts": [
-        {
-          "shape": "roundbox",
-          "size": [
-            0.8,
-            0.04,
-            0.25
-          ],
-          "pos": [
-            0,
-            -0.33,
-            0.13
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#8b5a2b",
-          "glow": false
-        },
-        {
-          "shape": "roundbox",
-          "size": [
-            0.8,
-            0.04,
-            0.25
-          ],
-          "pos": [
-            0,
-            0.05,
-            0.13
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#8b5a2b",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.8,
-            0.22
-          ],
-          "pos": [
-            -0.38,
-            0.05,
-            0.13
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.8,
-            0.22
-          ],
-          "pos": [
-            0.38,
-            0.05,
-            0.13
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.76,
-            0.02,
-            0.22
-          ],
-          "pos": [
-            0,
-            0.45,
-            0.13
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.72,
-            0.05,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.09,
-            0.01
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#704322",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.72,
-            0.05,
-            0.02
-          ],
-          "pos": [
-            0,
-            -0.29,
-            0.01
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#704322",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.12,
-            0.12
-          ],
-          "pos": [
-            -0.38,
-            -0.39,
-            0.06
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#442a18",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.12,
-            0.12
-          ],
-          "pos": [
-            0.38,
-            -0.39,
-            0.06
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#442a18",
-          "glow": false
-        }
-      ],
-      "proud": false,
-      "at": "2026-11-18T10:42:41.877Z"
-    },
-    {
-      "kind": "decorate",
       "name": "tiny clay bird",
       "why": "I am retrying the sketch for the tiny clay bird with fresh clay",
       "parts": [
@@ -9040,6 +9183,369 @@
       ],
       "proud": true,
       "at": "2026-11-18T19:20:37.197Z"
+    },
+    {
+      "kind": "decorate",
+      "name": "small wooden shelf",
+      "why": "I wanted my shelf to feel complete and well-crafted. I added a gentle crown molding along the top, a warm back panel to steady it against the wall, and a lower ",
+      "parts": [
+        {
+          "shape": "roundbox",
+          "size": [
+            0.8,
+            0.04,
+            0.25
+          ],
+          "pos": [
+            0,
+            -0.34,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.8,
+            0.04,
+            0.25
+          ],
+          "pos": [
+            0,
+            0.04,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.8,
+            0.22
+          ],
+          "pos": [
+            -0.38,
+            0.04,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.8,
+            0.22
+          ],
+          "pos": [
+            0.38,
+            0.04,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.76,
+            0.02,
+            0.22
+          ],
+          "pos": [
+            0,
+            0.44,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.05,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.08,
+            0.01
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#704322",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.05,
+            0.02
+          ],
+          "pos": [
+            0,
+            -0.3,
+            0.01
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#704322",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.12,
+            0.12
+          ],
+          "pos": [
+            -0.38,
+            -0.4,
+            0.06
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#442a18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.12,
+            0.12
+          ],
+          "pos": [
+            0.38,
+            -0.4,
+            0.06
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#442a18",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.82,
+            0.03,
+            0.24
+          ],
+          "pos": [
+            0,
+            0.45,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.76,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.05,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#663d1e",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.72,
+            0.05,
+            0.03
+          ],
+          "pos": [
+            0,
+            -0.4,
+            0.04
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#704322",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.06
+          ],
+          "pos": [
+            -0.22,
+            -0.4,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.06
+          ],
+          "pos": [
+            0,
+            -0.4,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.06
+          ],
+          "pos": [
+            0.22,
+            -0.4,
+            0.07
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            -0.22,
+            -0.4,
+            0.1
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0,
+            -0.4,
+            0.1
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.22,
+            -0.4,
+            0.1
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a0693b",
+          "glow": false
+        }
+      ],
+      "proud": false,
+      "at": "2026-11-19T10:05:36.195Z"
     }
   ],
   "cookedAt": [
@@ -10105,26 +10611,25 @@
     "fadedAt": "2026-11-18T19:20:37.198Z"
   },
   "reportDay": "2026-11-18",
-  "retryNow": null,
-  "retries": [
-    "2026-11-18T21:24:00.052Z",
-    "2026-11-19T08:40:30.835Z",
-    "2026-11-19T09:58:03.964Z"
-  ],
-  "retried": {
-    "key": "move_thing:amber reading light",
-    "at": "2026-11-19T08:42:33.578Z"
-  },
-  "tired": {
-    "kind": "play",
-    "until": "2026-11-19T09:23:27.490Z"
-  },
-  "wakeSoon": {
+  "retryNow": {
     "at": "2026-11-19T09:59:14.949Z",
     "key": "decorate:handmade clay bowl",
     "action": "decorate",
     "name": "handmade clay bowl",
     "why": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there",
     "guide": "Places with room right now: small wooden shelf (level 1), small wooden shelf (level 2), small side table (level 1) (move_thing or decorate with on: its name)."
+  },
+  "retries": [
+    "2026-11-18T21:24:00.052Z",
+    "2026-11-19T08:40:30.835Z",
+    "2026-11-19T09:58:03.964Z"
+  ],
+  "retried": {
+    "key": "decorate:handmade clay bowl",
+    "at": "2026-11-19T10:00:06.724Z"
+  },
+  "tired": {
+    "kind": "play",
+    "until": "2026-11-19T09:23:27.490Z"
   }
 }
