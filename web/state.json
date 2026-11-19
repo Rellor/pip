@@ -1,17 +1,11 @@
 {
   "mood": "determined",
-  "energy": 9,
+  "energy": 8.75,
   "boredom": 0,
-  "loneliness": 1.48,
+  "loneliness": 1.49,
   "interests": [],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-18T20:10:41.714Z",
-      "action": "play_piano",
-      "detail": "C4 E4 G4:2 E4:4",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-18T20:18:46.976Z",
       "action": "browse",
@@ -311,10 +305,15 @@
       "action": "do",
       "detail": "hum a small tune while I swing my arms",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-19T10:40:20.706Z",
+      "action": "browse",
+      "detail": "",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "My basil is fully grown and ready to harvest!",
     "I harvested basil from place 1. It goes in my pantry, and the plant grows back.",
     "Searched \"how to make a tiny glowing lamp\" and read about Glow stick: A glow stick, also known as a light stick, chem light, light wand, light rod, and rave light, is a self-contained, short-term light source. It consists of a translucent plastic tube containing isolated substances that, when combined, produce light through chemiluminescence. The light cannot be turned off and can be used only once. The used tube is then thrown away. Glow sticks are often used for recreation, such as for events, camping, outdoor exploration, and concerts. …",
     "Searched \"how to make a glowing lamp craft DIY\" and read about Fire making: Fire making, fire lighting or fire craft is the process of artificially starting a fire.  It requires completing the fire triangle, usually by heating tinder above its autoignition temperature.\nFire is an essential tool for human survival and the use of fire was important in early human cultural history since the Lower Paleolithic. Today, it is a key component of Scouting, woodcraft and bushcraft.\n\nArchaeology\n\n …",
@@ -343,7 +342,8 @@
     "I watered basil. The soil stays damp for about 10 hours.",
     "Browsing the web I came across Ulysses S. Grant: Ulysses S. Grant (born Hiram Ulysses Grant; April 27, 1822 – July 23, 1885) was the 18th president of the United States, serving from 1869 to 1877, and was the Commanding General of the Union Army. He led the army to victory in the American Civil War in 1865. Grant was born in Ohio and graduated…",
     "Browsing the web I came across Late Neolithic (near Levantine pottery): In the archaeology of Southwest Asia, the Late Neolithic, also known as the Ceramic Neolithic or Pottery Neolithic, is the final part of the Neolithic in the Near East, following on from the Pre-Pottery Neolithic and preceding the Chalcolithic. It is sometimes further divided into Pottery Neolithic…",
-    "Searched \"Late Neolithic pottery\" and read about Late Neolithic: In the archaeology of Southwest Asia, the Late Neolithic, also known as the Ceramic Neolithic or Pottery Neolithic, is the final part of the Neolithic in the Near East, following on from the Pre-Pottery Neolithic and preceding the Chalcolithic. It is sometimes further divided into Pottery Neolithic A (PNA) and Pottery Neolithic B (PNB) phases.\n …"
+    "Searched \"Late Neolithic pottery\" and read about Late Neolithic: In the archaeology of Southwest Asia, the Late Neolithic, also known as the Ceramic Neolithic or Pottery Neolithic, is the final part of the Neolithic in the Near East, following on from the Pre-Pottery Neolithic and preceding the Chalcolithic. It is sometimes further divided into Pottery Neolithic A (PNA) and Pottery Neolithic B (PNB) phases.\n …",
+    "Browsing the web I came across Reliquary: A reliquary (also referred to as a shrine, chasse, or phylactery) is a container for relics. A portable reliquary, or the room in which one is stored, may also be called a feretory. A brooch-like container for a very small relic may be called a \"theca\". Relics may be the purported or actual…"
   ],
   "requests": [],
   "story": "Pip spends his quiet days decorating his little room as autumn dusk settles outside. He learns by doing, crafting things with his own hands even when his first tries are clumsy. Fixing and changing things helped him feel better, though resting sometimes made him feel worse. He stayed deeply focused on his tasks throughout the day. He still needs to finish shaping a clay bowl for his desk. At dusk, he returns to the autumn window. Late at night, he sits down by candlelight to write in his diary.",
@@ -1177,27 +1177,19 @@
       "lastUsed": "2026-11-19T10:21:58.177Z"
     },
     {
-      "id": "mmwnesbqy60",
-      "at": "2026-11-19T10:30:04.127Z",
-      "text": "plan my new project: Paint a quiet autumn window at dusk",
-      "importance": 4,
+      "id": "mmwnf5k9v60",
+      "at": "2026-11-19T10:40:20.707Z",
+      "text": "I decided to browse the web to look for a new hobby.",
+      "importance": 6,
       "kind": "memory",
-      "weight": 3.998,
-      "lastUsed": "2026-11-19T10:30:04.127Z"
+      "weight": 6,
+      "lastUsed": "2026-11-19T10:40:20.707Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-18T22:04:39.754Z",
   "thoughts": [
-    {
-      "at": "2026-11-18T21:48:29.198Z",
-      "text": "I am moving my reading light to the desk to make it cozier and more useful.",
-      "short": "I am moving my reading light to the desk to make it cozier and more useful.",
-      "mood": "energetic",
-      "action": "move_thing",
-      "detail": "amber reading light"
-    },
     {
       "at": "2026-11-18T21:56:35.175Z",
       "text": "I want to plan the steps for my clay bowl project since I finished my lamps and need something new to make.",
@@ -1429,6 +1421,14 @@
       "mood": "determined",
       "action": "move_thing",
       "detail": "amber reading light"
+    },
+    {
+      "at": "2026-11-19T10:40:20.707Z",
+      "text": "I am full of energy and want to browse the web to find something new to love.",
+      "short": "I am full of energy and want to browse the web to find something new to love.",
+      "mood": "determined",
+      "action": "browse",
+      "detail": ""
     }
   ],
   "outbox": [
@@ -1837,14 +1837,16 @@
       "failed": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there"
     },
     {
-      "at": "2026-11-19T10:42:13.544Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🎵",
-      "what": "hum a small tune while I swing my arms",
-      "feeling": "joy"
+      "at": "2026-11-19T10:40:21.705Z",
+      "action": "browse",
+      "thought": "I have no hobby yet and I want to see what is out there.",
+      "topic": null,
+      "opened": {
+        "title": "Reliquary",
+        "url": "https://en.wikipedia.org/wiki/Reliquary",
+        "text": "A reliquary (also referred to as a shrine, chasse, or phylactery) is a container for relics. A portable reliquary, or the room in which one is stored, may also be called a feretory. A brooch-like container for a very small relic may be called a \"theca\". Relics may be the purported or actual…"
+      },
+      "failed": null
     }
   ],
   "decor": [
@@ -5205,7 +5207,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-19T10:38:12.544Z",
+    "at": "2026-11-19T10:40:20.705Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -5213,50 +5215,31 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1830,
-      "output": 134,
+      "input": 1894,
+      "output": 241,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I wanted to move my amber reading light closer to the desk so I have better light for reading and writing.",
-    "inner": "I wanted to move my amber reading light closer to the desk so I have better light for reading and writing.",
+    "thought": "I am full of energy and want to browse the web to find something new to love.",
+    "inner": "I am full of energy and want to browse the web to find something new to love.",
     "sent": false,
     "steps": [
       {
-        "action": "move_thing",
-        "details": {
-          "name": "amber reading light",
-          "on": "desk"
-        },
-        "detail": "amber reading light",
-        "thought": "I will move the amber reading light to the desk where I need it.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "hum a small tune while I swing my arms",
-          "feeling": "joy",
-          "emoji": "🎵"
-        },
-        "detail": "hum a small tune while I swing my arms",
-        "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
+        "action": "browse",
+        "details": {},
+        "detail": "",
+        "thought": "I have no hobby yet and I want to see what is out there.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "move_thing",
-    "details": {
-      "name": "amber reading light",
-      "on": "desk"
-    },
-    "detail": "amber reading light",
-    "enjoyment": 0,
+    "action": "browse",
+    "details": {},
+    "detail": "",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -5335,7 +5318,7 @@
   "quota": {
     "day": "2026-11-19",
     "calls": {
-      "gemini-3.5-flash-lite": 21,
+      "gemini-3.5-flash-lite": 22,
       "gemini-3.8-flash": 5,
       "gemini-3.6-flash": 3,
       "gemini-3.5-flash": 1
@@ -5500,22 +5483,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-19T10:38:12.552Z",
-  "fullness": 6.74,
+  "memoryFadeAt": "2026-11-19T10:40:20.880Z",
+  "fullness": 6.7,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.93,
-  "joy": 4.81,
-  "calm": 5.41,
+  "wonder": 6.64,
+  "joy": 4.37,
+  "calm": 5.32,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0.96,
     "sad": 0,
-    "excited": 0.7
+    "excited": 0.42
   },
-  "feelAt": "2026-11-19T10:38:08.678Z",
+  "feelAt": "2026-11-19T10:40:15.063Z",
   "lastAte": "2026-11-19T10:21:58.177Z",
   "studio": {
     "songs": [
@@ -5822,21 +5805,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.08,
-    "curiosity": 0.85,
+    "creativity": 0.1,
+    "curiosity": 0,
     "boredom": 0,
-    "loneliness": 1.48,
+    "loneliness": 1.49,
     "tidiness": 7.6,
-    "at": "2026-11-19T10:38:08.678Z",
+    "at": "2026-11-19T10:40:15.063Z",
     "coziness": 6.2
   },
   "recent": {
     "moves": [
-      {
-        "move": "ask_for",
-        "kind": "people",
-        "at": "2026-11-19T09:07:10.152Z"
-      },
       {
         "move": "plan_project",
         "kind": "make",
@@ -5909,6 +5887,11 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-19T10:38:12.557Z"
+      },
+      {
+        "move": "browse",
+        "kind": "learn",
+        "at": "2026-11-19T10:40:20.887Z"
       }
     ],
     "moods": [
@@ -5919,12 +5902,6 @@
       "determined"
     ],
     "choices": [
-      {
-        "key": "eat:",
-        "move": "eat",
-        "ok": true,
-        "at": "2026-11-19T09:47:48.759Z"
-      },
       {
         "key": "decorate:shape the clay bowl",
         "move": "decorate",
@@ -5954,6 +5931,12 @@
         "move": "move_thing",
         "ok": false,
         "at": "2026-11-19T10:38:12.560Z"
+      },
+      {
+        "key": "browse:",
+        "move": "browse",
+        "ok": true,
+        "at": "2026-11-19T10:40:20.888Z"
       }
     ]
   },
@@ -5964,7 +5947,7 @@
       "plan_project": 4,
       "water": 1,
       "do": 12,
-      "browse": 2,
+      "browse": 3,
       "search_web": 1,
       "ask_for": 1,
       "cook": 1,
@@ -5977,7 +5960,7 @@
       "plan_project": 4,
       "water": 1,
       "do": 12,
-      "browse": 2,
+      "browse": 3,
       "move_thing": 3,
       "search_web": 1,
       "ask_for": 1,
@@ -5992,14 +5975,14 @@
       "make": 7,
       "garden": 1,
       "play": 12,
-      "learn": 3,
+      "learn": 4,
       "people": 1
     },
     "moods": {
       "focused": 14,
       "curious": 6,
       "hungry": 3,
-      "determined": 5
+      "determined": 6
     },
     "lift": {
       "eat": 2.37,
@@ -6043,7 +6026,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-19T10:38:12.544Z",
+    "decidedAt": "2026-11-19T10:40:20.704Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
@@ -6053,10 +6036,7 @@
       "seeds": 10,
       "visitors": 0
     },
-    "lastFail": {
-      "at": "2026-11-19T10:38:12.558Z",
-      "why": "move_thing: the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -6237,10 +6217,10 @@
     "start_project": 3,
     "write_diary": 2,
     "place_picture": 1,
-    "browse": 5
+    "browse": 6
   },
   "checkup": {
-    "at": "2026-11-19T10:38:12.560Z",
+    "at": "2026-11-19T10:40:20.888Z",
     "items": [
       {
         "id": "circling",
@@ -6266,9 +6246,9 @@
         "id": "pretend",
         "ok": false,
         "label": "Real things",
-        "text": "12 of his 28 steps today were free \"do\" steps that make nothing.",
+        "text": "12 of his 29 steps today were free \"do\" steps that make nothing.",
         "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
-        "debug": "last \"do\" steps:\n- 09:31 UTC Plan the steps for my clay bowl project.\n- 10:02 UTC tell my plant what went wrong and how it felt (after a failure)\n- 10:13 UTC look closely at my project Shape a clay bowl for my desk\n- 10:30 UTC plan my new project: Paint a quiet autumn window at dusk\n- 10:42 UTC hum a small tune while I swing my arms (after a failure)"
+        "debug": "last \"do\" steps:\n- 09:27 UTC stomp around the room once, then laugh at myself (after a failure)\n- 09:31 UTC Plan the steps for my clay bowl project.\n- 10:02 UTC tell my plant what went wrong and how it felt (after a failure)\n- 10:13 UTC look closely at my project Shape a clay bowl for my desk\n- 10:30 UTC plan my new project: Paint a quiet autumn window at dusk"
       },
       {
         "id": "needs",
@@ -10051,6 +10031,15 @@
         "via": null,
         "at": "2026-11-19T08:59:03.982Z",
         "shown": 2
+      },
+      {
+        "topic": "Reliquary",
+        "text": "A reliquary (also referred to as a shrine, chasse, or phylactery) is a container for relics. A portable reliquary, or the room in which one is stored, may also be called a feretory. A brooch-like container for a very small relic may be called a \"theca\". Relics may be the purported or actual physical remains of saints, and may comprise bones, pieces of clothing, or some object associated with…",
+        "url": "https://en.wikipedia.org/wiki/Reliquary",
+        "from": "news",
+        "via": null,
+        "at": "2026-11-19T10:40:20.708Z",
+        "shown": 0
       }
     ],
     "interests": [
@@ -10070,7 +10059,14 @@
     "fadedAt": "2026-11-18T19:20:37.198Z"
   },
   "reportDay": "2026-11-18",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-19T10:39:23.544Z",
+    "key": "move_thing:amber reading light",
+    "action": "move_thing",
+    "name": "amber reading light",
+    "why": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there",
+    "guide": "Places with room right now: small wooden shelf (level 1), small wooden shelf (level 2), small side table (level 1) (move_thing or decorate with on: its name)."
+  },
   "retries": [
     "2026-11-18T21:24:00.052Z",
     "2026-11-19T08:40:30.835Z",
@@ -10078,19 +10074,11 @@
     "2026-11-19T10:38:12.559Z"
   ],
   "retried": {
-    "key": "decorate:handmade clay bowl",
-    "at": "2026-11-19T10:00:06.724Z"
+    "key": "move_thing:amber reading light",
+    "at": "2026-11-19T10:40:15.108Z"
   },
   "tired": {
     "kind": "play",
     "until": "2026-11-19T09:23:27.490Z"
-  },
-  "wakeSoon": {
-    "at": "2026-11-19T10:39:23.544Z",
-    "key": "move_thing:amber reading light",
-    "action": "move_thing",
-    "name": "amber reading light",
-    "why": "the desk is full: 2 things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there",
-    "guide": "Places with room right now: small wooden shelf (level 1), small wooden shelf (level 2), small side table (level 1) (move_thing or decorate with on: its name)."
   }
 }
