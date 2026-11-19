@@ -2593,3 +2593,9 @@ I finished my last project and want to ask for more clay to start shaping a desk
 - ask_for (more clay: I finished my clay bird and I want to shape a bowl for my desk.): I am proud of my little clay bird and would love some more clay for my new desk bowl.
 - mood: curious
 
+## 19/11/2026, 09:15:16
+I have been thinking about my clay bowl project and need to plan out the steps before I start shaping it.
+> I have been thinking about my clay bowl project and need to plan out the steps before I start shaping it.
+- do (plan the steps of my project Shape a clay bowl for my desk): I need to plan the steps for my clay bowl project first.
+- mood: curious
+
