@@ -2606,3 +2606,9 @@ Moving my reading light to the desk will make it more useful for reading and wri
 - do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
 - mood: curious
 
+## 19/11/2026, 09:31:36
+I am planning the steps for my clay bowl project so I can start shaping it.
+> I am planning the steps for my clay bowl project so I can start shaping it.
+- do (Plan the steps for my clay bowl project.): I need to plan the steps for my clay bowl project.
+- mood: curious
+
