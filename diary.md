@@ -3006,3 +3006,9 @@ I am very hungry right after finishing my tasks, so I decided to eat some cheese
 - eat (cheese): I am hungry and need a quick bite.
 - mood: hungry
 
+## 19/11/2026, 18:38:17
+It stays dark near the bed and bookshelf even with all lamps on, so I want to make a small lamp for that corner.
+> It stays dark near the bed and bookshelf even with all lamps on, so I want to make a small lamp for that corner.
+- decorate (cozy bed reading lamp): I need a light near the bed.
+- mood: cozy
+
