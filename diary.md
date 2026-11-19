@@ -2797,3 +2797,9 @@ I want to tend to my plants since it is raining and cozy inside.
 - use (wooden planter box): I should check on the sprouts in my planter.
 - mood: determined
 
+## 19/11/2026, 13:32:17
+I should water my dry basil plants to keep them healthy.
+> I should water my dry basil plants to keep them healthy.
+- water (basil): My basil plants are dry and need water.
+- mood: determined
+
