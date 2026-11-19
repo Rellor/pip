@@ -2587,3 +2587,9 @@ I am curious about the Late Neolithic pottery I read about, so I will look it up
 - search_web (Late Neolithic pottery): I want to look up what I read earlier.
 - mood: curious
 
+## 19/11/2026, 09:07:10
+I finished my last project and want to ask for more clay to start shaping a desk bowl.
+> I finished my last project and want to ask for more clay to start shaping a desk bowl.
+- ask_for (more clay: I finished my clay bird and I want to shape a bowl for my desk.): I am proud of my little clay bird and would love some more clay for my new desk bowl.
+- mood: curious
+
