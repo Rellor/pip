@@ -2637,3 +2637,9 @@ I need to fix the space issue on my desk by altering the shelf so I can continue
 - change_thing (small wooden shelf): My desk is full, so I need to improve my shelf to make room for my new clay bowl.
 - mood: determined
 
+## 19/11/2026, 10:13:45
+I finished my clay bowl and now I want to judge it as proud since it is a nice first version.
+> I finished my clay bowl and now I want to judge it as proud since it is a nice first version.
+- do (look closely at my project Shape a clay bowl for my desk): Time to judge my clay bowl project.
+- mood: determined
+
