@@ -117,3 +117,9 @@ ok('every place word a move asks for can be answered (on, where, x, z, level...)
   const p = brainSchema(['move_thing']).properties.moves.items.properties.details.properties;
   for (const k of ['on', 'where', 'x', 'z', 'level', 'wall', 'along', 'height', 'next_to', 'side', 'turn']) assert.ok(k in p, `the answer form has no "${k}"`);
 });
+
+ok('planning without steps still gives a plan (the game writes simple steps)', async () => {
+  const { planSteps } = await import('../brain.js');
+  assert.equal(planSteps({}, 'Paint a quiet autumn window').length, 3);
+  assert.deepEqual(planSteps({ steps: '1. sketch it 2. paint the sky' }, 'x'), ['sketch it', 'paint the sky']);
+});

@@ -1450,7 +1450,14 @@ async function wakeUp() {
     }
     if (st.action === 'make_move') st.made = makeMove(state, st.details, stepStart);
     if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
-    if (st.action === 'cook') st.made = cook(state, st.details, stepStart);
+    if (st.action === 'cook') {
+      const d0 = st.details ?? {};
+      if (!text(d0.dish ?? d0.name, 60) || !(Array.isArray(d0.ingredients) && d0.ingredients.length)) { // he only said "cook": a simple dish from what is there
+        const have = state.pantry.filter((x) => x.kind === 'ingredient' && x.qty > 0).map((x) => x.name).slice(0, 2);
+        if (have.length) st.details = { ...d0, dish: text(d0.dish ?? d0.name, 60) || `simple ${have.join(' and ')}`, ingredients: Array.isArray(d0.ingredients) && d0.ingredients.length ? d0.ingredients : have };
+      }
+      st.made = cook(state, st.details, stepStart);
+    }
     if (st.action === 'wear') st.made = wear(state.wardrobe, st.details.name, stepStart);
     if (st.action === 'take_off') st.made = takeOff(state.wardrobe, st.details.name);
     if (st.action === 'remove_decoration') st.made = storeAway(state.decor, state.stored, st.details.name);
@@ -1613,7 +1620,7 @@ async function wakeUp() {
           Object.assign(placed.entry, { art: id, name, why: text(d.why, 200) });
           state.decor.push(placed.entry);
           st.made = placed;
-        } else st.made = { drawn: name, failed: `it is in his album, but ${placed.failed}` };
+        } else st.made = { drawn: name, image: file, hint: `it is in my album: ${placed.failed.replace(/^there is /, 'there is ')}` }; // the drawing is made: walls being full is no failure
       }
     }
     if (st.action === 'update_app') {
@@ -1895,7 +1902,7 @@ async function wakeUp() {
     if (st.action === 'take_down_picture') Object.assign(entry, { name: text(d.id, 20), removed: st.made?.removed ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'record_song') Object.assign(entry, { name: text(d.name, 60), tempo: st.made?.recording?.tempo ?? null, tracks: st.made?.recording?.tracks ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'compose') Object.assign(entry, { name: text(d.name, 60), song: st.made?.song ?? null, failed: st.made?.failed ?? null });
-    if (st.action === 'draw') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), image: st.made?.entry?.image ?? null, place: withWarn(st.made?.entry?.label, st.made), failed: st.made?.failed ?? null });
+    if (st.action === 'draw') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), image: st.made?.entry?.image ?? st.made?.image ?? null, place: withWarn(st.made?.entry?.label ?? (st.made?.drawn ? 'in my album' : null), st.made), failed: st.made?.failed ?? null });
     if (st.action === 'make_app') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'use') Object.assign(entry, { verdict: text(d.verdict, 240) || null, testNote: st.testNote ?? null });
     if (st.action === 'use') Object.assign(entry, { name: st.made?.used?.name ?? text(d.name, 60), label: st.made?.used?.label ?? text(d.label, 30), text: st.made?.used?.text ?? '', view: st.made?.used?.view ?? null, song: st.made?.used?.song ?? null, app: st.made?.used?.app ?? null, failed: st.made?.failed ?? null });

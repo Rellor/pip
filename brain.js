@@ -76,6 +76,15 @@ Answer in JSON: {"moves": [{"move": "name", "details": {...}, "thought": "a few 
 
 // The brain's reply as the plan the body runs (the same shape the old brain gave, so all the old code that
 // carries out a step still works). Unknown or unoffered moves are dropped.
+// The steps of a plan: a list, or one text ("1. look up... 2. make..."), or (when he gave none) a simple plan the game
+// writes from the title, so a project never stays without steps (he "planned" one 4 times and nothing was saved).
+export function planSteps(d, title) {
+  let st = Array.isArray(d?.steps) ? d.steps : typeof d?.steps === 'string' ? d.steps.split(/\n|;|\s(?=\d+[.)]\s)/) : [];
+  st = st.map((x) => clip(String(x).replace(/^\s*(\d+[.)]|-|\*)\s*/, ''), 120)).filter(Boolean).slice(0, 6);
+  if (st.length || !title) return st;
+  const t = title.replace(/^(make|build|craft|create|paint|draw|sculpt|shape|write|compose|bake|cook|sew|learn)\s+/i, '');
+  return [`look up how people ${/^(paint|draw|sculpt|shape|compose|bake|cook|sew)/i.test(title) ? title.split(/\s+/)[0].toLowerCase() : 'make'} ${t}`, `${title}: a first version`, `look at it and improve one thing`];
+}
 export function toAnswer(reply, offered = MOVE_NAMES) {
   const ok = new Set(offered);
   const steps = [];
@@ -91,7 +100,7 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       continue;
     }
     if (name === 'start_project') {
-      const st = (Array.isArray(d.steps) ? d.steps : []).map((x) => clip(x, 120)).filter(Boolean).slice(0, 8);
+      const st = planSteps(d, clip(d.title, 80));
       const needs = (Array.isArray(d.needs) ? d.needs : []).map((x) => clip(x, 40)).filter(Boolean).slice(0, 4);
       if (clip(d.title, 80)) answer.projects_add.push({ title: clip(d.title, 80), why: clip(d.why, 160), next: st[0] ?? '', steps: st, needs });
       steps.push({ action: 'do', as: 'start_project', details: { what: `plan my new project: ${clip(d.title, 80)}` }, thought, enjoyment: 7 });
@@ -121,7 +130,7 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       continue;
     }
     if (name === 'plan_project') {
-      const st = (Array.isArray(d.steps) ? d.steps : []).map((x) => clip(x, 120)).filter(Boolean).slice(0, 6);
+      const st = planSteps(d, clip(d.title ?? d.project, 80));
       if (clip(d.title ?? d.project, 80) && st.length) answer.projects_update.push({ title: clip(d.title ?? d.project, 80), steps: st, next: st[0], plan: true });
       steps.push({ action: 'do', as: 'plan_project', details: { what: `plan the steps of my project ${clip(d.title ?? d.project, 60)}` }, thought, enjoyment: 6 });
       continue;

@@ -623,6 +623,13 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
     }
     return out;
   }
+  if (d.on && e.kind !== 'surface' && !e.image) { // a small thing on the floor (or a wall) put ON something: it becomes a thing on top of it
+    if (decor.some((o) => o.base === e.id || String(o.base ?? '').startsWith(`${e.id}#`))) return { failed: 'things stand on it. He takes them off first' };
+    const base = findBase(decor, d.on, d);
+    if (!base) return { failed: 'he cannot put it on that: the desk, piano, bookshelf, bed, a thing he made on the floor, or a shelf on the wall will do' };
+    const r = placeOn(decor.filter((o) => o !== e), e, copy(), base, null, atMs, now, true);
+    return r.failed ? r : keep(r);
+  }
   if (e.kind === 'surface' && (d.on || hasXZ)) {
     const base = d.on ? findBase(decor, d.on, d) : baseByKey(decor, baseKeyOf(e));
     if (!base) return { failed: 'he cannot put it on that: the desk, piano, bookshelf, bed, a thing he made on the floor, or a shelf on the wall will do' };
