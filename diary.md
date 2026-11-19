@@ -2686,3 +2686,10 @@ I am clearing a space on the wall by taking down the picture that has hung the l
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: determined
 
+## 19/11/2026, 11:13:05
+Moving my reading light to the desk makes my workspace better for writing.
+> Moving my reading light to the desk makes my workspace better for writing.
+- move_thing (amber reading light): I should put my amber reading light closer to my desk where I read.
+- do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
+- mood: determined
+
