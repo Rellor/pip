@@ -2711,3 +2711,10 @@ I am in the middle of my painting project and need to plan the steps first.
 - do (Plan the steps for my project Paint a quiet autumn window at dusk): I need to plan my autumn window painting before I start.
 - mood: determined
 
+## 19/11/2026, 11:46:30
+My desk is crowded and my amber reading light would be better nearby, so I will build a small stand for it.
+> My desk is crowded and my amber reading light would be better nearby, so I will build a small stand for it.
+- decorate (small wooden stand): I need a place for my reading light near the desk
+- do (look closely at something in my room I never really looked at): That did not work out. I shake it off and look closely at something in my room I never really looked at.
+- mood: determined
+
