@@ -32,3 +32,14 @@ console.log('ok  he may put it in the middle himself, and then he notices it is 
   assert.match(misplaced(t, lost)?.why ?? '', /small/);
   console.log('ok  a small thing he put on the floor himself: he notices');
 }
+{
+  const d = [];
+  const cup = (n) => ({ name: n, on: 'desk', parts: [{ shape: 'cylinder', size: [0.04, 0.04, 0.08], pos: [0, 0.04, 0] }] });
+  for (const n of ['cup one', 'cup two']) d.push(makeDecor(d, cup(n), Date.now()).entry);
+  const t = makeDecor(d, { name: 'little side table', where: 'floor', x: 2, z: -2, parts: [{ shape: 'box', size: [0.8, 0.05, 0.6], pos: [0, 0.6, 0] }, { shape: 'box', size: [0.05, 0.6, 0.05], pos: [0, 0.3, 0] }], why: 'to put things on' }, Date.now());
+  d.push(t.entry);
+  const m = makeDecor(d, cup('cup three'), Date.now());
+  assert.ok(m.entry, m.failed);
+  assert.match(m.warn, /desk was full .* so it stands on little side table/);
+  console.log('ok  a full desk: it goes on the nearest top with room, and he is told');
+}

@@ -587,7 +587,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
     Object.assign(e, { ...r.entry, id: e.id, createdAt: e.createdAt, at: e.at, uses: e.uses, song: e.song, tool: e.tool, project: e.project, why: e.why });
     e.movedAt = at;
     e.updatedAt = at;
-    return { name: e.name, entry: e, label: e.label };
+    return { name: e.name, entry: e, label: e.label, ...(r.warn ? { warn: r.warn } : {}) };
   };
   const copy = () => e.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] }));
   if (e.kind === 'floor' && d.wall && !sideOf(d.wall) && /right|front/i.test(String(d.wall))) { // a thing that stands against that side of the room
@@ -1305,7 +1305,7 @@ export function supportsInfo(decor) {
     const on = decor.filter((o) => o.kind === 'surface' && o.pos && baseKeyOf(o) === b.key);
     const area = (b.x1 - b.x0) * (b.z1 - b.z0);
     const used = on.reduce((t, o) => { const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY); return t + (r.x1 - r.x0) * (r.z1 - r.z0); }, 0);
-    return { label: b.label, cx: r3((b.x0 + b.x1) / 2), cz: r3((b.z0 + b.z1) / 2), on: on.map((o) => o.name), ...(b.key === 'desk' ? { fixed: DESK_ITEMS } : {}), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
+    return { key: b.key, label: b.label, cx: r3((b.x0 + b.x1) / 2), cz: r3((b.z0 + b.z1) / 2), on: on.map((o) => o.name), ...(b.key === 'desk' ? { fixed: DESK_ITEMS } : {}), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
   });
 }
 // Small things that stand loose on the floor (not furniture he can sit in or use).
@@ -1384,7 +1384,17 @@ function holderWalls(decor, base) {
 function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   const already = surfaceOthers(decor, base.key, null).length;
   if (!reachable(base)) return { failed: `the top of ${base.n} is ${r3(base.y)} m high, and I can only reach up to ${base.hung ? 2.2 : PIP.reachUp} m. I put it somewhere lower, or build a shelf or table within reach`, hinted: true };
-  if (!spec.keep && already >= maxOn(base)) return { failed: `${base.n} is full: ${already} things stand on it already. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) and put things there`, hinted: true };
+  if (!spec.keep && already >= maxOn(base)) { // full: the nearest top with room takes it (like anyone would), and he is told where it went
+    const cx = (base.x0 + base.x1) / 2;
+    const cz = (base.z0 + base.z1) / 2;
+    const alts = spec.noAlt ? [] : supportsInfo(decor).filter((b) => b.key !== base.key && !b.full && !b.high && b.room > 0 && !/^piano$/.test(b.label)).sort((a, b) => Math.hypot(a.cx - cx, a.cz - cz) - Math.hypot(b.cx - cx, b.cz - cz));
+    for (const b of alts) {
+      const alt = baseByKey(decor, b.key);
+      const r = alt ? placeOn(decor, { ...spec, noAlt: true }, parts, alt, null, atMs, now, moving) : null;
+      if (r && !r.failed) return { ...r, moved: true, warn: `${base.n.replace(/^the /, 'my ')} was full (${already} things), so it stands on ${b.label.replace(/^the /, '')} instead` };
+    }
+    return { failed: `${base.n} is full: ${already} things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest`, hinted: true };
+  }
   const sq = Math.max(0.15, Math.min(base.x1 - base.x0, base.z1 - base.z0) - 0.1);
   let scale = fit(parts, 'surface', { w: sq, d: sq });
   const tall = Math.max(0.01, ...parts.map((p) => (p.pos?.[1] ?? 0) + ((p.shape === 'sphere' ? p.size[0] * 2 : p.size[1]) ?? 0) / 2));
