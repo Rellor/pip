@@ -2599,3 +2599,10 @@ I have been thinking about my clay bowl project and need to plan out the steps b
 - do (plan the steps of my project Shape a clay bowl for my desk): I need to plan the steps for my clay bowl project first.
 - mood: curious
 
+## 19/11/2026, 09:23:29
+Moving my reading light to the desk will make it more useful for reading and writing.
+> Moving my reading light to the desk will make it more useful for reading and writing.
+- move_thing (amber reading light): I want my reading light closer to my desk.
+- do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
+- mood: curious
+
