@@ -2901,3 +2901,10 @@ I am hungry so I will eat a piece of cheese before starting something new.
 - eat (cheese): I am hungry and need a small bite.
 - mood: hungry
 
+## 19/11/2026, 16:05:38
+My basil is fully grown and ready to harvest, so I should gather it.
+> My basil is fully grown and ready to harvest, so I should gather it.
+- harvest (basil): My basil is ready, I will harvest it.
+- do (look closely at something in my room I never really looked at): That did not work out. I shake it off and look closely at something in my room I never really looked at.
+- mood: hungry
+
