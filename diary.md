@@ -3018,3 +3018,9 @@ I finished my plans for today and want to check on my growing sprouts.
 - use (wooden planter box): I will check on my plants to see how they are doing.
 - mood: cozy
 
+## 19/11/2026, 18:54:43
+I want to make a small reading lamp for my bed so it is no longer dark there.
+> I want to make a small reading lamp for my bed so it is no longer dark there.
+- decorate (cozy night owl reading lamp): I need a cozy lamp near the bed to see at dusk.
+- mood: cozy
+
