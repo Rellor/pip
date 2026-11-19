@@ -62,11 +62,13 @@ export function checkup(s, health = {}, now = Date.now()) {
 
   // 4. Too much pretending: free "do" steps make nothing.
   const total = Object.values(done).reduce((a, b) => a + b, 0);
-  const pretend = (done.do ?? 0) / Math.max(1, total);
+  const realAsDo = (s.log ?? []).filter((e) => e.action === 'do' && e.as && now - Date.parse(e.at) < DAY).length; // planning or judging a project is shown as a "do", but it is real
+  const doN = Math.max(0, (done.do ?? 0) - realAsDo);
+  const pretend = doN / Math.max(1, total);
   const lately = (s.log ?? []).filter((e) => now - Date.parse(e.at) < 3 * HOUR && Date.parse(e.at) <= now);
   const lateDo = lately.filter((e) => e.action === 'do' && !e.as).length;
   const loopy = lately.length >= 12 && lateDo / lately.length >= 0.6; // most of the last 3 hours were free "do" steps: a loop
-  add('pretend', !(total >= 20 && pretend >= 0.4) && !loopy, 'Real things', loopy ? `${lateDo} of his last ${lately.length} steps (3 hours) were free "do" steps that make nothing: probably a loop.` : total >= 20 && pretend >= 0.4 ? `${done.do} of his ${total} steps today were free "do" steps that make nothing.` : 'Most of his steps really make, grow or learn something.', {
+  add('pretend', !(total >= 20 && pretend >= 0.4) && !loopy, 'Real things', loopy ? `${lateDo} of his last ${lately.length} steps (3 hours) were free "do" steps that make nothing: probably a loop.` : total >= 20 && pretend >= 0.4 ? `${doN} of his ${total} steps today were free "do" steps that make nothing.` : 'Most of his steps really make, grow or learn something.', {
     look: 'He picks "do" when the real moves he wants are not offered or keep failing. Check which "do" steps he takes: each is a move he is missing.',
     debug: `last "do" steps:\n${(s.log ?? []).filter((e) => e.action === 'do').slice(-5).map((e) => `- ${at(e.at)} ${String(e.what ?? (e.sealed ? '(private)' : e.thought) ?? '').slice(0, 120)}${e.fallback ? ' (after a failure)' : ''}`).join('\n')}`,
   });

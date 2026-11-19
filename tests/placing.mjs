@@ -43,3 +43,13 @@ console.log('ok  he may put it in the middle himself, and then he notices it is 
   assert.match(m.warn, /desk was full .* so it stands on little side table/);
   console.log('ok  a full desk: it goes on the nearest top with room, and he is told');
 }
+{
+  const { moveThing } = await import('../decor.js');
+  const d = [];
+  const bird = makeDecor(d, { name: 'clay owl', where: 'floor', x: 2, z: 2, parts: [{ shape: 'sphere', size: [0.08], pos: [0, 0.08, 0] }] }, Date.now()).entry;
+  d.push(bird);
+  const r = moveThing(d, null, { name: 'clay owl', on: 'desk' }, Date.now());
+  assert.ok(!r.failed, r.failed);
+  assert.equal(bird.kind, 'surface');
+  console.log('ok  a small thing on the floor can be put on the desk');
+}
