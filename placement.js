@@ -117,6 +117,10 @@ export function misplaced(s, e) {
   const at = nearestNeed(s, rp, [e.pos[0], e.pos[2]]);
   const far = at && Math.hypot(at.x - e.pos[0], at.z - e.pos[2]) > 3;
   if (sameKind && !far) return null;
+  if (rp.kind === 'surface' && at) { // a better top only counts when one near there has room (a full desk is no better place)
+    const room = supportsInfo(s.decor ?? []).some((b) => b.key !== (e.base ?? '') && !b.full && !b.high && b.room > 0 && !/^piano$/.test(b.label) && Math.hypot(b.cx - at.x, b.cz - at.z) <= 3);
+    if (!room) return null;
+  }
   const where = !sameKind ? `${rp.words}${at ? ` near ${at.name}` : ''}` : `near ${at.name}`;
   return { better: where, why: rp.why, kind: rp.kind, near: at?.name?.replace(/^the /, '') ?? null };
 }
