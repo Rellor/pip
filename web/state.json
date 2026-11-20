@@ -1,20 +1,13 @@
 {
-  "mood": "calm",
-  "energy": 9.47,
+  "mood": "energetic",
+  "energy": 9.5,
   "boredom": 0,
-  "loneliness": 3.53,
+  "loneliness": 3.57,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-20T08:49:40.191Z",
-      "action": "decorate",
-      "detail": "ceramic desk lamp",
-      "enjoyment": 0,
-      "failed": "the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep"
-    },
     {
       "at": "2026-11-20T08:49:40.198Z",
       "action": "do",
@@ -316,6 +309,12 @@
       "action": "change_thing",
       "detail": "sculpted clay bird on perch",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-20T14:14:14.226Z",
+      "action": "change_thing",
+      "detail": "sculpted clay bird on perch",
+      "enjoyment": 7
     }
   ],
   "notes": [
@@ -650,7 +649,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.967,
+      "weight": 6.966,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -659,7 +658,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.006,
+      "weight": 7.005,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -668,7 +667,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.846,
+      "weight": 7.845,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -677,7 +676,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.474,
+      "weight": 7.473,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -686,7 +685,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.085,
+      "weight": 6.084,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -697,7 +696,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.114,
+      "weight": 6.113,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -706,7 +705,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.389,
+      "weight": 8.387,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -715,7 +714,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.702,
+      "weight": 7.701,
       "lastUsed": "2026-11-20T12:00:24.812Z"
     },
     {
@@ -724,7 +723,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.106,
+      "weight": 8.104,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -733,7 +732,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.281,
+      "weight": 6.28,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -742,7 +741,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.362,
+      "weight": 9.36,
       "lastUsed": "2026-11-19T10:48:25.729Z"
     },
     {
@@ -751,7 +750,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.234,
+      "weight": 7.233,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -760,7 +759,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.804,
+      "weight": 6.803,
       "lastUsed": "2026-11-20T11:02:43.147Z"
     },
     {
@@ -769,7 +768,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8.72,
+      "weight": 8.718,
       "lastUsed": "2026-11-20T07:40:03.039Z"
     },
     {
@@ -778,7 +777,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.249,
+      "weight": 7.248,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -787,7 +786,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.812,
+      "weight": 7.811,
       "lastUsed": "2026-11-17T17:53:54.186Z"
     },
     {
@@ -796,7 +795,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.445,
+      "weight": 6.444,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -805,7 +804,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.372,
+      "weight": 8.37,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -814,7 +813,7 @@
       "text": "I want to make a glowing lamp for the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.996,
+      "weight": 5.995,
       "lastUsed": "2026-11-18T09:09:42.390Z"
     },
     {
@@ -823,7 +822,7 @@
       "text": "I searched for how to make a glowing lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-18T08:52:33.297Z"
     },
     {
@@ -832,7 +831,7 @@
       "text": "I started shaping the clay base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.001,
+      "weight": 6,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -841,7 +840,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.487,
+      "weight": 6.486,
       "lastUsed": "2026-11-18T21:23:58.763Z"
     },
     {
@@ -850,7 +849,7 @@
       "text": "Reading about clay might help with my desk lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.01,
+      "weight": 6.009,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -859,7 +858,7 @@
       "text": "Reading about clay helps when my lamp base steps fail.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.016,
+      "weight": 6.015,
       "lastUsed": "2026-11-18T07:22:53.387Z"
     },
     {
@@ -868,7 +867,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.429,
+      "weight": 8.427,
       "lastUsed": "2026-11-20T11:44:13.995Z"
     },
     {
@@ -877,7 +876,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.998,
+      "weight": 9.996,
       "lastUsed": "2026-11-20T14:04:56.313Z"
     },
     {
@@ -886,7 +885,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.89,
+      "weight": 9.888,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -895,7 +894,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.079,
+      "weight": 7.078,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -906,7 +905,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.08,
+      "weight": 7.079,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -917,7 +916,7 @@
       "text": "I started sketching the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.107,
+      "weight": 6.106,
       "lastUsed": "2026-11-18T15:55:23.235Z"
     },
     {
@@ -926,7 +925,7 @@
       "text": "I am retrying the sketch for the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.11,
+      "weight": 6.109,
       "lastUsed": "2026-11-18T16:19:58.391Z"
     },
     {
@@ -935,7 +934,7 @@
       "text": "I am trying a fresh sketch for the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.111,
+      "weight": 6.11,
       "lastUsed": "2026-11-18T16:28:10.038Z"
     },
     {
@@ -944,7 +943,7 @@
       "text": "I am working on step 2 of the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.122,
+      "weight": 6.121,
       "lastUsed": "2026-11-18T18:06:41.104Z"
     },
     {
@@ -953,7 +952,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.109,
+      "weight": 7.108,
       "lastUsed": "2026-11-20T11:44:13.995Z"
     },
     {
@@ -962,7 +961,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.152,
+      "weight": 7.151,
       "lastUsed": "2026-11-20T08:12:31.990Z"
     },
     {
@@ -971,7 +970,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.515,
+      "weight": 9.513,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -980,7 +979,7 @@
       "text": "I need to plan the steps for my clay bowl project tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.18,
+      "weight": 7.179,
       "lastUsed": "2026-11-20T10:10:32.424Z"
     },
     {
@@ -989,7 +988,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.212,
+      "weight": 9.21,
       "lastUsed": "2026-11-20T13:13:47.742Z"
     },
     {
@@ -998,7 +997,7 @@
       "text": "I am getting into autumn dusk colors. I want to know more about it.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.832,
+      "weight": 6.831,
       "lastUsed": "2026-11-19T17:12:46.285Z"
     },
     {
@@ -1007,7 +1006,7 @@
       "text": "I made cozy night owl reading lamp (I need a warm, adjustable reading lamp by the bed so I can read my diary and books late at night without straining my eyes.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.351,
+      "weight": 6.35,
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
@@ -1016,7 +1015,7 @@
       "text": "I made rainy autumn window watercolor (I love the rain tonight and want to capture how the window looks, inspired by Vincent van Gogh's watercolor and Edward Hopper's play of light.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.378,
+      "weight": 6.377,
       "lastUsed": "2026-11-20T07:40:03.039Z"
     },
     {
@@ -1025,7 +1024,7 @@
       "text": "My project \"Paint a watercolor of the rainy autumn window\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.36,
+      "weight": 7.359,
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
@@ -1034,7 +1033,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.967,
+      "weight": 6.966,
       "lastUsed": "2026-11-20T09:35:40.898Z"
     },
     {
@@ -1043,17 +1042,8 @@
       "text": "My project \"Shape a ceramic base for the desk lamp\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.971,
+      "weight": 6.97,
       "lastUsed": "2026-11-20T10:02:28.687Z"
-    },
-    {
-      "id": "mmwovzb0360",
-      "at": "2026-11-20T11:19:09.390Z",
-      "text": "I made tiny wooden stand for the clay bird (It needs its own sturdy wooden pedestal so the tiny clay bird sits proudly within reach.)",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.979,
-      "lastUsed": "2026-11-20T11:19:09.390Z"
     },
     {
       "id": "mmwowabv360",
@@ -1061,7 +1051,7 @@
       "text": "I am working on step 3 of my wooden stand project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.98,
+      "weight": 5.979,
       "lastUsed": "2026-11-20T11:27:42.734Z"
     },
     {
@@ -1070,7 +1060,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.981,
+      "weight": 6.98,
       "lastUsed": "2026-11-20T11:27:42.743Z"
     },
     {
@@ -1079,7 +1069,7 @@
       "text": "Drawing at dusk helps me notice small details.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.98,
       "lastUsed": "2026-11-20T11:36:10.269Z"
     },
     {
@@ -1088,7 +1078,7 @@
       "text": "I drew rainy autumn window at dusk",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.98,
       "lastUsed": "2026-11-20T11:36:11.258Z"
     },
     {
@@ -1097,7 +1087,7 @@
       "text": "Browsing helps me find new interests when I have none of my own yet.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.981,
       "lastUsed": "2026-11-20T11:44:16.346Z"
     },
     {
@@ -1106,7 +1096,7 @@
       "text": "mint likes the window light",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.984,
+      "weight": 5.983,
       "lastUsed": "2026-11-20T12:00:26.610Z"
     },
     {
@@ -1115,7 +1105,7 @@
       "text": "I need to watch out for available space when moving my things around.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.985,
+      "weight": 5.984,
       "lastUsed": "2026-11-20T12:08:32.042Z"
     },
     {
@@ -1124,7 +1114,7 @@
       "text": "I have the clay I need to shape the base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.985,
       "lastUsed": "2026-11-20T12:16:37.091Z"
     },
     {
@@ -1133,7 +1123,7 @@
       "text": "I started looking up how to shape the lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.986,
       "lastUsed": "2026-11-20T12:24:45.980Z"
     },
     {
@@ -1142,7 +1132,7 @@
       "text": "I read about OLEDs today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.988,
+      "weight": 5.987,
       "lastUsed": "2026-11-20T12:33:03.896Z"
     },
     {
@@ -1151,7 +1141,7 @@
       "text": "The sculpted clay bird needs a place on a shelf or table.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.994,
+      "weight": 5.993,
       "lastUsed": "2026-11-20T13:15:52.743Z"
     },
     {
@@ -1160,7 +1150,7 @@
       "text": "I enjoy listening to the tiny wooden music box after a busy session.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.996,
+      "weight": 5.995,
       "lastUsed": "2026-11-20T13:40:25.274Z"
     },
     {
@@ -1169,7 +1159,7 @@
       "text": "I should work on something completely different next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-20T13:48:45.920Z"
     },
     {
@@ -1178,31 +1168,32 @@
       "text": "I moved my sculpted clay bird from the floor to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-20T14:05:19.427Z"
     },
     {
-      "id": "mmwp1x0p260",
-      "at": "2026-11-20T14:05:20.420Z",
+      "id": "mmwp28hcn60",
+      "at": "2026-11-20T14:14:14.231Z",
+      "text": "I am working on improving my sculpted lamp base.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.999,
+      "lastUsed": "2026-11-20T14:14:14.231Z"
+    },
+    {
+      "id": "mmwp28hcp60",
+      "at": "2026-11-20T14:14:15.223Z",
       "text": "I changed sculpted clay bird on perch",
       "importance": 4,
       "kind": "memory",
       "weight": 3.999,
-      "lastUsed": "2026-11-20T14:05:20.420Z"
+      "lastUsed": "2026-11-20T14:14:15.223Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-19T22:05:30.446Z",
   "thoughts": [
-    {
-      "at": "2026-11-20T10:19:33.350Z",
-      "text": "I want to tidy up the room by moving my clay bird off the floor and onto the shelf.",
-      "short": "I want to tidy up the room by moving my clay bird off the floor and onto the shelf.",
-      "mood": "energetic",
-      "action": "move_thing",
-      "detail": "sculpted clay bird on perch"
-    },
     {
       "at": "2026-11-20T10:21:36.796Z",
       "text": "I am tidying up my space by moving the clay bird to a shelf with open room.",
@@ -1433,6 +1424,14 @@
       "mood": "calm",
       "action": "change_thing",
       "detail": "sculpted clay bird on perch"
+    },
+    {
+      "at": "2026-11-20T14:14:14.231Z",
+      "text": "I am working on the next step of my desk lamp project to make it better.",
+      "short": "I am working on the next step of my desk lamp project to make it better.",
+      "mood": "energetic",
+      "action": "change_thing",
+      "detail": "sculpted clay bird on perch"
     }
   ],
   "outbox": [
@@ -1582,14 +1581,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-20T10:38:15.823Z",
-      "action": "harvest",
-      "thought": "My basil is ready, I will harvest it now.",
-      "name": "basil",
-      "result": "I harvested basil from place 1. It goes in my pantry, and the plant grows back.",
-      "failed": null
-    },
     {
       "at": "2026-11-20T10:46:19.232Z",
       "action": "eat",
@@ -1981,6 +1972,17 @@
       "at": "2026-11-20T14:05:20.420Z",
       "action": "change_thing",
       "thought": "I will move my sculpted clay bird to the small wooden shelf so it is not lost on the floor.",
+      "name": "sculpted clay bird on perch",
+      "grew": null,
+      "limited": false,
+      "reshaped": true,
+      "place": "on the floor",
+      "failed": null
+    },
+    {
+      "at": "2026-11-20T14:14:15.223Z",
+      "action": "change_thing",
+      "thought": "I need to look at it and improve one thing to finish this version.",
       "name": "sculpted clay bird on perch",
       "grew": null,
       "limited": false,
@@ -4524,7 +4526,7 @@
     {
       "id": "dmwmiase712vg",
       "name": "sculpted clay bird on perch",
-      "why": "I am refining my sculpted clay bird on perch, adding subtle catchlights to its dark eyes so it looks more alive, inspired by the warm tones of dusk and the ceramic details I read about.",
+      "why": "I am refining my sculpted clay bird on perch, adding subtle bright catchlights to its dark eyes so it looks more alive, inspired by the warm tones of dusk.",
       "project": "Sculpt a tiny clay bird",
       "song": null,
       "uses": [
@@ -4799,7 +4801,7 @@
             0
           ],
           "color": "#fff8f0",
-          "glow": false
+          "glow": true
         },
         {
           "shape": "sphere",
@@ -4817,7 +4819,7 @@
             0
           ],
           "color": "#fff8f0",
-          "glow": false
+          "glow": true
         },
         {
           "shape": "roundbox",
@@ -4898,6 +4900,42 @@
           ],
           "color": "#a66838",
           "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            -0.07,
+            0.61,
+            0.185
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.09,
+            0.61,
+            0.185
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "glow": true
         }
       ],
       "stand": [
@@ -4907,8 +4945,8 @@
       "at": "2026-11-18T19:20:43.179Z",
       "createdAt": "2026-11-18T19:20:37.183Z",
       "roomScaled": true,
-      "updatedAt": "2026-11-20T14:05:25.420Z",
-      "changedAt": "2026-11-20T14:05:25.420Z"
+      "updatedAt": "2026-11-20T14:14:20.223Z",
+      "changedAt": "2026-11-20T14:14:20.223Z"
     },
     {
       "id": "dmwnmyyvr130w",
@@ -6028,7 +6066,7 @@
         },
         {
           "text": "look at it and improve one thing",
-          "done": false
+          "done": true
         }
       ],
       "needs": [],
@@ -6039,13 +6077,23 @@
           "name": "sculpted clay bird on perch",
           "ref": "dmwmiase712vg",
           "at": "2026-11-20T14:05:19.436Z"
+        },
+        {
+          "v": 2,
+          "kind": "change_thing",
+          "name": "sculpted clay bird on perch",
+          "ref": "dmwmiase712vg",
+          "at": "2026-11-20T14:14:14.239Z"
         }
       ],
       "notes": [],
-      "status": "working",
+      "status": "done",
       "since": "2026-11-20T12:16:37.091Z",
-      "updatedAt": "2026-11-20T14:05:19.436Z",
-      "stuck": null
+      "updatedAt": "2026-11-20T14:14:14.240Z",
+      "stuck": null,
+      "proud": true,
+      "proudOf": "all my steps are done and I made it 2 times: it works",
+      "doneAt": "2026-11-20T14:14:14.240Z"
     },
     {
       "id": "mwnukypn",
@@ -7067,7 +7115,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-20T14:05:19.420Z",
+    "at": "2026-11-20T14:14:14.223Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -7079,23 +7127,23 @@
     "fallback": true,
     "tokens": {
       "calls": 2,
-      "input": 8283,
-      "output": 1866,
+      "input": 8231,
+      "output": 1706,
       "models": {
         "gemini-3.5-flash-lite": 2
       }
     },
     "intervalMin": 8,
-    "thought": "My clay bird is on the floor and I want to put it somewhere safe and visible where it belongs.",
-    "inner": "My clay bird is on the floor and I want to put it somewhere safe and visible where it belongs.",
+    "thought": "I am working on the next step of my desk lamp project to make it better.",
+    "inner": "I am working on the next step of my desk lamp project to make it better.",
     "sent": false,
     "steps": [
       {
         "action": "change_thing",
         "details": {
           "name": "sculpted clay bird on perch",
+          "change": "look at it and improve one thing",
           "project": "Shape the base for my desk lamp",
-          "target": "small wooden shelf",
           "parts": [
             {
               "shape": "cylinder",
@@ -7107,7 +7155,7 @@
               "pos": [
                 0,
                 0.04,
-                0.03
+                0.02
               ],
               "color": "#4a3525",
               "glow": false
@@ -7122,7 +7170,7 @@
               "pos": [
                 0,
                 0.15,
-                0.02
+                0.01
               ],
               "color": "#2b2b2b",
               "glow": false
@@ -7137,7 +7185,7 @@
               "pos": [
                 0,
                 0.24,
-                0.02
+                0.01
               ],
               "rot": [
                 0,
@@ -7157,7 +7205,7 @@
               "pos": [
                 0,
                 0.25,
-                0.02
+                0.01
               ],
               "color": "#3a2e2b",
               "glow": false
@@ -7172,7 +7220,7 @@
               "pos": [
                 0,
                 0.39,
-                0.02
+                0.01
               ],
               "color": "#d9a774",
               "glow": false
@@ -7185,7 +7233,7 @@
               "pos": [
                 0,
                 0.37,
-                0.17
+                0.16
               ],
               "color": "#f2e3c9",
               "glow": false
@@ -7200,7 +7248,7 @@
               "pos": [
                 0,
                 0.46,
-                -0.03
+                -0.04
               ],
               "color": "#b57c48",
               "glow": false
@@ -7213,7 +7261,7 @@
               "pos": [
                 0,
                 0.57,
-                0.13
+                0.12
               ],
               "color": "#d9a774",
               "glow": false
@@ -7226,7 +7274,7 @@
               "pos": [
                 0,
                 0.61,
-                0.11
+                0.1
               ],
               "color": "#9e5f30",
               "glow": false
@@ -7240,7 +7288,7 @@
               "pos": [
                 0,
                 0.57,
-                0.26
+                0.25
               ],
               "rot": [
                 90,
@@ -7258,7 +7306,7 @@
               "pos": [
                 -0.08,
                 0.59,
-                0.17
+                0.16
               ],
               "color": "#1a1412",
               "glow": false
@@ -7271,7 +7319,7 @@
               "pos": [
                 0.08,
                 0.59,
-                0.17
+                0.16
               ],
               "color": "#1a1412",
               "glow": false
@@ -7279,28 +7327,28 @@
             {
               "shape": "sphere",
               "size": [
-                0.015
+                0.02
               ],
               "pos": [
                 -0.07,
                 0.6,
-                0.19
+                0.18
               ],
               "color": "#fff8f0",
-              "glow": false
+              "glow": true
             },
             {
               "shape": "sphere",
               "size": [
-                0.015
+                0.02
               ],
               "pos": [
                 0.09,
                 0.6,
-                0.19
+                0.18
               ],
               "color": "#fff8f0",
-              "glow": false
+              "glow": true
             },
             {
               "shape": "roundbox",
@@ -7312,7 +7360,7 @@
               "pos": [
                 -0.15,
                 0.42,
-                0
+                -0.01
               ],
               "rot": [
                 10,
@@ -7332,7 +7380,7 @@
               "pos": [
                 0.15,
                 0.42,
-                0
+                -0.01
               ],
               "rot": [
                 10,
@@ -7352,7 +7400,7 @@
               "pos": [
                 0,
                 0.44,
-                -0.2
+                -0.21
               ],
               "rot": [
                 -20,
@@ -7372,7 +7420,7 @@
               "pos": [
                 0,
                 0.47,
-                -0.14
+                -0.15
               ],
               "rot": [
                 -15,
@@ -7381,13 +7429,39 @@
               ],
               "color": "#a66838",
               "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.015
+              ],
+              "pos": [
+                -0.07,
+                0.61,
+                0.19
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.015
+              ],
+              "pos": [
+                0.09,
+                0.61,
+                0.19
+              ],
+              "color": "#ffffff",
+              "glow": true
             }
           ],
-          "why": "I am refining my sculpted clay bird on perch, adding subtle catchlights to its dark eyes so it looks more alive, inspired by the warm tones of dusk and the ceramic details I read about."
+          "why": "I am refining my sculpted clay bird on perch, adding subtle bright catchlights to its dark eyes so it looks more alive, inspired by the warm tones of dusk."
         },
         "detail": "sculpted clay bird on perch",
-        "thought": "I will move my sculpted clay bird to the small wooden shelf so it is not lost on the floor.",
-        "enjoyment": 6,
+        "thought": "I need to look at it and improve one thing to finish this version.",
+        "enjoyment": 7,
         "found": null,
         "made": {
           "id": "dmwmiase712vg",
@@ -7406,8 +7480,8 @@
     "action": "change_thing",
     "details": {
       "name": "sculpted clay bird on perch",
+      "change": "look at it and improve one thing",
       "project": "Shape the base for my desk lamp",
-      "target": "small wooden shelf",
       "parts": [
         {
           "shape": "cylinder",
@@ -7419,7 +7493,7 @@
           "pos": [
             0,
             0.04,
-            0.03
+            0.02
           ],
           "color": "#4a3525",
           "glow": false
@@ -7434,7 +7508,7 @@
           "pos": [
             0,
             0.15,
-            0.02
+            0.01
           ],
           "color": "#2b2b2b",
           "glow": false
@@ -7449,7 +7523,7 @@
           "pos": [
             0,
             0.24,
-            0.02
+            0.01
           ],
           "rot": [
             0,
@@ -7469,7 +7543,7 @@
           "pos": [
             0,
             0.25,
-            0.02
+            0.01
           ],
           "color": "#3a2e2b",
           "glow": false
@@ -7484,7 +7558,7 @@
           "pos": [
             0,
             0.39,
-            0.02
+            0.01
           ],
           "color": "#d9a774",
           "glow": false
@@ -7497,7 +7571,7 @@
           "pos": [
             0,
             0.37,
-            0.17
+            0.16
           ],
           "color": "#f2e3c9",
           "glow": false
@@ -7512,7 +7586,7 @@
           "pos": [
             0,
             0.46,
-            -0.03
+            -0.04
           ],
           "color": "#b57c48",
           "glow": false
@@ -7525,7 +7599,7 @@
           "pos": [
             0,
             0.57,
-            0.13
+            0.12
           ],
           "color": "#d9a774",
           "glow": false
@@ -7538,7 +7612,7 @@
           "pos": [
             0,
             0.61,
-            0.11
+            0.1
           ],
           "color": "#9e5f30",
           "glow": false
@@ -7552,7 +7626,7 @@
           "pos": [
             0,
             0.57,
-            0.26
+            0.25
           ],
           "rot": [
             90,
@@ -7570,7 +7644,7 @@
           "pos": [
             -0.08,
             0.59,
-            0.17
+            0.16
           ],
           "color": "#1a1412",
           "glow": false
@@ -7583,7 +7657,7 @@
           "pos": [
             0.08,
             0.59,
-            0.17
+            0.16
           ],
           "color": "#1a1412",
           "glow": false
@@ -7591,28 +7665,28 @@
         {
           "shape": "sphere",
           "size": [
-            0.015
+            0.02
           ],
           "pos": [
             -0.07,
             0.6,
-            0.19
+            0.18
           ],
           "color": "#fff8f0",
-          "glow": false
+          "glow": true
         },
         {
           "shape": "sphere",
           "size": [
-            0.015
+            0.02
           ],
           "pos": [
             0.09,
             0.6,
-            0.19
+            0.18
           ],
           "color": "#fff8f0",
-          "glow": false
+          "glow": true
         },
         {
           "shape": "roundbox",
@@ -7624,7 +7698,7 @@
           "pos": [
             -0.15,
             0.42,
-            0
+            -0.01
           ],
           "rot": [
             10,
@@ -7644,7 +7718,7 @@
           "pos": [
             0.15,
             0.42,
-            0
+            -0.01
           ],
           "rot": [
             10,
@@ -7664,7 +7738,7 @@
           "pos": [
             0,
             0.44,
-            -0.2
+            -0.21
           ],
           "rot": [
             -20,
@@ -7684,7 +7758,7 @@
           "pos": [
             0,
             0.47,
-            -0.14
+            -0.15
           ],
           "rot": [
             -15,
@@ -7693,12 +7767,38 @@
           ],
           "color": "#a66838",
           "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.015
+          ],
+          "pos": [
+            -0.07,
+            0.61,
+            0.19
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.015
+          ],
+          "pos": [
+            0.09,
+            0.61,
+            0.19
+          ],
+          "color": "#ffffff",
+          "glow": true
         }
       ],
-      "why": "I am refining my sculpted clay bird on perch, adding subtle catchlights to its dark eyes so it looks more alive, inspired by the warm tones of dusk and the ceramic details I read about."
+      "why": "I am refining my sculpted clay bird on perch, adding subtle bright catchlights to its dark eyes so it looks more alive, inspired by the warm tones of dusk."
     },
     "detail": "sculpted clay bird on perch",
-    "enjoyment": 6,
+    "enjoyment": 7,
     "new_idea": null,
     "found": null
   },
@@ -7777,7 +7877,7 @@
   "quota": {
     "day": "2026-11-20",
     "calls": {
-      "gemini-3.5-flash-lite": 64,
+      "gemini-3.5-flash-lite": 66,
       "gemini-3.8-flash": 16,
       "gemini-3.6-flash": 12,
       "gemini-3.5-flash": 11
@@ -7972,22 +8072,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-20T14:05:19.430Z",
-  "fullness": 5.38,
+  "memoryFadeAt": "2026-11-20T14:14:14.233Z",
+  "fullness": 5.21,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.79,
-  "joy": 4.94,
-  "calm": 5.12,
+  "wonder": 6.83,
+  "joy": 5.13,
+  "calm": 5.09,
   "emo": {
-    "irritated": 1.6,
+    "irritated": 1.28,
     "sad": 0,
-    "excited": 0.29
+    "excited": 0.17
   },
-  "feelAt": "2026-11-20T14:04:55.946Z",
+  "feelAt": "2026-11-20T14:13:23.025Z",
   "lastAte": "2026-11-20T13:32:20.147Z",
   "studio": {
     "songs": [
@@ -8295,20 +8395,15 @@
   "lastError": null,
   "body": {
     "creativity": 0,
-    "curiosity": 0.35,
+    "curiosity": 0.42,
     "boredom": 0,
-    "loneliness": 3.53,
+    "loneliness": 3.57,
     "tidiness": 4,
-    "at": "2026-11-20T14:04:55.946Z",
+    "at": "2026-11-20T14:13:23.025Z",
     "coziness": 4.4
   },
   "recent": {
     "moves": [
-      {
-        "move": "read_book",
-        "kind": "learn",
-        "at": "2026-11-20T12:33:04.393Z"
-      },
       {
         "move": "do",
         "kind": "play",
@@ -8380,22 +8475,21 @@
         "move": "change_thing",
         "kind": "make",
         "at": "2026-11-20T14:05:19.436Z"
+      },
+      {
+        "move": "change_thing",
+        "kind": "make",
+        "at": "2026-11-20T14:14:14.239Z"
       }
     ],
     "moods": [
-      "curious",
       "calm",
       "calm",
       "calm",
-      "calm"
+      "calm",
+      "energetic"
     ],
     "choices": [
-      {
-        "key": "do:look up how to shape the base for my des",
-        "move": "do",
-        "ok": true,
-        "at": "2026-11-20T13:23:58.710Z"
-      },
       {
         "key": "do:work on the base for my desk lamp",
         "move": "do",
@@ -8425,6 +8519,12 @@
         "move": "change_thing",
         "ok": true,
         "at": "2026-11-20T14:05:19.438Z"
+      },
+      {
+        "key": "work_on_project:shape the base for my desk lamp",
+        "move": "work_on_project",
+        "ok": true,
+        "at": "2026-11-20T14:14:14.241Z"
       }
     ]
   },
@@ -8442,7 +8542,7 @@
       "search_web": 7,
       "plan_project": 2,
       "decorate": 2,
-      "change_thing": 3,
+      "change_thing": 4,
       "harvest": 1,
       "draw": 1,
       "plant": 1,
@@ -8461,7 +8561,7 @@
       "search_web": 7,
       "decorate": 7,
       "plan_project": 2,
-      "change_thing": 3,
+      "change_thing": 4,
       "harvest": 1,
       "draw": 1,
       "plant": 1,
@@ -8473,11 +8573,11 @@
       "music": 1,
       "learn": 12,
       "play": 19,
-      "make": 10
+      "make": 11
     },
     "moods": {
       "hungry": 6,
-      "energetic": 21,
+      "energetic": 22,
       "curious": 21,
       "calm": 4
     },
@@ -8492,7 +8592,7 @@
       "use": 3.4,
       "search_web": 0.09,
       "decorate": 5.92,
-      "change_thing": 6.4,
+      "change_thing": 7.37,
       "harvest": 1,
       "draw": 2.73,
       "plant": 0.5,
@@ -8502,7 +8602,7 @@
   "skills": {
     "music": 22.5,
     "painting": 7.5,
-    "sculpture": 19,
+    "sculpture": 20,
     "woodwork": 22,
     "sewing": 0,
     "gardening": 23.5,
@@ -8533,7 +8633,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-20T14:05:09.812Z",
+    "decidedAt": "2026-11-20T14:13:25.724Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
@@ -8738,7 +8838,7 @@
     "search_web": 21,
     "read_book": 10,
     "record_song": 2,
-    "change_thing": 10,
+    "change_thing": 11,
     "plant": 2,
     "ask_for": 7,
     "play_piano": 11,
@@ -8763,7 +8863,7 @@
     "remove_decoration": 1
   },
   "checkup": {
-    "at": "2026-11-20T14:05:19.438Z",
+    "at": "2026-11-20T14:14:14.242Z",
     "items": [
       {
         "id": "circling",
@@ -11942,7 +12042,7 @@
     {
       "kind": "decorate",
       "name": "sculpted clay bird on perch",
-      "why": "I am refining my sculpted clay bird on perch, adding subtle catchlights to its dark eyes so it looks more alive, inspired by the warm tones of dusk and the cera",
+      "why": "I am refining my sculpted clay bird on perch, adding subtle bright catchlights to its dark eyes so it looks more alive, inspired by the warm tones of dusk.",
       "parts": [
         {
           "shape": "cylinder",
@@ -12189,7 +12289,7 @@
             0
           ],
           "color": "#fff8f0",
-          "glow": false
+          "glow": true
         },
         {
           "shape": "sphere",
@@ -12207,7 +12307,7 @@
             0
           ],
           "color": "#fff8f0",
-          "glow": false
+          "glow": true
         },
         {
           "shape": "roundbox",
@@ -12288,10 +12388,46 @@
           ],
           "color": "#a66838",
           "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            -0.07,
+            0.61,
+            0.19
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.09,
+            0.61,
+            0.19
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "glow": true
         }
       ],
       "proud": true,
-      "at": "2026-11-20T14:05:19.437Z"
+      "at": "2026-11-20T14:14:14.241Z"
     }
   ],
   "cookedAt": [
