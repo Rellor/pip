@@ -3628,3 +3628,9 @@ I cannot proceed with my knitting project without a sewing kit, so I am asking f
 - ask_for (sewing kit: I need a sewing kit to knit the first version of my warm wool blanket.): I need a sewing kit to continue my blanket project.
 - mood: energetic
 
+## 20/11/2026, 17:16:17
+I am in the middle of knitting a small warm wool blanket and need to look up how to do it.
+> I am in the middle of knitting a small warm wool blanket and need to look up how to do it.
+- search_web (to knit a small warm wool blanket): I need to check how to knit the blanket as my next project step.
+- mood: energetic
+
