@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Timer App</title>
+<style>
+  body { font-family: monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+  .container { max-width: 400px; margin: auto; background: #252526; padding: 20px; border-radius: 5px; }
+  input, select, button { width: 100%; padding: 8px; margin-top: 10px; background: #333; color: #fff; border: 1px solid #555; }
+  button { background: #0e639c; cursor: pointer; }
+  button:hover { background: #1177bb; }
+  .log { margin-top: 15px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h3>Timer & Action</h3>
+  <label>Time (HH:MM):</label>
+  <input type="time" id="timeInput">
+  <label>Action:</label>
+  <select id="actionSelect">
+    <option value="on">On</option>
+    <option value="off">Off</option>
+  </select>
+  <button onclick="setTimer()">Set Timer</button>
+  <div class="log" id="log"></div>
+</div>
+<script>
+  function setTimer() {
+    const t = document.getElementById('timeInput').value;
+    const a = document.getElementById('actionSelect').value;
+    const log = document.getElementById('log');
+    if (!t) {
+      log.innerText = 'Please pick a time.';
+      return;
+    }
+    log.innerText = `Timer set for ${t}: will trigger [${a.toUpperCase()}]`;
+  }
+</script>
+</body>
+</html>
