@@ -3548,3 +3548,9 @@ I finished looking up how to build the shelf, so now I am ready to work on the a
 - decorate (tiny wooden shelf for my bird): I need to build the first version of the shelf.
 - mood: curious
 
+## 20/11/2026, 15:28:40
+I am working on the next step of my tiny wooden shelf project.
+> I am working on the next step of my tiny wooden shelf project.
+- change_thing (tiny wooden shelf for my bird): I need to look at my tiny wooden shelf and improve one thing now that the first version is built.
+- mood: curious
+
