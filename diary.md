@@ -3727,3 +3727,9 @@ My sculpted clay bird stands in the middle of the room, so I will move it agains
 - do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
 - mood: energetic
 
+## 20/11/2026, 19:22:24
+My sculpted clay bird is currently in the middle of the room where I walk, so I need to move it next to the wall.
+> My sculpted clay bird is currently in the middle of the room where I walk, so I need to move it next to the wall.
+- do (move the sculpted clay bird on perch near the wall): I will place my sculpted bird against the wall so it is out of the walking path.
+- mood: energetic
+
