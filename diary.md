@@ -3659,3 +3659,9 @@ I want to tidy up my room by moving the clay bird against the wall where it is o
 - do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
 - mood: energetic
 
+## 20/11/2026, 17:52:13
+I am trying a different way to place my sculpted bird near the wall so it is not in the middle of the room.
+> I am trying a different way to place my sculpted bird near the wall so it is not in the middle of the room.
+- do (move the sculpted clay bird on perch near the left wall so it is out of my walking path): I want to place the clay bird safely against the wall since putting it near 'the wall' directly failed earlier.
+- mood: energetic
+
