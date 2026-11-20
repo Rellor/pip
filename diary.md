@@ -3652,3 +3652,10 @@ I have just completed my project to knit a small warm wool blanket and I am read
 - do (look closely at my project Knit a small warm wool blanket): I made the blanket, now I can judge it.
 - mood: energetic
 
+## 20/11/2026, 17:50:04
+I want to tidy up my room by moving the clay bird against the wall where it is out of the way.
+> I want to tidy up my room by moving the clay bird against the wall where it is out of the way.
+- move_thing (sculpted clay bird on perch): I will move my sculpted clay bird out of the middle of the floor so I do not trip on it.
+- do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
+- mood: energetic
+
