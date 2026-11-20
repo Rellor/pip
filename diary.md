@@ -3554,3 +3554,10 @@ I am working on the next step of my tiny wooden shelf project.
 - change_thing (tiny wooden shelf for my bird): I need to look at my tiny wooden shelf and improve one thing now that the first version is built.
 - mood: curious
 
+## 20/11/2026, 15:36:51
+I am moving my sculpted clay bird from the floor onto the small wooden shelf so it is safe and visible.
+> I am moving my sculpted clay bird from the floor onto the small wooden shelf so it is safe and visible.
+- move_thing (sculpted clay bird on perch): My bird gets lost on the floor, the small wooden shelf has room now.
+- do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
+- mood: curious
+
