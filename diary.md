@@ -3530,3 +3530,9 @@ My sculpted clay bird on the floor gets in the way, so I am moving it onto my de
 - do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
 - mood: curious
 
+## 20/11/2026, 15:03:16
+I am starting a project to build a small shelf so my sculpted clay bird has a proper place to stand instead of getting lost on the floor.
+> I am starting a project to build a small shelf so my sculpted clay bird has a proper place to stand instead of getting lost on the floor.
+- do (plan my new project: Build a tiny wooden shelf for my bird): I will start a small project to build a shelf.
+- mood: curious
+
