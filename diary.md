@@ -3271,3 +3271,9 @@ I am in the middle of my ceramic base project and ready to shape the first versi
 - do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
 - mood: energetic
 
+## 20/11/2026, 09:35:40
+My project steps for shaping the ceramic base failed twice, so I will replan them.
+> My project steps for shaping the ceramic base failed twice, so I will replan them.
+- do (plan the steps of my project Shape a ceramic base for the desk lamp): I need to plan the project differently since it failed twice.
+- mood: energetic
+
