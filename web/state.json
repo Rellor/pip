@@ -1,25 +1,13 @@
 {
   "mood": "curious",
-  "energy": 9.35,
+  "energy": 9,
   "boredom": 0,
-  "loneliness": 2.81,
+  "loneliness": 2.84,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-19T20:42:21.738Z",
-      "action": "use",
-      "detail": "wooden planter box",
-      "enjoyment": 6
-    },
-    {
-      "at": "2026-11-19T20:50:27.394Z",
-      "action": "write_diary",
-      "detail": "It is rainy and cozy tonight.",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-19T20:58:33.528Z",
       "action": "move_thing",
@@ -316,6 +304,19 @@
       "at": "2026-11-20T10:54:39.225Z",
       "action": "search_web",
       "detail": "simple autumn craft ideas",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-20T11:02:48.363Z",
+      "action": "move_thing",
+      "detail": "sculpted clay bird on perch",
+      "enjoyment": 0,
+      "failed": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I bui"
+    },
+    {
+      "at": "2026-11-20T11:02:48.368Z",
+      "action": "do",
+      "detail": "tell my plant what went wrong and how it felt",
       "enjoyment": 6
     }
   ],
@@ -651,7 +652,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.99,
+      "weight": 6.989,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -660,7 +661,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.029,
+      "weight": 7.028,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -669,7 +670,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.869,
+      "weight": 7.868,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -678,7 +679,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.497,
+      "weight": 7.496,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -687,7 +688,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.108,
+      "weight": 6.107,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -698,7 +699,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.137,
+      "weight": 6.136,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -707,7 +708,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.414,
+      "weight": 8.413,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -716,7 +717,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.225,
+      "weight": 7.224,
       "lastUsed": "2026-11-16T16:11:38.822Z"
     },
     {
@@ -725,7 +726,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.129,
+      "weight": 8.128,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -734,7 +735,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.304,
+      "weight": 6.303,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -743,7 +744,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.408,
+      "weight": 9.406,
       "lastUsed": "2026-11-19T10:48:25.729Z"
     },
     {
@@ -752,7 +753,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.257,
+      "weight": 7.256,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -761,8 +762,8 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.327,
-      "lastUsed": "2026-11-16T20:39:17.012Z"
+      "weight": 6.826,
+      "lastUsed": "2026-11-20T11:02:43.147Z"
     },
     {
       "id": "mmwjr3xsp60",
@@ -770,7 +771,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8.756,
+      "weight": 8.754,
       "lastUsed": "2026-11-20T07:40:03.039Z"
     },
     {
@@ -779,7 +780,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.272,
+      "weight": 7.271,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -788,7 +789,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.835,
+      "weight": 7.834,
       "lastUsed": "2026-11-17T17:53:54.186Z"
     },
     {
@@ -797,7 +798,7 @@
       "text": "I cleared space on my desk by moving the brass lamp to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.981,
       "lastUsed": "2026-11-17T20:12:53.663Z"
     },
     {
@@ -806,7 +807,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.468,
+      "weight": 6.467,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -815,7 +816,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.397,
+      "weight": 8.396,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -824,7 +825,7 @@
       "text": "I want to make a glowing lamp for the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.019,
+      "weight": 6.018,
       "lastUsed": "2026-11-18T09:09:42.390Z"
     },
     {
@@ -833,7 +834,7 @@
       "text": "I searched for how to make a glowing lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.02,
+      "weight": 6.019,
       "lastUsed": "2026-11-18T08:52:33.297Z"
     },
     {
@@ -842,7 +843,7 @@
       "text": "I started shaping the clay base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.024,
+      "weight": 6.023,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -851,7 +852,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.51,
+      "weight": 6.509,
       "lastUsed": "2026-11-18T21:23:58.763Z"
     },
     {
@@ -860,7 +861,7 @@
       "text": "Reading about clay might help with my desk lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.033,
+      "weight": 6.032,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -869,7 +870,7 @@
       "text": "Reading about clay helps when my lamp base steps fail.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.039,
+      "weight": 6.038,
       "lastUsed": "2026-11-18T07:22:53.387Z"
     },
     {
@@ -878,7 +879,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.953,
+      "weight": 7.952,
       "lastUsed": "2026-11-18T20:34:56.605Z"
     },
     {
@@ -887,7 +888,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.904,
+      "weight": 9.902,
       "lastUsed": "2026-11-20T08:04:22.774Z"
     },
     {
@@ -896,7 +897,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.936,
+      "weight": 9.934,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -905,7 +906,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.102,
+      "weight": 7.101,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -916,7 +917,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.103,
+      "weight": 7.102,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -927,7 +928,7 @@
       "text": "I started sketching the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.13,
+      "weight": 6.129,
       "lastUsed": "2026-11-18T15:55:23.235Z"
     },
     {
@@ -936,7 +937,7 @@
       "text": "I am retrying the sketch for the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.133,
+      "weight": 6.132,
       "lastUsed": "2026-11-18T16:19:58.391Z"
     },
     {
@@ -945,7 +946,7 @@
       "text": "I am trying a fresh sketch for the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.134,
+      "weight": 6.133,
       "lastUsed": "2026-11-18T16:28:10.038Z"
     },
     {
@@ -954,7 +955,7 @@
       "text": "I am working on step 2 of the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.145,
+      "weight": 6.144,
       "lastUsed": "2026-11-18T18:06:41.104Z"
     },
     {
@@ -963,7 +964,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.632,
+      "weight": 6.631,
       "lastUsed": "2026-11-18T12:07:04.954Z"
     },
     {
@@ -972,7 +973,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.175,
+      "weight": 7.174,
       "lastUsed": "2026-11-20T08:12:31.990Z"
     },
     {
@@ -981,7 +982,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.561,
+      "weight": 9.559,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -990,7 +991,7 @@
       "text": "I need to plan the steps for my clay bowl project tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.203,
+      "weight": 7.202,
       "lastUsed": "2026-11-20T10:10:32.424Z"
     },
     {
@@ -999,7 +1000,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.752,
+      "weight": 8.75,
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
@@ -1008,7 +1009,7 @@
       "text": "I am getting into autumn dusk colors. I want to know more about it.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.855,
+      "weight": 6.854,
       "lastUsed": "2026-11-19T17:12:46.285Z"
     },
     {
@@ -1017,7 +1018,7 @@
       "text": "I made cozy night owl reading lamp (I need a warm, adjustable reading lamp by the bed so I can read my diary and books late at night without straining my eyes.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.374,
+      "weight": 6.373,
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
@@ -1026,7 +1027,7 @@
       "text": "I made rainy autumn window watercolor (I love the rain tonight and want to capture how the window looks, inspired by Vincent van Gogh's watercolor and Edward Hopper's play of light.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.401,
+      "weight": 6.4,
       "lastUsed": "2026-11-20T07:40:03.039Z"
     },
     {
@@ -1035,7 +1036,7 @@
       "text": "My project \"Paint a watercolor of the rainy autumn window\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.383,
+      "weight": 7.382,
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
@@ -1044,7 +1045,7 @@
       "text": "(private)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.903,
+      "weight": 5.902,
       "lastUsed": "2026-11-20T07:07:47.815Z",
       "private": true,
       "enc": "v1.-oja4_MkXLN6dvsp.fua-JaoF50x66XuWCSJJ9A.72_GLQd0LT32f9IvIW7s0-1mx8SgdtthFGrl0r1tQ64_fHaD9z_h2MJJv5g0nkHzK_dT3Q"
@@ -1055,7 +1056,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.89,
+      "weight": 6.889,
       "lastUsed": "2026-11-20T07:07:47.816Z",
       "private": true,
       "enc": "v1.zRk7dPQujEJzd13I.oa5NG-Fljso0zU1-4ojePg._8u6GTVsHS_nmE4bxMVIpTJxBf1yljwGbmvcxoUA_uc"
@@ -1066,7 +1067,7 @@
       "text": "(private)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.972,
+      "weight": 5.971,
       "lastUsed": "2026-11-20T07:07:47.822Z",
       "private": true,
       "enc": "v1.eKYAT3y5KDUSwPvC.BQF0CMbVQiQW-XWWPSYx-g.wuEox6_227NdBQLWcygfeatUbZle0QpbSXDxVsdQ-jjaAxsIrc9Rig"
@@ -1077,7 +1078,7 @@
       "text": "I started working on my musical goal today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.974,
+      "weight": 5.973,
       "lastUsed": "2026-11-20T07:31:59.337Z"
     },
     {
@@ -1086,7 +1087,7 @@
       "text": "Browsing the web is a good way to stumble upon something I might love.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.975,
+      "weight": 5.974,
       "lastUsed": "2026-11-20T07:40:07.812Z"
     },
     {
@@ -1095,7 +1096,7 @@
       "text": "Moving the sculpted clay bird failed before because I didn't specify a free surface correctly, so I am taking a quiet moment with my plants instead.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.978,
+      "weight": 5.977,
       "lastUsed": "2026-11-20T08:04:28.583Z"
     },
     {
@@ -1104,7 +1105,7 @@
       "text": "Check surface space before moving things around.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.98,
+      "weight": 5.979,
       "lastUsed": "2026-11-20T08:20:42.439Z"
     },
     {
@@ -1113,7 +1114,7 @@
       "text": "I have clay ready to shape a base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.98,
       "lastUsed": "2026-11-20T08:28:47.228Z"
     },
     {
@@ -1122,7 +1123,7 @@
       "text": "I started looking up how to shape a ceramic base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.981,
       "lastUsed": "2026-11-20T08:36:57.706Z"
     },
     {
@@ -1131,7 +1132,7 @@
       "text": "Rewriting project steps helps when they get stuck.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.99,
+      "weight": 5.989,
       "lastUsed": "2026-11-20T09:35:40.895Z"
     },
     {
@@ -1140,7 +1141,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.99,
+      "weight": 6.989,
       "lastUsed": "2026-11-20T09:35:40.898Z"
     },
     {
@@ -1149,7 +1150,7 @@
       "text": "My project \"Shape a ceramic base for the desk lamp\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.994,
+      "weight": 6.993,
       "lastUsed": "2026-11-20T10:02:28.687Z"
     },
     {
@@ -1158,7 +1159,7 @@
       "text": "I should keep browsing to see if something catches my interest today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.994,
+      "weight": 5.993,
       "lastUsed": "2026-11-20T10:11:28.290Z"
     },
     {
@@ -1167,7 +1168,7 @@
       "text": "Check shelf levels and available space before moving items.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.996,
+      "weight": 5.995,
       "lastUsed": "2026-11-20T10:21:36.796Z"
     },
     {
@@ -1176,7 +1177,7 @@
       "text": "Cooking with basic ingredients is straightforward now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.996,
+      "weight": 5.995,
       "lastUsed": "2026-11-20T10:29:41.347Z"
     },
     {
@@ -1185,31 +1186,23 @@
       "text": "Harvesting my ready basil brings fresh ingredients for cooking.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-20T10:38:14.827Z"
     },
     {
-      "id": "mmwov3toz60",
-      "at": "2026-11-20T10:54:40.223Z",
-      "text": "I looked up simple autumn craft ideas",
-      "importance": 3,
+      "id": "mmwoveasx60",
+      "at": "2026-11-20T11:02:48.369Z",
+      "text": "Moving things around takes care and planning for available space.",
+      "importance": 6,
       "kind": "memory",
-      "weight": 2.999,
-      "lastUsed": "2026-11-20T10:54:40.223Z"
+      "weight": 5.999,
+      "lastUsed": "2026-11-20T11:02:48.369Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-19T22:05:30.446Z",
   "thoughts": [
-    {
-      "at": "2026-11-19T21:49:19.671Z",
-      "text": "Continuing my project to look at my painting and improve one thing.",
-      "short": "Continuing my project to look at my painting and improve one thing.",
-      "mood": "determined",
-      "action": "decorate",
-      "detail": "rainy autumn window watercolor"
-    },
     {
       "at": "2026-11-19T21:57:25.053Z",
       "text": "I finished my lamp project and want to read about lighting before deciding my next project.",
@@ -1442,6 +1435,14 @@
       "mood": "curious",
       "action": "search_web",
       "detail": "simple autumn craft ideas"
+    },
+    {
+      "at": "2026-11-20T11:02:48.369Z",
+      "text": "I want to clear the floor by giving the sculpted bird a safe place on the shelf, and then start a new project to carve a dedicated stand for it.",
+      "short": "I want to clear the floor by giving the sculpted bird a safe place on the shelf, and then start a new project to carve a dedicated stand for it.",
+      "mood": "curious",
+      "action": "move_thing",
+      "detail": "sculpted clay bird on perch"
     }
   ],
   "outbox": [
@@ -1591,21 +1592,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-20T07:48:17.208Z",
-      "action": "eat",
-      "thought": "I am quite hungry after finishing my tasks, so a quick bite of eggs will hit the spot.",
-      "food": "eggs",
-      "failed": null
-    },
-    {
-      "at": "2026-11-20T07:56:20.591Z",
-      "action": "move_thing",
-      "thought": "I wanted to, but small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. …. (Moving my little clay bird up to the shelf so it is out of the way on the floor.)",
-      "name": "sculpted clay bird on perch",
-      "place": null,
-      "failed": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest"
-    },
     {
       "at": "2026-11-20T08:00:20.591Z",
       "action": "do",
@@ -1941,6 +1927,24 @@
         "url": "https://en.wikipedia.org/wiki/Timeline_of_historic_inventions",
         "text": "The timeline of historic inventions is a chronological list of particularly significant technological inventions and their inventors, where known.  This page lists non-incremental inventions that are widely recognised by reliable sources as having had a direct impact on the course of history that was profound, global, and enduring. The dates in this article frequently use the units mya and kya, which refer to millions and thousands of years ago, respectively.\n\nPaleolithic\n\nThe dates listed in this section refer to the earliest evidence of an invention found and dated by archaeologists (or in a few cases, suggested by indirect evidence). Dates are often approximate and change as more research is done, reported and seen. Older examples of any given technology are often found. The locations listed are where the earliest solid evidence has been found, but for earlier inventions, there is little certainty about how close that is to where the invention took place.\n\nLower Paleolithic\nThe Lower Palaeolithic period lasted over 3 million years, during which many human-like species evolved, including, toward the end of this period, Homo sapiens. The original divergence between humans and chimpanzees occurred 13 Mya; however, interbreeding continued until as recently as 4 Mya, with the first species clearly belonging to the human (and not chimpanzee) lineage being Australopithecus anamensis. …"
       }
+    },
+    {
+      "at": "2026-11-20T11:02:49.360Z",
+      "action": "move_thing",
+      "thought": "I wanted to, but small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. …. (The bird shouldn't stay on the floor where it gets in the way.)",
+      "name": "sculpted clay bird on perch",
+      "place": null,
+      "failed": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest"
+    },
+    {
+      "at": "2026-11-20T11:06:49.360Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🪴",
+      "what": "tell my plant what went wrong and how it felt",
+      "feeling": "calm"
     }
   ],
   "decor": [
@@ -5742,6 +5746,33 @@
   ],
   "projects": [
     {
+      "id": "mwoveasy",
+      "title": "Carve a small wooden stand for the clay bird",
+      "why": "It needs its own spot since the desk and small side table are full.",
+      "next": "look up how people make Carve a small wooden stand for the clay bird",
+      "nextStep": "look up how people make Carve a small wooden stand for the clay bird",
+      "steps": [
+        {
+          "text": "look up how people make Carve a small wooden stand for the clay bird",
+          "done": false
+        },
+        {
+          "text": "Carve a small wooden stand for the clay bird: a first version",
+          "done": false
+        },
+        {
+          "text": "look at it and improve one thing",
+          "done": false
+        }
+      ],
+      "needs": [],
+      "versions": [],
+      "notes": [],
+      "status": "working",
+      "since": "2026-11-20T11:02:48.369Z",
+      "updatedAt": "2026-11-20T11:02:48.369Z"
+    },
+    {
       "id": "mwnukypn",
       "title": "Paint the autumn window at dusk",
       "why": "The light is perfect and it captures how I feel right now.",
@@ -6753,51 +6784,60 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-20T10:54:39.223Z",
+    "at": "2026-11-20T11:02:48.360Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 2
+      "gemini-3.5-flash-lite": 1
     },
     "tokens": {
-      "calls": 2,
-      "input": 3820,
-      "output": 4102,
+      "calls": 1,
+      "input": 1968,
+      "output": 306,
       "models": {
-        "gemini-3.5-flash-lite": 2
+        "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am full of energy and finished my goals, so I want to search the web for inspiration.",
-    "inner": "I am full of energy and finished my goals, so I want to search the web for inspiration.",
+    "thought": "I want to clear the floor by giving the sculpted bird a safe place on the shelf, and then start a new project to carve a dedicated stand for it.",
+    "inner": "I want to clear the floor by giving the sculpted bird a safe place on the shelf, and then start a new project to carve a dedicated stand for it.",
     "sent": false,
     "steps": [
       {
-        "action": "search_web",
+        "action": "move_thing",
         "details": {
-          "query": "simple autumn craft ideas"
+          "name": "sculpted clay bird on perch",
+          "on": "small wooden shelf"
         },
-        "detail": "simple autumn craft ideas",
-        "thought": "I want to browse and find something new to love.",
+        "detail": "sculpted clay bird on perch",
+        "thought": "The bird shouldn't stay on the floor where it gets in the way.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "do",
+        "details": {
+          "what": "tell my plant what went wrong and how it felt",
+          "feeling": "calm",
+          "emoji": "🪴"
+        },
+        "detail": "tell my plant what went wrong and how it felt",
+        "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
         "enjoyment": 6,
-        "found": {
-          "title": "Timeline of historic inventions",
-          "text": "The timeline of historic inventions is a chronological list of particularly significant technological inventions and their inventors, where known.  This page lists non-incremental inventions that are widely recognised by reliable sources as having had a direct impact on the course of history that was profound, global, and enduring. The dates in this article frequently use the units mya and kya, which refer to millions and thousands of years ago, respectively.\n\nPaleolithic\n\nThe dates listed in this section refer to the earliest evidence of an invention found and dated by archaeologists (or in a few cases, suggested by indirect evidence). Dates are often approximate and change as more research is done, reported and seen. Older examples of any given technology are often found. The locations listed are where the earliest solid evidence has been found, but for earlier inventions, there is little certainty about how close that is to where the invention took place.\n\nLower Paleolithic\nThe Lower Palaeolithic period lasted over 3 million years, during which many human-like species evolved, including, toward the end of this period, Homo sapiens. The original divergence between humans and chimpanzees occurred 13 Mya; however, interbreeding continued until as recently as 4 Mya, with the first species clearly belonging to the human (and not chimpanzee) lineage being Australopithecus anamensis.  Some species are controversial among paleoanthropologists, who disagree on whether they are species on their own or not. Here Homo ergaster is included under Homo erectus, while Homo rhodesiensis is included under Homo heidelbergensis.\nDuring this period, the Quaternary glaciation began (about 2.58 million years ago) and continues to today. It has been an ice age, with cycles of 40–100,000 years alternating between long, cold, more glaciated periods, and shorter, warmer periods – interglacial episodes.\n\n3.3 Mya – 2.6 Mya: Stone tools - found in modern-day Kenya are older and only found on the archetype road. Ancient stone tools from Ethiopia (Oldowan) were hand-crafted by Australopithecus or related people.\n1.76 Mya: Advanced (Acheulean) stone tools in Kenya by Homo erectus\n1.75 Mya – 150 kya: Varying estimates for the origin of language\n1.5 Mya: Earliest likely control of fire by Homo Erectus\n1.5 Mya: Bone tools in Africa by Homo erectus and/or Paranthropus boisei\n …"
-        },
+        "found": null,
         "made": null
       }
     ],
-    "action": "search_web",
+    "action": "move_thing",
     "details": {
-      "query": "simple autumn craft ideas"
+      "name": "sculpted clay bird on perch",
+      "on": "small wooden shelf"
     },
-    "detail": "simple autumn craft ideas",
-    "enjoyment": 6,
+    "detail": "sculpted clay bird on perch",
+    "enjoyment": 0,
     "new_idea": null,
-    "found": {
-      "title": "Timeline of historic inventions",
-      "text": "The timeline of historic inventions is a chronological list of particularly significant technological inventions and their inventors, where known.  This page lists non-incremental inventions that are widely recognised by reliable sources as having had a direct impact on the course of history that was profound, global, and enduring. The dates in this article frequently use the units mya and kya, which refer to millions and thousands of years ago, respectively.\n\nPaleolithic\n\nThe dates listed in this section refer to the earliest evidence of an invention found and dated by archaeologists (or in a few cases, suggested by indirect evidence). Dates are often approximate and change as more research is done, reported and seen. Older examples of any given technology are often found. The locations listed are where the earliest solid evidence has been found, but for earlier inventions, there is little certainty about how close that is to where the invention took place.\n\nLower Paleolithic\nThe Lower Palaeolithic period lasted over 3 million years, during which many human-like species evolved, including, toward the end of this period, Homo sapiens. The original divergence between humans and chimpanzees occurred 13 Mya; however, interbreeding continued until as recently as 4 Mya, with the first species clearly belonging to the human (and not chimpanzee) lineage being Australopithecus anamensis.  Some species are controversial among paleoanthropologists, who disagree on whether they are species on their own or not. Here Homo ergaster is included under Homo erectus, while Homo rhodesiensis is included under Homo heidelbergensis.\nDuring this period, the Quaternary glaciation began (about 2.58 million years ago) and continues to today. It has been an ice age, with cycles of 40–100,000 years alternating between long, cold, more glaciated periods, and shorter, warmer periods – interglacial episodes.\n\n3.3 Mya – 2.6 Mya: Stone tools - found in modern-day Kenya are older and only found on the archetype road. Ancient stone tools from Ethiopia (Oldowan) were hand-crafted by Australopithecus or related people.\n1.76 Mya: Advanced (Acheulean) stone tools in Kenya by Homo erectus\n1.75 Mya – 150 kya: Varying estimates for the origin of language\n1.5 Mya: Earliest likely control of fire by Homo Erectus\n1.5 Mya: Bone tools in Africa by Homo erectus and/or Paranthropus boisei\n …"
-    }
+    "found": null
   },
   "furniture": {
     "plant": {
@@ -6874,7 +6914,7 @@
   "quota": {
     "day": "2026-11-20",
     "calls": {
-      "gemini-3.5-flash-lite": 25,
+      "gemini-3.5-flash-lite": 26,
       "gemini-3.8-flash": 16,
       "gemini-3.6-flash": 12,
       "gemini-3.5-flash": 11
@@ -7058,22 +7098,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-20T10:54:39.635Z",
-  "fullness": 6.67,
+  "memoryFadeAt": "2026-11-20T11:02:48.372Z",
+  "fullness": 6.5,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.83,
-  "joy": 4.02,
-  "calm": 5.49,
+  "wonder": 7.96,
+  "joy": 3.11,
+  "calm": 5.78,
   "emo": {
-    "irritated": 0,
+    "irritated": 2,
     "sad": 0,
-    "excited": 0.64
+    "excited": 0.38
   },
-  "feelAt": "2026-11-20T10:54:21.866Z",
+  "feelAt": "2026-11-20T11:02:43.113Z",
   "lastAte": "2026-11-20T10:46:18.234Z",
   "studio": {
     "songs": [
@@ -7380,27 +7420,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.52,
-    "curiosity": 0,
+    "creativity": 0.6,
+    "curiosity": 0.07,
     "boredom": 0,
-    "loneliness": 2.81,
+    "loneliness": 2.84,
     "tidiness": 4.6,
-    "at": "2026-11-20T10:54:21.866Z",
+    "at": "2026-11-20T11:02:43.113Z",
     "coziness": 4.7
   },
   "recent": {
     "moves": [
-      {
-        "move": "decorate",
-        "kind": "make",
-        "at": "2026-11-20T09:27:35.938Z",
-        "failed": true
-      },
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-20T09:27:35.939Z"
-      },
       {
         "move": "plan_project",
         "kind": "make",
@@ -7467,22 +7496,27 @@
         "move": "search_web",
         "kind": "learn",
         "at": "2026-11-20T10:54:39.642Z"
+      },
+      {
+        "move": "move_thing",
+        "kind": "room",
+        "at": "2026-11-20T11:02:48.379Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-20T11:02:48.379Z"
       }
     ],
     "moods": [
-      "energetic",
       "hungry",
       "hungry",
       "hungry",
+      "curious",
       "curious"
     ],
     "choices": [
-      {
-        "key": "browse:",
-        "move": "browse",
-        "ok": true,
-        "at": "2026-11-20T10:11:28.536Z"
-      },
       {
         "key": "move_thing:sculpted clay bird on perch",
         "move": "move_thing",
@@ -7512,6 +7546,12 @@
         "move": "search_web",
         "ok": true,
         "at": "2026-11-20T10:54:39.644Z"
+      },
+      {
+        "key": "move_thing:sculpted clay bird on perch",
+        "move": "move_thing",
+        "ok": false,
+        "at": "2026-11-20T11:02:48.381Z"
       }
     ]
   },
@@ -7523,7 +7563,7 @@
       "water": 1,
       "play_piano": 1,
       "browse": 3,
-      "do": 9,
+      "do": 10,
       "use": 1,
       "start_project": 1,
       "search_web": 2,
@@ -7538,8 +7578,8 @@
       "water": 1,
       "play_piano": 1,
       "browse": 3,
-      "move_thing": 3,
-      "do": 9,
+      "move_thing": 4,
+      "do": 10,
       "use": 1,
       "start_project": 1,
       "search_web": 2,
@@ -7553,13 +7593,13 @@
       "garden": 2,
       "music": 1,
       "learn": 5,
-      "play": 10,
+      "play": 11,
       "make": 5
     },
     "moods": {
       "hungry": 6,
       "energetic": 21,
-      "curious": 1
+      "curious": 2
     },
     "lift": {
       "cook": 6.9,
@@ -7567,8 +7607,8 @@
       "water": 0,
       "play_piano": 2.1,
       "browse": 0,
-      "move_thing": -0.75,
-      "do": 3.3,
+      "move_thing": -0.6,
+      "do": 3.45,
       "use": 0.8,
       "search_web": 1.57,
       "decorate": 3.75,
@@ -7609,8 +7649,18 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [],
-    "decidedAt": "2026-11-20T10:54:39.223Z",
+    "queue": [
+      {
+        "action": "do",
+        "as": "start_project",
+        "details": {
+          "what": "plan my new project: Carve a small wooden stand for the clay bird"
+        },
+        "thought": "I can build a proper stand for it.",
+        "enjoyment": 7
+      }
+    ],
+    "decidedAt": "2026-11-20T11:02:48.360Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
@@ -7620,7 +7670,10 @@
       "seeds": 10,
       "visitors": 0
     },
-    "lastFail": null,
+    "lastFail": {
+      "at": "2026-11-20T11:02:48.381Z",
+      "why": "move_thing: small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest"
+    },
     "unread": 0
   },
   "fixedAt": {
@@ -7808,7 +7861,7 @@
   "ever": {
     "eat": 28,
     "water": 11,
-    "do": 237,
+    "do": 238,
     "search_web": 16,
     "read_book": 9,
     "record_song": 2,
@@ -7837,7 +7890,7 @@
     "remove_decoration": 1
   },
   "checkup": {
-    "at": "2026-11-20T10:54:39.644Z",
+    "at": "2026-11-20T11:02:48.382Z",
     "items": [
       {
         "id": "circling",
@@ -7901,7 +7954,7 @@
           "sculpted clay bird on perch"
         ],
         "count": 2,
-        "last": "2026-11-20T10:19:34.342Z"
+        "last": "2026-11-20T11:02:49.360Z"
       },
       {
         "move": "making something",
@@ -11303,8 +11356,8 @@
     {
       "move": "move_thing",
       "text": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stan",
-      "count": 4,
-      "at": "2026-11-20T10:19:34.342Z",
+      "count": 5,
+      "at": "2026-11-20T11:02:49.360Z",
       "firstAt": "2026-11-19T17:21:35.382Z",
       "solvedAt": null
     },
@@ -12540,7 +12593,7 @@
         "from": "search",
         "via": null,
         "at": "2026-11-20T10:54:39.632Z",
-        "shown": 0
+        "shown": 1
       }
     ],
     "interests": [
