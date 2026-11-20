@@ -3473,3 +3473,10 @@ I have been working on lamps for hours and need a fresh thought.
 - water: My plants look dry.
 - mood: calm
 
+## 20/11/2026, 13:56:52
+My sculpted clay bird on perch is currently on the floor where it gets in the way. Moving it to the desk will make it easier to see.
+> My sculpted clay bird on perch is currently on the floor where it gets in the way. Moving it to the desk will make it easier to see.
+- move_thing (sculpted clay bird on perch): I want to move the bird from the floor onto my desk so it doesn't get lost.
+- do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
+- mood: calm
+
