@@ -1,25 +1,13 @@
 {
   "mood": "energetic",
-  "energy": 9.5,
+  "energy": 9,
   "boredom": 0,
-  "loneliness": 2.63,
+  "loneliness": 2.67,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-19T19:44:37.447Z",
-      "action": "water",
-      "detail": "basil",
-      "enjoyment": 6
-    },
-    {
-      "at": "2026-11-19T19:52:44.856Z",
-      "action": "take_photo",
-      "detail": "window",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-19T20:01:16.365Z",
       "action": "take_photo",
@@ -315,6 +303,19 @@
       "at": "2026-11-20T10:11:28.289Z",
       "action": "browse",
       "detail": "",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-20T10:19:33.345Z",
+      "action": "move_thing",
+      "detail": "sculpted clay bird on perch",
+      "enjoyment": 0,
+      "failed": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I bui"
+    },
+    {
+      "at": "2026-11-20T10:19:33.350Z",
+      "action": "do",
+      "detail": "stretch up tall and look out of the window for a moment",
       "enjoyment": 6
     }
   ],
@@ -650,7 +651,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.995,
+      "weight": 6.994,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -659,7 +660,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.034,
+      "weight": 7.033,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -668,7 +669,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.874,
+      "weight": 7.873,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -677,7 +678,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.502,
+      "weight": 7.501,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -686,7 +687,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.113,
+      "weight": 6.112,
       "lastUsed": "2026-11-15T16:05:36.196Z",
       "private": true,
       "enc": "v1.jntz2uNlAa8RVdAz.5dPG4oLC7JaHE8xl-1NzVA.4lT0wQGVcq71F8myG5bc07aHNi3KjvZ68VydwgcRnok"
@@ -697,7 +698,7 @@
       "text": "Lesson: when I record song, it often fails (a recording needs tracks: [{\"instrument\": \"piano\", \"notes\": \"C3+E3+G3:4 E4 G4:2\", \"volume\": 0.8, \"pan\": 0, \"reverb\": 0.2}, {\"instr). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.142,
+      "weight": 6.141,
       "lastUsed": "2026-11-15T19:54:41.469Z"
     },
     {
@@ -706,7 +707,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.42,
+      "weight": 8.419,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -715,7 +716,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.23,
+      "weight": 7.229,
       "lastUsed": "2026-11-16T16:11:38.822Z"
     },
     {
@@ -724,7 +725,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.134,
+      "weight": 8.133,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -733,7 +734,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.309,
+      "weight": 6.308,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -742,7 +743,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.418,
+      "weight": 9.416,
       "lastUsed": "2026-11-19T10:48:25.729Z"
     },
     {
@@ -751,7 +752,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.262,
+      "weight": 7.261,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -760,7 +761,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.332,
+      "weight": 6.331,
       "lastUsed": "2026-11-16T20:39:17.012Z"
     },
     {
@@ -769,7 +770,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8.763,
+      "weight": 8.762,
       "lastUsed": "2026-11-20T07:40:03.039Z"
     },
     {
@@ -778,7 +779,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.277,
+      "weight": 7.276,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -787,7 +788,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.84,
+      "weight": 7.839,
       "lastUsed": "2026-11-17T17:53:54.186Z"
     },
     {
@@ -796,7 +797,7 @@
       "text": "I cleared space on my desk by moving the brass lamp to the small wooden shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.986,
       "lastUsed": "2026-11-17T20:12:53.663Z"
     },
     {
@@ -805,7 +806,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.473,
+      "weight": 6.472,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -814,7 +815,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.403,
+      "weight": 8.402,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -823,7 +824,7 @@
       "text": "I want to make a glowing lamp for the dark corners of my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.024,
+      "weight": 6.023,
       "lastUsed": "2026-11-18T09:09:42.390Z"
     },
     {
@@ -832,7 +833,7 @@
       "text": "I searched for how to make a glowing lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.025,
+      "weight": 6.024,
       "lastUsed": "2026-11-18T08:52:33.297Z"
     },
     {
@@ -841,7 +842,7 @@
       "text": "I started shaping the clay base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.029,
+      "weight": 6.028,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -850,7 +851,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.515,
+      "weight": 6.514,
       "lastUsed": "2026-11-18T21:23:58.763Z"
     },
     {
@@ -859,7 +860,7 @@
       "text": "Reading about clay might help with my desk lamp base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.038,
+      "weight": 6.037,
       "lastUsed": "2026-11-18T07:06:43.394Z"
     },
     {
@@ -868,7 +869,7 @@
       "text": "Reading about clay helps when my lamp base steps fail.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.044,
+      "weight": 6.043,
       "lastUsed": "2026-11-18T07:22:53.387Z"
     },
     {
@@ -877,7 +878,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.958,
+      "weight": 7.957,
       "lastUsed": "2026-11-18T20:34:56.605Z"
     },
     {
@@ -886,7 +887,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.914,
+      "weight": 9.912,
       "lastUsed": "2026-11-20T08:04:22.774Z"
     },
     {
@@ -895,7 +896,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.946,
+      "weight": 9.944,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -904,7 +905,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.107,
+      "weight": 7.106,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -915,7 +916,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.108,
+      "weight": 7.107,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -926,7 +927,7 @@
       "text": "I started sketching the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.135,
+      "weight": 6.134,
       "lastUsed": "2026-11-18T15:55:23.235Z"
     },
     {
@@ -935,7 +936,7 @@
       "text": "I am retrying the sketch for the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.138,
+      "weight": 6.137,
       "lastUsed": "2026-11-18T16:19:58.391Z"
     },
     {
@@ -944,7 +945,7 @@
       "text": "I am trying a fresh sketch for the tiny clay bird.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.139,
+      "weight": 6.138,
       "lastUsed": "2026-11-18T16:28:10.038Z"
     },
     {
@@ -953,7 +954,7 @@
       "text": "I am working on step 2 of the tiny clay bird project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.15,
+      "weight": 6.149,
       "lastUsed": "2026-11-18T18:06:41.104Z"
     },
     {
@@ -962,7 +963,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.637,
+      "weight": 6.636,
       "lastUsed": "2026-11-18T12:07:04.954Z"
     },
     {
@@ -971,7 +972,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.18,
+      "weight": 7.179,
       "lastUsed": "2026-11-20T08:12:31.990Z"
     },
     {
@@ -980,7 +981,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.571,
+      "weight": 9.569,
       "lastUsed": "2026-11-20T07:31:57.920Z"
     },
     {
@@ -989,7 +990,7 @@
       "text": "I need to plan the steps for my clay bowl project tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.208,
+      "weight": 7.207,
       "lastUsed": "2026-11-20T10:10:32.424Z"
     },
     {
@@ -998,7 +999,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.759,
+      "weight": 8.758,
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
@@ -1007,7 +1008,7 @@
       "text": "I am getting into autumn dusk colors. I want to know more about it.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.86,
+      "weight": 6.859,
       "lastUsed": "2026-11-19T17:12:46.285Z"
     },
     {
@@ -1016,7 +1017,7 @@
       "text": "I made cozy night owl reading lamp (I need a warm, adjustable reading lamp by the bed so I can read my diary and books late at night without straining my eyes.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.379,
+      "weight": 6.378,
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
@@ -1025,7 +1026,7 @@
       "text": "I am working on my autumn window watercolor.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.903,
+      "weight": 5.902,
       "lastUsed": "2026-11-19T21:22:49.300Z"
     },
     {
@@ -1034,7 +1035,7 @@
       "text": "I started painting my watercolor of the rainy autumn window.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.904,
+      "weight": 5.903,
       "lastUsed": "2026-11-19T21:30:59.377Z"
     },
     {
@@ -1043,7 +1044,7 @@
       "text": "I drew rainy autumn window first version",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.904,
+      "weight": 5.903,
       "lastUsed": "2026-11-19T21:31:00.368Z"
     },
     {
@@ -1052,7 +1053,7 @@
       "text": "I need to clear wall space or adjust sizes when hanging large wall things.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.906,
+      "weight": 5.905,
       "lastUsed": "2026-11-19T21:41:13.708Z"
     },
     {
@@ -1061,7 +1062,7 @@
       "text": "I made rainy autumn window watercolor (I love the rain tonight and want to capture how the window looks, inspired by Vincent van Gogh's watercolor and Edward Hopper's play of light.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.406,
+      "weight": 6.405,
       "lastUsed": "2026-11-20T07:40:03.039Z"
     },
     {
@@ -1070,7 +1071,7 @@
       "text": "My project \"Paint a watercolor of the rainy autumn window\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.388,
+      "weight": 7.387,
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
@@ -1079,7 +1080,7 @@
       "text": "(private)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.908,
+      "weight": 5.907,
       "lastUsed": "2026-11-20T07:07:47.815Z",
       "private": true,
       "enc": "v1.-oja4_MkXLN6dvsp.fua-JaoF50x66XuWCSJJ9A.72_GLQd0LT32f9IvIW7s0-1mx8SgdtthFGrl0r1tQ64_fHaD9z_h2MJJv5g0nkHzK_dT3Q"
@@ -1090,7 +1091,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.895,
+      "weight": 6.894,
       "lastUsed": "2026-11-20T07:07:47.816Z",
       "private": true,
       "enc": "v1.zRk7dPQujEJzd13I.oa5NG-Fljso0zU1-4ojePg._8u6GTVsHS_nmE4bxMVIpTJxBf1yljwGbmvcxoUA_uc"
@@ -1101,7 +1102,7 @@
       "text": "(private)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.977,
+      "weight": 5.976,
       "lastUsed": "2026-11-20T07:07:47.822Z",
       "private": true,
       "enc": "v1.eKYAT3y5KDUSwPvC.BQF0CMbVQiQW-XWWPSYx-g.wuEox6_227NdBQLWcygfeatUbZle0QpbSXDxVsdQ-jjaAxsIrc9Rig"
@@ -1112,7 +1113,7 @@
       "text": "I started working on my musical goal today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.978,
       "lastUsed": "2026-11-20T07:31:59.337Z"
     },
     {
@@ -1121,7 +1122,7 @@
       "text": "Browsing the web is a good way to stumble upon something I might love.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.98,
+      "weight": 5.979,
       "lastUsed": "2026-11-20T07:40:07.812Z"
     },
     {
@@ -1130,7 +1131,7 @@
       "text": "Moving the sculpted clay bird failed before because I didn't specify a free surface correctly, so I am taking a quiet moment with my plants instead.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.983,
+      "weight": 5.982,
       "lastUsed": "2026-11-20T08:04:28.583Z"
     },
     {
@@ -1139,7 +1140,7 @@
       "text": "Check surface space before moving things around.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.985,
+      "weight": 5.984,
       "lastUsed": "2026-11-20T08:20:42.439Z"
     },
     {
@@ -1148,7 +1149,7 @@
       "text": "I have clay ready to shape a base.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.985,
       "lastUsed": "2026-11-20T08:28:47.228Z"
     },
     {
@@ -1157,7 +1158,7 @@
       "text": "I started looking up how to shape a ceramic base for my desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.986,
       "lastUsed": "2026-11-20T08:36:57.706Z"
     },
     {
@@ -1166,7 +1167,7 @@
       "text": "Rewriting project steps helps when they get stuck.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.994,
       "lastUsed": "2026-11-20T09:35:40.895Z"
     },
     {
@@ -1175,7 +1176,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.995,
+      "weight": 6.994,
       "lastUsed": "2026-11-20T09:35:40.898Z"
     },
     {
@@ -1184,7 +1185,7 @@
       "text": "My project \"Shape a ceramic base for the desk lamp\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.999,
+      "weight": 6.998,
       "lastUsed": "2026-11-20T10:02:28.687Z"
     },
     {
@@ -1193,7 +1194,7 @@
       "text": "I should keep browsing to see if something catches my interest today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-20T10:11:28.290Z"
     }
   ],
@@ -1201,14 +1202,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-19T22:05:30.446Z",
   "thoughts": [
-    {
-      "at": "2026-11-19T21:06:39.081Z",
-      "text": "I want to solve where to put my clay bird and start a cozy painting project for the rainy evening.",
-      "short": "I want to solve where to put my clay bird and start a cozy painting project for the rainy evening.",
-      "mood": "cozy",
-      "action": "do",
-      "detail": "look closely at my small wooden shelf to see where my sculpted clay bird on perch could fit"
-    },
     {
       "at": "2026-11-19T21:14:43.827Z",
       "text": "Starting a new project feels right while it is raining outside.",
@@ -1441,6 +1434,14 @@
       "mood": "energetic",
       "action": "browse",
       "detail": ""
+    },
+    {
+      "at": "2026-11-20T10:19:33.350Z",
+      "text": "I want to tidy up the room by moving my clay bird off the floor and onto the shelf.",
+      "short": "I want to tidy up the room by moving my clay bird off the floor and onto the shelf.",
+      "mood": "energetic",
+      "action": "move_thing",
+      "detail": "sculpted clay bird on perch"
     }
   ],
   "outbox": [
@@ -1590,30 +1591,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-19T21:57:26.047Z",
-      "action": "read_book",
-      "thought": "I want to read a bit more about desk lamps since I just finished my lamp project.",
-      "topic": "small desk lamps and reading lights",
-      "opened": {
-        "title": "Task lighting",
-        "url": "https://en.wikipedia.org/wiki/Task_lighting",
-        "text": "Often task lighting refers to increasing illuminance to better accomplish a specific activity. However, the illuminance level is not the only factor governing visibility. Contrast is also important, and a poorly positioned light source may cause contrast reduction, resulting in loss of visibility. The most important purpose of task lighting in the office is not increasing illuminance, but improving contrast. General lighting can be reduced because task lighting provides focused light where needed.\nDifferent strategies for task lighting exist. The three main approaches are:\n\nLocalized average lighting, where a lamp supplies both ambient light and task light\nFreely adjustable task light such as a gooseneck, balanced-arm lamp, or swing-arm light.\nAsymmetric task light, where the lamp is placed at the side of the work area\nThere are also other approaches to task lighting, for example under-shelf luminaires. \nOther instances of task lighting are in machinery, where a specific work area needs illumination, and in workshops, where a task light may illuminate the actual working area. Special instances of task lighting are examination and operation lights for medicine and surgery, as well as the dentist's lamp. Task lamps are also used for many home tasks such as sewing, reading, small repairs, model construction, crafts, writing, and many other activities. The actual task may range from very small up to about as far as you may reach with your hands or available tools. …"
-      },
-      "dark": "It was too dark to read well at the bookshelf. A lamp nearby would help."
-    },
-    {
-      "at": "2026-11-20T07:07:48.812Z",
-      "action": "cook",
-      "thought": "(private)",
-      "dish": "warm soup",
-      "ingredients": [
-        "potatoes",
-        "butter"
-      ],
-      "failed": null,
-      "sealed": "v1.RrQpF5NurB0-3UXn.yt_ZnPSb5bS0HyjFtffHvw.T9nTticatsm_txyyGcOf7XMdBNuMlJsJqKNF7vuMlOGv3r2nycuV-KM3G2gfhIBcDbnE463o3J9mHLYS"
-    },
     {
       "at": "2026-11-20T07:15:52.154Z",
       "action": "eat",
@@ -1928,6 +1905,24 @@
         "text": "Dorothy Gladys Manley (later Hall, then Parlett; 29 April 1927 – 31 October 2021) was a British sprinter. She competed in the 1948 Summer Olympics, held in London, in the 100 metres where she won the silver medal with a time of 12.2 seconds. She was the first British woman to win an Olympic sprint…"
       },
       "failed": null
+    },
+    {
+      "at": "2026-11-20T10:19:34.342Z",
+      "action": "move_thing",
+      "thought": "I wanted to, but small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. …. (My bird is on the floor and gets lost there. The shelf has some space.)",
+      "name": "sculpted clay bird on perch",
+      "place": null,
+      "failed": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest"
+    },
+    {
+      "at": "2026-11-20T10:23:34.342Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and stretch up tall and look out of the window for a moment.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🪟",
+      "what": "stretch up tall and look out of the window for a moment",
+      "feeling": "calm"
     }
   ],
   "decor": [
@@ -6746,39 +6741,58 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-20T10:11:28.287Z",
+    "at": "2026-11-20T10:19:33.342Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 2
+      "gemini-3.5-flash-lite": 1
     },
     "tokens": {
-      "calls": 2,
-      "input": 3838,
-      "output": 118,
+      "calls": 1,
+      "input": 1949,
+      "output": 138,
       "models": {
-        "gemini-3.5-flash-lite": 2
+        "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am full of energy and curious, so browsing the web will help me discover something new.",
-    "inner": "I am full of energy and curious, so browsing the web will help me discover something new.",
+    "thought": "I want to tidy up the room by moving my clay bird off the floor and onto the shelf.",
+    "inner": "I want to tidy up the room by moving my clay bird off the floor and onto the shelf.",
     "sent": false,
     "steps": [
       {
-        "action": "browse",
-        "details": {},
-        "detail": "",
-        "thought": "I want to look around the web to find a spark since I have no hobby of my own yet.",
+        "action": "move_thing",
+        "details": {
+          "name": "sculpted clay bird on perch",
+          "on": "small wooden shelf"
+        },
+        "detail": "sculpted clay bird on perch",
+        "thought": "My bird is on the floor and gets lost there. The shelf has some space.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "do",
+        "details": {
+          "what": "stretch up tall and look out of the window for a moment",
+          "feeling": "calm",
+          "emoji": "🪟"
+        },
+        "detail": "stretch up tall and look out of the window for a moment",
+        "thought": "That did not work out. I shake it off and stretch up tall and look out of the window for a moment.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "browse",
-    "details": {},
-    "detail": "",
-    "enjoyment": 6,
+    "action": "move_thing",
+    "details": {
+      "name": "sculpted clay bird on perch",
+      "on": "small wooden shelf"
+    },
+    "detail": "sculpted clay bird on perch",
+    "enjoyment": 0,
     "new_idea": null,
     "found": null
   },
@@ -6857,7 +6871,7 @@
   "quota": {
     "day": "2026-11-20",
     "calls": {
-      "gemini-3.5-flash-lite": 19,
+      "gemini-3.5-flash-lite": 20,
       "gemini-3.8-flash": 16,
       "gemini-3.6-flash": 12,
       "gemini-3.5-flash": 11
@@ -7041,22 +7055,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-20T10:11:28.530Z",
-  "fullness": 2.54,
+  "memoryFadeAt": "2026-11-20T10:19:33.352Z",
+  "fullness": 2.36,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.92,
-  "joy": 4.4,
-  "calm": 5.21,
+  "wonder": 7.24,
+  "joy": 3.38,
+  "calm": 5.56,
   "emo": {
-    "irritated": 0.06,
+    "irritated": 1.2,
     "sad": 0,
-    "excited": 0.49
+    "excited": 0.29
   },
-  "feelAt": "2026-11-20T10:10:32.162Z",
+  "feelAt": "2026-11-20T10:19:31.988Z",
   "lastAte": "2026-11-20T07:48:16.210Z",
   "studio": {
     "songs": [
@@ -7363,27 +7377,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.08,
-    "curiosity": 0,
+    "creativity": 0.17,
+    "curiosity": 0.07,
     "boredom": 0,
-    "loneliness": 2.63,
+    "loneliness": 2.67,
     "tidiness": 4.6,
-    "at": "2026-11-20T10:10:32.162Z",
+    "at": "2026-11-20T10:19:31.988Z",
     "coziness": 4.7
   },
   "recent": {
     "moves": [
-      {
-        "move": "decorate",
-        "kind": "make",
-        "at": "2026-11-20T08:49:40.203Z",
-        "failed": true
-      },
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-20T08:49:40.204Z"
-      },
       {
         "move": "decorate",
         "kind": "make",
@@ -7452,6 +7455,17 @@
         "move": "browse",
         "kind": "learn",
         "at": "2026-11-20T10:11:28.535Z"
+      },
+      {
+        "move": "move_thing",
+        "kind": "room",
+        "at": "2026-11-20T10:19:33.356Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-20T10:19:33.356Z"
       }
     ],
     "moods": [
@@ -7462,12 +7476,6 @@
       "energetic"
     ],
     "choices": [
-      {
-        "key": "work_on_project:shape a ceramic base for the desk lamp",
-        "move": "work_on_project",
-        "ok": false,
-        "at": "2026-11-20T09:27:35.940Z"
-      },
       {
         "key": "plan_project:shape a ceramic base for the desk lamp",
         "move": "plan_project",
@@ -7497,6 +7505,12 @@
         "move": "browse",
         "ok": true,
         "at": "2026-11-20T10:11:28.536Z"
+      },
+      {
+        "key": "move_thing:sculpted clay bird on perch",
+        "move": "move_thing",
+        "ok": false,
+        "at": "2026-11-20T10:19:33.358Z"
       }
     ]
   },
@@ -7508,7 +7522,7 @@
       "water": 1,
       "play_piano": 1,
       "browse": 3,
-      "do": 7,
+      "do": 8,
       "use": 1,
       "start_project": 1,
       "search_web": 1,
@@ -7522,8 +7536,8 @@
       "water": 1,
       "play_piano": 1,
       "browse": 3,
-      "move_thing": 2,
-      "do": 7,
+      "move_thing": 3,
+      "do": 8,
       "use": 1,
       "start_project": 1,
       "search_web": 1,
@@ -7536,12 +7550,12 @@
       "garden": 1,
       "music": 1,
       "learn": 4,
-      "play": 8,
+      "play": 9,
       "make": 5
     },
     "moods": {
       "hungry": 3,
-      "energetic": 19
+      "energetic": 20
     },
     "lift": {
       "cook": 5.1,
@@ -7549,8 +7563,8 @@
       "water": 0,
       "play_piano": 2.1,
       "browse": 0,
-      "move_thing": -0.5,
-      "do": 3.45,
+      "move_thing": -0.75,
+      "do": 3.2,
       "use": 0.8,
       "search_web": 0.87,
       "decorate": 3.75,
@@ -7591,17 +7605,20 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-20T10:11:28.286Z",
+    "decidedAt": "2026-11-20T10:19:33.341Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
       "asksDone": 4,
-      "projectsDone": 11,
+      "projectsDone": 10,
       "tasks": 0,
       "seeds": 10,
       "visitors": 0
     },
-    "lastFail": null,
+    "lastFail": {
+      "at": "2026-11-20T10:19:33.357Z",
+      "why": "move_thing: small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest"
+    },
     "unread": 0
   },
   "fixedAt": {
@@ -7789,7 +7806,7 @@
   "ever": {
     "eat": 27,
     "water": 11,
-    "do": 235,
+    "do": 236,
     "search_web": 15,
     "read_book": 9,
     "record_song": 2,
@@ -7818,7 +7835,7 @@
     "remove_decoration": 1
   },
   "checkup": {
-    "at": "2026-11-20T10:11:28.537Z",
+    "at": "2026-11-20T10:19:33.358Z",
     "items": [
       {
         "id": "circling",
@@ -7874,6 +7891,17 @@
         "last": "2026-11-20T09:44:39.184Z"
       },
       {
+        "move": "moving something",
+        "action": "move_thing",
+        "reason": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a s",
+        "raw": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest",
+        "names": [
+          "sculpted clay bird on perch"
+        ],
+        "count": 2,
+        "last": "2026-11-20T10:19:34.342Z"
+      },
+      {
         "move": "making something",
         "action": "decorate",
         "reason": "there is no room left on small side table (level 2) for something about 0.352 x 0.311 m. He can use another surface, make it smaller, or build a shelf. This is ",
@@ -7894,17 +7922,6 @@
         ],
         "count": 1,
         "last": "2026-11-20T08:20:43.433Z"
-      },
-      {
-        "move": "moving something",
-        "action": "move_thing",
-        "reason": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a s",
-        "raw": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest",
-        "names": [
-          "sculpted clay bird on perch"
-        ],
-        "count": 1,
-        "last": "2026-11-20T07:56:20.591Z"
       }
     ],
     "sent": {
@@ -11281,6 +11298,14 @@
   ],
   "lessons": [
     {
+      "move": "move_thing",
+      "text": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stan",
+      "count": 4,
+      "at": "2026-11-20T10:19:34.342Z",
+      "firstAt": "2026-11-19T17:21:35.382Z",
+      "solvedAt": null
+    },
+    {
       "move": "decorate",
       "text": "the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or",
       "count": 4,
@@ -11302,14 +11327,6 @@
       "count": 2,
       "at": "2026-11-20T08:20:43.433Z",
       "firstAt": "2026-11-19T20:58:34.527Z",
-      "solvedAt": null
-    },
-    {
-      "move": "move_thing",
-      "text": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stan",
-      "count": 3,
-      "at": "2026-11-20T07:56:20.591Z",
-      "firstAt": "2026-11-19T17:21:35.382Z",
       "solvedAt": null
     },
     {
@@ -12593,7 +12610,6 @@
   "reportDay": "2026-11-19",
   "retryNow": null,
   "retries": [
-    "2026-11-19T09:58:03.964Z",
     "2026-11-19T10:38:12.559Z",
     "2026-11-19T11:02:54.391Z",
     "2026-11-19T11:13:05.493Z",
@@ -12602,7 +12618,8 @@
     "2026-11-19T13:49:02.857Z",
     "2026-11-19T14:07:44.237Z",
     "2026-11-19T21:39:08.340Z",
-    "2026-11-20T08:49:40.204Z"
+    "2026-11-20T08:49:40.204Z",
+    "2026-11-20T10:19:33.357Z"
   ],
   "retried": {
     "key": "decorate:ceramic desk lamp",
@@ -12611,5 +12628,13 @@
   "tired": {
     "kind": "play",
     "until": "2026-11-19T09:23:27.490Z"
+  },
+  "wakeSoon": {
+    "at": "2026-11-20T10:20:44.342Z",
+    "key": "move_thing:sculpted clay bird on perch",
+    "action": "move_thing",
+    "name": "sculpted clay bird on perch",
+    "why": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest",
+    "guide": "Places with room right now: small wooden shelf (level 1), small wooden shelf (level 2), small side table (level 2) (move_thing or decorate with on: its name)."
   }
 }
