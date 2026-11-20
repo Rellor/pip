@@ -3801,3 +3801,10 @@ My room feels a bit cluttered, and I want to put my clay bird in a better spot n
 - move_thing (sculpted clay bird on perch): I will move my clay bird closer to the back wall so it is out of the way.
 - mood: determined
 
+## 20/11/2026, 20:48:07
+I want to have my reading lamp close to the desk so I can see better when I write.
+> I want to have my reading lamp close to the desk so I can see better when I write.
+- move_thing (cozy night owl reading lamp): Moving the reading lamp close to where I work.
+- do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
+- mood: determined
+
