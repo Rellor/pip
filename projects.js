@@ -120,6 +120,7 @@ export function workStep(s, title, ctx = {}) {
   // The step's own words first; a step that says nothing clear ("mix them") goes by what the project is about.
   const vague = /^\s*(mix|stir|blend|combine|prepare|continue|finish|work on|keep going|try)\b/i.test(t);
   let route = (ROUTES.find(([, re]) => re.test(t)) ?? (vague ? ROUTES.find(([k, re]) => k !== 'wait' && re.test(p.title)) : null) ?? ['decorate'])[0];
+  if (route === 'make_clothes' && /\b(blanket|quilt|pillow|cushion|rug|curtain|throw|bag|tapestry|banner|toy|doll|plush)\b/i.test(`${t} ${p.title}`)) route = 'decorate'; // sewn or knitted, but not to wear: a thing for his room
   if (['change_thing', 'extend_thing'].includes(route) && !lastMade(p)) route = 'decorate'; // nothing made yet to change
   const base = { thought: `I work on my project "${p.title}": ${t}`, enjoyment: 7, needs: '', forStep: { project: p.title, text: t } };
   const project = p.title;

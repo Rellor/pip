@@ -231,6 +231,15 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-20 sewing kit from Bas',
+    run(s, at) { // he asked for a sewing kit to knit his warm wool blanket
+      const ask = (s.asks ?? []).find((a) => a.status === 'open' && /sew|knit/i.test(a.item));
+      const given = giveForAsk(s, 'sewing kit');
+      if (ask) Object.assign(ask, { status: 'done', doneAt: at, given });
+      return given.length ? 'Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.' : null;
+    },
+  },
+  {
     id: '2026-11-18 the lamp project is done',
     run(s, at) { // all its steps were done and he had made it twice, but he kept making one more lamp
       const done = (s.projects ?? []).filter((p) => p.status === 'working').map((p) => finishDone(s, p.title, at)).filter(Boolean);

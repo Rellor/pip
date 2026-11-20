@@ -3,7 +3,7 @@
 // wall. When Pip does not say where a new thing goes, it goes to its right place. He may put it somewhere else (it is his
 // room), but then he notices it would be better elsewhere, and putting it right is offered to him.
 import { placeFor } from './web/lighting.js';
-import { supportsInfo, sizeOf } from './decor.js';
+import { supportsInfo, sizeOf, fitsOnATop } from './decor.js';
 import { box } from './scale.js';
 import { needLampSpots } from './growth.js';
 
@@ -116,7 +116,7 @@ export function misplaced(s, e) {
   if (!e || e.image || e.art || !e.pos) return null;
   const rp = rightPlace(e);
   const sz = e.kind === 'floor' ? sizeOf(e) : null;
-  if (sz && Math.max(...sz) < SMALL_THING * 1.6 && !rp) return { better: 'on a shelf, a table or the desk', why: 'it is small: on the floor it gets lost and is in the way', kind: 'surface', near: null }; // (built 1.6 times bigger)
+  if (sz && Math.max(...sz) < SMALL_THING * 1.6 && !rp && fitsOnATop(s.decor ?? [], e)) return { better: 'on a shelf, a table or the desk', why: 'it is small: on the floor it gets lost and is in the way', kind: 'surface', near: null }; // (built 1.6 times bigger)
   if (inTheMiddle(e) && rp?.near?.[0] !== 'middle of the room') { // in the way, wherever else it might go
     const at = nearestNeed(s, rp, [e.pos[0], e.pos[2]]);
     return { better: at ? `near ${at.name}, against a wall` : 'against a wall', why: 'it stands in the middle of the room, in the way where I walk', kind: 'floor', near: at?.name?.replace(/^the /, '') ?? null };
@@ -127,6 +127,7 @@ export function misplaced(s, e) {
   const at = nearestNeed(s, rp, [e.pos[0], e.pos[2]]);
   const far = at && Math.hypot(at.x - e.pos[0], at.z - e.pos[2]) > 3;
   if (sameKind && !far) return null;
+  if (rp.kind === 'surface' && kind !== 'surface' && !fitsOnATop(s.decor ?? [], e)) return null; // no top could hold it: nothing better to offer
   if (rp.kind === 'surface' && at) { // a better top only counts when one near there has room (a full desk is no better place)
     const room = supportsInfo(s.decor ?? []).some((b) => b.key !== (e.base ?? '') && !b.full && !b.high && b.room > 0 && !/^piano$/.test(b.label) && Math.hypot(b.cx - at.x, b.cz - at.z) <= 3);
     if (!room) return null;

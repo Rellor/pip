@@ -17,9 +17,12 @@ export const gotSomewhere = (entries) => entries.some((e) => !e.failed && !e.fal
 export function noteChoice(s, choice, ok, why = '', now = Date.now()) {
   if (!choice) return null;
   s.recent ??= {};
-  s.recent.choices = [...(s.recent.choices ?? []), { key: choice.key, move: choice.move, ok, at: new Date(now).toISOString() }].slice(-6);
+  s.recent.choices = [...(s.recent.choices ?? []), { key: choice.key, move: choice.move, ok, at: new Date(now).toISOString() }].slice(-10);
   const last = s.recent.choices.slice(-LOOP_TRIES);
-  if (NEVER.includes(choice.move) || last.length < LOOP_TRIES || last.some((c) => c.key !== choice.key || c.ok)) return null;
+  const inARow = last.length >= LOOP_TRIES && last.every((c) => c.key === choice.key && !c.ok);
+  const same = s.recent.choices.filter((c) => c.key === choice.key); // the same thing again and again, with other moves in between
+  const onAndOff = same.length >= LOOP_TRIES && same.every((c) => !c.ok);
+  if (NEVER.includes(choice.move) || !(inARow || onAndOff)) return null;
   s.resting = { move: choice.move, key: choice.key, until: new Date(now + LOOP_REST_H * 3_600_000).toISOString(), why: String(why || 'nothing came of it').slice(0, 160) };
   s.recent.choices = [];
   return s.resting;
