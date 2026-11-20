@@ -3640,3 +3640,9 @@ I finished the first step of my blanket project and I am ready to try knitting i
 - do (Take a look at the second step of my blanket project and start knitting): I finished looking up how to do it, now I try knitting the first version.
 - mood: energetic
 
+## 20/11/2026, 17:33:07
+i received a sewing kit and am ready to work on the second step of my blanket project.
+> i received a sewing kit and am ready to work on the second step of my blanket project.
+- make_clothes (warm wool cap): time to start knitting the blanket with my new sewing kit
+- mood: energetic
+
