@@ -3443,3 +3443,9 @@ I noticed the clay bird gets lost on the floor and my shelf has space.
 - do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
 - mood: curious
 
+## 20/11/2026, 13:15:52
+I am sorting out my things so the sculpted clay bird has a proper place instead of the floor.
+> I am sorting out my things so the sculpted clay bird has a proper place instead of the floor.
+- do (clear a space on the small wooden shelf so I can put the sculpted clay bird there): The shelf is full, so I need to make room for the bird.
+- mood: curious
+
