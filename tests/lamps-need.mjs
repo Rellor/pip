@@ -14,3 +14,14 @@ assert.ok(!needLampSpots(s, night).some((p) => p.name === 'bed'), 'but no new la
 console.log('ok  a lamp that is off still counts: switch it on, no new lamp needed there');
 assert.ok(needLampSpots(s, night).some((p) => p.name !== 'bed'), 'far corners still need one');
 console.log('ok  a place no lamp reaches still needs a lamp');
+{
+  const { designate } = await import('../placement.js');
+  const t = base();
+  const RealNow = Date.now; Date.now = () => night;
+  const p = designate(t, { name: 'cozy bed reading lamp', parts: [{ shape: 'sphere', size: [0.1], pos: [0, 0.1, 0], glow: true }] });
+  Date.now = RealNow;
+  const dark = needLampSpots(t, night)[0];
+  assert.ok(p.next_to || p.on, JSON.stringify(p));
+  assert.ok(!p.on || p.on !== 'desk' || dark.name === 'desk', `a new lamp goes where it is dark (${dark.name}), not to the desk: ${JSON.stringify(p)}`);
+  console.log('ok  a new lamp goes to the dark place, not where the other lamps are');
+}

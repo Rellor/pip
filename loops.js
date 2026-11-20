@@ -6,12 +6,10 @@ export const LOOP_REST_H = 2;
 const NEVER = ['tell', 'rest', 'eat']; // "do" counts too, by what he does (the same pretend step 3 times) // the free move and the needs are never put to rest
 
 // The move he chose this time, in a few words: "work_on_project:bake a simple loaf of bread".
-export const choiceOf = (reply) => {
-  const m = (Array.isArray(reply?.moves) ? reply.moves : [])[0];
-  if (!m?.move) return null;
-  const d = m.details ?? {};
-  return { move: String(m.move), key: `${m.move}:${String(d.title ?? d.name ?? d.lamp ?? d.app ?? d.query ?? d.dish ?? d.what ?? '').toLowerCase().trim().slice(0, 40)}` };
-};
+// Making the same kind of thing under a new name ("ceramic desk lamp", "ceramic base desk lamp") is the same choice.
+const MAKERS = ['decorate', 'draw', 'make_app', 'make_clothes', 'record_song'];
+const thingWord = (t) => String(t ?? '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter((w) => w.length > 2 && !['for', 'the', 'and', 'with', 'base', 'small', 'little', 'tiny', 'big', 'new', 'cozy'].includes(w)).at(-1) ?? '';
+export const choiceOf = (reply) => { const m = (Array.isArray(reply?.moves) ? reply.moves : [])[0]; if (!m?.move) return null; const d = m.details ?? {}; const name = d.title ?? d.name ?? d.lamp ?? d.app ?? d.query ?? d.dish ?? d.what ?? ''; return { move: String(m.move), key: `${m.move}:${MAKERS.includes(m.move) ? thingWord(name) : String(name).toLowerCase().trim().slice(0, 40)}` }; };
 // Did this wake-up's steps (its log entries) really do something?
 export const gotSomewhere = (entries) => entries.some((e) => !e.failed && !e.fallback && (e.action !== 'do' || e.as));
 

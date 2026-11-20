@@ -1400,7 +1400,8 @@ function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
       const r = alt ? placeOn(decor, { ...spec, noAlt: true }, parts, alt, null, atMs, now, moving) : null;
       if (r && !r.failed) return { ...r, moved: true, warn: `${base.n.replace(/^the /, 'my ')} was full (${already} things), so it stands on ${b.label.replace(/^the /, '')} instead` };
     }
-    return { failed: `${base.n} is full: ${already} things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest`, hinted: true };
+    const [hw0, hd0] = halfFoot(parts, 1);
+    return { failed: alts.length ? `${base.n} is full (${already} things), and the other tops with room are too small for something about ${r3(hw0 * 2)} x ${r3(hd0 * 2)} m. I make it smaller, or first build a bigger table or a deeper shelf (decorate), or put something in my chest` : `${base.n} is full: ${already} things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a bigger table or a stand, with decorate) or put something in my chest`, hinted: true };
   }
   const sq = Math.max(0.15, Math.min(base.x1 - base.x0, base.z1 - base.z0) - 0.1);
   let scale = fit(parts, 'surface', { w: sq, d: sq });

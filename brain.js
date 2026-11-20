@@ -82,8 +82,8 @@ export function planSteps(d, title) {
   let st = Array.isArray(d?.steps) ? d.steps : typeof d?.steps === 'string' ? d.steps.split(/\n|;|\s(?=\d+[.)]\s)/) : [];
   st = st.map((x) => clip(String(x).replace(/^\s*(\d+[.)]|-|\*)\s*/, ''), 120)).filter(Boolean).slice(0, 6);
   if (st.length || !title) return st;
-  const t = title.replace(/^(make|build|craft|create|paint|draw|sculpt|shape|write|compose|bake|cook|sew|learn)\s+/i, '');
-  return [`look up how people ${/^(paint|draw|sculpt|shape|compose|bake|cook|sew)/i.test(title) ? title.split(/\s+/)[0].toLowerCase() : 'make'} ${t}`, `${title}: a first version`, `look at it and improve one thing`];
+  const low = title.charAt(0).toLowerCase() + title.slice(1);
+  return [`look up how to ${low}`, `${title}: a first version`, `look at it and improve one thing`];
 }
 export function toAnswer(reply, offered = MOVE_NAMES) {
   const ok = new Set(offered);
