@@ -3826,3 +3826,9 @@ I am full of energy and want to browse the web for a little while to find someth
 - browse: I will browse the web to see if I stumble on something new that catches my eye.
 - mood: warm
 
+## 20/11/2026, 21:14:31
+I am putting my reading lamp where I actually need the light.
+> I am putting my reading lamp where I actually need the light.
+- move_thing (cozy night owl reading lamp): I need the lamp close to read and write.
+- mood: warm
+
