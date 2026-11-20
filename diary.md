@@ -3516,3 +3516,10 @@ I am feeling energetic after cooking and reading, so I want to hum a simple tune
 - play_piano (C4 E4 G4:2 E4:4): I feel full of energy and want to hum a gentle tune.
 - mood: curious
 
+## 20/11/2026, 14:56:10
+My basil is fully grown, so I am harvesting it to use later.
+> My basil is fully grown, so I am harvesting it to use later.
+- harvest (basil): My basil is ready!
+- do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
+- mood: curious
+
