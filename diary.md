@@ -3764,3 +3764,9 @@ The room is quiet and the night sky is clear, so I want to read about stars.
 - read_book (constellations and night sky): I want to look up at the night sky and learn something new.
 - mood: calm
 
+## 20/11/2026, 20:05:20
+I finished my goals for the day and want to record my thoughts in my diary.
+> I finished my goals for the day and want to record my thoughts in my diary.
+- write_diary (The sky is clear and cold outside at four degrees. Now I am quiet and tired.): Writing in my diary before I sleep.
+- mood: calm
+
