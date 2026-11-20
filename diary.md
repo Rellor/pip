@@ -3309,3 +3309,9 @@ I want to tidy up the room by moving my clay bird off the floor and onto the she
 - do (stretch up tall and look out of the window for a moment): That did not work out. I shake it off and stretch up tall and look out of the window for a moment.
 - mood: energetic
 
+## 20/11/2026, 10:21:36
+I am tidying up my space by moving the clay bird to a shelf with open room.
+> I am tidying up my space by moving the clay bird to a shelf with open room.
+- do (move sculpted clay bird on perch to small wooden shelf level 2): I need to put my sculpted clay bird somewhere safe now that the floor is crowded.
+- mood: energetic
+

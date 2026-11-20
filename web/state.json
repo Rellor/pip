@@ -1,19 +1,13 @@
 {
   "mood": "energetic",
-  "energy": 9,
+  "energy": 8.75,
   "boredom": 0,
-  "loneliness": 2.67,
+  "loneliness": 2.68,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-19T20:01:16.365Z",
-      "action": "take_photo",
-      "detail": "window",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-19T20:09:45.855Z",
       "action": "decorate",
@@ -316,6 +310,12 @@
       "at": "2026-11-20T10:19:33.350Z",
       "action": "do",
       "detail": "stretch up tall and look out of the window for a moment",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-20T10:21:36.794Z",
+      "action": "do",
+      "detail": "move sculpted clay bird on perch to small wooden shelf level 2",
       "enjoyment": 6
     }
   ],
@@ -1021,24 +1021,6 @@
       "lastUsed": "2026-11-20T07:07:46.341Z"
     },
     {
-      "id": "mmwo23sk560",
-      "at": "2026-11-19T21:22:49.300Z",
-      "text": "I am working on my autumn window watercolor.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.902,
-      "lastUsed": "2026-11-19T21:22:49.300Z"
-    },
-    {
-      "id": "mmwo2eape60",
-      "at": "2026-11-19T21:30:59.377Z",
-      "text": "I started painting my watercolor of the rainy autumn window.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.903,
-      "lastUsed": "2026-11-19T21:30:59.377Z"
-    },
-    {
       "id": "mmwo2eapg60",
       "at": "2026-11-19T21:31:00.368Z",
       "text": "I drew rainy autumn window first version",
@@ -1196,20 +1178,30 @@
       "kind": "memory",
       "weight": 5.998,
       "lastUsed": "2026-11-20T10:11:28.290Z"
+    },
+    {
+      "id": "mmwotxbq560",
+      "at": "2026-11-20T10:21:36.796Z",
+      "text": "Check shelf levels and available space before moving items.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 6,
+      "lastUsed": "2026-11-20T10:21:36.796Z"
+    },
+    {
+      "id": "mmwotxbq760",
+      "at": "2026-11-20T10:21:37.793Z",
+      "text": "move sculpted clay bird on perch to small wooden shelf level 2",
+      "importance": 4,
+      "kind": "memory",
+      "weight": 4,
+      "lastUsed": "2026-11-20T10:21:37.793Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-19T22:05:30.446Z",
   "thoughts": [
-    {
-      "at": "2026-11-19T21:14:43.827Z",
-      "text": "Starting a new project feels right while it is raining outside.",
-      "short": "Starting a new project feels right while it is raining outside.",
-      "mood": "cozy",
-      "action": "do",
-      "detail": "plan my new project: Paint a watercolor of the rainy autumn window"
-    },
     {
       "at": "2026-11-19T21:22:49.300Z",
       "text": "I finished what I planned and now it is time to look up how to paint the watercolor.",
@@ -1442,6 +1434,14 @@
       "mood": "energetic",
       "action": "move_thing",
       "detail": "sculpted clay bird on perch"
+    },
+    {
+      "at": "2026-11-20T10:21:36.796Z",
+      "text": "I am tidying up my space by moving the clay bird to a shelf with open room.",
+      "short": "I am tidying up my space by moving the clay bird to a shelf with open room.",
+      "mood": "energetic",
+      "action": "do",
+      "detail": "move sculpted clay bird on perch to small wooden shelf level 2"
     }
   ],
   "outbox": [
@@ -1915,14 +1915,13 @@
       "failed": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest"
     },
     {
-      "at": "2026-11-20T10:23:34.342Z",
+      "at": "2026-11-20T10:21:37.793Z",
       "action": "do",
-      "thought": "That did not work out. I shake it off and stretch up tall and look out of the window for a moment.",
-      "fallback": true,
+      "thought": "I need to put my sculpted clay bird somewhere safe now that the floor is crowded.",
       "move": null,
-      "emoji": "🪟",
-      "what": "stretch up tall and look out of the window for a moment",
-      "feeling": "calm"
+      "emoji": "",
+      "what": "move sculpted clay bird on perch to small wooden shelf level 2",
+      "feeling": null
     }
   ],
   "decor": [
@@ -6741,7 +6740,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-20T10:19:33.342Z",
+    "at": "2026-11-20T10:21:36.793Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -6749,50 +6748,35 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1949,
-      "output": 138,
+      "input": 2070,
+      "output": 156,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I want to tidy up the room by moving my clay bird off the floor and onto the shelf.",
-    "inner": "I want to tidy up the room by moving my clay bird off the floor and onto the shelf.",
+    "thought": "I am tidying up my space by moving the clay bird to a shelf with open room.",
+    "inner": "I am tidying up my space by moving the clay bird to a shelf with open room.",
     "sent": false,
     "steps": [
       {
-        "action": "move_thing",
-        "details": {
-          "name": "sculpted clay bird on perch",
-          "on": "small wooden shelf"
-        },
-        "detail": "sculpted clay bird on perch",
-        "thought": "My bird is on the floor and gets lost there. The shelf has some space.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
         "action": "do",
         "details": {
-          "what": "stretch up tall and look out of the window for a moment",
-          "feeling": "calm",
-          "emoji": "🪟"
+          "what": "move sculpted clay bird on perch to small wooden shelf level 2"
         },
-        "detail": "stretch up tall and look out of the window for a moment",
-        "thought": "That did not work out. I shake it off and stretch up tall and look out of the window for a moment.",
+        "detail": "move sculpted clay bird on perch to small wooden shelf level 2",
+        "thought": "I need to put my sculpted clay bird somewhere safe now that the floor is crowded.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "move_thing",
+    "action": "do",
     "details": {
-      "name": "sculpted clay bird on perch",
-      "on": "small wooden shelf"
+      "what": "move sculpted clay bird on perch to small wooden shelf level 2"
     },
-    "detail": "sculpted clay bird on perch",
-    "enjoyment": 0,
+    "detail": "move sculpted clay bird on perch to small wooden shelf level 2",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -6871,7 +6855,7 @@
   "quota": {
     "day": "2026-11-20",
     "calls": {
-      "gemini-3.5-flash-lite": 20,
+      "gemini-3.5-flash-lite": 21,
       "gemini-3.8-flash": 16,
       "gemini-3.6-flash": 12,
       "gemini-3.5-flash": 11
@@ -6931,12 +6915,12 @@
     ]
   },
   "weather": {
-    "at": "2026-11-20T10:10:32.407Z",
+    "at": "2026-11-20T10:21:35.397Z",
     "kind": "cloudy",
     "code": 3,
-    "temp": 6.6,
-    "cloud": 0.96,
-    "wind": 0.2866666666666667
+    "temp": 6.8,
+    "cloud": 0.81,
+    "wind": 0.26333333333333336
   },
   "news": {
     "date": "2026-11-20",
@@ -7055,22 +7039,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-20T10:19:33.352Z",
-  "fullness": 2.36,
+  "memoryFadeAt": "2026-11-20T10:21:36.799Z",
+  "fullness": 2.32,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.24,
-  "joy": 3.38,
-  "calm": 5.56,
+  "wonder": 6.69,
+  "joy": 3.67,
+  "calm": 5.44,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0,
     "sad": 0,
-    "excited": 0.29
+    "excited": 0.17
   },
-  "feelAt": "2026-11-20T10:19:31.988Z",
+  "feelAt": "2026-11-20T10:21:35.257Z",
   "lastAte": "2026-11-20T07:48:16.210Z",
   "studio": {
     "songs": [
@@ -7377,22 +7361,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.17,
-    "curiosity": 0.07,
+    "creativity": 0.19,
+    "curiosity": 0.09,
     "boredom": 0,
-    "loneliness": 2.67,
+    "loneliness": 2.68,
     "tidiness": 4.6,
-    "at": "2026-11-20T10:19:31.988Z",
+    "at": "2026-11-20T10:21:35.257Z",
     "coziness": 4.7
   },
   "recent": {
     "moves": [
-      {
-        "move": "decorate",
-        "kind": "make",
-        "at": "2026-11-20T08:55:39.347Z",
-        "failed": true
-      },
       {
         "move": "do",
         "kind": "play",
@@ -7466,6 +7444,11 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-20T10:19:33.356Z"
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-20T10:21:36.805Z"
       }
     ],
     "moods": [
@@ -7476,12 +7459,6 @@
       "energetic"
     ],
     "choices": [
-      {
-        "key": "plan_project:shape a ceramic base for the desk lamp",
-        "move": "plan_project",
-        "ok": true,
-        "at": "2026-11-20T09:35:40.904Z"
-      },
       {
         "key": "work_on_project:shape a ceramic base for the desk lamp",
         "move": "work_on_project",
@@ -7511,6 +7488,12 @@
         "move": "move_thing",
         "ok": false,
         "at": "2026-11-20T10:19:33.358Z"
+      },
+      {
+        "key": "do:move sculpted clay bird on perch to smal",
+        "move": "do",
+        "ok": false,
+        "at": "2026-11-20T10:21:36.805Z"
       }
     ]
   },
@@ -7522,7 +7505,7 @@
       "water": 1,
       "play_piano": 1,
       "browse": 3,
-      "do": 8,
+      "do": 9,
       "use": 1,
       "start_project": 1,
       "search_web": 1,
@@ -7537,7 +7520,7 @@
       "play_piano": 1,
       "browse": 3,
       "move_thing": 3,
-      "do": 8,
+      "do": 9,
       "use": 1,
       "start_project": 1,
       "search_web": 1,
@@ -7550,12 +7533,12 @@
       "garden": 1,
       "music": 1,
       "learn": 4,
-      "play": 9,
+      "play": 10,
       "make": 5
     },
     "moods": {
       "hungry": 3,
-      "energetic": 20
+      "energetic": 21
     },
     "lift": {
       "cook": 5.1,
@@ -7564,7 +7547,7 @@
       "play_piano": 2.1,
       "browse": 0,
       "move_thing": -0.75,
-      "do": 3.2,
+      "do": 3.3,
       "use": 0.8,
       "search_web": 0.87,
       "decorate": 3.75,
@@ -7605,7 +7588,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-20T10:19:33.341Z",
+    "decidedAt": "2026-11-20T10:21:36.793Z",
     "seen": {
       "tools": 4,
       "gifts": 1,
@@ -7615,10 +7598,7 @@
       "seeds": 10,
       "visitors": 0
     },
-    "lastFail": {
-      "at": "2026-11-20T10:19:33.357Z",
-      "why": "move_thing: small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -7806,7 +7786,7 @@
   "ever": {
     "eat": 27,
     "water": 11,
-    "do": 236,
+    "do": 237,
     "search_web": 15,
     "read_book": 9,
     "record_song": 2,
@@ -7835,7 +7815,7 @@
     "remove_decoration": 1
   },
   "checkup": {
-    "at": "2026-11-20T10:19:33.358Z",
+    "at": "2026-11-20T10:21:36.806Z",
     "items": [
       {
         "id": "circling",
@@ -12608,7 +12588,14 @@
     "fadedAt": "2026-11-19T19:28:25.932Z"
   },
   "reportDay": "2026-11-19",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-20T10:20:44.342Z",
+    "key": "move_thing:sculpted clay bird on perch",
+    "action": "move_thing",
+    "name": "sculpted clay bird on perch",
+    "why": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest",
+    "guide": "Places with room right now: small wooden shelf (level 1), small wooden shelf (level 2), small side table (level 2) (move_thing or decorate with on: its name)."
+  },
   "retries": [
     "2026-11-19T10:38:12.559Z",
     "2026-11-19T11:02:54.391Z",
@@ -12622,19 +12609,11 @@
     "2026-11-20T10:19:33.357Z"
   ],
   "retried": {
-    "key": "decorate:ceramic desk lamp",
-    "at": "2026-11-20T08:51:42.366Z"
+    "key": "move_thing:sculpted clay bird on perch",
+    "at": "2026-11-20T10:21:35.412Z"
   },
   "tired": {
     "kind": "play",
     "until": "2026-11-19T09:23:27.490Z"
-  },
-  "wakeSoon": {
-    "at": "2026-11-20T10:20:44.342Z",
-    "key": "move_thing:sculpted clay bird on perch",
-    "action": "move_thing",
-    "name": "sculpted clay bird on perch",
-    "why": "small wooden shelf (level 3) is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a small table or a stand, with decorate) or put something in my chest",
-    "guide": "Places with room right now: small wooden shelf (level 1), small wooden shelf (level 2), small side table (level 2) (move_thing or decorate with on: its name)."
   }
 }
