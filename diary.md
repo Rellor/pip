@@ -3321,3 +3321,9 @@ I am hungry and want to cook a warm simple meal.
 - cook: I am hungry and need some food.
 - mood: hungry
 
+## 20/11/2026, 10:38:14
+My basil is fully grown, so I am harvesting it first, and then I am eating because I am very hungry.
+> My basil is fully grown, so I am harvesting it first, and then I am eating because I am very hungry.
+- harvest (basil): My basil is ready, I will harvest it now.
+- mood: hungry
+
