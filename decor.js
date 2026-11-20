@@ -509,6 +509,18 @@ export function moveThing(decor, chest, details, atMs, now = Date.now()) {
 }
 function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   let d = details && typeof details === 'object' ? details : {};
+  if (/\bwall\b/i.test(String(d.next_to ?? '')) && !decor.some((x) => !x.image && x.name.toLowerCase() === String(d.next_to).toLowerCase().trim())) { // "next to the wall": against that wall (the nearest one when he did not say which)
+    const named = /left|back|right|front/i.exec(String(d.next_to))?.[0]?.toLowerCase();
+    const e0 = decor.find((x) => !x.image && x.name.toLowerCase() === str(d.name, 60).toLowerCase());
+    const [px, pz] = e0?.pos ? [e0.pos[0], e0.pos[2]] : [0, 0];
+    const sides = named ? [named] : Object.entries({ left: px + 5, right: 5 - px, back: pz + 5, front: 5 - pz }).sort((a, b) => a[1] - b[1]).map(([k]) => k);
+    let r = null;
+    for (const side of sides) { // the nearest wall first; when it has no room there, the next one
+      r = moveThingRaw(decor, chest, { ...d, next_to: undefined, x: side === 'left' ? -4.5 : side === 'right' ? 4.5 : px, z: side === 'back' ? -4.5 : side === 'front' ? 4.5 : pz }, atMs, now);
+      if (!r.failed) return r;
+    }
+    return r;
+  }
   if (d.wall && !sideOf(d.wall) && decor.some((x) => !x.image && x.name.toLowerCase() === String(d.wall).toLowerCase().trim())) d = { ...d, on: d.wall, wall: undefined }; // "wall: my shelf" means on the shelf
   const n = str(d.name, 60).toLowerCase();
   if (!n) return { failed: 'he did not say what to move' };
@@ -1339,7 +1351,8 @@ function findBase(decor, on, pick = {}) {
     const i = Number.isInteger(Number(txt)) && txt !== '' ? Math.min(L.length, Math.max(1, Number(txt))) - 1 : /bottom|lower|low/.test(txt) ? 0 : /middle/.test(txt) ? Math.floor((L.length - 1) / 2) : /top|upper|high/.test(txt) ? L.length - 1 : h !== null ? L.reduce((b, l, k) => (Math.abs(l.y - h) < Math.abs(L[b].y - h) ? k : b), 0) : L.length - 1;
     return baseByKey(decor, `${sh.id}#${i}`);
   }
-  const mine = decor.find((x) => x.kind === 'floor' && !x.image && x.pos && x.name.toLowerCase() === w) ?? decor.find((x) => x.kind === 'floor' && !x.image && x.pos && (x.name.toLowerCase().includes(w) || w.includes(x.name.toLowerCase())));
+  const furnWord = /^(my )?(desk|computer|computer desk|piano|book ?shelf|bookcase|bed)$/.test(w); // "the desk" is the desk, not his "ceramic desk lamp base"
+  const mine = decor.find((x) => x.kind === 'floor' && !x.image && x.pos && x.name.toLowerCase() === w) ?? (furnWord ? null : decor.find((x) => x.kind === 'floor' && !x.image && x.pos && holdsThings(x) && (x.name.toLowerCase().includes(w) || w.includes(x.name.toLowerCase()))));
   const FL = mine ? floorLevels(mine) : [];
   if (FL.length > 1) {
     const txt = String(pick.level ?? '').toLowerCase();
