@@ -5,6 +5,7 @@
 import { placeFor } from './web/lighting.js';
 import { supportsInfo, sizeOf } from './decor.js';
 import { box } from './scale.js';
+import { needLampSpots } from './growth.js';
 
 // Checked in order: the first match wins, so "floor lamp" comes before "lamp".
 const RULES = [
@@ -74,6 +75,15 @@ export function designate(s, spec) {
     const exact = ['on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some(given);
     return exact ? {} : floorSpot(s, spec, rp);
   }
+  if (rp?.kind === 'surface' && /\b(lamp|light|lantern|candle)\b/i.test(String(spec?.name ?? ''))) { // a new lamp goes where it is dark, not where the other lamps already are
+    const dark = needLampSpots(s)[0];
+    const at = dark ? spotOf(s, dark.name) ?? { name: dark.name, x: dark.x, z: dark.z } : null;
+    if (at) {
+      const top = freeTop(s, { near: [dark.name] });
+      if (top) return top;
+      return { next_to: at.name.replace(/^the /, '') };
+    }
+  }
   if (smallThing(spec) && (!rp || rp.kind === 'surface')) { const top = freeTop(s, rp); if (top) return top; } // small things stand on something
   if (!rp) return { where: 'floor', ...floorSpot(s, spec, null) }; // nothing known about it: a free spot by a wall
   if (rp.kind === 'floor' && !rp.near?.length) return { where: 'floor', ...floorSpot(s, spec, rp) };
@@ -106,7 +116,7 @@ export function misplaced(s, e) {
   if (!e || e.image || e.art || !e.pos) return null;
   const rp = rightPlace(e);
   const sz = e.kind === 'floor' ? sizeOf(e) : null;
-  if (sz && Math.max(...sz) < SMALL_THING * 1.6 && (!rp || rp.kind !== 'floor')) return { better: 'on a shelf, a table or the desk', why: 'it is small: on the floor it gets lost and is in the way', kind: 'surface', near: null }; // (built 1.6 times bigger)
+  if (sz && Math.max(...sz) < SMALL_THING * 1.6 && !rp) return { better: 'on a shelf, a table or the desk', why: 'it is small: on the floor it gets lost and is in the way', kind: 'surface', near: null }; // (built 1.6 times bigger)
   if (inTheMiddle(e) && rp?.near?.[0] !== 'middle of the room') { // in the way, wherever else it might go
     const at = nearestNeed(s, rp, [e.pos[0], e.pos[2]]);
     return { better: at ? `near ${at.name}, against a wall` : 'against a wall', why: 'it stands in the middle of the room, in the way where I walk', kind: 'floor', near: at?.name?.replace(/^the /, '') ?? null };

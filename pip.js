@@ -43,7 +43,7 @@ const THINK_ROOM = 3000; // these models think before they answer, and the think
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, capabilityGuide, blueprintGaps, requestAbility } from './blueprints.js';
-import { purposeProblem, purposeHint, setFronts, rehangPictures, makeDecor, updateDecor, storeAway, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { purposeProblem, purposeHint, setFronts, rehangPictures, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { lessonsFrom, themeFatigue } from './mirror.js';
@@ -1333,6 +1333,13 @@ async function wakeUp() {
       const placed = designate(state, st.details); // no place said: the game puts it where it belongs
       const built = settle(cleanParts(st.details.parts) ?? [], { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js)
       st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart); // built at the size of his room
+      if (st.made.failed && /is full|no room left on/i.test(st.made.failed) && !/wall/i.test(st.made.failed) && state.stored.length < MAX_STORED) { // made, but no top has room: it waits in his chest instead of being lost
+        const spot = makeDecor(state.decor, { ...st.details, on: undefined, wall: undefined, where: 'floor', x: undefined, z: undefined, next_to: undefined, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart);
+        if (spot.entry) {
+          state.stored.push({ ...spot.entry, roomScaled: true, storedAt: new Date().toISOString() });
+          st.made = { name: spot.entry.name, stored: true, entry: null, hint: `there was no room for it on any top (${st.made.failed.split(':')[0]}), so it waits in my chest. To show it I make room first (move something, or build a bigger shelf or table), then take_out` };
+        }
+      }
       if (st.made.entry) {
         st.made.entry.roomScaled = true;
         state.decor.push(st.made.entry);
@@ -1912,7 +1919,7 @@ async function wakeUp() {
     if (st.action === 'make_move') Object.assign(entry, { name: st.made?.move?.name ?? text(d.name, 40), why: text(d.why, 200), frames: st.made?.move?.frames?.length ?? 0, failed: st.made?.failed ?? null });
     if (st.action === 'do' && text(d.move, 60) && !findMove(state, d.move)) entry.failed = `I have no move called "${text(d.move, 60)}". I design one first with make_move`;
     if (st.action === 'do') Object.assign(entry, { move: findMove(state, d.move)?.name ?? null, emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
-    if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: withWarn(st.made?.entry?.label, st.made), tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: withWarn(st.made?.entry?.label ?? (st.made?.stored ? 'in my chest' : null), st.made), tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, side: st.made?.side ?? null, joined: st.made?.joined ?? null, place: withWarn(st.made?.entry?.label ?? null, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'move_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), place: withWarn(st.made?.label ?? (st.made?.chest ? 'in a new place' : null), st.made), failed: st.made?.failed ?? null });
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, place: withWarn(st.made?.label ?? null, st.made), failed: st.made?.failed ?? null });

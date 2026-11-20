@@ -40,3 +40,5 @@ assert.equal(l.resting?.move, 'do');
 assert.equal(restingMove(l), null, '"do" itself stays offered');
 assert.deepEqual(dropRestingDo(l, [{ action: 'do', details: { what: 'Sculpt the body and wings' } }, { action: 'do', details: { what: 'hum' } }]).map((x) => x.details.what), ['hum']);
 console.log('ok  the same pretend step 3 times: that one rests, other "do" steps are fine');
+assert.equal(choiceOf({ moves: [{ move: 'decorate', details: { what: 'ceramic desk lamp' } }] }).key, choiceOf({ moves: [{ move: 'decorate', details: { what: 'ceramic base for the desk lamp' } }] }).key);
+console.log('ok  making the same kind of thing under a new name is the same choice');

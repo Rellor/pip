@@ -12,6 +12,7 @@ fs.cpSync(root, work, { recursive: true, filter: (p) => !p.includes(`${path.sep}
 const old = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
 old.changes = (old.changes ?? []).filter((c) => c !== '2026-11-15 fresh start'); // run the fresh start again on today's state
 fs.writeFileSync(path.join(work, 'web/state.json'), JSON.stringify(old));
+const started = Date.now();
 const soul = fs.readFileSync(path.join(work, 'soul.md'), 'utf8');
 execFileSync('node', ['pip.js'], { cwd: work, env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NIGHT: '0' }, stdio: 'pipe' });
 const s = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
@@ -22,8 +23,8 @@ assert.equal(fs.readFileSync(path.join(work, 'soul.md'), 'utf8'), soul, 'his sou
 assert.equal(s.tools.length, 0, 'no tools (no light meter, shovel or watering can come back)');
 assert.equal(s.garden.seeds.length + s.garden.plots.length, 0, 'no seeds or plants');
 assert.equal((s.pantry ?? []).length, 0, 'no food');
-assert.equal((s.stored ?? []).length, 0, 'an empty chest');
-assert.ok(s.decor.length <= 1, 'only what he made in this one wake-up');
+assert.equal((s.stored ?? []).filter((x) => Date.parse(x.createdAt ?? 0) < started).length, 0, 'an empty chest (only what he made in this one wake-up may wait there)');
+assert.ok(s.decor.length + (s.stored ?? []).length <= 1, 'only what he made in this one wake-up');
 assert.ok(s.memories.every((m) => !/studio|piano|guitar|scarf|stool|greenhouse|rosemary/i.test(m.text)));
 assert.deepEqual(s.furniture, old.furniture, 'the furniture stays where it was');
 assert.deepEqual(JSON.parse(fs.readFileSync(path.join(work, 'web/archive/index.json'), 'utf8')), [], 'the site starts with no old days');
