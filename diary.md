@@ -3315,3 +3315,9 @@ I am tidying up my space by moving the clay bird to a shelf with open room.
 - do (move sculpted clay bird on perch to small wooden shelf level 2): I need to put my sculpted clay bird somewhere safe now that the floor is crowded.
 - mood: energetic
 
+## 20/11/2026, 10:29:41
+I am hungry and want to cook a warm simple meal.
+> I am hungry and want to cook a warm simple meal.
+- cook: I am hungry and need some food.
+- mood: hungry
+
