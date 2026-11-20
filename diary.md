@@ -3480,3 +3480,9 @@ My sculpted clay bird on perch is currently on the floor where it gets in the wa
 - do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
 - mood: calm
 
+## 20/11/2026, 14:05:19
+My clay bird is on the floor and I want to put it somewhere safe and visible where it belongs.
+> My clay bird is on the floor and I want to put it somewhere safe and visible where it belongs.
+- change_thing (sculpted clay bird on perch): I will move my sculpted clay bird to the small wooden shelf so it is not lost on the floor.
+- mood: calm
+
