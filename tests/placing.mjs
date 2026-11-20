@@ -53,3 +53,20 @@ console.log('ok  he may put it in the middle himself, and then he notices it is 
   assert.equal(bird.kind, 'surface');
   console.log('ok  a small thing on the floor can be put on the desk');
 }
+{
+  const { moveThing } = await import('../decor.js');
+  const d = [];
+  const base = makeDecor(d, { name: 'ceramic desk lamp base', where: 'floor', x: -3, z: 4, parts: [{ shape: 'cylinder', size: [0.15, 0.15, 0.1], pos: [0, 0.05, 0] }] }, Date.now()).entry;
+  d.push(base);
+  const owl = makeDecor(d, { name: 'clay owl', where: 'floor', x: 2, z: 2, parts: [{ shape: 'sphere', size: [0.06], pos: [0, 0.06, 0] }] }, Date.now()).entry;
+  d.push(owl);
+  const r = moveThing(d, null, { name: 'clay owl', on: 'desk' }, Date.now());
+  assert.equal(owl.base, 'desk', `"desk" is the desk, not his lamp base: ${r.failed ?? r.label}`);
+  console.log('ok  "on the desk" means the desk, not a thing with "desk" in its name');
+  const bench = makeDecor(d, { name: 'long bench', where: 'floor', x: 1, z: 1, parts: [{ shape: 'box', size: [1.2, 0.45, 0.4], pos: [0, 0.22, 0] }] }, Date.now()).entry;
+  d.push(bench);
+  const w = moveThing(d, null, { name: 'long bench', next_to: 'the wall' }, Date.now());
+  assert.ok(!w.failed, w.failed);
+  assert.match(w.label, /by the/);
+  console.log('ok  "next to the wall" puts it against the nearest wall');
+}

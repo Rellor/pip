@@ -90,9 +90,10 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
   const steps = [];
   const answer = { thought: clip(reply?.reason, 200), inner: clip(reply?.reason, 600), mood_after: clip(reply?.mood, 30) || 'calm', steps, new_idea: null, tell: null, remember: null, asks_add: [], projects_add: [], projects_update: [] };
   for (const m of (Array.isArray(reply?.moves) ? reply.moves : []).slice(0, MAX_PICK)) {
-    const name = String(m?.move ?? '');
+    let name = String(m?.move ?? '');
     if (!ok.has(name)) continue;
     const d = m.details && typeof m.details === 'object' ? m.details : {};
+    if (name === 'make_clothes' && /\b(blanket|quilt|pillow|cushion|rug|curtain|throw|tapestry|banner|plush|doll)\b/i.test(`${d.what ?? ''} ${d.name ?? ''}`)) name = 'decorate'; // sewn or knitted, but not to wear: a thing for his room
     const thought = clip(m.thought, 160) || clip(d.why, 160) || '';
     if (name === 'tell') {
       if (clip(d.text, 1000)) answer.tell = clip(d.text, 1000);
