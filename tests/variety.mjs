@@ -42,3 +42,18 @@ assert.deepEqual(dropRestingDo(l, [{ action: 'do', details: { what: 'Sculpt the 
 console.log('ok  the same pretend step 3 times: that one rests, other "do" steps are fine');
 assert.equal(choiceOf({ moves: [{ move: 'decorate', details: { what: 'ceramic desk lamp' } }] }).key, choiceOf({ moves: [{ move: 'decorate', details: { what: 'ceramic base for the desk lamp' } }] }).key);
 console.log('ok  making the same kind of thing under a new name is the same choice');
+{
+  const v = { recent: {} };
+  const mv = { moves: [{ move: 'move_thing', details: { name: 'clay bird' } }] };
+  const other = { moves: [{ move: 'play_piano', details: {} }] };
+  noteChoice(v, choiceOf(mv), false); noteChoice(v, choiceOf(other), true); noteChoice(v, choiceOf(mv), false); noteChoice(v, choiceOf(other), true);
+  const r = noteChoice(v, choiceOf(mv), false, 'the shelf is full');
+  assert.equal(r?.move, 'move_thing', 'the same failure 3 times, with other moves in between, also rests');
+  console.log('ok  the same thing failing 3 times with other moves in between: it rests too');
+}
+{
+  const { workStep } = await import('../projects.js');
+  const p = { title: 'Knit a small warm wool blanket', status: 'working', steps: [{ text: 'Knit a small warm wool blanket: a first version', done: false }], versions: [], notes: [], needs: [] };
+  assert.equal(workStep({ projects: [p] }, p.title).action, 'decorate', 'a blanket is not clothes');
+  console.log('ok  a knitted blanket is a thing for his room, not clothes');
+}

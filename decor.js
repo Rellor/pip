@@ -1315,6 +1315,16 @@ export function supportsInfo(decor) {
     return { key: b.key, label: b.label, cx: r3((b.x0 + b.x1) / 2), cz: r3((b.z0 + b.z1) / 2), on: on.map((o) => o.name), ...(b.key === 'desk' ? { fixed: DESK_ITEMS } : {}), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
   });
 }
+// Is there a top with room where this thing would really fit (its size, the height above the board)? For hints only: changes nothing.
+export function fitsOnATop(decor, e, now = Date.now()) {
+  const parts = (e.parts ?? []).map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...(p.rot ?? [0, 0, 0])] }));
+  if (!parts.length) return false;
+  for (const b of supportsInfo(decor).filter((x) => !x.full && !x.high && x.room > 0 && !/^piano$/.test(x.label) && x.key !== e.base)) {
+    const base = baseByKey(decor, b.key);
+    if (base && !placeOn(decor.filter((o) => o !== e), { ...e, noAlt: true }, parts, base, null, now, now, true).failed) return true;
+  }
+  return false;
+}
 // Small things that stand loose on the floor (not furniture he can sit in or use).
 export const looseSmall = (decor) => decor.filter((o) => o.kind === 'floor' && !o.image && o.pos && (() => { const s = sizeOf(o); return s && s[0] <= 0.5 && s[2] <= 0.5 && s[1] <= 0.6; })()).map((o) => o.name);
 
