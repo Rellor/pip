@@ -3844,3 +3844,9 @@ It is late at night and time to write my diary entry.
 - write_diary (Friday night. The room is quiet.): I will write in my diary before sleep.
 - mood: warm
 
+## 20/11/2026, 21:39:34
+The night is clear and cold, and taking a quick photo of the window feels right before I settle down.
+> The night is clear and cold, and taking a quick photo of the window feels right before I settle down.
+- take_photo (window): I want to take a picture of the night sky through the window.
+- mood: calm
+
