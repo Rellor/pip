@@ -3567,3 +3567,10 @@ I am full of energy and drawn to the autumn window as dusk falls.
 - draw (sketch of the autumn window at dusk): I love sitting by the window as the sun goes down.
 - mood: curious
 
+## 20/11/2026, 15:54:21
+I am tidying up my room and moving my clay bird to a safer spot where it won't be in the way.
+> I am tidying up my room and moving my clay bird to a safer spot where it won't be in the way.
+- move_thing (sculpted clay bird on perch): My bird is on the floor and gets in the way. I'll move it to the small wooden shelf.
+- do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
+- mood: curious
+
