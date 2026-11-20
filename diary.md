@@ -3345,3 +3345,9 @@ I want to clear the floor by giving the sculpted bird a safe place on the shelf,
 - do (tell my plant what went wrong and how it felt): That did not work out. I shake it off and tell my plant what went wrong and how it felt.
 - mood: curious
 
+## 20/11/2026, 11:11:01
+I am in the middle of my wooden stand project and need to take the next step.
+> I am in the middle of my wooden stand project and need to take the next step.
+- search_web (people make Carve a small wooden stand for the clay bird): I need to look up how to carve this stand.
+- mood: curious
+
