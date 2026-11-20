@@ -3523,3 +3523,10 @@ My basil is fully grown, so I am harvesting it to use later.
 - do (juggle three imaginary berries): That did not work out. I shake it off and juggle three imaginary berries.
 - mood: curious
 
+## 20/11/2026, 14:59:16
+My sculpted clay bird on the floor gets in the way, so I am moving it onto my desk.
+> My sculpted clay bird on the floor gets in the way, so I am moving it onto my desk.
+- move_thing (sculpted clay bird on perch): I will move my clay bird to the desk so it is not lost on the floor.
+- do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
+- mood: curious
+
