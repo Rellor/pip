@@ -71,6 +71,19 @@ export function scaleParts(parts, wide, high = wide) {
     return { ...p, size: size.map(r3), pos: [r3(p.pos[0] * wide), r3(p.pos[1] * high), r3(p.pos[2] * wide)] };
   });
 }
+// What the name says about its size: a "tiny" stand is not 70 cm wide. In his design (everyday sizes): tiny at most
+// 0.25 m, small or little at most 0.7 m (a small table or chair may be a bit bigger: 0.9 m). Bigger designs shrink to fit.
+export function sizeWords(parts, name = '') {
+  const b = box(parts);
+  if (!b) return parts;
+  const n = String(name).toLowerCase();
+  const furniture = /\b(table|chair|bench|shelf|cabinet|stool|desk|bed|sofa|stove|oven|wardrobe|dresser)\b/.test(n);
+  const max = /\b(tiny|mini|miniature)\b/.test(n) ? (furniture ? 0.45 : 0.25) : /\b(small|little)\b/.test(n) ? (furniture ? 0.9 : 0.7) : null;
+  const big = Math.max(b.size[0], b.size[2], b.size[1]);
+  if (!max || big <= max) return parts;
+  const k = max / big;
+  return scaleParts(parts, k, k);
+}
 // A new design at the room's size.
 export function roomScale(parts, spec = {}) {
   const f = roomFactors(parts, spec);

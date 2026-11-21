@@ -19,7 +19,7 @@ import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } f
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone, realProjectWork } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words, dayReport } from './checkup.js';
-import { roomScale, placeKind } from './scale.js';
+import { roomScale, placeKind, sizeWords } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
 import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo } from './loops.js';
 import { planRetry, startRetry, retryLines } from './retry.js';
@@ -1331,7 +1331,7 @@ async function wakeUp() {
         return;
       }
       const placed = designate(state, st.details); // no place said: the game puts it where it belongs
-      const built = settle(cleanParts(st.details.parts) ?? [], { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js)
+      const built = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js); a "tiny" thing is tiny
       st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart); // built at the size of his room
       if (st.made.failed && /is full|no room left on/i.test(st.made.failed) && !/wall/i.test(st.made.failed) && state.stored.length < MAX_STORED) { // made, but no top has room: it waits in his chest instead of being lost
         const spot = makeDecor(state.decor, { ...st.details, on: undefined, wall: undefined, where: 'floor', x: undefined, z: undefined, next_to: undefined, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart);

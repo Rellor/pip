@@ -11,7 +11,7 @@ export const STARTER_SEEDS = ['basil', 'mint', 'strawberry'];
 const FOOD = /\b(bread|rice|eggs?|potato(es)?|carrots?|apples?|milk|cheese|flour|butter|onions?|tomato(es)?|berr(y|ies)|soup|pasta|beans|fruit|vegetables|food|snacks?|honey|oats)\b/i;
 
 // Materials to make things with: when he asks for one of these, Bas can simply give it (it goes with his tools).
-const MATERIALS = /\b(clay|wire|wood|planks?|sticks?|twigs?|string|rope|yarn|beads?|stones?|pebbles?|shells?|paper|cardboard|glass|metal|wax|plaster|cork|leather|felt|sand|ribbons?|buttons?|magnets?|batter(y|ies)|light ?bulbs?|led|leds|bricks?|tiles?)\b/i;
+const MATERIALS = /\b(clay|wool|wire|wood|planks?|sticks?|twigs?|string|rope|yarn|beads?|stones?|pebbles?|shells?|paper|cardboard|glass|metal|wax|plaster|cork|leather|felt|sand|ribbons?|buttons?|magnets?|batter(y|ies)|light ?bulbs?|led|leds|bricks?|tiles?)\b/i;
 export function giveForAsk(s, item) {
   const t = String(item ?? '').toLowerCase();
   const given = [];

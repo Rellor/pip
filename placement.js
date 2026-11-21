@@ -3,7 +3,7 @@
 // wall. When Pip does not say where a new thing goes, it goes to its right place. He may put it somewhere else (it is his
 // room), but then he notices it would be better elsewhere, and putting it right is offered to him.
 import { placeFor } from './web/lighting.js';
-import { supportsInfo, sizeOf, fitsOnATop } from './decor.js';
+import { supportsInfo, sizeOf, fitsOnATop, accessProblem } from './decor.js';
 import { box } from './scale.js';
 import { needLampSpots } from './growth.js';
 
@@ -115,6 +115,8 @@ export const inTheMiddle = (e) => e?.kind === 'floor' && e.pos && Math.abs(e.pos
 export function misplaced(s, e) {
   if (!e || e.image || e.art || !e.pos) return null;
   const rp = rightPlace(e);
+  const blocks = e.kind === 'floor' ? [accessProblem(s.decor ?? [], e)].find((t) => /where I stand/.test(t ?? '')) ?? null : null; // it stands where he needs to stand to use something (a planter by the window is fine)
+  if (blocks) return { better: 'somewhere that is not in the way', why: blocks.split(',')[0], kind: 'floor', near: null };
   const sz = e.kind === 'floor' ? sizeOf(e) : null;
   if (sz && Math.max(...sz) < SMALL_THING * 1.6 && !rp && fitsOnATop(s.decor ?? [], e)) return { better: 'on a shelf, a table or the desk', why: 'it is small: on the floor it gets lost and is in the way', kind: 'surface', near: null }; // (built 1.6 times bigger)
   if (inTheMiddle(e) && rp?.near?.[0] !== 'middle of the room') { // in the way, wherever else it might go

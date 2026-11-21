@@ -231,6 +231,15 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-21 wool from Bas',
+    run(s, at) { // he asked for extra wool for his blanket
+      const ask = (s.asks ?? []).find((a) => a.status === 'open' && /wool|yarn/i.test(a.item));
+      const given = giveForAsk(s, 'wool');
+      if (ask) Object.assign(ask, { status: 'done', doneAt: at, given });
+      return given.length ? 'Bas gave me wool, soft and warm. Now I can knit my blanket.' : null;
+    },
+  },
+  {
     id: '2026-11-20 sewing kit from Bas',
     run(s, at) { // he asked for a sewing kit to knit his warm wool blanket
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /sew|knit/i.test(a.item));
