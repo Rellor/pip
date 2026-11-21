@@ -4525,3 +4525,9 @@ I am winding down for the night and want to write in my diary.
 - write_diary (Saturday night. The birdhouse project can rest for a little while. I am quiet and ready to write.): I want to record my thoughts tonight before I sleep.
 - mood: thoughtful
 
+## 21/11/2026, 21:42:06
+I am tidying up my room a bit and clearing the path around my reading lamp.
+> I am tidying up my room a bit and clearing the path around my reading lamp.
+- move_thing (small side table): Moving my small side table so it is out of the way of the bed reading lamp.
+- mood: thoughtful
+
