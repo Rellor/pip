@@ -1,19 +1,13 @@
 {
   "mood": "thoughtful",
-  "energy": 9.42,
-  "boredom": 0,
-  "loneliness": 2.73,
+  "energy": 9.5,
+  "boredom": 1.11,
+  "loneliness": 2.76,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-21T14:12:42.707Z",
-      "action": "water",
-      "detail": "mint",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-21T14:16:59.009Z",
       "action": "search_web",
@@ -310,6 +304,12 @@
       "at": "2026-11-21T19:48:03.051Z",
       "action": "do",
       "detail": "sit by the autumn window and watch the dusk turn into night",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-21T19:56:09.852Z",
+      "action": "do",
+      "detail": "plan my new project: Build a wooden birdhouse",
       "enjoyment": 6
     }
   ],
@@ -659,7 +659,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.736,
+      "weight": 6.735,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -668,7 +668,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.775,
+      "weight": 6.774,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -677,7 +677,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.598,
+      "weight": 7.597,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -686,7 +686,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.234,
+      "weight": 7.233,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -695,7 +695,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.121,
+      "weight": 8.12,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -704,7 +704,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.456,
+      "weight": 7.455,
       "lastUsed": "2026-11-20T12:00:24.812Z"
     },
     {
@@ -713,7 +713,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.852,
+      "weight": 7.851,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -722,7 +722,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.06,
+      "weight": 6.059,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -731,7 +731,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.966,
+      "weight": 8.964,
       "lastUsed": "2026-11-19T10:48:25.729Z"
     },
     {
@@ -740,7 +740,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.998,
+      "weight": 6.997,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -749,7 +749,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.576,
+      "weight": 6.575,
       "lastUsed": "2026-11-20T11:02:43.147Z"
     },
     {
@@ -758,7 +758,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.916,
+      "weight": 9.914,
       "lastUsed": "2026-11-21T14:04:03.714Z"
     },
     {
@@ -767,7 +767,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.013,
+      "weight": 7.012,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -776,7 +776,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.548,
+      "weight": 8.547,
       "lastUsed": "2026-11-21T14:49:17.703Z"
     },
     {
@@ -785,7 +785,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.222,
+      "weight": 6.221,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -794,7 +794,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.499,
+      "weight": 9.497,
       "lastUsed": "2026-11-21T18:34:37.216Z"
     },
     {
@@ -803,7 +803,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.264,
+      "weight": 6.263,
       "lastUsed": "2026-11-18T21:23:58.763Z"
     },
     {
@@ -812,7 +812,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.159,
+      "weight": 8.158,
       "lastUsed": "2026-11-20T11:44:13.995Z"
     },
     {
@@ -821,7 +821,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.593,
+      "weight": 9.591,
       "lastUsed": "2026-11-20T14:04:56.313Z"
     },
     {
@@ -830,7 +830,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.825,
+      "weight": 9.823,
       "lastUsed": "2026-11-21T07:32:11.956Z"
     },
     {
@@ -839,7 +839,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.847,
+      "weight": 6.846,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -850,7 +850,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.848,
+      "weight": 6.847,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -861,7 +861,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.868,
+      "weight": 7.867,
       "lastUsed": "2026-11-21T16:02:42.795Z"
     },
     {
@@ -870,7 +870,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 8.879,
+      "weight": 8.877,
       "lastUsed": "2026-11-21T17:43:30.365Z"
     },
     {
@@ -879,7 +879,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.92,
+      "weight": 9.918,
       "lastUsed": "2026-11-21T14:16:37.978Z"
     },
     {
@@ -888,7 +888,7 @@
       "text": "I need to plan the steps for my clay bowl project tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.945,
+      "weight": 6.944,
       "lastUsed": "2026-11-20T10:10:32.424Z"
     },
     {
@@ -897,7 +897,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.818,
+      "weight": 8.816,
       "lastUsed": "2026-11-20T13:13:47.742Z"
     },
     {
@@ -906,7 +906,7 @@
       "text": "I am getting into autumn dusk colors. I want to know more about it.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.603,
+      "weight": 6.602,
       "lastUsed": "2026-11-19T17:12:46.285Z"
     },
     {
@@ -915,7 +915,7 @@
       "text": "I made cozy night owl reading lamp (I need a warm, adjustable reading lamp by the bed so I can read my diary and books late at night without straining my eyes.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.621,
+      "weight": 7.62,
       "lastUsed": "2026-11-21T14:57:56.570Z"
     },
     {
@@ -924,7 +924,7 @@
       "text": "I made rainy autumn window watercolor (I love the rain tonight and want to capture how the window looks, inspired by Vincent van Gogh's watercolor and Edward Hopper's play of light.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.648,
+      "weight": 6.647,
       "lastUsed": "2026-11-20T14:56:00.347Z"
     },
     {
@@ -933,7 +933,7 @@
       "text": "My project \"Paint a watercolor of the rainy autumn window\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.113,
+      "weight": 8.112,
       "lastUsed": "2026-11-21T11:40:46.602Z"
     },
     {
@@ -942,7 +942,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8.225,
+      "weight": 8.224,
       "lastUsed": "2026-11-21T15:06:03.096Z"
     },
     {
@@ -951,7 +951,7 @@
       "text": "My project \"Shape a ceramic base for the desk lamp\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.74,
+      "weight": 6.739,
       "lastUsed": "2026-11-20T10:02:28.687Z"
     },
     {
@@ -960,7 +960,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.741,
+      "weight": 7.74,
       "lastUsed": "2026-11-21T07:32:11.956Z"
     },
     {
@@ -969,7 +969,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.764,
+      "weight": 7.763,
       "lastUsed": "2026-11-21T07:07:52.723Z"
     },
     {
@@ -978,7 +978,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.741,
+      "weight": 8.74,
       "lastUsed": "2026-11-21T14:16:37.978Z"
     },
     {
@@ -987,8 +987,8 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.736,
-      "lastUsed": "2026-11-21T13:13:16.483Z"
+      "weight": 9.234,
+      "lastUsed": "2026-11-21T19:56:08.254Z"
     },
     {
       "id": "mmwpe6qgn60",
@@ -996,7 +996,7 @@
       "text": "Basil needs time to grow before I can harvest it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.323,
+      "weight": 6.322,
       "lastUsed": "2026-11-21T07:40:17.716Z"
     },
     {
@@ -1005,7 +1005,7 @@
       "text": "I can use my sewing kit now to make clothes and blankets.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.829,
+      "weight": 6.828,
       "lastUsed": "2026-11-21T13:37:32.860Z"
     },
     {
@@ -1014,7 +1014,7 @@
       "text": "I started working on stitching a tiny fabric pouch.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.331,
+      "weight": 6.33,
       "lastUsed": "2026-11-21T07:07:52.723Z"
     },
     {
@@ -1023,7 +1023,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.408,
+      "weight": 8.407,
       "lastUsed": "2026-11-21T14:41:12.077Z"
     },
     {
@@ -1032,7 +1032,7 @@
       "text": "My project \"Knit my warm wool blanket\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.939,
+      "weight": 6.938,
       "lastUsed": "2026-11-21T11:32:42.324Z"
     },
     {
@@ -1041,7 +1041,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.445,
+      "weight": 8.444,
       "lastUsed": "2026-11-21T18:42:41.546Z"
     },
     {
@@ -1050,17 +1050,8 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.978,
+      "weight": 7.977,
       "lastUsed": "2026-11-21T16:52:12.758Z"
-    },
-    {
-      "id": "mmwqpfv2m60",
-      "at": "2026-11-21T17:51:35.949Z",
-      "text": "I can move things to make more space and keep paths clear.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.986,
-      "lastUsed": "2026-11-21T17:51:35.949Z"
     },
     {
       "id": "mmwqpqw6r60",
@@ -1068,7 +1059,7 @@
       "text": "Browsing helps me find new ideas when I have energy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.986,
       "lastUsed": "2026-11-21T18:00:10.610Z"
     },
     {
@@ -1077,7 +1068,7 @@
       "text": "Cooking warm soup helps when I am hungry and full of energy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.988,
+      "weight": 5.987,
       "lastUsed": "2026-11-21T18:08:17.706Z"
     },
     {
@@ -1086,7 +1077,7 @@
       "text": "Eating warm soup helps when I am hungry and working.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.99,
       "lastUsed": "2026-11-21T18:26:33.986Z"
     },
     {
@@ -1095,7 +1086,7 @@
       "text": "I ate a warm bowl of vegetable soup when I was hungry.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.99,
       "lastUsed": "2026-11-21T18:34:38.518Z"
     },
     {
@@ -1104,7 +1095,7 @@
       "text": "I should place a lamp by the bed to see better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.992,
+      "weight": 5.991,
       "lastUsed": "2026-11-21T18:42:44.123Z"
     },
     {
@@ -1113,7 +1104,7 @@
       "text": "I made cozy brass reading lamp (to light up the dark bed area and make it cozy for reading my diary)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.992,
+      "weight": 5.991,
       "lastUsed": "2026-11-21T18:42:45.116Z"
     },
     {
@@ -1122,7 +1113,7 @@
       "text": "Drawing at dusk helps me catch quiet moments.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.992,
       "lastUsed": "2026-11-21T18:50:50.129Z"
     },
     {
@@ -1131,7 +1122,7 @@
       "text": "Eating warm soup makes me feel cozy in my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.994,
+      "weight": 5.993,
       "lastUsed": "2026-11-21T18:58:54.501Z"
     },
     {
@@ -1140,7 +1131,7 @@
       "text": "Moving the small side table next to the wall gives me more room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.994,
       "lastUsed": "2026-11-21T19:07:20.119Z"
     },
     {
@@ -1149,7 +1140,7 @@
       "text": "A lamp near the bed would make it cozy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-21T19:17:52.475Z"
     },
     {
@@ -1158,7 +1149,7 @@
       "text": "Moving surface things requires placing them on valid surfaces.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
+      "weight": 5.996,
       "lastUsed": "2026-11-21T19:25:56.857Z"
     },
     {
@@ -1167,7 +1158,7 @@
       "text": "Browsing the web is a good way to find new ideas when I am figuring out what to do.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
+      "weight": 5.997,
       "lastUsed": "2026-11-21T19:28:03.463Z"
     },
     {
@@ -1176,7 +1167,7 @@
       "text": "Looking out the window at dusk helps clear my mind after a busy day of making things.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
+      "weight": 5.997,
       "lastUsed": "2026-11-21T19:36:18.828Z"
     },
     {
@@ -1185,31 +1176,32 @@
       "text": "Looking at the autumn window at dusk always brings a quiet calm.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-21T19:44:27.918Z"
     },
     {
-      "id": "mmwqtlmcv60",
-      "at": "2026-11-21T19:48:04.048Z",
-      "text": "sit by the autumn window and watch the dusk turn into night",
+      "id": "mmwqtw1z260",
+      "at": "2026-11-21T19:56:09.853Z",
+      "text": "Woodwork projects help me learn and make my room better.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.999,
+      "lastUsed": "2026-11-21T19:56:09.853Z"
+    },
+    {
+      "id": "mmwqtw1z460",
+      "at": "2026-11-21T19:56:10.851Z",
+      "text": "plan my new project: Build a wooden birdhouse",
       "importance": 4,
       "kind": "memory",
-      "weight": 4,
-      "lastUsed": "2026-11-21T19:48:04.048Z"
+      "weight": 3.999,
+      "lastUsed": "2026-11-21T19:56:10.851Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-20T22:00:07.969Z",
   "thoughts": [
-    {
-      "at": "2026-11-21T16:19:29.383Z",
-      "text": "I am working on my current project to make progress.",
-      "short": "I am working on my current project to make progress.",
-      "mood": "energetic",
-      "action": "search_web",
-      "detail": "to stitch a cozy wool blanket"
-    },
     {
       "at": "2026-11-21T16:27:45.624Z",
       "text": "I want to continue making progress on my cozy wool blanket project.",
@@ -1441,6 +1433,14 @@
       "mood": "thoughtful",
       "action": "do",
       "detail": "sit by the autumn window and watch the dusk turn into night"
+    },
+    {
+      "at": "2026-11-21T19:56:09.853Z",
+      "text": "I feel full of energy and want to start a new woodwork project to make my room cozier.",
+      "short": "I feel full of energy and want to start a new woodwork project to make my room cozier.",
+      "mood": "thoughtful",
+      "action": "do",
+      "detail": "plan my new project: Build a wooden birdhouse"
     }
   ],
   "outbox": [
@@ -1631,29 +1631,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-21T16:19:30.378Z",
-      "action": "search_web",
-      "thought": "I need to look up how to stitch this blanket.",
-      "query": "to stitch a cozy wool blanket",
-      "results": [
-        {
-          "title": "Yarn bombing",
-          "snippet": "movement moved on from simple 'cozies' with the innovation of the 'stitched story'. The concept has been attributed to Lauren O'Farrell (who creates her",
-          "url": "https://en.wikipedia.org/wiki/Yarn_bombing"
-        },
-        {
-          "title": "Sweater",
-          "snippet": "blouse, T-shirt, or another top, but sometimes next to the skin. Sweaters were traditionally made from wool but can now be made of cotton, synthetic fibers",
-          "url": "https://en.wikipedia.org/wiki/Sweater"
-        }
-      ],
-      "opened": {
-        "title": "Yarn bombing",
-        "url": "https://en.wikipedia.org/wiki/Yarn_bombing",
-        "text": "Yarn bombing (or yarnbombing) is a type of graffiti or street art that employs colorful displays of knitted or crocheted yarn or fibre rather than paint or chalk. It is also called wool bombing, yarn storming, guerrilla knitting, kniffiti, urban knitting, or graffiti knitting.\n\nMotivation\nWhile other forms of graffiti may be expressive, decorative, territorial, socio-political commentary, advertising or vandalism, yarn bombing was initially almost exclusively about reclaiming and personalizing sterile or cold public places. It has since developed with groups graffiti knitting and crocheting worldwide, each with their own agendas and public graffiti knitting projects being run.\nAccording to Manuela Farinosi and Leopoldina Fortunati, yarn bombing has become synonymous with the current feminist movement due in part to the reclamation of the traditionally feminine arts of knitting and crocheting to partake in the traditionally masculine and male-dominated graffiti scene. The women and girls who make up the yarn bombing subculture are diverse in race, age, sexuality, class, etc., and create space for themselves and their art everywhere from college campuses to public parks. This creation and preservation of space is what motivates some of the participants, some of whom have never been able to access a political art space before. …"
-      }
-    },
     {
       "at": "2026-11-21T16:27:46.614Z",
       "action": "decorate",
@@ -1932,6 +1909,16 @@
       "move": null,
       "emoji": "",
       "what": "sit by the autumn window and watch the dusk turn into night",
+      "feeling": null
+    },
+    {
+      "at": "2026-11-21T19:56:10.851Z",
+      "action": "do",
+      "thought": "I want to build something for my room with my woodwork skills.",
+      "as": "start_project",
+      "move": null,
+      "emoji": "",
+      "what": "plan my new project: Build a wooden birdhouse",
       "feeling": null
     }
   ],
@@ -7113,6 +7100,33 @@
   ],
   "projects": [
     {
+      "id": "mwqtw1z2",
+      "title": "Build a wooden birdhouse",
+      "why": "to give my clay bird a nice little home by the window",
+      "next": "look up how to build a wooden birdhouse",
+      "nextStep": "look up how to build a wooden birdhouse",
+      "steps": [
+        {
+          "text": "look up how to build a wooden birdhouse",
+          "done": false
+        },
+        {
+          "text": "Build a wooden birdhouse: a first version",
+          "done": false
+        },
+        {
+          "text": "look at it and improve one thing",
+          "done": false
+        }
+      ],
+      "needs": [],
+      "versions": [],
+      "notes": [],
+      "status": "working",
+      "since": "2026-11-21T19:56:09.853Z",
+      "updatedAt": "2026-11-21T19:56:09.853Z"
+    },
+    {
       "id": "mwnukypn",
       "title": "Paint the autumn window at dusk",
       "why": "The light is perfect and it captures how I feel right now.",
@@ -9208,7 +9222,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-21T19:48:03.048Z",
+    "at": "2026-11-21T19:56:09.851Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -9216,24 +9230,24 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1887,
-      "output": 113,
+      "input": 2030,
+      "output": 187,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I have finished my goals for today and want to take a quiet moment by the window at dusk.",
-    "inner": "I have finished my goals for today and want to take a quiet moment by the window at dusk.",
+    "thought": "I feel full of energy and want to start a new woodwork project to make my room cozier.",
+    "inner": "I feel full of energy and want to start a new woodwork project to make my room cozier.",
     "sent": false,
     "steps": [
       {
         "action": "do",
         "details": {
-          "what": "sit by the autumn window and watch the dusk turn into night"
+          "what": "plan my new project: Build a wooden birdhouse"
         },
-        "detail": "sit by the autumn window and watch the dusk turn into night",
-        "thought": "The evening is quiet and I want to look at the sky before it gets too late.",
+        "detail": "plan my new project: Build a wooden birdhouse",
+        "thought": "I want to build something for my room with my woodwork skills.",
         "enjoyment": 6,
         "found": null,
         "made": null
@@ -9241,9 +9255,9 @@
     ],
     "action": "do",
     "details": {
-      "what": "sit by the autumn window and watch the dusk turn into night"
+      "what": "plan my new project: Build a wooden birdhouse"
     },
-    "detail": "sit by the autumn window and watch the dusk turn into night",
+    "detail": "plan my new project: Build a wooden birdhouse",
     "enjoyment": 6,
     "new_idea": null,
     "found": null
@@ -9325,7 +9339,7 @@
   "quota": {
     "day": "2026-11-21",
     "calls": {
-      "gemini-3.5-flash-lite": 135,
+      "gemini-3.5-flash-lite": 136,
       "gemini-3.8-flash": 17,
       "gemini-3.6-flash": 13,
       "gemini-3.5-flash": 8,
@@ -9541,22 +9555,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-21T19:48:03.055Z",
-  "fullness": 9.02,
+  "memoryFadeAt": "2026-11-21T19:56:09.856Z",
+  "fullness": 8.86,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 4.92,
-  "joy": 3.88,
-  "calm": 5.31,
+  "wonder": 4.14,
+  "joy": 4.02,
+  "calm": 5.24,
   "emo": {
     "irritated": 0,
     "sad": 0,
     "excited": 0.01
   },
-  "feelAt": "2026-11-21T19:48:01.403Z",
+  "feelAt": "2026-11-21T19:56:08.204Z",
   "lastAte": "2026-11-21T18:58:54.500Z",
   "studio": {
     "songs": [
@@ -9999,21 +10013,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.56,
-    "curiosity": 0.17,
-    "boredom": 1,
-    "loneliness": 2.73,
+    "creativity": 0,
+    "curiosity": 0.24,
+    "boredom": 1.11,
+    "loneliness": 2.76,
     "tidiness": 0,
-    "at": "2026-11-21T19:48:01.403Z",
+    "at": "2026-11-21T19:56:08.204Z",
     "coziness": 2.9
   },
   "recent": {
     "moves": [
-      {
-        "move": "eat",
-        "kind": "food",
-        "at": "2026-11-21T18:26:33.991Z"
-      },
       {
         "move": "do",
         "kind": "play",
@@ -10085,6 +10094,11 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-21T19:48:03.061Z"
+      },
+      {
+        "move": "start_project",
+        "kind": "make",
+        "at": "2026-11-21T19:56:09.863Z"
       }
     ],
     "moods": [
@@ -10095,12 +10109,6 @@
       "thoughtful"
     ],
     "choices": [
-      {
-        "key": "draw:dusk",
-        "move": "draw",
-        "ok": true,
-        "at": "2026-11-21T18:50:50.135Z"
-      },
       {
         "key": "eat:",
         "move": "eat",
@@ -10154,6 +10162,12 @@
         "move": "do",
         "ok": false,
         "at": "2026-11-21T19:48:03.063Z"
+      },
+      {
+        "key": "start_project:build a wooden birdhouse",
+        "move": "start_project",
+        "ok": true,
+        "at": "2026-11-21T19:56:09.865Z"
       }
     ]
   },
@@ -10175,7 +10189,7 @@
       "take_photo": 2,
       "search_web": 5,
       "play_piano": 4,
-      "start_project": 3,
+      "start_project": 4,
       "change_thing": 1,
       "judge_project": 2,
       "write_diary": 1,
@@ -10200,7 +10214,7 @@
       "take_photo": 3,
       "search_web": 5,
       "play_piano": 4,
-      "start_project": 3,
+      "start_project": 4,
       "change_thing": 1,
       "phone": 3,
       "judge_project": 2,
@@ -10211,7 +10225,7 @@
     },
     "kinds": {
       "garden": 5,
-      "make": 20,
+      "make": 21,
       "people": 2,
       "learn": 16,
       "room": 10,
@@ -10226,7 +10240,7 @@
       "gentle": 1,
       "calm": 20,
       "hungry": 5,
-      "thoughtful": 11
+      "thoughtful": 12
     },
     "lift": {
       "harvest": 0.5,
@@ -10240,7 +10254,7 @@
       "eat": 3.3,
       "draw": 5.3,
       "use": 4.7,
-      "do": 7.8,
+      "do": 7.2,
       "take_photo": 3.25,
       "search_web": 3.61,
       "play_piano": 1.23,
@@ -10286,7 +10300,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-21T19:48:03.047Z",
+    "decidedAt": "2026-11-21T19:56:09.850Z",
     "seen": {
       "tools": 6,
       "gifts": 1,
@@ -10541,7 +10555,7 @@
     "harvest": 7,
     "phone": 3,
     "make_app": 2,
-    "start_project": 14,
+    "start_project": 15,
     "write_diary": 8,
     "place_picture": 1,
     "browse": 18,
@@ -10550,7 +10564,7 @@
     "make_clothes": 3
   },
   "checkup": {
-    "at": "2026-11-21T19:48:03.063Z",
+    "at": "2026-11-21T19:56:09.865Z",
     "items": [
       {
         "id": "circling",
@@ -10582,7 +10596,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 9.02\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm soup\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"potatoes\",\"butter\"],\"madeAt\":\"2026-11-20T07:07:47.812Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 8.86\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm soup\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"potatoes\",\"butter\"],\"madeAt\":\"2026-11-20T07:07:47.812Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -15048,6 +15062,6 @@
   },
   "tired": {
     "kind": "play",
-    "until": "2026-11-19T09:23:27.490Z"
+    "until": "2026-11-21T20:56:08.227Z"
   }
 }
