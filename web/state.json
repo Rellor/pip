@@ -1,19 +1,13 @@
 {
   "mood": "energetic",
-  "energy": 9,
+  "energy": 8.75,
   "boredom": 0,
-  "loneliness": 0.88,
+  "loneliness": 0.89,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-20T20:29:36.706Z",
-      "action": "do",
-      "detail": "stretch up tall and look out of the window for a moment",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-20T20:31:56.716Z",
       "action": "make_app",
@@ -308,6 +302,12 @@
       "at": "2026-11-21T11:54:02.143Z",
       "action": "do",
       "detail": "tell my plant what went wrong and how it felt",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-21T11:56:06.467Z",
+      "action": "eat",
+      "detail": "simple snack",
       "enjoyment": 6
     }
   ],
@@ -1016,15 +1016,6 @@
       "lastUsed": "2026-11-21T07:07:52.723Z"
     },
     {
-      "id": "mmwq3wfgm60",
-      "at": "2026-11-21T07:48:37.317Z",
-      "text": "I moved my night owl reading lamp closer to the desk for better light.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.968,
-      "lastUsed": "2026-11-21T07:48:37.317Z"
-    },
-    {
       "id": "mmwq4hh5j60",
       "at": "2026-11-21T08:04:59.287Z",
       "text": "Mint needs watering when it is dry.",
@@ -1194,20 +1185,21 @@
       "kind": "memory",
       "weight": 5.997,
       "lastUsed": "2026-11-21T11:40:53.507Z"
+    },
+    {
+      "id": "mmwqcqp5260",
+      "at": "2026-11-21T11:56:06.469Z",
+      "text": "I should continue working on my knitting project steadily.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 6,
+      "lastUsed": "2026-11-21T11:56:06.469Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-20T22:00:07.969Z",
   "thoughts": [
-    {
-      "at": "2026-11-21T07:32:13.228Z",
-      "text": "I completed my sewing goal and decided to ask for a small gift.",
-      "short": "I completed my sewing goal and decided to ask for a small gift.",
-      "mood": "energetic",
-      "action": "ask_for",
-      "detail": "extra wool: I finished stitching a tiny fabric pouch and I am proud of it."
-    },
     {
       "at": "2026-11-21T07:40:18.967Z",
       "text": "It is raining and calm, so I want to read about the autumn window.",
@@ -1438,6 +1430,14 @@
       "mood": "energetic",
       "action": "phone",
       "detail": "opened weather"
+    },
+    {
+      "at": "2026-11-21T11:56:06.469Z",
+      "text": "I am energized and ready to start my new knitting project after having a small snack.",
+      "short": "I am energized and ready to start my new knitting project after having a small snack.",
+      "mood": "energetic",
+      "action": "eat",
+      "detail": "simple snack"
     }
   ],
   "outbox": [
@@ -1955,14 +1955,11 @@
       "failed": "there is no app called \"weather\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action"
     },
     {
-      "at": "2026-11-21T11:58:03.140Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🪴",
-      "what": "tell my plant what went wrong and how it felt",
-      "feeling": "calm"
+      "at": "2026-11-21T11:56:07.466Z",
+      "action": "eat",
+      "thought": "I need a quick bite before diving into my next project.",
+      "food": "simple snack",
+      "failed": null
     }
   ],
   "decor": [
@@ -6759,6 +6756,33 @@
   ],
   "projects": [
     {
+      "id": "mwqcqp52",
+      "title": "Knit a soft wool blanket",
+      "why": "Someone gave me wonderful wool and I want to keep my bed cozy.",
+      "next": "look up how to knit a soft wool blanket",
+      "nextStep": "look up how to knit a soft wool blanket",
+      "steps": [
+        {
+          "text": "look up how to knit a soft wool blanket",
+          "done": false
+        },
+        {
+          "text": "Knit a soft wool blanket: a first version",
+          "done": false
+        },
+        {
+          "text": "look at it and improve one thing",
+          "done": false
+        }
+      ],
+      "needs": [],
+      "versions": [],
+      "notes": [],
+      "status": "working",
+      "since": "2026-11-21T11:56:06.469Z",
+      "updatedAt": "2026-11-21T11:56:06.469Z"
+    },
+    {
       "id": "mwnukypn",
       "title": "Paint the autumn window at dusk",
       "why": "The light is perfect and it captures how I feel right now.",
@@ -7986,15 +8010,6 @@
       "qty": 6
     },
     {
-      "name": "simple snack",
-      "kind": "dish",
-      "qty": 1,
-      "ingredients": [
-        "carrots"
-      ],
-      "madeAt": "2026-11-18T11:41:47.387Z"
-    },
-    {
       "name": "warm soup",
       "kind": "dish",
       "qty": 1,
@@ -8296,7 +8311,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-21T11:54:02.140Z",
+    "at": "2026-11-21T11:56:06.466Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -8304,62 +8319,35 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1882,
-      "output": 100,
+      "input": 1978,
+      "output": 232,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am curious about the rainy weather outside and want to check my phone.",
-    "inner": "I am curious about the rainy weather outside and want to check my phone.",
+    "thought": "I am energized and ready to start my new knitting project after having a small snack.",
+    "inner": "I am energized and ready to start my new knitting project after having a small snack.",
     "sent": false,
     "steps": [
       {
-        "action": "phone",
+        "action": "eat",
         "details": {
-          "lamp": "",
-          "app": "weather",
-          "switch": "",
-          "level": "",
-          "color": "",
-          "mode": "",
-          "name": "",
-          "timer": null
+          "food": "simple snack"
         },
-        "detail": "opened weather",
-        "thought": "Checking if the rain will stop soon.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "tell my plant what went wrong and how it felt",
-          "feeling": "calm",
-          "emoji": "🪴"
-        },
-        "detail": "tell my plant what went wrong and how it felt",
-        "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
+        "detail": "simple snack",
+        "thought": "I need a quick bite before diving into my next project.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "phone",
+    "action": "eat",
     "details": {
-      "lamp": "",
-      "app": "weather",
-      "switch": "",
-      "level": "",
-      "color": "",
-      "mode": "",
-      "name": "",
-      "timer": null
+      "food": "simple snack"
     },
-    "detail": "opened weather",
-    "enjoyment": 0,
+    "detail": "simple snack",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -8440,7 +8428,7 @@
   "quota": {
     "day": "2026-11-21",
     "calls": {
-      "gemini-3.5-flash-lite": 40,
+      "gemini-3.5-flash-lite": 41,
       "gemini-3.8-flash": 11,
       "gemini-3.6-flash": 10,
       "gemini-3.5-flash": 7,
@@ -8650,23 +8638,23 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-21T11:54:02.145Z",
-  "fullness": 7.08,
+  "memoryFadeAt": "2026-11-21T11:56:06.472Z",
+  "fullness": 10,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.82,
-  "joy": 3.38,
-  "calm": 5.44,
+  "wonder": 7.36,
+  "joy": 3.87,
+  "calm": 5.64,
   "emo": {
-    "irritated": 1.37,
+    "irritated": 1.1,
     "sad": 0,
-    "excited": 0.97
+    "excited": 0.58
   },
-  "feelAt": "2026-11-21T11:54:00.610Z",
-  "lastAte": "2026-11-21T09:26:40.868Z",
+  "feelAt": "2026-11-21T11:56:04.468Z",
+  "lastAte": "2026-11-21T11:56:06.468Z",
   "studio": {
     "songs": [
       {
@@ -9040,21 +9028,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.24,
-    "curiosity": 0.09,
+    "creativity": 0.26,
+    "curiosity": 0.11,
     "boredom": 0,
-    "loneliness": 0.88,
+    "loneliness": 0.89,
     "tidiness": 1.6,
-    "at": "2026-11-21T11:54:00.610Z",
+    "at": "2026-11-21T11:56:04.468Z",
     "coziness": 3.6
   },
   "recent": {
     "moves": [
-      {
-        "move": "play_piano",
-        "kind": "music",
-        "at": "2026-11-21T10:05:49.918Z"
-      },
       {
         "move": "move_thing",
         "kind": "room",
@@ -9126,22 +9109,21 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-21T11:54:02.149Z"
+      },
+      {
+        "move": "eat",
+        "kind": "food",
+        "at": "2026-11-21T11:56:06.477Z"
       }
     ],
     "moods": [
       "energetic",
-      "energetic",
       "calm",
+      "energetic",
       "energetic",
       "energetic"
     ],
     "choices": [
-      {
-        "key": "decorate:lamp",
-        "move": "decorate",
-        "ok": true,
-        "at": "2026-11-21T10:34:34.190Z"
-      },
       {
         "key": "read_book:",
         "move": "read_book",
@@ -9195,6 +9177,12 @@
         "move": "phone",
         "ok": false,
         "at": "2026-11-21T11:54:02.151Z"
+      },
+      {
+        "key": "eat:",
+        "move": "eat",
+        "ok": true,
+        "at": "2026-11-21T11:56:06.479Z"
       }
     ]
   },
@@ -9209,7 +9197,7 @@
       "move_thing": 4,
       "water": 2,
       "browse": 4,
-      "eat": 2,
+      "eat": 3,
       "draw": 1,
       "use": 1,
       "do": 3,
@@ -9228,7 +9216,7 @@
       "move_thing": 4,
       "water": 2,
       "browse": 4,
-      "eat": 2,
+      "eat": 3,
       "draw": 1,
       "use": 2,
       "do": 3,
@@ -9245,13 +9233,13 @@
       "people": 2,
       "learn": 8,
       "room": 4,
-      "food": 2,
+      "food": 3,
       "play": 4,
       "look": 1,
       "music": 2
     },
     "moods": {
-      "energetic": 30,
+      "energetic": 31,
       "gentle": 1,
       "calm": 2
     },
@@ -9264,7 +9252,7 @@
       "move_thing": -2,
       "water": -1,
       "browse": -2,
-      "eat": 1.1,
+      "eat": 2.7,
       "draw": 2.1,
       "use": 2.3,
       "do": 1.42,
@@ -9308,8 +9296,18 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [],
-    "decidedAt": "2026-11-21T11:54:02.139Z",
+    "queue": [
+      {
+        "action": "do",
+        "as": "start_project",
+        "details": {
+          "what": "plan my new project: Knit a soft wool blanket"
+        },
+        "thought": "Time to start knitting with the wool I received.",
+        "enjoyment": 7
+      }
+    ],
+    "decidedAt": "2026-11-21T11:56:06.465Z",
     "seen": {
       "tools": 6,
       "gifts": 1,
@@ -9319,10 +9317,7 @@
       "seeds": 9,
       "visitors": 0
     },
-    "lastFail": {
-      "at": "2026-11-21T11:54:02.150Z",
-      "why": "phone: there is no app called \"weather\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -9544,7 +9539,7 @@
     }
   ],
   "ever": {
-    "eat": 34,
+    "eat": 35,
     "water": 16,
     "do": 263,
     "search_web": 27,
@@ -9576,7 +9571,7 @@
     "make_clothes": 3
   },
   "checkup": {
-    "at": "2026-11-21T11:54:02.152Z",
+    "at": "2026-11-21T11:56:06.479Z",
     "items": [
       {
         "id": "circling",
@@ -14396,7 +14391,14 @@
     "fadedAt": "2026-11-20T19:30:29.557Z"
   },
   "reportDay": "2026-11-20",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-21T11:55:13.140Z",
+    "key": "phone:",
+    "action": "phone",
+    "name": null,
+    "why": "there is no app called \"weather\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action",
+    "guide": "My things are: small wooden shelf, wooden planter box, tiny wooden music box, small stove, small clay lamp, cozy brass gas bulb lamp, amber reading light, small side table. In my pantry: milk, basil, simple snack, warm soup."
+  },
   "retries": [
     "2026-11-20T13:13:49.010Z",
     "2026-11-20T14:56:10.424Z",
@@ -14409,19 +14411,11 @@
     "2026-11-21T11:54:02.150Z"
   ],
   "retried": {
-    "key": "use:",
-    "at": "2026-11-21T11:42:55.865Z"
+    "key": "phone:",
+    "at": "2026-11-21T11:56:04.507Z"
   },
   "tired": {
     "kind": "play",
     "until": "2026-11-19T09:23:27.490Z"
-  },
-  "wakeSoon": {
-    "at": "2026-11-21T11:55:13.140Z",
-    "key": "phone:",
-    "action": "phone",
-    "name": null,
-    "why": "there is no app called \"weather\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action",
-    "guide": "My things are: small wooden shelf, wooden planter box, tiny wooden music box, small stove, small clay lamp, cozy brass gas bulb lamp, amber reading light, small side table. In my pantry: milk, basil, simple snack, warm soup."
   }
 }
