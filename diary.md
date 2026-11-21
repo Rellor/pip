@@ -4336,3 +4336,9 @@ It is dusk and I want to look at the autumn window.
 - do (look out the autumn window at dusk): I want to watch the evening light change.
 - mood: calm
 
+## 21/11/2026, 17:51:35
+My small side table is in the way and moving it will make my room feel better arranged.
+> My small side table is in the way and moving it will make my room feel better arranged.
+- move_thing (small side table): I should move my small side table so it is not in the way when I reach the bed reading lamp.
+- mood: energetic
+
