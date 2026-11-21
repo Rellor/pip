@@ -1,19 +1,13 @@
 {
   "mood": "hungry",
-  "energy": 9,
-  "boredom": 0.06,
-  "loneliness": 2.4,
+  "energy": 8.75,
+  "boredom": 0.05,
+  "loneliness": 2.41,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-21T12:22:33.174Z",
-      "action": "decorate",
-      "detail": "soft wool blanket",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-21T12:32:11.756Z",
       "action": "play_piano",
@@ -308,6 +302,12 @@
       "at": "2026-11-21T18:24:30.874Z",
       "action": "do",
       "detail": "do a silly little dance to shake it off",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-21T18:26:33.984Z",
+      "action": "eat",
+      "detail": "warm soup",
       "enjoyment": 6
     }
   ],
@@ -1187,27 +1187,19 @@
       "lastUsed": "2026-11-21T18:08:17.706Z"
     },
     {
-      "id": "mmwqq1c1760",
-      "at": "2026-11-21T18:08:18.702Z",
-      "text": "I cooked warm soup",
-      "importance": 5,
+      "id": "mmwqqotxe60",
+      "at": "2026-11-21T18:26:33.986Z",
+      "text": "Eating warm soup helps when I am hungry and working.",
+      "importance": 6,
       "kind": "memory",
-      "weight": 4.997,
-      "lastUsed": "2026-11-21T18:08:18.702Z"
+      "weight": 6,
+      "lastUsed": "2026-11-21T18:26:33.986Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-20T22:00:07.969Z",
   "thoughts": [
-    {
-      "at": "2026-11-21T14:33:08.931Z",
-      "text": "It is late afternoon and I want to enjoy the autumn window before night falls.",
-      "short": "It is late afternoon and I want to enjoy the autumn window before night falls.",
-      "mood": "calm",
-      "action": "do",
-      "detail": "look out the autumn window at dusk and watch the clouds shift"
-    },
     {
       "at": "2026-11-21T14:41:14.644Z",
       "text": "I am feeling full of energy and want to listen to some gentle rain ambiance while I relax in my room.",
@@ -1439,6 +1431,14 @@
       "mood": "hungry",
       "action": "cook",
       "detail": ""
+    },
+    {
+      "at": "2026-11-21T18:26:33.986Z",
+      "text": "I am hungry, so I am eating warm soup to feel better.",
+      "short": "I am hungry, so I am eating warm soup to feel better.",
+      "mood": "hungry",
+      "action": "eat",
+      "detail": "warm soup"
     }
   ],
   "outbox": [
@@ -1946,14 +1946,11 @@
       "failed": "I have no mint in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil"
     },
     {
-      "at": "2026-11-21T18:28:31.872Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and do a silly little dance to shake it off.",
-      "fallback": true,
-      "move": null,
-      "emoji": "💃",
-      "what": "do a silly little dance to shake it off",
-      "feeling": "joy"
+      "at": "2026-11-21T18:26:34.984Z",
+      "action": "eat",
+      "thought": "I am hungry and need to eat something warm before continuing.",
+      "food": "warm soup",
+      "failed": null
     }
   ],
   "decor": [
@@ -8759,7 +8756,7 @@
     {
       "name": "warm soup",
       "kind": "dish",
-      "qty": 3,
+      "qty": 2,
       "ingredients": [
         "potatoes",
         "butter"
@@ -9093,7 +9090,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-21T18:24:30.872Z",
+    "at": "2026-11-21T18:26:33.984Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -9101,56 +9098,35 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1894,
-      "output": 116,
+      "input": 2058,
+      "output": 113,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am hungry and need something warm to eat after finishing my tasks.",
-    "inner": "I am hungry and need something warm to eat after finishing my tasks.",
+    "thought": "I am hungry, so I am eating warm soup to feel better.",
+    "inner": "I am hungry, so I am eating warm soup to feel better.",
     "sent": false,
     "steps": [
       {
-        "action": "cook",
+        "action": "eat",
         "details": {
-          "dish": "warm evening soup",
-          "ingredients": [
-            "basil",
-            "mint"
-          ]
+          "food": "warm soup"
         },
-        "detail": "",
-        "thought": "I am hungry and want a simple bowl of warm soup.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "do a silly little dance to shake it off",
-          "feeling": "joy",
-          "emoji": "💃"
-        },
-        "detail": "do a silly little dance to shake it off",
-        "thought": "That did not work out. I shake it off and do a silly little dance to shake it off.",
+        "detail": "warm soup",
+        "thought": "I am hungry and need to eat something warm before continuing.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "cook",
+    "action": "eat",
     "details": {
-      "dish": "warm evening soup",
-      "ingredients": [
-        "basil",
-        "mint"
-      ]
+      "food": "warm soup"
     },
-    "detail": "",
-    "enjoyment": 0,
+    "detail": "warm soup",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -9231,7 +9207,7 @@
   "quota": {
     "day": "2026-11-21",
     "calls": {
-      "gemini-3.5-flash-lite": 115,
+      "gemini-3.5-flash-lite": 116,
       "gemini-3.8-flash": 17,
       "gemini-3.6-flash": 13,
       "gemini-3.5-flash": 8,
@@ -9302,7 +9278,7 @@
     ]
   },
   "weather": {
-    "at": "2026-11-21T18:16:21.018Z",
+    "at": "2026-11-21T18:26:32.814Z",
     "kind": "cloudy",
     "code": 3,
     "temp": 5.8,
@@ -9447,23 +9423,23 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-21T18:24:30.876Z",
-  "fullness": 2.29,
+  "memoryFadeAt": "2026-11-21T18:26:33.987Z",
+  "fullness": 7.25,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.38,
-  "joy": 3.29,
-  "calm": 5.54,
+  "wonder": 5.7,
+  "joy": 3.8,
+  "calm": 5.72,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0.96,
     "sad": 0,
-    "excited": 0.73
+    "excited": 0.44
   },
-  "feelAt": "2026-11-21T18:24:25.705Z",
-  "lastAte": "2026-11-21T11:56:06.468Z",
+  "feelAt": "2026-11-21T18:26:32.730Z",
+  "lastAte": "2026-11-21T18:26:33.985Z",
   "studio": {
     "songs": [
       {
@@ -9905,21 +9881,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.83,
-    "curiosity": 0.21,
-    "boredom": 0.06,
-    "loneliness": 2.4,
+    "creativity": 0.85,
+    "curiosity": 0.23,
+    "boredom": 0.05,
+    "loneliness": 2.41,
     "tidiness": 0.4,
-    "at": "2026-11-21T18:24:25.705Z",
+    "at": "2026-11-21T18:26:32.730Z",
     "coziness": 3.6
   },
   "recent": {
     "moves": [
-      {
-        "move": "judge_project",
-        "kind": "make",
-        "at": "2026-11-21T16:52:12.764Z"
-      },
       {
         "move": "draw",
         "kind": "make",
@@ -9991,22 +9962,21 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-21T18:24:30.878Z"
+      },
+      {
+        "move": "eat",
+        "kind": "food",
+        "at": "2026-11-21T18:26:33.991Z"
       }
     ],
     "moods": [
       "energetic",
-      "energetic",
+      "hungry",
       "hungry",
       "hungry",
       "hungry"
     ],
     "choices": [
-      {
-        "key": "do:look at the autumn window at dusk",
-        "move": "do",
-        "ok": false,
-        "at": "2026-11-21T17:17:04.254Z"
-      },
       {
         "key": "phone:lights",
         "move": "phone",
@@ -10060,6 +10030,12 @@
         "move": "cook",
         "ok": false,
         "at": "2026-11-21T18:24:30.880Z"
+      },
+      {
+        "key": "eat:",
+        "move": "eat",
+        "ok": true,
+        "at": "2026-11-21T18:26:33.992Z"
       }
     ]
   },
@@ -10074,7 +10050,7 @@
       "move_thing": 8,
       "water": 4,
       "browse": 5,
-      "eat": 3,
+      "eat": 4,
       "draw": 4,
       "use": 4,
       "do": 17,
@@ -10099,7 +10075,7 @@
       "move_thing": 9,
       "water": 4,
       "browse": 5,
-      "eat": 3,
+      "eat": 4,
       "draw": 4,
       "use": 5,
       "do": 17,
@@ -10121,7 +10097,7 @@
       "people": 2,
       "learn": 15,
       "room": 9,
-      "food": 5,
+      "food": 6,
       "play": 21,
       "look": 2,
       "music": 5,
@@ -10131,7 +10107,7 @@
       "energetic": 59,
       "gentle": 1,
       "calm": 20,
-      "hungry": 3
+      "hungry": 4
     },
     "lift": {
       "harvest": 0.5,
@@ -10142,7 +10118,7 @@
       "move_thing": -4.25,
       "water": -0.5,
       "browse": -1.5,
-      "eat": 2.7,
+      "eat": 3,
       "draw": 4.5,
       "use": 4.7,
       "do": 7.57,
@@ -10191,7 +10167,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-21T18:24:30.871Z",
+    "decidedAt": "2026-11-21T18:26:33.983Z",
     "seen": {
       "tools": 6,
       "gifts": 1,
@@ -10201,10 +10177,7 @@
       "seeds": 9,
       "visitors": 0
     },
-    "lastFail": {
-      "at": "2026-11-21T18:24:30.880Z",
-      "why": "cook: I have no mint in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -10426,7 +10399,7 @@
     }
   ],
   "ever": {
-    "eat": 35,
+    "eat": 36,
     "water": 18,
     "do": 277,
     "search_web": 30,
@@ -10458,7 +10431,7 @@
     "make_clothes": 3
   },
   "checkup": {
-    "at": "2026-11-21T18:24:30.881Z",
+    "at": "2026-11-21T18:26:33.993Z",
     "items": [
       {
         "id": "circling",
@@ -14978,7 +14951,14 @@
     "fadedAt": "2026-11-20T19:30:29.557Z"
   },
   "reportDay": "2026-11-20",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-21T18:25:41.872Z",
+    "key": "cook:warm evening soup",
+    "action": "cook",
+    "name": null,
+    "why": "I have no mint in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil",
+    "guide": ""
+  },
   "retries": [
     "2026-11-20T19:46:44.596Z",
     "2026-11-20T20:29:36.715Z",
@@ -14990,19 +14970,11 @@
     "2026-11-21T18:24:30.880Z"
   ],
   "retried": {
-    "key": "phone:",
-    "at": "2026-11-21T17:27:21.823Z"
+    "key": "cook:warm evening soup",
+    "at": "2026-11-21T18:26:32.834Z"
   },
   "tired": {
     "kind": "play",
     "until": "2026-11-19T09:23:27.490Z"
-  },
-  "wakeSoon": {
-    "at": "2026-11-21T18:25:41.872Z",
-    "key": "cook:warm evening soup",
-    "action": "cook",
-    "name": null,
-    "why": "I have no mint in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil",
-    "guide": ""
   }
 }
