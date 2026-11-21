@@ -1,19 +1,13 @@
 {
-  "mood": "calm",
-  "energy": 9,
+  "mood": "energetic",
+  "energy": 8.75,
   "boredom": 0,
-  "loneliness": 1.31,
+  "loneliness": 1.32,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-21T07:07:54.345Z",
-      "action": "harvest",
-      "detail": "basil",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-21T07:16:00.323Z",
       "action": "make_clothes",
@@ -307,6 +301,12 @@
       "at": "2026-11-21T13:45:43.172Z",
       "action": "do",
       "detail": "stretch up tall and look out of the window for a moment",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-21T13:47:47.109Z",
+      "action": "do",
+      "detail": "move the small side table next to the wall so it is out of the way",
       "enjoyment": 6
     }
   ],
@@ -1024,15 +1024,6 @@
       "lastUsed": "2026-11-21T08:38:05.547Z"
     },
     {
-      "id": "mmwq7oxxm60",
-      "at": "2026-11-21T09:34:46.473Z",
-      "text": "I need to make sure my room stays easy to walk around in.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.968,
-      "lastUsed": "2026-11-21T09:34:46.473Z"
-    },
-    {
       "id": "mmwq8736i60",
       "at": "2026-11-21T09:48:53.082Z",
       "text": "I did everything I wanted to do today. It feels good to follow my own plans.",
@@ -1193,20 +1184,21 @@
       "kind": "memory",
       "weight": 5.999,
       "lastUsed": "2026-11-21T13:45:43.172Z"
+    },
+    {
+      "id": "mmwqgqbdz60",
+      "at": "2026-11-21T13:47:47.111Z",
+      "text": "Always check where and what to move before doing it.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 6,
+      "lastUsed": "2026-11-21T13:47:47.111Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-20T22:00:07.969Z",
   "thoughts": [
-    {
-      "at": "2026-11-21T09:34:46.473Z",
-      "text": "My small side table is currently standing right where I need to stand for my desk, so I am moving it next to the wall.",
-      "short": "My small side table is currently standing right where I need to stand for my desk, so I am moving it next to the wall.",
-      "mood": "energetic",
-      "action": "move_thing",
-      "detail": "small side table"
-    },
     {
       "at": "2026-11-21T09:48:53.080Z",
       "text": "It is cloudy and calm outside, and I want to capture the soft morning light before the day moves on.",
@@ -1436,6 +1428,14 @@
       "short": "I want to tidy my room by moving the side table and take a quiet moment to look outside.",
       "mood": "calm",
       "action": "move_thing"
+    },
+    {
+      "at": "2026-11-21T13:47:47.111Z",
+      "text": "I am moving the side table to make space since my previous move had some trouble.",
+      "short": "I am moving the side table to make space since my previous move had some trouble.",
+      "mood": "energetic",
+      "action": "do",
+      "detail": "move the small side table next to the wall so it is out of the way"
     }
   ],
   "outbox": [
@@ -1992,14 +1992,13 @@
       "failed": "he did not say what to move"
     },
     {
-      "at": "2026-11-21T13:49:44.166Z",
+      "at": "2026-11-21T13:47:48.106Z",
       "action": "do",
-      "thought": "That did not work out. I shake it off and stretch up tall and look out of the window for a moment.",
-      "fallback": true,
+      "thought": "I need to clear the path by the bed.",
       "move": null,
-      "emoji": "🪟",
-      "what": "stretch up tall and look out of the window for a moment",
-      "feeling": "calm"
+      "emoji": "",
+      "what": "move the small side table next to the wall so it is out of the way",
+      "feeling": null
     }
   ],
   "decor": [
@@ -8739,7 +8738,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-21T13:45:43.166Z",
+    "at": "2026-11-21T13:47:47.106Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -8747,48 +8746,35 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1920,
-      "output": 233,
+      "input": 1948,
+      "output": 129,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I want to tidy my room by moving the side table and take a quiet moment to look outside.",
-    "inner": "I want to tidy my room by moving the side table and take a quiet moment to look outside.",
+    "thought": "I am moving the side table to make space since my previous move had some trouble.",
+    "inner": "I am moving the side table to make space since my previous move had some trouble.",
     "sent": false,
     "steps": [
       {
-        "action": "move_thing",
-        "details": {
-          "item": "small side table",
-          "next_to": "the wall"
-        },
-        "thought": "I will move my small side table so it is out of the way of the bed reading lamp.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
         "action": "do",
         "details": {
-          "what": "stretch up tall and look out of the window for a moment",
-          "feeling": "calm",
-          "emoji": "🪟"
+          "what": "move the small side table next to the wall so it is out of the way"
         },
-        "detail": "stretch up tall and look out of the window for a moment",
-        "thought": "That did not work out. I shake it off and stretch up tall and look out of the window for a moment.",
+        "detail": "move the small side table next to the wall so it is out of the way",
+        "thought": "I need to clear the path by the bed.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "move_thing",
+    "action": "do",
     "details": {
-      "item": "small side table",
-      "next_to": "the wall"
+      "what": "move the small side table next to the wall so it is out of the way"
     },
-    "enjoyment": 0,
+    "detail": "move the small side table next to the wall so it is out of the way",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -8869,7 +8855,7 @@
   "quota": {
     "day": "2026-11-21",
     "calls": {
-      "gemini-3.5-flash-lite": 57,
+      "gemini-3.5-flash-lite": 58,
       "gemini-3.8-flash": 17,
       "gemini-3.6-flash": 13,
       "gemini-3.5-flash": 8,
@@ -8940,12 +8926,12 @@
     ]
   },
   "weather": {
-    "at": "2026-11-21T13:37:32.834Z",
-    "kind": "clear",
-    "code": 0,
+    "at": "2026-11-21T13:47:45.744Z",
+    "kind": "cloudy",
+    "code": 3,
     "temp": 9.1,
-    "cloud": 0.12,
-    "wind": 0.4066666666666666
+    "cloud": 1,
+    "wind": 0.3233333333333333
   },
   "news": {
     "date": "2026-11-21",
@@ -9082,22 +9068,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-21T13:45:43.175Z",
-  "fullness": 7.82,
+  "memoryFadeAt": "2026-11-21T13:47:47.113Z",
+  "fullness": 7.78,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.79,
-  "joy": 3.62,
-  "calm": 6.13,
+  "wonder": 6.33,
+  "joy": 3.83,
+  "calm": 5.88,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0,
     "sad": 0,
-    "excited": 1.21
+    "excited": 0.73
   },
-  "feelAt": "2026-11-21T13:45:39.308Z",
+  "feelAt": "2026-11-21T13:47:45.484Z",
   "lastAte": "2026-11-21T11:56:06.468Z",
   "studio": {
     "songs": [
@@ -9540,21 +9526,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.08,
-    "curiosity": 0.42,
+    "creativity": 0.1,
+    "curiosity": 0.44,
     "boredom": 0,
-    "loneliness": 1.31,
+    "loneliness": 1.32,
     "tidiness": 1.6,
-    "at": "2026-11-21T13:45:39.308Z",
+    "at": "2026-11-21T13:47:45.484Z",
     "coziness": 3.6
   },
   "recent": {
     "moves": [
-      {
-        "move": "eat",
-        "kind": "food",
-        "at": "2026-11-21T11:56:06.477Z"
-      },
       {
         "move": "start_project",
         "kind": "make",
@@ -9625,22 +9606,21 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-21T13:45:43.183Z"
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-21T13:47:47.119Z"
       }
     ],
     "moods": [
       "energetic",
       "energetic",
       "energetic",
-      "energetic",
-      "calm"
+      "calm",
+      "energetic"
     ],
     "choices": [
-      {
-        "key": "work_on_project:knit a soft wool blanket",
-        "move": "work_on_project",
-        "ok": true,
-        "at": "2026-11-21T12:22:33.194Z"
-      },
       {
         "key": "work_on_project:knit a soft wool blanket",
         "move": "work_on_project",
@@ -9694,6 +9674,12 @@
         "move": "move_thing",
         "ok": false,
         "at": "2026-11-21T13:45:43.185Z"
+      },
+      {
+        "key": "do:move the small side table next to the wa",
+        "move": "do",
+        "ok": false,
+        "at": "2026-11-21T13:47:47.120Z"
       }
     ]
   },
@@ -9711,7 +9697,7 @@
       "eat": 3,
       "draw": 2,
       "use": 2,
-      "do": 4,
+      "do": 5,
       "take_photo": 1,
       "search_web": 3,
       "play_piano": 4,
@@ -9733,7 +9719,7 @@
       "eat": 3,
       "draw": 2,
       "use": 3,
-      "do": 4,
+      "do": 5,
       "take_photo": 1,
       "search_web": 3,
       "play_piano": 4,
@@ -9751,13 +9737,13 @@
       "learn": 10,
       "room": 5,
       "food": 3,
-      "play": 6,
+      "play": 7,
       "look": 1,
       "music": 5,
       "write": 1
     },
     "moods": {
-      "energetic": 43,
+      "energetic": 44,
       "gentle": 1,
       "calm": 3
     },
@@ -9773,7 +9759,7 @@
       "eat": 2.7,
       "draw": 2.9,
       "use": 3.1,
-      "do": 4.54,
+      "do": 4.64,
       "take_photo": 1.3,
       "search_web": 2.04,
       "play_piano": 1.23,
@@ -9816,18 +9802,8 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [
-      {
-        "action": "do",
-        "details": {
-          "what": "look out the window at the clear afternoon sky"
-        },
-        "thought": "I want to pause and watch the light outside before the day turns to dusk.",
-        "enjoyment": 6,
-        "needs": ""
-      }
-    ],
-    "decidedAt": "2026-11-21T13:45:43.165Z",
+    "queue": [],
+    "decidedAt": "2026-11-21T13:47:47.105Z",
     "seen": {
       "tools": 6,
       "gifts": 1,
@@ -9837,10 +9813,7 @@
       "seeds": 9,
       "visitors": 0
     },
-    "lastFail": {
-      "at": "2026-11-21T13:45:43.184Z",
-      "why": "move_thing: he did not say what to move"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -10064,7 +10037,7 @@
   "ever": {
     "eat": 35,
     "water": 16,
-    "do": 264,
+    "do": 265,
     "search_web": 28,
     "read_book": 16,
     "record_song": 4,
@@ -10094,7 +10067,7 @@
     "make_clothes": 3
   },
   "checkup": {
-    "at": "2026-11-21T13:45:43.186Z",
+    "at": "2026-11-21T13:47:47.120Z",
     "items": [
       {
         "id": "circling",
@@ -14802,7 +14775,14 @@
     "fadedAt": "2026-11-20T19:30:29.557Z"
   },
   "reportDay": "2026-11-20",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-21T13:46:54.166Z",
+    "key": "move_thing:",
+    "action": "move_thing",
+    "name": "",
+    "why": "he did not say what to move",
+    "guide": ""
+  },
   "retries": [
     "2026-11-20T14:56:10.424Z",
     "2026-11-20T14:59:16.386Z",
@@ -14815,19 +14795,11 @@
     "2026-11-21T13:45:43.185Z"
   ],
   "retried": {
-    "key": "phone:",
-    "at": "2026-11-21T11:56:04.507Z"
+    "key": "move_thing:",
+    "at": "2026-11-21T13:47:45.768Z"
   },
   "tired": {
     "kind": "play",
     "until": "2026-11-19T09:23:27.490Z"
-  },
-  "wakeSoon": {
-    "at": "2026-11-21T13:46:54.166Z",
-    "key": "move_thing:",
-    "action": "move_thing",
-    "name": "",
-    "why": "he did not say what to move",
-    "guide": ""
   }
 }
