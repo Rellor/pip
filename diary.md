@@ -4477,3 +4477,9 @@ I am in the middle of building my wooden birdhouse and ready for the next step.
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: thoughtful
 
+## 21/11/2026, 20:37:08
+I am working on step 2 of my birdhouse project, making the first version.
+> I am working on step 2 of my birdhouse project, making the first version.
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: thoughtful
+
