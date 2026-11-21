@@ -4410,3 +4410,9 @@ I wanted to look at the autumn window at dusk today.
 - do (tell my plant what went wrong and how it felt): That did not work out. I shake it off and tell my plant what went wrong and how it felt.
 - mood: thoughtful
 
+## 21/11/2026, 19:17:52
+I am checking my room to see where a lamp might be needed most.
+> I am checking my room to see where a lamp might be needed most.
+- do (look closely at the dark corner by the bed): I want to see how dark it is over there.
+- mood: thoughtful
+
