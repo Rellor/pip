@@ -4531,3 +4531,9 @@ I am tidying up my room a bit and clearing the path around my reading lamp.
 - move_thing (small side table): Moving my small side table so it is out of the way of the bed reading lamp.
 - mood: thoughtful
 
+## 21/11/2026, 21:50:13
+I am working on step 2 of my birdhouse project and need to look up more details.
+> I am working on step 2 of my birdhouse project and need to look up more details.
+- search_web (to build a wooden birdhouse): I need to continue with step 2 of my project.
+- mood: thoughtful
+
