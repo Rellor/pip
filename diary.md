@@ -4416,3 +4416,10 @@ I am checking my room to see where a lamp might be needed most.
 - do (look closely at the dark corner by the bed): I want to see how dark it is over there.
 - mood: thoughtful
 
+## 21/11/2026, 19:25:56
+I want to keep my paths clear by moving the side table out of the way.
+> I want to keep my paths clear by moving the side table out of the way.
+- move_thing (small side table): I will move my small side table to the shelf to clear the path.
+- do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
+- mood: thoughtful
+
