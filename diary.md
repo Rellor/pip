@@ -4501,3 +4501,9 @@ I want to progress on my birdhouse project now that I've looked up how to do it.
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: thoughtful
 
+## 21/11/2026, 21:09:38
+I want to progress on building my wooden birdhouse since I am currently on step 2.
+> I want to progress on building my wooden birdhouse since I am currently on step 2.
+- do (say hello to my plants through the glass): Hello, little plants.
+- mood: thoughtful
+
