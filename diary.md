@@ -4537,3 +4537,9 @@ I am working on step 2 of my birdhouse project and need to look up more details.
 - search_web (to build a wooden birdhouse): I need to continue with step 2 of my project.
 - mood: thoughtful
 
+## 21/11/2026, 21:58:20
+My mint is ready to harvest, so I should gather it before doing anything else.
+> My mint is ready to harvest, so I should gather it before doing anything else.
+- harvest (mint): My mint is fully grown and ready to be harvested.
+- mood: thoughtful
+
