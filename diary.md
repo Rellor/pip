@@ -4078,3 +4078,9 @@ Time to start knitting with the wool I received.
 - do (plan my new project: Knit a soft wool blanket): Time to start knitting with the wool I received.
 - mood: energetic
 
+## 21/11/2026, 12:12:17
+I am in the middle of my new project to knit a soft wool blanket, so I should look up how to do it.
+> I am in the middle of my new project to knit a soft wool blanket, so I should look up how to do it.
+- search_web (to knit a soft wool blanket): I need to start the first step of my new blanket project.
+- mood: energetic
+
