@@ -1,5 +1,5 @@
 {
-  "mood": "thoughtful",
+  "mood": "sleepy",
   "energy": 9.5,
   "boredom": 0,
   "loneliness": 3.21,
@@ -8,12 +8,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-21T16:19:29.381Z",
-      "action": "search_web",
-      "detail": "to stitch a cozy wool blanket",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-21T16:27:45.616Z",
       "action": "decorate",
@@ -310,6 +304,12 @@
       "action": "harvest",
       "detail": "mint",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-21T22:06:25.104Z",
+      "action": "rest",
+      "detail": "sleeping through the night",
+      "enjoyment": 8
     }
   ],
   "notes": [
@@ -345,7 +345,7 @@
     "I harvested mint from place 3. It goes in my pantry, and the plant grows back."
   ],
   "requests": [],
-  "story": "Pip spends his quiet days decorating his little room as autumn dusk settles outside. He learns by doing, crafting things with his own hands even when his first tries are clumsy. Cooking and changing things helped him feel better, though resting sometimes made him feel worse. He stayed deeply focused on his tasks throughout the day, doing and searching the web. He still needs to stitch a tiny fabric pouch. At dusk, he returns to the autumn window. Late at night, he sits down by candlelight to write in his diary.",
+  "story": "Pip spends his quiet days decorating his little room as autumn dusk settles outside. He learns by doing, crafting things with his own hands even when his first tries are clumsy. Changing things helped him feel better, though moving things around often made him feel worse. He stayed deeply focused on his tasks throughout the day, doing and searching the web. He still needs to build his wooden birdhouse. At dusk, he returns to the autumn window. Late at night, he sits down by candlelight to write in his diary.",
   "wants": [],
   "questions": [],
   "fulfilled": [],
@@ -1199,7 +1199,7 @@
   ],
   "reflections": [],
   "lastReflectAt": null,
-  "storyAt": "2026-11-20T22:00:07.969Z",
+  "storyAt": "2026-11-21T22:06:26.534Z",
   "thoughts": [
     {
       "at": "2026-11-21T18:24:30.874Z",
@@ -9032,6 +9032,10 @@
     {
       "at": "2026-11-20T22:00:07.969Z",
       "text": "He dreams of a vast library where every book is a tiny seed waiting to grow into a new song."
+    },
+    {
+      "at": "2026-11-21T22:06:26.534Z",
+      "text": "He dreams of a vast workshop where every wooden toy he touches springs to life and dances under the starlight."
     }
   ],
   "rituals": [],
@@ -9283,45 +9287,15 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-21T21:58:20.133Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 1969,
-      "output": 113,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "My mint is ready to harvest, so I should gather it before doing anything else.",
-    "inner": "My mint is ready to harvest, so I should gather it before doing anything else.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "harvest",
-        "details": {
-          "plant": "mint"
-        },
-        "detail": "mint",
-        "thought": "My mint is fully grown and ready to be harvested.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
-    "action": "harvest",
-    "details": {
-      "plant": "mint"
-    },
-    "detail": "mint",
-    "enjoyment": 6,
+    "at": "2026-11-21T22:06:25.104Z",
+    "thought": "It is late. Good night...",
+    "action": "rest",
+    "details": {},
+    "detail": "sleeping through the night",
+    "enjoyment": 8,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "sleeping": true
   },
   "furniture": {
     "plant": {
@@ -9400,7 +9374,7 @@
   "quota": {
     "day": "2026-11-21",
     "calls": {
-      "gemini-3.5-flash-lite": 158,
+      "gemini-3.5-flash-lite": 159,
       "gemini-3.8-flash": 17,
       "gemini-3.6-flash": 13,
       "gemini-3.5-flash": 8,
@@ -10568,6 +10542,32 @@
       "unfinished": [
         "Stitch a tiny fabric pouch"
       ]
+    },
+    {
+      "day": "2026-11-21",
+      "lifted": [
+        "decorate",
+        "do",
+        "draw"
+      ],
+      "lowered": [
+        "move_thing",
+        "browse",
+        "phone"
+      ],
+      "most": [
+        "do",
+        "move_thing",
+        "search_web"
+      ],
+      "kinds": [
+        "play",
+        "make"
+      ],
+      "mood": "energetic",
+      "unfinished": [
+        "Build a wooden birdhouse"
+      ]
     }
   ],
   "soulLines": [
@@ -10575,7 +10575,7 @@
       "text": "He finds quiet joy in decorating his little room as the autumn dusk settles outside.",
       "key": "lifted:decorate",
       "addedAt": "2026-11-17T22:08:14.614Z",
-      "lastSeen": "2026-11-19T22:05:30.441Z"
+      "lastSeen": "2026-11-21T22:06:26.532Z"
     },
     {
       "text": "He stays focused all day long on making and decorating his little room.",
@@ -10593,7 +10593,13 @@
       "text": "He learns best by simply doing and getting his hands dirty.",
       "key": "most:do",
       "addedAt": "2026-11-20T22:00:07.967Z",
-      "lastSeen": "2026-11-20T22:00:07.967Z"
+      "lastSeen": "2026-11-21T22:06:26.532Z"
+    },
+    {
+      "text": "He makes things with his own hands and feels better when he changes them.",
+      "key": "lifted:change_thing",
+      "addedAt": "2026-11-21T22:06:26.532Z",
+      "lastSeen": "2026-11-21T22:06:26.532Z"
     }
   ],
   "ever": {
