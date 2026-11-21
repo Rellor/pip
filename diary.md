@@ -4011,3 +4011,9 @@ My desk is crowded with small things, so I want to make a tiny ceramic saucer to
 - decorate (tiny ceramic saucer): My desk is so full right now, a tiny tray will help.
 - mood: energetic
 
+## 21/11/2026, 10:42:40
+Since I have some lovely wool, I want to read up on knitting so I can start my blanket soon.
+> Since I have some lovely wool, I want to read up on knitting so I can start my blanket soon.
+- read_book (knitting techniques for beginners): I want to learn more about how to knit my blanket with the wool someone gave me.
+- mood: energetic
+
