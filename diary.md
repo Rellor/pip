@@ -4029,3 +4029,9 @@ I have wool and I am ready to start knitting my blanket as planned.
 - do (plan my new project: Knit my warm wool blanket): I am ready to knit my blanket with the wool I was given.
 - mood: energetic
 
+## 21/11/2026, 11:07:26
+I want to progress on my warm wool blanket project by looking up the steps.
+> I want to progress on my warm wool blanket project by looking up the steps.
+- search_web (to knit my warm wool blanket): I am ready to look up how to knit my warm wool blanket.
+- mood: energetic
+
