@@ -4379,3 +4379,9 @@ I am very hungry after working and need to have some of the vegetable soup broug
 - do (look out of the window for a while): I watch the sky for a bit.
 - mood: hungry
 
+## 21/11/2026, 18:42:44
+It stays dark at the bed even with all lamps on, so I want to make a small reading lamp for that area.
+> It stays dark at the bed even with all lamps on, so I want to make a small reading lamp for that area.
+- decorate (cozy brass reading lamp): I need a light near the bed.
+- mood: thoughtful
+
