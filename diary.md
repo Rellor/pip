@@ -4162,3 +4162,9 @@ I have been busy all day and need a quiet moment by the window.
 - do (sit quietly by the autumn window as dusk begins to fall): I want to rest for a moment and look outside.
 - mood: calm
 
+## 21/11/2026, 14:04:37
+The basil is dry and needs tending to keep my plants healthy.
+> The basil is dry and needs tending to keep my plants healthy.
+- water (basil): My basil needs some water to keep growing.
+- mood: calm
+
