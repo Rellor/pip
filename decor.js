@@ -881,6 +881,11 @@ export const turnRad = (v) => {
   if (t === null) return null;
   return ((((Math.round(t / 45) * 45) % 360) + 360) % 360) * Math.PI / 180;
 };
+// Where he stands to use each piece of furniture (in front of the desk, beside the bed...): nothing new may stand there.
+export const useSpots = (skipKey = null) => MOVABLE.filter((k) => k !== skipKey && !FURNITURE[k].flat && FURNITURE[k].spot && !furnNow?.[k]?.gone).map((k) => {
+  const [x, z] = worldPoint(k, placeOf(furnNow, k), FURNITURE[k].spot.p);
+  return { n: `the spot where I stand to use ${FURNITURE[k].n}`, x0: x - 0.3, x1: x + 0.3, z0: z - 0.3, z1: z + 0.3 };
+});
 export function obstacles(decor, skip = null, withChest = true, skipKey = null) {
   const list = [...fixedRects(skipKey), ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
   if (withChest) {
@@ -956,7 +961,7 @@ function fitSpots(tryFn, x, z) {
 function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false) {
   const scale = fit(parts, 'floor', {});
   const [hw, hd] = halfFoot(parts, scale);
-  const obs = obstacles(decor, null, true);
+  const obs = [...obstacles(decor, null, true), ...useSpots()]; // and never where he stands to use the desk, the bed...
   const turned = turnRad(spec.turn); // he said how it is turned: it stands that way, not flush against a wall
   const tryRaw = (x, z) => {
     if (turned !== null) {
@@ -1119,6 +1124,8 @@ export function accessProblem(decor, e) {
     if (o === e || o.image || !Array.isArray(o.stand)) continue;
     if (hit(o.stand[0], o.stand[1])) return `it stands where I stand to use ${o.name}, so I cannot reach ${o.name} any more. I move ${o.name} (move_thing) so it can still be used, or put this somewhere else`;
   }
+  const spot = useSpots().find((u) => r.x0 < u.x1 && r.x1 > u.x0 && r.z0 < u.z1 && r.z1 > u.z0);
+  if (spot) return `it stands on ${spot.n.replace(/^the spot where I stand/, 'the spot where I stand')}, so I cannot use it well. I move it somewhere that is not in the way (move_thing)`;
   const isStep = /\b(stool|step|steps|ladder|platform|podium)\b/i.test(e.name);
   const win = { x0: -0.9, x1: 1.5, z0: -5, z1: -3.7 }; // the floor in front of the window
   const over = r.x1 > win.x0 && r.x0 < win.x1 && r.z1 > win.z0 && r.z0 < win.z1;

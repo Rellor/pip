@@ -70,3 +70,16 @@ console.log('ok  he may put it in the middle himself, and then he notices it is 
   assert.match(w.label, /by the/);
   console.log('ok  "next to the wall" puts it against the nearest wall');
 }
+{
+  const { useSpots } = await import('../decor.js');
+  const desk = useSpots().find((u) => /desk/.test(u.n));
+  const [dx, dz] = [(desk.x0 + desk.x1) / 2, (desk.z0 + desk.z1) / 2];
+  const tb = makeDecor([], { name: 'side table', where: 'floor', x: dx, z: dz, parts: [{ shape: 'box', size: [0.9, 0.05, 0.8], pos: [0, 0.9, 0] }, { shape: 'box', size: [0.05, 0.88, 0.05], pos: [0, 0.44, 0] }] }, Date.now());
+  assert.ok(tb.entry, tb.failed);
+  const r = { x0: tb.entry.pos[0] - 0.45, x1: tb.entry.pos[0] + 0.45, z0: tb.entry.pos[2] - 0.4, z1: tb.entry.pos[2] + 0.4 };
+  assert.ok(!(r.x0 < desk.x1 && r.x1 > desk.x0 && r.z0 < desk.z1 && r.z1 > desk.z0), `a table never stands where he stands to use the desk: ${tb.entry.label}`);
+  console.log('ok  nothing new stands where he stands to use the desk');
+  const { sizeWords, box } = await import('../scale.js');
+  assert.ok(Math.max(...box(sizeWords([{ shape: 'box', size: [0.44, 0.05, 0.44], pos: [0, 0.1, 0] }], 'tiny wooden stand')).size) <= 0.25 + 1e-9);
+  console.log('ok  a "tiny" thing is tiny');
+}
