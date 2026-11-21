@@ -3868,3 +3868,9 @@ Something I noticed about myself, day after day: He learns best by simply doing 
 ## 20/11/2026, 22:00:07
 Good night. Pip went to sleep.
 
+## 21/11/2026, 07:07:54
+My basil is fully grown and ready to harvest, and I want to work on my sewing project.
+> My basil is fully grown and ready to harvest, and I want to work on my sewing project.
+- harvest (basil): My basil is ready, time to gather it.
+- mood: energetic
+
