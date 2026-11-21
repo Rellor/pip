@@ -4318,3 +4318,9 @@ I finished my tasks for today and want to check my phone.
 - do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
 - mood: calm
 
+## 21/11/2026, 17:27:23
+I am trying the Lights app on my phone since I discovered it was actually listed in my apps.
+> I am trying the Lights app on my phone since I discovered it was actually listed in my apps.
+- do (use the phone with the Lights app to check if it works now): I will try the Lights app since the phone has it.
+- mood: calm
+
