@@ -4102,3 +4102,9 @@ I finished my project steps and want to judge it as complete so I can move on.
 - do (look closely at my project Knit a soft wool blanket): I want to judge my blanket project as done.
 - mood: energetic
 
+## 21/11/2026, 12:48:45
+My small side table stands where I stand to use cozy bed reading lamp, so I am moving it next to the wall.
+> My small side table stands where I stand to use cozy bed reading lamp, so I am moving it next to the wall.
+- move_thing (small side table): I will move my small side table so it is out of the way.
+- mood: energetic
+
