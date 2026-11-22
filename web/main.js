@@ -48,12 +48,18 @@ function roughen(root) { // a grainy skin for every plain, solid thing that has 
     m.needsUpdate = true;
   });
 }
-// How many pixels the picture is drawn with: few, so they are big (walking: bigger still).
+// Big pixels, but only outside: in his house the picture stays sharp, so his drawings on the walls can be seen as he
+// drew them (the rough skins are on everything inside too, only the picture itself is not made coarse).
+let pixelNow = false;
 function applyPixels() {
   if (!ROUGH) return;
+  const outside = view.mode === 'walk' ? inTown(view.x) : streetish();
+  if (outside === pixelNow && renderer.domElement.dataset.px) return;
+  pixelNow = outside;
+  renderer.domElement.dataset.px = '1';
   const w = stage.clientWidth || 800;
-  renderer.domElement.style.imageRendering = 'pixelated';
-  renderer.setPixelRatio(Math.max(0.2, Math.min(1, (view.mode === 'walk' ? 460 : 720) / w)));
+  renderer.domElement.style.imageRendering = outside ? 'pixelated' : '';
+  renderer.setPixelRatio(outside ? Math.max(0.2, Math.min(1, (view.mode === 'walk' ? 460 : 760) / w)) : Math.min(devicePixelRatio, 1.5));
 }
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
@@ -2219,6 +2225,7 @@ function updateWalk(dt) {
     else if (inTown(view.x) && Math.abs(view.x - TOWN_X) < 0.9 && view.z < 2.4 && pushing) Object.assign(view, { x: SPOTS.hall_door.p.x, z: -3.7, yaw: Math.PI });
   }
   walkPlace(); // inside or outside: the sky, the horizon and the look follow where you stand
+  applyPixels();
   camera.position.set(view.x, 1.55 + (inTown(view.x) ? townGround(view.x, view.z) : 0), view.z);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
 }
@@ -2573,6 +2580,7 @@ document.querySelectorAll('#rooms button').forEach((b) => b.addEventListener('cl
   houseView.want = b.dataset.room;
   document.querySelectorAll('#rooms button').forEach((x) => x.classList.toggle('on', x === b));
   fitRoom(false);
+  applyPixels();
 }));
 
 const ray = new THREE.Raycaster();
@@ -3059,7 +3067,7 @@ function loop(now) {
     const want = avg > 0.026 ? Math.max(0.75, pixels - 0.25) : avg < 0.015 ? Math.min(SHARP, pixels + 0.25) : pixels;
     if (want !== pixels) {
       pixels = want;
-      if (!ROUGH) renderer.setPixelRatio(pixels);
+      if (!pixelNow) renderer.setPixelRatio(pixels);
       fitCamera();
     }
     slowSum = 0;
@@ -3088,7 +3096,7 @@ function loop(now) {
   if (now > viewAt) { viewAt = now + 60_000; home.refreshViews(forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60); }
   if (view.mode === 'overview') { // the overview follows Pip from room to room (or stays on the room chosen)
     const roomNow = inTown(pip.group.position.x) ? 'street' : roomOf(pip.group.position.x);
-    if (houseView.now !== roomNow) { houseView.now = roomNow; if (houseView.want === 'auto') fitRoom(false); }
+    if (houseView.now !== roomNow) { houseView.now = roomNow; if (houseView.want === 'auto') fitRoom(false); applyPixels(); }
     const goalX = FOCUS[focusName()];
     if (Math.abs(focusX - goalX) > 0.005 || Math.abs(orbit.fit - fitGoal) > 0.001) {
       focusX += (goalX - focusX) * Math.min(1, dt * 3);
