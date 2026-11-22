@@ -367,7 +367,8 @@ export function applyLook(mode, ctx) {
       side.intensity = 0.1 + 2.2 * day;
       lerpColor(cool.color, 0x7f98ff, 0xbcd4ff, 1 - nightK);
       side.color.copy(cool.color);
-      scene.background.copy(bg0).lerp(nightBg, nightK * 0.4);
+      if (scene.userData.sky != null) scene.background.set(scene.userData.sky); // out in the street (walking): a real sky
+      else scene.background.copy(bg0).lerp(nightBg, nightK * 0.4);
       // sunlight by day, a little cool moonlight through the same window at night
       // Where the sun or moon is now, and how much of it comes through: all of it when clear, broken up by passing clouds when a bit cloudy, none when overcast or wet
       const nowDate = new Date();
