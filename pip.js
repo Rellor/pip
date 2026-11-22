@@ -1704,7 +1704,8 @@ async function wakeUp() {
         const file = `made/${id}.html`;
         await mkdir('web/made', { recursive: true });
         await writeFile(`web/${file}`, html);
-        state.apps = [...state.apps, { id, name, why: text(d.why, 200), file, createdAt: new Date().toISOString() }];
+        const icon = [...String(d.icon ?? '')].filter((c) => /\p{Extended_Pictographic}/u.test(c)).slice(0, 1).join('') || null; // one emoji for his phone
+        state.apps = [...state.apps, { id, name, title: text(d.title, 22) || null, icon, why: text(d.why, 200), file, createdAt: new Date().toISOString() }];
         st.made = { app: { id, file, name } };
         const test = await testApp(file);
         if (test.errors?.length) { addFixTicket(state, name, test.errors[0]); st.made.warn = `when I ran it, it showed an error: ${test.errors[0]}. Fixing it is my next ticket`; }

@@ -5,7 +5,7 @@ export const FORMATS = {
   change_thing: '{"name": "the exact name of the thing", "parts": [...all its parts, changed], "why": "..."}',
   extend_thing: '{"name": "the exact name of the thing", "parts": [...up to 40 new parts]}',
   draw: '{"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\\"0 0 400 300\\">...</svg>"}',
-  make_app: '{"name": "...", "why": "...", "html": "<!doctype html>..."}',
+  make_app: '{"name": "...", "title": "a short, nice name for the phone (1 to 3 words)", "icon": "one emoji for its icon", "why": "...", "html": "<!doctype html>... (it must also work small, on a phone screen)"}',
   update_app: '{"name": "the exact name of the app", "change": "the one thing I did, in a few words", "edits": [{"find": "a piece of the file copied exactly (a few whole lines, so it is found only once)", "replace": "what comes there instead"}]}  (small edits: only what changes; or, for a tiny program, "html": the whole new file instead of edits)',
   record_song: '{"name": "...", "tempo": 90, "instruments": ["one of my instruments", "drums"], "form": ["A", "A", "B", "A"], "sections": [{"name": "A", "bars": [{"piano": "C4 E4 G4 E4", "guitar": "C3+E3+G3:4", "drums": "kick hat snare hat"}]}, {"name": "B", "bars": [...]}]}',
   revise_song: '{"section": "the name of the ONE section I rewrite", "bars": [{"<instrument>": "..."}], "why": "what I changed and why"}',
