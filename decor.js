@@ -563,14 +563,18 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
       const at = r0 ? [(r0.x0 + r0.x1) / 2, (r0.z0 + r0.z1) / 2] : thing ? [thing.pos[0], thing.pos[2]] : xz;
       if (at) { // he can hang things on the left and the back wall: the closer one first, then the other
         const tries = [['left', at[1], Math.abs(at[0] + 5)], ['back', at[0], Math.abs(at[1] + 5)]].sort((a, b) => a[2] - b[2]);
+        const nowFar = Math.hypot(w0.pos[0] - at[0], w0.pos[2] - at[1]);
+        const side0 = w0.side ?? ZONES[w0.zone]?.side ?? (Math.abs(w0.pos[0] + 4.97) < 0.1 ? 'left' : 'back');
         let r = null;
-        for (const [side, along] of tries) {
+        let asClose = false;
+        for (const [side, along, wallFar] of tries) {
+          if (side !== side0 && wallFar >= nowFar - 0.3) { asClose = true; continue; } // the other wall would be no closer
           for (const height of [num2(d.height) ?? w0.pos[1], 1.6, 1.3, 2.2]) { // its height first, then other heights he can reach
             r = moveThingRaw(decor, chest, { ...d, wall: side, along: r3(Math.min(4.4, Math.max(-4.4, along))), height, next_to: undefined, where: undefined, x: undefined, z: undefined }, atMs, now);
             if (!r.failed) return { ...r, warn: [r.warn, side !== tries[0][0] ? `the ${tries[0][0]} wall there was full, so it hangs on the ${side} wall near it` : null].filter(Boolean).join('; ') || undefined };
           }
         }
-        return r;
+        return asClose ? { failed: `${w0.name} already hangs about as close to ${word || 'that place'} as my walls allow (the wall right there is full). It is fine where it is`, hinted: true } : r;
       }
     }
   }

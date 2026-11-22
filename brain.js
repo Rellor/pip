@@ -31,8 +31,8 @@ const DETAILS = { type: 'OBJECT', properties: Object.fromEntries(['what', 'why',
 export const brainSchema = (names = MOVE_NAMES) => ({
   type: 'OBJECT',
   properties: {
-    moves: { type: 'ARRAY', items: { type: 'OBJECT', properties: { move: { type: 'STRING', enum: names }, details: DETAILS, thought: S }, required: ['move', 'details'] } },
     reason: S,
+    moves: { type: 'ARRAY', items: { type: 'OBJECT', properties: { thought: S, move: { type: 'STRING', enum: names }, details: DETAILS }, required: ['move', 'details'], propertyOrdering: ['thought', 'move', 'details'] } },
     mood: S,
     remember: { type: 'STRING', nullable: true },
     step_done: { type: 'OBJECT', nullable: true, properties: { project: S, step: { type: 'INTEGER' } } },
@@ -41,7 +41,8 @@ export const brainSchema = (names = MOVE_NAMES) => ({
     received: { type: 'OBJECT', properties: { tools: SA, seeds: SA, ingredients: SA } },
     spark: { type: 'OBJECT', nullable: true, properties: { topic: S, how: { type: 'STRING', enum: ['love', 'like', 'meh'] } } },
   },
-  required: ['moves', 'reason', 'mood'],
+  required: ['reason', 'moves', 'mood'],
+  propertyOrdering: ['reason', 'moves', 'mood', 'remember', 'spark', 'step_done', 'picture_notes', 'tasks_answer', 'received'], // the reason is written first, then the choice (reasoning before the answer helps small models most)
 });
 
 // ctx: { soul, now: "Saturday 10:12, a grey autumn morning", feelings: [..], doing: [..], events: [..], messages: [..],
@@ -72,7 +73,7 @@ export function brainPrompt(ctx) {
 If I finished a step of a project, I say which in step_done (project title and step number).
 I write plain and short, in my own words.
 
-Answer in JSON: {"moves": [{"move": "name", "details": {...}, "thought": "a few words"}], "reason": "one or two sentences: why this, now", "mood": "one word", "remember": "something worth remembering, or null", "spark": {"topic": "something I came across or read about", "how": "love, like or meh"} or null}`);
+Based on everything above, I answer in JSON, in this order: {"reason": "one or two sentences: what I want now and why", "moves": [{"thought": "a few words", "move": "name", "details": {...}}], "mood": "one word", "remember": "something worth remembering, or null", "spark": {"topic": "something I came across or read about", "how": "love, like or meh"} or null}`);
   return parts.join('\n\n');
 }
 
