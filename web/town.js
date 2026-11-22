@@ -6,7 +6,7 @@
 import { PEOPLE, faceSvg, hourNL, shopOpen } from './street.js';
 import { seasonInfo } from './season.js';
 
-export const TOWN_X = 120; // where the street is in the scene (his house is around x 0)
+export const TOWN_X = 220; // where the street is in the scene (his house is around x 0; the park reaches 92 m to the left of the street)
 export const TOWN_RANGE = [-39, 42]; // from the left end of the street to the right end (street coordinates)
 export const TOWN_Z = [-9, 28];
 // Pip's own plot: a piece of land across the street from his house, for the things he makes that are too big or too
@@ -20,16 +20,40 @@ export const TOWN_SPOTS = {
   shop: { x: 34.6, z: 1.0, face: Math.PI },
   garden: { x: -29.5, z: -3.4, face: 0.6 }, // between Oma Jo's vegetable beds
   gate: { x: -25.6, z: 0.9, face: Math.PI }, // her garden gate: the way in and out
+  gateIn: { x: -25.7, z: -1.3, face: Math.PI }, // just inside it
   left: { x: -38, z: 1.2, face: -Math.PI / 2 }, // the way to the park and the pond, and up the hill
   right: { x: 41, z: 1.2, face: Math.PI / 2 }, // the way to the library
+  parkGate: { x: -44, z: 1.4, face: -Math.PI / 2 }, // where the street becomes the park path
+  pond: { x: -58.5, z: 5.6, face: 0.25 }, // by the bench under the willow, looking over the water
+  hillFoot: { x: -62, z: -6, face: Math.PI },
+  hillBend: { x: -72, z: -15, face: Math.PI },
+  hill: { x: -65.2, z: -23.2, face: 0.5 }, // on the top, by the bench
+  libFront: { x: 46, z: 3.6, face: Math.PI / 2 },
+  library: { x: 57, z: 3.6, face: Math.PI }, // at the foot of the library steps
 };
 // Where Pip is seen for each place of his world: [spot, does he walk on out of the street?]
-export const TOWN_FOR = { doorstep: ['step', false], shop: ['shop', false], garden: ['garden', false], pond: ['left', true], hill: ['left', true], library: ['right', true] };
+// Where Pip is seen for each place of his world: [the spot, 'in' when he goes inside there (then he is out of sight)].
+export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], garden: ['garden', ''], pond: ['pond', ''], hill: ['hill', ''], library: ['library', 'in'] };
+// The way to each spot from his door: the corners he walks by, one after the other (the way home is the same, backwards).
+export const ROUTES = { garden: ['gate', 'gateIn'], pond: ['left', 'parkGate'], hill: ['left', 'parkGate', 'hillFoot', 'hillBend'], library: ['right', 'libFront'] };
+// The world outside the street: the park with the pond and the hill to the left, the library to the right (street coordinates).
+export const WORLD_RANGE = [-92, 74];
+export const PARK = { x0: -92, x1: -39, z0: -46, z1: 28 };
+export const POND = { x: -64, z: 14, rx: 11.5, rz: 6.5 };
+export const HILL = { x: -66, z: -24, r: 21, h: 8.5 };
+// How high the ground is (the hill): street coordinates in, metres out. Everywhere else the ground is flat.
+export function groundAt(lx, z) {
+  const d = Math.hypot(lx - HILL.x, z - HILL.z) / HILL.r;
+  return d >= 1 ? 0 : HILL.h * (1 - d * d) ** 2;
+}
+export const townGround = (x, z) => groundAt(x - TOWN_X, z);
 // What cannot be walked through: [x0, x1, z0, z1] in street coordinates (the houses, the fence, the trees).
-const BLOCKS = [[-24.6, -14.4, -7.5, 0.2], [-13.4, -4.6, -7.5, 0.2], [-4.6, 4.6, -7.5, 0.2], [6.4, 16.6, -7.5, 0.2], [17.9, 25.1, -7.5, 0.2], [26.9, 39.1, -7.5, 0.2], [-23.6, -13.4, 11.8, 19], [-36.2, -35.4, -7.5, 0.3], [-36.2, -24.6, -7.6, -7.2], [-36.2, -26.6, -0.1, 0.25]];
+const BLOCKS = [[-24.6, -14.4, -7.5, 0.2], [-13.4, -4.6, -7.5, 0.2], [-4.6, 4.6, -7.5, 0.2], [6.4, 16.6, -7.5, 0.2], [17.9, 25.1, -7.5, 0.2], [26.9, 39.1, -7.5, 0.2], [-23.6, -13.4, 11.8, 19], [-36.2, -35.4, -7.5, 0.3], [-36.2, -24.6, -7.6, -7.2], [-36.2, -26.6, -0.1, 0.25], [48.8, 65.2, -10, 2.3]];
 export function townBlocked(x, z, pad = 0.3) {
   const lx = x - TOWN_X;
-  if (lx < TOWN_RANGE[0] + 0.4 || lx > TOWN_RANGE[1] - 0.4 || z < TOWN_Z[0] + 0.4 || z > TOWN_Z[1] - 0.4) return true;
+  const inside = (x0, x1, z0, z1) => lx >= x0 + 0.4 && lx <= x1 - 0.4 && z >= z0 + 0.4 && z <= z1 - 0.4;
+  if (!(inside(TOWN_RANGE[0] - 1, TOWN_RANGE[1] + 1, TOWN_Z[0], TOWN_Z[1]) || inside(PARK.x0, PARK.x1 + 1, PARK.z0, PARK.z1) || inside(TOWN_RANGE[1] - 1, WORLD_RANGE[1], TOWN_Z[0], TOWN_Z[1]))) return true; // the street, the park, the library square
+  if (((lx - POND.x) / (POND.rx + pad)) ** 2 + ((z - POND.z) / (POND.rz + pad)) ** 2 < 1) return true; // the water
   return BLOCKS.some(([x0, x1, z0, z1]) => lx > x0 - pad && lx < x1 + pad && z > z0 - pad && z < z1 + pad);
 }
 // Standing right in front of Pip's door in the street (for the viewer who walks: this is the way back into the hall).
@@ -206,7 +230,7 @@ export function buildTown(THREE) {
   }
   // ---- where the street goes on: signposts at both ends
   const post = (x, words, flip) => { cyl(0.07, 0.07, 2.6, 0x7a5237, [x, 1.3, 2.0]); const s = sign(words, 3.0, 0.6, '#fffaf3', '#4a3d35', 62); s.position.set(x + (flip ? -0.2 : 0.2), 2.3, 2.09); group.add(s); };
-  post(-36.5, '←  Park · Pond · Hill');
+
   post(39.5, 'Library  →', true);
   { cyl(0.06, 0.06, 1.5, 0x7a5237, [-2.2, 0.75, PLOT.z0 - 0.3]); const sg = sign('Pip’s plot', 2.2, 0.55, '#fde3c4', '#8a4a2c', 84); sg.position.set(-2.2, 1.45, PLOT.z0 - 0.36); sg.rotation.y = Math.PI; group.add(sg); const sg2 = sign('Pip’s plot', 2.2, 0.55, '#fde3c4', '#8a4a2c', 84); sg2.position.set(-2.2, 1.45, PLOT.z0 - 0.24); group.add(sg2); }
 
@@ -233,7 +257,7 @@ export function buildTown(THREE) {
   }
   // Daylight for the street. The lamps and the window light of his room are 120 metres away, so the street has a light
   // of its own, high above it (it does not reach his room).
-  const daylight = new THREE.PointLight(0xfff4e2, 1.5, 95, 0);
+  const daylight = new THREE.PointLight(0xfff4e2, 1.5, 74, 0);
   daylight.position.set(4, 34, 20);
   group.add(daylight);
   // a bench by the pavement, across the street
@@ -249,6 +273,73 @@ export function buildTown(THREE) {
   }
   market.visible = false;
   group.add(market);
+
+  // ---- the park: a meadow with the pond, a willow, benches and a swing; behind it the hill
+  const SEG = 44;
+  const parkGeo = new THREE.PlaneGeometry(PARK.x1 - PARK.x0, PARK.z1 - PARK.z0, SEG, SEG);
+  parkGeo.rotateX(-Math.PI / 2);
+  parkGeo.translate((PARK.x0 + PARK.x1) / 2, 0, (PARK.z0 + PARK.z1) / 2);
+  { const pos = parkGeo.attributes.position; for (let i = 0; i < pos.count; i++) pos.setY(i, groundAt(pos.getX(i), pos.getZ(i)) - 0.03); parkGeo.computeVertexNormals(); }
+  const park = add(parkGeo, M(0x9ccf86), [0, 0, 0]);
+  park.receiveShadow = true;
+  box([PARK.x1 - PARK.x0 + 0.4, 0.6, PARK.z1 - PARK.z0 + 0.4], 0x8a6a4c, [(PARK.x0 + PARK.x1) / 2, -0.6, (PARK.z0 + PARK.z1) / 2]);
+  const gravel = M(0xe2d5bd);
+  box([32, 0.05, 2.2], gravel, [-55, 0.03, 1.4]); // the park path, on from the pavement
+  for (const [x, z] of [[-60.5, -1.5], [-61.5, -4], [-62, -6.5], [-64, -9], [-67, -11.5], [-70, -13.8], [-72, -16], [-71.2, -18.6], [-69, -20.6], [-66.8, -22.2]]) { const st = cyl(0.55, 0.6, 0.12, gravel, [x, groundAt(x, z) + 0.04, z]); st.scale.z = 0.75; } // stepping stones up the hill
+  const water = new THREE.MeshStandardMaterial({ color: 0x7fc4e8, roughness: 0.25, emissive: 0x2a6f95, emissiveIntensity: 0.35 });
+  const pond = add(new THREE.CylinderGeometry(1, 1, 0.08, 40), water, [POND.x, 0.03, POND.z]);
+  pond.scale.set(POND.rx, 1, POND.rz);
+  const bank = add(new THREE.CylinderGeometry(1, 1, 0.05, 40), M(0xcdbb8e), [POND.x, 0.01, POND.z]);
+  bank.scale.set(POND.rx + 0.7, 1, POND.rz + 0.7);
+  for (let i = 0; i < 26; i++) { const a = 2.2 + i * 0.13; const x = POND.x + Math.cos(a) * (POND.rx + 0.2); const z = POND.z + Math.sin(a) * (POND.rz + 0.2); const r = cyl(0.04, 0.05, 1.1 + (i % 3) * 0.3, 0x6f9a4f, [x, 0.6, z]); r.rotation.z = (i % 5 - 2) * 0.05; cyl(0.07, 0.07, 0.3, 0x7a5237, [x, 1.2 + (i % 3) * 0.3, z]); } // reeds
+  const ducks = [];
+  const duck = (body, head) => { const g = new THREE.Group(); const b = add(new THREE.SphereGeometry(0.42, 14, 10), M(body), [0, 0.22, 0], g); b.scale.set(1.25, 0.7, 0.85); add(new THREE.SphereGeometry(0.2, 12, 8), M(head), [0.42, 0.55, 0], g); const bill = add(new THREE.ConeGeometry(0.08, 0.22, 8), M(0xf2a33c), [0.66, 0.53, 0], g); bill.rotation.z = -Math.PI / 2; group.add(g); ducks.push(g); return g; };
+  duck(0xffffff, 0xffffff); duck(0xe8d9b8, 0x3d7d5a); duck(0xd9c7a0, 0x3d7d5a); duck(0xffffff, 0xffffff);
+  const benchAt = (x, z, rot = 0) => { const g = new THREE.Group(); g.position.set(x, groundAt(x, z), z); g.rotation.y = rot; group.add(g); box([2.2, 0.1, 0.6], 0x9a6b47, [0, 0.55, 0], g); box([2.2, 0.5, 0.08], 0x9a6b47, [0, 0.95, -0.3], g); for (const dx of [-0.9, 0.9]) box([0.1, 0.55, 0.5], 0x7a5237, [dx, 0.27, 0], g); return g; };
+  benchAt(-60.5, 5.2); benchAt(-69, 5.6, 0.2);
+  // the willow: a thick trunk and long hanging green
+  { const g = new THREE.Group(); g.position.set(-52.8, 0, 6.4); group.add(g); cyl(0.4, 0.55, 3.4, 0x6b4a35, [0, 1.7, 0], g).castShadow = true; const wl = se.leafOn <= 0.05 ? null : se.turn > 0.5 ? 0xc9b24f : 0x86b96a; if (wl) { add(new THREE.SphereGeometry(2.6, 16, 12), M(wl), [0, 4.4, 0], g).scale.y = 0.75; for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2; cyl(0.5, 0.18, 2.6, wl, [Math.cos(a) * 2.2, 2.9, Math.sin(a) * 2.2], g, 8); } } else for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; const br = cyl(0.05, 0.1, 2.6, 0x6b4a35, [Math.cos(a) * 0.9, 4.2, Math.sin(a) * 0.9], g, 6); br.rotation.z = Math.cos(a) * 0.7; br.rotation.x = -Math.sin(a) * 0.7; } }
+  // the swing by the pond (Dot's favourite)
+  { const g = new THREE.Group(); g.position.set(-48.5, 0, 9.5); group.add(g); for (const dx of [-1.3, 1.3]) { for (const dz of [-0.8, 0.8]) { const leg = cyl(0.07, 0.07, 3.1, 0xc9573c, [dx, 1.5, dz * 0.5], g); leg.rotation.x = -dz * 0.26; } } cyl(0.07, 0.07, 2.8, 0xc9573c, [0, 3.0, 0], g).rotation.z = Math.PI / 2; for (const dx of [-0.35, 0.35]) cyl(0.02, 0.02, 2.2, 0x5a4a40, [dx, 1.9, 0], g); box([0.9, 0.07, 0.34], 0xf2c14e, [0, 0.8, 0], g); }
+  for (const [x, z, sc] of [[-45, -8, 1.1], [-52, -16, 1], [-84, 2, 1.2], [-86, 18, 1], [-78, 24, 1.1], [-47, 22, 0.9], [-86, -14, 1.1], [-50, -34, 1.2], [-84, -36, 1], [-74, 8, 0.8]]) { const before = group.children.length; tree(x, z, sc); group.children[before].position.y = groundAt(x, z); }
+  // the top of the hill: a bench, a flag, and all of the sky
+  benchAt(HILL.x + 0.2, HILL.z - 0.6, 0.5);
+  { const y = groundAt(HILL.x + 2.6, HILL.z); cyl(0.06, 0.06, 3.2, 0x7a5237, [HILL.x + 2.6, y + 1.6, HILL.z]); box([1.1, 0.6, 0.04], 0xf2c14e, [HILL.x + 3.2, y + 2.85, HILL.z]); }
+  post(-40.5, '←  Park · Pond · Hill');
+  { cyl(0.06, 0.06, 1.6, 0x7a5237, [-60.2, 0.8, -0.6]); const sg = sign('↑ Up the hill', 2.2, 0.5, '#fffaf3', '#4a3d35', 78); sg.position.set(-60.2, 1.5, -0.52); group.add(sg); }
+  // ---- the library, at the other end of the street: wide steps, pillars, a big door
+  const libGrass = box([32, 0.5, 37.5], 0x9ccf86, [58, -0.27, 9.25]);
+  box([32.4, 0.6, 37.9], 0x8a6a4c, [58, -0.6, 9.25]);
+  box([32, 0.08, 2.6], 0xd8cdbf, [58, 0.02, 1.1]);
+  { const g = new THREE.Group(); g.position.set(57, 0, 0); group.add(g);
+    box([16, 6.4, 9], 0xe7d3b5, [0, 3.2, -4.5], g).castShadow = true; // its front wall is at z 0, like the houses
+    const ped = gable(16.6, 3.0, 10.4, 0x8a5a3a); ped.position.set(0, 6.7, -9.3); g.add(ped); roofs.push({ m: ped, color: 0x8a5a3a });
+    for (let i = 0; i < 3; i++) box([13 - i * 1.0, 0.18, 2.4 - i * 0.6], 0xd9cdb8, [0, 0.09 + i * 0.18, 1.2 - i * 0.3], g); // the steps
+    for (const dx of [-5.6, -2.6, 2.6, 5.6]) { cyl(0.36, 0.42, 5.5, 0xfff8ee, [dx, 3.25, 1.05], g, 18); box([1.0, 0.25, 1.0], 0xfff8ee, [dx, 6.1, 1.05], g); }
+    box([16.6, 0.5, 1.7], 0xf1e6d2, [0, 6.45, 0.8], g);
+    door(g, 0, 2.2, 3.7, 0x7a5237);
+    win(g, -4.1, 3.3, 1.3, 2.6); win(g, 4.1, 3.3, 1.3, 2.6);
+    const ls = sign('LIBRARY', 5.2, 0.46, '#f1e6d2', '#7a5237', 40); ls.position.set(0, 6.45, 1.66); g.add(ls);
+    const hours = sign('Tue – Sat   10 – 17', 2.6, 0.42, '#fffaf3', '#4a3d35', 56); hours.position.set(7.2, 1.6, 2.72); g.add(hours); cyl(0.04, 0.04, 1.5, 0x7a5237, [7.2, 0.75, 2.68], g);
+  }
+  for (const [x, z, sc] of [[46, -5, 1], [70, -4, 1.1], [69, 12, 1], [47, 16, 1.1], [60, 22, 1.2]]) tree(x, z, sc);
+  // light for the park and for the library square (the street has its own)
+  const parkLight = new THREE.PointLight(0xfff4e2, 1.5, 70, 0);
+  parkLight.position.set(-66, 40, -6);
+  const libLight = new THREE.PointLight(0xfff4e2, 1.2, 44, 0);
+  libLight.position.set(60, 30, 12);
+  group.add(parkLight, libLight);
+  // the ducks swim their rounds (or stand still on the ice)
+  let frozenNow = false;
+  function animate(t) {
+    ducks.forEach((d, i) => {
+      const a = frozenNow ? i * 1.7 : t * (0.05 + i * 0.012) + i * 1.7;
+      const k = 0.35 + (i % 3) * 0.2;
+      d.position.set(POND.x + Math.cos(a) * POND.rx * k, frozenNow ? 0.07 : 0.03 + Math.sin(t * 1.6 + i) * 0.025, POND.z + Math.sin(a) * POND.rz * k);
+      d.rotation.y = -a - Math.PI / 2;
+    });
+  }
+  animate(0);
 
   // ---- what follows the real time: lights in the windows, the shop sign, the clock, the snow
   const nightBlue = new THREE.Color(0x1c2a55);
@@ -285,8 +376,11 @@ export function buildTown(THREE) {
     for (const l of lamps) { l.bulb.material.emissiveIntensity = dusk ? 1.2 : 0; l.light.intensity = dusk ? 26 : 0; }
     // The lamps of his room do not reach the street, and the page's daylight is made for indoors: so everything here
     // keeps some of its own colour (more by day, less at night, a little blue in the dark).
-    daylight.intensity = dark ? 0.35 : dusk ? 0.9 : 1.5;
-    daylight.color.set(dark ? 0x8fa3e0 : dusk ? 0xffc79a : 0xfff4e2);
+    for (const [l, k] of [[daylight, 1], [parkLight, 1], [libLight, 0.8]]) { l.intensity = (dark ? 0.35 : dusk ? 0.9 : 1.5) * k; l.color.set(dark ? 0x8fa3e0 : dusk ? 0xffc79a : 0xfff4e2); }
+    frozenNow = Number.isFinite(state.weather?.temp) ? state.weather.temp <= 0 : false; // the pond freezes in real frost
+    water.color.set(frozenNow ? 0xe1f1f8 : dark ? 0x3b5a92 : 0x7fc4e8);
+    water.emissive.set(frozenNow ? 0x9fc4d6 : 0x2a6f95);
+    for (const m of [park, libGrass]) m.material.color.set(snowy() ? 0xeef3f6 : se.name === 'autumn' ? 0xc2bf7c : se.name === 'winter' ? 0xb9c6a4 : 0x9ccf86);
     const glow = dark ? 0.16 : dusk ? 0.2 : 0.22;
     for (const m of mats) { m.emissive.copy(m.color).multiplyScalar(glow); if (dark) m.emissive.lerp(nightBlue, 0.35); }
     const white = snowy();
@@ -300,5 +394,5 @@ export function buildTown(THREE) {
   }
   // Walking in the street shows Lina's whole house; from above only its outline (it would stand in front of everything).
   const setWalk = (walking) => { linaFull.visible = walking; linaLow.visible = !walking; };
-  return { group, update, setWalk };
+  return { group, update, setWalk, animate };
 }

@@ -12,7 +12,7 @@ import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sid
 import { streetData, renderStreet } from './streetview.js';
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
-import { buildTown, TOWN_X, TOWN_RANGE, TOWN_SPOTS, TOWN_FOR, inTown, townBlocked, atTownDoor } from './town.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -47,10 +47,10 @@ FOCUS_RANGE.street = [TOWN_X + TOWN_RANGE[0], TOWN_X + TOWN_RANGE[1]];
 FOCUS.street = TOWN_X + (TOWN_RANGE[0] + TOWN_RANGE[1]) / 2;
 // In the auto view the street is followed closer, with Pip in the middle (the Street button shows all of it).
 FOCUS_RANGE.follow = [TOWN_X - 15, TOWN_X + 15];
-Object.defineProperty(FOCUS, 'follow', { get: () => clamp(pip.group.position.x, TOWN_X + TOWN_RANGE[0] + 13, TOWN_X + TOWN_RANGE[1] - 13) });
+Object.defineProperty(FOCUS, 'follow', { get: () => clamp(pip.group.position.x, TOWN_X + WORLD_RANGE[0] + 13, TOWN_X + WORLD_RANGE[1] - 13) });
 const streetish = (n = focusName()) => n === 'street' || n === 'follow';
 const camBase = () => (streetish() ? [5, 9, 15] : [9.5, 9, 11]); // the street is looked at more from the front, so the house fronts show
-const panLimit = () => (streetish() ? 36 : 5); // how far the view can be moved sideways
+const panLimit = () => (streetish() ? 62 : 5); // how far the view can be moved sideways (outside: all the way to the park and the library)
 if (!HAS_STUDIO) document.querySelector('#rooms [data-room="studio"]')?.remove();
 let fitGoal = 1;
 const focusName = () => (houseView.want === 'auto' ? (houseView.now === 'street' ? 'follow' : houseView.now) : houseView.want);
@@ -1762,9 +1762,11 @@ function moveSound(kind) {
 // or walking to the end of the street on his way to the pond or the library (then he is out of sight until he comes back).
 let outKey = '';
 let outHidden = false;
-let outGoal = 'door';
+let outPath = [];
+let outIdx = 0;
 let outSpot = '';
 const townSpot = (n) => ({ p: new V3(TOWN_X + TOWN_SPOTS[n].x, 0, TOWN_SPOTS[n].z), face: TOWN_SPOTS[n].face, y: TOWN_SPOTS[n].y ?? 0 });
+const farFrom = (n) => Math.hypot(pip.group.position.x - TOWN_X - TOWN_SPOTS[n].x, pip.group.position.z - TOWN_SPOTS[n].z);
 function tickOutside() {
   const w = lastState?.where;
   const g = pip.group;
@@ -1772,6 +1774,7 @@ function tickOutside() {
     if (outKey) { // home again: he comes in through the front door
       outKey = '';
       outHidden = false;
+      outPath = [];
       if (inTown(g.position.x)) g.position.set(SPOTS.hall_door.p.x, 0, SPOTS.hall_door.p.z);
       if (plan && stepNow >= 0) startTask(plan.steps[stepNow]);
     }
@@ -1779,29 +1782,28 @@ function tickOutside() {
   }
   const now = Date.now();
   const phase = now < Date.parse(w.arriveAt) && !w.cut ? 'going' : now < Date.parse(w.leaveAt) ? 'there' : 'back';
-  const [name, leaves] = TOWN_FOR[w.place] ?? ['left', true];
+  const [name, how] = TOWN_FOR[w.place] ?? ['left', 'in'];
+  const route = ROUTES[w.place] ?? [];
   const key = `${w.id}${phase}`;
   if (key !== outKey) {
     const fresh = !inTown(g.position.x); // he steps out of his door (or the page was opened while he is out)
-    if (fresh) g.position.copy(townSpot(outKey || phase === 'going' ? 'door' : name).p);
-    if (phase === 'back' && leaves && (outHidden || fresh)) g.position.copy(townSpot(name).p); // back from further away: he comes walking in at the end of the street
     outKey = key;
-    outHidden = leaves && phase === 'there';
-    outGoal = phase === 'back' ? 'door' : name;
+    if (fresh) { const at = townSpot(phase === 'going' ? 'door' : name).p; g.position.set(at.x, townGround(at.x, at.z), at.z); }
+    if (phase === 'back') outPath = [...route].reverse().concat('door'); // the same way home
+    else if (phase === 'going' || fresh || !outPath.length) outPath = phase === 'going' ? [...route, name] : [name];
+    outIdx = phase === 'back' || fresh || phase === 'going' ? 0 : outIdx;
     outSpot = '';
   }
-  // Oma Jo's garden has a gate: he goes in and comes out through it (one corner at a time, like through the doors at home)
-  const inGarden = g.position.z < 0.3 && g.position.x < TOWN_X - 24.7;
-  const nearGate = g.position.distanceTo(townSpot('gate').p) < 0.8;
-  const spotNow = outGoal === 'garden' ? (inGarden || nearGate ? 'garden' : 'gate') : inGarden && !nearGate ? 'gate' : outGoal;
+  while (outIdx < outPath.length - 1 && farFrom(outPath[outIdx]) < 1.0) outIdx++; // one corner at a time, like through the doors at home
+  const spotNow = outPath[outIdx];
   if (spotNow !== outSpot) {
     outSpot = spotNow;
     task = { at: 'custom', anim: 'look', spot: townSpot(spotNow), last: { action: 'go_out', details: { place: w.place } }, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
   }
-  if (leaves && phase === 'going' && g.position.distanceTo(townSpot(name).p) < 0.6) outHidden = true; // he walked on, out of the street
+  outHidden = how === 'in' && phase !== 'back' && spotNow === name && farFrom(name) < 0.7; // he went inside (the library): out of sight until he comes out
 }
 function startTask(last) {
-  if (awayNow()) { outKey = outKey ? `${outKey}!` : ''; tickOutside(); return; } // while he is out, the street decides where he is
+  if (awayNow()) { outSpot = ''; tickOutside(); return; } // while he is out, the world outside decides where he is (he keeps walking where he was going)
   const plan = planFor(last);
   if (last.action === 'use' && last.made?.id && last.made.does === 'custom') setTimeout(() => runBehavior(last.made.id, 'custom', last.made.steps), 2500);
   if (last.action === 'use' && last.made?.id && ['drive', 'spin'].includes(last.made.does)) setTimeout(() => runBehavior(last.made.id, last.made.does, last.made.motion), 2500); // when he has walked up to it
@@ -1887,7 +1889,7 @@ function frame(now, dt) {
     if (dist > 0.06) {
       walking = true;
       g.rotation.x = lerp(g.rotation.x, 0, dt * 8);
-      g.position.y = lerp(g.position.y, 0, dt * 8);
+      g.position.y = lerp(g.position.y, inTown(g.position.x) ? townGround(g.position.x, g.position.z) : 0, dt * 8); // outside he walks over the ground as it is (up the hill)
       // to another room: through the doors, one waypoint at a time
       const way = nextGoal({ x: g.position.x, z: g.position.z }, { x: spot.p.x, z: spot.p.z });
       const wayP = way.x === spot.p.x && way.z === spot.p.z ? spot.p : new V3(way.x, 0, way.z);
@@ -1899,7 +1901,7 @@ function frame(now, dt) {
       turnTo(Math.atan2(dir.x, dir.z), dt * 10);
     } else {
       turnTo(spot.face, dt * 6);
-      g.position.y = lerp(g.position.y, spot.y || 0, dt * 6);
+      g.position.y = lerp(g.position.y, (spot.y || 0) + (inTown(g.position.x) ? townGround(g.position.x, g.position.z) : 0), dt * 6);
       g.rotation.x = lerp(g.rotation.x, spot.rx || 0, dt * 6);
       if (task.detour) {
         anim = 'look';
@@ -2184,14 +2186,17 @@ function updateWalk(dt) {
     const speed = 2.4 * dt * Math.min(1, len);
     const dx = ((-Math.sin(view.yaw) * fwd + Math.cos(view.yaw) * side) / len) * speed;
     const dz = ((-Math.cos(view.yaw) * fwd - Math.sin(view.yaw) * side) / len) * speed;
+    const wasZ = view.z;
     if (!blocked(view.x + dx, view.z)) view.x += dx;
     if (!blocked(view.x, view.z + dz)) view.z += dz;
-    // the front door in the hall leads to the street, and the door of his house in the street leads back in
-    if (!inTown(view.x) && Math.abs(view.x - SPOTS.hall_door.p.x) < 0.6 && view.z < -4.4 && dz < 0) Object.assign(view, { x: TOWN_X, z: 1.5, yaw: Math.PI });
-    else if (inTown(view.x) && atTownDoor(view.x, view.z) && dz < 0) Object.assign(view, { x: SPOTS.hall_door.p.x, z: -3.9, yaw: Math.PI });
+    // The front door in the hall leads to the street, and the door of his house in the street leads back in:
+    // walking into the door (pushing on although the wall stops you) takes you through.
+    const pushing = dz < 0 && view.z === wasZ;
+    if (!inTown(view.x) && Math.abs(view.x - SPOTS.hall_door.p.x) < 0.7 && view.z < -3.3 && pushing) Object.assign(view, { x: TOWN_X, z: 1.6, yaw: Math.PI }); // (a slow screen takes big steps: the wall can stop you a little way off)
+    else if (inTown(view.x) && Math.abs(view.x - TOWN_X) < 0.9 && view.z < 2.4 && pushing) Object.assign(view, { x: SPOTS.hall_door.p.x, z: -3.7, yaw: Math.PI });
     walkPlace();
   }
-  camera.position.set(view.x, 1.55, view.z);
+  camera.position.set(view.x, 1.55 + (inTown(view.x) ? townGround(view.x, view.z) : 0), view.z);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
 }
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
@@ -2612,7 +2617,7 @@ function panBy(dx, dy) {
   const s = (2 * dist * Math.tan((camera.fov * Math.PI) / 360)) / (renderer.domElement.clientHeight || 600); // world units per pixel
   orbit.px = clamp(orbit.px - (right.x * dx - up.x * dy) * s, -panLimit(), panLimit());
   orbit.py = orbit.py - (right.y * dx - up.y * dy) * s; // applyOrbit keeps it between the floor and just above the walls
-  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, -5, streetish() ? 26 : 5);
+  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, streetish() ? -40 : -5, streetish() ? 26 : 5);
 }
 dom.addEventListener('contextmenu', (e) => e.preventDefault());
 dom.addEventListener('pointerdown', (e) => {
@@ -3052,6 +3057,7 @@ function loop(now) {
   }
   updateSlides(now, dt);
   frame(now, dt);
+  town.animate(now / 1000);
   if (pip.group.visible === (awayNow() && outHidden)) pip.group.visible = !(awayNow() && outHidden); // out of the street too (at the pond, the library): nowhere to be seen
   home.update(now / 1000, studioBusy);
   if (now > viewAt) { viewAt = now + 60_000; home.refreshViews(forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60); }
@@ -4705,6 +4711,7 @@ $('wake').addEventListener('click', () => {
 
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipGroup = (id) => decorGroups.get(id); // for testing
+window.pipView = view; // for testing: where the walking viewer stands
 window.pipStep = (n, dt = 0.05) => { for (let i = 0; i < n; i++) updateBehaviors(performance.now() + i * dt * 1000, dt); }; // for testing without a visible page
 let tickClock = 0;
 window.pipTick = (n, dt = 0.05) => { tickClock ||= performance.now(); for (let i = 0; i < n; i++) { tickClock += dt * 1000; frame(tickClock, dt); updateBehaviors(tickClock, dt); } return tickClock; }; // for testing: run n frames by hand

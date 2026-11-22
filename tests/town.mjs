@@ -2,7 +2,7 @@
 // of his world has a spot in the street. (The drawing itself is checked by eye, in a real browser.)
 // Run: node tests/town.mjs
 import assert from 'node:assert/strict';
-import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, inTown, townBlocked, atTownDoor } from '../web/town.js';
+import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, ROUTES, POND, HILL, WORLD_RANGE, groundAt, inTown, townBlocked, atTownDoor } from '../web/town.js';
 import { PLACES } from '../web/world.js';
 import { PLOT } from '../web/town.js';
 import { makeDecor, moveThing, updateDecor, storeAway, takeOut, outsideThings, sizeOf, setFurniture, setChest, MAX_OUTSIDE } from '../decor.js';
@@ -24,10 +24,29 @@ for (const to of ['shop', 'left', 'right', 'step']) { // along the pavement from
 }
 ok('where he stands is free, and the pavement is clear from his door to every end');
 
+// every place has a way there from his door, corner by corner, with nothing in the way
+for (const [place, [spot]] of Object.entries(TOWN_FOR)) {
+  const path = ['door', ...(ROUTES[place] ?? []), spot];
+  for (const n of path) assert.ok(TOWN_SPOTS[n], `${place}: ${n} is a spot`);
+  for (let i = 0; i < path.length - 1; i++) {
+    const a = TOWN_SPOTS[path[i]];
+    const b = TOWN_SPOTS[path[i + 1]];
+    for (let k = 0; k <= 1; k += 0.02) assert.equal(townBlocked(TOWN_X + a.x + (b.x - a.x) * k, a.z + (b.z - a.z) * k, 0.2), false, `${place}: from ${path[i]} to ${path[i + 1]} at ${Math.round(k * 100)}%`);
+  }
+}
+assert.equal(townBlocked(TOWN_X + POND.x, POND.z), true, 'nobody walks on the water');
+assert.ok(groundAt(HILL.x, HILL.z) > 8 && groundAt(TOWN_SPOTS.hill.x, TOWN_SPOTS.hill.z) > 7.5, 'the top of the hill is high');
+assert.equal(groundAt(0, 1), 0);
+assert.equal(groundAt(TOWN_SPOTS.pond.x, TOWN_SPOTS.pond.z), 0, 'the pond lies on flat ground');
+assert.ok(groundAt(TOWN_SPOTS.hillBend.x, TOWN_SPOTS.hillBend.z) > 1 && groundAt(TOWN_SPOTS.hillBend.x, TOWN_SPOTS.hillBend.z) < groundAt(TOWN_SPOTS.hill.x, TOWN_SPOTS.hill.z), 'the path climbs');
+assert.ok(inTown(TOWN_X + WORLD_RANGE[0]) && inTown(TOWN_X + WORLD_RANGE[1]));
+ok('the park, the pond, the hill and the library: a clear way to each, and the hill is a real hill');
+
 assert.equal(townBlocked(TOWN_X, -3), true, 'inside his own house');
 assert.equal(townBlocked(TOWN_X + 33, -2), true, 'inside the shop');
 assert.equal(townBlocked(TOWN_X - 18.5, 15), true, 'inside Lina\'s house');
-assert.equal(townBlocked(TOWN_X + TOWN_RANGE[1] + 1, 2), true, 'beyond the end of the street');
+assert.equal(townBlocked(TOWN_X + WORLD_RANGE[1] + 1, 2), true, 'beyond the end of the world');
+assert.equal(townBlocked(TOWN_X + 57, -4), true, 'inside the library');
 assert.equal(townBlocked(TOWN_X, TOWN_Z[1] + 1), true);
 assert.equal(townBlocked(TOWN_X + 3, 5), false, 'the road');
 assert.equal(townBlocked(TOWN_X - 30, -3), false, 'Oma Jo\'s garden can be walked into (from the street side it has a fence)');
