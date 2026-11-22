@@ -251,10 +251,10 @@
   .ph-screen.appmode .ph-hd { padding-bottom:6px; }
   .ph-screen.appmode .ph-hd > div { min-width:0; }
   .ph-screen.appmode .ph-hd b { font-size:15px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .ph-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px 8px; padding:22px 14px; }
-  .ph-app { background:none; border:0; text-align:center; font-size:11px; color:var(--ink); cursor:pointer; padding:0; min-width:0; overflow-wrap:anywhere; line-height:1.2; }
-  .ph-app div:last-child { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .ph-ic { width:50px; height:50px; border-radius:14px; margin:0 auto 5px; display:grid; place-items:center; font-size:25px; box-shadow:0 2px 6px rgba(0,0,0,.15); }
+  .ph-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px 8px; padding:22px 14px; align-items:start; }
+  .ph-app { background:none; border:0; text-align:center; font-size:11px; color:var(--ink); cursor:pointer; padding:0; min-width:0; overflow-wrap:anywhere; line-height:1.2; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; } /* every icon at the top of its cell, so a row of icons is one straight line, however long a name is */
+  .ph-app div:last-child { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.4em; }
+  .ph-ic { width:50px; height:50px; flex:none; border-radius:14px; margin:0 auto 5px; display:grid; place-items:center; font-size:25px; box-shadow:0 2px 6px rgba(0,0,0,.15); }
   .ph-hd { display:flex; align-items:center; gap:8px; padding:4px 14px 10px; }
   .ph-hd button { background:none; border:0; font-size:20px; cursor:pointer; color:var(--ink); padding:0; }
   .ph-hd b { font-size:19px; } .ph-hd small { display:block; color:var(--muted); font-size:12px; }
