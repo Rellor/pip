@@ -32,6 +32,7 @@ export const FURNITURE = {
     back: [0, -1],
     rects: [{ n: 'the bed', x: [2.2, 4.6], z: [1.3, 4.7], h: 0.9 }],
     top: { x: [2.5, 4.5], z: [2.4, 4.7], y: 0.7, face: 0, off: [-1.5, 0] },
+    cover: { x: [2.3, 4.5], z: [2.5, 4.58], y: 0.74, thick: [0.07, 0.09], drop: 0.22, sides: ['x'] }, // where a blanket he made lies: over the duvet, from under the pillows to the foot, hanging down both sides
     spot: { p: [3.4, 3.45], face: 0, y: 1.15, rx: -Math.PI / 2 },
   },
   plant: {

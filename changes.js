@@ -2,10 +2,10 @@
 // so the live loop applies it itself (no need to pause him). Nothing is deleted: what goes, goes to s.archive.
 import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
-import { makeDecor, holdsThings, sizeOf, reseat, levelCountOf } from './decor.js';
+import { makeDecor, holdsThings, sizeOf, reseat, levelCountOf, settleRoom, coverKind, coverTarget } from './decor.js';
 import { settle } from './build.js';
 import { finishDone } from './projects.js';
-import { roomFactors, scaleParts } from './scale.js';
+import { roomFactors, scaleParts, nameMax, ROOM_SCALE } from './scale.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
 import { addIngredient } from './food.js';
@@ -345,6 +345,37 @@ const CHANGES = [
     run(s) { // what he already looked up goes in his new notebook, so it helps when he makes something about it
       for (const e of (s.log ?? []).filter((x) => ['search_web', 'read_book'].includes(x.action) && x.opened)) noteResearch(s, { query: e.query ?? e.topic, page: e.opened, at: e.at });
       return null;
+    },
+  },
+  {
+    // His blanket was a doormat on the bed, his reading light floated where a table had stood, and a "tiny" stand three
+    // times the size of what it stood on balanced on a lamp base. The room gets gravity (decor.js settleRoom), cloth is
+    // fitted to what it lies on, and a thing called tiny is tiny.
+    id: '2026-11-22 a blanket that fits, and nothing floats',
+    run(s, at) {
+      const now = Date.parse(at);
+      const decor = s.decor ?? [];
+      const done = [];
+      for (const d of decor.filter((x) => x.kind === 'surface' && !x.image && x.parts?.length && !coverKind(x))) { // a "tiny" thing is tiny
+        const lim = nameMax(d.name) ? nameMax(d.name) * ROOM_SCALE : null;
+        const shown = Math.max(...(sizeOf(d) ?? [0]));
+        const natural = shown / (d.scale || 1);
+        if (!lim || natural <= lim * 1.05) continue;
+        d.parts = scaleParts(d.parts, lim / natural, lim / natural);
+        d.scale = Math.min(1, Math.floor((shown / lim) * 1000) / 1000);
+        if (shown > lim * 1.05) done.push(`my ${d.name} is the size its name says now`);
+      }
+      for (const d of decor.filter((x) => x.kind === 'surface' && !x.cover && !x.image && x.parts?.length && coverKind(x))) { // cloth lies over what it is on
+        const host = coverTarget(decor, { name: d.name, id: d.id, on: d.base === 'bed' || d.zone === 'on_bed' ? 'bed' : decor.find((x) => x.id === String(d.base ?? '').split('#')[0])?.name });
+        if (!host) continue;
+        Object.assign(d, { cover: host.key, base: host.key, zone: 'surface', scale: 1 });
+        done.push(`my ${d.name} covers ${host.name.replace(/^the /, 'my ')} now`);
+      }
+      const put = settleRoom(decor, now);
+      for (const d of decor.filter((x) => x.cover)) d.updatedAt = at;
+      const all = [...done, ...put.filter((t) => !/lies neatly/.test(t)).map((t) => `my ${t}`)];
+      console.log(`🧲 the room was put right: ${all.join('; ') || 'nothing to do'}`);
+      return all.length ? `My room was put right: ${all.slice(0, 5).join('; ')}. From now on what stands on a table or a shelf goes along when I move it, a blanket or a tablecloth I make is fitted to what it lies on, and a thing that is too big for a top stands on the floor.` : null;
     },
   },
 ];

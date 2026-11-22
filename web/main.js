@@ -203,7 +203,7 @@ new THREE.TextureLoader().load('pictures/dark-sky.jpg', (tex) => {
 const decorGroups = new Map();
 const SHAPE_GEO = {
   box: (s) => new THREE.BoxGeometry(...s),
-  roundbox: (s) => new RoundedBoxGeometry(s[0], s[1], s[2], 3, Math.min(...s) * 0.18), // a box with soft edges
+  roundbox: (s, p) => new RoundedBoxGeometry(s[0], s[1], s[2], p?.soft ? 5 : 3, Math.min(...s) * (p?.soft ? 0.46 : 0.18)), // a box with soft edges (cloth: rounder still)
   sphere: (s) => new THREE.SphereGeometry(s[0], 20, 14),
   cylinder: (s) => new THREE.CylinderGeometry(s[0], s[1], s[2], 20),
   cone: (s) => new THREE.ConeGeometry(s[0], s[1], 20),
@@ -238,8 +238,8 @@ function buildDecor(d) {
     const geo = SHAPE_GEO[p.shape];
     if (!geo) continue;
     const mesh = new THREE.Mesh(
-      geo(p.size),
-      new THREE.MeshStandardMaterial({ color: p.color, roughness: p.glass ? 0.1 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0, ...(p.glass ? { transparent: true, opacity: 0.2, depthWrite: false } : {}) })
+      geo(p.size, p),
+      new THREE.MeshStandardMaterial({ color: p.color, roughness: p.glass ? 0.1 : p.soft ? 0.96 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0, ...(p.glass ? { transparent: true, opacity: 0.2, depthWrite: false } : {}) })
     );
     mesh.position.set(...p.pos);
     mesh.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
