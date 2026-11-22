@@ -27,7 +27,7 @@ const list = (items, none = 'nothing') => (items.length ? items.map((x) => `- ${
 const S = { type: 'STRING' };
 const SA = { type: 'ARRAY', items: S };
 // One flat set of detail fields for all moves; each move uses the ones its line names.
-const DETAILS = { type: 'OBJECT', properties: Object.fromEntries(['what', 'why', 'name', 'label', 'query', 'topic', 'text', 'notes', 'instrument', 'food', 'dish', 'plant', 'seed', 'target', 'caption', 'id', 'wall', 'next_to', 'item', 'title', 'change', 'add', 'project', 'proud', 'section', 'camera', 'id', 'lamp', 'switch', 'level', 'mode', 'color', 'app', 'on', 'where', 'x', 'z', 'along', 'height', 'side', 'turn'].map((k) => [k, S]) /* where things go: without these he could not say "on the shelf" or "ceiling" */.concat([['ingredients', SA], ['steps', SA], ['needs', SA], ['timer', { type: 'OBJECT', properties: { at: S, do: S, color: S, level: S } }]])) };
+const DETAILS = { type: 'OBJECT', properties: Object.fromEntries(['what', 'why', 'name', 'label', 'query', 'topic', 'text', 'notes', 'instrument', 'food', 'dish', 'plant', 'seed', 'target', 'caption', 'id', 'wall', 'next_to', 'item', 'title', 'change', 'add', 'project', 'proud', 'section', 'camera', 'id', 'lamp', 'switch', 'level', 'mode', 'color', 'app', 'on', 'where', 'x', 'z', 'along', 'height', 'side', 'turn', 'place'].map((k) => [k, S]) /* where things go: without these he could not say "on the shelf" or "ceiling" */.concat([['ingredients', SA], ['steps', SA], ['needs', SA], ['timer', { type: 'OBJECT', properties: { at: S, do: S, color: S, level: S } }]])) };
 export const brainSchema = (names = MOVE_NAMES) => ({
   type: 'OBJECT',
   properties: {

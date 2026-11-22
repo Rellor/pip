@@ -4,6 +4,7 @@
 // are neither Bas's nor his own. One light model call a day writes the day's notes; they arrive spread over the day.
 // They are characters of his world, and the page says so.
 import { PEOPLE, warmthWord as warmthWordOf } from './web/street.js';
+import { placeOf } from './web/world.js';
 // Who they are is shared with the page (web/street.js). How each one writes, and what each is a fan of, only the game needs.
 const MORE = {
   Mo: { voice: 'warm, slow, tells little stories', fan: /\b(train|locomotive|rail|station|map|engine|machine|teapot|tea)\b/i },
@@ -24,7 +25,8 @@ export function streetView(s, now = Date.now()) {
   const made = [...new Set(day.filter((e) => ['decorate', 'draw', 'make_app', 'update_app', 'record_song', 'cook', 'make_clothes'].includes(e.action)).map((e) => `${e.action === 'draw' ? 'a drawing' : e.action.includes('app') ? 'a program' : e.action === 'record_song' ? 'a song' : e.action === 'cook' ? 'a dish' : 'a thing'}: ${e.name ?? e.dish ?? ''}`))].slice(0, 5);
   const project = (s.projects ?? []).find((p) => p.status === 'working')?.title ?? null;
   const into = (s.curious?.interests ?? []).slice(0, 3).map((i) => i.topic);
-  return { made, project, into };
+  const out = (s.outings ?? []).filter((o) => !o.errand && now - Date.parse(o.homeAt) < 36 * 3_600_000).slice(-2).map((o) => `${placeOf(o.place)?.name.replace(/^my /, 'his ') ?? 'outside'}${o.found?.length ? ` (he came back with ${o.found[0].name})` : ''}`);
+  return { made, project, into, out };
 }
 
 export function neighbourPrompt(s, now = Date.now()) {
@@ -38,6 +40,7 @@ WHAT THEY CAN SEE OF PIP
 Made lately: ${v.made.join('; ') || 'nothing new'}
 Working on: ${v.project ?? 'nothing in particular'}
 Seems into: ${v.into.join(', ') || 'not sure yet'}
+Seen outside lately: ${v.out.join('; ') || 'he stayed in'}
 ${ledgerLines(s, now).length ? `\nWHAT HAS HAPPENED BETWEEN THEM (the story goes on from here; nobody starts again from nothing)\n${ledgerLines(s, now).map((x) => `- ${x}`).join('\n')}\n` : ''}
 Write ${NOTES_PER_DAY} short notes (1 to 3 sentences each), each from a different neighbour, in their own voice:
 - at least one "ask": a friendly wish he could make into a project (a drawing, a small game, a song, a thing), from that neighbour's own interests

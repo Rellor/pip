@@ -25,9 +25,11 @@ export function weekDigest(s, now = Date.now()) {
   const wishes = (s.wishes ?? []).filter((w) => w.status === 'kept' && inWeek(w.keptAt)).map((w) => `${w.with || w.topic} for ${w.from}`);
   const happenings = (s.teller?.log ?? []).filter((e) => inWeek(e.at) && e.big).map((e) => e.text.slice(0, 110));
   const bought = (s.bought ?? []).filter((b) => inWeek(b.at)).map((b) => b.item);
+  const outings = (s.outings ?? []).filter((o) => !o.errand && inWeek(o.homeAt)).map((o) => `${o.place === 'doorstep' ? 'my doorstep' : o.place === 'garden' ? 'Oma Jo’s garden' : `the ${o.place}`}: ${clip(o.did, 110)}`).slice(-5);
+  const finds = (s.finds ?? []).filter((f) => inWeek(f.at)).map((f) => f.name);
   const memories = (s.memories ?? []).filter((m) => inWeek(m.at) && (m.importance ?? 0) >= 7).sort((a, b) => (b.importance ?? 0) - (a.importance ?? 0)).slice(0, 8).map((m) => clip(m.text, 140));
   const days = (s.days ?? []).filter((d) => d.day && Date.parse(d.day) > since - DAY).map((d) => `${d.day}: mostly ${(d.most ?? []).slice(0, 2).join(', ')}, mood ${d.mood}`);
-  return { art, made, apps, songs, done, working, learned: [...new Set(learned)].slice(0, 6), lessons, into, neighbours, gifts, memories, days, wishes, happenings, bought, coins: s.coins ?? null };
+  return { art, made, apps, songs, done, working, learned: [...new Set(learned)].slice(0, 6), lessons, into, neighbours, gifts, memories, days, wishes, happenings, bought, outings, finds, coins: s.coins ?? null };
 }
 
 export function letterPrompt(soul, d, { first = false } = {}) {
@@ -50,6 +52,8 @@ MY WEEK, IN FACTS
 - What Bas gave me: ${list(d.gifts)}
 - Wishes of neighbours I made come true: ${list(d.wishes ?? [])}
 - Things that happened in my street: ${list(d.happenings ?? [])}
+- Where I went outside: ${list(d.outings ?? [])}
+- What I found and brought home: ${list(d.finds ?? [])}
 - What I bought at the corner shop: ${list(d.bought ?? [])}${d.coins != null ? ` (I have ${d.coins} coins)` : ''}
 - What I remember most: ${list(d.memories)}
 

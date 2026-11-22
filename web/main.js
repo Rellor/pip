@@ -10,6 +10,7 @@ import { lampsOf, lampName, lampNow, PRESETS, LEVELS, timerWords, applyLight, fi
 import { buildHouse, LEFT_WINDOW, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects, isGone } from './furniture.js';
 import { streetData, renderStreet } from './streetview.js';
+import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -1597,6 +1598,7 @@ function planFor(last) {
     case 'search_web': return { at: 'computer', anim: 'search' };
     case 'browse': return { at: 'computer', anim: 'search' };
     case 'write_diary': return { at: 'center', anim: 'write' };
+    case 'go_out': return { at: 'hall_door', anim: 'look' }; // to the front door (then he is out: the game hides him)
     case 'rest': return { at: 'bed', anim: 'rest' };
     case 'ask_for': return { at: 'center', anim: 'ask' };
     case 'eat': return { at: 'center', anim: 'eat', food: String(d.food || '') };
@@ -2969,6 +2971,7 @@ function loop(now) {
   }
   updateSlides(now, dt);
   frame(now, dt);
+  if (pip.group.visible === awayNow()) pip.group.visible = !awayNow(); // out of the house: the room is empty
   home.update(now / 1000, studioBusy);
   if (now > viewAt) { viewAt = now + 60_000; home.refreshViews(forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60); }
   if (view.mode === 'overview') { // the overview follows Pip from room to room (or stays on the room chosen)
@@ -3053,6 +3056,17 @@ try {
   pending = JSON.parse(store('pip-pending') || '[]');
 } catch {}
 let lastState = null;
+// Is Pip out of the house right now (world.js)? A little after he left, so he is first seen walking to the door.
+const awayNow = () => { const w = lastState?.where; return Boolean(w && worldPlace(w.place) && w.place !== 'home' && Date.now() >= Date.parse(w.leftAt) + 30_000); };
+const awayWords = () => {
+  const w = lastState?.where;
+  if (!awayNow()) return null;
+  const p = worldPlace(w.place);
+  const now = Date.now();
+  const name = p.name.replace(/^my /, 'his ');
+  const back = new Date(Date.parse(w.homeAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' }); // his clock (Dutch time), like the World tab
+  return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? [p.emoji, `At ${name}`, back] : ['🏠', `Walking home from ${name}`, back];
+};
 let isStatic = false;
 let fastUntil = 0;
 
@@ -3389,6 +3403,8 @@ function headlineBase(st) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
     case 'browse': return ['🧭', 'Browsing the web, to see what he comes across'];
     case 'buy': return ['🛍️', `At the corner shop for ${d.item || st.item || 'something'}`];
+    case 'go_out': return [worldPlace(d.place ?? st.place)?.emoji ?? '🚶', st.away || awayNow() ? `Out: ${(awayWords()?.[1] ?? `at ${worldPlace(d.place ?? st.place)?.name ?? 'somewhere'}`).toLowerCase()}` : `Going out, to ${(st.placeName || worldPlace(d.place ?? st.place)?.name || 'somewhere').replace(/^my /, 'his ')}`];
+    case 'came_home': return ['🏠', `Home again from ${(st.placeName || 'outside').replace(/^my /, 'his ')}`];
     case 'happened': return [st.emoji || '🌤️', 'Something happened'];
     case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
     case 'record_song': return ['🎛️', `Recording “${d.name || st.name || 'a song'}”`];
@@ -3436,7 +3452,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { buy: 'shop', happened: 'event', blueprint: 'make', search_web: 'search', read_book: 'read', browse: 'read', play_piano: 'piano', record_song: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { go_out: 'out', came_home: 'out', buy: 'shop', happened: 'event', blueprint: 'make', search_web: 'search', read_book: 'read', browse: 'read', play_piano: 'piano', record_song: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Music'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -3502,7 +3518,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the corner shop', event: 'Something happened', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the corner shop', out: e.action === 'came_home' ? 'Came home' : e.failed ? 'Wanted to go out' : 'Went out', event: 'Something happened', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3556,6 +3572,15 @@ function dayCard(e) {
     if (e.text) card.append(el('div', e.text, 'quote'));
   } else if (kind === 'event') { // something that happened in his street or sky (story.js), in his own words
     card.append(el('p', e.what || ''));
+  } else if (kind === 'out' && e.action === 'go_out') { // he went out of the house (world.js)
+    card.append(el('h3', `To ${(e.placeName || 'somewhere').replace(/^my /, 'his ')}`, 'title'));
+    card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `${e.what ? `He wants to ${hisWords(e.place, e.what)}. ` : ''}${e.back ? `Home again around ${hm(Date.parse(e.back))}.` : ''}`, 'muted'));
+  } else if (kind === 'out') { // home again: a postcard of what he saw, and what he brought
+    card.append(el('h3', e.errand ? `Back from the corner shop with ${e.errand}` : `From ${(e.placeName || 'outside').replace(/^my /, 'his ')}`, 'title'));
+    if (e.card) { const pc = el('div'); pc.innerHTML = postcardSvg(e.card); card.append(pc); } // drawn by the page from the place, the hour and the weather (no outside text in it)
+    if (!e.errand && e.did) card.append(el('p', e.did, 'thought'));
+    if (e.found?.length) { const row = el('div', null, 'chips'); for (const f of e.found) row.append(el('span', `${f.emoji || '✨'} ${f.name}`, 'chip')); row.style.marginTop = '8px'; card.append(row); }
+    if (e.book?.title) card.append(el('p', `📖 He read: ${e.book.title}`, 'muted'));
   } else if (kind === 'shop') {
     card.append(el('h3', e.item || '', 'title'));
     card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `He bought it with his own coins${e.price ? ` (${e.price})` : ''}.`, 'muted'));
@@ -3779,6 +3804,13 @@ function renderNow() {
   if (s.last.sleeping) {
     const row = el('div', null, 'row');
     row.append(el('span', 'Now', 'label'), el('span', '💤 Sleeping. He wakes up in the morning.', 'big'));
+    fill(box, [row]);
+    return;
+  }
+  const out = awayWords();
+  if (out) { // he is out of the house: where, and when he is home again
+    const row = el('div', null, 'row');
+    row.append(el('span', 'Now', 'label'), el('span', `${out[0]} ${out[1]}. Home around ${out[2]}.`, 'big'));
     fill(box, [row]);
     return;
   }
@@ -4374,8 +4406,22 @@ function setPlan(last) {
   tickPlan();
   renderNow();
 }
+// While he is out, a little sign in the room says where he is (and the "now" line follows him: on his way, there, on his way home).
+let awaySaid = '';
+function tickAway() {
+  const a = awayWords();
+  const said = a ? `${a[0]} Pip is out: ${a[1].toLowerCase()}. Home around ${a[2]}.` : '';
+  if (said === awaySaid) return;
+  awaySaid = said;
+  $('away').hidden = !a;
+  $('away').textContent = said;
+  renderNow();
+  if (lastState) { streetSig = null; drawStreet(lastState); }
+}
+$('away').addEventListener('click', () => showTab('street'));
 setInterval(() => {
   tickPlan();
+  tickAway();
   updateDecor(lastState);
   syncClothes(lastState);
 }, 1000);

@@ -12,6 +12,8 @@ const FOOD = /\b(bread|rice|eggs?|potato(es)?|carrots?|apples?|milk|cheese|flour
 
 // Materials to make things with: when he asks for one of these, Bas can simply give it (it goes with his tools).
 const MATERIALS = /\b(clay|wool|wire|wood|planks?|sticks?|twigs?|string|rope|yarn|beads?|stones?|pebbles?|shells?|paper|cardboard|glass|metal|wax|plaster|cork|leather|felt|sand|ribbons?|buttons?|magnets?|batter(y|ies)|light ?bulbs?|led|leds|bricks?|tiles?)\b/i;
+// Things for going outside (world.js): an umbrella for the rain, something warm for the frost, a card for the library, a kite for the hill.
+const OUTDOOR = /\b(umbrella|rain ?coat|library card|kite|scarf|mittens|gloves|wool(l?y|len)? hat|lantern|backpack|basket)\b/i;
 export function giveForAsk(s, item) {
   const t = String(item ?? '').toLowerCase();
   const given = [];
@@ -27,8 +29,9 @@ export function giveForAsk(s, item) {
   }
   if (given.length) return given;
   for (const k of Object.keys(HELD)) if (t.includes(k) && addTool(s, k)) given.push(`a ${k}`);
-  if (!given.length && toolKind(t) && addTool(s, t)) given.push(t); // tools the game knows (shovel, toolbox, sewing kit...)
   const thing = t.replace(/^\s*(some|a|an|the|more|my|new)\s+/, '').trim();
+  if (!given.length && OUTDOOR.test(thing) && addTool(s, thing.match(OUTDOOR)[0])) given.push(`a ${thing.match(OUTDOOR)[0]}`); // before the tool kinds: a "knitted scarf" is a scarf, not a sewing kit
+  if (!given.length && toolKind(t) && addTool(s, t)) given.push(t); // tools the game knows (shovel, toolbox, sewing kit...)
   if (!given.length && MATERIALS.test(thing) && addTool(s, thing)) given.push(thing); // a material to make with (clay, wire, wood): it goes with his tools
   return given;
 }

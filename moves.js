@@ -18,6 +18,7 @@ import { noveltyBoost, roomIsDark, needLampSpots, storageFull, darkLampOff } fro
 import { restingMove, tiredOf } from './loops.js';
 import { canBrowse, interests, HOBBY_AT } from './curiosity.js';
 import { shopLine, shopOpen, wantsToBuy } from './shop.js';
+import { goOptions, goLine, wantsOut, gearWish } from './world.js';
 import { lampsOf, lampName, lampNow } from './web/lights.js';
 import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
@@ -85,6 +86,8 @@ export function askReason(s, now = Date.now()) {
   if (s.fullness <= 3 && !food(s).length && !ripe(s, now).length) return 'I am hungry and I have nothing left to eat or harvest (seeds would help)';
   const need = missingForProject(s, (n) => hasTool(s, n) || (s.tools ?? []).some((t) => String(t.name).toLowerCase().includes(String(n).toLowerCase())));
   if (need) return `my project "${need.project}" needs ${need.tool}, and I looked into how it is done`;
+  const gear = gearWish(s, now); // the rain, the frost or a missing library card keeps him in (world.js)
+  if (gear) return gear;
   const f = lastFail(s);
   if (f && /need|missing|do not have|don't have|ask for|no tool|nothing called/i.test(f.why)) return `my last try failed: ${f.why}`;
   const stuck = working(s).find((p) => daysSince(p.updatedAt ?? p.since, now) >= 2);
@@ -137,6 +140,7 @@ export const MOVES = [
   { name: 'tell', line: () => 'write a message to Bas: {text}', when: (s, n) => s.plan?.unread > 0 || (s.body.loneliness >= 7 && daysSince(s.outbox?.filter((m) => m.kind === 'tell').at(-1)?.at, n) >= 1), score: (s) => (s.plan?.unread ? 5 : 1) },
   { name: 'answer_visitor', line: (s) => `answer a visitor's or a neighbour's note (${names((s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => v.id))}): {id, text}`, when: (s) => (s.visitors ?? []).some((v) => !v.answer), score: () => 2 },
   { name: 'buy', line: (s) => `buy something at the corner shop with my coins (I have ${s.coins ?? 0}): ${shopLine(s)}: {item}`, when: (s, n) => (s.coins ?? 0) >= 1 && shopOpen(n), score: (s) => 0.4 + (wantsToBuy(s) ? 1.2 : 0) + ((s.fullness ?? 10) <= 4 && !(s.pantry ?? []).some((p) => p.qty > 0) ? 3 : 0) },
+  { name: 'go_out', line: (s, n) => `go outside for a while (I come home by myself): ${goLine(s, n)}: {place, what}`, when: (s, n) => goOptions(s, n).length > 0, score: (s, n) => wantsOut(s, n) },
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
   { name: 'dream', line: () => 'tell Bas about a big dream, something far too big to make myself (he might build it): {what, why}', when: (s, n) => daysSince(s.bigDreamAt, n) >= 3 && s.body.creativity >= 6, score: () => 0.8 },

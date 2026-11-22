@@ -26,13 +26,14 @@ export const CATALOGUE = [
   ...['tomato', 'sunflower', 'lettuce', 'carrot', 'lavender', 'pea'].map((k) => ({ item: `${k} seeds`, price: 2, kind: 'seeds' })),
   { item: 'paper', price: 2, kind: 'material' }, { item: 'beads', price: 2, kind: 'material' }, { item: 'string', price: 2, kind: 'material' },
   { item: 'clay', price: 3, kind: 'material' }, { item: 'wool', price: 3, kind: 'material' }, { item: 'wire', price: 3, kind: 'material' }, { item: 'wood', price: 3, kind: 'material' },
+  { item: 'umbrella', price: 4, kind: 'outdoor' }, { item: 'kite', price: 4, kind: 'outdoor' }, { item: 'scarf', price: 5, kind: 'outdoor' },
   { item: 'ruler', price: 3, kind: 'tool' }, { item: 'drawing supplies', price: 4, kind: 'tool' }, { item: 'sewing kit', price: 6, kind: 'tool' }, { item: 'toolbox', price: 8, kind: 'tool' },
   { item: 'kalimba', price: 10, kind: 'instrument' }, { item: 'flute', price: 12, kind: 'instrument' }, { item: 'guitar', price: 14, kind: 'instrument' }, { item: 'synthesizer', price: 16, kind: 'instrument' },
 ];
-export const SHOP_ICON = { food: '🍞', seeds: '🌱', material: '🧶', tool: '🧰', instrument: '🎵' };
+export const SHOP_ICON = { food: '🍞', seeds: '🌱', material: '🧶', tool: '🧰', instrument: '🎵', outdoor: '☂️' };
 export const hourNL = (now = Date.now()) => { const d = new Date(new Date(now).toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' })); return d.getHours() + d.getMinutes() / 60; };
 export const shopOpen = (now = Date.now()) => Math.floor(hourNL(now)) >= OPEN_FROM && Math.floor(hourNL(now)) < OPEN_TO;
-export const owns = (s, c) => (c.kind === 'tool' || c.kind === 'instrument' || c.kind === 'material') && (s.tools ?? []).some((t) => `${t.name} ${t.kind ?? ''}`.toLowerCase().includes(c.item.split(' ')[0]));
+export const owns = (s, c) => (c.kind === 'tool' || c.kind === 'instrument' || c.kind === 'material' || c.kind === 'outdoor') && (s.tools ?? []).some((t) => `${t.name} ${t.kind ?? ''}`.toLowerCase().includes(c.item.split(' ')[0]));
 
 // ---- The sky over the street
 // The real moon: 0 new, 0.5 full (a new moon was on 6 January 2000, 18:14 UTC; one round takes 29.53 days).

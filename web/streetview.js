@@ -1,13 +1,15 @@
-// The Street tab: Pip's street as a picture, his neighbours and how fond they are of him, the wishes they made,
-// his coins and the corner shop, and what happened out there. Everything is read from state.json; nothing is asked of a server.
+// The World tab: where Pip is, the map of his little world, postcards of his outings and what he brought home; then
+// his street as a picture, his neighbours and how fond they are of him, the wishes they made, his coins and the corner
+// shop, and what happened out there. Everything is read from state.json; nothing is asked of a server.
 import { PEOPLE, warmthWord, hearts, nextStep, CATALOGUE, SHOP_ICON, OPEN_FROM, OPEN_TO, shopOpen, owns, hourNL, moonPhase, moonWord, nextFullMoon, sceneOf, faceSvg, streetSvg, SPOTS, STREET_SIZE } from './street.js';
+import { PLACES, placeOf, openNow, worldMapSvg, postcardSvg, hisWords } from './world.js';
 
 const DAY = 86_400_000;
 const WISH_DAYS = 6; // a wish he does not take fades after this many days (neighbours.js)
 const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const nl = (now, o) => new Date(now).toLocaleString('en-GB', { timeZone: 'Europe/Amsterdam', ...o });
 const dayNL = (now) => new Date(now).toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' });
-const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+const plural = (n, w) => `${n} ${w}${n === 1 ? '' : /(sh|ch|s|x)$/.test(w) ? 'es' : 's'}`;
 const ago = (iso, now) => {
   const d = now - Date.parse(iso);
   if (!Number.isFinite(d)) return '';
@@ -52,8 +54,28 @@ export function streetData(s, now = Date.now()) {
   ];
   const w = s.weather ?? {};
   const cap = [`${weekday} ${nl(now, { hour: '2-digit', minute: '2-digit' })}`, w.kind ? `${w.kind}${Number.isFinite(w.temp) ? `, ${Math.round(w.temp)}°` : ''}` : '', open ? `shop open till ${OPEN_TO}:00` : `shop closed (opens ${OPEN_FROM}:00)`].filter(Boolean).join(' · ');
+  // his world: where he is, the places he knows, the postcards of his outings, what he brought home
+  const wh = s.where && placeOf(s.where.place) && s.where.place !== 'home' ? s.where : null;
+  const phase = !wh ? null : now < Date.parse(wh.leftAt) ? null : now < Date.parse(wh.arriveAt) && !wh.cut ? 'going' : now < Date.parse(wh.leaveAt) ? 'there' : 'back';
+  const openKeys = new Set(PLACES.filter((p) => !p.locked || s.world?.open?.[p.key]).map((p) => p.key));
+  const hmNL = (iso) => nl(Date.parse(iso), { hour: '2-digit', minute: '2-digit' });
+  const hoursWords = (p) => (p.hours === 'light' ? 'while it is light' : p.hours === 'evening' ? 'until the first stars' : `${p.hours?.[0] ?? 8}:00 to ${p.hours?.[1] ?? 21}:00${p.days ? ', Tuesday to Saturday' : ''}`);
+  const outings = (s.outings ?? []).filter((o) => o && placeOf(o.place));
+  const world = {
+    away: Boolean(wh && phase),
+    place: wh && phase ? wh.place : 'home',
+    phase,
+    now: !wh || !phase ? { emoji: s.last?.sleeping ? '💤' : '🏠', line: s.last?.sleeping ? 'Pip is at home, asleep.' : 'Pip is at home.', sub: '' }
+      : { emoji: phase === 'there' ? placeOf(wh.place).emoji : phase === 'going' ? '🚶' : '🏠', line: phase === 'going' ? `Pip is walking to ${placeOf(wh.place).name.replace(/^my /, 'his ')}.` : phase === 'there' ? `Pip is at ${placeOf(wh.place).name.replace(/^my /, 'his ')}.` : `Pip is walking home from ${placeOf(wh.place).name.replace(/^my /, 'his ')}.`, sub: `${phase === 'there' && wh.words && !wh.errand ? `He wants to ${hisWords(wh.place, wh.words)}. ` : ''}Home again around ${hmNL(wh.homeAt)}.` },
+    map: { now, weather: s.weather, where: wh && phase ? wh.place : 'home', phase, unlocked: [...openKeys], known: Object.keys(s.world?.known ?? {}), open: Object.fromEntries(PLACES.filter((p) => p.key !== 'home').map((p) => [p.key, openNow(p, now)])) },
+    places: PLACES.filter((p) => p.key !== 'home').map((p) => ({ key: p.key, title: p.title, emoji: p.emoji, walk: p.walk, blurb: p.blurb, hours: hoursWords(p), unlocked: openKeys.has(p.key), heard: openKeys.has(p.key) || Boolean(p.seen) || Boolean(s.world?.known?.[p.key]), lock: p.locked ?? null, open: openNow(p, now), visits: outings.filter((o) => o.place === p.key && !o.errand).length, things: (p.things ?? []).map((t) => hisWords(p.key, t.words)) })),
+    cards: outings.filter((o) => !o.errand).slice(-8).reverse().map((o) => ({ id: o.id, place: o.place, title: placeOf(o.place).title, at: o.homeAt, when: ago(o.homeAt, now), did: o.did, found: o.found ?? [], met: o.met ?? null, weather: o.weather })),
+    finds: (s.finds ?? []).slice(-24).reverse().map((f) => ({ ...f, where: placeOf(f.from)?.title ?? '' })),
+    trips: s.world?.count ?? outings.filter((o) => !o.errand).length,
+  };
   return {
-    scene: { now, weather: s.weather, today: log.filter((e) => dayNL(Date.parse(e.at)) === today).map((e) => e.key), notes: notes.filter((v) => !v.answer).length, market, puzzle: openW.some((x) => x.from === 'Kees' && /puzzle/i.test(x.text)), away: Boolean(s.where && s.where.place && s.where.place !== 'home') },
+    world,
+    scene: { now, weather: s.weather, today: log.filter((e) => dayNL(Date.parse(e.at)) === today).map((e) => e.key), notes: notes.filter((v) => !v.answer).length, market, puzzle: openW.some((x) => x.from === 'Kees' && /puzzle/i.test(x.text)), away: world.away },
     cap, coins, open, can, saving, bought: (s.bought ?? []).slice(-5).reverse(), wishes: openW, kept, people, coming,
     happened: [...log].sort((a, b) => Date.parse(b.at) - Date.parse(a.at)).slice(0, 12).map((e) => ({ ...e, emoji: sceneOf(e.key).emoji })), // the newest first
     count: openW.length,
@@ -67,6 +89,17 @@ const bubble = (who, text, mine = false) => `<div class="st-say${mine ? ' pip' :
 export function renderStreet(root, s, now = Date.now()) {
   const d = streetData(s, now);
   const html = [];
+  const w = d.world;
+  // where he is now, and the map of his world
+  html.push(`<div class="st-card wd-now${w.away ? ' away' : ''}"><span class="wd-em">${w.now.emoji}</span><div><b>${esc(w.now.line)}</b>${w.now.sub ? `<small>${esc(w.now.sub)}</small>` : ''}</div></div>`);
+  html.push(`<div class="wd-map">${worldMapSvg(w.map)}</div>`);
+  html.push(`<div class="wd-places">${w.places.map((p) => `<details class="wd-place${p.unlocked ? '' : ' locked'}" data-place="${p.key}"><summary><span class="st-em">${p.heard ? p.emoji : '❔'}</span><span class="wd-pt"><b>${esc(p.heard ? p.title : 'Somewhere new')}</b><small>${p.unlocked ? `${p.walk} min walk · ${esc(p.hours)}${p.open ? '' : ' · closed now'}${p.visits ? ` · been ${p.visits} time${p.visits === 1 ? '' : 's'}` : ''}` : p.heard ? '🔒 not yet' : 'He has not heard of it yet'}</small></span></summary><p>${p.heard ? esc(p.blurb) : 'There is more of the world than he knows. It opens up as he goes out, makes friends and gets what he needs.'}</p>${p.unlocked && p.things.length ? `<p class="wd-do">There he can: ${p.things.map(esc).join(', ')}.</p>` : ''}${!p.unlocked && p.heard && p.lock ? `<p class="wd-do">🔒 ${esc(p.lock)}</p>` : ''}</details>`).join('')}</div>`);
+  // postcards of his outings, and what he brought home
+  html.push('<h2>Postcards from his outings</h2>');
+  if (w.cards.length) html.push(`<div class="wd-cards">${w.cards.map((c) => `<figure class="wd-card">${postcardSvg({ place: c.place, at: c.at, weather: c.weather, found: c.found })}<figcaption><b>${esc(c.title)}</b> <small>${esc(c.when)}</small><p>${esc(c.did)}</p>${c.found.length ? `<div class="st-tags">${c.found.map((f) => `<span class="st-tag coin">${f.emoji ?? '✨'} ${esc(f.name)}</span>`).join('')}</div>` : ''}</figcaption></figure>`).join('')}</div>`);
+  else html.push('<p class="muted">He has not been out yet. When he goes, he comes home with a postcard of what he saw.</p>');
+  if (w.finds.length) html.push(`<h2>Things he brought home</h2><div class="st-chips wd-finds">${w.finds.map((f) => `<span class="st-chip" title="${esc(f.where)}">${f.emoji ?? '✨'} ${esc(f.name.replace(/^an? /, ''))}</span>`).join('')}</div>`);
+  html.push('<h2>His street</h2>');
   html.push(`<div class="st-scene" id="stscene">${streetSvg(d.scene)}</div><p class="st-cap">${esc(d.cap)}</p>`);
   // everyone at a glance: a face, a name and how fond they are of him (a dot when a note of theirs waits for an answer)
   html.push(`<div class="st-faces">${d.people.map((p) => `<button type="button" data-goto="${esc(p.name)}" style="--who:${p.color}" title="${esc(p.name)}: ${esc(p.word)}"><span class="${p.waiting ? 'st-new' : ''}">${faceSvg(p.name, 46)}</span><b>${esc(p.name)}</b>${heartsHtml(p.hearts)}</button>`).join('')}</div>`);
@@ -116,5 +149,6 @@ export function renderStreet(root, s, now = Date.now()) {
   const goto = (who) => { const card = root.querySelector(`#stp-${CSS.escape(String(who).replace(/\s+/g, '-'))}`); if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 1400); } };
   scene.addEventListener('click', (e) => { const g = e.target.closest('[data-who]'); if (!g) return; const who = g.dataset.who; if (who === 'shop') root.querySelector('.st-purse')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); else if (who !== 'Pip') goto(who); });
   root.querySelectorAll('[data-goto]').forEach((n) => n.addEventListener('click', () => goto(n.dataset.goto)));
+  root.querySelector('.wd-map')?.addEventListener('click', (e) => { const g = e.target.closest('[data-place]'); const row = g && root.querySelector(`.wd-place[data-place="${g.dataset.place}"]`); if (row) { root.querySelectorAll('.wd-place[open]').forEach((x) => { if (x !== row) x.open = false; }); row.open = true; row.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } });
   return d;
 }
