@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { background: #0b0b1a; color: #e0e0ff; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }
+canvas { background: #101026; display: block; margin: 10px auto; max-width: 100%; border-radius: 8px; }
+#info { font-size: 14px; min-height: 40px; padding: 5px; }
+</style>
+</head>
+<body>
+<h2>Night Sky</h2>
+<canvas id="sky" width="360" height="360"></canvas>
+<div id="info">Click a star or press Space to explore Orion.</div>
+<script>
+const canvas = document.getElementById('sky');
+const ctx = canvas.getContext('2d');
+const info = document.getElementById('info');
+let stars = [
+{x: 120, y: 80, desc: "Betelgeuse: Orion's red supergiant star (alpha)"},
+{x: 200, y: 100, desc: "Bellatrix: Orion's gamma star"},
+{x: 160, y: 180, desc: "Orion's Belt: Mintaka, Alnilam, Alnitak"},
+{x: 140, y: 280, desc: "Rigel: Orion's bright blue supergiant star (beta)"}
+];
+function draw() {
+ctx.fillStyle = '#101026';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.strokeStyle = '#5555aa';
+ctx.lineWidth = 2;
+ctx.beginPath();
+ctx.moveTo(120, 80);
+ctx.lineTo(200, 100);
+ctx.lineTo(160, 180);
+ctx.lineTo(140, 280);
+ctx.stroke();
+stars.forEach(s => {
+ctx.fillStyle = '#ffffff';
+ctx.beginPath();
+ctx.arc(s.x, s.y, 7, 0, Math.PI * 2);
+ctx.fill();
+});
+}
+canvas.addEventListener('click', (e) => {
+const rect = canvas.getBoundingClientRect();
+const x = e.clientX - rect.left;
+const y = e.clientY - rect.top;
+stars.forEach(s => {
+if (Math.hypot(s.x - x, s.y - y) < 20) {
+info.innerText = s.desc;
+}
+});
+});
+window.addEventListener('keydown', (e) => {
+if (e.code === 'Space') {
+info.innerText = "Orion is a prominent winter constellation named after a Greek hunter.";
+}
+});
+draw();
+</script>
+</body>
+</html>
