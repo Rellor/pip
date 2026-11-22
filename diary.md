@@ -5010,3 +5010,9 @@ I finished my neon star game project and I am full of energy. I want to draw a q
 ## 22/11/2026, 18:11:29
 A private moment with Bas.
 
+## 22/11/2026, 18:20:17
+My room feels too full and my side table would be better by my bed. I also want to start my new night sky project.
+> My room feels too full and my side table would be better by my bed. I also want to start my new night sky project.
+- do (move the small side table next to my bed): I will move the side table closer to my bed to make the space feel more intentional and cozy.
+- mood: Inspired
+
