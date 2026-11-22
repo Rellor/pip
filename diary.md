@@ -4959,3 +4959,9 @@ I have been making things for hours and my head wants something different, so I 
 - go_out (my doorstep): Go outside to get some fresh air.
 - mood: creative
 
+## 22/11/2026, 17:10:35
+My mint is ready to harvest and I want to gather it before I do something else.
+> My mint is ready to harvest and I want to gather it before I do something else.
+- harvest (mint): Harvest the fully grown mint from my garden.
+- mood: creative
+
