@@ -3,7 +3,7 @@
 // wall. When Pip does not say where a new thing goes, it goes to its right place. He may put it somewhere else (it is his
 // room), but then he notices it would be better elsewhere, and putting it right is offered to him.
 import { placeFor } from './web/lighting.js';
-import { supportsInfo, sizeOf, fitsOnATop, accessProblem, coverKind, coverTarget, freeSpaceOn, MIN_SHRINK } from './decor.js';
+import { supportsInfo, sizeOf, fitsOnATop, accessProblem, coverKind, coverTarget, freeSpaceOn, MIN_SHRINK, isOutside, outsideThings, MAX_OUTSIDE } from './decor.js';
 import { box, ROOM_SCALE } from './scale.js';
 import { needLampSpots } from './growth.js';
 
@@ -71,6 +71,7 @@ function freeTop(s, rp) {
 }
 export function designate(s, spec) {
   const given = (k) => spec?.[k] !== undefined && spec?.[k] !== null && spec?.[k] !== '';
+  if (isOutside(spec?.where)) return {}; // out to his plot: decor.js finds the spot there
   if (coverKind(spec)) { // cloth: a blanket is spread over the bed, a tablecloth over a table (the game fits it)
     const host = coverTarget(s.decor ?? [], spec);
     if (host) return { on: host.name.replace(/^the /, '') };
@@ -114,6 +115,7 @@ export const inTheMiddle = (e) => e?.kind === 'floor' && e.pos && Math.abs(e.pos
 export function misplaced(s, e) {
   if (!e || e.image || e.art || !e.pos) return null;
   if (e.cover || coverKind(e)) return null; // cloth lies where he spread it
+  if (e.kind === 'outside') return null; // what stands on his plot stands where he wants it
   const rp = rightPlace(e);
   const blocks = e.kind === 'floor' ? [accessProblem(s.decor ?? [], e)].find((t) => /where I stand/.test(t ?? '')) ?? null : null; // it stands where he needs to stand to use something (a planter by the window is fine)
   if (blocks) return { better: 'somewhere that is not in the way', why: blocks.split(',')[0], kind: 'floor', near: null };
@@ -149,6 +151,10 @@ export function spotNote(s, details = {}) {
   const said = `${details.name ?? ''} ${details.what ?? ''}`.trim();
   if (!said) return '';
   const lines = [];
+  if (isOutside(details.where) || isOutside(said)) { // for his plot across the street: there is room for big things
+    const n = outsideThings(decor).length;
+    return `WHERE IT WILL GO: outside, on my own plot across the street (a field of 46 x 14 m; ${n ? `${n} of my things stand${n === 1 ? 's' : ''} there` : 'nothing stands there yet'}, room for ${MAX_OUTSIDE}). Out there a thing can be big: up to 3.7 m wide and 3 m high in everyday size. Everyone who walks down my street sees it, from all sides, so I give it a back too. It stands on the grass: it needs feet or a base. I answer with "where": "outside".`;
+  }
   const cloth = CLOTH_WORD.exec(said)?.[1];
   const host = cloth ? coverTarget(decor, { name: cloth, on: details.on }) : null;
   if (host) {

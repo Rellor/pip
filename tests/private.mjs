@@ -34,7 +34,7 @@ fs.mkdirSync(path.join(work, 'visitors'), { recursive: true });
 fs.writeFileSync(path.join(work, 'inbox/m1.json'), JSON.stringify({ id: 'm1', at: new Date().toISOString(), private: true, enc: seal('The secret word is marmalade', KEY) }));
 fs.writeFileSync(path.join(work, 'visitors/v1.json'), JSON.stringify({ id: 'v1', at: new Date().toISOString(), status: 'approved', name: 'Ann', text: 'Hi Pip, what is your favourite star?' }));
 fs.writeFileSync(path.join(work, 'visitors/v2.json'), JSON.stringify({ id: 'v2', at: new Date().toISOString(), status: 'pending', enc: seal(JSON.stringify({ name: 'Bob', text: 'waiting' }), KEY) }));
-const run = (env) => execFileSync('node', ['pip.js'], { cwd: work, env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NIGHT: '0', ...env }, stdio: 'pipe' });
+const run = (env) => execFileSync('node', ['pip.js'], { cwd: work, env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_OUT: '1', PIP_NIGHT: '0', ...env }, stdio: 'pipe' });
 
 await ok('without the key, a private message waits and nothing leaks', () => {
   run({ PIP_REPLY_KEY: '', PIP_PRIVATE_KEY: '' });

@@ -11,6 +11,9 @@ import { buildHouse, LEFT_WINDOW, nextGoal, walkable, blockedInHouse, roomOf, FO
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects, isGone } from './furniture.js';
 import { streetData, renderStreet } from './streetview.js';
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
+import { seasonInfo } from './season.js';
+import { makeGrain } from './grain.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -31,29 +34,65 @@ Object.values(G).forEach((g) => scene.add(g));
 scene.background = new THREE.Color(getComputedStyle(document.body).backgroundColor);
 
 const camera = new THREE.PerspectiveCamera(35, 1, 1, 1000);
+// The look of his whole world: rough, grainy skins on everything and big pixels, like an old game console, so nothing
+// looks like smooth plastic (?style=clean shows the old smooth look).
+const ROUGH = new URLSearchParams(location.search).get('style') !== 'clean';
+const grain = makeGrain(THREE);
+function roughen(root) { // a grainy skin for every plain, solid thing that has none yet
+  if (!ROUGH) return;
+  root.traverse((o) => {
+    const m = o.material;
+    if (!o.isMesh || !m || Array.isArray(m) || !m.isMeshStandardMaterial || m.map || m.transparent || m.userData.smooth) return;
+    m.map = grain('plain');
+    m.roughness = Math.max(m.roughness, 0.85);
+    m.needsUpdate = true;
+  });
+}
+// Big pixels, but only outside: in his house the picture stays sharp, so his drawings on the walls can be seen as he
+// drew them (the rough skins are on everything inside too, only the picture itself is not made coarse).
+let pixelNow = false;
+function applyPixels() {
+  if (!ROUGH) return;
+  const outside = view.mode === 'walk' ? inTown(view.x) : streetish();
+  if (outside === pixelNow && renderer.domElement.dataset.px) return;
+  pixelNow = outside;
+  renderer.domElement.dataset.px = '1';
+  const w = stage.clientWidth || 800;
+  renderer.domElement.style.imageRendering = outside ? 'pixelated' : '';
+  renderer.setPixelRatio(outside ? Math.max(0.2, Math.min(1, (view.mode === 'walk' ? 460 : 760) / w)) : Math.min(devicePixelRatio, 1.5));
+}
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
 const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
 // The parts of the room that can be seen from the front: the floor and the two back walls.
-const pointsFor = (x0, x1) => [[x0, 0, -5], [x1, 0, -5], [x0, 0, 5], [x1, 0, 5], [x0, 5, -5], [x1, 5, -5], [x0, 5, 5]].map(([x, y, z]) => new THREE.Vector3(x, y, z));
+const pointsFor = (x0, x1, street = false) => (street ? [[x0, 0, -8], [x1, 0, -8], [x0, 0, 27], [x1, 0, 27], [x0, 7, -8], [x1, 7, -8]] : [[x0, 0, -5], [x1, 0, -5], [x0, 0, 5], [x1, 0, 5], [x0, 5, -5], [x1, 5, -5], [x0, 5, 5]]).map(([x, y, z]) => new THREE.Vector3(x, y, z));
 // Which part of the house the overview shows: the room Pip is in (auto), or one room, or the whole house.
 const houseView = { want: 'auto', now: 'bedroom' };
 const FOCUS_RANGE = HAS_STUDIO ? { bedroom: [-5, 5], hall: [3, 11], studio: [8.4, 16.9], house: [-5, 16.9] } : { bedroom: [-5, 5], hall: [3, 9.5], house: [-5, 8.8] };
-const FOCUS = HAS_STUDIO ? FOCUS_X : { ...FOCUS_X, house: 1.9 };
+const FOCUS = HAS_STUDIO ? { ...FOCUS_X } : { ...FOCUS_X, house: 1.9 };
+// His street outside (town.js): it stands far to the side of the house, and the overview can show it like a room.
+FOCUS_RANGE.street = [TOWN_X + TOWN_RANGE[0], TOWN_X + TOWN_RANGE[1]];
+FOCUS.street = TOWN_X + (TOWN_RANGE[0] + TOWN_RANGE[1]) / 2;
+// In the auto view the street is followed closer, with Pip in the middle (the Street button shows all of it).
+FOCUS_RANGE.follow = [TOWN_X - 15, TOWN_X + 15];
+Object.defineProperty(FOCUS, 'follow', { get: () => clamp(pip.group.position.x, TOWN_X + WORLD_RANGE[0] + 13, TOWN_X + WORLD_RANGE[1] - 13) });
+const streetish = (n = focusName()) => n === 'street' || n === 'follow';
+const camBase = () => (streetish() ? [5, 9, 15] : [9.5, 9, 11]); // the street is looked at more from the front, so the house fronts show
+const panLimit = () => (streetish() ? 62 : 5); // how far the view can be moved sideways (outside: all the way to the park and the library)
 if (!HAS_STUDIO) document.querySelector('#rooms [data-room="studio"]')?.remove();
 let fitGoal = 1;
-const focusName = () => (houseView.want === 'auto' ? houseView.now : houseView.want);
+const focusName = () => (houseView.want === 'auto' ? (houseView.now === 'street' ? 'follow' : houseView.now) : houseView.want);
 let focusX = 0; // the middle of what is shown, eased toward the goal
 // How far back the camera must be for the whole room to fit on this screen, however wide or tall it is.
 function fitRoom(instant = true) {
   const prevFit = orbit.fit;
   orbit.fit = 1;
   const name = focusName();
-  const range = FOCUS_RANGE[name];
-  const pts = pointsFor(range[0], range[1]);
   const cx = FOCUS[name];
+  const range = name === 'follow' ? [cx - 15, cx + 15] : FOCUS_RANGE[name];
+  const pts = pointsFor(range[0], range[1], streetish(name));
   for (let i = 0; i < 8; i++) {
-    const base = new THREE.Vector3(9.5, 9, 11).multiplyScalar(orbit.fit);
+    const base = new THREE.Vector3(...camBase()).multiplyScalar(orbit.fit);
     camera.position.set(cx + base.x, 1.2 + base.y, -0.3 + base.z);
     camera.lookAt(cx, 1.2, -0.3);
     camera.updateMatrixWorld(true);
@@ -68,7 +107,8 @@ function fitRoom(instant = true) {
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 function applyOrbit() {
   const k = orbit.fit;
-  const base = new THREE.Vector3(9.5 * k, 9 * k * (1 + orbit.el), 11 * k).applyAxisAngle(new THREE.Vector3(0, 1, 0), orbit.az).multiplyScalar(orbit.zoom);
+  const cb = camBase();
+  const base = new THREE.Vector3(cb[0] * k, cb[1] * k * (1 + orbit.el), cb[2] * k).applyAxisAngle(new THREE.Vector3(0, 1, 0), orbit.az).multiplyScalar(orbit.zoom);
   // How high or low the middle of the view may go: the top edge of the screen can reach just above the walls (5 high), the bottom edge the floor.
   const dist = base.length();
   const half = dist * Math.tan((camera.fov * Math.PI) / 360) * Math.sqrt(1 - (base.y / dist) ** 2);
@@ -84,6 +124,7 @@ function resetOrbit() {
 function fitCamera() {
   const w = stage.clientWidth || 1;
   const h = stage.clientHeight || 1;
+  applyPixels();
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
@@ -150,6 +191,8 @@ box(extraWalls, [10.6, 0.3, 10.6], 0xe8c9b0, [0, 5.15, 0]);
 extraWalls.traverse((o) => (o.castShadow = false));
 scene.add(extraWalls);
 const home = buildHouse(THREE, scene); // the hall and the music studio
+const town = buildTown(THREE); // his street outside (town.js)
+scene.add(town.group);
 const rug = cyl(G.rug, [2, 2, 0.04], 0xe3a183, [0, 0.02, 0.8]);
 rug.castShadow = false;
 
@@ -241,7 +284,7 @@ function buildDecor(d) {
     if (!geo) continue;
     const mesh = new THREE.Mesh(
       geo(p.size, p),
-      new THREE.MeshStandardMaterial({ color: p.color, roughness: p.glass ? 0.1 : p.soft ? 0.96 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0, ...(p.glass ? { transparent: true, opacity: 0.2, depthWrite: false } : {}) })
+      new THREE.MeshStandardMaterial({ color: p.color, ...(ROUGH && !p.glass ? { map: grain('plain') } : {}), roughness: p.glass ? 0.1 : p.soft ? 0.96 : ROUGH ? 0.9 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0, ...(p.glass ? { transparent: true, opacity: 0.2, depthWrite: false } : {}) })
     );
     mesh.position.set(...p.pos);
     mesh.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
@@ -436,6 +479,7 @@ function setLit(g, on, d = null) {
 const behaviors = new Map(); // thing id -> what it is doing now
 // Is this spot in the way? goal = where he is heading: a thing that already covers the goal (the bed he walks onto, the piano he walks up to) does not count.
 const floorBlocked = (x, z, skipId, goal = null) => {
+  if (inTown(x)) return townBlocked(x, z, 0.2) && !(goal && Math.hypot(goal.x - x, goal.z - z) < 1.2); // out in the street (town.js)
   if (!walkable(x, z) || blockedInHouse(x, z)) return true;
   const furn = shownFurniture(lastState?.furniture);
   for (const k of MOVABLE) {
@@ -633,7 +677,7 @@ function buildClothes(c) {
   for (const p of c.parts || []) {
     const geo = SHAPE_GEO[p.shape];
     if (!geo) continue;
-    const mesh = new THREE.Mesh(geo(p.size), new THREE.MeshStandardMaterial({ color: p.color, roughness: 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0 }));
+    const mesh = new THREE.Mesh(geo(p.size), new THREE.MeshStandardMaterial({ color: p.color, ...(ROUGH ? { map: grain('plain') } : {}), roughness: ROUGH ? 0.9 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0 }));
     mesh.position.set(...p.pos);
     mesh.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
     mesh.castShadow = true;
@@ -1743,7 +1787,52 @@ function moveSound(kind) {
     src.start(t);
   }
 }
+// ---- Pip in his street (town.js). When he is out he is seen there: on his doorstep, at the shop door, in Oma Jo's garden,
+// or walking to the end of the street on his way to the pond or the library (then he is out of sight until he comes back).
+let outKey = '';
+let outHidden = false;
+let outPath = [];
+let outIdx = 0;
+let outSpot = '';
+const townSpot = (n) => ({ p: new V3(TOWN_X + TOWN_SPOTS[n].x, 0, TOWN_SPOTS[n].z), face: TOWN_SPOTS[n].face, y: TOWN_SPOTS[n].y ?? 0 });
+const farFrom = (n) => Math.hypot(pip.group.position.x - TOWN_X - TOWN_SPOTS[n].x, pip.group.position.z - TOWN_SPOTS[n].z);
+function tickOutside() {
+  const w = lastState?.where;
+  const g = pip.group;
+  if (!awayNow()) {
+    if (outKey) { // home again: he comes in through the front door
+      outKey = '';
+      outHidden = false;
+      outPath = [];
+      if (inTown(g.position.x)) g.position.set(SPOTS.hall_door.p.x, 0, SPOTS.hall_door.p.z);
+      if (plan && stepNow >= 0) startTask(plan.steps[stepNow]);
+    }
+    return;
+  }
+  const now = Date.now();
+  const phase = now < Date.parse(w.arriveAt) && !w.cut ? 'going' : now < Date.parse(w.leaveAt) ? 'there' : 'back';
+  const [name, how] = TOWN_FOR[w.place] ?? ['left', 'in'];
+  const route = ROUTES[w.place] ?? [];
+  const key = `${w.id}${phase}`;
+  if (key !== outKey) {
+    const fresh = !inTown(g.position.x); // he steps out of his door (or the page was opened while he is out)
+    outKey = key;
+    if (fresh) { const at = townSpot(phase === 'going' ? 'door' : name).p; g.position.set(at.x, townGround(at.x, at.z), at.z); }
+    if (phase === 'back') outPath = [...route].reverse().concat('door'); // the same way home
+    else if (phase === 'going' || fresh || !outPath.length) outPath = phase === 'going' ? [...route, name] : [name];
+    outIdx = phase === 'back' || fresh || phase === 'going' ? 0 : outIdx;
+    outSpot = '';
+  }
+  while (outIdx < outPath.length - 1 && farFrom(outPath[outIdx]) < 1.0) outIdx++; // one corner at a time, like through the doors at home
+  const spotNow = outPath[outIdx];
+  if (spotNow !== outSpot) {
+    outSpot = spotNow;
+    task = { at: 'custom', anim: 'look', spot: townSpot(spotNow), last: { action: 'go_out', details: { place: w.place } }, arrived: false, detour: null, phrase: null, nextPhraseAt: 0, nextBreak: Infinity, askUntil: 0 };
+  }
+  outHidden = how === 'in' && phase !== 'back' && spotNow === name && farFrom(name) < 0.7; // he went inside (the library): out of sight until he comes out
+}
 function startTask(last) {
+  if (awayNow()) { outSpot = ''; tickOutside(); return; } // while he is out, the world outside decides where he is (he keeps walking where he was going)
   const plan = planFor(last);
   if (last.action === 'use' && last.made?.id && last.made.does === 'custom') setTimeout(() => runBehavior(last.made.id, 'custom', last.made.steps), 2500);
   if (last.action === 'use' && last.made?.id && ['drive', 'spin'].includes(last.made.does)) setTimeout(() => runBehavior(last.made.id, last.made.does, last.made.motion), 2500); // when he has walked up to it
@@ -1829,7 +1918,7 @@ function frame(now, dt) {
     if (dist > 0.06) {
       walking = true;
       g.rotation.x = lerp(g.rotation.x, 0, dt * 8);
-      g.position.y = lerp(g.position.y, 0, dt * 8);
+      g.position.y = lerp(g.position.y, inTown(g.position.x) ? townGround(g.position.x, g.position.z) : 0, dt * 8); // outside he walks over the ground as it is (up the hill)
       // to another room: through the doors, one waypoint at a time
       const way = nextGoal({ x: g.position.x, z: g.position.z }, { x: spot.p.x, z: spot.p.z });
       const wayP = way.x === spot.p.x && way.z === spot.p.z ? spot.p : new V3(way.x, 0, way.z);
@@ -1841,7 +1930,7 @@ function frame(now, dt) {
       turnTo(Math.atan2(dir.x, dir.z), dt * 10);
     } else {
       turnTo(spot.face, dt * 6);
-      g.position.y = lerp(g.position.y, spot.y || 0, dt * 6);
+      g.position.y = lerp(g.position.y, (spot.y || 0) + (inTown(g.position.x) ? townGround(g.position.x, g.position.z) : 0), dt * 6);
       g.rotation.x = lerp(g.rotation.x, spot.rx || 0, dt * 6);
       if (task.detour) {
         anim = 'look';
@@ -2111,6 +2200,7 @@ const r1 = (v) => (Math.round(Number(v) * 10) / 10).toString();
 const logOf = (...actions) => (lastState?.log || []).filter((e) => actions.includes(e.action) && Date.parse(e.at) <= Date.now());
 const WALK_EXTRA = [[-4.6, -3.6, 3.6, 4.2]]; // the chest
 function blocked(x, z) {
+  if (inTown(x)) return townBlocked(x, z);
   if (!walkable(x, z) || blockedInHouse(x, z, 0.1)) return true;
   const furn = shownFurniture(lastState?.furniture);
   const rects = [...MOVABLE.filter((k) => !FURNITURE[k].flat).flatMap((k) => furnRects(furn, k)).map((r) => [r.x0, r.x1, r.z0, r.z1]), ...WALK_EXTRA];
@@ -2125,11 +2215,38 @@ function updateWalk(dt) {
     const speed = 2.4 * dt * Math.min(1, len);
     const dx = ((-Math.sin(view.yaw) * fwd + Math.cos(view.yaw) * side) / len) * speed;
     const dz = ((-Math.cos(view.yaw) * fwd - Math.sin(view.yaw) * side) / len) * speed;
+    const wasZ = view.z;
     if (!blocked(view.x + dx, view.z)) view.x += dx;
     if (!blocked(view.x, view.z + dz)) view.z += dz;
+    // The front door in the hall leads to the street, and the door of his house in the street leads back in:
+    // walking into the door (pushing on although the wall stops you) takes you through.
+    const pushing = dz < 0 && view.z === wasZ;
+    if (!inTown(view.x) && Math.abs(view.x - SPOTS.hall_door.p.x) < 0.7 && view.z < -3.3 && pushing) Object.assign(view, { x: TOWN_X, z: 1.6, yaw: Math.PI }); // (a slow screen takes big steps: the wall can stop you a little way off)
+    else if (inTown(view.x) && Math.abs(view.x - TOWN_X) < 0.9 && view.z < 2.4 && pushing) Object.assign(view, { x: SPOTS.hall_door.p.x, z: -3.7, yaw: Math.PI });
   }
-  camera.position.set(view.x, 1.55, view.z);
+  walkPlace(); // inside or outside: the sky, the horizon and the look follow where you stand
+  applyPixels();
+  camera.position.set(view.x, 1.55 + (inTown(view.x) ? townGround(view.x, view.z) : 0), view.z);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
+}
+// Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
+let walkOut = false;
+function skyNow() {
+  const h = forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60;
+  const se = seasonInfo(new Date());
+  return h < se.sunrise - 0.6 || h > se.sunset + 0.7 ? 0x1b2347 : h < se.sunrise + 0.7 ? 0xf7c9a8 : h > se.sunset - 0.9 ? 0xf2a988 : 0xa9d8f2;
+}
+function walkPlace() {
+  const out = view.mode === 'walk' && inTown(view.x);
+  if (out === walkOut) return;
+  walkOut = out;
+  town.setWalk(out);
+  scene.userData.sky = out ? town.skyFog() : null; // look.js keeps the background: this tells it to show the sky's own colour
+  if (out) scene.background.set(town.skyFog());
+  scene.fog = out ? new THREE.Fog(town.skyFog(), 140, 700) : null; // far things fade into the sky
+  fitCamera();
+  home.full.visible = view.mode === 'walk' && !out;
+  home.roof.visible = view.mode === 'walk' && !out;
 }
 function setMode(mode) {
   view.mode = mode;
@@ -2143,7 +2260,7 @@ function setMode(mode) {
   $('stick').hidden = mode !== 'walk';
   $('resetview').hidden = mode === 'walk';
   if (mode === 'walk') {
-    Object.assign(view, { x: 0, z: 3.4, yaw: 0, pitch: 0 });
+    Object.assign(view, streetish() ? { x: TOWN_X + 4, z: 9.2, yaw: 0.3, pitch: 0.04 } : { x: 0, z: 3.4, yaw: 0, pitch: 0 }); // from the street view: you start in the street
     camera.fov = 70;
     camera.rotation.order = 'YXZ';
   } else {
@@ -2153,6 +2270,7 @@ function setMode(mode) {
     $('knob').style.transform = '';
   }
   camera.updateProjectionMatrix();
+  walkPlace();
   if (mode === 'overview') fitCamera();
   $('walk').textContent = mode === 'walk' ? '🏠 Back to overview' : '🚶 Walk around';
   hideInfo();
@@ -2462,6 +2580,7 @@ document.querySelectorAll('#rooms button').forEach((b) => b.addEventListener('cl
   houseView.want = b.dataset.room;
   document.querySelectorAll('#rooms button').forEach((x) => x.classList.toggle('on', x === b));
   fitRoom(false);
+  applyPixels();
 }));
 
 const ray = new THREE.Raycaster();
@@ -2529,9 +2648,9 @@ function panBy(dx, dy) {
   const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
   const dist = camera.position.distanceTo(new THREE.Vector3(orbit.px, 1.2 + orbit.py, -0.3 + orbit.pz));
   const s = (2 * dist * Math.tan((camera.fov * Math.PI) / 360)) / (renderer.domElement.clientHeight || 600); // world units per pixel
-  orbit.px = clamp(orbit.px - (right.x * dx - up.x * dy) * s, -5, 5);
+  orbit.px = clamp(orbit.px - (right.x * dx - up.x * dy) * s, -panLimit(), panLimit());
   orbit.py = orbit.py - (right.y * dx - up.y * dy) * s; // applyOrbit keeps it between the floor and just above the walls
-  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, -5, 5);
+  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, streetish() ? -40 : -5, streetish() ? 26 : 5);
 }
 dom.addEventListener('contextmenu', (e) => e.preventDefault());
 dom.addEventListener('pointerdown', (e) => {
@@ -2948,7 +3067,7 @@ function loop(now) {
     const want = avg > 0.026 ? Math.max(0.75, pixels - 0.25) : avg < 0.015 ? Math.min(SHARP, pixels + 0.25) : pixels;
     if (want !== pixels) {
       pixels = want;
-      renderer.setPixelRatio(pixels);
+      if (!pixelNow) renderer.setPixelRatio(pixels);
       fitCamera();
     }
     slowSum = 0;
@@ -2971,12 +3090,13 @@ function loop(now) {
   }
   updateSlides(now, dt);
   frame(now, dt);
-  if (pip.group.visible === awayNow()) pip.group.visible = !awayNow(); // out of the house: the room is empty
+  town.animate(now / 1000);
+  if (pip.group.visible === (awayNow() && outHidden)) pip.group.visible = !(awayNow() && outHidden); // out of the street too (at the pond, the library): nowhere to be seen
   home.update(now / 1000, studioBusy);
   if (now > viewAt) { viewAt = now + 60_000; home.refreshViews(forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60); }
   if (view.mode === 'overview') { // the overview follows Pip from room to room (or stays on the room chosen)
-    const roomNow = roomOf(pip.group.position.x);
-    if (houseView.now !== roomNow) { houseView.now = roomNow; if (houseView.want === 'auto') fitRoom(false); }
+    const roomNow = inTown(pip.group.position.x) ? 'street' : roomOf(pip.group.position.x);
+    if (houseView.now !== roomNow) { houseView.now = roomNow; if (houseView.want === 'auto') fitRoom(false); applyPixels(); }
     const goalX = FOCUS[focusName()];
     if (Math.abs(focusX - goalX) > 0.005 || Math.abs(orbit.fit - fitGoal) > 0.001) {
       focusX += (goalX - focusX) * Math.min(1, dt * 3);
@@ -2995,6 +3115,7 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 fitCamera();
+roughen(scene); // his room and his house get their rough skins (the street outside has its own)
 requestAnimationFrame(loop);
 
 // ---------------------------------------------------------------- panel + polling
@@ -3403,7 +3524,7 @@ function headlineBase(st) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
     case 'browse': return ['🧭', 'Browsing the web, to see what he comes across'];
     case 'buy': return ['🛍️', `At the corner shop for ${d.item || st.item || 'something'}`];
-    case 'go_out': return [worldPlace(d.place ?? st.place)?.emoji ?? '🚶', st.away || awayNow() ? `Out: ${(awayWords()?.[1] ?? `at ${worldPlace(d.place ?? st.place)?.name ?? 'somewhere'}`).toLowerCase()}` : `Going out, to ${(st.placeName || worldPlace(d.place ?? st.place)?.name || 'somewhere').replace(/^my /, 'his ')}`];
+    case 'go_out': return [worldPlace(d.place ?? st.place)?.emoji ?? '🚶', st.away || awayNow() ? `Out: ${((w) => `${w[0].toLowerCase()}${w.slice(1)}`)(awayWords()?.[1] ?? `at ${worldPlace(d.place ?? st.place)?.name ?? 'somewhere'}`)}` : `Going out, to ${(st.placeName || worldPlace(d.place ?? st.place)?.name || 'somewhere').replace(/^my /, 'his ')}`];
     case 'came_home': return ['🏠', `Home again from ${(st.placeName || 'outside').replace(/^my /, 'his ')}`];
     case 'happened': return [st.emoji || '🌤️', 'Something happened'];
     case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
@@ -4410,7 +4531,7 @@ function setPlan(last) {
 let awaySaid = '';
 function tickAway() {
   const a = awayWords();
-  const said = a ? `${a[0]} Pip is out: ${a[1].toLowerCase()}. Home around ${a[2]}.` : '';
+  const said = a ? `${a[0]} Pip is out: ${a[1][0].toLowerCase()}${a[1].slice(1)}. Home around ${a[2]}.` : ''; // (names keep their capital: Oma Jo)
   if (said === awaySaid) return;
   awaySaid = said;
   $('away').hidden = !a;
@@ -4421,7 +4542,9 @@ function tickAway() {
 $('away').addEventListener('click', () => showTab('street'));
 setInterval(() => {
   tickPlan();
+  tickOutside();
   tickAway();
+  town.update(lastState, Date.now(), forceLook.hour);
   updateDecor(lastState);
   syncClothes(lastState);
 }, 1000);
@@ -4622,6 +4745,8 @@ $('wake').addEventListener('click', () => {
 
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipGroup = (id) => decorGroups.get(id); // for testing
+window.pipView = view; // for testing: where the walking viewer stands
+window.pipCam = () => ({ fit: orbit.fit, goal: fitGoal, zoom: orbit.zoom, px: orbit.px, pz: orbit.pz, focusX, name: focusName(), aspect: camera.aspect, pos: camera.position.toArray().map((v) => Math.round(v)) }); // for testing: how the overview looks at things
 window.pipStep = (n, dt = 0.05) => { for (let i = 0; i < n; i++) updateBehaviors(performance.now() + i * dt * 1000, dt); }; // for testing without a visible page
 let tickClock = 0;
 window.pipTick = (n, dt = 0.05) => { tickClock ||= performance.now(); for (let i = 0; i < n; i++) { tickClock += dt * 1000; frame(tickClock, dt); updateBehaviors(tickClock, dt); } return tickClock; }; // for testing: run n frames by hand

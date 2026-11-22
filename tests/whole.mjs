@@ -11,7 +11,7 @@ const N = Number(process.argv[2] ?? 40);
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 'pip-whole-'));
 fs.cpSync(root, work, { recursive: true, filter: (p) => !p.includes(`${path.sep}.git`) && !p.includes('node_modules') });
-const env = { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_FAKE_STYLE: 'greedy' };
+const env = { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_OUT: '1', PIP_FAKE_STYLE: 'greedy' };
 const read = () => JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
 const startedAt = Date.now() - 1000;
 const STEP_MIN = 9; // a wake-up every 9 minutes of fake time

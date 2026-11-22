@@ -24,7 +24,7 @@ const server = http.createServer((req, res) => {
   });
 }).listen(0);
 await new Promise((r) => server.once('listening', r));
-const env = { ...process.env, GEMINI_API_KEY: 'test', GEMINI_API_BASE: `http://127.0.0.1:${server.address().port}`, GEMINI_LITE: 'lite-a,lite-b', GEMINI_BIG: 'big-a', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NIGHT: '0', PIP_NO_NEIGHBOURS: '1', PIP_NO_STORY: '1', PIP_MODEL_TIMEOUT_MS: '1500' };
+const env = { ...process.env, GEMINI_API_KEY: 'test', GEMINI_API_BASE: `http://127.0.0.1:${server.address().port}`, GEMINI_LITE: 'lite-a,lite-b', GEMINI_BIG: 'big-a', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_OUT: '1', PIP_NIGHT: '0', PIP_NO_NEIGHBOURS: '1', PIP_NO_STORY: '1', PIP_MODEL_TIMEOUT_MS: '1500' };
 delete env.PIP_FAKE;
 const prep = () => {
   const state = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));

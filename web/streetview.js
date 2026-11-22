@@ -72,6 +72,7 @@ export function streetData(s, now = Date.now()) {
     cards: outings.filter((o) => !o.errand).slice(-8).reverse().map((o) => ({ id: o.id, place: o.place, title: placeOf(o.place).title, at: o.homeAt, when: ago(o.homeAt, now), did: o.did, found: o.found ?? [], met: o.met ?? null, weather: o.weather })),
     finds: (s.finds ?? []).slice(-24).reverse().map((f) => ({ ...f, where: placeOf(f.from)?.title ?? '' })),
     trips: s.world?.count ?? outings.filter((o) => !o.errand).length,
+    plot: (s.decor ?? []).filter((d) => d.kind === 'outside').map((d) => d.name),
   };
   return {
     world,
@@ -94,6 +95,7 @@ export function renderStreet(root, s, now = Date.now()) {
   html.push(`<div class="st-card wd-now${w.away ? ' away' : ''}"><span class="wd-em">${w.now.emoji}</span><div><b>${esc(w.now.line)}</b>${w.now.sub ? `<small>${esc(w.now.sub)}</small>` : ''}</div></div>`);
   html.push(`<div class="wd-map">${worldMapSvg(w.map)}</div>`);
   html.push(`<div class="wd-places">${w.places.map((p) => `<details class="wd-place${p.unlocked ? '' : ' locked'}" data-place="${p.key}"><summary><span class="st-em">${p.heard ? p.emoji : '❔'}</span><span class="wd-pt"><b>${esc(p.heard ? p.title : 'Somewhere new')}</b><small>${p.unlocked ? `${p.walk} min walk · ${esc(p.hours)}${p.open ? '' : ' · closed now'}${p.visits ? ` · been ${p.visits} time${p.visits === 1 ? '' : 's'}` : ''}` : p.heard ? '🔒 not yet' : 'He has not heard of it yet'}</small></span></summary><p>${p.heard ? esc(p.blurb) : 'There is more of the world than he knows. It opens up as he goes out, makes friends and gets what he needs.'}</p>${p.unlocked && p.things.length ? `<p class="wd-do">There he can: ${p.things.map(esc).join(', ')}.</p>` : ''}${!p.unlocked && p.heard && p.lock ? `<p class="wd-do">🔒 ${esc(p.lock)}</p>` : ''}</details>`).join('')}</div>`);
+  html.push(`<div class="st-card wd-plot"><span class="st-em">🌱</span><div><b>His plot</b> <small>a field of his own, across the street</small><p>${w.plot.length ? `${plural(w.plot.length, 'thing')} he made stand${w.plot.length === 1 ? 's' : ''} there: ${w.plot.slice(-6).map(esc).join(', ')}.` : 'Nothing stands there yet. What is too big for his room can go here.'}</p></div></div>`);
   // postcards of his outings, and what he brought home
   html.push('<h2>Postcards from his outings</h2>');
   if (w.cards.length) html.push(`<div class="wd-cards">${w.cards.map((c) => `<figure class="wd-card">${postcardSvg({ place: c.place, at: c.at, weather: c.weather, found: c.found })}<figcaption><b>${esc(c.title)}</b> <small>${esc(c.when)}</small><p>${esc(c.did)}</p>${c.found.length ? `<div class="st-tags">${c.found.map((f) => `<span class="st-tag coin">${f.emoji ?? '✨'} ${esc(f.name)}</span>`).join('')}</div>` : ''}</figcaption></figure>`).join('')}</div>`);

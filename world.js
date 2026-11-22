@@ -82,6 +82,7 @@ export function canGo(s, key, now = Date.now()) {
 export const thingsNow = (s, p, now = Date.now()) => [...(p.things ?? [])].sort((a, b) => Boolean(b.when) - Boolean(a.when)).filter((t) => (t.when === 'frozen' ? isFrozen(s.weather, now) : true) && (!t.needs || owns(s, GEAR[t.needs])) && !(isFrozen(s.weather, now) && p.key === 'pond' && t.key === 'find' && /snow/.test(String(s.weather?.kind ?? ''))));
 // The places he can go to now, the most inviting first: [{ key, name, words }].
 export function goOptions(s, now = Date.now()) {
+  if (process.env.PIP_NO_OUT) return []; // tests of other things keep him in
   const done = (key) => (s.outings ?? []).filter((o) => o.place === key).length;
   return PLACES.filter((p) => p.key !== 'home' && !p.errand && canGo(s, p.key, now).ok)
     .sort((a, b) => done(a.key) - done(b.key) || a.walk - b.walk)
@@ -117,6 +118,7 @@ export function gearWish(s, now = Date.now()) {
 // ---- Going out
 // details: { place, what } as the brain said it (or { place: 'shop', errand: 'clay' } for a quick errand). Returns { ok, ... } or { failed }.
 export function startOuting(s, details = {}, now = Date.now()) {
+  if (process.env.PIP_NO_OUT) return { failed: 'I stay in today' };
   const d = details && typeof details === 'object' ? details : {};
   const options = goOptions(s, now);
   let p = d.errand ? placeOf('shop') : findPlace(d.place) ?? findPlace(d.where) ?? findPlace(d.what) ?? findPlace(d.name);

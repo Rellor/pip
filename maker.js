@@ -46,7 +46,7 @@ export function applyMade(step, reply, limits = {}) {
   const d = reply && typeof reply === 'object' ? { ...reply } : {};
   if (limits.parts && Array.isArray(d.parts)) d.parts = d.parts.slice(0, limits.parts); // his skill sets how much he can do
   if (limits.bars && Array.isArray(d.tracks)) d.tracks = d.tracks.slice(0, 4);
-  return { ...step, details: { ...step.details, ...d, name: d.name ?? step.details?.name ?? step.details?.what }, make: false, made_by_maker: true };
+  return { ...step, brainWhere: step.details?.where ?? (/\b(outside|my plot)\b/i.test(String(step.details?.what ?? '')) ? 'outside' : null), details: { ...step.details, ...d, name: d.name ?? step.details?.name ?? step.details?.what }, make: false, made_by_maker: true };
 }
 
 // Songs only use what he has. An instrument he does not own becomes his voice (drums stay drums), and names are matched

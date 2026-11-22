@@ -1,6 +1,7 @@
 // Phase 8 end to end, with a local fake Gemini (no key, no real calls): the first lite model is out for the day,
 // the second answers. Pip must skip the first, count both, log the model and say it switched.
 // Run: node tests/quota.mjs
+import { weekOf } from '../letters.js';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { execFileSync } from 'node:child_process';
@@ -31,13 +32,14 @@ const server = http.createServer((req, res) => {
   });
 }).listen(0);
 await new Promise((r) => server.once('listening', r));
-const env = { ...process.env, GEMINI_API_KEY: 'test', GEMINI_API_BASE: `http://127.0.0.1:${server.address().port}`, GEMINI_LITE: 'lite-a,lite-b', GEMINI_BIG: 'big-a', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NIGHT: '0', PIP_NO_NEIGHBOURS: '1' };
+const env = { ...process.env, GEMINI_API_KEY: 'test', GEMINI_API_BASE: `http://127.0.0.1:${server.address().port}`, GEMINI_LITE: 'lite-a,lite-b', GEMINI_BIG: 'big-a', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_OUT: '1', PIP_NIGHT: '0', PIP_NO_NEIGHBOURS: '1' };
 delete env.PIP_FAKE;
 const state = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
 state.inbox = (state.inbox ?? []).map((m) => ({ ...m, read: true })); // nobody wrote: a normal (lite) brain call
 state.changes = [...new Set([...(state.changes ?? []), '2026-11-15 greenhouse by the window, instruments by asking', '2026-11-15 old clothes put away', '2026-11-15 forget what was removed', '2026-11-15 fresh start'])]; // no one-time changes in this test
 state.plan = { ...(state.plan ?? {}), queue: [], decidedAt: null }; // the brain decides now
 state.intent = { day: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }), items: [] }; // goals already set today
+state.letterWeek = weekOf(); // (on a Sunday evening he would write his weekly letter with the big model: not what is counted here)
 fs.writeFileSync(path.join(work, 'web/state.json'), JSON.stringify(state));
 const run = () => new Promise((resolve, reject) => {
   import('node:child_process').then(({ execFile }) => execFile('node', ['pip.js'], { cwd: work, env, timeout: 120_000 }, (e, out, err) => (e ? reject(new Error(`${e.message}\n${out}\n${err}`)) : resolve(out))));

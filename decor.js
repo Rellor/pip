@@ -5,6 +5,7 @@ import { toolKind } from './tools.js';
 import { behaviorProblem } from './behaviors.js';
 import { settle } from './build.js';
 import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pivotOf, frontWorld, ownSides, SIDE_VECTORS, sideOfVector } from './web/furniture.js';
+import { TOWN_X, PLOT } from './web/town.js';
 
 // Pip's decorations.
 // He designs objects from a few simple shapes. His design is plain data, never code, and everything is checked and
@@ -17,6 +18,7 @@ const LIMITS = {
   floor: { w: 4.8, h: 3.2, d: 3.0 }, // a long table for many of him fits
   surface: { w: 1.0, h: 0.9, d: 1.0 }, // on top of furniture
   wall: { w: 2.0, h: 1.6, d: 0.4 }, // flat things on a wall
+  outside: { w: 6, h: 5, d: 6 }, // on his plot across the street: room for big things
 };
 // What kind of thing it is, from its name: "cozy brass reading lamp" is a lamp, "tiny wooden stand for my bird" a stand.
 const KIND_SYNONYM = { light: 'lamp', lantern: 'lamp', candle: 'lamp', sconce: 'lamp', shelves: 'shelf', bookshelf: 'shelf', pedestal: 'stand', riser: 'stand', perch: 'stand' };
@@ -35,6 +37,12 @@ const STORAGE_WORDS = /shelf|shelves|closet|cabinet|wardrobe|drawer|dresser|rack
 export function capOf(decor) {
   return Math.min(60, MAX_DECOR + 6 * decor.filter((d) => !d.image && !d.art && STORAGE_WORDS.test(d.name)).length);
 }
+// ---- His plot outside (web/town.js): a field across the street for things that are too big or too many for his room.
+export const MAX_OUTSIDE = 24;
+const OUTSIDE_WORDS = /\b(outside|outdoors?|my plot|my land|my field|on the plot|across the street|in the street|my yard|the meadow)\b/i;
+export const isOutside = (where) => OUTSIDE_WORDS.test(String(where ?? ''));
+export const outsideThings = (decor) => decor.filter((d) => d.kind === 'outside');
+const roomCount = (decor) => decor.filter((d) => d.kind !== 'outside').length; // what stands on his plot does not fill his room
 const FULL = 'his room is full. He can put things in his chest, build storage (a shelf or a closet makes room for more), or ask for more space';
 
 // Spots: [x, y, z] in the room. For wall spots y is the height of the middle of the object.
@@ -47,6 +55,7 @@ export const ZONES = {
   floor_right: { label: 'on the floor on the right side of the room', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: -Math.PI / 2, off: [-1.2, 0], slots: [[4.4, 0, -1.6], [4.4, 0, -0.2]] },
   floor: { label: 'on the floor', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [], free: true }, // anywhere on the floor that has room
   surface: { label: 'on furniture', kind: 'surface', rotY: 0, off: [0, 1.1], slots: [], free: true },
+  outside: { label: 'outside on my plot', kind: 'outside', lim: {}, rotY: Math.PI, off: [0, -1.5], slots: [], free: true },
   wall_free: { label: 'on a wall', kind: 'wall', rotY: 0, side: null, slots: [], free: true },
   on_piano: { label: 'on top of the piano', kind: 'surface', lim: { w: 1.1, d: 0.8 }, rotY: 0, off: [0, 1.5], slots: [[-3.4, 1.4, -4.5], [-1.9, 1.4, -4.5]] },
   on_bookshelf: { label: 'on top of the bookshelf', kind: 'surface', lim: { w: 1.0, d: 0.55 }, rotY: 0, off: [0, 1.4], slots: [[2.0, 3.0, -4.65], [3.2, 3.0, -4.65]] },
@@ -151,7 +160,7 @@ function findZone(where) {
 // Puts a finished design into the room: his spot first, then another of the same kind, then anywhere with room.
 // `spec` is { name, why, project, where, parts } with clean parts. Does not change `decor`.
 function placeParts(decor, spec, atMs, now) {
-  if (decor.length >= capOf(decor)) return { failed: FULL };
+  if (!isOutside(spec.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside on his plot (where: "outside")` };
   const parts = spec.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] })); // fit() moves things, so work on a copy
   const want = findZone(spec.where);
   const dest = placeWhere(decor, spec, parts, want, atMs, now);
@@ -164,7 +173,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   const name = str(d.name, 60);
   if (!name) return { failed: 'he did not give it a name' };
   if (decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
-  if (decor.length >= capOf(decor)) return { failed: FULL };
+  if (!isOutside(d.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside on his plot (where: "outside")` };
   const kind = kindWord(name);
   const same = kind ? decor.filter((x) => !x.image && !x.art && kindWord(x.name) === kind) : [];
   if (same.length >= (kind === 'lamp' ? MAX_LAMPS : MAX_SAME)) return { failed: `I already have ${same.length} ${kind === 'lamp' ? 'lamps' : `things that are a ${kind}`} (${same.slice(0, 4).map((x) => x.name).join(', ')}). That is enough of those: I improve one of them (change_thing), move one where it is needed, or put one in my chest first`, hinted: true };
@@ -252,7 +261,7 @@ export const ART_MAX = { wall: [1.5, 1.2], surface: [0.5, 0.4] }; // Pip's own d
 export function placePicture(decor, pic, where, atMs, now = Date.now(), max = PICTURE_MAX, spot = null) {
   if (!pic || !pic.image) return { failed: 'he does not have that picture' };
   if (decor.some((x) => x.picture === pic.id)) return { failed: 'that picture is already up' };
-  if (decor.length >= capOf(decor)) return { failed: FULL };
+  if (roomCount(decor) >= capOf(decor)) return { failed: FULL };
   const usable = Object.keys(ZONES).filter((k) => !ZONES[k].prints && (ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface'));
   const want = findZone(where);
   const cap0 = str(pic.caption, 60);
@@ -321,7 +330,7 @@ export function printPhoto(decor, pic, where, atMs, now = Date.now()) {
   if (!pic || !pic.image) return { failed: 'I do not have that picture' };
   const key = `print:${pic.id}`;
   if (decor.some((x) => x.picture === key)) return { failed: 'I already printed that one and it is still up' };
-  if (decor.length >= capOf(decor)) return { failed: FULL };
+  if (roomCount(decor) >= capOf(decor)) return { failed: FULL };
   const usable = Object.keys(ZONES).filter((k) => ZONES[k].kind === 'wall' || ZONES[k].kind === 'surface');
   const want = findZone(where);
   // By default a print goes on the photo wall. A spot he names comes first; when the wall is full and he named nothing, he takes one down first.
@@ -688,7 +697,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   if (!e && furnitureKey(n) && turnRad(d.turn) !== null) return { failed: 'furniture stands square to the walls: only things he made on the floor can be turned' };
   if (!e && furnitureKey(n)) return moveFurniture(decor, furnNow, furnitureKey(n), d, atMs, now);
   if (!e) return { failed: 'there is nothing with that name in his room' };
-  if (want && ZONES[want].kind !== e.kind) return { failed: `it cannot go there: it is a ${e.kind} thing` };
+  if (want && want !== 'outside' && e.kind !== 'outside' && ZONES[want].kind !== e.kind) return { failed: `it cannot go there: it is a ${e.kind} thing` }; // (out to his plot and back in is handled below)
   const keep = (r) => {
     Object.assign(e, { ...r.entry, id: e.id, createdAt: e.createdAt, at: e.at, uses: e.uses, song: e.song, tool: e.tool, project: e.project, why: e.why });
     e.movedAt = at;
@@ -729,6 +738,18 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
       o.updatedAt = e.updatedAt;
     }
     return out;
+  }
+  if (isOutside(d.where) && !d.on) { // out to his plot across the street
+    if (e.kind === 'wall' || e.cover) return { failed: `${e.name} belongs inside. Only things that stand by themselves can go out to the plot` };
+    if (decor.some((o) => o.base === e.id || String(o.base ?? '').startsWith(`${e.id}#`))) return { failed: 'things stand on it. He takes them off first' };
+    const r = placeOutside(decor.filter((o) => o !== e), e, copy(), atMs, now, true);
+    if (r.failed) return r;
+    delete e.base;
+    return keep(r);
+  }
+  if (e.kind === 'outside') { // back into his room (or to a spot he names)
+    const r = d.on ? placeOn(decor.filter((o) => o !== e), e, copy(), findBase(decor, d.on, d) ?? baseByKey(decor, 'desk'), null, atMs, now, true) : placeFloor(decor.filter((o) => o !== e), { ...e, zone: 'floor', kind: 'floor' }, copy(), hasXZ ? { x: Number(d.x), z: Number(d.z) } : null, hasXZ ? [Number(d.x), Number(d.z)] : [0, 3.6], atMs, now, true);
+    return r.failed ? r : keep(r);
   }
   if (e.cover || (d.on && coverKind(e))) { // cloth is spread over the bed or a table: it has no spot of its own
     const host = d.on ? coverHost(decor, { ...e, on: d.on, where: undefined }) : null;
@@ -1814,7 +1835,31 @@ function placeCeiling(decor, spec, parts, atMs, now) {
     },
   };
 }
+// A place on his plot: the front row first (by the street, across from his door), then further back. Things stand apart.
+function placeOutside(decor, spec, parts, atMs, now, moving = false) {
+  const mine = outsideThings(decor);
+  if (mine.length >= MAX_OUTSIDE) return { failed: `my plot is full (${mine.length} things). I take one back inside or put one in my chest first`, hinted: true };
+  const scale = fit(parts, 'outside', {});
+  const [hw, hd] = halfFoot(parts, scale);
+  const others = mine.filter((o) => o.pos).map((o) => rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY));
+  const spots = [];
+  for (let x = PLOT.x0 + hw + 0.6; x <= PLOT.x1 - hw - 0.6; x += 1) for (let z = PLOT.z0 + hd + 0.8; z <= PLOT.z1 - hd - 0.6; z += 1) spots.push([x, z, (z - PLOT.z0) * 1.6 + Math.abs(x - 1) * 0.35]);
+  spots.sort((a, b) => a[2] - b[2]);
+  const free = spots.find(([x, z]) => { const r = { x0: TOWN_X + x - hw, x1: TOWN_X + x + hw, z0: z - hd, z1: z + hd }; return !others.some((o) => r.x0 < o.x1 + 0.6 && r.x1 + 0.6 > o.x0 && r.z0 < o.z1 + 0.6 && r.z1 + 0.6 > o.z0); });
+  if (!free) return { failed: `there is no room left on my plot for something about ${r3(hw * 2)} x ${r3(hd * 2)} m. I make it smaller, or take something off the plot first`, hinted: true };
+  const [x, z] = free;
+  return {
+    entry: {
+      id: `d${now.toString(36)}${decor.length}${rid()}`, name: spec.name, why: spec.why, project: spec.project, song: spec.song ?? null,
+      uses: moving ? spec.uses : storedUses(spec.uses), tool: spec.tool ?? null, zone: 'outside', slot: null, free: true, kind: 'outside',
+      label: 'outside on my plot, across the street from my door', pos: [r3(TOWN_X + x), 0, r3(z)], rotY: Math.PI, scale, parts,
+      stand: [0.3, -3.9], // he looks at it from his window
+      at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString(),
+    },
+  };
+}
 function placeWhereRaw(decor, spec, parts, want, atMs, now) {
+  if (isOutside(spec.where) || want === 'outside') return placeOutside(decor, spec, parts, atMs, now);
   if (spec.ceiling === true || /\b(ceiling|roof)\b/i.test(String(spec.where ?? ''))) return placeCeiling(decor, spec, parts, atMs, now);
   const cloth = !want || ZONES[want]?.kind === 'surface' ? coverHost(decor, spec) : null; // a blanket is spread over the bed, a tablecloth over a table: fitted to it
   if (cloth) return placeCover(decor, spec, parts, cloth, atMs, now);
