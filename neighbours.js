@@ -3,13 +3,16 @@
 // comment on what he made, ask him for something, or tell him about something they love, so ideas come to him that
 // are neither Bas's nor his own. One light model call a day writes the day's notes; they arrive spread over the day.
 // They are characters of his world, and the page says so.
-export const NEIGHBOURS = [
-  { name: 'Mo', who: 'a retired train driver next door', likes: ['trains', 'maps', 'old machines', 'tea'], voice: 'warm, slow, tells little stories', fan: /\b(train|locomotive|rail|station|map|engine|machine|teapot|tea)\b/i },
-  { name: 'Lina', who: 'a teenager across the street who makes music', likes: ['synthesizers', 'electronic music', 'video games', 'neon colours'], voice: 'quick, excited, lots of ideas', fan: /\b(synth|synthesizer|keyboard|guitar|music|robot|neon|game|headphones|radio)\b/i },
-  { name: 'Oma Jo', who: 'a grandmother with a big garden', likes: ['vegetables', 'flowers', 'knitting', 'baking bread'], voice: 'kind, practical, gives tips', fan: /\b(flower|rose|tulip|sunflower|vegetable|carrot|tomato|garden|bread|loaf|yarn|wool|basil|herb|apple|pear)\b/i },
-  { name: 'Dot', who: 'a seven-year-old girl two doors down', likes: ['cats', 'drawing', 'dinosaurs', 'stars'], voice: 'short sentences, asks lots of questions', fan: /\b(cat|kitten|dinosaur|star|moon|rocket|dog|rabbit|owl|bird|fish)\b/i },
-  { name: 'Kees', who: 'a puzzle maker who lives above the bakery', likes: ['puzzles', 'clocks', 'woodwork', 'riddles'], voice: 'dry humour, curious how things work', fan: /\b(puzzle|clock|gear|key|lock|maze|knot|hammer|saw|chess|dice)\b/i },
-];
+import { PEOPLE, warmthWord as warmthWordOf } from './web/street.js';
+// Who they are is shared with the page (web/street.js). How each one writes, and what each is a fan of, only the game needs.
+const MORE = {
+  Mo: { voice: 'warm, slow, tells little stories', fan: /\b(train|locomotive|rail|station|map|engine|machine|teapot|tea)\b/i },
+  Lina: { voice: 'quick, excited, lots of ideas', fan: /\b(synth|synthesizer|keyboard|guitar|music|robot|neon|game|headphones|radio)\b/i },
+  'Oma Jo': { voice: 'kind, practical, gives tips', fan: /\b(flower|rose|tulip|sunflower|vegetable|carrot|tomato|garden|bread|loaf|yarn|wool|basil|herb|apple|pear)\b/i },
+  Dot: { voice: 'short sentences, asks lots of questions', fan: /\b(cat|kitten|dinosaur|star|moon|rocket|dog|rabbit|owl|bird|fish)\b/i },
+  Kees: { voice: 'dry humour, curious how things work', fan: /\b(puzzle|clock|gear|key|lock|maze|knot|hammer|saw|chess|dice)\b/i },
+};
+export const NEIGHBOURS = PEOPLE.map((p) => ({ name: p.name, who: p.who, likes: p.likes, ...MORE[p.name] }));
 export const NOTES_PER_DAY = 4;
 const KINDS = ['comment', 'ask', 'share', 'hello'];
 const clip = (t, n) => String(t ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
@@ -111,7 +114,7 @@ const WISH_DAYS = 6;
 const DAY_MS = 86_400_000;
 const person = (s, name) => { s.street ??= {}; s.street.people ??= {}; return (s.street.people[name] ??= { warmth: 0 }); };
 export function warm(s, name, by) { const p = person(s, name); p.warmth = Math.round(Math.max(0, Math.min(10, (p.warmth ?? 0) + by)) * 10) / 10; return p; }
-export const warmthWord = (w) => (w >= 8 ? 'a close friend' : w >= 5 ? 'a friend' : w >= 2 ? 'friendly' : 'a new neighbour');
+export const warmthWord = warmthWordOf;
 const rewardFor = (text) => (/\b(game|program|app|simulat)/i.test(text) ? 5 : /\b(song|tune|melody|music)\b/i.test(text) ? 3 : /\b(draw|drawing|picture|sketch|paint)/i.test(text) ? 2 : 3);
 const mediumOf = (text) => (/\b(game|program|app|simulat)/i.test(text) ? ['make_app', 'update_app'] : /\b(song|tune|melody)\b/i.test(text) ? ['record_song'] : /\b(draw|drawing|picture|sketch|paint)/i.test(text) ? ['draw'] : /\b(cook|bake|soup|bread|cake|dish)\b/i.test(text) ? ['cook'] : ['decorate', 'draw', 'make_clothes', 'make_app', 'update_app', 'change_thing', 'record_song', 'cook']);
 const WISH_STOP = new Set('the a an of at in on my for and with from little small tiny big new nice drawing picture sketch game song thing something one some your you me could can please would'.split(' '));

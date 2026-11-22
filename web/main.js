@@ -9,6 +9,7 @@ import { isGreenhouse, plantState, slotSpot } from './gardening.js';
 import { lampsOf, lampName, lampNow, PRESETS, LEVELS, timerWords, applyLight, fixedLamp } from './lights.js';
 import { buildHouse, LEFT_WINDOW, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects, isGone } from './furniture.js';
+import { streetData, renderStreet } from './streetview.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -3330,7 +3331,7 @@ async function refreshNtfy() {
 }
 
 // tabs
-const TABS = ['day', 'life', 'asks', 'messages'];
+const TABS = ['day', 'life', 'street', 'asks', 'messages'];
 // Tabs that were folded into another one: Mind and the pictures live under Pip, Tasks under Asks, Visitors under Talk.
 const OLD_TABS = { mind: 'life', tasks: 'asks', photos: 'life', found: 'life', visitors: 'messages', talk: 'messages', pip: 'life' };
 const tabName = (n) => OLD_TABS[n] || n;
@@ -3345,6 +3346,7 @@ function showTab(name) {
   document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
   document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
   if (name === 'life') openLife(null);
+  if (name === 'street' && lastState) { streetSig = null; drawStreet(lastState); } // drawn fresh when it is opened (the picture needs to know how wide the panel is)
   if (name === 'day') loadOlder();
   if (name === 'messages') refreshNtfy(); // look for things typed in the ntfy app as soon as the chat is opened
   if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
@@ -3980,8 +3982,20 @@ function renderStatus(s) {
     ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
     : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
 }
+// The Street tab (streetview.js): drawn again only when something in it changed, so it does not jump while someone reads.
+let streetSig = null;
+function drawStreet(s) {
+  const d = streetData(s);
+  $('streetcount').textContent = d.count ? String(d.count) : '';
+  const sig = JSON.stringify({ ...d, cap: null, scene: { ...d.scene, now: Math.floor(d.scene.now / 1_800_000) } });
+  if (sig === streetSig) { const c = $('street').querySelector('.st-cap'); if (c) c.textContent = d.cap; return; }
+  if (tab !== 'street') return; // it is drawn when the tab is opened
+  streetSig = sig;
+  renderStreet($('street'), s);
+}
 function render(s) {
   renderPhone(s);
+  drawStreet(s);
   syncFixedLamps(s);
   $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);

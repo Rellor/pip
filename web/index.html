@@ -97,7 +97,7 @@
   button:disabled { opacity:.6; cursor:default; }
 
   #tabs { display:flex; gap:2px; padding:10px 8px 0; border-bottom:1px solid var(--line); overflow-x:auto; }
-  .tab { position:relative; background:none; border:0; border-bottom:3px solid transparent; border-radius:0; padding:8px 12px; color:var(--muted); font-size:16px; white-space:nowrap; }
+  .tab { position:relative; background:none; border:0; border-bottom:3px solid transparent; border-radius:0; padding:8px 9px; color:var(--muted); font-size:16px; white-space:nowrap; }
   .tab[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--accent); font-weight:600; }
   .count { margin-left:6px; background:var(--accent); color:#fff; border-radius:999px; font-size:12px; padding:0 7px; }
   .count:empty { display:none; }
@@ -105,8 +105,8 @@
   .dot.on { display:block; }
 
   @media (max-width:600px) {
-    #tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:0; padding:6px 6px 0; overflow:visible; }
-    .tab { padding:9px 2px; font-size:14.5px; text-align:center; border-bottom-width:3px; }
+    #tabs { display:grid; grid-template-columns:repeat(5,auto); justify-content:space-between; gap:0; padding:6px 4px 0; overflow:visible; }
+    .tab { padding:9px 3px; font-size:13.5px; text-align:center; border-bottom-width:3px; }
     .count { margin-left:3px; padding:0 5px; font-size:11px; }
     .dot { right:6px; }
   }
@@ -326,6 +326,80 @@
   .reflect { border-left:3px solid var(--accent); padding-left:12px; }
   .ask { border-left:3px solid var(--accent); padding-left:10px; }
   .mine { border-left:3px solid var(--line); padding-left:10px; }
+  /* ---- The Street tab: his street as a picture, the neighbours, wishes, coins and the shop */
+  #panel, .pane { min-width:0; } /* a wide picture inside (the street) scrolls by itself and never widens the panel */
+  #street { min-width:0; max-width:100%; overflow:hidden; }
+  .st-scene { max-width:100%; overflow-x:auto; overflow-y:hidden; border-radius:16px; border:1px solid var(--line); scrollbar-width:none; -webkit-overflow-scrolling:touch; background:var(--card); }
+  .st-scene::-webkit-scrollbar { display:none; }
+  .st-scene svg { display:block; height:240px; width:720px; max-width:none; }
+  .st-scene .sthouse { cursor:pointer; }
+  .st-scene .sthouse:hover { filter:brightness(1.06); }
+  .st-cap { margin:6px 2px 14px; font-size:13px; color:var(--muted); text-align:center; }
+  .st-faces { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:4px; margin:0 0 12px; }
+  .st-faces button { background:none; border:0; padding:4px 0; border-radius:12px; color:var(--ink); font:inherit; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; min-width:0; }
+  .st-faces button:hover { background:var(--chip); }
+  .st-faces svg { border-radius:50%; box-shadow:0 0 0 2.5px var(--who); display:block; }
+  .st-faces b { font-size:13px; font-weight:600; white-space:nowrap; }
+  .st-faces .st-hearts i { font-size:11px; margin-right:0; }
+  .st-faces .st-new { position:relative; }
+  .st-faces .st-new::after { content:''; position:absolute; right:-2px; top:-2px; width:11px; height:11px; border-radius:50%; background:var(--accent); border:2px solid var(--panel); }
+  .st-card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px; }
+  .st-coins { display:flex; align-items:center; gap:12px; }
+  .st-coin { font-size:34px; line-height:1; }
+  .st-coins b { font-size:30px; line-height:1; display:block; }
+  .st-coins small { color:var(--muted); font-size:13px; }
+  .st-pill { margin-left:auto; border-radius:999px; padding:3px 11px; font-size:13px; font-weight:700; color:#fff; white-space:nowrap; }
+  .st-pill.open { background:#3f9a5a; } .st-pill.closed { background:#9a8c82; }
+  .st-sub { margin-top:10px; font-size:13px; color:var(--muted); }
+  .st-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .st-chip { background:var(--chip); border-radius:999px; padding:2px 10px; font-size:14px; white-space:nowrap; }
+  .st-chip b { color:var(--accent); margin-left:2px; }
+  .st-bar { height:9px; border-radius:6px; background:var(--chip); overflow:hidden; margin-top:6px; }
+  .st-bar span { display:block; height:100%; border-radius:6px; background:linear-gradient(90deg,#f2c14e,#e9855b); }
+  .st-how { margin:10px 0 0; font-size:13px; color:var(--muted); }
+  .st-wish { display:flex; gap:12px; cursor:pointer; border-left:5px solid #f2c14e; }
+  .st-face { flex:none; position:relative; line-height:0; }
+  .st-face svg { border-radius:50%; display:block; }
+  .st-face.big svg { box-shadow:0 0 0 3px var(--who, var(--line)); }
+  .st-zz { position:absolute; right:-6px; bottom:-4px; font-size:16px; line-height:1; }
+  .st-body { min-width:0; }
+  .st-body p { margin:4px 0 8px; font-size:15px; font-style:italic; }
+  .st-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .st-tag { border:1px solid var(--line); border-radius:999px; padding:1px 9px; font-size:13px; color:var(--muted); white-space:nowrap; }
+  .st-tag.coin { background:#fbe9b8; border-color:#f2c14e; color:#6b4a12; font-weight:700; }
+  .st-tag.yes { background:#dff1e2; border-color:#8fc79b; color:#2c6b3c; font-weight:600; }
+  .st-kept { margin:-2px 0 6px; font-size:14px; }
+  .st-kept summary { cursor:pointer; color:var(--muted); font-weight:600; padding:4px 2px; }
+  .st-keptrow { display:flex; align-items:center; gap:8px; padding:5px 2px; }
+  .st-keptrow svg { border-radius:50%; display:block; }
+  .st-keptrow small { color:var(--muted); display:block; }
+  .st-person { border-left:5px solid var(--who); transition:box-shadow .3s; }
+  .st-person.flash { box-shadow:0 0 0 3px var(--who); }
+  .st-top { display:flex; gap:13px; align-items:center; }
+  .st-name { font-size:19px; font-weight:700; line-height:1.2; }
+  .st-who { font-size:14px; color:var(--muted); }
+  .st-fr { display:flex; align-items:center; gap:8px; margin-top:3px; font-size:14px; font-weight:600; }
+  .st-hearts i { font-style:normal; color:var(--line); font-size:17px; margin-right:1px; }
+  .st-hearts i.on { color:#e5534b; }
+  .st-chips.likes { margin-top:10px; }
+  .st-chips.likes .st-chip { font-size:13px; }
+  .st-today { margin-top:10px; padding:8px 10px; border-radius:10px; background:var(--bg); font-size:14px; }
+  .st-talk { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
+  .st-say { max-width:92%; background:var(--bg); border-radius:14px 14px 14px 4px; padding:8px 11px; font-size:15px; }
+  .st-say b { display:block; font-size:12px; color:var(--muted); font-weight:600; margin-bottom:1px; }
+  .st-say.pip { align-self:flex-end; background:#fde3c4; color:#3b2f2a; border-radius:14px 14px 4px 14px; }
+  .st-say.pip b { color:#8a5a2c; }
+  .st-wait, .st-none { font-size:13px; color:var(--muted); margin:2px 2px 0; }
+  .st-foot { display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:10px; font-size:13px; color:var(--muted); }
+  .st-fine { font-size:13px; margin:2px 2px 0; }
+  .st-row { display:flex; gap:10px; align-items:flex-start; padding:6px 0; }
+  .st-row + .st-row { border-top:1px solid var(--line); }
+  .st-row small, .st-log small { color:var(--muted); }
+  .st-em { flex:none; width:30px; font-size:22px; line-height:1.2; text-align:center; }
+  .st-log { list-style:none; margin:0; padding:0; }
+  .st-log li { display:flex; gap:10px; padding:8px 4px; border-bottom:1px solid var(--line); font-size:15px; }
+  .st-log li.big { background:var(--card); border:1px solid #f2c14e; border-radius:12px; padding:9px 10px; margin:6px 0; }
+  .st-log small { display:block; font-size:12px; }
   .chips { display:flex; flex-wrap:wrap; gap:6px; }
   .chip { background:var(--chip); border-radius:999px; padding:2px 10px; font-size:14px; }
   .story { white-space:pre-wrap; }
@@ -388,6 +462,7 @@
     <nav id="tabs" role="tablist">
       <button class="tab" role="tab" data-tab="day">📖 Day</button>
       <button class="tab" role="tab" data-tab="life">🐣 Pip</button>
+      <button class="tab" role="tab" data-tab="street">🏘️ Street<span class="count" id="streetcount"></span></button>
       <button class="tab" role="tab" data-tab="asks">🙏 Asks<span class="count" id="askcount"></span></button>
       <button class="tab" role="tab" data-tab="messages">💬 Talk<span class="dot" id="msgdot"></span></button>
     </nav>
@@ -401,6 +476,10 @@
       <div id="olderlist"></div>
     </section>
 
+
+    <section class="pane" data-pane="street" hidden>
+      <div id="street"></div>
+    </section>
 
     <section class="pane" data-pane="asks" hidden>
       <h2>Pip would like from you</h2>
