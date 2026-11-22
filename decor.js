@@ -422,7 +422,23 @@ export function reseat(decor, e, levelsBefore = null, now = Date.now()) {
       done = true;
       break;
     }
-    if (!done) out.fell.push(o.name);
+    if (!done) { // it does not fit on it any more: another top with room takes it, or the floor close by (never left floating)
+      const parts = o.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...(p.rot ?? [0, 0, 0])] }));
+      let r = null;
+      for (const b of supportsInfo(decor).filter((x) => !x.full && !x.high && x.room > 0 && !String(x.key).startsWith(e.id) && !/^piano$/.test(x.label))) {
+        const base = baseByKey(decor, b.key);
+        r = base ? placeOn(decor.filter((x) => x !== o), { ...o, noAlt: true }, parts, base, null, now, now, true) : null;
+        if (r && !r.failed) break;
+        r = null;
+      }
+      if (!r) r = placeFloor(decor.filter((x) => x !== o), { ...o }, parts, null, [e.pos[0] + 0.8, e.pos[2] + 0.8], now, now, true);
+      if (r && !r.failed) {
+        const n = r.entry;
+        Object.assign(o, { pos: n.pos, base: n.base ?? undefined, kind: n.kind, zone: n.zone, label: n.label, scale: n.scale, rotY: n.rotY, stand: n.stand, updatedAt: e.updatedAt ?? new Date(now).toISOString() });
+        out.moved.push(o.name);
+        (out.away ??= []).push(`${o.name} (now ${n.label.replace(/ \(.*\)$/, '')})`);
+      } else out.fell.push(o.name);
+    }
   }
   return out;
 }
@@ -524,6 +540,28 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   if (d.wall && !sideOf(d.wall) && decor.some((x) => !x.image && x.name.toLowerCase() === String(d.wall).toLowerCase().trim())) d = { ...d, on: d.wall, wall: undefined }; // "wall: my shelf" means on the shelf
   const n = str(d.name, 60).toLowerCase();
   if (!n) return { failed: 'he did not say what to move' };
+  { // a wall thing moved "near the desk" (or next to something, or to an x and z): it hangs on the wall closest to that place
+    const w0 = decor.find((x) => x.kind === 'wall' && x.name.toLowerCase() === n) ?? decor.find((x) => x.kind === 'wall' && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
+    const word = String((!sideOf(d.wall) && d.wall) || d.next_to || (ZONES[findZone(d.where)]?.kind !== 'wall' && d.where) || '').toLowerCase().replace(/^(near|next to|by|beside|above|over|close to)\s+/, '').replace(/^(the|my)\s+/, '').trim();
+    const xz = Number.isFinite(Number(d.x)) && Number.isFinite(Number(d.z)) && d.x !== '' && d.z !== '' && d.x !== null && d.z !== null ? [Number(d.x), Number(d.z)] : null;
+    if (w0 && !d.on && (word || (xz && !sideOf(d.wall)))) {
+      const key = word ? furnitureKey(word) : null;
+      const thing = word && !key ? decor.find((x) => x !== w0 && !x.image && x.pos && (x.name.toLowerCase() === word || x.name.toLowerCase().includes(word))) : null;
+      const r0 = key ? furnRects(furnNow, key)[0] : null;
+      const at = r0 ? [(r0.x0 + r0.x1) / 2, (r0.z0 + r0.z1) / 2] : thing ? [thing.pos[0], thing.pos[2]] : xz;
+      if (at) { // he can hang things on the left and the back wall: the closer one first, then the other
+        const tries = [['left', at[1], Math.abs(at[0] + 5)], ['back', at[0], Math.abs(at[1] + 5)]].sort((a, b) => a[2] - b[2]);
+        let r = null;
+        for (const [side, along] of tries) {
+          for (const height of [num2(d.height) ?? w0.pos[1], 1.6, 1.3, 2.2]) { // its height first, then other heights he can reach
+            r = moveThingRaw(decor, chest, { ...d, wall: side, along: r3(Math.min(4.4, Math.max(-4.4, along))), height, next_to: undefined, where: undefined, x: undefined, z: undefined }, atMs, now);
+            if (!r.failed) return { ...r, warn: [r.warn, side !== tries[0][0] ? `the ${tries[0][0]} wall there was full, so it hangs on the ${side} wall near it` : null].filter(Boolean).join('; ') || undefined };
+          }
+        }
+        return r;
+      }
+    }
+  }
   if (d.ceiling === true || /\b(ceiling|roof)\b/i.test(String(d.where ?? ''))) { // up to the ceiling (a lamp that should hang)
     const e = decor.find((x) => !x.image && x.name.toLowerCase() === n) ?? decor.find((x) => !x.image && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
     if (!e) return { failed: 'there is nothing with that name in his room' };
@@ -623,11 +661,12 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   }
   if (e.kind === 'wall' && (d.wall || num2(d.along) !== null || num2(d.height) !== null)) {
     const carried = decor.filter((o) => String(o.base ?? '').startsWith(`${e.id}#`));
-    if (carried.length && sideOf(d.wall) && sideOf(d.wall) !== (e.side ?? ZONES[e.zone]?.side)) return { failed: 'things stand on it. He takes them off before he puts it on the other wall' };
+    const otherWall = carried.length && sideOf(d.wall) && sideOf(d.wall) !== (e.side ?? ZONES[e.zone]?.side); // what stands on it is put back on its boards afterwards (reseat)
     const was = [...e.pos];
     const r = placeWall(decor.filter((o) => o !== e && !carried.includes(o)), e, copy(), sideOf(d.wall) ?? e.side ?? ZONES[e.zone]?.side ?? 'back', [num2(d.along) ?? (e.side === 'left' ? e.pos[2] : e.pos[0]), num2(d.height) ?? e.pos[1]], atMs, now, true);
     if (r.failed) return r;
     const out = keep(r);
+    if (otherWall) { const seat = reseat(decor, e, levelCountOf(e), now); if (seat.away?.length) out.warn = [out.warn, `not everything fitted on it there: ${seat.away.join(', ')}`].filter(Boolean).join('; '); return out; }
     for (const o of carried) { // what stands on the shelf goes along
       o.pos = [r3(o.pos[0] + e.pos[0] - was[0]), r3(o.pos[1] + e.pos[1] - was[1]), r3(o.pos[2] + e.pos[2] - was[2])];
       o.stand = e.stand;

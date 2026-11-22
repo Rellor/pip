@@ -83,3 +83,13 @@ console.log('ok  he may put it in the middle himself, and then he notices it is 
   assert.ok(Math.max(...box(sizeWords([{ shape: 'box', size: [0.44, 0.05, 0.44], pos: [0, 0.1, 0] }], 'tiny wooden stand')).size) <= 0.25 + 1e-9);
   console.log('ok  a "tiny" thing is tiny');
 }
+{
+  const { moveThing } = await import('../decor.js');
+  const d = [];
+  const shelf = makeDecor(d, { name: 'wall shelf', wall: 'left', along: -3, height: 1.6, parts: [{ shape: 'box', size: [0.6, 0.03, 0.2], pos: [0, 0, 0.1] }, { shape: 'box', size: [0.6, 0.03, 0.2], pos: [0, 0.3, 0.1] }], why: 'to put things on' }, Date.now()).entry;
+  d.push(shelf);
+  const r = moveThing(d, null, { name: 'wall shelf', wall: 'near desk' }, Date.now());
+  assert.ok(!r.failed, r.failed);
+  assert.ok(Math.abs(shelf.pos[2] - 1.2) < 1.5 || Math.abs(shelf.pos[0] + 4.3) < 1.5, `near the desk: ${r.label}`);
+  console.log('ok  a wall shelf moved "near the desk" hangs on the wall close to the desk');
+}
