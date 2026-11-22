@@ -159,6 +159,7 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
     try { ok = Boolean(m.when(s, now)) && m.name !== restingMove(s, now) && !(tired && kindOf(m.name) === tired && !['do', 'tell', 'ask_for'].includes(m.name)); } catch { ok = false; } // a move he looped on rests for a while (loops.js)
     if (!ok) continue;
     let score = m.score(s, now);
+    if (process.env.PIP_FAKE_MOVE === m.name) score = 99; // tests: the move a test wants is always among the offered ones
     score *= 0.5 ** recent.filter((x) => x === m.name).length;
     if ((s.today?.done?.[m.name] ?? 0) >= 4 && !['eat', 'rest', 'water', 'harvest'].includes(m.name)) score *= 0.2;
     score *= 0.8 ** recentKinds.filter((k) => k === kindOf(m.name)).length;

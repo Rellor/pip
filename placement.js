@@ -120,7 +120,7 @@ export function misplaced(s, e) {
   const kind = e.kind ?? (/^on_|surface/.test(e.zone ?? '') ? 'surface' : /^wall/.test(e.zone ?? '') ? 'wall' : /^floor/.test(e.zone ?? '') ? 'floor' : e.zone);
   const sameKind = kind === rp.kind || (rp.kind === 'surface' && kind === 'wall' && /shelf/i.test(String(e.base ?? '') + e.label)) || (rp.kind === 'floor' && kind === 'floor');
   const at = nearestNeed(s, rp, [e.pos[0], e.pos[2]]);
-  const far = at && Math.hypot(at.x - e.pos[0], at.z - e.pos[2]) > 3;
+  const far = kind !== 'wall' && at && Math.hypot(at.x - e.pos[0], at.z - e.pos[2]) > 3; // a wall thing hangs where the two walls have room: "too far" is no reason to move it
   if (sameKind && !far) return null;
   if (rp.kind === 'surface' && kind !== 'surface' && !fitsOnATop(s.decor ?? [], e)) return null; // no top could hold it: nothing better to offer
   if (rp.kind === 'surface' && at) { // a better top only counts when one near there has room (a full desk is no better place)

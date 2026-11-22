@@ -29,7 +29,11 @@ export function noteLesson(s, move, reason, at = new Date().toISOString()) {
 export function noteWorked(s, move, at = new Date().toISOString()) {
   for (const l of s.lessons ?? []) if (l.move === move && !l.solvedAt) l.solvedAt = at;
 }
-const lessonLine = (l) => `${MOVE_WORDS[l.move] ?? l.move.replace(/_/g, ' ')}: ${l.text}${l.count > 1 ? ` (this went wrong ${l.count} times)` : ''}${l.solvedAt ? ' (I got past this)' : ''}`;
+// One lesson in one short line: the first sentence of what went wrong (the rest was the game's long explanation).
+// The useful part of a lesson is what to do instead (it comes after the first sentence, which only says what went wrong).
+// Research: showing a small model its failed action makes it more likely to repeat it; showing what works does not.
+const firstSentence = (t, n = 170) => { const parts = String(t ?? '').replace(/\s+/g, ' ').trim().split(/(?<=[.!?])\s+/).filter((x) => x.length > 12); const how = parts.slice(1).join(' '); const one = how.length >= 25 ? how : parts[0] ?? String(t ?? ''); return one.length <= n ? one : `${one.slice(0, n).replace(/\s+\S*$/, '')}…`; };
+const lessonLine = (l) => `${MOVE_WORDS[l.move] ?? l.move.replace(/_/g, ' ')}: ${firstSentence(l.text)}${l.count > 1 ? ` (this went wrong ${l.count} times)` : ''}${l.solvedAt ? ' (I got past this)' : ''}`;
 // For the maker: what went wrong before with this kind of thing.
 export function lessonsFor(s, move, now = Date.now()) {
   return (s.lessons ?? []).filter((l) => l.move === move && now - Date.parse(l.at) < 21 * DAY).sort((a, b) => Boolean(a.solvedAt) - Boolean(b.solvedAt) || b.count - a.count).slice(0, 3).map(lessonLine);
@@ -37,7 +41,7 @@ export function lessonsFor(s, move, now = Date.now()) {
 // For the brain: open lessons for the moves offered now (the ones he has not got past yet first).
 export function lessonLines(s, offered = [], now = Date.now()) {
   const names = new Set(offered);
-  return (s.lessons ?? []).filter((l) => names.has(l.move) && now - Date.parse(l.at) < 7 * DAY && (!l.solvedAt || l.count >= 3)).sort((a, b) => Boolean(a.solvedAt) - Boolean(b.solvedAt) || b.count - a.count).slice(0, 3).map(lessonLine);
+  return (s.lessons ?? []).filter((l) => names.has(l.move) && now - Date.parse(l.at) < 7 * DAY && !l.solvedAt).sort((a, b) => b.count - a.count).slice(0, 2).map(lessonLine); // only what he has not got past yet (a short list is read; a long one is not)
 }
 
 // ---- B. Recipe book

@@ -119,35 +119,52 @@ export async function renderFile(file, root = 'web', { width = 800, height = 600
   }
 }
 
-// A test run of one of his programs, like a coder runs their code: it is opened for a moment, a few clicks and keys are
-// tried, and every error is written down. Returns { errors: [..], bytes } or { failed } (no browser here).
-export async function testApp(file, root = 'web') {
+// A test run of one of his programs, like a coder runs their code. It runs in the same locked box as on the page (a
+// sandboxed frame with the same safety rules: no internet, no storage), on a small screen. The run opens it, waits,
+// clicks its buttons and the canvas, presses keys, and writes down what it saw:
+// { errors: [..], blank, still, overflow, bytes } or { failed } (no browser on this computer).
+export const APP_CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'"; // the same as web/main.js
+export async function testHtml(html) {
   let pw;
   try {
     pw = await import('playwright');
   } catch {
     return { failed: 'no browser to test with on this computer' };
   }
-  const server = await serve(root, '{}');
   let browser;
   const errors = [];
   try {
     browser = await pw.chromium.launch({ executablePath: process.env.PIP_CHROMIUM || undefined, args: ['--no-sandbox'] });
-    const page = await browser.newPage({ viewport: { width: 900, height: 640 } });
-    page.on('pageerror', (e) => errors.push(String(e.message).split('\n')[0].slice(0, 160)));
-    page.on('console', (m) => { if (m.type() === 'error' && !/favicon|net::ERR/.test(m.text())) errors.push(`console: ${m.text().slice(0, 160)}`); });
-    await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
-    await page.goto(`http://127.0.0.1:${server.address().port}/${String(file).replace(/^\/+/, '')}`, { waitUntil: 'load', timeout: 20_000 });
-    await page.waitForTimeout(800);
-    for (const [x, y] of [[450, 320], [300, 200], [600, 450]]) { await page.mouse.click(x, y).catch(() => {}); await page.waitForTimeout(150); }
-    for (const k of ['ArrowRight', 'ArrowUp', 'Space', 'Enter']) { await page.keyboard.press(k).catch(() => {}); await page.waitForTimeout(80); }
+    const page = await browser.newPage({ viewport: { width: 480, height: 700 } });
+    page.on('pageerror', (e) => errors.push(String(e.message).split('\n')[0].slice(0, 170)));
+    page.on('console', (m) => { if (m.type() === 'error' && !/favicon/.test(m.text())) errors.push(m.text().replace(/\s+/g, ' ').replace(/^Refused to (load|connect|execute)[^']*'([^']{0,60})[^']*'.*$/, 'it tried to load $2 from outside: that is blocked').slice(0, 170)); });
+    await page.route(/^https?:\/\//, (r) => r.abort());
+    await page.setContent('<!doctype html><body style="margin:0"><iframe id="f" sandbox="allow-scripts" style="border:0;display:block;width:100vw;height:100vh"></iframe>');
+    await page.evaluate(([doc, csp]) => { document.getElementById('f').srcdoc = `<!doctype html><meta http-equiv="Content-Security-Policy" content="${csp}">${doc}`; }, [String(html), APP_CSP]);
+    await page.waitForTimeout(900);
+    const frame = page.frames().find((f) => f !== page.mainFrame());
+    const look = async () => (frame ? frame.evaluate(() => ({ seen: (document.body?.innerText ?? '').trim().length + document.querySelectorAll('canvas,svg,img,button,input,select,video').length, wide: document.documentElement.scrollWidth })).catch(() => null) : null);
+    const first = await look();
+    const a = await page.screenshot({ type: 'png' });
+    await page.waitForTimeout(600);
+    const b = await page.screenshot({ type: 'png' });
+    for (const sel of ['button', 'canvas', 'input', '[onclick]', 'svg', 'a']) { // press what can be pressed
+      for (const el of (frame ? await frame.$$(sel).catch(() => []) : []).slice(0, 3)) { await el.click({ timeout: 400 }).catch(() => {}); await page.waitForTimeout(120); }
+    }
+    await page.mouse.click(240, 350).catch(() => {});
+    for (const k of ['ArrowRight', 'ArrowUp', 'Space', 'Enter', 'KeyA']) { await page.keyboard.press(k).catch(() => {}); await page.waitForTimeout(70); }
     await page.waitForTimeout(500);
+    const c = await page.screenshot({ type: 'png' });
     const bytes = new Uint8Array(await page.screenshot({ type: 'jpeg', quality: 75 }));
-    return { errors: [...new Set(errors)].slice(0, 5), bytes };
+    return { errors: [...new Set(errors)].slice(0, 5), blank: first ? first.seen === 0 : false, still: a.equals(b) && b.equals(c), overflow: first && first.wide > 500 ? first.wide : 0, bytes };
   } catch (e) {
     return { errors: [...new Set([...errors, `it did not start: ${String(e.message).split('\n')[0].slice(0, 120)}`])].slice(0, 5) };
   } finally {
     await browser?.close().catch(() => {});
-    server.close();
   }
+}
+export async function testApp(file, root = 'web') {
+  let html;
+  try { html = await readFile(join(root, String(file).replace(/^\/+/, '')), 'utf8'); } catch { return { errors: ['the file is missing'] }; }
+  return testHtml(html);
 }

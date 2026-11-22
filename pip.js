@@ -23,6 +23,7 @@ import { roomScale, placeKind, sizeWords } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
 import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo } from './loops.js';
 import { planRetry, startRetry, retryLines } from './retry.js';
+import { challengeLines, challengeSteps } from './curriculum.js';
 import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLetter } from './letters.js';
 import { needsNotes, fakeNotes, neighbourPrompt, neighbourSchema, planNotes, deliverNotes, neighbourLines } from './neighbours.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
@@ -55,7 +56,8 @@ import { bonusRewards } from './rewards.js';
 import { ensureTools, NEEDS, toolsGuide, toolFor, missingTool, toolList, addTool, toolKind, fits, craftTool, MAX_TOOLS } from './tools.js';
 import { ensureMemory, addMemory, recall, markUsed, fade, archiveForgotten, addInterest } from './memory.js';
 import { ensureIdentity, applyIdentity } from './identity.js';
-import { takePhoto, renderFile, testApp } from './photo.js';
+import { takePhoto, renderFile, testApp, testHtml } from './photo.js';
+import { checkMade, withOneRetry, revisionsLeft, noteRevision, revisionNote, serious, drawnOften } from './verify.js';
 import { TIMBRES, cleanTracks } from './songs.js';
 import { grantInstruments, instrumentNeeds } from './instruments.js';
 import { moveMusicToStudio, moveMusicBack, keepWindowsClear, HAS_STUDIO } from './web/house.js';
@@ -484,8 +486,8 @@ BIGGER AND OTHER THINGS I CAN MAKE
 - Music is something I can learn, and it makes my songs better: how chords and scales are built, rhythm and tempo, bass lines, how a melody and a harmony fit, how mixing works (volume, left and right, reverb, equalizing, compression), how a synthesizer makes a sound (waves, filters, envelopes) and how songs are put together (verse, chorus). I look things up with search_web and read_book, and then I try what I learned in my studio.
 - I do not forget what I made. Before I make something new, I look at what I already have: my shelves, tables and tops are for putting small things on (a shelf I built holds my sculptures, the desk holds my small models), so I put loose things there instead of leaving them on the floor, and I do not build a second shelf while the first has room. Things I made earlier can be used again, changed, combined, given a new use or a better place. A drawing in my album can go on a wall. A song I composed can be played on another instrument in the studio. I keep my own plans for the day (TODAY I WANT TO): they are mine, and I like it when they come true.
 - Big things take steps. If something is too big for one wake-up (more than 40 parts, a whole outfit, an album, a garden, an app with several screens, a thing with many rooms), I do not squeeze it into one step and I do not drop it: I make it a project (projects_add with steps), I do one or two steps in each wake-up, and I tick each one off with step_done in projects_update. A thing that is too big for decorate I build in layers: the base first, then extend_thing for each next part. A long song I record one section at a time. A good project has 3 to 6 steps, and its next step is always small enough to finish in one wake-up.
-- Drawings: with draw I draw a picture for a wall or a surface, as SVG: {"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\"0 0 400 300\">...</svg>"}. I draw like in a sketchbook: ONE thing from my day (something I came across, made, ate, found or saw, not my window again), big in the middle, with clear ink lines (a stroke on every shape) and one or two colours; no background, the paper shows around it. The game draws it by hand on paper for me (wobbly ink, the colour a little beside the line). Only plain shapes (rect, circle, ellipse, line, polyline, polygon, path, text), gradients and colours. No scripts, images or links. Under 12000 characters, at most 3 a day. Drawings have ids: I can take one down with take_down_picture(id) and put it up again with place_picture(id, where).
-- Apps and websites: with make_app I write a small web page or app: {"name": "...", "why": "...", "html": "<!doctype html>..."}. One file with HTML, CSS and JavaScript, under 14000 characters. It runs in a locked box with no internet and no storage, and only when someone opens it from my computer. At most 2 a day.
+- Drawings: with draw I draw a picture for a wall or a surface, as SVG: {"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\"0 0 400 300\">...</svg>"}. I draw like in a sketchbook: ONE thing from my day (something I came across, made, ate, found or saw, not my window again), big in the middle, with clear ink lines (a stroke on every shape) and one or two colours; no background, the paper shows around it. The game draws it by hand on paper for me (wobbly ink, the colour a little beside the line). Only plain shapes (rect, circle, ellipse, line, polyline, polygon, path, text), gradients and colours. No scripts, images or links. Under 12000 characters, at most ${MAX_ART_PER_DAY} a day. Drawings have ids: I can take one down with take_down_picture(id) and put it up again with place_picture(id, where).
+- Apps and websites: with make_app I write a small program, game or web page: one file with HTML, CSS and JavaScript. It runs on my computer and my phone, in a locked box with no internet and no storage. A new one starts small (a first version is best under 6000 characters); with update_app I add one thing at a time to it, so it can grow big over days (up to 120000 characters). At most 2 new ones a day.
 - Big things, step by step: with extend_thing {name, parts} I add up to 40 more parts to something I already made (up to 160 parts in all), a few wake-ups in a row, so I can build something big and detailed. I need a toolbox for it. The new parts use the same measuring as the thing: pos is measured from the middle of the bottom of the thing as it is now (its size is in my room list). A big build is a good project: I write the steps, and each wake-up I do the next one. UPGRADING something into a bigger whole (a stove that becomes a kitchen with a counter, a bed with a night table, a desk with a shelf): extend_thing {name, side, parts} where side is \"left\", \"right\", \"front\" or \"back\" (as I see it standing in front of it) and parts are a new little piece built around ITS OWN middle, like a new thing: the game fits it flush against that side and keeps the whole thing in one place. If that side has no room, the other side is tried. Or extend_thing {name, with: \"another thing of mine\", side} joins a thing I already made onto it, and then they are one thing (the uses join too). That is how I upgrade what I have into one whole instead of leaving separate things next to each other.
 - If I need a bigger room, more rooms, something even bigger than the sizes above, or something too complicated for all of this, I ask with asks_add and say exactly what I need and why.
 
@@ -574,7 +576,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -618,6 +620,31 @@ async function morningGoals(s, soul, system) {
   s.intent.day = day;
 }
 
+// For the drawing maker: what he drew a lot lately (not again), and things from his day he could draw instead.
+function drawnNote(s) {
+  const often = drawnOften(s.art ?? []);
+  const day = (s.log ?? []).filter((e) => Date.now() - Date.parse(e.at) < 36 * 3_600_000 && !e.failed);
+  const ideas = [...new Set([
+    ...(s.curious?.sparks ?? []).slice(-3).map((x) => x.topic),
+    ...day.filter((e) => ['decorate', 'cook', 'harvest', 'plant'].includes(e.action)).map((e) => e.name ?? e.dish ?? e.plant ?? e.seed).filter(Boolean).slice(-3),
+    ...(s.visitors ?? []).filter((v) => v.npc && v.topic && v.kind !== 'hello').slice(-2).map((v) => v.topic),
+  ].filter(Boolean))].slice(0, 6);
+  return [
+    often.length ? `WHAT I DREW A LOT LATELY (not again this time): ${often.slice(0, 3).map((o) => `${o.word} (${o.n} times)`).join(', ')}` : '',
+    ideas.length ? `THINGS FROM MY DAY I COULD DRAW: ${ideas.join(', ')}` : '',
+  ].filter(Boolean).join('\n');
+}
+// A retry that fixed what the check found is worth remembering: next time he gets it right the first time.
+function addLesson(s, move, facts) {
+  const text = serious(facts)[0];
+  if (!text) return;
+  s.lessons ??= [];
+  const old = s.lessons.find((l) => l.move === move && l.text.slice(0, 40) === text.slice(0, 40));
+  const at = new Date().toISOString();
+  if (old) Object.assign(old, { count: old.count + 1, at });
+  else s.lessons.push({ move, text: text.slice(0, 240), count: 1, at, firstAt: at, from: 'check' });
+  s.lessons = s.lessons.slice(-40);
+}
 // The maker designs one thing the brain chose. If it fails, the step fails with a reason (and the brain hears it).
 async function makeIt(s, soul, system, st) {
   const room = s.decor.filter((d) => !d.image).slice(0, 12).map((d) => `${d.name} (${d.label ?? d.zone})`);
@@ -634,9 +661,27 @@ async function makeIt(s, soul, system, st) {
     const lessons = lessonsFor(s, st.action);
     const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
     const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`, st.details?.project);
-    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
+    const mctx = { drawn: st.action === 'draw' ? drawnNote(s) : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
+    const mprompt = makerPrompt(mctx);
+    if (process.env.PIP_DUMP) await appendFile(`${process.env.PIP_DUMP}.maker`, `\n\n=================== ${st.action}\n${mprompt}`);
+    const think = ['make_app', 'update_app'].includes(st.action) ? { think: 'high' } : {}; // code needs the most thought
+    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, mprompt, 1, [], { group: 'big', ...think });
     if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl), allowed: [...instruments(s), 'drums'] });
-    return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
+    // The game checks it (verify.js): measured facts, and one retry with them. The better try is kept.
+    const limits = { parts: maxParts(lvl), bars: maxBars(lvl) };
+    const check = (m) => checkMade(st.action, m.details, { art: s.art, maxParts: maxParts(lvl), current: appNow ? build : null, test: process.env.PIP_NO_PHOTO ? null : testHtml }).catch(() => []);
+    const out = await withOneRetry(applyMade(st, reply, limits), {
+      check,
+      allowed: !process.env.PIP_FAKE && revisionsLeft(s) > 0,
+      retry: async (facts) => {
+        noteRevision(s);
+        console.log(`   🔎 the check found: ${facts.join(' | ').slice(0, 300)}. One more try.`);
+        try { return applyMade(st, await askGemini(system, mprompt + revisionNote(reply, facts), 1, [], { group: 'big', ...think }), limits); } catch (e) { console.error('⚠️  second try:', e.message); return null; }
+      },
+    });
+    if (out.tries === 2) console.log(serious(out.facts).length ? `   🔎 after the second try: ${out.facts.join(' | ').slice(0, 200)}` : '   🔎 the second try passed the check ✓');
+    if (out.tries === 2 && !serious(out.facts).length && serious(out.before ?? []).length) addLesson(s, st.action, out.before);
+    return out.made;
   } catch (e) {
     console.error('⚠️  maker:', e.message);
     s.plan.lastFail = { at: new Date().toISOString(), why: `${st.action}: I could not work out how to make it (${e.message.slice(0, 60)})` };
@@ -646,6 +691,8 @@ async function makeIt(s, soul, system, st) {
 
 // Pip does not read anyone's name: whoever wrote to him is "someone".
 const noName = (t) => String(t).replace(/\bBas(?='s)\b/g, 'someone').replace(/\bBas\b/g, 'someone');
+// The same schema without the ordering hints (for a model that refuses them).
+const plainSchema = (x) => (Array.isArray(x) ? x.map(plainSchema) : x && typeof x === 'object' ? Object.fromEntries(Object.entries(x).filter(([k]) => k !== 'propertyOrdering').map(([k, v]) => [k, plainSchema(v)])) : x);
 async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
   system = noName(system);
   wakeUp = noName(wakeUp);
@@ -663,6 +710,7 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
   for (const model of order) {
     let retried429 = false;
     let timeouts = 0;
+    let plainWay = Boolean(q.plain?.[model]); // this model refused the newer settings before (a thinking level, ordered answers): asked the plain way
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         res = await fetch(`${API}/models/${model}:generateContent`, {
@@ -672,7 +720,7 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: system }] },
             contents: [{ role: 'user', parts: [{ text: wakeUp }, ...images.map(({ mime, data }) => ({ inlineData: { mimeType: mime, data } }))] }],
-            generationConfig: { responseMimeType: 'application/json', temperature: 1, ...(opts.schema ? { responseSchema: opts.schema } : {}), ...(opts.maxTokens ? { maxOutputTokens: opts.maxTokens } : {}) },
+            generationConfig: { responseMimeType: 'application/json', temperature: 1, ...(opts.schema ? { responseSchema: plainWay ? plainSchema(opts.schema) : opts.schema } : {}), ...(opts.maxTokens ? { maxOutputTokens: opts.maxTokens } : {}), ...(opts.think && !plainWay ? { thinkingConfig: { thinkingLevel: opts.think } } : {}) },
           }),
         });
       } catch (e) {
@@ -681,6 +729,13 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
         break;
       }
       count(q, model); // every request that reached Google counts toward its quota
+      if (res.status === 400 && !plainWay && (opts.think || opts.schema)) { // a setting this model does not know: once more the plain way, and remembered for today
+        console.log(`   ${model}: 400 with the newer settings (${(await res.clone().text()).replace(/\s+/g, ' ').slice(0, 140)}), asking the plain way`);
+        plainWay = true;
+        (q.plain ??= {})[model] = true;
+        attempt--;
+        continue;
+      }
       if (res.status === 429) {
         const why = read429(await res.clone().text());
         console.log(`   ${model}: 429 (${why.perDay ? 'daily quota' : why.perMinute ? 'per-minute limit' : 'quota'}${why.quotaId ? `, ${why.quotaId}` : ''}${why.notFree ? ', limit 0: not in the free tier' : ''})`);
@@ -1015,6 +1070,8 @@ function applyInnerLife(s, r, detail, replying = false) {
     const title = text(p?.title, 80);
     if (!title || s.projects.filter((x) => x.status === 'working').length >= 5 || s.projects.some((x) => x.status === 'working' && sameItem(x.title, title))) continue;
     felt(s, 'projectStart');
+    const ladder = challengeSteps(s, title); // a challenge from his ladder (curriculum.js): its steps are known
+    if (ladder && (!(p?.steps ?? []).length || String(p.steps[0]).startsWith('look up how to'))) p.steps = ladder;
     s.projects.push({ id: Date.now().toString(36), title, why: text(p?.why, 200), next: text(p?.next, 160), nextStep: text(p?.next, 160), steps: cleanSteps(p?.steps), needs: (Array.isArray(p?.needs) ? p.needs : []).map((x) => text(x, 40)).filter(Boolean).slice(0, 4), versions: [], notes: [], status: 'working', since: at, updatedAt: at });
   }
   for (const u of Array.isArray(r.projects_update) ? r.projects_update : []) {
@@ -1266,7 +1323,7 @@ async function wakeUp() {
       const ctx = brainContext(state, { soul, offered, reasons, unread, looking, grew, ownWork });
       const prompt = brainPrompt(ctx);
       if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, prompt);
-      const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
+      const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, think: 'low', ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
       answer.steps = projectSteps(state, realProjectWork(state, answer.steps)); // pretending to do a project step ("do: sculpt the body") becomes the real step
       answer.steps = hungerFirst(state, dropRestingDo(state, answer.steps), offered);
@@ -2095,7 +2152,8 @@ async function wakeUp() {
     }
   }
   { // the loop breaker: the same choice 3 times with nothing to show rests that move for a while
-    const rested = noteChoice(state, choice, gotSomewhere(state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)), state.plan.lastFail?.why);
+    const mine = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000);
+    const rested = noteChoice(state, choice, gotSomewhere(mine), state.plan.lastFail?.why, Date.now(), mine.some((x) => x.failed && !x.fallback));
     if (rested) console.log(`🛑 loop: ${rested.key} chose 3 times with nothing to show; it rests until ${rested.until}`);
   }
   state.last = {

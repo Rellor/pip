@@ -70,7 +70,8 @@ export function projectLines(s, now = Date.now()) {
     const note = p.notes.at(-1)?.text ? `, to improve: ${p.notes.at(-1).text}` : '';
     const wait = untouchedDays(p, now) >= 1 ? ` (I have not touched it for ${Math.floor(untouchedDays(p, now))} day${untouchedDays(p, now) >= 2 ? 's' : ''})` : '';
     const needs = p.needs.length ? `, needs: ${p.needs.join(', ')}` : '';
-    const next = (p.steps ?? []).length ? p.nextStep || p.next || (p.steps.find((x) => !x.done)?.text ?? '?') : 'no steps yet, so I plan it first with the plan_project move (and give the steps)';
+    const open = (p.steps ?? []).find((x) => !x.done); // the next step is the first one not done (an old "next" from when he started it went stale)
+    const next = (p.steps ?? []).length ? open?.text ?? (p.nextStep || p.next || 'all steps are done: I look at it and say if I am proud (judge_project)') : 'no steps yet, so I plan it first with the plan_project move (and give the steps)';
     return `"${p.title}"${v}${note}${needs}. Next: ${next}${how}${steps ? ` [${steps}]` : ''}${wait}`;
   });
 }
