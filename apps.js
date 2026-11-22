@@ -2,7 +2,7 @@
 // They only run when Bas opens one, inside a locked box in the page (no internet, no storage, no way out).
 // This file only checks the size and removes tags that try to change the page around them.
 
-export const MAX_APP_BYTES = 14_000;
+export const MAX_APP_BYTES = 32_000; // room for a game that grows one feature a day
 export const MAX_APPS = 12;
 export const MAX_APPS_PER_DAY = 2;
 

@@ -29,7 +29,7 @@ export function addVersion(s, title, { kind, name, ref, at = new Date().toISOStr
 // one more version of it (six lamps for one lamp project). Returns the finished project, or null.
 export function finishDone(s, title, at = new Date().toISOString()) {
   const p = findProject(s, title);
-  if (!p || !(p.steps ?? []).length || !p.steps.every((x) => x.done) || (p.versions ?? []).length < 2) return null;
+  if (!p || !(p.steps ?? []).length || !p.steps.every((x) => x.done) || (p.versions ?? []).length < 2 || lastApp(p)) return null; // a game or program keeps growing (growGames)
   Object.assign(p, { status: 'done', proud: true, proudOf: `all my steps are done and I made it ${p.versions.length} times: it works`, doneAt: at, updatedAt: at, needs: [] });
   return p;
 }
@@ -102,12 +102,14 @@ const ROUTES = [
   ['record_song', /\b(record|compose)\b|\b(write|make)\b.*\b(song|melody|tune)\b/i],
   ['play_piano', /\b(hum|sing|play|practi[cs]e|try out)\b/i],
   ['take_photo', /\b(photo|photograph|picture of)\b/i],
-  ['make_app', /\b(program|app|code)\b/i],
+  ['make_app', /\b(program|app|code|game|sim|simulator|puzzle|website|web page)\b/i],
   ['make_clothes', /\b(sew|stitch|knit|wear)\b/i],
   ['change_thing', /\b(fix|improve|smooth|polish|adjust|repaint|change|sand)\b/i],
   ['extend_thing', /\b(add|attach|extend|put .* on top)\b/i],
 ];
 export const MAKER_ROUTES = ['decorate', 'draw', 'record_song', 'make_app', 'make_clothes', 'change_thing', 'extend_thing'];
+// The program or game a project is about (its last version that was a program), or null.
+export const lastApp = (p) => [...(p.versions ?? [])].reverse().find((v) => ['make_app', 'update_app'].includes(v.kind))?.name ?? null;
 const lastMade = (p) => [...(p.versions ?? [])].reverse().find((v) => ['decorate', 'change_thing', 'extend_thing'].includes(v.kind))?.name ?? null;
 
 // The next step of a project as a real move. ctx: { cookDetails(text), seeds: [names], tune: "notes" }. Null if nothing is left.
@@ -122,6 +124,8 @@ export function workStep(s, title, ctx = {}) {
   let route = (ROUTES.find(([, re]) => re.test(t)) ?? (vague ? ROUTES.find(([k, re]) => k !== 'wait' && re.test(p.title)) : null) ?? ['decorate'])[0];
   if (route === 'make_clothes' && /\b(blanket|quilt|pillow|cushion|rug|curtain|throw|bag|tapestry|banner|toy|doll|plush)\b/i.test(`${t} ${p.title}`)) route = 'decorate'; // sewn or knitted, but not to wear: a thing for his room
   if (['change_thing', 'extend_thing'].includes(route) && !lastMade(p)) route = 'decorate'; // nothing made yet to change
+  const app = lastApp(p);
+  if (app && route !== 'search_web' && route !== 'wait' && !/\b(record|draw|paint|cook|plant)\b/i.test(t)) route = 'update_app'; // a project about a program or game: every next step grows that same program
   const base = { thought: `I work on my project "${p.title}": ${t}`, enjoyment: 7, needs: '', forStep: { project: p.title, text: t } };
   const project = p.title;
   const d = {
@@ -135,7 +139,8 @@ export function workStep(s, title, ctx = {}) {
     record_song: { action: 'record_song', details: { what: p.title, why: t, project }, make: true },
     play_piano: { action: 'play_piano', details: { notes: ctx.tune || 'C4 E4 G4:2 E4 C4:2', instrument: 'voice' } },
     take_photo: { action: 'take_photo', details: { target: lastMade(p) ?? 'window', why: t } },
-    make_app: { action: 'make_app', details: { what: t, why: `for my project "${p.title}"`, project }, make: true },
+    make_app: { action: 'make_app', details: { what: /\b(game|sim)/i.test(p.title) && !/\b(game|sim)/i.test(t) ? `${p.title}: ${t}` : t, why: `for my project "${p.title}"`, project }, make: true },
+    update_app: { action: 'update_app', details: { name: app, change: t, what: t, why: `for my project "${p.title}"`, project }, make: true },
     make_clothes: { action: 'make_clothes', details: { what: t, why: `for my project "${p.title}"`, project }, make: true },
     change_thing: { action: 'change_thing', details: { name: lastMade(p), change: t, project }, make: true },
     extend_thing: { action: 'extend_thing', details: { name: lastMade(p), add: t, project }, make: true },
@@ -154,4 +159,21 @@ export function realProjectWork(s, steps) {
     const p = (s.projects ?? []).find((x) => x.status === 'working' && (() => { const next = wordsOf((x.steps ?? []).find((y) => !y.done)?.text); return next.length && next.filter((w) => what.includes(w)).length >= Math.min(2, next.length); })());
     return p ? { ...st, action: 'work_on_project', details: { title: p.title } } : st;
   });
+}
+
+// A game or program he is building grows a little every day, like Pino's train simulator: when its steps are done, one
+// new step comes (at most one a day): add one small new thing to it. He can still say he is proud of it (judge_project).
+export function growGames(s, now = Date.now()) {
+  const day = new Date(now).toISOString().slice(0, 10);
+  const grown = [];
+  for (const p of (s.projects ?? []).filter((x) => x.status === 'working')) {
+    const app = lastApp(p);
+    if (!app || (p.steps ?? []).some((x) => !x.done) || p.grewOn === day) continue;
+    const v = (s.apps ?? []).find((a) => a.name === app)?.v ?? (p.versions ?? []).length;
+    p.steps = [...(p.steps ?? []), { text: `add one small new thing to ${app} (version ${v + 1}): a new feature, a level, a sound or a better look`, done: false }].slice(-12);
+    p.grewOn = day;
+    p.updatedAt = new Date(now).toISOString();
+    grown.push(p.title);
+  }
+  return grown;
 }

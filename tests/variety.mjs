@@ -57,3 +57,12 @@ console.log('ok  making the same kind of thing under a new name is the same choi
   assert.equal(workStep({ projects: [p] }, p.title).action, 'decorate', 'a blanket is not clothes');
   console.log('ok  a knitted blanket is a thing for his room, not clothes');
 }
+{
+  const { habitCap, habitLines } = await import('../growth.js');
+  const now = Date.now();
+  const h = { log: Array.from({ length: 5 }, (_, i) => ({ action: 'draw', at: new Date(now - (i + 1) * 600_000).toISOString() })) };
+  assert.ok(habitCap(h, 'draw', now) < 6, 'the 6th drawing of the day gives less');
+  assert.equal(habitCap(h, 'eat', now), 10, 'eating never wears off');
+  assert.match(habitLines(h, ['draw', 'eat'], now)[0], /drawing \(5 times today\) did less for me than it used to/);
+  console.log('ok  the more often today, the less it gives him, and he feels it');
+}

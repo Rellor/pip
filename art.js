@@ -73,3 +73,34 @@ export function cleanSvg(raw, maxChars = MAX_CHARS) {
   svg = svg.replace(/(<svg\b[^>]*?)\sheight="[^"]*"([^>]*?)\sheight="[^"]*"/, `$1 height="${Math.round(800 / aspect)}"$2`);
   return { svg, aspect };
 }
+
+// The sketchbook look (like Pino's drawings): his shapes drawn as wobbly ink lines on warm paper, the line traced twice,
+// the colour laid on a little beside the line (like a print slightly off), and paper grain. Plain SVG filters and styles,
+// so it is still only an image. Applied to every new drawing, on top of what cleanSvg kept.
+export function sketchStyle(svg, seed = 1) {
+  const vb = /viewBox="([^"]+)"/.exec(svg)?.[1] ?? '0 0 400 300';
+  const [x0, y0, w, h] = vb.split(/[\s,]+/).map(Number);
+  const inner = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  const prefix = (t, p) => t.replace(/id="([^"]+)"/g, `id="${p}$1"`).replace(/url\(#([^)]+)\)/g, `url(#${p}$1)`);
+  const big = (t) => t.replace(/<rect\b[^>]*>/g, (r) => { // a rect that fills the whole picture is a background: the paper shows instead
+    const n = (k) => Number(new RegExp(`\\s${k}="([-\\d.]+)%?"`).exec(r)?.[1] ?? (k === 'x' || k === 'y' ? 0 : NaN));
+    const pct = /width="100%"/.test(r);
+    return pct || (n('width') >= w * 0.9 && n('height') >= h * 0.9) ? '' : r;
+  });
+  const body = big(inner);
+  const sd = Math.abs(Math.round(seed)) % 97 + 1;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="${/width="(\d+)"/.exec(svg)?.[1] ?? 800}" height="${/height="(\d+)"/.exec(svg)?.[1] ?? 600}">
+<defs>
+<filter id="skW" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="${sd}"/><feDisplacementMap in="SourceGraphic" scale="${(w / 90).toFixed(1)}"/></filter>
+<filter id="skW2" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="${sd + 7}"/><feDisplacementMap in="SourceGraphic" scale="${(w / 110).toFixed(1)}"/></filter>
+<filter id="skG"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="${sd + 3}"/><feColorMatrix type="matrix" values="0 0 0 0 0.45 0 0 0 0 0.4 0 0 0 0 0.35 0 0 0 0.07 0"/></filter>
+<radialGradient id="skP" cx="45%" cy="40%" r="78%"><stop offset="0" stop-color="#f6f1e8"/><stop offset="1" stop-color="#ddd3c3"/></radialGradient>
+<style>.skC *{stroke:none !important}.skK *{fill:none !important}.skK *:not([stroke]){stroke:#2b2522}.skK text,.skK tspan{fill:#2b2522 !important;stroke:none !important}.skC text,.skK2 text{display:none}</style>
+</defs>
+<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="url(#skP)"/>
+<g class="skC" opacity="0.85" transform="translate(${(w / 110).toFixed(1)} ${(-h / 110).toFixed(1)})" filter="url(#skW)" style="mix-blend-mode:multiply">${prefix(body, 'c')}</g>
+<g class="skK" filter="url(#skW2)">${prefix(body, 'k').replace(/<text\b/g, '<text filter="none"')}</g>
+<g class="skK skK2" opacity="0.45" transform="translate(${(w / 250).toFixed(1)} ${(h / 300).toFixed(1)})" filter="url(#skW)">${prefix(body, 'k2')}</g>
+<rect x="${x0}" y="${y0}" width="${w}" height="${h}" filter="url(#skG)"/>
+</svg>`;
+}
