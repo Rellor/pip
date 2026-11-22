@@ -4651,3 +4651,9 @@ I decided to relocate my small wooden shelf so it is within reach near my desk.
 - do (move my small wooden shelf to the left wall near the desk): I want my shelf closer to where I work.
 - mood: curious
 
+## 22/11/2026, 09:26:42
+I want to capture the grey afternoon sky while the room is calm.
+> I want to capture the grey afternoon sky while the room is calm.
+- draw (cloudy sky over the courtyard): The light outside feels quiet and still right now.
+- mood: curious
+
