@@ -378,6 +378,13 @@ const CHANGES = [
       return all.length ? `My room was put right: ${all.slice(0, 5).join('; ')}. From now on what stands on a table or a shelf goes along when I move it, a blanket or a tablecloth I make is fitted to what it lies on, and a thing that is too big for a top stands on the floor.` : null;
     },
   },
+  {
+    // His street has a field of his own across the road (web/town.js), for what is too big or too many for his room.
+    id: '2026-11-22 a plot of his own',
+    run() {
+      return 'Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: "outside", or I carry a thing out with move_thing {name, where: "outside"} (and back in with move_thing {name, where: "floor"}).';
+    },
+  },
 ];
 
 // What was removed is also forgotten: the studio, the piano, the instruments, the old clothes and what he let go in the tidy.

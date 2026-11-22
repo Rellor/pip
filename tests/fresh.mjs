@@ -14,7 +14,7 @@ old.changes = (old.changes ?? []).filter((c) => c !== '2026-11-15 fresh start');
 fs.writeFileSync(path.join(work, 'web/state.json'), JSON.stringify(old));
 const started = Date.now();
 const soul = fs.readFileSync(path.join(work, 'soul.md'), 'utf8');
-execFileSync('node', ['pip.js'], { cwd: work, env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NIGHT: '0' }, stdio: 'pipe' });
+execFileSync('node', ['pip.js'], { cwd: work, env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_OUT: '1', PIP_NIGHT: '0' }, stdio: 'pipe' });
 const s = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
 assert.ok(s.changes.includes('2026-11-15 fresh start'));
 assert.ok(JSON.parse(fs.readFileSync(path.join(work, 'web/archive/pre-fresh/state.json'), 'utf8')).memories.length > 5, 'the old state is archived');
@@ -28,7 +28,7 @@ assert.ok(s.decor.length + (s.stored ?? []).length <= 1, 'only what he made in t
 assert.ok(s.memories.every((m) => !/studio|piano|guitar|scarf|stool|greenhouse|rosemary/i.test(m.text)));
 assert.deepEqual(s.furniture, old.furniture, 'the furniture stays where it was');
 assert.deepEqual(JSON.parse(fs.readFileSync(path.join(work, 'web/archive/index.json'), 'utf8')), [], 'the site starts with no old days');
-execFileSync('node', ['pip.js'], { cwd: work, env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NIGHT: '0' }, stdio: 'pipe' });
+execFileSync('node', ['pip.js'], { cwd: work, env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_OUT: '1', PIP_NIGHT: '0' }, stdio: 'pipe' });
 const again = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
 assert.equal(again.changes.filter((c) => c === '2026-11-15 fresh start').length, 1, 'it runs only once');
 assert.ok(again.memories.some((m) => /quiet room/.test(m.text)), 'his first memory is still there');

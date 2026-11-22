@@ -37,7 +37,7 @@ const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set()
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
 const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
 // The parts of the room that can be seen from the front: the floor and the two back walls.
-const pointsFor = (x0, x1, street = false) => (street ? [[x0, 0, -8], [x1, 0, -8], [x0, 0, 11], [x1, 0, 11], [x0, 7, -8], [x1, 7, -8]] : [[x0, 0, -5], [x1, 0, -5], [x0, 0, 5], [x1, 0, 5], [x0, 5, -5], [x1, 5, -5], [x0, 5, 5]]).map(([x, y, z]) => new THREE.Vector3(x, y, z));
+const pointsFor = (x0, x1, street = false) => (street ? [[x0, 0, -8], [x1, 0, -8], [x0, 0, 27], [x1, 0, 27], [x0, 7, -8], [x1, 7, -8]] : [[x0, 0, -5], [x1, 0, -5], [x0, 0, 5], [x1, 0, 5], [x0, 5, -5], [x1, 5, -5], [x0, 5, 5]]).map(([x, y, z]) => new THREE.Vector3(x, y, z));
 // Which part of the house the overview shows: the room Pip is in (auto), or one room, or the whole house.
 const houseView = { want: 'auto', now: 'bedroom' };
 const FOCUS_RANGE = HAS_STUDIO ? { bedroom: [-5, 5], hall: [3, 11], studio: [8.4, 16.9], house: [-5, 16.9] } : { bedroom: [-5, 5], hall: [3, 9.5], house: [-5, 8.8] };
@@ -2612,7 +2612,7 @@ function panBy(dx, dy) {
   const s = (2 * dist * Math.tan((camera.fov * Math.PI) / 360)) / (renderer.domElement.clientHeight || 600); // world units per pixel
   orbit.px = clamp(orbit.px - (right.x * dx - up.x * dy) * s, -panLimit(), panLimit());
   orbit.py = orbit.py - (right.y * dx - up.y * dy) * s; // applyOrbit keeps it between the floor and just above the walls
-  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, -5, streetish() ? 14 : 5);
+  orbit.pz = clamp(orbit.pz - (right.z * dx - up.z * dy) * s, -5, streetish() ? 26 : 5);
 }
 dom.addEventListener('contextmenu', (e) => e.preventDefault());
 dom.addEventListener('pointerdown', (e) => {

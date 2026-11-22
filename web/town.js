@@ -8,7 +8,10 @@ import { seasonInfo } from './season.js';
 
 export const TOWN_X = 120; // where the street is in the scene (his house is around x 0)
 export const TOWN_RANGE = [-39, 42]; // from the left end of the street to the right end (street coordinates)
-export const TOWN_Z = [-9, 11];
+export const TOWN_Z = [-9, 28];
+// Pip's own plot: a piece of land across the street from his house, for the things he makes that are too big or too
+// many for his room (like Pino's town, which grows with what its bird builds). Street coordinates.
+export const PLOT = { x0: -11, x1: 35, z0: 12.4, z1: 26.6 };
 export const inTown = (x) => x > 60;
 // Places in the street (street coordinates: x along the street, z toward the viewer; the house fronts are at z 0).
 export const TOWN_SPOTS = {
@@ -60,8 +63,13 @@ export function buildTown(THREE) {
   };
 
   // ---- the ground: grass, two pavements and the road, on a slab like the floor of his room
-  const grass = box([84, 0.5, 32], 0x9ccf86, [1.5, -0.27, 1.5]);
-  box([84.4, 0.6, 32.4], 0x8a6a4c, [1.5, -0.6, 1.5]);
+  const grass = box([84, 0.5, 40], 0x9ccf86, [1.5, -0.27, 9.5]);
+  box([84.4, 0.6, 40.4], 0x8a6a4c, [1.5, -0.6, 9.5]);
+  // his plot: a mown field with a low fence and a sign
+  const field = box([PLOT.x1 - PLOT.x0, 0.06, PLOT.z1 - PLOT.z0], 0xb4dc9a, [(PLOT.x0 + PLOT.x1) / 2, 0.0, (PLOT.z0 + PLOT.z1) / 2]);
+  field.receiveShadow = true;
+  for (let x = PLOT.x0; x <= PLOT.x1 + 0.01; x += 2) for (const z of [PLOT.z0, PLOT.z1]) if (!(z === PLOT.z0 && Math.abs(x - 1) < 2.5)) box([0.14, 0.5, 0.14], 0xfff8ee, [x, 0.25, z]);
+  for (let z = PLOT.z0; z <= PLOT.z1 + 0.01; z += 2) for (const x of [PLOT.x0, PLOT.x1]) box([0.14, 0.5, 0.14], 0xfff8ee, [x, 0.25, z]);
   const paveA = box([82, 0.08, 2.6], 0xd8cdbf, [1.5, 0.02, 1.1]);
   const road = box([82, 0.06, 6], 0x8f8a86, [1.5, 0.0, 5.4]);
   const paveB = box([82, 0.08, 2.2], 0xd8cdbf, [1.5, 0.02, 9.5]);
@@ -200,6 +208,7 @@ export function buildTown(THREE) {
   const post = (x, words, flip) => { cyl(0.07, 0.07, 2.6, 0x7a5237, [x, 1.3, 2.0]); const s = sign(words, 3.0, 0.6, '#fffaf3', '#4a3d35', 62); s.position.set(x + (flip ? -0.2 : 0.2), 2.3, 2.09); group.add(s); };
   post(-36.5, '←  Park · Pond · Hill');
   post(39.5, 'Library  →', true);
+  { cyl(0.06, 0.06, 1.5, 0x7a5237, [-2.2, 0.75, PLOT.z0 - 0.3]); const sg = sign('Pip’s plot', 2.2, 0.55, '#fde3c4', '#8a4a2c', 84); sg.position.set(-2.2, 1.45, PLOT.z0 - 0.36); sg.rotation.y = Math.PI; group.add(sg); const sg2 = sign('Pip’s plot', 2.2, 0.55, '#fde3c4', '#8a4a2c', 84); sg2.position.set(-2.2, 1.45, PLOT.z0 - 0.24); group.add(sg2); }
 
   // ---- trees (their leaves follow the real season) and a street lamp
   const leaf = se.leafOn <= 0.05 ? null : se.turn > 0.5 ? 0xd98b3a : se.blossom ? 0xf3b7c8 : 0x6fae5e;
@@ -212,7 +221,7 @@ export function buildTown(THREE) {
     if (leaf) for (const [dx, dy, dz, r] of [[0, 3.6, 0, 1.7], [-1.1, 3.0, 0.3, 1.2], [1.1, 3.1, -0.2, 1.25], [0.2, 4.6, 0.2, 1.1]]) crowns.push(add(new THREE.SphereGeometry(r, 14, 10), M(leaf), [dx, dy, dz], g));
     else for (const [a, len] of [[0.5, 1.6], [-0.6, 1.5], [0.1, 1.9]]) { const b = cyl(0.06, 0.1, len, 0x7a5237, [Math.sin(a) * len * 0.45, 2.6 + len * 0.42, 0], g); b.rotation.z = -a; }
   };
-  for (const [x, z, s] of [[-37.5, -5.5, 1.1], [-25.2, 10.2, 0.9], [5.5, -5.5, 0.8], [-3, 12.5, 1.1], [14, 13, 1.2], [28, 12.4, 1], [40, -5, 1.1], [39.5, 12, 0.9], [-36, 13, 1]]) tree(x, z, s);
+  for (const [x, z, s] of [[-37.5, -5.5, 1.1], [-25.2, 10.2, 0.9], [5.5, -5.5, 0.8], [-13, 24, 1.1], [40, -5, 1.1], [39.5, 14, 0.9], [-36, 13, 1], [-30, 25, 1.2], [39, 25.5, 1]]) tree(x, z, s);
   const lamps = [];
   for (const x of [-12.6, 16.9]) {
     cyl(0.07, 0.09, 3.6, 0x4a4f66, [x, 1.8, 2.05]);
