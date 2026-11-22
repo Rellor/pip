@@ -231,6 +231,17 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-22 extra reading lamps in the chest',
+    run(s, at) { // nine lamps; the three newest reading lamps stood on the floor by the left wall, far from the bed they were for
+      const names = ['cozy wooden reading lamp', 'cozy tiny reading lamp', 'cozy brass reading lamp'];
+      const put = (s.decor ?? []).filter((d) => names.includes(d.name) && d.kind === 'floor' && !(s.decor ?? []).some((o) => String(o.base ?? '').startsWith(d.id)));
+      if (!put.length) return null;
+      s.decor = s.decor.filter((d) => !put.includes(d));
+      s.stored = [...(s.stored ?? []), ...put.map((d) => ({ ...d, storedAt: at }))];
+      return `Bas put ${put.length} of my reading lamps in my chest (${put.map((d) => d.name).join(', ')}): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) and put it right by the bed.`;
+    },
+  },
+  {
     id: '2026-11-21 wool from Bas',
     run(s, at) { // he asked for extra wool for his blanket
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /wool|yarn/i.test(a.item));

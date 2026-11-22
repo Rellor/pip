@@ -35,8 +35,9 @@ console.log('ok  he may put it in the middle himself, and then he notices it is 
 {
   const d = [];
   const cup = (n) => ({ name: n, on: 'desk', parts: [{ shape: 'cylinder', size: [0.04, 0.04, 0.08], pos: [0, 0.04, 0] }] });
-  for (const n of ['cup one', 'cup two']) d.push(makeDecor(d, cup(n), Date.now()).entry);
-  const t = makeDecor(d, { name: 'little side table', where: 'floor', x: 2, z: -2, parts: [{ shape: 'box', size: [0.8, 0.05, 0.6], pos: [0, 0.6, 0] }, { shape: 'box', size: [0.05, 0.6, 0.05], pos: [0, 0.3, 0] }], why: 'to put things on' }, Date.now());
+  const yesterday = Date.now() - 86_400_000 - 1000; // made on another day (3 new things a day)
+  for (const n of ['cup one', 'cup two']) d.push(makeDecor(d, cup(n), yesterday, yesterday).entry);
+  const t = makeDecor(d, { name: 'little side table', where: 'floor', x: 2, z: -2, parts: [{ shape: 'box', size: [0.8, 0.05, 0.6], pos: [0, 0.6, 0] }, { shape: 'box', size: [0.05, 0.6, 0.05], pos: [0, 0.3, 0] }], why: 'to put things on' }, yesterday, yesterday);
   d.push(t.entry);
   const m = makeDecor(d, cup('cup three'), Date.now());
   assert.ok(m.entry, m.failed);
@@ -92,4 +93,15 @@ console.log('ok  he may put it in the middle himself, and then he notices it is 
   assert.ok(!r.failed, r.failed);
   assert.ok(Math.abs(shelf.pos[2] - 1.2) < 1.5 || Math.abs(shelf.pos[0] + 4.3) < 1.5, `near the desk: ${r.label}`);
   console.log('ok  a wall shelf moved "near the desk" hangs on the wall close to the desk');
+}
+{
+  const { kindWord, MAX_SAME } = await import('../decor.js');
+  assert.equal(kindWord('tiny wooden stand for my tiny clay bird'), 'stand');
+  assert.equal(kindWord('amber reading light'), 'lamp');
+  const d = [];
+  const day = (i) => Date.now() - (i + 1) * 86_400_000;
+  for (let i = 0; i < MAX_SAME; i++) d.push(makeDecor(d, { name: `wooden stand ${'abc'[i]}`.replace(/ .$/, ''), where: 'floor', x: -3 + i * 1.5, z: -2, parts: [{ shape: 'box', size: [0.3, 0.3, 0.3], pos: [0, 0.15, 0] }] }, day(i), day(i)).entry);
+  const more = makeDecor(d, { name: 'little oak stand', where: 'floor', x: 2, z: 2, parts: [{ shape: 'box', size: [0.3, 0.3, 0.3], pos: [0, 0.15, 0] }] }, Date.now());
+  assert.match(more.failed ?? '', /already have 3 things that are a stand/);
+  console.log('ok  at most 3 of one kind of thing: then he improves one or puts one away');
 }

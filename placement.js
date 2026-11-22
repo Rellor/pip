@@ -71,19 +71,12 @@ export function designate(s, spec) {
   const given = (k) => spec?.[k] !== undefined && spec?.[k] !== null && spec?.[k] !== '';
   const said = ['where', 'on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some((k) => given(k) && !(k === 'where' && GENERIC.test(String(spec.where))));
   const rp = rightPlace(spec);
-  if (said) { // his own choice. Only "where" without an exact spot: the search for room starts at a good spot, not the middle
-    const exact = ['on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some(given);
-    return exact ? {} : floorSpot(s, spec, rp);
-  }
-  if (rp?.kind === 'surface' && /\b(lamp|light|lantern|candle)\b/i.test(String(spec?.name ?? ''))) { // a new lamp goes where it is dark, not where the other lamps already are
+  const exact = ['on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some(given);
+  if (!exact && rp?.kind === 'surface' && /\b(lamp|light|lantern|candle)\b/i.test(String(spec?.name ?? ''))) { // a new lamp goes where it is dark (also when he only said "floor")
     const dark = needLampSpots(s)[0];
-    const at = dark ? spotOf(s, dark.name) ?? { name: dark.name, x: dark.x, z: dark.z } : null;
-    if (at) {
-      const top = freeTop(s, { near: [dark.name] });
-      if (top) return top;
-      return { next_to: at.name.replace(/^the /, '') };
-    }
+    if (dark) return freeTop(s, { near: [dark.name] }) ?? { next_to: dark.name.replace(/^the /, '') };
   }
+  if (said) return exact ? {} : floorSpot(s, spec, rp); // his own choice. Only "where" without an exact spot: the search for room starts at a good spot, not the middle
   if (smallThing(spec) && (!rp || rp.kind === 'surface')) { const top = freeTop(s, rp); if (top) return top; } // small things stand on something
   if (!rp) return { where: 'floor', ...floorSpot(s, spec, null) }; // nothing known about it: a free spot by a wall
   if (rp.kind === 'floor' && !rp.near?.length) return { where: 'floor', ...floorSpot(s, spec, rp) };
