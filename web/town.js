@@ -355,6 +355,7 @@ export function buildTown(THREE) {
     handPivots[1].rotation.z = -(((h % 12) / 12) * Math.PI * 2);
     if (key === said) return;
     said = key;
+    fogColor = paintSky(h);
     for (const w of windows) {
       const p = w.who ? PEOPLE.find((q) => q.name === w.who) : null;
       const up = w.who === 'Pip' ? !away && h >= 8 && h < 23 : p ? h >= p.up[0] && h < p.up[1] : h >= 7 && h < 22;
@@ -392,7 +393,42 @@ export function buildTown(THREE) {
     const d = new Date(new Date(now).toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' }));
     market.visible = d.getDay() === 6 && h >= 10 && h < 16;
   }
-  // Walking in the street shows Lina's whole house; from above only its outline (it would stand in front of everything).
-  const setWalk = (walking) => { linaFull.visible = walking; linaLow.visible = !walking; };
-  return { group, update, setWalk, animate };
+  // ---- far away (only seen when you walk outside): the land goes on to a horizon with hills, under a real sky
+  const far = new THREE.Group();
+  far.visible = false;
+  group.add(far);
+  const gridTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); g.fillStyle = '#b9d79f'; g.fillRect(0, 0, 64, 64); g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = 2; g.strokeRect(0, 0, 64, 64); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(160, 160); t.magFilter = THREE.NearestFilter; t.colorSpace = THREE.SRGBColorSpace; return t; })();
+  const land = add(new THREE.CircleGeometry(640, 48), new THREE.MeshBasicMaterial({ map: gridTex, color: 0xffffff }), [0, -0.66, 0], far);
+  land.rotation.x = -Math.PI / 2;
+  const hillMat = new THREE.MeshBasicMaterial({ color: 0x8fb89a });
+  const hillMat2 = new THREE.MeshBasicMaterial({ color: 0xa7c6b4 });
+  for (let i = 0; i < 26; i++) { const a = (i / 26) * Math.PI * 2 + 0.2; const r = 300 + ((i * 37) % 90); const h = add(new THREE.SphereGeometry(60 + ((i * 53) % 50), 12, 8), i % 2 ? hillMat : hillMat2, [Math.cos(a) * r, -18, Math.sin(a) * r], far); h.scale.y = 0.38 + ((i * 17) % 10) / 40; }
+  const skyGeo = new THREE.SphereGeometry(900, 24, 14);
+  skyGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(skyGeo.attributes.position.count * 3), 3));
+  const sky = add(skyGeo, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, fog: false, depthWrite: false }), [0, 0, 0], far);
+  const sunDisc = add(new THREE.CircleGeometry(34, 28), new THREE.MeshBasicMaterial({ color: 0xffd36e, fog: false }), [0, 0, 0], far);
+  // The sky for an hour: [top, horizon, sun colour, fog colour]
+  function paintSky(h) {
+    const night = h < se.sunrise - 0.6 || h > se.sunset + 0.7;
+    const edge = !night && (h < se.sunrise + 0.9 || h > se.sunset - 1.0);
+    const [top, low, sunC] = night ? [0x10173a, 0x2b3a6b, 0xf2f0dc] : edge ? [0x5b7fc0, 0xf5a98a, 0xff7a5a] : [0x4f9fe0, 0xcfe9f7, 0xffd36e];
+    const a = new THREE.Color(top), b = new THREE.Color(low), c = new THREE.Color();
+    const pos = skyGeo.attributes.position, col = skyGeo.attributes.color;
+    for (let i = 0; i < pos.count; i++) { const k = Math.max(0, Math.min(1, pos.getY(i) / 520)); c.copy(b).lerp(a, Math.sqrt(k)); col.setXYZ(i, c.r, c.g, c.b); }
+    col.needsUpdate = true;
+    const f = night ? 0.5 : Math.max(0.04, Math.min(0.96, (h - se.sunrise) / (se.sunset - se.sunrise)));
+    const ang = Math.PI * (1 - f);
+    sunDisc.position.set(Math.cos(ang) * 620, 60 + Math.sin(ang) * 360, -520);
+    sunDisc.lookAt(group.position.x, 20, 0);
+    sunDisc.material.color.set(sunC);
+    land.material.color.set(night ? 0x56608f : edge ? 0xf2cdb0 : 0xffffff);
+    hillMat.color.set(night ? 0x2d3a63 : edge ? 0xb98f86 : 0x8fb89a);
+    hillMat2.color.set(night ? 0x384873 : edge ? 0xd3a894 : 0xa7c6b4);
+    return low;
+  }
+  let fogColor = paintSky(13);
+  // Walking in the street shows Lina's whole house and the land to the horizon; from above only the town itself.
+  const setWalk = (walking) => { linaFull.visible = walking; linaLow.visible = !walking; far.visible = walking; };
+  const skyFog = () => fogColor;
+  return { group, update, setWalk, animate, skyFog };
 }

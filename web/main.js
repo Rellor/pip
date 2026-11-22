@@ -2194,13 +2194,15 @@ function updateWalk(dt) {
     const pushing = dz < 0 && view.z === wasZ;
     if (!inTown(view.x) && Math.abs(view.x - SPOTS.hall_door.p.x) < 0.7 && view.z < -3.3 && pushing) Object.assign(view, { x: TOWN_X, z: 1.6, yaw: Math.PI }); // (a slow screen takes big steps: the wall can stop you a little way off)
     else if (inTown(view.x) && Math.abs(view.x - TOWN_X) < 0.9 && view.z < 2.4 && pushing) Object.assign(view, { x: SPOTS.hall_door.p.x, z: -3.7, yaw: Math.PI });
-    walkPlace();
   }
+  walkPlace(); // inside or outside: the sky, the horizon and the look follow where you stand
   camera.position.set(view.x, 1.55 + (inTown(view.x) ? townGround(view.x, view.z) : 0), view.z);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
 }
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
 let walkOut = false;
+let retroNow = false;
+const RETRO = new URLSearchParams(location.search).get('style') === 'retro';
 function skyNow() {
   const h = forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60;
   const se = seasonInfo(new Date());
@@ -2210,9 +2212,15 @@ function walkPlace() {
   const out = view.mode === 'walk' && inTown(view.x);
   if (out === walkOut) return;
   walkOut = out;
-  scene.userData.sky = out ? skyNow() : null; // look.js keeps the background: this tells it to show a sky
-  if (out) scene.background.set(skyNow());
   town.setWalk(out);
+  scene.userData.sky = out ? town.skyFog() : null; // look.js keeps the background: this tells it to show the sky's own colour
+  if (out) scene.background.set(town.skyFog());
+  scene.fog = out ? new THREE.Fog(town.skyFog(), 140, 700) : null; // far things fade into the sky
+  // A look to try (?style=retro): everything outside drawn in big pixels, like an old game console.
+  retroNow = out && RETRO;
+  renderer.domElement.style.imageRendering = retroNow ? 'pixelated' : '';
+  renderer.setPixelRatio(retroNow ? Math.max(0.2, 420 / (stage.clientWidth || 800)) : pixels);
+  fitCamera();
   home.full.visible = view.mode === 'walk' && !out;
   home.roof.visible = view.mode === 'walk' && !out;
 }
@@ -3034,7 +3042,7 @@ function loop(now) {
     const want = avg > 0.026 ? Math.max(0.75, pixels - 0.25) : avg < 0.015 ? Math.min(SHARP, pixels + 0.25) : pixels;
     if (want !== pixels) {
       pixels = want;
-      renderer.setPixelRatio(pixels);
+      if (!retroNow) renderer.setPixelRatio(pixels);
       fitCamera();
     }
     slowSum = 0;
