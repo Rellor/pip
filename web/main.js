@@ -2199,8 +2199,23 @@ function frame(now, dt) {
 const r1 = (v) => (Math.round(Number(v) * 10) / 10).toString();
 const logOf = (...actions) => (lastState?.log || []).filter((e) => actions.includes(e.action) && Date.parse(e.at) <= Date.now());
 const WALK_EXTRA = [[-4.6, -3.6, 3.6, 4.2]]; // the chest
+// What Pip built out in his world is solid for the walker: a tower cannot be walked through. (Where the walker already
+// stands inside one, because it was just built around them, it does not hold them.)
+function outsideSolid(x, z) {
+  const now = performance.now();
+  for (const d of lastState?.decor || []) {
+    if (d.kind !== 'outside') continue;
+    const g = decorGroups.get(d.id);
+    if (!g) continue;
+    let r = g.userData.foot;
+    if (!r || now - r.at > 3000) { const b = new THREE.Box3().setFromObject(g); r = g.userData.foot = { at: now, x0: b.min.x - 0.25, x1: b.max.x + 0.25, z0: b.min.z - 0.25, z1: b.max.z + 0.25 }; }
+    const inside = (px, pz) => px > r.x0 && px < r.x1 && pz > r.z0 && pz < r.z1;
+    if (inside(x, z) && !inside(view.x, view.z)) return true;
+  }
+  return false;
+}
 function blocked(x, z) {
-  if (inTown(x)) return townBlocked(x, z);
+  if (inTown(x)) return townBlocked(x, z) || outsideSolid(x, z);
   if (!walkable(x, z) || blockedInHouse(x, z, 0.1)) return true;
   const furn = shownFurniture(lastState?.furniture);
   const rects = [...MOVABLE.filter((k) => !FURNITURE[k].flat).flatMap((k) => furnRects(furn, k)).map((r) => [r.x0, r.x1, r.z0, r.z1]), ...WALK_EXTRA];

@@ -31,7 +31,7 @@ import { storyTick } from './story.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
-import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks } from './world.js';
+import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys } from './world.js';
 import { placeOf } from './web/world.js';
 import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
@@ -1478,13 +1478,14 @@ async function wakeUp() {
         st.made = craftTool(state, st.details, kind, parts);
         return;
       }
-      if (isOutside(st.brainWhere) && !isOutside(st.details.where)) st.details.where = 'outside'; // he chose his plot: the maker's design goes there
-      const placed = designate(state, st.details); // no place said: the game puts it where it belongs
+      const out = isOutside(st.details.where);
+      const placed = { ...designate(state, st.details), ...(out ? { worldOpen: [...new Set([...unlockedKeys(state), ...knownKeys(state)])] } : {}) }; // no place said: the game puts it where it belongs. Outside: only where he knows the way
       const built = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js); a "tiny" thing is tiny
-      st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart); // built at the size of his room
+      const sized = out && Number(st.details.metres) > 0 ? built.parts : roomScale(built.parts, st.details);
+      st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: sized, uses: st.uses }, stepStart); // built at the size of his room (outside: as big as he said)
       const oldCloth = /^(.+) already lies over /.exec(st.made.failed ?? '')?.[1];
       if (oldCloth && state.stored.length < MAX_STORED && storeAway(state.decor, state.stored, oldCloth).stored) { // a new blanket: the old one is folded into his chest, like anyone would
-        st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart);
+        st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: sized, uses: st.uses }, stepStart);
         if (st.made.entry) st.made.hint = `my ${oldCloth} lay there, so I folded that into my chest.`;
       }
       if (st.made.failed && /is full|no room left on/i.test(st.made.failed) && !/wall/i.test(st.made.failed) && state.stored.length < MAX_STORED) { // made, but no top has room: it waits in his chest instead of being lost
@@ -1591,7 +1592,7 @@ async function wakeUp() {
     }
     if (st.action === 'change_thing') st.made = updateDecor(state.decor, st.details, stepStart);
     if (st.action === 'move_thing') {
-      st.made = moveThing(state.decor, state.chest, st.details, stepStart);
+      st.made = moveThing(state.decor, state.chest, isOutside(st.details.where) && !st.details.on ? { ...st.details, worldOpen: [...new Set([...unlockedKeys(state), ...knownKeys(state)])] } : st.details, stepStart);
       if (st.made.chest) {
         state.chest = st.made.chest;
         setChest(state.chest);

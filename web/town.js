@@ -60,6 +60,80 @@ export function townBlocked(x, z, pad = 0.3) {
 // Standing right in front of Pip's door in the street (for the viewer who walks: this is the way back into the hall).
 export const atTownDoor = (x, z) => Math.abs(x - TOWN_X) < 0.75 && z < 0.75 && z > -0.2;
 
+// ---- Where Pip may build (decor.js). He picks the place himself, anywhere in his world: on his plot, in the street,
+// in the park, by the pond, on the hill, by the library. The only rule: it has to fit. It may not stand in a house, in the
+// water, on a tree or on what is already there, and the ways people walk must stay free (the pavement along the doors,
+// the park path, the way up the hill). It can be bigger than a house.
+export const BUILD_MAX = { w: 20, h: 18, d: 20 };
+// What stands there already: [what it is, x0, x1, z0, z1] and [what it is, x, z, radius] (street coordinates).
+const KEEP_RECTS = [
+  ['the houses of my street stand there', -40.5, 43.5, -10.5, 0.25], ['the pavement along the doors must stay free to walk on', -45, 74, 0.25, 2.5],
+  ['the park path must stay free to walk on', -71.5, -39, 0.2, 2.6], ['Lina’s house stands there', -24.4, -12.6, 11, 19.8], ['the library stands there', 48, 66, -10.5, 4.8],
+  ['the market stalls stand there on Saturday', -8, 9.5, 8.3, 10.7], ['the old containers stand there', -40.4, -28.8, 19, 27.4],
+];
+const TREES = [[-37.5, -5.5, 1.1], [-25.2, 10.2, 0.9], [5.5, -5.5, 0.8], [-13, 24, 1.1], [40, -5, 1.1], [39.5, 14, 0.9], [-36, 13, 1], [-30, 25, 1.2], [39, 25.5, 1], [-45, -8, 1.1], [-52, -16, 1], [-84, 2, 1.2], [-86, 18, 1], [-78, 24, 1.1], [-47, 22, 0.9], [-86, -14, 1.1], [-50, -34, 1.2], [-84, -36, 1], [-74, 8, 0.8], [46, -5, 1], [70, -4, 1.1], [69, 12, 1], [47, 16, 1.1], [60, 22, 1.2]];
+const STONES = [[-60.5, -1.5], [-61.5, -4], [-62, -6.5], [-64, -9], [-67, -11.5], [-70, -13.8], [-72, -16], [-71.2, -18.6], [-69, -20.6], [-66.8, -22.2]];
+const KEEP_ROUND = [
+  ...TREES.map(([x, z, k]) => ['a tree stands there', x, z, 1.5 * k]), ...STONES.map(([x, z]) => ['the path up the hill must stay free', x, z, 1.3]),
+  ['the willow stands there', -52.8, 6.4, 3], ['the swing stands there', -48.5, 9.5, 2.5], ['a park bench stands there', -60.5, 5.2, 2.2], ['a park bench stands there', -69, 5.6, 1.8],
+  ['the bench and the flag on the hilltop stand there', HILL.x + 0.8, HILL.z - 0.3, 3.4], ['the old boat lies there', -78, 21.5, 3.4], ['the green stone stands there', -82, -6, 3],
+  ['the radio mast stands there', -86, -40, 2.4], ['the heap of junk lies there', 43.5, 13.5, 2.5], ['the sign of my plot stands there', -2.2, 12.1, 0.9],
+  ...[-37, -14, 9, 32, 47].map((x) => ['a pole with wires stands there', x, 10.9, 0.6]),
+];
+// The ways he walks himself (ROUTES): they stay free too, from corner to corner.
+const WALKS = Object.entries(TOWN_FOR).flatMap(([place, [spot]]) => { const pts = ['door', ...(ROUTES[place] ?? []), spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
+const inRect = (x, z, x0, x1, z0, z1, pad = 0) => x > x0 - pad && x < x1 + pad && z > z0 - pad && z < z1 + pad;
+// null when a thing with this footprint (street coordinates) can stand there, otherwise what is in the way, in his words.
+export function buildProblem(x0, x1, z0, z1) {
+  if (x0 < PARK.x0 + 0.5 || x1 > WORLD_RANGE[1] - 0.5) return 'my world ends there';
+  for (const [a, b, lo, hi] of [[PARK.x0, PARK.x1, PARK.z0, PARK.z1], [PARK.x1, WORLD_RANGE[1], TOWN_Z[0] - 1.5, TOWN_Z[1] + 1]]) if (x1 > a && x0 < b && (z0 < lo + 0.5 || z1 > hi - 0.5)) return 'my world ends there';
+  for (const [why, a, b, c, d] of KEEP_RECTS) if (x0 < b && x1 > a && z0 < d && z1 > c) return why;
+  const nearX = (x) => Math.max(x0, Math.min(x1, x));
+  const nearZ = (z) => Math.max(z0, Math.min(z1, z));
+  for (const [why, x, z, r] of KEEP_ROUND) if (Math.hypot(nearX(x) - x, nearZ(z) - z) < r) return why;
+  { const x = nearX(POND.x); const z = nearZ(POND.z); if (((x - POND.x) / (POND.rx + 1.3)) ** 2 + ((z - POND.z) / (POND.rz + 1.3)) ** 2 < 1) return 'the pond is there'; }
+  if (x0 < PLOT.x1 + 0.3 && x1 > PLOT.x0 - 0.3 && z0 < PLOT.z1 + 0.3 && z1 > PLOT.z0 - 0.3 && !(x0 >= PLOT.x0 + 0.3 && x1 <= PLOT.x1 - 0.3 && z0 >= PLOT.z0 + 0.3 && z1 <= PLOT.z1 - 0.3)) return 'the fence of my plot runs there';
+  for (const [a, b, place] of WALKS) {
+    const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.6));
+    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : `the ${place}`} must stay free`;
+  }
+  return null;
+}
+// The places he can name. `at` is the middle, `half` how far it reaches (a thing goes beside it, not in it), `needs` the
+// place of his world he must know first (world.js). The first place named in his words counts.
+export const BUILD_PLACES = [
+  { key: 'plot', name: 'on my plot', words: /\b(my |the )?(plot|own land|own field|yard)\b/i, at: [12, 19.5], half: [0, 0] },
+  { key: 'pond', name: 'by the pond', words: /\bpond\b/i, at: [POND.x, POND.z], half: [POND.rx + 1.3, POND.rz + 1.3], needs: 'pond' },
+  { key: 'willow', name: 'by the willow', words: /\bwillow\b/i, at: [-52.8, 6.4], half: [3, 3], needs: 'pond' },
+  { key: 'swing', name: 'by the swing', words: /\bswing\b/i, at: [-48.5, 9.5], half: [2.5, 2.5], needs: 'pond' },
+  { key: 'boat', name: 'by the old boat', words: /\b(old )?boat\b/i, at: [-78, 21.5], half: [3.4, 3.4], needs: 'pond' },
+  { key: 'stone', name: 'by the green stone', words: /\b(green|glowing) stone\b/i, at: [-82, -6], half: [3, 3], needs: 'pond' },
+  { key: 'hilltop', name: 'on top of the hill', words: /\b(hill ?top|top of the hill|on the hill|up the hill)\b/i, at: [HILL.x - 5.5, HILL.z + 1], half: [0, 0], needs: 'hill' },
+  { key: 'hillfoot', name: 'at the foot of the hill', words: /\b(foot|bottom) of the hill\b/i, at: [-54, -4], half: [0, 0], needs: 'hill' },
+  { key: 'hillside', name: 'on the side of the hill', words: /\b(hill ?side|slope|hill)\b/i, at: [-55, -18], half: [0, 0], needs: 'hill' },
+  { key: 'library', name: 'by the library', words: /\blibrary\b/i, at: [57, -3], half: [9, 7.8], needs: 'library' },
+  { key: 'bakery', name: 'in the street by the bakery', words: /\b(bakery|kees)\b/i, at: [11.5, 5.4], half: [0, 0] },
+  { key: 'shop', name: 'in the street by the corner shop', words: /\b(corner )?shop\b/i, at: [33, 5.4], half: [0, 0] },
+  { key: 'mo', name: 'in the street by Mo’s house', words: /\bmo(’s|'s)|\b(by|near|of) mo\b/i, at: [-9, 5.4], half: [0, 0] },
+  { key: 'jo', name: 'in the street by Oma Jo’s house', words: /\b(oma jo|jo(’s|'s))/i, at: [-22, 5.4], half: [0, 0] },
+  { key: 'dot', name: 'in the street by Dot’s house', words: /\bdot(’s|'s)|\b(by|near|of) dot\b/i, at: [21.5, 5.4], half: [0, 0] },
+  { key: 'lina', name: 'by Lina’s house', words: /\blina\b/i, at: [-18.5, 15.4], half: [5.9, 4.4], side: [0, -1] }, // her door is on the street side
+  { key: 'park', name: 'in the park', words: /\b(park|meadow)\b/i, at: [-46, 16], half: [0, 0], needs: 'pond', wide: true },
+  { key: 'street', name: 'in the street in front of my house', words: /\b(street|road|my (front )?door|my house|my home|doorstep)\b/i, at: [0, 5.4], half: [0, 0], wide: true },
+];
+// "outside by the pond", "in the park", "on top of the hill" -> the place he means (null for a plain "outside").
+export function buildPlace(text) {
+  const t = String(text ?? '');
+  const hits = BUILD_PLACES.map((p) => ({ p, i: t.search(p.words) })).filter((h) => h.i >= 0);
+  if (!hits.length) return null;
+  const exact = hits.filter((h) => !h.p.wide); // "in the park by the pond" is the pond, "in the street by the shop" the shop
+  return (exact.length ? exact : hits).sort((a, b) => a.i - b.i)[0].p;
+}
+// Is this "where" a place out in his world? "outside ...", or one of the places with a word like by, in, on, at before it.
+const PLACE_WORDS = /\b(by|at|near|in|on|beside|next to|in front of|behind|left of|right of|top of|foot of|across from|up)\s+(the |my )?(pond|park|hill|hilltop|hillside|library|street|road|meadow|willow|swing|old boat|green stone|bakery|corner shop|plot)\b(?!\s+(lamp|light|sign|map|picture|painting|drawing|photo|model|book|shelf|poster|print|view))/i;
+export const worldPhrase = (text) => PLACE_WORDS.exec(String(text ?? ''))?.[0] ?? null; // "by the pond" out of a longer sentence
+export const worldWhere = (text) => /\b(outside|outdoors?)\b/i.test(String(text ?? '')) || PLACE_WORDS.test(String(text ?? ''));
+
 export function buildTown(THREE) {
   const group = new THREE.Group();
   group.position.x = TOWN_X;

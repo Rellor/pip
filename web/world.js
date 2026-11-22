@@ -124,9 +124,9 @@ export function worldMapSvg(o = {}) {
     const here = o.where === p.key && o.phase !== 'going' && o.phase !== 'back';
     const ly = p.key === 'home' ? y + 26 : p.key === 'shop' || p.key === 'garden' ? y + 34 : p.key === 'hill' ? y - 44 : y + 48;
     const closed = can && !here && p.key !== 'home' && o.open && o.open[p.key] === false;
-    const words = `${can ? '' : heard ? '🔒 ' : '❔ '}${heard ? p.title : 'Somewhere new'}${closed ? ' · closed' : ''}`;
-    const wide = Math.max(56, words.length * 6.7 + 18); // the little sign is as wide as its words
-    add(`<g data-place="${p.key}" class="wplace${can ? '' : ' locked'}"><title>${p.title}</title><circle cx="${x}" cy="${y - 4}" r="38" fill="#fff" opacity="${here ? 0.35 : 0}"/><rect x="${x - wide / 2}" y="${ly - 13}" width="${wide}" height="18" rx="9" fill="${here ? '#e9855b' : '#fffaf3'}" opacity="${can ? 0.95 : 0.7}"/><text x="${x}" y="${ly}" font-size="11.5" font-weight="700" text-anchor="middle" fill="${here ? '#fff' : can ? '#4a3d35' : '#8a7d73'}" font-family="system-ui,sans-serif">${words}</text></g>`);
+    const words = `${can ? '' : heard ? '🔒 ' : ''}${heard ? p.title : '?'}`; // short and big, so it can be read on a phone
+    const wide = Math.max(30, words.length * 8.9 + 20); // the little sign is as wide as its words
+    add(`<g data-place="${p.key}" class="wplace${can ? '' : ' locked'}"><title>${p.title}</title><circle cx="${x}" cy="${y - 4}" r="38" fill="#fff" opacity="${here ? 0.35 : 0}"/><rect x="${x - wide / 2}" y="${ly - 17}" width="${wide}" height="24" rx="12" fill="${here ? '#e9855b' : '#fffaf3'}" opacity="${can ? (closed ? 0.8 : 0.96) : 0.7}"/><text x="${x}" y="${ly}" font-size="16" font-weight="700" text-anchor="middle" fill="${here ? '#fff' : can ? '#4a3d35' : '#8a7d73'}" font-family="system-ui,sans-serif">${words}</text></g>`);
   }
   // where Pip is: at a place, or on the way (a third of the way out, or two thirds of the way back)
   const home = placeOf('home').at;

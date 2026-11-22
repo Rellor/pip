@@ -94,6 +94,18 @@ for (const p of [...PEOPLE.map((x) => x.name), 'Pip', 'nobody']) assert.ok(faceS
 assert.equal(sceneOf('sky:Leonids').emoji, '🌠');
 ok('the street is a whole picture by day and night, in snow and storm, on market day, and when he is out');
 
+// ---- the shop shelf (the Shop page of the World tab)
+{
+  const d2 = streetData({ coins: 4, tools: [{ name: 'clay', kind: 'clay' }] }, noon);
+  assert.deepEqual(d2.shelf.map((g) => g.kind), ['food', 'seeds', 'material', 'tool', 'instrument', 'outdoor']);
+  const all = d2.shelf.flatMap((g) => g.things);
+  assert.equal(all.find((t) => t.item === 'clay').owned, true);
+  assert.equal(all.find((t) => t.item === 'umbrella').can, true);
+  assert.equal(all.find((t) => t.item === 'flute').can, false);
+  assert.ok(all.every((t) => t.price >= 1));
+  ok('the shop shelf: everything for sale, what he has and what he can pay');
+}
+
 // ---- the sky
 assert.equal(shopOpen(noon), true);
 assert.ok(Math.abs(moonPhase(Date.UTC(2000, 0, 21, 4, 40)) - 0.5) < 0.02);

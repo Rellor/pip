@@ -46,7 +46,10 @@ export function applyMade(step, reply, limits = {}) {
   const d = reply && typeof reply === 'object' ? { ...reply } : {};
   if (limits.parts && Array.isArray(d.parts)) d.parts = d.parts.slice(0, limits.parts); // his skill sets how much he can do
   if (limits.bars && Array.isArray(d.tracks)) d.tracks = d.tracks.slice(0, 4);
-  return { ...step, brainWhere: step.details?.where ?? (/\b(outside|my plot)\b/i.test(String(step.details?.what ?? '')) ? 'outside' : null), details: { ...step.details, ...d, name: d.name ?? step.details?.name ?? step.details?.what }, make: false, made_by_maker: true };
+  // He chose a place outside when he picked the move ("a lighthouse outside by the pond"): the design goes there, whatever
+  // spot the maker wrote down (decided here, because the step is tidied afterwards and only its details stay).
+  const where = outsideChoice(step.details?.where ?? outsideIn(step.details?.what), d.where ?? step.details?.where);
+  return { ...step, details: { ...step.details, ...d, ...(where ? { where } : {}), name: d.name ?? step.details?.name ?? step.details?.what }, make: false, made_by_maker: true };
 }
 
 // Songs only use what he has. An instrument he does not own becomes his voice (drums stay drums), and names are matched
@@ -74,6 +77,7 @@ function onlyWhatHeHas(reply, allowed) {
 
 // A song: the maker's pattern (or one revised section of an old one) becomes tracks the site can play.
 import { cleanPattern, patternToTracks, reviseSection } from './music.js';
+import { outsideIn, outsideChoice } from './decor.js';
 export function finishSong(step, reply, { songs = [], maxBars = 16, allowed = null } = {}) {
   if (allowed && reply && typeof reply === 'object') reply = onlyWhatHeHas(reply, allowed);
   const old = step.details?.revise ? [...songs].reverse().find((x) => x.pattern && x.name.toLowerCase() === String(step.details.revise).toLowerCase()) : null;

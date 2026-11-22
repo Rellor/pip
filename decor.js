@@ -5,7 +5,7 @@ import { toolKind } from './tools.js';
 import { behaviorProblem } from './behaviors.js';
 import { settle } from './build.js';
 import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pivotOf, frontWorld, ownSides, SIDE_VECTORS, sideOfVector } from './web/furniture.js';
-import { TOWN_X, PLOT } from './web/town.js';
+import { TOWN_X, PLOT, BUILD_MAX, BUILD_PLACES, buildPlace, buildProblem, worldWhere, worldPhrase, groundAt } from './web/town.js';
 
 // Pip's decorations.
 // He designs objects from a few simple shapes. His design is plain data, never code, and everything is checked and
@@ -18,7 +18,7 @@ const LIMITS = {
   floor: { w: 4.8, h: 3.2, d: 3.0 }, // a long table for many of him fits
   surface: { w: 1.0, h: 0.9, d: 1.0 }, // on top of furniture
   wall: { w: 2.0, h: 1.6, d: 0.4 }, // flat things on a wall
-  outside: { w: 6, h: 5, d: 6 }, // on his plot across the street: room for big things
+  outside: BUILD_MAX, // out in his world (web/town.js): it can be bigger than a house
 };
 // What kind of thing it is, from its name: "cozy brass reading lamp" is a lamp, "tiny wooden stand for my bird" a stand.
 const KIND_SYNONYM = { light: 'lamp', lantern: 'lamp', candle: 'lamp', sconce: 'lamp', shelves: 'shelf', bookshelf: 'shelf', pedestal: 'stand', riser: 'stand', perch: 'stand' };
@@ -37,10 +37,12 @@ const STORAGE_WORDS = /shelf|shelves|closet|cabinet|wardrobe|drawer|dresser|rack
 export function capOf(decor) {
   return Math.min(60, MAX_DECOR + 6 * decor.filter((d) => !d.image && !d.art && STORAGE_WORDS.test(d.name)).length);
 }
-// ---- His plot outside (web/town.js): a field across the street for things that are too big or too many for his room.
-export const MAX_OUTSIDE = 24;
+// ---- Outside (web/town.js): his plot across the street, and every other place of his world that is free. He picks the
+// place himself ("outside by the pond"); the game only checks that it fits there.
+export const MAX_OUTSIDE = 40;
 const OUTSIDE_WORDS = /\b(outside|outdoors?|my plot|my land|my field|on the plot|across the street|in the street|my yard|the meadow)\b/i;
-export const isOutside = (where) => OUTSIDE_WORDS.test(String(where ?? ''));
+export const saysOutside = (text) => OUTSIDE_WORDS.test(String(text ?? '')); // in a sentence about what he makes
+export const isOutside = (where) => saysOutside(where) || worldWhere(where); // as the place he picked: also "by the pond", "on top of the hill"
 export const outsideThings = (decor) => decor.filter((d) => d.kind === 'outside');
 const roomCount = (decor) => decor.filter((d) => d.kind !== 'outside').length; // what stands on his plot does not fill his room
 const FULL = 'his room is full. He can put things in his chest, build storage (a shelf or a closet makes room for more), or ask for more space';
@@ -129,7 +131,8 @@ function fit(parts, kind, lim = {}) {
   }
   const [w, h, d] = [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
   const L = { ...LIMITS[kind], ...lim };
-  const scale = Math.min(1, L.w / w, L.h / h, L.d / d);
+  const grow = kind === 'outside' && Number(lim.metres) > 0 ? Number(lim.metres) / Math.max(w, h, d) : 1; // outside he says how big it is: its longest side in metres
+  const scale = Math.min(grow, L.w / w, L.h / h, L.d / d);
   const cx = (min[0] + max[0]) / 2;
   const cy = kind === 'wall' ? (min[1] + max[1]) / 2 : min[1]; // wall things: middle at the spot; others: bottom on the surface
   const cz = kind === 'wall' ? min[2] : (min[2] + max[2]) / 2; // wall things: back against the wall
@@ -160,7 +163,7 @@ function findZone(where) {
 // Puts a finished design into the room: his spot first, then another of the same kind, then anywhere with room.
 // `spec` is { name, why, project, where, parts } with clean parts. Does not change `decor`.
 function placeParts(decor, spec, atMs, now) {
-  if (!isOutside(spec.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside on his plot (where: "outside")` };
+  if (!isOutside(spec.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside (where: "outside", or a place like "outside by the pond")` };
   const parts = spec.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] })); // fit() moves things, so work on a copy
   const want = findZone(spec.where);
   const dest = placeWhere(decor, spec, parts, want, atMs, now);
@@ -173,13 +176,13 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   const name = str(d.name, 60);
   if (!name) return { failed: 'he did not give it a name' };
   if (decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
-  if (!isOutside(d.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside on his plot (where: "outside")` };
+  if (!isOutside(d.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside (where: "outside", or a place like "outside by the pond")` };
   const kind = kindWord(name);
   const same = kind ? decor.filter((x) => !x.image && !x.art && kindWord(x.name) === kind) : [];
   if (same.length >= (kind === 'lamp' ? MAX_LAMPS : MAX_SAME)) return { failed: `I already have ${same.length} ${kind === 'lamp' ? 'lamps' : `things that are a ${kind}`} (${same.slice(0, 4).map((x) => x.name).join(', ')}). That is enough of those: I improve one of them (change_thing), move one where it is needed, or put one in my chest first`, hinted: true };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
-  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, near_xz: d.near_xz, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn, ceiling: d.ceiling, next_to: d.next_to, level: d.level, keep: d.keep === true }, atMs, now);
+  return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, metres: d.metres, worldOpen: d.worldOpen, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, near_xz: d.near_xz, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn, ceiling: d.ceiling, next_to: d.next_to, level: d.level, keep: d.keep === true }, atMs, now);
 }
 
 // ---- The chest: things he does not want in the room right now are kept, not deleted.
@@ -512,7 +515,7 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
       Object.assign(e, { pos: n.pos, base: n.base ?? undefined, kind: n.kind, zone: n.zone, label: n.label, scale: n.scale, rotY: n.rotY, stand: n.stand, parts: n.parts });
       limited = Boolean(factor) && factor > 1 && e.scale < 1;
     } else {
-      e.scale = fit(next, Z.kind, Z.lim);
+      e.scale = fit(next, Z.kind, e.kind === 'outside' && e.metres ? { metres: e.metres } : Z.lim);
       e.parts = next;
       limited = e.scale < 1 && (Boolean(factor) && factor > 1);
     }
@@ -641,7 +644,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   const want = findZone(d.where);
   const hasXZ0 = d.x !== undefined && d.z !== undefined && d.x !== null && d.z !== null && d.x !== '' && d.z !== '' && Number.isFinite(Number(d.x)) && Number.isFinite(Number(d.z));
   let hasXZ = hasXZ0;
-  if (!want && !dx && !dz && !hasXZ && !d.next_to && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null && turnRad(d.turn) === null) return { failed: 'he did not say where to move it' };
+  if (!want && !isOutside(d.where) && !dx && !dz && !hasXZ && !d.next_to && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null && turnRad(d.turn) === null) return { failed: 'he did not say where to move it' };
   if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const at = new Date(atMs + 6000).toISOString();
   const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && !liesFlat(o) && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
@@ -742,12 +745,13 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   if (isOutside(d.where) && !d.on) { // out to his plot across the street
     if (e.kind === 'wall' || e.cover) return { failed: `${e.name} belongs inside. Only things that stand by themselves can go out to the plot` };
     if (decor.some((o) => o.base === e.id || String(o.base ?? '').startsWith(`${e.id}#`))) return { failed: 'things stand on it. He takes them off first' };
-    const r = placeOutside(decor.filter((o) => o !== e), e, copy(), atMs, now, true);
+    const r = placeOutside(decor.filter((o) => o !== e), { ...e, where: d.where, worldOpen: d.worldOpen, metres: Number(d.metres) > 0 ? d.metres : e.metres }, copy(), atMs, now, true);
     if (r.failed) return r;
     delete e.base;
     return keep(r);
   }
   if (e.kind === 'outside') { // back into his room (or to a spot he names)
+    { const z = sizeOf(e); if (z && (z[0] > LIMITS.floor.w || z[1] > LIMITS.floor.h || z[2] > LIMITS.floor.w)) return { failed: `${e.name} is ${r3(z[0])} m wide and ${r3(z[1])} m high: too big for my room. It stays outside (I can move it to another place out there: move_thing {name, where: "outside by the pond"})`, hinted: true }; }
     const r = d.on ? placeOn(decor.filter((o) => o !== e), e, copy(), findBase(decor, d.on, d) ?? baseByKey(decor, 'desk'), null, atMs, now, true) : placeFloor(decor.filter((o) => o !== e), { ...e, zone: 'floor', kind: 'floor' }, copy(), hasXZ ? { x: Number(d.x), z: Number(d.z) } : null, hasXZ ? [Number(d.x), Number(d.z)] : [0, 3.6], atMs, now, true);
     return r.failed ? r : keep(r);
   }
@@ -918,7 +922,7 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
     const built = settle(all, { kind: e.kind, only: all.map((p, i) => i).filter((i) => i >= e.parts.length) }); // new parts snap onto the old ones
     all = built.parts;
     fixes = built.fixes;
-    e.scale = fit(all, Z.kind, Z.lim);
+    e.scale = fit(all, Z.kind, e.kind === 'outside' && e.metres ? { metres: e.metres } : Z.lim);
     e.parts = all;
     if (sd) { // the middle moved by `shift` in its own frame: its place in the room and the spot he stands at move along
       const c = Math.cos(e.rotY || 0);
@@ -1835,31 +1839,67 @@ function placeCeiling(decor, spec, parts, atMs, now) {
     },
   };
 }
-// A place on his plot: the front row first (by the street, across from his door), then further back. Things stand apart.
+// He chose a place outside when he picked the move ("outside by the pond"), and the maker's design may name one too:
+// the one that names a real place wins, and his own choice comes first. Returns the where to use (or the maker's own).
+export function outsideChoice(brainWhere, where) {
+  if (!isOutside(brainWhere)) return where;
+  return isOutside(where) && buildPlace(where) && !buildPlace(brainWhere) ? where : brainWhere;
+}
+// What he said he makes: "a lighthouse outside by the pond" -> "outside by the pond" (null when it is for his room).
+export const outsideIn = (what) => (saysOutside(what) ? `outside ${worldPhrase(what) ?? ''}`.trim() : null);
+// The places outside he can pick from, in his words (only the ones he knows the way to, when `open` says which).
+export const outsidePlaces = (open = null) => BUILD_PLACES.filter((p) => !p.needs || !open || open.includes(p.needs)).map((p) => p.name);
+const SIDE = [[/\bleft\b/i, [-1, 0]], [/\bright\b/i, [1, 0]], [/\b(behind|back of|north)\b/i, [0, -1]], [/\b(in front|front of|south)\b/i, [0, 1]]];
+// A place outside. A plain "outside" is his plot: the front row first (by the street, across from his door), then
+// further back. Anywhere else he names the place himself: the thing goes as close to it as it fits (within 10 m), on
+// the ground as it is there (on the hill it stands on the slope). When it does not fit he hears why, and what would.
 function placeOutside(decor, spec, parts, atMs, now, moving = false) {
   const mine = outsideThings(decor);
-  if (mine.length >= MAX_OUTSIDE) return { failed: `my plot is full (${mine.length} things). I take one back inside or put one in my chest first`, hinted: true };
-  const scale = fit(parts, 'outside', {});
+  if (mine.length >= MAX_OUTSIDE) return { failed: `there are ${mine.length} things of mine outside, and that is enough. I take one back inside or put one in my chest first`, hinted: true };
+  const metres = Number(spec.metres) > 0 ? Math.min(Math.max(BUILD_MAX.w, BUILD_MAX.h), Math.max(0.3, Number(spec.metres))) : null; // how big he wants it: its longest side
+  const scale = fit(parts, 'outside', metres ? { metres } : {});
   const [hw, hd] = halfFoot(parts, scale);
-  const others = mine.filter((o) => o.pos).map((o) => rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY));
-  const spots = [];
-  for (let x = PLOT.x0 + hw + 0.6; x <= PLOT.x1 - hw - 0.6; x += 1) for (let z = PLOT.z0 + hd + 0.8; z <= PLOT.z1 - hd - 0.6; z += 1) spots.push([x, z, (z - PLOT.z0) * 1.6 + Math.abs(x - 1) * 0.35]);
-  spots.sort((a, b) => a[2] - b[2]);
-  const free = spots.find(([x, z]) => { const r = { x0: TOWN_X + x - hw, x1: TOWN_X + x + hw, z0: z - hd, z1: z + hd }; return !others.some((o) => r.x0 < o.x1 + 0.6 && r.x1 + 0.6 > o.x0 && r.z0 < o.z1 + 0.6 && r.z1 + 0.6 > o.z0); });
-  if (!free) return { failed: `there is no room left on my plot for something about ${r3(hw * 2)} x ${r3(hd * 2)} m. I make it smaller, or take something off the plot first`, hinted: true };
-  const [x, z] = free;
-  return {
-    entry: {
-      id: `d${now.toString(36)}${decor.length}${rid()}`, name: spec.name, why: spec.why, project: spec.project, song: spec.song ?? null,
-      uses: moving ? spec.uses : storedUses(spec.uses), tool: spec.tool ?? null, zone: 'outside', slot: null, free: true, kind: 'outside',
-      label: 'outside on my plot, across the street from my door', pos: [r3(TOWN_X + x), 0, r3(z)], rotY: Math.PI, scale, parts,
-      stand: [0.3, -3.9], // he looks at it from his window
-      at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString(),
-    },
+  const spot = buildPlace(spec.where);
+  if (spot?.needs && Array.isArray(spec.worldOpen) && !spec.worldOpen.includes(spot.needs)) return { failed: `I do not know the way to that place yet (${spot.name}). I pick a place I know: ${outsidePlaces(spec.worldOpen).join(', ')}`, hinted: true };
+  const others = mine.filter((o) => o.pos).map((o) => ({ ...rectAt(footOf(o), o.pos[0] - TOWN_X, o.pos[2], o.rotY), name: o.name }));
+  const inWay = (x, z, a = hw, b = hd) => buildProblem(x - a, x + a, z - b, z + b) ?? (() => { const o = others.find((r) => x - a < r.x1 + 0.6 && x + a + 0.6 > r.x0 && z - b < r.z1 + 0.6 && z + b + 0.6 > r.z0); return o ? `my ${o.name} stands there` : null; })();
+  const entry = (x, z, label, rotY) => ({
+    id: `d${now.toString(36)}${decor.length}${rid()}`, name: spec.name, why: spec.why, project: spec.project, song: spec.song ?? null,
+    uses: moving ? spec.uses : storedUses(spec.uses), tool: spec.tool ?? null, zone: 'outside', slot: null, free: true, kind: 'outside', spot: spot?.key ?? 'plot', ...(metres ? { metres } : {}),
+    label, pos: [r3(TOWN_X + x), r3(Math.min(...[[0, 0], [-hw, -hd], [hw, -hd], [-hw, hd], [hw, hd]].map(([a, b]) => groundAt(x + a, z + b)))), r3(z)], rotY, scale, parts,
+    stand: [0.3, -3.9], // he looks out of his window toward it
+    at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString(),
+  });
+  if (!spot || spot.key === 'plot') {
+    const spots = [];
+    for (let x = PLOT.x0 + hw + 0.6; x <= PLOT.x1 - hw - 0.6; x += 1) for (let z = PLOT.z0 + hd + 0.8; z <= PLOT.z1 - hd - 0.6; z += 1) spots.push([x, z, (z - PLOT.z0) * 1.6 + Math.abs(x - 1) * 0.35]);
+    spots.sort((a, b) => a[2] - b[2]);
+    const free = spots.find(([x, z]) => !inWay(x, z));
+    if (!free) return { failed: `there is no room on my plot for something about ${Math.round(hw * 20) / 10} x ${Math.round(hd * 20) / 10} m (my plot is ${PLOT.x1 - PLOT.x0} x ${r3(PLOT.z1 - PLOT.z0)} m). I pick another place outside (${outsidePlaces(spec.worldOpen).slice(1, 6).join(', ')}), or make it smaller`, hinted: true };
+    return { entry: entry(free[0], free[1], 'outside on my plot, across the street from my door', Math.PI) };
+  }
+  // the place he named: beside it when it is something that stands there (the pond, the library), on the side he said
+  const words = String(spec.where ?? '');
+  let side = SIDE.find(([re]) => re.test(words))?.[1] ?? (spot.half[0] ? spot.side ?? [0, 1] : [0, 0]);
+  if (!spot.half[0] && side[1] > 0) side = [0, 0]; // "in the street in front of my house" is that place itself, not a step further
+  const reach = (h, own) => (h ? h + own + 1 : 4 + own);
+  const tx = spot.at[0] + side[0] * reach(spot.half[0], hw);
+  const tz = spot.at[1] + side[1] * reach(spot.half[1], hd);
+  const near = (a, b, far = 10) => {
+    let best = null;
+    for (let dx = -far; dx <= far; dx += 0.5) for (let dz = -far; dz <= far; dz += 0.5) { const d = Math.hypot(dx, dz); if (d <= far && (!best || d < best[2]) && !inWay(tx + dx, tz + dz, a, b)) best = [tx + dx, tz + dz, d]; }
+    return best;
   };
+  const free = near(hw, hd);
+  if (!free) {
+    const k = [0.75, 0.55, 0.4, 0.28, 0.18].find((f) => near(hw * f, hd * f, 8));
+    const why = inWay(tx, tz) ?? 'there is not enough free ground';
+    return { failed: `it does not fit ${spot.name}: it is about ${Math.round(hw * 20) / 10} x ${Math.round(hd * 20) / 10} m, and ${why}. ${k ? `Something up to about ${Math.floor(Math.max(hw, hd) * 2 * k * 2) / 2} m wide fits there` : 'Nothing fits there'}. I pick another place (${outsidePlaces(spec.worldOpen).filter((n) => n !== spot.name).slice(0, 5).join(', ')}), or make it smaller`, hinted: true };
+  }
+  return { entry: entry(free[0], free[1], `outside, ${spot.name}`, spot.key === 'lina' ? Math.PI : 0) };
 }
 function placeWhereRaw(decor, spec, parts, want, atMs, now) {
-  if (isOutside(spec.where) || want === 'outside') return placeOutside(decor, spec, parts, atMs, now);
+  if (want === 'outside' || isOutside(spec.where)) return placeOutside(decor, spec, parts, atMs, now); // before the room's own words: "outside in front of the library" is not the front of his room
   if (spec.ceiling === true || /\b(ceiling|roof)\b/i.test(String(spec.where ?? ''))) return placeCeiling(decor, spec, parts, atMs, now);
   const cloth = !want || ZONES[want]?.kind === 'surface' ? coverHost(decor, spec) : null; // a blanket is spread over the bed, a tablecloth over a table: fitted to it
   if (cloth) return placeCover(decor, spec, parts, cloth, atMs, now);
