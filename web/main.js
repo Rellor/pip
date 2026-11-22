@@ -3386,6 +3386,8 @@ function headlineBase(st) {
   switch (st.action) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
     case 'browse': return ['🧭', 'Browsing the web, to see what he comes across'];
+    case 'buy': return ['🛍️', `At the corner shop for ${d.item || st.item || 'something'}`];
+    case 'happened': return [st.emoji || '🌤️', 'Something happened'];
     case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
     case 'record_song': return ['🎛️', `Recording “${d.name || st.name || 'a song'}”`];
     case 'play_piano': return [playedOf(st)[0], `Playing ${playedOf(st)[1]}${d.style ? ` (${d.style})` : ''}`];
@@ -3432,7 +3434,7 @@ function headlineBase(st) {
     default: return ['•', String(st.action || '')];
   }
 }
-const KINDS = { blueprint: 'make', search_web: 'search', read_book: 'read', browse: 'read', play_piano: 'piano', record_song: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
+const KINDS = { buy: 'shop', happened: 'event', blueprint: 'make', search_web: 'search', read_book: 'read', browse: 'read', play_piano: 'piano', record_song: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
 const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Music'], ['make', 'Creations']];
 let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
@@ -3498,7 +3500,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the corner shop', event: 'Something happened', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3550,6 +3552,11 @@ function dayCard(e) {
     }
   } else if (kind === 'diary') {
     if (e.text) card.append(el('div', e.text, 'quote'));
+  } else if (kind === 'event') { // something that happened in his street or sky (story.js), in his own words
+    card.append(el('p', e.what || ''));
+  } else if (kind === 'shop') {
+    card.append(el('h3', e.item || '', 'title'));
+    card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `He bought it with his own coins${e.price ? ` (${e.price})` : ''}.`, 'muted'));
   } else if (kind === 'ask') {
     card.append(el('h3', e.item || '', 'title'));
     if (e.reason) card.append(el('p', e.reason, 'muted'));
@@ -3610,7 +3617,7 @@ function dayCard(e) {
     } else if (e.action === 'compose') {
       card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : 'He gave it a song.', 'muted'));
     } else if (e.action === 'draw') {
-      card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `He drew it and put it ${e.place}.`, 'muted'));
+      card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `He drew it and put it ${String(e.place ?? '').replace(/\bmy\b/g, 'his')}.`, 'muted'));
     } else if (e.action === 'change_thing') {
       card.append(el('p', e.failed ? `That did not work out: ${humanFail(e.failed)}.` : e.grew ? (e.limited ? `He made it bigger, as big as this spot allows (x${e.grew}).` : `He made it bigger (x${e.grew}).`) : e.reshaped ? 'He gave it a new shape.' : 'He changed it.', 'muted'));
     } else if (e.action === 'plant' || e.action === 'water' || e.action === 'harvest') {
@@ -3870,7 +3877,7 @@ function renderMind(s) {
   fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
   const done = (s.fulfilled || []).slice().reverse();
   fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
-  { const c = s.body?.coziness; $('coziness').textContent = Number.isFinite(c) ? `🏠 cozy ${Math.round(c)}/10` : ''; }
+  { const c = s.body?.coziness; $('coziness').textContent = [Number.isFinite(c) ? `🏠 cozy ${Math.round(c)}/10` : '', Number.isFinite(s.coins) ? `🪙 ${s.coins} coin${s.coins === 1 ? '' : 's'}` : ''].filter(Boolean).join(' · '); }
   // Right now: the project he is on (one line and a bar) and today's goals as a small checklist.
   const cur = projects.find((p) => p.status === 'working');
   const np = $('nowproject');

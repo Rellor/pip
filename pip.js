@@ -25,7 +25,9 @@ import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropResti
 import { planRetry, startRetry, retryLines } from './retry.js';
 import { challengeLines, challengeSteps } from './curriculum.js';
 import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLetter } from './letters.js';
-import { needsNotes, fakeNotes, neighbourPrompt, neighbourSchema, planNotes, deliverNotes, neighbourLines } from './neighbours.js';
+import { needsNotes, fakeNotes, neighbourPrompt, neighbourSchema, planNotes, deliverNotes, neighbourLines, noteAnswer, keepWishes, wishLines } from './neighbours.js';
+import { buy } from './shop.js';
+import { storyTick } from './story.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
@@ -100,7 +102,7 @@ const ROOM = [
   'bed',
   'a framed photo on the wall above the piano: the Milky Way over a very dark sky full of stars, with two people in silhouette looking up from a railing',
 ];
-const ACTION_NAMES = ['walk_to', 'do', 'browse', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'browse', 'buy', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -568,7 +570,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
       last.length ? `I just did: ${last.join(', ')}` : null,
       ...(s.plan?.queue ?? []).slice(0, 2).map((q) => `still planned: ${q.action.replace(/_/g, ' ')}`),
     ].filter(Boolean),
-    events: [...reasons, ...grew.slice(0, 2)],
+    events: [...reasons, ...(s.street?.happened ?? []).slice(-3), ...grew.slice(0, 2)],
     messages: unread.map((m) => `(${ago(m.at)}) "${text(m.text, 400)}"`),
     memories: markUsed(recall(s, focus, 5)).map((m) => m.text),
     projects: [...projectLines(s), ...s.projects.filter((p) => p.status === 'done').slice(-2).map((p) => `"${p.title}" (done${p.proud ? ', proud of it' : ''})`)],
@@ -576,7 +578,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...wishLines(s), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -645,6 +647,8 @@ function addLesson(s, move, facts) {
   else s.lessons.push({ move, text: text.slice(0, 240), count: 1, at, firstAt: at, from: 'check' });
   s.lessons = s.lessons.slice(-40);
 }
+// Something that happened in his world (a wish come true, a parcel, the full moon): he hears it once, at his next thought.
+function happened(s, line) { s.street ??= {}; s.street.happened = [...(s.street.happened ?? []), String(line)].slice(-4); }
 // The maker designs one thing the brain chose. If it fails, the step fails with a reason (and the brain hears it).
 async function makeIt(s, soul, system, st) {
   const room = s.decor.filter((d) => !d.image).slice(0, 12).map((d) => `${d.name} (${d.label ?? d.zone})`);
@@ -841,6 +845,7 @@ function describe(a) {
     case 'search_web': return d.query;
     case 'write_diary': return d.text;
     case 'ask_for': return `${d.item}: ${d.reason}`;
+    case 'buy': return d.item;
     case 'eat': return d.food;
     case 'take_photo': return d.target;
     case 'find_picture': return d.query;
@@ -1311,8 +1316,15 @@ async function wakeUp() {
     console.log(`📮 a note from ${n.from} (${n.kind}): ${n.text.slice(0, 80)}`);
     if (n.kind === 'share' && n.topic) noteSpark(state, { topic: n.topic, text: n.text, from: 'neighbour' }); // what a neighbour loves can become his interest too
   }
+  // The storyteller (story.js): now and then something happens in his street or sky. He hears it once, and it is in his day.
+  if (!process.env.PIP_NO_STORY) for (const ev of storyTick(state)) {
+    console.log(`${ev.emoji} ${ev.big ? 'something happened' : 'he notices'}: ${ev.text}`);
+    happened(state, ev.text);
+    state.log.push({ at: new Date(Date.now() - 2000).toISOString(), action: 'happened', what: ev.text, emoji: ev.emoji });
+    addMemory(state, ev.text, ev.big ? 7 : 4, 'memory', new Date().toISOString());
+  }
   const retry = startRetry(state); // the early second try after something did not work (retry.js)
-  const reasons = [...(ownWork ? [`I want to look at the ${ownWork.what} I just made`] : []), ...(retry ? [`${retry.action.replace(/_/g, ' ')} did not work, so I am up again to try another way`] : []), ...wakeReasons(state, { unread: unread.length, woke: wokeNow })];
+  const reasons = [...(ownWork ? [`I want to look at the ${ownWork.what} I just made`] : []), ...(retry ? ['I am up again to try another way'] : []), ...wakeReasons(state, { unread: unread.length, woke: wokeNow }).filter((r) => !(retry && /^something did not work/.test(r)))]; // on a second try the failure is told once, with what to do instead (retryLines): repeating a failed action in the prompt makes a small model repeat it
   let answer = null;
   let choice = null;
   let via = 'autopilot';
@@ -1322,6 +1334,7 @@ async function wakeUp() {
     try {
       const ctx = brainContext(state, { soul, offered, reasons, unread, looking, grew, ownWork });
       const prompt = brainPrompt(ctx);
+      if (state.street) state.street.happened = []; // told once
       if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, prompt);
       const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, think: 'low', ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
@@ -1339,7 +1352,7 @@ async function wakeUp() {
     }
     for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
       const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
-      if (v && text(a.text, 400)) Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() });
+      if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); } // a neighbour: they grow closer, and yes to a wish is a promise
     }
     if (!answer.steps.length) answer.steps = fallbackSteps(state, offered);
     answer.steps = decided(state, answer.steps);
@@ -1542,6 +1555,7 @@ async function wakeUp() {
     }
     if (st.action === 'make_move') st.made = makeMove(state, st.details, stepStart);
     if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
+    if (st.action === 'buy') st.made = buy(state, st.details.item ?? st.details.name ?? st.details.what);
     if (st.action === 'cook') {
       const d0 = st.details ?? {};
       if (!text(d0.dish ?? d0.name, 60) || !(Array.isArray(d0.ingredients) && d0.ingredients.length)) { // he only said "cook": a simple dish from what is there
@@ -2028,6 +2042,7 @@ async function wakeUp() {
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, place: withWarn(st.made?.label ?? null, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, change: text(d.change, 160) || null, v: state.apps.find((a) => a.id === st.made?.app?.id)?.v ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
+    if (st.action === 'buy') Object.assign(entry, { item: st.made?.bought ?? text(d.item ?? d.name, 40), price: st.made?.price != null ? `${st.made.price} coin${st.made.price === 1 ? '' : 's'}, ${st.made.left} left` : null, failed: st.made?.failed ?? null });
     if (st.action === 'cook') Object.assign(entry, { dish: text(d.dish ?? d.name, 60), ingredients: (Array.isArray(d.ingredients) ? d.ingredients : []).slice(0, 4).map((x) => text(x, 40)), failed: st.made?.failed ?? null });
     if (st.action === 'take_photo') Object.assign(entry, { target: text(d.target, 60), caption: text(d.caption, 300), image: st.made?.picture?.image ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'find_picture') Object.assign(entry, { query: text(d.query, 80), caption: text(d.caption, 200), picture: st.made?.found?.image ?? null, title: st.made?.found?.title ?? null, failed: st.made?.failed ?? null });
@@ -2141,6 +2156,13 @@ async function wakeUp() {
   noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state));
   const failedNow = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 && x.failed).at(-1);
   if (failedNow) state.plan.lastFail = { at: new Date().toISOString(), why: `${failedNow.action}: ${failedNow.failed}` };
+  for (const line of keepWishes(state, state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000))) { // he made what a neighbour wished for, or someone bought a print
+    console.log(`🪙 ${line}`);
+    happened(state, line);
+    state.log.push({ at: new Date(Math.max(Date.now(), ...state.log.slice(-6).map((x) => Date.parse(x.at) || 0)) + 1000).toISOString(), action: 'happened', what: line, emoji: '🪙' }); // in his day, right after what he made
+    addMemory(state, line, 7, 'memory', new Date().toISOString());
+    nudge(state, 'joy', 1);
+  }
   { const w = planRetry(state, state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)); if (w) console.log(`⏰ ${w.action} did not work: Pip wakes again at ${w.at.slice(11, 19)} to try another way`); }
   { // next time he looks at what he made now (his newest drawing, program or thing)
     const made = [...steps].reverse().find((st) => st.made && !st.made.failed && ['draw', 'make_app', 'update_app', 'decorate', 'change_thing', 'extend_thing'].includes(st.action));

@@ -23,7 +23,7 @@ export const KIND = {
   play_piano: 'music', compose: 'music', record_song: 'music',
   search_web: 'learn', read_book: 'learn', browse: 'learn', find_picture: 'learn', measure: 'learn', check_light: 'learn',
   plant: 'garden', water: 'garden', harvest: 'garden',
-  eat: 'food', cook: 'food',
+  eat: 'food', cook: 'food', buy: 'shop', happened: 'world',
   rest: 'rest',
   write_diary: 'write', tell: 'people', ask_for: 'people', plan_project: 'make', judge_project: 'make', start_project: 'make', work_on_project: 'make', phone: 'room',
   take_photo: 'look', print_photo: 'look', place_picture: 'room', take_down_picture: 'room', take_down_print: 'room',

@@ -184,7 +184,7 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
 export function fakeReply(moves, random = Math.random) {
   const pool = moves.filter((m) => m.name !== 'tell');
   const forced = process.env.PIP_FAKE_MOVE && moves.find((m) => m.name === process.env.PIP_FAKE_MOVE); // tests: always this move when it is offered
-  if (forced) return { moves: [{ move: forced.name, details: { title: process.env.PIP_FAKE_TITLE ?? '', name: /"([^"]+)"/.exec(forced.line ?? '')?.[1]?.replace(/ v\d+$/, '') }, thought: '(fake) I want to.' }], reason: '(fake) test', mood: 'calm', remember: null };
+  if (forced) return { moves: [{ move: forced.name, details: { title: process.env.PIP_FAKE_TITLE ?? '', ...(process.env.PIP_FAKE_WHAT ? { what: process.env.PIP_FAKE_WHAT } : {}), name: /"([^"]+)"/.exec(forced.line ?? '')?.[1]?.replace(/ v\d+$/, '') }, thought: '(fake) I want to.' }], reason: '(fake) test', mood: 'calm', remember: null };
   if (process.env.PIP_FAKE_STYLE === 'greedy') pool.splice(0, pool.length, ...pool.filter((m) => m.name !== 'ask_for').slice(0, random() < 0.75 ? 1 : 2).slice(-1)); // like the real model: (almost) always the top move
   const n = 1 + Math.floor(random() * MAX_PICK);
   const picked = [];
