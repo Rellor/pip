@@ -2202,7 +2202,7 @@ function updateWalk(dt) {
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
 let walkOut = false;
 let retroNow = false;
-const RETRO = new URLSearchParams(location.search).get('style') === 'retro';
+const RETRO = new URLSearchParams(location.search).get('style') !== 'clean'; // outside is drawn in big pixels, like an old game console (?style=clean switches it off)
 function skyNow() {
   const h = forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60;
   const se = seasonInfo(new Date());
@@ -2219,7 +2219,7 @@ function walkPlace() {
   // A look to try (?style=retro): everything outside drawn in big pixels, like an old game console.
   retroNow = out && RETRO;
   renderer.domElement.style.imageRendering = retroNow ? 'pixelated' : '';
-  renderer.setPixelRatio(retroNow ? Math.max(0.2, 420 / (stage.clientWidth || 800)) : pixels);
+  renderer.setPixelRatio(retroNow ? Math.max(0.22, 520 / (stage.clientWidth || 800)) : pixels);
   fitCamera();
   home.full.visible = view.mode === 'walk' && !out;
   home.roof.visible = view.mode === 'walk' && !out;

@@ -63,7 +63,48 @@ export function buildTown(THREE) {
   const group = new THREE.Group();
   group.position.x = TOWN_X;
   const mats = []; // every plain material: at dusk and at night they keep a little of their own colour, so the street is never a black shape
-  const M = (color, o = {}) => { const m = new THREE.MeshStandardMaterial({ color, roughness: 0.88, ...o }); mats.push(m); return m; };
+  // Nothing out here is smooth plastic: every surface has a rough, grainy skin (made here, pixel by pixel, no picture files):
+  // plaster with stains, brick, planks, corrugated metal, roof tiles, stone blocks, worn grass, cracked paving, patched asphalt.
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+  const jit = (by) => (rnd() - 0.5) * 2 * by; // a little crooked, never the same twice
+  const grains = new Map();
+  function grain(kind, rx = 1, ry = 1) {
+    const key = `${kind}`;
+    let base = grains.get(key);
+    if (!base) {
+      const n = ['brick', 'stone', 'pave'].includes(kind) ? 64 : 32;
+      const c = document.createElement('canvas');
+      c.width = c.height = n;
+      const g = c.getContext('2d');
+      const grey = (v) => `rgb(${v},${v},${v})`;
+      const px = (x, y, v, w = 1, h = 1) => { g.fillStyle = grey(Math.max(0, Math.min(255, Math.round(v)))); g.fillRect(x, y, w, h); };
+      g.fillStyle = grey(232); g.fillRect(0, 0, n, n);
+      if (kind === 'brick') { g.fillStyle = grey(168); g.fillRect(0, 0, n, n); for (let row = 0; row < 8; row++) for (let i = -1; i < 4; i++) px(i * 16 + (row % 2) * 8 + 1, row * 8 + 1, 196 + rnd() * 54 - (rnd() < 0.12 ? 50 : 0), 14, 6); }
+      else if (kind === 'stone') { g.fillStyle = grey(176); g.fillRect(0, 0, n, n); for (let row = 0; row < 4; row++) for (let i = -1; i < 2; i++) px(i * 32 + (row % 2) * 16 + 1, row * 16 + 1, 206 + rnd() * 44, 30, 14); }
+      else if (kind === 'planks') { for (let i = 0; i < 4; i++) { const v = 208 + rnd() * 42; px(i * 8, 0, v, 7, n); px(i * 8 + 7, 0, 150, 1, n); if (rnd() < 0.6) px(i * 8 + 2 + Math.floor(rnd() * 3), Math.floor(rnd() * 28), v - 46, 2, 2); } }
+      else if (kind === 'boards') { for (let i = 0; i < 4; i++) { const v = 206 + rnd() * 44; px(0, i * 8, v, n, 7); px(0, i * 8 + 7, 146, n, 1); } }
+      else if (kind === 'metal') { for (let x = 0; x < n; x++) px(x, 0, x % 4 < 2 ? 238 : 198, 1, n); for (let i = 0; i < 9; i++) px(Math.floor(rnd() * 30), Math.floor(rnd() * 30), 150 + rnd() * 30, 1 + Math.floor(rnd() * 3), 1 + Math.floor(rnd() * 4)); }
+      else if (kind === 'roof') { for (let row = 0; row < 4; row++) for (let i = -1; i < 5; i++) { const v = 200 + rnd() * 50 - (rnd() < 0.1 ? 45 : 0); px(i * 8 + (row % 2) * 4, row * 8, v, 7, 6); px(i * 8 + (row % 2) * 4, row * 8 + 6, v - 50, 7, 2); } }
+      else if (kind === 'pave') { for (let i = 0; i < 2; i++) for (let k = 0; k < 2; k++) px(i * 32 + 1, k * 32 + 1, 214 + rnd() * 34, 30, 30); let cx = 10, cy = 0; for (let i = 0; i < 40; i++) { px(cx, cy, 150); cy += 1; cx += Math.round(jit(1)); } }
+      if (kind !== 'brick' && kind !== 'stone') for (let i = 0; i < n * n * 0.35; i++) { const x = Math.floor(rnd() * n), y = Math.floor(rnd() * n); const d = g.getImageData(x, y, 1, 1).data[0]; px(x, y, d + jit(kind === 'grass' ? 34 : kind === 'road' ? 26 : 16)); }
+      if (kind === 'grass') for (let i = 0; i < 26; i++) px(Math.floor(rnd() * n), Math.floor(rnd() * n), 176 + rnd() * 20, 1 + Math.floor(rnd() * 2), 1);
+      if (kind === 'road') { px(4, 6, 196, 12, 9); px(18, 20, 244, 9, 7); }
+      if (kind === 'plain') { for (let i = 0; i < 3; i++) { const x = Math.floor(rnd() * 30); g.fillStyle = 'rgba(60,50,40,.12)'; g.fillRect(x, 0, 1 + Math.floor(rnd() * 2), 12 + rnd() * 20); } g.fillStyle = 'rgba(255,255,255,.2)'; g.fillRect(Math.floor(rnd() * 20), Math.floor(rnd() * 20), 9, 7); }
+      base = new THREE.CanvasTexture(c);
+      base.magFilter = THREE.NearestFilter;
+      base.minFilter = THREE.NearestMipmapLinearFilter;
+      base.wrapS = base.wrapT = THREE.RepeatWrapping;
+      base.colorSpace = THREE.SRGBColorSpace;
+      grains.set(key, base);
+    }
+    if (rx === 1 && ry === 1) return base;
+    const t = base.clone();
+    t.repeat.set(rx, ry);
+    t.needsUpdate = true;
+    return t;
+  }
+  const M = (color, o = {}, kind = 'plain', rx = 1, ry = 1) => { const map = o.transparent ? null : grain(kind, rx, ry); const m = new THREE.MeshStandardMaterial({ color, roughness: 0.94, ...(map ? { map, emissiveMap: map } : {}), ...o }); mats.push(m); return m; };
   const add = (geo, material, [x, y, z], parent = group) => { const m = new THREE.Mesh(geo, material); m.position.set(x, y, z); parent.add(m); return m; };
   const box = (size, color, pos, parent = group) => add(new THREE.BoxGeometry(...size), typeof color === 'number' ? M(color) : color, pos, parent);
   const cyl = (r0, r1, h, color, pos, parent = group, seg = 14) => add(new THREE.CylinderGeometry(r0, r1, h, seg), typeof color === 'number' ? M(color) : color, pos, parent);
@@ -76,7 +117,7 @@ export function buildTown(THREE) {
     const c = document.createElement('canvas');
     c.width = 512; c.height = Math.round((512 * h) / w);
     const g = c.getContext('2d');
-    const draw = (words, back = bg) => { g.fillStyle = back; g.fillRect(0, 0, c.width, c.height); g.fillStyle = fg; g.font = `800 ${font}px system-ui, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(words, c.width / 2, c.height / 2 + 2); t.needsUpdate = true; };
+    const draw = (words, back = bg) => { g.fillStyle = back; g.fillRect(0, 0, c.width, c.height); g.fillStyle = fg; g.font = `800 ${font}px "Marker Felt", "Comic Sans MS", "Chalkboard SE", "Segoe Print", cursive, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(words, c.width / 2, c.height / 2 + 2); t.needsUpdate = true; };
     const t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
     draw(text);
@@ -87,16 +128,16 @@ export function buildTown(THREE) {
   };
 
   // ---- the ground: grass, two pavements and the road, on a slab like the floor of his room
-  const grass = box([84, 0.5, 40], 0x9ccf86, [1.5, -0.27, 9.5]);
+  const grass = box([84, 0.5, 40], M(0x9ccf86, {}, 'grass', 26, 12), [1.5, -0.27, 9.5]);
   box([84.4, 0.6, 40.4], 0x8a6a4c, [1.5, -0.6, 9.5]);
   // his plot: a mown field with a low fence and a sign
-  const field = box([PLOT.x1 - PLOT.x0, 0.06, PLOT.z1 - PLOT.z0], 0xb4dc9a, [(PLOT.x0 + PLOT.x1) / 2, 0.0, (PLOT.z0 + PLOT.z1) / 2]);
+  const field = box([PLOT.x1 - PLOT.x0, 0.06, PLOT.z1 - PLOT.z0], M(0xb4dc9a, {}, 'grass', 14, 4), [(PLOT.x0 + PLOT.x1) / 2, 0.0, (PLOT.z0 + PLOT.z1) / 2]);
   field.receiveShadow = true;
   for (let x = PLOT.x0; x <= PLOT.x1 + 0.01; x += 2) for (const z of [PLOT.z0, PLOT.z1]) if (!(z === PLOT.z0 && Math.abs(x - 1) < 2.5)) box([0.14, 0.5, 0.14], 0xfff8ee, [x, 0.25, z]);
   for (let z = PLOT.z0; z <= PLOT.z1 + 0.01; z += 2) for (const x of [PLOT.x0, PLOT.x1]) box([0.14, 0.5, 0.14], 0xfff8ee, [x, 0.25, z]);
-  const paveA = box([82, 0.08, 2.6], 0xd8cdbf, [1.5, 0.02, 1.1]);
-  const road = box([82, 0.06, 6], 0x8f8a86, [1.5, 0.0, 5.4]);
-  const paveB = box([82, 0.08, 2.2], 0xd8cdbf, [1.5, 0.02, 9.5]);
+  const paveA = box([82, 0.08, 2.6], M(0xd8cdbf, {}, 'pave', 30, 1), [1.5, 0.02, 1.1]);
+  const road = box([82, 0.06, 6], M(0x8f8a86, {}, 'road', 20, 2), [1.5, 0.0, 5.4]);
+  const paveB = box([82, 0.08, 2.2], M(0xd8cdbf, {}, 'pave', 30, 1), [1.5, 0.02, 9.5]);
   for (let x = -36; x <= 40; x += 6) box([2.4, 0.02, 0.16], 0xf4efe6, [x, 0.04, 5.4]);
   for (const m of [grass, paveA, paveB, road]) m.receiveShadow = true;
 
@@ -106,7 +147,7 @@ export function buildTown(THREE) {
     const s = new THREE.Shape();
     s.moveTo(-w / 2 - 0.35, 0); s.lineTo(0, h); s.lineTo(w / 2 + 0.35, 0); s.closePath();
     const geo = new THREE.ExtrudeGeometry(s, { depth: d + 0.5, bevelEnabled: false });
-    return new THREE.Mesh(geo, M(color));
+    return new THREE.Mesh(geo, M(color, {}, 'roof', 0.5, 0.5));
   };
   const win = (parent, x, y, w, h, who = null) => {
     box([w + 0.3, h + 0.3, 0.12], 0xfff8ee, [x, y, 0.04], parent);
@@ -125,14 +166,15 @@ export function buildTown(THREE) {
     const g = new THREE.Group();
     g.position.set(x, 0, 0);
     group.add(g);
-    box([w, h, d], wall, [0, h / 2, -d / 2], g).castShadow = true;
+    box([w, h, d], M(wall, {}, o.kind ?? 'plain', o.kind === 'brick' ? w / 3 : o.kind ? w / 2.4 : 1, o.kind === 'brick' ? h / 3 : o.kind ? h / 2.4 : 1), [0, h / 2, -d / 2], g).castShadow = true;
+    g.rotation.y = jit(0.03); g.rotation.z = jit(0.008); g.position.z = jit(0.12) - 0.1; // built by hand: none stands quite straight
     if (o.flat) { const r = box([w + 0.5, 0.35, d + 0.4], roofColor, [0, h + 0.17, -d / 2], g); roofs.push({ m: r, color: roofColor }); }
     else { const r = gable(w, o.roofH ?? w * 0.42, d, roofColor); r.position.set(0, h, -d - 0.25); g.add(r); roofs.push({ m: r, color: roofColor }); }
     if (o.chimney) { box([0.7, 1.6, 0.7], o.chimney, [w / 2 - 1.3, h + (o.flat ? 0.9 : w * 0.2), -d / 2], g); }
     return g;
   };
   // Oma Jo: a cottage, with her garden beside it
-  const jo = house(-19.5, 9.4, 3.3, 7, 0xf6ead6, 0x9a6b47, { chimney: 0xa8674a });
+  const jo = house(-19.5, 9.4, 3.3, 7, 0xf6ead6, 0x9a6b47, { chimney: 0xa8674a, kind: 'planks' });
   win(jo, -2.4, 1.9, 1.5, 1.5, 'Oma Jo');
   door(jo, 1.8, 1.25, 2.5, 0x5f9e63);
   const beds = [];
@@ -140,13 +182,13 @@ export function buildTown(THREE) {
   box([10.6, 0.5, 6.6], 0x8a6a48, [-30.3, 0.02, -3.6]).scale.y = 0.2;
   for (let i = 0; i < 4; i++) { const b = box([8.2, 0.22, 0.7], 0x6b4f35, [-30.9, 0.16, -1.3 - i * 1.5]); beds.push(b); for (let k = 0; k < 8; k++) { const p = add(new THREE.SphereGeometry(0.22, 8, 6), M(se.flowers ? [0x5f9e63, 0x7fbf6a, 0x4f8a45][k % 3] : 0x8a9a6a), [-34.6 + k * 1.07, 0.38, -1.3 - i * 1.5]); p.userData.plant = true; beds.push(p); } }
   if (se.flowers) for (const [x, z] of [[-34.2, -6.4], [-32.9, -6.5], [-31.6, -6.4]]) { cyl(0.05, 0.05, 1.7, 0x4f8a45, [x, 0.85, z]); cyl(0.36, 0.36, 0.08, 0xf6c544, [x, 1.72, z + 0.02]).rotation.x = Math.PI / 2; cyl(0.17, 0.17, 0.1, 0x7a5237, [x, 1.72, z + 0.04]).rotation.x = Math.PI / 2; }
-  for (let x = -35.8; x <= -24.8; x += 0.62) if (x < -26.5 || x > -24.9) box([0.12, 0.85, 0.06], fence, [x, 0.42, 0.05]); // (an open gate by the cottage)
+  for (let x = -35.8; x <= -24.8; x += 0.62) if (x < -26.5 || x > -24.9) { const pk = box([0.12, 0.7 + rnd() * 0.3, 0.06], fence, [x, 0.4, 0.05]); pk.rotation.z = jit(0.07); } // (an open gate by the cottage)
   for (const y of [0.62, 0.3]) box([9.4, 0.09, 0.05], fence, [-31.2, y, 0.07]);
   box([0.06, 0.85, 7.4], fence, [-35.8, 0.42, -3.6]);
   const shed = house(-26.4, 2.4, 1.9, 2.2, 0xb98a5a, 0x7a5237, { roofH: 0.9 });
   shed.position.z = -5.2;
   // Mo: next door, with a little locomotive on the roof
-  const mo = house(-9, 8.2, 4.2, 7, 0xd9775f, 0x6b4a44, { chimney: 0x8a4a3a });
+  const mo = house(-9, 8.2, 4.2, 7, 0xd9775f, 0x6b4a44, { chimney: 0x8a4a3a, kind: 'brick' });
   win(mo, -2.2, 2.3, 1.6, 1.6, 'Mo');
   win(mo, 2.4, 2.9, 1.5, 1.2);
   door(mo, 2.2, 1.3, 2.5, 0x2f4a7a);
@@ -172,7 +214,7 @@ export function buildTown(THREE) {
   mailbox.position.set(-3.6, 0, 0.7);
   group.add(mailbox);
   // the bakery, and Kees above it
-  const bakery = house(11.5, 9.8, 6.2, 7, 0xe9dcc6, 0x7c6a5c, { flat: true, chimney: 0x7c6a5c });
+  const bakery = house(11.5, 9.8, 6.2, 7, 0xe9dcc6, 0x7c6a5c, { flat: true, chimney: 0x7c6a5c, kind: 'brick' });
   win(bakery, -2.6, 4.6, 1.7, 1.7, 'Kees');
   const clock = cyl(0.62, 0.62, 0.1, 0xfff8ee, [2.4, 4.7, 0.08], bakery); clock.rotation.x = Math.PI / 2;
   add(new THREE.TorusGeometry(0.62, 0.07, 8, 28), M(0x3f7fa8), [2.4, 4.7, 0.1], bakery);
@@ -186,12 +228,12 @@ export function buildTown(THREE) {
   door(bakery, 3.2, 1.35, 2.6, 0x7c5a3c);
   const bakerySign = sign('BAKERY', 3.0, 0.6, '#fff8ee', '#7c5a3c', 70); bakerySign.position.set(0, 3.75, 0.13); bakery.add(bakerySign);
   // Dot: two doors down, with chalk on the pavement
-  const dot = house(21.5, 6.8, 3.8, 7, 0xa9d3e8, 0x4f7fa3);
+  const dot = house(21.5, 6.8, 3.8, 7, 0xa9d3e8, 0x4f7fa3, { kind: 'boards' });
   win(dot, -1.5, 2.2, 1.6, 1.6, 'Dot');
   door(dot, 1.6, 1.2, 2.4, 0xe3a12f);
   for (const [x, z, c, r] of [[20.2, 1.2, 0xf6a9c0, 0.42], [21.2, 1.5, 0xf6e27a, 0.3], [22.3, 1.1, 0x9ad0f0, 0.36]]) { const ch = add(new THREE.RingGeometry(r * 0.62, r, 20), new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: 0.85 }), [x, 0.07, z]); ch.rotation.x = -Math.PI / 2; }
   // the corner shop
-  const shop = house(33, 11.6, 4.2, 7, 0x58a59a, 0x3d7d74, { flat: true });
+  const shop = house(33, 11.6, 4.2, 7, 0x58a59a, 0x3d7d74, { flat: true, kind: 'metal' });
   const shopSign = sign('CORNER SHOP', 7.4, 0.9, '#fff8ee', '#3d7d74', 54); shopSign.position.set(0, 3.55, 0.1); shop.add(shopSign);
   for (let i = 0; i < 9; i++) { const a = box([1.24, 0.08, 1.2], i % 2 ? 0xfff8ee : 0xf2c14e, [-4.96 + i * 1.24, 2.85, 0.55], shop); a.rotation.x = 0.42; }
   const shopGlass = new THREE.MeshStandardMaterial({ color: 0xeaf6f4, roughness: 0.4, emissive: 0xffe2a6, emissiveIntensity: 0 });
@@ -207,7 +249,7 @@ export function buildTown(THREE) {
   const linaFull = new THREE.Group(); // seen when you walk in the street
   const linaLow = new THREE.Group(); // seen from above: only the floor and low walls, like the front of Pip's own room, so it hides nothing
   lina.add(linaFull, linaLow);
-  box([9.4, 4.0, 7], 0x8b78c9, [0, 2.0, -3.5], linaFull).castShadow = true;
+  box([9.4, 4.0, 7], M(0x8b78c9, {}, 'planks', 4, 1.6), [0, 2.0, -3.5], linaFull).castShadow = true;
   const lr = gable(9.4, 3.6, 7, 0x5b4a8a); lr.position.set(0, 4.0, -7.25); linaFull.add(lr); roofs.push({ m: lr, color: 0x5b4a8a });
   win(linaFull, -2.2, 2.3, 1.7, 1.7, 'Lina');
   door(linaFull, 2.2, 1.3, 2.5, 0x2bb3a3);
@@ -224,7 +266,7 @@ export function buildTown(THREE) {
   // ---- names on little signs by the doors
   for (const [name, x, z, rot] of [['Oma Jo', -17.6, 0.5, 0], ['Mo', -6.8, 0.5, 0], ['Pip', -1.6, 0.5, 0], ['Kees', 14.7, 0.5, 0], ['Dot', 23.1, 0.5, 0], ['Lina', -20.7, 11.6, Math.PI]]) {
     const s = sign(name, 0.9, 0.36, '#fffaf3', '#4a3d35', 150);
-    s.position.set(x, 1.2, z); s.rotation.y = rot;
+    s.position.set(x, 1.2, z); s.rotation.y = rot; s.rotation.z = jit(0.09);
     group.add(s);
     cyl(0.03, 0.03, 1.1, 0x7a5237, [x, 0.55, z - (rot ? -0.03 : 0.03)]);
   }
@@ -255,6 +297,33 @@ export function buildTown(THREE) {
     group.add(light);
     lamps.push({ bulb, light });
   }
+  // ---- Scrap. A street people really live in is never tidy: patched walls, crates and barrels, a washing line, poles
+  // with sagging wires, puddles, weeds along the walls, a heap of junk at the end.
+  const wood = (c = 0xb98a5a) => M(c, {}, 'boards');
+  const tin = (c = 0x9aa3a8) => M(c, { roughness: 0.6, metalness: 0.35 }, 'metal');
+  const crate = (x, y, z, sz = 0.8, c = 0xb98a5a) => { const m = box([sz, sz, sz], wood(c), [x, y + sz / 2, z]); m.rotation.y = jit(0.4); return m; };
+  crate(27.6, 0, 0.55); crate(28.5, 0, 0.5, 0.7, 0xa87b4f); crate(27.9, 0.8, 0.5, 0.65); crate(40.2, 0, 0.6, 0.9, 0x9a6b47);
+  for (const [x, z] of [[17.1, 0.45], [17.9, 0.5], [-4.9, 0.4]]) { const b = cyl(0.36, 0.36, 0.95, tin(rnd() < 0.5 ? 0x3d6f8a : 0xb8554a), [x, 0.48, z]); b.rotation.y = jit(1); }
+  for (let i = 0; i < 3; i++) { const t = add(new THREE.TorusGeometry(0.34, 0.14, 8, 16), M(0x2a2a2e), [-13.2 + jit(0.06), 0.14 + i * 0.27, 0.5 + jit(0.05)]); t.rotation.x = Math.PI / 2; }
+  // patches on the walls: a sheet of tin here, a few boards there
+  for (const [g, x, y, w, h, c, k] of [[mo, 2.9, 1.2, 1.5, 1.1, 0x9aa3a8, 'metal'], [home, 3.3, 1.1, 1.3, 1.5, 0xc9a26a, 'boards'], [jo, -4.0, 0.7, 1.0, 1.2, 0x9aa3a8, 'metal'], [dot, -2.9, 0.9, 0.9, 1.6, 0xc98a5a, 'boards'], [shop, 4.6, 1.6, 1.6, 2.2, 0xb8554a, 'metal'], [bakery, -4.4, 0.8, 0.8, 1.3, 0xc9a26a, 'boards']]) { const pch = box([w, h, 0.06], M(c, k === 'metal' ? { roughness: 0.6, metalness: 0.3 } : {}, k), [x, y, 0.035], g); pch.rotation.z = jit(0.06); }
+  // a washing line in Oma Jo's garden
+  { cyl(0.05, 0.06, 2.9, 0x7a5237, [-34.6, 1.45, -4.2]).rotation.z = 0.04; box([9.9, 0.03, 0.03], 0xf1ece2, [-29.7, 2.72, -4.2]).rotation.z = -0.012; for (const [x, w, h, c] of [[-33.2, 0.7, 0.9, 0xef6f6c], [-32.1, 0.5, 0.6, 0xfff8ee], [-31.2, 0.9, 1.1, 0x7fb6d9], [-29.8, 0.5, 0.7, 0xf2c14e], [-28.9, 0.8, 0.5, 0xfff8ee], [-27.6, 0.6, 0.9, 0x8b78c9]]) { const cl = box([w, h, 0.03], c, [x, 2.68 - h / 2, -4.2 + jit(0.02)]); cl.rotation.z = jit(0.07); cl.rotation.x = jit(0.12); } }
+  // poles with sagging wires along the far side of the street
+  const poleXs = [-37, -14, 9, 32, 47];
+  for (const x of poleXs) { const pl = cyl(0.11, 0.14, 6.4, 0x6b4a35, [x, 3.2, 10.9]); pl.rotation.z = jit(0.03); pl.rotation.x = jit(0.03); box([1.6, 0.12, 0.12], 0x6b4a35, [x, 5.9, 10.9]); for (const dx of [-0.6, 0.6]) cyl(0.06, 0.06, 0.2, 0x3d7d74, [x + dx, 6.05, 10.9]); }
+  const wire = new THREE.LineBasicMaterial({ color: 0x2a2a2e });
+  for (let i = 0; i < poleXs.length - 1; i++) for (const dx of [-0.6, 0.6]) { const pts = []; for (let k = 0; k <= 10; k++) { const t = k / 10; pts.push(new THREE.Vector3(poleXs[i] + dx + (poleXs[i + 1] - poleXs[i]) * t, 6.1 - Math.sin(Math.PI * t) * 0.9, 10.9)); } group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), wire)); }
+  { const pts = [new THREE.Vector3(9 - 0.6, 6.1, 10.9), new THREE.Vector3(9.5, 5.2, 5), new THREE.Vector3(10.6, 5.6, 0.2)]; group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), wire)); } // one wire crosses the street to the bakery
+  // puddles and weeds
+  const wet = new THREE.MeshStandardMaterial({ color: 0x5f6f80, roughness: 0.08, metalness: 0.4 });
+  for (const [x, z, rx, rz] of [[-7, 4.4, 1.4, 0.7], [15.5, 6.3, 1.0, 0.6], [29, 3.6, 1.6, 0.8], [-27, 6.8, 0.9, 0.5]]) { const pd = add(new THREE.CircleGeometry(1, 14), wet, [x, 0.035, z]); pd.rotation.x = -Math.PI / 2; pd.scale.set(rx, rz, 1); }
+  for (let i = 0; i < 46; i++) { const x = TOWN_RANGE[0] + 3 + rnd() * 74; const z = rnd() < 0.6 ? 0.28 + jit(0.08) : 8.5 + rnd() * 2; const w = add(new THREE.ConeGeometry(0.1 + rnd() * 0.08, 0.3 + rnd() * 0.35, 5), M(rnd() < 0.5 ? 0x6f9a4f : 0x8aae5c), [x, 0.2, z]); w.rotation.z = jit(0.3); }
+  // a heap of junk at the end of the street, by the way to the library
+  { const g = new THREE.Group(); g.position.set(43.5, 0, 13.5); group.add(g); for (let i = 0; i < 12; i++) { const m = box([0.5 + rnd() * 0.9, 0.3 + rnd() * 0.7, 0.4 + rnd() * 0.8], rnd() < 0.5 ? wood([0xb98a5a, 0x8a6a48, 0xc9a26a][i % 3]) : tin([0x9aa3a8, 0xb8554a, 0x3d6f8a][i % 3]), [jit(1.5), 0.25 + rnd() * 0.9, jit(1.2)], g); m.rotation.set(jit(0.5), jit(1.5), jit(0.5)); } const wh = add(new THREE.TorusGeometry(0.42, 0.12, 8, 16), M(0x2a2a2e), [1.6, 0.45, 0.6], g); wh.rotation.y = 0.5; wh.rotation.x = 0.3; cyl(0.07, 0.07, 2.4, tin(0x8a8f96), [-0.4, 1.3, 0.2], g).rotation.z = 0.9; }
+  // a ladder against Mo's wall and a wheelbarrow by the garden
+  { const g = new THREE.Group(); g.position.set(-12.2, 0, 0.5); g.rotation.x = -0.2; group.add(g); for (const dx of [-0.25, 0.25]) box([0.07, 3.4, 0.07], wood(0xc9a26a), [dx, 1.7, 0], g); for (let i = 0; i < 8; i++) box([0.5, 0.05, 0.05], wood(0xc9a26a), [0, 0.35 + i * 0.4, 0], g); }
+  { const g = new THREE.Group(); g.position.set(-25.4, 0, 2.0); g.rotation.y = 0.5; group.add(g); box([0.9, 0.35, 0.6], tin(0x5f9e63), [0, 0.5, 0], g); const whl = add(new THREE.TorusGeometry(0.2, 0.06, 8, 14), M(0x2a2a2e), [0.6, 0.2, 0], g); whl.rotation.y = Math.PI / 2; for (const dz of [-0.25, 0.25]) box([1.0, 0.05, 0.05], wood(), [-0.6, 0.55, dz], g); }
   // Daylight for the street. The lamps and the window light of his room are 120 metres away, so the street has a light
   // of its own, high above it (it does not reach his room).
   const daylight = new THREE.PointLight(0xfff4e2, 1.5, 74, 0);
@@ -280,7 +349,7 @@ export function buildTown(THREE) {
   parkGeo.rotateX(-Math.PI / 2);
   parkGeo.translate((PARK.x0 + PARK.x1) / 2, 0, (PARK.z0 + PARK.z1) / 2);
   { const pos = parkGeo.attributes.position; for (let i = 0; i < pos.count; i++) pos.setY(i, groundAt(pos.getX(i), pos.getZ(i)) - 0.03); parkGeo.computeVertexNormals(); }
-  const park = add(parkGeo, M(0x9ccf86), [0, 0, 0]);
+  const park = add(parkGeo, M(0x9ccf86, {}, 'grass', 17, 24), [0, 0, 0]);
   park.receiveShadow = true;
   box([PARK.x1 - PARK.x0 + 0.4, 0.6, PARK.z1 - PARK.z0 + 0.4], 0x8a6a4c, [(PARK.x0 + PARK.x1) / 2, -0.6, (PARK.z0 + PARK.z1) / 2]);
   const gravel = M(0xe2d5bd);
@@ -308,11 +377,11 @@ export function buildTown(THREE) {
   post(-40.5, '←  Park · Pond · Hill');
   { cyl(0.06, 0.06, 1.6, 0x7a5237, [-60.2, 0.8, -0.6]); const sg = sign('↑ Up the hill', 2.2, 0.5, '#fffaf3', '#4a3d35', 78); sg.position.set(-60.2, 1.5, -0.52); group.add(sg); }
   // ---- the library, at the other end of the street: wide steps, pillars, a big door
-  const libGrass = box([32, 0.5, 37.5], 0x9ccf86, [58, -0.27, 9.25]);
+  const libGrass = box([32, 0.5, 37.5], M(0x9ccf86, {}, 'grass', 10, 12), [58, -0.27, 9.25]);
   box([32.4, 0.6, 37.9], 0x8a6a4c, [58, -0.6, 9.25]);
   box([32, 0.08, 2.6], 0xd8cdbf, [58, 0.02, 1.1]);
   { const g = new THREE.Group(); g.position.set(57, 0, 0); group.add(g);
-    box([16, 6.4, 9], 0xe7d3b5, [0, 3.2, -4.5], g).castShadow = true; // its front wall is at z 0, like the houses
+    box([16, 6.4, 9], M(0xe7d3b5, {}, 'stone', 4, 2.4), [0, 3.2, -4.5], g).castShadow = true; // its front wall is at z 0, like the houses
     const ped = gable(16.6, 3.0, 10.4, 0x8a5a3a); ped.position.set(0, 6.7, -9.3); g.add(ped); roofs.push({ m: ped, color: 0x8a5a3a });
     for (let i = 0; i < 3; i++) box([13 - i * 1.0, 0.18, 2.4 - i * 0.6], 0xd9cdb8, [0, 0.09 + i * 0.18, 1.2 - i * 0.3], g); // the steps
     for (const dx of [-5.6, -2.6, 2.6, 5.6]) { cyl(0.36, 0.42, 5.5, 0xfff8ee, [dx, 3.25, 1.05], g, 18); box([1.0, 0.25, 1.0], 0xfff8ee, [dx, 6.1, 1.05], g); }
@@ -377,12 +446,12 @@ export function buildTown(THREE) {
     for (const l of lamps) { l.bulb.material.emissiveIntensity = dusk ? 1.2 : 0; l.light.intensity = dusk ? 26 : 0; }
     // The lamps of his room do not reach the street, and the page's daylight is made for indoors: so everything here
     // keeps some of its own colour (more by day, less at night, a little blue in the dark).
-    for (const [l, k] of [[daylight, 1], [parkLight, 1], [libLight, 0.8]]) { l.intensity = (dark ? 0.35 : dusk ? 0.9 : 1.5) * k; l.color.set(dark ? 0x8fa3e0 : dusk ? 0xffc79a : 0xfff4e2); }
+    for (const [l, k] of [[daylight, 1], [parkLight, 1], [libLight, 0.8]]) { l.intensity = (dark ? 0.4 : dusk ? 1.2 : 2.1) * k; l.color.set(dark ? 0x8fa3e0 : dusk ? 0xffc79a : 0xfff4e2); }
     frozenNow = Number.isFinite(state.weather?.temp) ? state.weather.temp <= 0 : false; // the pond freezes in real frost
     water.color.set(frozenNow ? 0xe1f1f8 : dark ? 0x3b5a92 : 0x7fc4e8);
     water.emissive.set(frozenNow ? 0x9fc4d6 : 0x2a6f95);
     for (const m of [park, libGrass]) m.material.color.set(snowy() ? 0xeef3f6 : se.name === 'autumn' ? 0xc2bf7c : se.name === 'winter' ? 0xb9c6a4 : 0x9ccf86);
-    const glow = dark ? 0.16 : dusk ? 0.2 : 0.22;
+    const glow = dark ? 0.16 : dusk ? 0.16 : 0.12;
     for (const m of mats) { m.emissive.copy(m.color).multiplyScalar(glow); if (dark) m.emissive.lerp(nightBlue, 0.35); }
     const white = snowy();
     grass.material.color.set(white ? 0xeef3f6 : se.name === 'autumn' ? 0xc2bf7c : se.name === 'winter' ? 0xb9c6a4 : 0x9ccf86);
