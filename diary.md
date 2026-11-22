@@ -5135,3 +5135,9 @@ I want to take out a reading lamp from my chest to put near the bookshelf so I c
 - do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
 - mood: Inspired
 
+## 22/11/2026, 21:03:37
+I want to start a new project to learn more about the night sky since I love it so much.
+> I want to start a new project to learn more about the night sky since I love it so much.
+- do (plan my new project: Map the summer constellations): Start a new project about constellations
+- mood: Inspired
+

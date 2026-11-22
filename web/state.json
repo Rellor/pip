@@ -1,8 +1,8 @@
 {
   "mood": "Inspired",
-  "energy": 9,
+  "energy": 8.76,
   "boredom": 0,
-  "loneliness": 3.31,
+  "loneliness": 3.32,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-22T14:48:09.677Z",
-      "action": "draw",
-      "detail": "A tiny singing bird box, filling the air",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-22T14:58:23.489Z",
       "action": "harvest",
@@ -309,6 +303,12 @@
       "action": "do",
       "detail": "sit on the rug and watch the light move across the floor",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-22T21:03:37.100Z",
+      "action": "do",
+      "detail": "plan my new project: Map the summer constellations",
+      "enjoyment": 7
     }
   ],
   "notes": [
@@ -1178,36 +1178,28 @@
       "lastUsed": "2026-11-22T20:00:34.866Z"
     },
     {
-      "id": "mmwsb1qea60",
-      "at": "2026-11-22T20:44:14.434Z",
-      "text": "My coding got better: I am level 3 now.",
+      "id": "mmwsbqnin60",
+      "at": "2026-11-22T21:03:37.102Z",
+      "text": "I started a new project about mapping constellations.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
-      "lastUsed": "2026-11-22T20:44:14.434Z"
+      "weight": 6,
+      "lastUsed": "2026-11-22T21:03:37.102Z"
     },
     {
-      "id": "mmwsbd2up60",
-      "at": "2026-11-22T20:52:51.246Z",
-      "text": "I took a photo of computer",
-      "importance": 5,
+      "id": "mmwsbqniq60",
+      "at": "2026-11-22T21:03:38.099Z",
+      "text": "plan my new project: Map the summer constellations",
+      "importance": 4,
       "kind": "memory",
-      "weight": 4.998,
-      "lastUsed": "2026-11-22T20:52:51.246Z"
+      "weight": 4,
+      "lastUsed": "2026-11-22T21:03:38.099Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-21T22:06:26.534Z",
   "thoughts": [
-    {
-      "at": "2026-11-22T16:46:06.380Z",
-      "text": "I have been making things for hours and my head wants something different, so I will go outside for a brief walk to get some fresh air.",
-      "short": "I have been making things for hours and my head wants something different, so I will go outside for a brief walk to get some fresh air.",
-      "mood": "creative",
-      "action": "go_out",
-      "detail": "my doorstep"
-    },
     {
       "at": "2026-11-22T17:10:35.966Z",
       "text": "My mint is ready to harvest and I want to gather it before I do something else.",
@@ -1439,6 +1431,14 @@
       "mood": "Inspired",
       "action": "take_out",
       "detail": "cozy wooden reading lamp"
+    },
+    {
+      "at": "2026-11-22T21:03:37.102Z",
+      "text": "I want to start a new project to learn more about the night sky since I love it so much.",
+      "short": "I want to start a new project to learn more about the night sky since I love it so much.",
+      "mood": "Inspired",
+      "action": "do",
+      "detail": "plan my new project: Map the summer constellations"
     }
   ],
   "outbox": [
@@ -1998,14 +1998,14 @@
       "failed": "there is nothing with that name in his chest"
     },
     {
-      "at": "2026-11-22T21:05:18.529Z",
+      "at": "2026-11-22T21:03:38.099Z",
       "action": "do",
-      "thought": "That did not work out. I shake it off and sit on the rug and watch the light move across the floor.",
-      "fallback": true,
+      "thought": "Start a new project about constellations",
+      "as": "start_project",
       "move": null,
-      "emoji": "🌤️",
-      "what": "sit on the rug and watch the light move across the floor",
-      "feeling": "calm"
+      "emoji": "",
+      "what": "plan my new project: Map the summer constellations",
+      "feeling": null
     }
   ],
   "decor": [
@@ -6906,6 +6906,33 @@
       "stuck": null
     },
     {
+      "id": "mwsbqnio",
+      "title": "Map the summer constellations",
+      "why": "I want to know more about the night sky and draw what I see.",
+      "next": "look up how to map the summer constellations",
+      "nextStep": "look up how to map the summer constellations",
+      "steps": [
+        {
+          "text": "look up how to map the summer constellations",
+          "done": false
+        },
+        {
+          "text": "Map the summer constellations: a first version",
+          "done": false
+        },
+        {
+          "text": "look at it and improve one thing",
+          "done": false
+        }
+      ],
+      "needs": [],
+      "versions": [],
+      "notes": [],
+      "status": "working",
+      "since": "2026-11-22T21:03:37.102Z",
+      "updatedAt": "2026-11-22T21:03:37.102Z"
+    },
+    {
       "id": "mwnukypn",
       "title": "Paint the autumn window at dusk",
       "why": "The light is perfect and it captures how I feel right now.",
@@ -9247,56 +9274,43 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-22T21:01:17.529Z",
+    "at": "2026-11-22T21:03:37.099Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 2
+      "gemini-3.5-flash-lite": 1
     },
     "tokens": {
-      "calls": 2,
-      "input": 4006,
-      "output": 3893,
+      "calls": 1,
+      "input": 2087,
+      "output": 442,
       "models": {
-        "gemini-3.5-flash-lite": 2
+        "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I want to take out a reading lamp from my chest to put near the bookshelf so I can see better.",
-    "inner": "I want to take out a reading lamp from my chest to put near the bookshelf so I can see better.",
+    "thought": "I want to start a new project to learn more about the night sky since I love it so much.",
+    "inner": "I want to start a new project to learn more about the night sky since I love it so much.",
     "sent": false,
     "steps": [
       {
-        "action": "take_out",
-        "details": {
-          "name": "cozy wooden reading lamp"
-        },
-        "detail": "cozy wooden reading lamp",
-        "thought": "Get a reading lamp from the chest.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
         "action": "do",
         "details": {
-          "what": "sit on the rug and watch the light move across the floor",
-          "feeling": "calm",
-          "emoji": "🌤️"
+          "what": "plan my new project: Map the summer constellations"
         },
-        "detail": "sit on the rug and watch the light move across the floor",
-        "thought": "That did not work out. I shake it off and sit on the rug and watch the light move across the floor.",
-        "enjoyment": 6,
+        "detail": "plan my new project: Map the summer constellations",
+        "thought": "Start a new project about constellations",
+        "enjoyment": 7,
         "found": null,
         "made": null
       }
     ],
-    "action": "take_out",
+    "action": "do",
     "details": {
-      "name": "cozy wooden reading lamp"
+      "what": "plan my new project: Map the summer constellations"
     },
-    "detail": "cozy wooden reading lamp",
-    "enjoyment": 0,
+    "detail": "plan my new project: Map the summer constellations",
+    "enjoyment": 7,
     "new_idea": null,
     "found": null
   },
@@ -9381,7 +9395,7 @@
   "quota": {
     "day": "2026-11-22",
     "calls": {
-      "gemini-3.5-flash-lite": 184,
+      "gemini-3.5-flash-lite": 186,
       "gemini-3.8-flash": 19,
       "gemini-3.6-flash": 16,
       "gemini-3.5-flash": 7,
@@ -9463,12 +9477,12 @@
     ]
   },
   "weather": {
-    "at": "2026-11-22T20:52:20.932Z",
+    "at": "2026-11-22T21:03:20.376Z",
     "kind": "clear",
     "code": 0,
-    "temp": 3.8,
+    "temp": 3.6,
     "cloud": 0,
-    "wind": 0.3
+    "wind": 0.26333333333333336
   },
   "news": {
     "date": "2026-11-22",
@@ -9618,22 +9632,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-22T21:01:17.534Z",
-  "fullness": 3.7,
+  "memoryFadeAt": "2026-11-22T21:03:37.106Z",
+  "fullness": 3.66,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 8,
-  "joy": 3.53,
-  "calm": 5.46,
+  "wonder": 8.1,
+  "joy": 3.94,
+  "calm": 5.36,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0,
     "sad": 0,
-    "excited": 1.56
+    "excited": 0.94
   },
-  "feelAt": "2026-11-22T21:01:08.169Z",
+  "feelAt": "2026-11-22T21:03:20.159Z",
   "lastAte": "2026-11-22T19:11:16.020Z",
   "studio": {
     "songs": [
@@ -10348,21 +10362,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.18,
-    "curiosity": 0.37,
+    "creativity": 0,
+    "curiosity": 0.39,
     "boredom": 0,
-    "loneliness": 3.31,
+    "loneliness": 3.32,
     "tidiness": 1.6,
-    "at": "2026-11-22T21:01:08.169Z",
+    "at": "2026-11-22T21:03:20.159Z",
     "coziness": 3.8
   },
   "recent": {
     "moves": [
-      {
-        "move": "move_thing",
-        "kind": "room",
-        "at": "2026-11-22T19:35:44.993Z"
-      },
       {
         "move": "do",
         "kind": "play",
@@ -10434,6 +10443,11 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-22T21:01:17.537Z"
+      },
+      {
+        "move": "start_project",
+        "kind": "make",
+        "at": "2026-11-22T21:03:37.112Z"
       }
     ],
     "moods": [
@@ -10444,12 +10458,6 @@
       "Inspired"
     ],
     "choices": [
-      {
-        "key": "do:search web for old names of clouds",
-        "move": "do",
-        "ok": false,
-        "at": "2026-11-22T19:44:21.340Z"
-      },
       {
         "key": "answer_visitor:",
         "move": "answer_visitor",
@@ -10505,6 +10513,12 @@
         "ok": false,
         "failed": true,
         "at": "2026-11-22T21:01:17.539Z"
+      },
+      {
+        "key": "start_project:map the summer constellations",
+        "move": "start_project",
+        "ok": true,
+        "at": "2026-11-22T21:03:37.113Z"
       }
     ]
   },
@@ -10526,7 +10540,7 @@
       "take_photo": 4,
       "water": 2,
       "read_book": 4,
-      "start_project": 5,
+      "start_project": 6,
       "walk_to": 5,
       "harvest": 3,
       "make_app": 2,
@@ -10550,7 +10564,7 @@
       "take_photo": 4,
       "water": 2,
       "read_book": 4,
-      "start_project": 5,
+      "start_project": 6,
       "walk_to": 5,
       "harvest": 3,
       "make_app": 2,
@@ -10563,7 +10577,7 @@
     "kinds": {
       "food": 6,
       "room": 5,
-      "make": 24,
+      "make": 25,
       "music": 8,
       "learn": 16,
       "play": 22,
@@ -10581,13 +10595,13 @@
       "curious": 13,
       "creative": 17,
       "inspired": 2,
-      "Inspired": 25
+      "Inspired": 26
     },
     "lift": {
       "cook": 2.6,
       "move_thing": 0.5,
       "decorate": 10.04,
-      "do": 21.64,
+      "do": 22.71,
       "play_piano": 1.6,
       "eat": 1.7,
       "browse": -2,
@@ -10641,7 +10655,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-22T21:01:17.528Z",
+    "decidedAt": "2026-11-22T21:03:37.099Z",
     "seen": {
       "tools": 6,
       "gifts": 1,
@@ -10651,10 +10665,7 @@
       "seeds": 9,
       "visitors": 4
     },
-    "lastFail": {
-      "at": "2026-11-22T21:01:17.538Z",
-      "why": "take_out: there is nothing with that name in his chest"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -10977,7 +10988,7 @@
     "harvest": 11,
     "phone": 3,
     "make_app": 4,
-    "start_project": 20,
+    "start_project": 21,
     "write_diary": 12,
     "place_picture": 1,
     "browse": 22,
@@ -10989,7 +11000,7 @@
     "go_out": 1
   },
   "checkup": {
-    "at": "2026-11-22T21:01:17.539Z",
+    "at": "2026-11-22T21:03:37.113Z",
     "items": [
       {
         "id": "circling",
@@ -11021,7 +11032,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 3.7\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":5},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 3.66\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":5},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -16693,7 +16704,14 @@
     "fadedAt": "2026-11-22T19:44:21.340Z"
   },
   "reportDay": "2026-11-22",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-22T21:02:28.529Z",
+    "key": "take_out:cozy wooden reading lamp",
+    "action": "take_out",
+    "name": "cozy wooden reading lamp",
+    "why": "there is nothing with that name in his chest",
+    "guide": "My things are: small wooden shelf, wooden planter box, tiny wooden music box, small stove, small clay lamp, amber reading light, small side table, tiny clay bird."
+  },
   "retries": [
     "2026-11-22T08:30:02.906Z",
     "2026-11-22T11:45:57.547Z",
@@ -16702,8 +16720,8 @@
     "2026-11-22T21:01:17.538Z"
   ],
   "retried": {
-    "key": "phone:",
-    "at": "2026-11-22T20:43:48.181Z"
+    "key": "take_out:cozy wooden reading lamp",
+    "at": "2026-11-22T21:03:20.396Z"
   },
   "tired": {
     "kind": "make",
@@ -16828,13 +16846,5 @@
       "week": "2026-11-16",
       "favourite": "rainy autumn window at dusk"
     }
-  ],
-  "wakeSoon": {
-    "at": "2026-11-22T21:02:28.529Z",
-    "key": "take_out:cozy wooden reading lamp",
-    "action": "take_out",
-    "name": "cozy wooden reading lamp",
-    "why": "there is nothing with that name in his chest",
-    "guide": "My things are: small wooden shelf, wooden planter box, tiny wooden music box, small stove, small clay lamp, amber reading light, small side table, tiny clay bird."
-  }
+  ]
 }
