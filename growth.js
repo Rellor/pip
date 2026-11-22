@@ -207,3 +207,15 @@ export function roomLines(s, now = Date.now()) {
   if (lamps.length) lines.push(`Lamps: ${lamps.join(', ')}.`);
   return lines;
 }
+
+// ---- Less joy from repeating (like Pino's "it did less for you than it used to"): the more often he does the same
+// thing in a day, the less it gives him. Needs (eating, resting, the garden) never wear off.
+export const HABIT_FREE = ['eat', 'rest', 'water', 'harvest', 'walk_to', 'do', 'tell', 'ask_for', 'phone', 'plan_project', 'judge_project', 'start_project', 'work_on_project'];
+const HABIT_WORDS = { decorate: 'making things', draw: 'drawing', play_piano: 'playing music', record_song: 'recording songs', search_web: 'looking things up', read_book: 'reading', browse: 'browsing', move_thing: 'moving things around', change_thing: 'changing my things', write_diary: 'writing in my diary', take_photo: 'taking photos', cook: 'cooking', make_app: 'writing programs', update_app: 'working on my programs', make_clothes: 'sewing', use: 'using my things', find_picture: 'finding pictures' };
+export const timesToday = (s, move, now = Date.now()) => (s.log ?? []).filter((e) => (e.as ?? e.action) === move && !e.failed && !e.fallback && now - Date.parse(e.at) < 86_400_000 && Date.parse(e.at) <= now).length;
+// The most it can still be worth today (10 is the best), from how often he already did it.
+export const habitCap = (s, move, now = Date.now()) => (HABIT_FREE.includes(move) ? 10 : Math.max(3, 10 - Math.max(0, timesToday(s, move, now) - 2) * 1.5));
+export function habitLines(s, offered = [], now = Date.now()) {
+  const worn = offered.filter((m) => !HABIT_FREE.includes(m) && timesToday(s, m, now) >= 4).map((m) => `${HABIT_WORDS[m] ?? m.replace(/_/g, ' ')} (${timesToday(s, m, now)} times today)`);
+  return worn.length ? [`${worn.slice(0, 2).join(' and ')} did less for me than it used to. Something I have not done today would feel better.`] : [];
+}

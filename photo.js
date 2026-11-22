@@ -91,3 +91,30 @@ export async function takePhoto(target, at, state, root = 'web', recent = [], ca
     server.close();
   }
 }
+
+// A look at one of his own files (a drawing or a program), the way he would see it on his screen: returns { bytes } or { failed }.
+// Programs run in the same locked box as on the page (no internet), for a moment, and are shown as they look then.
+export async function renderFile(file, root = 'web', { width = 800, height = 600, wait = 1200 } = {}) {
+  let pw;
+  try {
+    pw = await import('playwright');
+  } catch {
+    return { failed: 'the camera is not set up on this computer' };
+  }
+  const server = await serve(root, '{}');
+  let browser;
+  try {
+    browser = await pw.chromium.launch({ executablePath: process.env.PIP_CHROMIUM || undefined, args: ['--no-sandbox'] });
+    const page = await browser.newPage({ viewport: { width, height } });
+    await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort()); // no internet, like on the page
+    await page.goto(`http://127.0.0.1:${server.address().port}/${String(file).replace(/^\/+/, '')}`, { waitUntil: 'load', timeout: 20_000 });
+    await page.waitForTimeout(wait);
+    const bytes = new Uint8Array(await page.screenshot({ type: 'jpeg', quality: 80 }));
+    return pictureType(bytes) ? { bytes } : { failed: 'it came out empty' };
+  } catch (e) {
+    return { failed: `it could not be shown (${String(e.message).split('\n')[0].slice(0, 100)})` };
+  } finally {
+    await browser?.close().catch(() => {});
+    server.close();
+  }
+}
