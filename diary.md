@@ -5128,3 +5128,10 @@ I just finished my Night Sky Learner app and it looks good. Now I want to take a
 - take_photo (computer): Take a photo of my new app
 - mood: Inspired
 
+## 22/11/2026, 21:01:17
+I want to take out a reading lamp from my chest to put near the bookshelf so I can see better.
+> I want to take out a reading lamp from my chest to put near the bookshelf so I can see better.
+- take_out (cozy wooden reading lamp): Get a reading lamp from the chest.
+- do (sit on the rug and watch the light move across the floor): That did not work out. I shake it off and sit on the rug and watch the light move across the floor.
+- mood: Inspired
+
