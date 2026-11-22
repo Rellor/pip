@@ -14,8 +14,12 @@ for (const spec of [{ name: 'small side table', where: 'floor' }, { name: 'stran
 }
 console.log('ok  "on the floor" or no place: a good spot by a wall, not the middle');
 const rug = makeDecor([], { name: 'round rug', ...designate(s, { name: 'round rug' }), parts: box(1.2, 0.02, 1.2) }, Date.now());
-assert.ok(middle(rug.entry), 'a rug belongs in the middle');
-console.log('ok  a rug still goes in the middle');
+assert.ok(rug.entry, rug.failed);
+const onBigRug = rug.entry.pos[0] - 0.6 < 1.9 && rug.entry.pos[0] + 0.6 > -1.9 && rug.entry.pos[2] - 0.6 < 2.7 && rug.entry.pos[2] + 0.6 > -1.1;
+assert.ok(!onBigRug, `a rug he makes does not lie on the big rug in the middle: ${rug.entry.label}`);
+assert.ok(Math.hypot(rug.entry.pos[0] - 3.4, rug.entry.pos[2] - 3) < 3, `it lies by the bed: ${rug.entry.label}`);
+assert.equal(misplaced(s, rug.entry), null);
+console.log('ok  a rug he makes lies beside the bed, not on top of the big rug');
 const put = makeDecor([], { name: 'odd stool', where: 'floor_middle', parts: box(0.4, 0.4, 0.4) }, Date.now());
 assert.ok(middle(put.entry));
 assert.match(misplaced(s, put.entry)?.why ?? '', /middle of the room/);

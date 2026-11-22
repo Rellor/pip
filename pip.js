@@ -30,7 +30,7 @@ import { buy } from './shop.js';
 import { storyTick } from './story.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
-import { designate } from './placement.js';
+import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
 import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
 import { warn } from './warn.js';
@@ -48,7 +48,7 @@ const THINK_ROOM = 3000; // these models think before they answer, and the think
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, capabilityGuide, blueprintGaps, requestAbility } from './blueprints.js';
-import { purposeProblem, purposeHint, setFronts, rehangPictures, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { settleRoom, purposeProblem, purposeHint, setFronts, rehangPictures, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, sketchStyle, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, applyEdits, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { lessonsFrom, themeFatigue } from './mirror.js';
@@ -249,6 +249,8 @@ async function loadState() {
   for (const note of applyChanges(state)) addMemory(state, note, 8, 'memory', new Date().toISOString()); // one-time changes from Bas
   moveMusicBack(state); // once: the piano and studio things come back from the old studio (no memory of it: Bas wants it forgotten)
   keepWindowsClear(state);
+  const tidied = settleRoom(state.decor); // nothing floats: what stands on something really stands on it (decor.js)
+  if (tidied.length) happened(state, `Things in my room were put right: ${tidied.slice(0, 4).join('; ')}.`);
   state.studio ??= { songs: [] };
   state.studio.songs = Array.isArray(state.studio.songs) ? state.studio.songs : [];
   return state;
@@ -665,7 +667,7 @@ async function makeIt(s, soul, system, st) {
     const lessons = lessonsFor(s, st.action);
     const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
     const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`, st.details?.project);
-    const mctx = { drawn: st.action === 'draw' ? drawnNote(s) : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
+    const mctx = { spot: st.action === 'decorate' ? spotNote(s, st.details) : '', drawn: st.action === 'draw' ? drawnNote(s) : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
     const mprompt = makerPrompt(mctx);
     if (process.env.PIP_DUMP) await appendFile(`${process.env.PIP_DUMP}.maker`, `\n\n=================== ${st.action}\n${mprompt}`);
     const think = ['make_app', 'update_app'].includes(st.action) ? { think: 'high' } : {}; // code needs the most thought
@@ -673,7 +675,11 @@ async function makeIt(s, soul, system, st) {
     if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl), allowed: [...instruments(s), 'drums'] });
     // The game checks it (verify.js): measured facts, and one retry with them. The better try is kept.
     const limits = { parts: maxParts(lvl), bars: maxBars(lvl) };
-    const check = (m) => checkMade(st.action, m.details, { art: s.art, maxParts: maxParts(lvl), current: appNow ? build : null, test: process.env.PIP_NO_PHOTO ? null : testHtml }).catch(() => []);
+    const check = async (m) => {
+      const facts = await checkMade(st.action, m.details, { art: s.art, maxParts: maxParts(lvl), current: appNow ? build : null, test: process.env.PIP_NO_PHOTO ? null : testHtml }).catch(() => []);
+      const tight = st.action === 'decorate' && !facts.some((f) => /could not be read/.test(f)) ? fitFact(s, { ...m.details, parts: cleanParts(m.details?.parts) }) : null; // measured against where it will go
+      return tight ? [...facts, tight] : facts;
+    };
     const out = await withOneRetry(applyMade(st, reply, limits), {
       check,
       allowed: !process.env.PIP_FAKE && revisionsLeft(s) > 0,
@@ -1438,9 +1444,17 @@ async function wakeUp() {
       const placed = designate(state, st.details); // no place said: the game puts it where it belongs
       const built = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js); a "tiny" thing is tiny
       st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart); // built at the size of his room
+      const oldCloth = /^(.+) already lies over /.exec(st.made.failed ?? '')?.[1];
+      if (oldCloth && state.stored.length < MAX_STORED && storeAway(state.decor, state.stored, oldCloth).stored) { // a new blanket: the old one is folded into his chest, like anyone would
+        st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart);
+        if (st.made.entry) st.made.hint = `my ${oldCloth} lay there, so I folded that into my chest.`;
+      }
       if (st.made.failed && /is full|no room left on/i.test(st.made.failed) && !/wall/i.test(st.made.failed) && state.stored.length < MAX_STORED) { // made, but no top has room: it waits in his chest instead of being lost
-        const spot = makeDecor(state.decor, { ...st.details, on: undefined, wall: undefined, where: 'floor', x: undefined, z: undefined, next_to: undefined, parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart);
-        if (spot.entry) {
+        const spot = makeDecor(state.decor, { ...st.details, on: undefined, wall: undefined, where: 'floor', x: undefined, z: undefined, next_to: undefined, ...floorSpot(state, st.details), parts: roomScale(built.parts, st.details), uses: st.uses }, stepStart);
+        const why = st.made.failed.split(':')[0].split('. ')[0];
+        if (spot.entry && Math.max(...(sizeOf(spot.entry) ?? [0])) >= 0.45) { // big enough not to get lost: it stands on the floor by a wall, where he can see it (not hidden in the chest)
+          st.made = { ...spot, warn: `no top had room for it (${why}), so it stands on the floor by a wall. To put it on a top I make room first (move something, or build a bigger shelf or table), then move_thing {name, on: "..."}` };
+        } else if (spot.entry) {
           state.stored.push({ ...spot.entry, roomScaled: true, storedAt: new Date().toISOString() });
           st.made = { name: spot.entry.name, stored: true, entry: null, hint: `there was no room for it on any top (${st.made.failed.split(':')[0]}), so it waits in my chest. To show it I make room first (move something, or build a bigger shelf or table), then take_out` };
         }
@@ -1461,10 +1475,16 @@ async function wakeUp() {
         const x = Number(st.details.x);
         const z = Number(st.details.z);
         const off = st.made.entry.kind === 'floor' && Number.isFinite(x) && Number.isFinite(z) ? Math.hypot(st.made.entry.pos[0] - x, st.made.entry.pos[2] - z) : 0;
-        st.made.warn = st.made.autoNote?.startsWith('I gave no place, so it stands') ? st.made.autoNote : accessProblem(state.decor, st.made.entry) || purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (promised.length ? `the blueprint promised more than it does yet: ${promised.join(', ')}` : null) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
-        st.made.hint = st.made.warn ? null : purposeHint(st.made.entry) || (added ? `it works: I gave it a use that really does it (${st.made.entry.uses.find((u) => u.does)?.label})` : null);
+        const placeWarn = st.made.warn ?? null; // what the placing itself said (the desk was full, it was too big for a top...)
+        st.made.warn = st.made.autoNote?.startsWith('I gave no place, so it stands') ? st.made.autoNote : placeWarn || accessProblem(state.decor, st.made.entry) || purposeProblem(st.made.entry) || behaviorProblem(st.made.entry) || (promised.length ? `the blueprint promised more than it does yet: ${promised.join(', ')}` : null) || (off > 0.5 ? `it went to x ${st.made.entry.pos[0]}, z ${st.made.entry.pos[2]}, not where I asked, because there was no room there` : null);
+        const hintBefore = st.made.hint ?? null; // what was said while placing it (the old blanket went into the chest)
+        st.made.hint = [st.made.warn ? null : purposeHint(st.made.entry) || (added ? `it works: I gave it a use that really does it (${st.made.entry.uses.find((u) => u.does)?.label})` : null), hintBefore].filter(Boolean).join(' ') || null;
         const fits = capacityText(st.made.entry, sizeOf(st.made.entry)); // how many it is for, so he learns what size things need
         if (built.fixes.length || fits) st.made.hint = [st.made.hint, fixWords(built.fixes), fits].filter(Boolean).join(' ');
+        if (st.made.entry.cover) st.made.hint = [st.made.hint, `it lies ${st.made.entry.label}: the game fitted it to the whole top and lets the edges hang down`].filter(Boolean).join(' ');
+        const isFor = forHint(state, st.made.entry);
+        if (isFor) st.made.hint = [st.made.hint, isFor].filter(Boolean).join(' ');
+        settleRoom(state.decor); // things on the bed stand on the new blanket
       }
     }
     if (st.action === 'add_use') st.made = st.uses?.[0] ? addUse(state.decor, st.details.name, st.uses[0]) : { failed: 'the use did not work out' };
@@ -1647,6 +1667,9 @@ async function wakeUp() {
       }
     }
   });
+
+  const put = settleRoom(state.decor); // after everything he moved, changed or took away: nothing is left floating
+  if (put.length) happened(state, `Things in my room were put right: ${put.slice(0, 4).join('; ')}.`);
 
   // Pictures: what he saw, and only if he chooses it: putting one up or taking it down.
   for (const n of Array.isArray(answer.picture_notes) ? answer.picture_notes : []) {

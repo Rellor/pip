@@ -195,7 +195,7 @@ export function takeOut(decor, stored, name, where, atMs, now = Date.now()) {
   if (i < 0 && n) i = stored.findIndex((x) => x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase()));
   if (i < 0) return { failed: 'there is nothing with that name in his chest' };
   const e = stored[i];
-  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.parts, song: e.song, uses: e.uses, tool: e.tool }, atMs, now);
+  const r = placeParts(decor, { name: e.name, why: e.why, project: e.project, where: where || e.zone, parts: e.design ?? e.parts, song: e.song, uses: e.uses, tool: e.tool }, atMs, now); // cloth comes out in his own design, and is laid again
   if (r.entry) {
     r.entry.createdAt = e.createdAt; // it is still the thing he made back then
     stored.splice(i, 1);
@@ -418,7 +418,11 @@ export function reseat(decor, e, levelsBefore = null, now = Date.now()) {
   const levels = e.kind === 'wall' ? wallLevels(e) : floorLevels(e).length > 1 ? floorLevels(e) : null;
   const keys = levels ? levels.map((l, i) => `${e.id}#${i}`) : [e.id];
   const yOf = (i) => baseByKey(decor, keys[i])?.y ?? Infinity;
-  for (const o of riders) {
+  for (const o of [...riders].sort((a, b) => Boolean(b.cover) - Boolean(a.cover))) { // the cloth first: the other things stand on it
+    if (o.cover) { // cloth over it takes its new shape
+      if (relayCover(decor, o, now)) { o.updatedAt = e.updatedAt ?? new Date(now).toISOString(); out.moved.push(o.name); } else out.fell.push(o.name);
+      continue;
+    }
     const was = String(o.base).includes('#') ? Number(String(o.base).split('#')[1]) : 0;
     const same = levelsBefore === keys.length && was < keys.length; // as many boards as before: the same board
     const order = keys.map((k, i) => i).sort((a, b) => (same ? (a === was ? -1 : b === was ? 1 : 0) : 0) || Math.abs(yOf(a) - o.pos[1]) - Math.abs(yOf(b) - o.pos[1]));
@@ -426,7 +430,7 @@ export function reseat(decor, e, levelsBefore = null, now = Date.now()) {
     for (const i of order) {
       const base = baseByKey(decor, keys[i]);
       if (!base || !reachable(base)) continue;
-      const r = placeOn(decor.filter((x) => x !== o), { ...o, keep: true }, o.parts, base, { x: o.pos[0], z: o.pos[2] }, Date.parse(e.updatedAt ?? '') - 6000 || now, now, true);
+      const r = placeOn(decor.filter((x) => x !== o), { ...o, keep: true, sameSize: true }, o.parts, base, { x: o.pos[0], z: o.pos[2] }, Date.parse(e.updatedAt ?? '') - 6000 || now, now, true);
       if (r.failed) continue;
       const n = r.entry;
       Object.assign(o, { pos: n.pos, base: n.base, label: n.label, scale: Math.min(o.scale || 1, n.scale || 1), rotY: n.rotY, stand: n.stand, updatedAt: e.updatedAt ?? new Date(now).toISOString() });
@@ -475,13 +479,34 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   const factor = !parts && Number.isFinite(grow) && grow > 0 ? Math.min(2, Math.max(0.5, grow)) : null; // "make it bigger" without drawing it again
   if (!parts && !why && !factor) return { failed: 'he did not say what to change' };
   let limited = false;
+  let movedTo = null;
   if (parts || factor) {
     const Z = ZONES[e.zone];
     const before = { parts: e.parts, scale: e.scale };
     const next = parts ?? e.parts.map((p) => ({ ...p, size: p.size.map((v) => r3(v * factor)), pos: p.pos.map((v) => r3(v * factor)), rot: [...p.rot] }));
-    e.scale = fit(next, Z.kind, Z.lim);
-    e.parts = next;
-    limited = e.scale < 1 && (Boolean(factor) && factor > 1);
+    if (e.cover) { // cloth: his new design is laid over what it covers again
+      if (!parts) return { failed: `${e.name} is cloth: it is always as big as ${baseByKey(decor, e.cover)?.n ?? 'what it lies on'}. He can change how it looks (new parts) instead` };
+      e.parts = next;
+      e.design = next;
+      relayCover(decor, e, now, true);
+    } else if (e.kind === 'surface') { // it still has to fit on what it stands on (a stand grew to three times its lamp base once)
+      const base = baseByKey(decor, baseKeyOf(e));
+      const others = decor.filter((x) => x !== e);
+      const spec = { ...e, scale: undefined };
+      let r = base ? placeOn(others, { ...e, keep: true }, next, base, { x: e.pos[0], z: e.pos[2] }, atMs, now, true) : null; // where it stands it may stay as small as it was
+      if ((!r || r.failed) && factor) return { failed: `${r?.failed ?? 'it stands on nothing'}. Bigger does not fit where it stands: he moves it to a bigger top first (move_thing), or leaves it this size` };
+      if (!r || r.failed) r = base ? placeOn(others, spec, next, base, null, atMs, now, true) : null; // his new design is bigger than its top: the nearest top where it fits
+      if (!r || r.failed) r = placeFloor(others, { ...spec }, next, null, [e.pos[0], e.pos[2]], atMs, now, true); // or the floor close by
+      if (r.failed) { Object.assign(e, before); return { failed: r.failed }; }
+      const n = r.entry;
+      if (n.base !== e.base || n.kind !== e.kind) movedTo = n.label.replace(/ \(x .*\)$/, '');
+      Object.assign(e, { pos: n.pos, base: n.base ?? undefined, kind: n.kind, zone: n.zone, label: n.label, scale: n.scale, rotY: n.rotY, stand: n.stand, parts: n.parts });
+      limited = Boolean(factor) && factor > 1 && e.scale < 1;
+    } else {
+      e.scale = fit(next, Z.kind, Z.lim);
+      e.parts = next;
+      limited = e.scale < 1 && (Boolean(factor) && factor > 1);
+    }
     const hit = e.kind === 'floor' ? roomToGrow(decor, e) : null;
     if (hit) {
       Object.assign(e, before);
@@ -492,7 +517,8 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   e.updatedAt = new Date(atMs + 6000).toISOString(); // the page shows the change a few seconds into his step
   e.changedAt = e.updatedAt; // only real changes count toward the daily limit, not moves
   const seat = parts || factor ? reseat(decor, e, boards, now) : { moved: [], fell: [] };
-  return { name: e.name, entry: e, reshaped: Boolean(parts || factor), grew: factor, limited, label: ZONES[e.zone].label, fixes: parts ? built.fixes : [], reseated: seat.moved, ...(seat.fell.length ? { warn: `${seat.fell.join(', ')} no longer fit${seat.fell.length > 1 ? '' : 's'} on it; I find ${seat.fell.length > 1 ? 'them' : 'it'} a new place` } : {}) };
+  const warns = [movedTo ? `it no longer fitted where it stood, so it stands ${movedTo} now` : '', seat.fell.length ? `${seat.fell.join(', ')} no longer fit${seat.fell.length > 1 ? '' : 's'} on it; I find ${seat.fell.length > 1 ? 'them' : 'it'} a new place` : ''].filter(Boolean);
+  return { name: e.name, entry: e, reshaped: Boolean(parts || factor), grew: factor, limited, label: ZONES[e.zone]?.label ?? e.label, fixes: parts ? built.fixes : [], reseated: seat.moved, ...(warns.length ? { warn: warns.join('; ') } : {}) };
 }
 
 // ---- Moving things. His chest is a piece of furniture he can move too (decor never overlaps it by much, but it is not checked).
@@ -526,6 +552,20 @@ export function squareUp(s, now = new Date().toISOString()) {
 const clampTo = ([lo, hi], v) => r3(Math.min(hi, Math.max(lo, v)));
 
 // details: { name, where, dx, dz }. `chest` is state.chest (or null). Returns { name, entry } for a thing, { name, chest } for the chest, or { failed }.
+// What stands on a thing he made goes along when it moves or turns: on its top, on every board of it, and the cloth over it.
+// (Only things on the very top went along before: his reading light stayed floating in the air where the side table had stood.)
+function carryRiders(decor, e, was, at) {
+  const dRot = (e.rotY || 0) - (was.rotY || 0);
+  const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
+  for (const o of decor.filter((x) => x !== e && x.pos && (x.base === e.id || String(x.base ?? '').startsWith(`${e.id}#`)))) {
+    const [px, pz] = turn([o.pos[0] - was.pos[0], o.pos[2] - was.pos[2]], dRot);
+    o.pos = [r3(e.pos[0] + px), r3(o.pos[1] + e.pos[1] - was.pos[1]), r3(e.pos[2] + pz)];
+    o.rotY = (o.rotY || 0) + dRot;
+    if (Array.isArray(o.stand)) { const [sx, sz] = turn([o.stand[0] - was.pos[0], o.stand[1] - was.pos[2]], dRot); o.stand = [clampRoom(e.pos[0] + sx), clampRoom(e.pos[2] + sz)]; }
+    if (!o.cover) o.label = `on ${baseByKey(decor, o.base)?.n ?? e.name} (x ${o.pos[0]}, z ${o.pos[2]})`;
+    o.updatedAt = at;
+  }
+}
 export function moveThing(decor, chest, details, atMs, now = Date.now()) {
   const r = moveThingRaw(decor, chest, details, atMs, now);
   if (r?.failed && !r.hinted && !/It would fit/.test(r.failed)) {
@@ -595,7 +635,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   if (!want && !dx && !dz && !hasXZ && !d.next_to && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null && turnRad(d.turn) === null) return { failed: 'he did not say where to move it' };
   if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const at = new Date(atMs + 6000).toISOString();
-  const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
+  const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && !liesFlat(o) && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
 
   if (/chest/.test(n)) {
     const cur = chest ?? CHEST_HOME;
@@ -690,6 +730,16 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
     }
     return out;
   }
+  if (e.cover || (d.on && coverKind(e))) { // cloth is spread over the bed or a table: it has no spot of its own
+    const host = d.on ? coverHost(decor, { ...e, on: d.on, where: undefined }) : null;
+    if (!host) return { failed: `${e.name} is cloth: it lies spread over ${e.cover ? baseByKey(decor, e.cover)?.n ?? 'something' : 'the bed or a table'}, and has no spot of its own to move to. To lay it over something else he says {name, on: "bed"} or the name of a table he made. To put it away he uses his chest`, hinted: true };
+    if (!e.cover && decor.some((o) => o.base === e.id || String(o.base ?? '').startsWith(`${e.id}#`))) return { failed: 'things stand on it. He takes them off first' };
+    const r = placeCover(decor.filter((o) => o !== e), e, e.design ?? copy(), host, atMs, now, true);
+    if (r.failed) return r;
+    const out = keep(r);
+    levelRiders(decor);
+    return out;
+  }
   if (d.on && e.kind !== 'surface' && !e.image) { // a small thing on the floor (or a wall) put ON something: it becomes a thing on top of it
     if (decor.some((o) => o.base === e.id || String(o.base ?? '').startsWith(`${e.id}#`))) return { failed: 'things stand on it. He takes them off first' };
     const base = findBase(decor, d.on, d);
@@ -726,14 +776,9 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
     const parts = e.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...p.rot] }));
     const r = placeFloor(decor.filter((o) => o !== e), { ...e, parts, name: e.name, turn: turnGiven ? d.turn : e.turn }, parts, target, anchor, atMs, now, true);
     if (r.failed) return r;
-    const was = [...e.pos];
+    const was = { pos: [...e.pos], rotY: e.rotY || 0 };
     Object.assign(e, { ...r.entry, id: e.id, createdAt: e.createdAt, at: e.at, uses: e.uses, song: e.song, tool: e.tool, project: e.project, why: e.why });
-    for (const o of decor.filter((x) => x.base === e.id)) { // things standing on top of it go along
-      o.pos = [r3(o.pos[0] + e.pos[0] - was[0]), o.pos[1], r3(o.pos[2] + e.pos[2] - was[2])];
-      o.stand = [r3(o.stand[0] + e.pos[0] - was[0]), r3(o.stand[1] + e.pos[2] - was[2])];
-      o.label = `on ${e.name} (x ${o.pos[0]}, z ${o.pos[2]})`;
-      o.updatedAt = at;
-    }
+    carryRiders(decor, e, was, at); // what stands on it (its top, every board, the cloth over it) goes along, also when it turns
     e.movedAt = at;
     e.updatedAt = at;
     const offF = target ? Math.hypot(e.pos[0] - target.x, e.pos[2] - target.z) : 0;
@@ -941,8 +986,11 @@ export const useSpots = (skipKey = null) => MOVABLE.filter((k) => k !== skipKey 
   const [x, z] = worldPoint(k, placeOf(furnNow, k), FURNITURE[k].spot.p);
   return { n: `the spot where I stand to use ${FURNITURE[k].n}`, x0: x - 0.3, x1: x + 0.3, z0: z - 0.3, z1: z + 0.3 };
 });
+// A rug, a mat, a carpet: it lies flat on the floor. He walks over it and furniture stands on it, like the big rug in the
+// middle of his room. (A rug he made used to be a wall nobody could pass: nothing could stand on it or near it.)
+export const liesFlat = (o) => { if (!o || o.kind !== 'floor' || o.image || !o.parts?.length) return false; const z = sizeOf(o); return Boolean(z) && z[1] <= 0.12 && Math.max(z[0], z[2]) >= 0.4; };
 export function obstacles(decor, skip = null, withChest = true, skipKey = null) {
-  const list = [...fixedRects(skipKey), ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
+  const list = [...fixedRects(skipKey), ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos && !liesFlat(o)).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
   if (withChest) {
     const c = chestNow ?? CHEST_HOME;
     list.push({ n: 'the chest', ...rectAt([0.5, 0.3], c.x, c.z, c.rotY) });
@@ -1016,13 +1064,18 @@ function fitSpots(tryFn, x, z) {
 function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false) {
   const scale = fit(parts, 'floor', {});
   const [hw, hd] = halfFoot(parts, scale);
-  const obs = [...obstacles(decor, null, true), ...useSpots()]; // and never where he stands to use the desk, the bed...
+  const rug = liesFlat({ kind: 'floor', parts, scale });
+  const solid = obstacles(decor, null, true);
+  const rugs = [...MOVABLE.filter((k) => FURNITURE[k].flat && !furnNow?.[k]?.gone).flatMap((k) => furnRects(furnNow, k).map((r) => ({ n: r.n, x0: r.x0, x1: r.x1, z0: r.z0, z1: r.z1 }))), ...decor.filter((o) => o.pos && liesFlat(o)).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
+  // A rug: not on another rug, and its middle on free floor (its edge may lie under a bed or between table legs). Anything else: not in anything solid, and never where he stands to use the desk, the bed...
+  const obs = rug ? [...rugs.map((r) => ({ ...r, x0: r.x0 + 0.1, x1: r.x1 - 0.1, z0: r.z0 + 0.1, z1: r.z1 - 0.1 })), ...solid.map((o) => ({ ...o, x0: o.x0 + hw + 0.2, x1: o.x1 - hw - 0.2, z0: o.z0 + hd + 0.2, z1: o.z1 - hd - 0.2 })).map((o) => (o.x0 < o.x1 && o.z0 < o.z1 ? o : null)).filter(Boolean)] : [...solid, ...useSpots()];
   const turned = turnRad(spec.turn); // he said how it is turned: it stands that way, not flush against a wall
   const tryRaw = (x, z) => {
-    if (turned !== null) {
-      const r0 = rectAt([hw, hd], 0, 0, turned);
-      const f = { rotY: turned, x: r3(Math.min(EDGE - r0.x1, Math.max(-EDGE - r0.x0, x))), z: r3(Math.min(EDGE - r0.z1, Math.max(-EDGE - r0.z0, z))) };
-      return blocker(rectAt([hw, hd], f.x, f.z, turned), obs) ? null : f;
+    if (turned !== null || rug) { // a rug lies where it is put (it is not pushed flush against a wall like a cupboard)
+      const rot = turned ?? 0;
+      const r0 = rectAt([hw, hd], 0, 0, rot);
+      const f = { rotY: rot, x: r3(Math.min(EDGE - r0.x1, Math.max(-EDGE - r0.x0, x))), z: r3(Math.min(EDGE - r0.z1, Math.max(-EDGE - r0.z0, z))) };
+      return blocker(rectAt([hw, hd], f.x, f.z, rot), obs) ? null : f;
     }
     const f = faceAndSnap(hw, hd, Math.min(EDGE, Math.max(-EDGE, x)), Math.min(EDGE, Math.max(-EDGE, z)));
     return blocker(rectAt([hw, hd], f.x, f.z, f.rotY), obs) ? null : f;
@@ -1091,7 +1144,7 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
 // A picture of the room in text, so he can see what stands where. Every character is half a metre.
 export function roomMap(decor) {
   const symbols = { 'the piano': 'P', 'the piano stool': 'o', 'the bookshelf': 'B', 'the desk and screen': 'D', 'the bed': 'E', 'the plant': 'L', 'the chest': 'C', 'the door to the hall': 'Z' };
-  const mine = decor.filter((o) => o.kind === 'floor' && !o.image && o.pos);
+  const mine = decor.filter((o) => o.kind === 'floor' && !o.image && o.pos && !liesFlat(o)); // the same list as obstacles(): a rug is floor to walk on
   const marks = '123456789abcdefghijklmnopqrstuvwxyz';
   const obs = obstacles(decor, null, true);
   const nFixed = fixedRects().length;
@@ -1171,7 +1224,7 @@ export function spaceLeft(decor) {
 // Things stand where they can still be used. Returns why a floor thing that was just put down is in a bad place, or null.
 // 1) it covers the spot where Pip stands to use something else. 2) it stands in front of the window, where the window stool should be reachable.
 export function accessProblem(decor, e) {
-  if (!e || e.kind !== 'floor' || !e.pos || e.image) return null;
+  if (!e || e.kind !== 'floor' || !e.pos || e.image || liesFlat(e)) return null; // a rug is never in the way: he stands on it
   const [hw, hd] = footOf(e);
   const r = rectAt([hw, hd], e.pos[0], e.pos[2], e.rotY);
   const hit = (px, pz, m = 0.2) => px > r.x0 - m && px < r.x1 + m && pz > r.z0 - m && pz < r.z1 + m;
@@ -1355,6 +1408,11 @@ export function purposeHint(o) {
   return `it works: things can stand on it. I put one there with move_thing {name, on: "${o.name}"${n > 1 ? ', level: "top" or "bottom"' : ''}}`;
 }
 function baseByKey(decor, key) {
+  const b = baseRaw(decor, key);
+  const cloth = b ? decor.find((o) => o.cover === String(key).split('#')[0] && o.pos && Number.isFinite(o.coverTop) && Math.abs(o.pos[1] - b.y) < 0.08) : null; // a blanket or tablecloth lies on it: things stand on the cloth
+  return cloth ? { ...b, y: Math.max(b.y, cloth.coverTop) } : b;
+}
+function baseRaw(decor, key) {
   if (FURNITURE[key]) return surfaceOf(key) ? { key, ...surfaceOf(key) } : null;
   const [wid, lv] = String(key).split('#');
   if (lv !== undefined) {
@@ -1383,7 +1441,7 @@ export function supportsInfo(decor) {
     }
   }
   return bases.filter((b) => b.key && Number.isFinite(b.x0)).map((b) => {
-    const on = decor.filter((o) => o.kind === 'surface' && o.pos && baseKeyOf(o) === b.key);
+    const on = decor.filter((o) => o.kind === 'surface' && o.pos && !o.cover && baseKeyOf(o) === b.key);
     const area = (b.x1 - b.x0) * (b.z1 - b.z0);
     const used = on.reduce((t, o) => { const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY); return t + (r.x1 - r.x0) * (r.z1 - r.z0); }, 0);
     return { key: b.key, label: b.label, cx: r3((b.x0 + b.x1) / 2), cz: r3((b.z0 + b.z1) / 2), on: on.map((o) => o.name), ...(b.key === 'desk' ? { fixed: DESK_ITEMS } : {}), room: !reachable(b) ? 0 : Math.max(0, Math.min(maxOn(b) - on.length, Math.floor((area - used * 1.4) / 0.05))), full: on.length >= maxOn(b), high: !reachable(b) };
@@ -1429,7 +1487,7 @@ function findBase(decor, on, pick = {}) {
   const k = /desk|computer|table/.test(w) ? 'desk' : /piano/.test(w) ? 'piano' : /book/.test(w) ? 'bookshelf' : /bed/.test(w) ? 'bed' : null;
   return k ? baseByKey(decor, k) : null;
 }
-const surfaceOthers = (decor, key, skip) => decor.filter((o) => o !== skip && o.kind === 'surface' && o.pos && baseKeyOf(o) === key).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }));
+const surfaceOthers = (decor, key, skip) => decor.filter((o) => o !== skip && o.kind === 'surface' && o.pos && !o.cover && baseKeyOf(o) === key).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }));
 
 // How many things fit on a surface before it is cluttered: the desk keeps room for his computer; his own shelves and
 // tables by their size. And it must be within reach: he cannot put things on top of the 3 m bookshelf.
@@ -1473,39 +1531,209 @@ function holderWalls(decor, base) {
     return [{ n: `the side of ${o.name}`, ...rectAt([hx, hz], o.pos[0] + dx, o.pos[2] + dz, o.rotY || 0) }];
   });
 }
+// ---- Cloth that lies ON something and takes its shape: a blanket covers the bed, a tablecloth covers a table.
+// (He designed a blanket of 1.9 x 2.6 m for his bed, and the game shrank it to a doormat because it treated it like a vase.
+// Research on rooms built by language models and on games like The Sims says the same thing: cloth belongs to what it
+// lies on, so the game fits it to that, and the design only says what it looks like.)
+const BED_COVER = /\b(blanket|quilt|duvet|bed ?spread|bed ?cover|comforter|coverlet|throw|plaid|bed ?sheet)s?$/i;
+const TABLE_COVER = /\b(table ?cloth|table ?cover|table ?runner|runner|doily|place ?mat)s?$/i;
+const TABLE_LIKE = /\b(table|desk|bench|counter|sideboard|dresser|nightstand|stand|cabinet|workbench)\b/i;
+const coverHead = (name) => String(name ?? '').toLowerCase().replace(/\s+(for|on|of|with|in|over|to|from)\s+.*$/, '').trim();
+// 'bed' for a blanket, 'table' for a tablecloth, null for everything else ("blanket box" and "throw pillow" are not cloth to spread).
+export const coverKind = (spec) => { const h = coverHead(spec?.name); return BED_COVER.test(h) ? 'bed' : TABLE_COVER.test(h) ? 'table' : null; };
+// The flat top of a thing he made, in its own frame: { W, D, cx, cz, y } (W along its own x, D along its own z).
+function ownTop(o) {
+  const sc = o.scale || 1;
+  const flat = (o.parts ?? []).filter((p) => ['box', 'roundbox'].includes(p.shape) && !p.rot.some((r) => r) && p.size[0] >= 0.25 && p.size[2] >= 0.12);
+  const high = flat.length ? Math.max(...flat.map((p) => p.pos[1] + p.size[1] / 2)) : null;
+  const p = flat.filter((q) => q.pos[1] + q.size[1] / 2 >= high - 0.01).sort((a, b) => b.size[0] * b.size[2] - a.size[0] * a.size[2])[0];
+  const full = sizeOf(o);
+  if (!p || (p.pos[1] + p.size[1] / 2) * sc < full[1] - 0.05) { const [hw, hd] = footOf(o); return { W: hw * 2, D: hd * 2, cx: o.pos[0], cz: o.pos[2], y: r3(o.pos[1] + full[1]) }; } // something rises above its flat part: the box around it
+  const [dx, dz] = turn([p.pos[0] * sc, p.pos[2] * sc], o.rotY || 0);
+  return { W: p.size[0] * sc, D: p.size[2] * sc, cx: o.pos[0] + dx, cz: o.pos[2] + dz, y: r3(o.pos[1] + (p.pos[1] + p.size[1] / 2) * sc) };
+}
+// What a cover lies on, by its key: the bed, or a table (or a stand, a bench...) he made.
+function coverHostByKey(decor, key) {
+  if (FURNITURE[key]?.cover && !furnNow?.[key]?.gone) {
+    const f = FURNITURE[key];
+    const pl = placeOf(furnNow, key);
+    const r = worldRect(key, pl, { n: f.n, x: f.cover.x, z: f.cover.z, h: 0 });
+    const quarter = Math.abs(Math.sin(pl.rot)) > 0.7;
+    const [ox, oz] = turn(f.top.off, pl.rot);
+    return { key, n: f.n, W: quarter ? r.z1 - r.z0 : r.x1 - r.x0, D: quarter ? r.x1 - r.x0 : r.z1 - r.z0, cx: (r.x0 + r.x1) / 2, cz: (r.z0 + r.z1) / 2, y: f.cover.y, rotY: pl.rot, thick: f.cover.thick, drop: f.cover.drop, sides: f.cover.sides, over: 0, stand: [(r.x0 + r.x1) / 2 + ox, (r.z0 + r.z1) / 2 + oz] };
+  }
+  const o = decor.find((x) => x.id === key && x.kind === 'floor' && !x.image && x.pos && x.parts);
+  if (!o) return null;
+  const t = ownTop(o);
+  return { key: o.id, n: o.name, ...t, rotY: o.rotY || 0, thick: [0.015, 0.03], drop: Math.min(0.12, t.y * 0.3), sides: ['x', 'z'], over: 0.04, stand: o.stand ?? [o.pos[0], o.pos[2] + 1] };
+}
+// For the game around it (placement.js): what a cover with this name would lie on, as { key, name, W, D }, or null.
+export const coverTarget = (decor, spec) => { const h = coverHost(decor, spec); return h ? { key: h.key, name: h.n, W: r3(h.W), D: r3(h.D) } : null; };
+// The biggest free space on a top, for a thing standing the way the top faces: { w, d, h } in metres, or null when nothing fits.
+export function freeSpaceOn(decor, key) {
+  const base = baseByKey(decor, key);
+  if (!base || !reachable(base)) return null;
+  const others = [...surfaceOthers(decor, base.key, null), ...(base.key === 'desk' ? deskGear() : []), ...holderWalls(decor, base)];
+  const quarter = Math.abs(Math.sin(base.rotY || 0)) > 0.7;
+  const fits = (w, d) => {
+    const [ax, az] = quarter ? [d / 2, w / 2] : [w / 2, d / 2];
+    for (let x = base.x0 + ax; x <= base.x1 - ax + 0.001; x += 0.05) for (let z = base.z0 + az; z <= base.z1 - az + 0.001; z += 0.05) if (!others.some((o) => x - ax < o.x1 + 0.05 && x + ax + 0.05 > o.x0 && z - az < o.z1 + 0.05 && z + az + 0.05 > o.z0)) return true;
+    return false;
+  };
+  const [lw, ld] = quarter ? [base.z1 - base.z0, base.x1 - base.x0] : [base.x1 - base.x0, base.z1 - base.z0];
+  let sq = 0;
+  for (let v = Math.min(lw, ld, 1) - 0.04; v >= 0.1; v -= 0.05) if (fits(v, v)) { sq = v; break; }
+  if (!sq) return null;
+  let w = sq;
+  let d = sq;
+  while (w + 0.05 <= Math.min(1, lw - 0.04) && fits(w + 0.05, d)) w += 0.05;
+  while (d + 0.05 <= Math.min(1, ld - 0.04) && fits(w, d + 0.05)) d += 0.05;
+  return { w: r3(w), d: r3(d), h: r3(Math.min(LIMITS.surface.h, base.clear ? base.clear - 0.02 : LIMITS.surface.h)) };
+}
+// What this cover would lie on, or null when it is no cover or he chose another kind of place (a blanket hung on the wall is a wall thing).
+function coverHost(decor, spec) {
+  const kind = coverKind(spec);
+  if (!kind) return null;
+  if (spec.wall || spec.ceiling === true || spec.next_to || num2(spec.x) !== null || num2(spec.z) !== null || num2(spec.along) !== null || num2(spec.height) !== null) return null;
+  if (!spec.on && /\b(floor|wall|ceiling)\b/i.test(String(spec.where ?? ''))) return null;
+  const named = String(spec.on ?? spec.where ?? '').toLowerCase().replace(/_/g, ' ').replace(/^(on |over |the |my )+/, '').trim();
+  const tables = decor.filter((o) => o.id !== spec.id && o.kind === 'floor' && !o.image && o.pos && o.parts && holdsThings(o) && !purposeProblem(o) && TABLE_LIKE.test(o.name));
+  const t = named ? tables.find((o) => o.name.toLowerCase() === named) ?? tables.find((o) => o.name.toLowerCase().includes(named) || named.includes(o.name.toLowerCase())) : null;
+  if (t) return coverHostByKey(decor, t.id);
+  if (kind === 'bed' || /\bbed\b/.test(named)) return coverHostByKey(decor, 'bed');
+  const free = tables.find((o) => !decor.some((c) => c.cover === o.id && c.id !== spec.id));
+  return free ? coverHostByKey(decor, free.id) : null;
+}
+// One part made wider, deeper and thinner by different amounts (cloth is stretched to what it lies on).
+function stretchPart(p, sx, sy, sz) {
+  const turned = Math.abs(Math.round((p.rot?.[1] ?? 0) / 90)) % 2 === 1; // a quarter turn: its own x lies along z
+  const [ax, az] = turned ? [sz, sx] : [sx, sz];
+  const m = Math.min(ax, az);
+  const s = p.size;
+  const size = p.shape === 'sphere' ? [s[0] * Math.min(m, Math.max(sy, 0.5))]
+    : p.shape === 'cylinder' ? [s[0] * m, s[1] * m, s[2] * sy]
+    : p.shape === 'cone' || p.shape === 'capsule' ? [s[0] * m, s[1] * sy]
+    : p.shape === 'torus' ? [s[0] * m, s[1] * Math.min(m, Math.max(sy, 0.5))]
+    : [s[0] * ax, s[1] * sy, s[2] * az];
+  return { ...p, size: size.map((v) => Math.max(0.01, r3(v))), pos: [r3(p.pos[0] * sx), r3(p.pos[1] * sy), r3(p.pos[2] * sz)], rot: [...p.rot] };
+}
+// His design spread over the host: as wide and long as the top (a narrow runner stays narrow), thin, with the edges hanging down.
+// Returns { parts, top } (top: how thick it lies, so things can stand on it).
+export function coverFit(rawParts, host, kind, narrow = false) {
+  let parts = rawParts.filter((p) => !p.auto).map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...(p.rot ?? [0, 0, 0])] }));
+  const dims = () => { const r = reach(parts); const ys = parts.map((p) => [p.pos[1] - halfSize(p)[1], p.pos[1] + halfSize(p)[1]]); return { w: r.x1 - r.x0, d: r.z1 - r.z0, cx: (r.x0 + r.x1) / 2, cz: (r.z0 + r.z1) / 2, y0: Math.min(...ys.map((y) => y[0])), h: Math.max(...ys.map((y) => y[1])) - Math.min(...ys.map((y) => y[0])) }; };
+  let b = dims();
+  if ((b.w > b.d * 1.1 && host.D > host.W * 1.1) || (b.d > b.w * 1.1 && host.W > host.D * 1.1)) { // its long side goes along the long side of what it covers
+    parts = parts.map((p) => ({ ...p, pos: [p.pos[2], p.pos[1], -p.pos[0]], size: ['box', 'roundbox'].includes(p.shape) ? [p.size[2], p.size[1], p.size[0]] : p.size, rot: ['box', 'roundbox'].includes(p.shape) ? p.rot : [p.rot[0], p.rot[1] + 90, p.rot[2]] }));
+    b = dims();
+  }
+  for (const p of parts) p.pos = [p.pos[0] - b.cx, p.pos[1] - b.y0, p.pos[2] - b.cz];
+  const whole = (mine, theirs) => !narrow || mine >= theirs * 0.6; // a blanket covers the bed, a tablecloth the table; a runner or a place mat that is narrow by design stays narrow
+  const fullW = whole(b.w, host.W);
+  const fullD = whole(b.d, host.D);
+  const tw = fullW ? host.W + 2 * host.over : Math.min(host.W, Math.max(b.w, host.W * 0.25));
+  const td = fullD ? host.D + 2 * host.over : Math.min(host.D, Math.max(b.d, host.D * 0.25));
+  const th = Math.min(host.thick[1], Math.max(host.thick[0], b.h));
+  parts = parts.map((p) => stretchPart(p, tw / Math.max(0.01, b.w), th / Math.max(0.01, b.h), td / Math.max(0.01, b.d)));
+  parts = parts.map((p) => ({ ...p, shape: p.shape === 'box' ? 'roundbox' : p.shape, soft: true })); // cloth: soft edges, no shine (the page draws it so)
+  const main = [...parts].sort((p, q) => halfSize(q).reduce((a, v) => a * v, 1) - halfSize(p).reduce((a, v) => a * v, 1))[0];
+  const shade = (hex, k) => `#${[1, 3, 5].map((i) => Math.round(Math.min(255, parseInt(hex.slice(i, i + 2), 16) * k)).toString(16).padStart(2, '0')).join('')}`;
+  const accent = parts.find((p) => p.color !== main.color)?.color ?? shade(main.color, 0.8);
+  const hang = (size, pos, color = main.color) => ({ shape: 'roundbox', size: size.map(r3), pos: pos.map(r3), rot: [0, 0, 0], color, glow: false, soft: true, auto: 'drape' });
+  if (host.drop > 0.02) { // the cloth hangs down over the edges, with a hem (made by the game, in his colours)
+    const t = Math.min(0.05, host.drop * 0.4);
+    const y = th - 0.004 - host.drop / 2;
+    const hem = Math.min(0.04, host.drop * 0.25);
+    const yHem = th - 0.004 - host.drop + hem / 2;
+    if (fullW && host.sides.includes('x')) for (const sgn of [-1, 1]) parts.push(hang([t, host.drop, td - 0.01], [sgn * (tw / 2 - t / 2 + 0.006), y, 0]), hang([t + 0.008, hem, td - 0.006], [sgn * (tw / 2 - t / 2 + 0.006), yHem, 0], accent));
+    if (fullD && host.sides.includes('z')) for (const sgn of [-1, 1]) parts.push(hang([tw - 0.01, host.drop, t], [0, y, sgn * (td / 2 - t / 2 + 0.006)]), hang([tw - 0.006, hem, t + 0.008], [0, yHem, sgn * (td / 2 - t / 2 + 0.006)], accent));
+  }
+  return { parts, top: r3(th) };
+}
+// Lay a cover over what it belongs on. Like placeOn, for cloth.
+function placeCover(decor, spec, rawParts, host, atMs, now, moving = false) {
+  const other = decor.find((o) => o.id !== spec.id && o.cover === host.key && o.pos);
+  if (other) return { failed: `${other.name} already lies over ${host.n}. I change that one (change_thing), or put it in my chest first`, hinted: true };
+  const design = rawParts.filter((p) => !p.auto).map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...(p.rot ?? [0, 0, 0])] })); // his own design is kept as he made it: every time it is laid, it is laid from this
+  const { parts, top } = coverFit(design, host, coverKind(spec), /\b(runner|doily|place ?mat)s?$/i.test(coverHead(spec.name)));
+  const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
+  return {
+    entry: {
+      id: `d${now.toString(36)}${decor.length}${rid()}`, name: spec.name, why: spec.why, project: spec.project, song: spec.song ?? null,
+      uses: moving ? spec.uses : storedUses(spec.uses), tool: spec.tool ?? null, zone: 'surface', slot: null, free: true,
+      base: host.key, cover: host.key, coverTop: r3(host.y + top), design, label: `spread over ${host.n}`, kind: 'surface',
+      pos: [r3(host.cx), r3(host.y), r3(host.cz)], rotY: host.rotY, scale: 1, parts,
+      stand: [clampRoom(host.stand[0]), clampRoom(host.stand[1])], at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString(),
+    },
+  };
+}
+// A cover that lies somewhere already is laid again (what it lies on moved, turned or changed shape; or he changed the cover).
+// Returns 'same' when it already lies right (nothing is touched), 'laid' when it was laid again, false when there is nothing to lie on.
+function relayCover(decor, o, now = Date.now(), force = false) {
+  const host = coverHostByKey(decor, o.cover);
+  if (!host) return false;
+  const r = placeCover(decor.filter((x) => x !== o), { ...o }, o.design ?? o.parts, host, now, now, true);
+  if (r.failed) return false;
+  const [a, b] = [sizeOf(o), sizeOf(r.entry)];
+  const near = (p, q, tol) => p.every((v, i) => Math.abs(v - q[i]) <= tol);
+  if (!force && o.parts.some((p) => p.auto) === r.entry.parts.some((p) => p.auto) && near(o.pos, r.entry.pos, 0.005) && near(a, b, 0.012) && Math.abs((o.rotY || 0) - (r.entry.rotY || 0)) < 0.001 && Number.isFinite(o.coverTop)) return 'same';
+  Object.assign(o, { pos: r.entry.pos, rotY: r.entry.rotY, scale: 1, parts: r.entry.parts, design: r.entry.design, coverTop: r.entry.coverTop, label: r.entry.label, stand: r.entry.stand, base: host.key });
+  return 'laid';
+}
+// A thing is never shrunk to a toy to squeeze it onto a top: below this it is "too big for that" and goes somewhere it fits.
+export const MIN_SHRINK = 0.6;
 function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
   const already = surfaceOthers(decor, base.key, null).length;
   if (!reachable(base)) return { failed: `the top of ${base.n} is ${r3(base.y)} m high, and I can only reach up to ${base.hung ? 2.2 : PIP.reachUp} m. I put it somewhere lower, or build a shelf or table within reach`, hinted: true };
-  if (!spec.keep && already >= maxOn(base)) { // full: the nearest top with room takes it (like anyone would), and he is told where it went
-    const cx = (base.x0 + base.x1) / 2;
-    const cz = (base.z0 + base.z1) / 2;
-    const alts = spec.noAlt ? [] : supportsInfo(decor).filter((b) => b.key !== base.key && !b.full && !b.high && b.room > 0 && !/^piano$/.test(b.label)).sort((a, b) => Math.hypot(a.cx - cx, a.cz - cz) - Math.hypot(b.cx - cx, b.cz - cz));
+  const mx = (base.x0 + base.x1) / 2;
+  const mz = (base.z0 + base.z1) / 2;
+  const alts = spec.noAlt ? [] : supportsInfo(decor).filter((b) => b.key !== base.key && !b.full && !b.high && b.room > 0 && !/^piano$/.test(b.label)).sort((a, b) => Math.hypot(a.cx - mx, a.cz - mz) - Math.hypot(b.cx - mx, b.cz - mz));
+  const elsewhere = (why) => { // the nearest other top with room where it does fit (like anyone would), and he is told where it went
     for (const b of alts) {
       const alt = baseByKey(decor, b.key);
       const r = alt ? placeOn(decor, { ...spec, noAlt: true }, parts, alt, null, atMs, now, moving) : null;
-      if (r && !r.failed) return { ...r, moved: true, warn: `${base.n.replace(/^the /, 'my ')} was full (${already} things), so it stands on ${b.label.replace(/^the /, '')} instead` };
+      if (r && !r.failed) return { ...r, moved: true, warn: `${why}, so it stands on ${b.label.replace(/^the /, '')} instead` };
     }
+    return null;
+  };
+  if (!spec.keep && already >= maxOn(base)) {
+    const r = elsewhere(`${base.n.replace(/^the /, 'my ')} was full (${already} things)`);
+    if (r) return r;
     const [hw0, hd0] = halfFoot(parts, 1);
     return { failed: alts.length ? `${base.n} is full (${already} things), and the other tops with room are too small for something about ${r3(hw0 * 2)} x ${r3(hd0 * 2)} m. I make it smaller, or first build a bigger table or a deeper shelf (decorate), or put something in my chest` : `${base.n} is full: ${already} things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within reach, a bigger table or a stand, with decorate) or put something in my chest`, hinted: true };
   }
-  const sq = Math.max(0.15, Math.min(base.x1 - base.x0, base.z1 - base.z0) - 0.1);
-  let scale = fit(parts, 'surface', { w: sq, d: sq });
-  const tall = Math.max(0.01, ...parts.map((p) => (p.pos?.[1] ?? 0) + ((p.shape === 'sphere' ? p.size[0] * 2 : p.size[1]) ?? 0) / 2));
-  if (base.clear && tall * scale > base.clear - 0.02) scale = Math.max(0.2, (base.clear - 0.02) / tall); // it has to fit under the board above
+  // The top in the thing's own frame (a thing stands the way its top faces): it may be as wide and as deep as the top, less a finger.
+  const quarter = Math.abs(Math.sin(base.rotY || 0)) > 0.7;
+  const [lw, ld] = quarter ? [base.z1 - base.z0, base.x1 - base.x0] : [base.x1 - base.x0, base.z1 - base.z0];
+  let scale = fit(parts, 'surface', { w: Math.max(0.12, lw - 0.04), d: Math.max(0.12, ld - 0.04) });
+  const tall = Math.max(0.01, ...parts.map((p) => (p.pos?.[1] ?? 0) + halfSize(p)[1]));
+  const under = Boolean(base.clear) && tall * scale > base.clear - 0.02; // it has to fit under the board above
+  if (under) scale = (base.clear - 0.02) / tall;
+  if (spec.sameSize && spec.scale) scale = Math.min(scale, spec.scale); // put back where it stood: it stays the size it was
+  const least = moving && spec.scale ? Math.min(MIN_SHRINK, spec.scale) : MIN_SHRINK;
+  if (scale < least - 0.001) {
+    const [hw0, hd0] = halfFoot(parts, 1);
+    const why = under ? `it is ${r3(tall)} m high and there is only ${r3(base.clear)} m under the board above` : `it is about ${r3(hw0 * 2)} x ${r3(hd0 * 2)} m and that top is ${r3(lw)} x ${r3(ld)} m`;
+    const r = spec.keep ? null : elsewhere(`${spec.name} is too big for ${base.n} (${why})`);
+    if (r) return r;
+    return { failed: `${spec.name} is too big for ${base.n}: ${why}. I put it on a bigger top, build a bigger table or a deeper shelf for it (decorate), or let it stand on the floor`, hinted: true, tooBig: true };
+  }
+  scale = Math.floor(scale * 1000) / 1000;
   const [hw, hd] = halfFoot(parts, scale);
   const others = [...surfaceOthers(decor, base.key, null), ...(base.key === 'desk' ? deskGear() : []), ...holderWalls(decor, base)]; // on the desk: not on his computer, keyboard, mouse, mug or printer; on a shelf: not in its side walls
   const fitsAt = (x, z) => {
     const r = rectAt([hw, hd], x, z, base.rotY);
-    return r.x0 >= base.x0 && r.x1 <= base.x1 && r.z0 >= base.z0 && r.z1 <= base.z1 && !others.some((o) => r.x0 < o.x1 + 0.05 && r.x1 + 0.05 > o.x0 && r.z0 < o.z1 + 0.05 && r.z1 + 0.05 > o.z0);
+    return r.x0 >= base.x0 - 0.001 && r.x1 <= base.x1 + 0.001 && r.z0 >= base.z0 - 0.001 && r.z1 <= base.z1 + 0.001 && !others.some((o) => r.x0 < o.x1 + 0.05 && r.x1 + 0.05 > o.x0 && r.z0 < o.z1 + 0.05 && r.z1 + 0.05 > o.z0);
   };
-  const cx = (base.x0 + base.x1) / 2;
-  const cz = (base.z0 + base.z1) / 2;
+  const cx = mx;
+  const cz = mz;
   const [tx, tz] = want ? [want.x, want.z] : [cx, cz];
   let found = fitsAt(tx, tz) ? [tx, tz] : null;
   let moved = false;
   if (!found) {
     const grid = [];
-    for (let x = base.x0; x <= base.x1 + 0.001; x += 0.1) for (let z = base.z0; z <= base.z1 + 0.001; z += 0.1) grid.push([x, z, Math.hypot(x - tx, z - tz)]);
+    for (let x = base.x0; x <= base.x1 + 0.001; x += 0.05) for (let z = base.z0; z <= base.z1 + 0.001; z += 0.05) grid.push([x, z, Math.hypot(x - tx, z - tz)]);
+    grid.push([cx, cz, Math.hypot(cx - tx, cz - tz)]);
     grid.sort((p, q) => p[2] - q[2]);
     for (const [x, z] of grid) {
       if (fitsAt(x, z)) {
@@ -1515,7 +1743,11 @@ function placeOn(decor, spec, parts, base, want, atMs, now, moving = false) {
       }
     }
   }
-  if (!found) return { failed: `there is no room left on ${base.n} for something about ${r3(hw * 2)} x ${r3(hd * 2)} m. He can use another surface, make it smaller, or build a shelf` };
+  if (!found) {
+    const r = spec.keep ? null : elsewhere(`there was no room left on ${base.n}`);
+    if (r) return r;
+    return { failed: `there is no room left on ${base.n} for something about ${r3(hw * 2)} x ${r3(hd * 2)} m. He can use another surface, make it smaller, or build a shelf` };
+  }
   const [x, z] = found.map(r3);
   const stand = base.stand ? [r3(x + (base.stand[0] - base.from[0])), r3(z + (base.stand[1] - base.from[2]))] : [r3(x + base.off[0]), r3(z + base.off[1])];
   const clampRoom = (v) => r3(Math.min(4.5, Math.max(-4.5, v)));
@@ -1584,6 +1816,8 @@ function placeCeiling(decor, spec, parts, atMs, now) {
 }
 function placeWhereRaw(decor, spec, parts, want, atMs, now) {
   if (spec.ceiling === true || /\b(ceiling|roof)\b/i.test(String(spec.where ?? ''))) return placeCeiling(decor, spec, parts, atMs, now);
+  const cloth = !want || ZONES[want]?.kind === 'surface' ? coverHost(decor, spec) : null; // a blanket is spread over the bed, a tablecloth over a table: fitted to it
+  if (cloth) return placeCover(decor, spec, parts, cloth, atMs, now);
   // "next to" something on the floor: the nearest free side of it
   if (spec.next_to && num2(spec.x) === null && !spec.on && !spec.wall) {
     const [hw, hd] = halfFoot(parts, 1);
@@ -1636,7 +1870,12 @@ function placeWhereRaw(decor, spec, parts, want, atMs, now) {
   if (onWhat) {
     const base = findBase(decor, onWhat, spec);
     if (!base) return { failed: `he cannot put anything on "${str(onWhat, 40)}": the desk, piano, bookshelf, bed, a thing he made on the floor, or a shelf on the wall (a wall thing with flat boards) will do` };
-    return placeOn(decor, spec, parts, base, x !== null && z !== null ? { x, z } : null, atMs, now);
+    const r = placeOn(decor, spec, parts, base, x !== null && z !== null ? { x, z } : null, atMs, now);
+    if (r.failed && r.tooBig) { // too big for every top: it stands on the floor next to it (never shrunk to a toy, never lost)
+      const f = placeFloor(decor, { ...spec, on: undefined }, parts, null, [(base.x0 + base.x1) / 2, (base.z0 + base.z1) / 2], atMs, now);
+      if (f.entry) return { ...f, warn: `${r.failed.split('. I put it')[0]}, so it stands on the floor near it. For a top it has to be smaller, or the top bigger` };
+    }
+    return r;
   }
   const anchor = x !== null && z !== null ? [x, z] : want && ZONES[want].kind === 'floor' && ZONES[want].slots[0] ? [ZONES[want].slots[0][0], ZONES[want].slots[0][2]] : Array.isArray(spec.near_xz) ? spec.near_xz.map(Number) : [0, 0]; // near_xz: the good spot the game found (placement.js)
   return placeFloor(decor, spec, parts, x !== null && z !== null ? { x, z } : null, anchor, atMs, now);
@@ -1900,4 +2139,69 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
   const off = Math.hypot(place.x - x, place.z - z);
   const warn = !d.next_to && off > 0.5 ? `it stands at x ${place.x}, z ${place.z}, ${r3(off)} m from where I asked, because ${moved ? 'there was no room exactly there' : 'a piece next to a wall goes flush against it'}` : null;
   return { name: f.n.replace(/^the /, ''), warn, label: `at x ${place.x}, z ${place.z}`, furniture: { key, place: { ...place, at, from: { x: cur.x, z: cur.z, rot: cur.rot } }, moves: [...moves, new Date(now).toISOString()] }, moved };
+}
+
+// ---- The room is checked like a room with gravity: everything that stands on something really stands on it.
+// Whatever went wrong before (a table that moved without its things, a thing that grew bigger than what it stands on,
+// something put on a thing that is no table), nothing is left floating. Research on rooms built by language models says the
+// same: the model names what belongs where, and code snaps every thing to its support and repairs what does not fit.
+const isHolder = (decor, key) => {
+  if (FURNITURE[key]) return true;
+  const o = decor.find((x) => x.id === String(key ?? '').split('#')[0]);
+  return Boolean(o && o.pos && (o.kind === 'wall' ? wallLevels(o).length : o.kind === 'floor' && holdsThings(o) && !purposeProblem(o)));
+};
+// Things stand at the height of their top (cloth came or went under them, a board moved): only heights change here.
+function levelRiders(decor, at = new Date().toISOString()) {
+  for (const o of decor) {
+    if (o.kind !== 'surface' || !o.pos || o.cover) continue;
+    const base = baseByKey(decor, baseKeyOf(o));
+    if (base && Math.abs(o.pos[1] - base.y) > 0.004 && Math.abs(o.pos[1] - base.y) < 0.15) { o.pos = [o.pos[0], r3(base.y), o.pos[2]]; o.updatedAt = at; }
+  }
+}
+// Puts right whatever floats or stands on something that cannot hold it. Returns what was put right, in his words (often nothing).
+export function settleRoom(decor, now = Date.now()) {
+  const fixed = [];
+  const at = new Date(now).toISOString();
+  for (const o of decor) { if (liesFlat(o)) o.flat = true; else if (o.flat) delete o.flat; } // for the page: he walks over a rug he made
+  for (const o of decor.filter((x) => x.cover && x.pos)) { // cloth first: things stand on it
+    const laid = relayCover(decor, o, now);
+    if (laid === 'laid') { o.updatedAt = at; fixed.push(`${o.name} lies neatly over ${baseByKey(decor, o.cover)?.n ?? 'it'} again`); }
+    if (laid) continue;
+    delete o.cover; // what it lay on is gone: it is a loose thing now, and is put somewhere below
+    delete o.coverTop;
+    o.parts = o.parts.filter((p) => !p.auto);
+    delete o.design;
+  }
+  for (const o of decor.filter((x) => x.kind === 'surface' && x.pos && x.parts?.length && !x.image && !x.cover)) {
+    const key = baseKeyOf(o);
+    const base = key && isHolder(decor, key) ? baseByKey(decor, key) : null;
+    const r = rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY);
+    const inside = base && r.x0 >= base.x0 - 0.04 && r.x1 <= base.x1 + 0.04 && r.z0 >= base.z0 - 0.04 && r.z1 <= base.z1 + 0.04;
+    if (inside && Math.abs(o.pos[1] - base.y) < 0.012) continue; // it stands where it should
+    if (inside && Math.abs(o.pos[1] - base.y) < 0.15) { o.pos = [o.pos[0], r3(base.y), o.pos[2]]; o.updatedAt = at; continue; } // only its height was a little off
+    const copy = () => o.parts.map((p) => ({ ...p, size: [...p.size], pos: [...p.pos], rot: [...(p.rot ?? [0, 0, 0])] }));
+    const others = decor.filter((x) => x !== o);
+    const from = base ? [(base.x0 + base.x1) / 2, (base.z0 + base.z1) / 2] : [o.pos[0], o.pos[2]];
+    let got = base ? placeOn(others, { ...o, keep: true, sameSize: true, noAlt: true }, copy(), base, { x: o.pos[0], z: o.pos[2] }, now, now, true) : null;
+    let how = got && !got.failed ? 'back' : null;
+    if (!how) { // the nearest other top with room where it fits
+      const tops = supportsInfo(others).filter((b) => b.key !== base?.key && !b.full && !b.high && b.room > 0 && !/^piano$/.test(b.label)).sort((a, b) => Math.hypot(a.cx - from[0], a.cz - from[1]) - Math.hypot(b.cx - from[0], b.cz - from[1]));
+      for (const b of tops) {
+        const alt = baseByKey(others, b.key);
+        got = alt ? placeOn(others, { ...o, noAlt: true }, copy(), alt, null, now, now, true) : null;
+        if (got && !got.failed) { how = 'top'; break; }
+      }
+    }
+    if (!how) { // or the floor close by
+      got = placeFloor(others, { ...o }, copy(), null, from, now, now, true);
+      if (got && !got.failed) how = 'floor';
+    }
+    if (!how) continue;
+    const n = got.entry;
+    const why = !base ? (key ? 'what it stood on cannot hold things' : 'it stood on nothing') : how === 'back' ? 'it was floating beside it' : 'it did not fit there';
+    Object.assign(o, { pos: n.pos, base: n.base ?? undefined, kind: n.kind, zone: n.zone, slot: n.slot ?? null, label: n.label, scale: n.scale, rotY: n.rotY, stand: n.stand, parts: n.parts, updatedAt: at });
+    if (o.base === undefined) delete o.base;
+    fixed.push(`${o.name} now stands ${n.label.replace(/ \(x .*\)$/, '')} (${why})`);
+  }
+  return fixed;
 }

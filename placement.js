@@ -3,8 +3,8 @@
 // wall. When Pip does not say where a new thing goes, it goes to its right place. He may put it somewhere else (it is his
 // room), but then he notices it would be better elsewhere, and putting it right is offered to him.
 import { placeFor } from './web/lighting.js';
-import { supportsInfo, sizeOf, fitsOnATop, accessProblem } from './decor.js';
-import { box } from './scale.js';
+import { supportsInfo, sizeOf, fitsOnATop, accessProblem, coverKind, coverTarget, freeSpaceOn, MIN_SHRINK } from './decor.js';
+import { box, ROOM_SCALE } from './scale.js';
 import { needLampSpots } from './growth.js';
 
 // Checked in order: the first match wins, so "floor lamp" comes before "lamp".
@@ -17,10 +17,12 @@ const RULES = [
   { re: /\b(greenhouse|planter|flower ?pot|plant ?pot|seed tray|herb (box|garden)|window box|garden bed)\b/i, kind: 'floor', near: ['window'], why: 'plants need the light from the window' },
   { re: /\b(bookshelf|bookshelves|bookcase|cabinet|cupboard|dresser|wardrobe|closet|chest of drawers|sideboard)\b/i, kind: 'floor', near: ['bookshelf', 'desk'], why: 'big storage stands on the floor against a wall' },
   { re: /\b(shelf|shelves|rack)\b/i, kind: 'wall', near: ['desk', 'bed', 'stove'], why: 'a shelf hangs on a wall within reach, near where I use what is on it' },
-  { re: /\b(rug|mat|carpet|cushion|pillow|beanbag|pouf)\b/i, kind: 'floor', near: ['middle of the room', 'bed'], why: 'it lies on the floor' },
+  { re: /\b(rug|mat|carpet|doormat)\b/i, kind: 'floor', near: ['bed', 'desk'], why: 'a small rug lies beside the bed or by the desk (the big rug has the middle of the room)' },
+  { re: /\b(cushion|pillow|beanbag|pouf)\b/i, kind: 'floor', near: ['middle of the room', 'bed'], why: 'it lies on the floor' },
   { re: /\b(chair|stool|seat|bench|armchair|sofa|couch)\b/i, kind: 'floor', near: ['desk', 'window'], why: 'a seat stands where I sit: at the desk or by the window' },
   { re: /\b(table|nightstand|bedside table|desk)\b/i, kind: 'floor', near: ['bed', 'desk'], why: 'a table stands on the floor' },
   { re: /\b(easel|loom|workbench|potter'?s wheel)\b/i, kind: 'floor', near: ['window'], why: 'I work at it in good light' },
+  { re: /\b(pedestal|plinth|display stand|plant stand|stand for|perch for)\b/i, kind: 'floor', near: [], why: 'a stand stands on the floor by a wall and holds a thing on its top' },
   { re: /\b(music box|figurine|ornament|trinket|vase|cup|mug|jar|bowl|book|toy|model|globe|snow ?globe|frame|photo frame|box)\b/i, kind: 'surface', near: [], why: 'small things stand on a shelf, a table or the desk' },
 ];
 const WORDS = { floor: 'on the floor', wall: 'on a wall', surface: 'on a shelf, a table or the desk', ceiling: 'hanging from the ceiling' };
@@ -69,6 +71,10 @@ function freeTop(s, rp) {
 }
 export function designate(s, spec) {
   const given = (k) => spec?.[k] !== undefined && spec?.[k] !== null && spec?.[k] !== '';
+  if (coverKind(spec)) { // cloth: a blanket is spread over the bed, a tablecloth over a table (the game fits it)
+    const host = coverTarget(s.decor ?? [], spec);
+    if (host) return { on: host.name.replace(/^the /, '') };
+  }
   const said = ['where', 'on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some((k) => given(k) && !(k === 'where' && GENERIC.test(String(spec.where))));
   const rp = rightPlace(spec);
   const exact = ['on', 'wall', 'x', 'z', 'next_to', 'along', 'height', 'ceiling'].some(given);
@@ -107,6 +113,7 @@ const MIDDLE_OK = /\b(rug|mat|carpet|cushion|pillow|beanbag|pouf|mobile|chandeli
 export const inTheMiddle = (e) => e?.kind === 'floor' && e.pos && Math.abs(e.pos[0]) < 2 && Math.abs(e.pos[2] - 0.8) < 2 && !MIDDLE_OK.test(String(e.name ?? ''));
 export function misplaced(s, e) {
   if (!e || e.image || e.art || !e.pos) return null;
+  if (e.cover || coverKind(e)) return null; // cloth lies where he spread it
   const rp = rightPlace(e);
   const blocks = e.kind === 'floor' ? [accessProblem(s.decor ?? [], e)].find((t) => /where I stand/.test(t ?? '')) ?? null : null; // it stands where he needs to stand to use something (a planter by the window is fine)
   if (blocks) return { better: 'somewhere that is not in the way', why: blocks.split(',')[0], kind: 'floor', near: null };
@@ -131,3 +138,61 @@ export function misplaced(s, e) {
   return { better: where, why: rp.why, kind: rp.kind, near: at?.name?.replace(/^the /, '') ?? null };
 }
 export const allMisplaced = (s) => (s.decor ?? []).map((e) => ({ e, m: misplaced(s, e) })).filter((x) => x.m);
+
+// ---- Before he designs a thing, he hears where it will go and how big that place is (research: a model that hears the
+// size of the spot first makes things that fit; one that guesses is off by a third, and then things get shrunk or float).
+// details: what the brain said ({ what, name, why, where, on }). Returns one short paragraph for the maker, or ''.
+const CLOTH_WORD = /\b(blanket|quilt|duvet|bed ?spread|comforter|coverlet|table ?cloth|table ?runner)s?\b(?!\s+(box|rack|ladder|chest|basket|shelf|stand|holder|hook))/i;
+const every = (v) => Math.round((v / ROOM_SCALE) * 20) / 20; // room size back to the everyday size he designs in, to 5 cm
+export function spotNote(s, details = {}) {
+  const decor = s.decor ?? [];
+  const said = `${details.name ?? ''} ${details.what ?? ''}`.trim();
+  if (!said) return '';
+  const lines = [];
+  const cloth = CLOTH_WORD.exec(said)?.[1];
+  const host = cloth ? coverTarget(decor, { name: cloth, on: details.on }) : null;
+  if (host) {
+    lines.push(`WHERE IT WILL GO: spread over my ${host.name.replace(/^(the|my) /, '')}. The game lays it over the whole top (about ${every(host.W)} x ${every(host.D)} m in everyday size) and lets the edges hang down, so I do not have to hit the size exactly. I design how it looks from above: one flat layer about ${every(host.W)} m wide, ${every(host.D)} m long and 0.04 m thick, with stripes, patches, a border or a folded edge lying flat on it. Nothing sticks up.`);
+    return lines.join('\n');
+  }
+  const rp = rightPlace({ name: said });
+  const wantsTop = Boolean(details.on) || /\b(on (my|the) (desk|shelf|table|bookshelf))\b/i.test(`${details.where ?? ''} ${said}`) || rp?.kind === 'surface' || (!rp && /\b(tiny|small|little|mini)\b/i.test(said));
+  if (wantsTop) {
+    const tops = supportsInfo(decor).filter((b) => !b.full && !b.high && b.room > 0 && !/^piano$/.test(b.label)).map((b) => ({ b, f: freeSpaceOn(decor, b.key) })).filter((x) => x.f).sort((p, q) => q.f.w * q.f.d - p.f.w * p.f.d).slice(0, 3);
+    if (tops.length) {
+      const best = tops[0].f;
+      lines.push(`WHERE IT WILL GO: on a top. The free tops in my room, in everyday size: ${tops.map(({ b, f }) => `${b.label} (${every(f.w)} x ${every(f.d)} m free, ${every(f.h)} m high)`).join('; ')}. So I design it at most ${every(best.w)} m wide and ${every(best.d)} m deep. A thing that is bigger does not fit on a top: the game then stands it on the floor.`);
+    } else lines.push('WHERE IT WILL GO: every top in my room is full, so it will stand on the floor (or wait in my chest). Something for the floor is at least 0.45 m big in everyday size, so it does not get lost.');
+  } else if (/\b(rug|carpet|doormat|floor mat|mat)\b/i.test(said) && rp?.kind === 'floor') lines.push('WHERE IT WILL GO: flat on the floor, beside my bed or by my desk (the big round rug already lies in the middle of my room). I walk over it and furniture may stand on it, so it lies flat: at most 0.05 m thick in everyday size, about 1.2 x 0.8 m. I design how it looks from above: a base layer with a border, stripes or a pattern lying flat on it.');
+  else if (rp?.kind === 'wall') lines.push('WHERE IT WILL GO: on a wall. It hangs flat against it: at most 0.25 m deep, 1.25 m wide and 1 m high in everyday size. Its back is at z 0.');
+  else if (rp?.kind === 'ceiling') lines.push('WHERE IT WILL GO: it hangs from the ceiling. I build it from its top down: the part that hangs highest is at the top.');
+  // "a stand for my clay bird": what it is for, and how big that is
+  const m = /\bfor (?:my |the |his )?([a-z][a-z ]{2,40})/i.exec(said);
+  const forThing = m ? decor.filter((d) => !d.image && d.parts && d.pos).sort((a, b) => b.name.length - a.name.length).find((d) => m[1].toLowerCase().includes(d.name.toLowerCase()) || d.name.toLowerCase().split(' ').filter((w) => w.length > 3).every((w) => m[1].toLowerCase().includes(w))) : null;
+  if (forThing) {
+    const sz = sizeOf(forThing);
+    lines.push(`IT IS FOR my ${forThing.name}, which is ${every(sz[0])} x ${every(sz[2])} m and ${every(sz[1])} m high in everyday size. If that has to stand on it, it needs a flat top at least ${Math.round((every(sz[0]) + 0.05) * 100) / 100} x ${Math.round((every(sz[2]) + 0.05) * 100) / 100} m, and it stands on the floor (a thing can only stand on something that stands on the floor or hangs on a wall).`);
+  }
+  return lines.join('\n');
+}
+// After it is made: what it is for, and the exact move that puts that on it (he said "a stand for my bird").
+export function forHint(s, entry) {
+  const m = /\bfor (?:my |the |his )?([a-z][a-z ]{2,40})/i.exec(String(entry?.name ?? ''));
+  if (!m || !entry?.pos || entry.kind === 'surface') return null;
+  const y = (s.decor ?? []).filter((d) => d !== entry && !d.image && d.parts && d.pos).sort((a, b) => b.name.length - a.name.length).find((d) => m[1].toLowerCase().includes(d.name.toLowerCase()) || d.name.toLowerCase().split(' ').filter((w) => w.length > 3).every((w) => m[1].toLowerCase().includes(w)));
+  return y ? `it is for my ${y.name}: I put that on it with move_thing {name: "${y.name}", on: "${entry.name}"}` : null;
+}
+// Would this design fit where it is going? One fact in his words (for one retry by the maker), or null. parts: his design in everyday size.
+export function fitFact(s, details = {}) {
+  const b = box(details.parts);
+  if (!b || coverKind(details)) return null;
+  const placed = { ...details, ...designate(s, details) };
+  if (!placed.on || placed.wall || placed.next_to) return null;
+  const tops = supportsInfo(s.decor ?? []).filter((t) => !t.full && !t.high && t.room > 0 && !/^piano$/.test(t.label)).map((t) => ({ t, f: freeSpaceOn(s.decor ?? [], t.key) })).filter((x) => x.f);
+  if (!tops.length) return null;
+  const [w, h, d] = [b.size[0] * ROOM_SCALE, b.size[1] * ROOM_SCALE, b.size[2] * ROOM_SCALE];
+  const fitsOne = tops.some(({ f }) => Math.min(f.w / w, f.d / d, f.h / h, 1) >= MIN_SHRINK);
+  if (fitsOne) return null;
+  const best = tops.sort((p, q) => q.f.w * q.f.d - p.f.w * p.f.d)[0];
+  return `it is ${Math.round(b.size[0] * 100) / 100} x ${Math.round(b.size[2] * 100) / 100} m and ${Math.round(b.size[1] * 100) / 100} m high: too big for every top with room. The biggest free top is ${best.t.label}: ${every(best.f.w)} x ${every(best.f.d)} m free and ${every(best.f.h)} m high (everyday size). I make it fit that, or it has to stand on the floor`;
+}

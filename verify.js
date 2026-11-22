@@ -4,7 +4,7 @@
 // Each check returns a list of short facts in Pip's words (empty when nothing is wrong). pip.js gives the maker one
 // retry with them (at most a few a day), and keeps the better try.
 import { cleanSvg } from './art.js';
-import { cleanParts } from './decor.js';
+import { cleanParts, coverKind } from './decor.js';
 import { settle } from './build.js';
 import { behaviorProblem } from './behaviors.js';
 import { cleanApp, applyEdits } from './apps.js';
@@ -84,7 +84,7 @@ export function checkThing(details, { maxParts = 40, action = 'decorate' } = {})
   if (!parts) return ['the parts could not be read: "parts" is a list like [{"shape": "box", "size": [0.4, 0.05, 0.3], "pos": [0, 0.5, 0], "color": "#aa7744"}]'];
   if (action === 'extend_thing') return facts;
   const name = String(details?.name ?? details?.what ?? 'it');
-  if (parts.length < 3 && maxParts >= 6 && action !== 'make_clothes') facts.push(`it has only ${parts.length} part${parts.length === 1 ? '' : 's'}: it will look like a plain block. A real ${name} has more to it (I can use up to ${maxParts} parts: its body, what it stands on, a detail or two)`);
+  if (parts.length < 3 && maxParts >= 6 && action !== 'make_clothes' && !(coverKind({ name }) && parts.length >= 2)) facts.push(`it has only ${parts.length} part${parts.length === 1 ? '' : 's'}: it will look like a plain block. A real ${name} has more to it (I can use up to ${maxParts} parts: its body, what it stands on, a detail or two)`);
   const st = settle(parts, { kind: details?.wall || /wall/.test(String(details?.where ?? '')) ? 'wall' : 'floor' });
   if (st.fixes.length >= 2) facts.push(`parts did not touch: ${st.fixes.join(', and ')}. Every part rests on the floor or touches another part (a top sits ON its legs: the legs are as tall as the top is high)`);
   const colors = new Set(parts.map((p) => p.color));

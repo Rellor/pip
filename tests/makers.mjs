@@ -113,7 +113,7 @@ ok('a bookshelf he builds works: every board within reach holds things, things f
   assert.equal(levels.filter((b) => !b.high).length, 4, 'the 1.8 m top is out of reach');
   const vase = makeDecor(decor, { name: 'tall vase', parts: [{ shape: 'box', size: [0.12, 0.6, 0.12], pos: [0, 0.3, 0], rot: [0, 0, 0], color: '#ccc' }], on: 'tall bookshelf' }, Date.now());
   assert.ok(vase.entry && vase.entry.pos[1] > 0.5 && vase.entry.pos[1] < 1.3, JSON.stringify(vase.entry?.pos ?? vase.failed));
-  assert.ok(0.6 * vase.entry.scale <= 0.4, 'it fits under the board above');
+  assert.ok(0.6 * vase.entry.scale <= 0.52 && vase.entry.scale >= 0.6, `it stands on the board with enough room above it, and is not shrunk to a toy (${vase.entry.label}, scale ${vase.entry.scale})`);
 });
 
 ok('things go where they belong when he does not say; somewhere else is allowed, and he notices it', async () => {
