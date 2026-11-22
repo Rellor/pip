@@ -23,6 +23,7 @@ import { roomScale, placeKind, sizeWords } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
 import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo } from './loops.js';
 import { planRetry, startRetry, retryLines } from './retry.js';
+import { needsNotes, fakeNotes, neighbourPrompt, neighbourSchema, planNotes, deliverNotes, neighbourLines } from './neighbours.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate } from './placement.js';
@@ -577,7 +578,8 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     pictures: looking.map((p) => p.id),
     ownWork,
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
-    visitors: (s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => `[${v.id}] ${v.name || 'someone'}: "${v.text}"`),
+    visitors: (s.visitors ?? []).filter((v) => !v.answer && !v.npc).slice(-2).map((v) => `[${v.id}] ${v.name || 'someone'}: "${v.text}"`),
+    neighbours: neighbourLines(s),
     gifts: unread.length > 0,
   };
 }
@@ -1240,6 +1242,17 @@ async function wakeUp() {
   // Autopilot or brain: the brain is only woken when something calls for it (autopilot.js).
   const offered = availableMoves(state);
   for (const g of growGames(state)) console.log(`🎮 ${g}: a new step to grow it today`); // a game he builds grows a little each day (projects.js)
+  // His neighbours (neighbours.js): once a day their notes are written (one light call), then they arrive spread over the day.
+  if (needsNotes(state) && !process.env.PIP_NO_NEIGHBOURS) { // (tests that count model calls switch them off)
+    try {
+      const reply = process.env.PIP_FAKE ? fakeNotes(state) : await askGemini('I write short, kind notes from neighbours. I answer only in JSON.', neighbourPrompt(state), 1, [], { schema: neighbourSchema, maxTokens: THINK_ROOM + 600 });
+      console.log(`🏘️  ${planNotes(state, reply).length} notes from the neighbours today`);
+    } catch (e) { console.error('⚠️  neighbours:', e.message); state.street = { ...(state.street ?? {}), day: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }), queue: [] }; }
+  }
+  for (const n of deliverNotes(state)) {
+    console.log(`📮 a note from ${n.from} (${n.kind}): ${n.text.slice(0, 80)}`);
+    if (n.kind === 'share' && n.topic) noteSpark(state, { topic: n.topic, text: n.text, from: 'neighbour' }); // what a neighbour loves can become his interest too
+  }
   const retry = startRetry(state); // the early second try after something did not work (retry.js)
   const reasons = [...(ownWork ? [`I want to look at the ${ownWork.what} I just made`] : []), ...(retry ? [`${retry.action.replace(/_/g, ' ')} did not work, so I am up again to try another way`] : []), ...wakeReasons(state, { unread: unread.length, woke: wokeNow })];
   let answer = null;
