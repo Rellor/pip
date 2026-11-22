@@ -3,13 +3,17 @@
 // comment on what he made, ask him for something, or tell him about something they love, so ideas come to him that
 // are neither Bas's nor his own. One light model call a day writes the day's notes; they arrive spread over the day.
 // They are characters of his world, and the page says so.
-export const NEIGHBOURS = [
-  { name: 'Mo', who: 'a retired train driver next door', likes: ['trains', 'maps', 'old machines', 'tea'], voice: 'warm, slow, tells little stories', fan: /\b(train|locomotive|rail|station|map|engine|machine|teapot|tea)\b/i },
-  { name: 'Lina', who: 'a teenager across the street who makes music', likes: ['synthesizers', 'electronic music', 'video games', 'neon colours'], voice: 'quick, excited, lots of ideas', fan: /\b(synth|synthesizer|keyboard|guitar|music|robot|neon|game|headphones|radio)\b/i },
-  { name: 'Oma Jo', who: 'a grandmother with a big garden', likes: ['vegetables', 'flowers', 'knitting', 'baking bread'], voice: 'kind, practical, gives tips', fan: /\b(flower|rose|tulip|sunflower|vegetable|carrot|tomato|garden|bread|loaf|yarn|wool|basil|herb|apple|pear)\b/i },
-  { name: 'Dot', who: 'a seven-year-old girl two doors down', likes: ['cats', 'drawing', 'dinosaurs', 'stars'], voice: 'short sentences, asks lots of questions', fan: /\b(cat|kitten|dinosaur|star|moon|rocket|dog|rabbit|owl|bird|fish)\b/i },
-  { name: 'Kees', who: 'a puzzle maker who lives above the bakery', likes: ['puzzles', 'clocks', 'woodwork', 'riddles'], voice: 'dry humour, curious how things work', fan: /\b(puzzle|clock|gear|key|lock|maze|knot|hammer|saw|chess|dice)\b/i },
-];
+import { PEOPLE, warmthWord as warmthWordOf } from './web/street.js';
+import { placeOf } from './web/world.js';
+// Who they are is shared with the page (web/street.js). How each one writes, and what each is a fan of, only the game needs.
+const MORE = {
+  Mo: { voice: 'warm, slow, tells little stories', fan: /\b(train|locomotive|rail|station|map|engine|machine|teapot|tea)\b/i },
+  Lina: { voice: 'quick, excited, lots of ideas', fan: /\b(synth|synthesizer|keyboard|guitar|music|robot|neon|game|headphones|radio)\b/i },
+  'Oma Jo': { voice: 'kind, practical, gives tips', fan: /\b(flower|rose|tulip|sunflower|vegetable|carrot|tomato|garden|bread|loaf|yarn|wool|basil|herb|apple|pear)\b/i },
+  Dot: { voice: 'short sentences, asks lots of questions', fan: /\b(cat|kitten|dinosaur|star|moon|rocket|dog|rabbit|owl|bird|fish)\b/i },
+  Kees: { voice: 'dry humour, curious how things work', fan: /\b(puzzle|clock|gear|key|lock|maze|knot|hammer|saw|chess|dice)\b/i },
+};
+export const NEIGHBOURS = PEOPLE.map((p) => ({ name: p.name, who: p.who, likes: p.likes, ...MORE[p.name] }));
 export const NOTES_PER_DAY = 4;
 const KINDS = ['comment', 'ask', 'share', 'hello'];
 const clip = (t, n) => String(t ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
@@ -21,7 +25,8 @@ export function streetView(s, now = Date.now()) {
   const made = [...new Set(day.filter((e) => ['decorate', 'draw', 'make_app', 'update_app', 'record_song', 'cook', 'make_clothes'].includes(e.action)).map((e) => `${e.action === 'draw' ? 'a drawing' : e.action.includes('app') ? 'a program' : e.action === 'record_song' ? 'a song' : e.action === 'cook' ? 'a dish' : 'a thing'}: ${e.name ?? e.dish ?? ''}`))].slice(0, 5);
   const project = (s.projects ?? []).find((p) => p.status === 'working')?.title ?? null;
   const into = (s.curious?.interests ?? []).slice(0, 3).map((i) => i.topic);
-  return { made, project, into };
+  const out = (s.outings ?? []).filter((o) => !o.errand && now - Date.parse(o.homeAt) < 36 * 3_600_000).slice(-2).map((o) => `${placeOf(o.place)?.name.replace(/^my /, 'his ') ?? 'outside'}${o.found?.length ? ` (he came back with ${o.found[0].name})` : ''}`);
+  return { made, project, into, out };
 }
 
 export function neighbourPrompt(s, now = Date.now()) {
@@ -35,6 +40,7 @@ WHAT THEY CAN SEE OF PIP
 Made lately: ${v.made.join('; ') || 'nothing new'}
 Working on: ${v.project ?? 'nothing in particular'}
 Seems into: ${v.into.join(', ') || 'not sure yet'}
+Seen outside lately: ${v.out.join('; ') || 'he stayed in'}
 ${ledgerLines(s, now).length ? `\nWHAT HAS HAPPENED BETWEEN THEM (the story goes on from here; nobody starts again from nothing)\n${ledgerLines(s, now).map((x) => `- ${x}`).join('\n')}\n` : ''}
 Write ${NOTES_PER_DAY} short notes (1 to 3 sentences each), each from a different neighbour, in their own voice:
 - at least one "ask": a friendly wish he could make into a project (a drawing, a small game, a song, a thing), from that neighbour's own interests
@@ -111,7 +117,7 @@ const WISH_DAYS = 6;
 const DAY_MS = 86_400_000;
 const person = (s, name) => { s.street ??= {}; s.street.people ??= {}; return (s.street.people[name] ??= { warmth: 0 }); };
 export function warm(s, name, by) { const p = person(s, name); p.warmth = Math.round(Math.max(0, Math.min(10, (p.warmth ?? 0) + by)) * 10) / 10; return p; }
-export const warmthWord = (w) => (w >= 8 ? 'a close friend' : w >= 5 ? 'a friend' : w >= 2 ? 'friendly' : 'a new neighbour');
+export const warmthWord = warmthWordOf;
 const rewardFor = (text) => (/\b(game|program|app|simulat)/i.test(text) ? 5 : /\b(song|tune|melody|music)\b/i.test(text) ? 3 : /\b(draw|drawing|picture|sketch|paint)/i.test(text) ? 2 : 3);
 const mediumOf = (text) => (/\b(game|program|app|simulat)/i.test(text) ? ['make_app', 'update_app'] : /\b(song|tune|melody)\b/i.test(text) ? ['record_song'] : /\b(draw|drawing|picture|sketch|paint)/i.test(text) ? ['draw'] : /\b(cook|bake|soup|bread|cake|dish)\b/i.test(text) ? ['cook'] : ['decorate', 'draw', 'make_clothes', 'make_app', 'update_app', 'change_thing', 'record_song', 'cook']);
 const WISH_STOP = new Set('the a an of at in on my for and with from little small tiny big new nice drawing picture sketch game song thing something one some your you me could can please would'.split(' '));

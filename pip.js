@@ -31,6 +31,8 @@ import { storyTick } from './story.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
+import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks } from './world.js';
+import { placeOf } from './web/world.js';
 import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
 import { warn } from './warn.js';
@@ -102,7 +104,7 @@ const ROOM = [
   'bed',
   'a framed photo on the wall above the piano: the Milky Way over a very dark sky full of stars, with two people in silhouette looking up from a railing',
 ];
-const ACTION_NAMES = ['walk_to', 'do', 'browse', 'buy', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'browse', 'buy', 'go_out', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -629,6 +631,7 @@ function drawnNote(s) {
   const often = drawnOften(s.art ?? []);
   const day = (s.log ?? []).filter((e) => Date.now() - Date.parse(e.at) < 36 * 3_600_000 && !e.failed);
   const ideas = [...new Set([
+    ...(s.outings ?? []).filter((o) => o.saw && Date.now() - Date.parse(o.homeAt) < 36 * 3_600_000).slice(-2).map((o) => o.saw), // what he saw outside comes first: he looked at it to draw it
     ...(s.curious?.sparks ?? []).slice(-3).map((x) => x.topic),
     ...day.filter((e) => ['decorate', 'cook', 'harvest', 'plant'].includes(e.action)).map((e) => e.name ?? e.dish ?? e.plant ?? e.seed).filter(Boolean).slice(-3),
     ...(s.visitors ?? []).filter((v) => v.npc && v.topic && v.kind !== 'hello').slice(-2).map((v) => v.topic),
@@ -648,6 +651,19 @@ function addLesson(s, move, facts) {
   if (old) Object.assign(old, { count: old.count + 1, at });
   else s.lessons.push({ move, text: text.slice(0, 240), count: 1, at, firstAt: at, from: 'check' });
   s.lessons = s.lessons.slice(-40);
+}
+// He came home from an outing (world.js decided what happened): it goes into his day, his memory and his next thought.
+// At the library he really read something: an article about what he wonders about goes into his notebook.
+async function cameHome(s, o) {
+  const p = placeOf(o.place);
+  if (o.read && !process.env.PIP_FAKE) {
+    try { const page = await readAbout(o.read); if (page?.text) { noteResearch(s, { query: o.read, page: { title: page.title, url: page.url, text: clip(page.text, 1500) }, at: o.homeAt }); o.book = { title: page.title, url: page.url }; } } catch (e) { console.error('⚠️  library:', e.message); }
+  }
+  const line = homeLine(o);
+  s.log.push({ at: o.homeAt, action: 'came_home', place: o.place, placeName: p?.name ?? o.place, thought: '', did: o.did, found: o.found.map((f) => ({ name: f.name, emoji: f.emoji })), met: o.met, gift: o.gift, book: o.book ?? null, errand: o.errand ?? null, cut: o.cut, card: o.errand ? null : { place: o.place, at: o.homeAt, weather: o.weather, found: o.found.map((f) => ({ emoji: f.emoji })) } });
+  if (!o.errand) { addMemory(s, line, o.found.length || o.met ? 7 : 6, 'memory', o.homeAt); happened(s, line); }
+  for (const said of checkUnlocks(s)) { happened(s, said); addMemory(s, said, 8, 'memory', o.homeAt); s.log.push({ at: new Date(Date.parse(o.homeAt) + 1000).toISOString(), action: 'happened', what: said, emoji: '🗺️' }); }
+  console.log(`🏠 home from ${p?.name ?? o.place}: ${o.did}${o.found.length ? ` (found: ${o.found.map((f) => f.name).join(', ')})` : ''}`);
 }
 // Something that happened in his world (a wish come true, a parcel, the full moon): he hears it once, at his next thought.
 function happened(s, line) { s.street ??= {}; s.street.happened = [...(s.street.happened ?? []), String(line)].slice(-4); }
@@ -859,6 +875,7 @@ function describe(a) {
     case 'write_diary': return d.text;
     case 'ask_for': return `${d.item}: ${d.reason}`;
     case 'buy': return d.item;
+    case 'go_out': return placeOf(d.place)?.name ?? d.place;
     case 'eat': return d.food;
     case 'take_photo': return d.target;
     case 'find_picture': return d.query;
@@ -1251,6 +1268,8 @@ async function wakeUp() {
   const lightFiles = await loadLights(state);
   setFronts(state.fronts);
   if (isNight() && !process.env.PIP_AWAKE) {
+    const late = hurryHome(state); // he is always home to sleep (the rules bring him home long before; this is the safety net)
+    if (late) await cameHome(state, late);
     await goToSleep(state);
     if (inbox.added) {
       await saveState(state);
@@ -1269,6 +1288,23 @@ async function wakeUp() {
   // No free food any more: what he eats he grows, cooks, or asks for (the pantry he has is what is left).
   ensureProjects(state);
   ensureSkills(state);
+  // His world outside (world.js). While he is out nothing else happens: no model is asked, and the game brings him home.
+  for (const said of checkUnlocks(state)) { happened(state, said); addMemory(state, said, 8, 'memory', new Date().toISOString()); state.log.push({ at: new Date().toISOString(), action: 'happened', what: said, emoji: '🗺️' }); }
+  const outing = outingTick(state);
+  if (outing?.home) await cameHome(state, outing.outing);
+  if (outing?.away) {
+    const at = new Date().toISOString();
+    state.last = { at, via: 'outside', thought: outing.line, action: 'go_out', details: { place: outing.place }, detail: outing.line, enjoyment: 7, new_idea: null, found: null, away: { place: outing.place, phase: outing.phase, back: outing.back } };
+    state.emotion = emotionWord(state);
+    await saveState(state);
+    await clearInbox(inbox.names);
+    await clearTasks(taskFiles.names);
+    await clearVisitors(visitorFiles);
+    await clearFronts(frontFiles.names);
+    await clearLights(lightFiles);
+    console.log(`🚶 ${outing.line} Back ${outing.backWords}.${inbox.added ? ' (Bas wrote: he reads it when he is home.)' : ''}`);
+    return;
+  }
   if (state.intent?.day !== dayOf()) await morningGoals(state, soul, system);
   if (state.last?.sleeping) {
     state.energy = 9;
@@ -1408,6 +1444,7 @@ async function wakeUp() {
     return true;
   });
   if (!steps.length) steps.push({ action: 'rest', details: {}, thought: 'I could not do what I planned, so I rest a moment.', working_on: '', needs: '', enjoyment: 5 });
+  { const gi = steps.findIndex((x) => x.action === 'go_out'); if (gi >= 0 && gi < steps.length - 1) steps.push(...steps.splice(gi, 1)); } // going out is always the last thing he does in a wake-up: nothing happens at home while he is away
   // A walk is short, so it takes a quarter of the time of other steps. The page uses the same weights.
   let weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1));
   let wsum = weights.reduce((a, b) => a + b, 0);
@@ -1583,6 +1620,8 @@ async function wakeUp() {
     if (st.action === 'make_move') st.made = makeMove(state, st.details, stepStart);
     if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
     if (st.action === 'buy') st.made = buy(state, st.details.item ?? st.details.name ?? st.details.what);
+    if (st.action === 'buy' && st.made?.bought && i === steps.length - 1) startOuting(state, { errand: st.made.bought }, stepStart); // a quick walk to the corner shop and back (when nothing else is planned after it)
+    if (st.action === 'go_out') st.made = startOuting(state, st.details, stepStart);
     if (st.action === 'cook') {
       const d0 = st.details ?? {};
       if (!text(d0.dish ?? d0.name, 60) || !(Array.isArray(d0.ingredients) && d0.ingredients.length)) { // he only said "cook": a simple dish from what is there
@@ -2072,6 +2111,7 @@ async function wakeUp() {
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, place: withWarn(st.made?.label ?? null, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, change: text(d.change, 160) || null, v: state.apps.find((a) => a.id === st.made?.app?.id)?.v ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
+    if (st.action === 'go_out') Object.assign(entry, { place: st.made?.place ?? null, placeName: st.made?.name ?? text(d.place, 40), what: st.made?.words ?? null, back: st.made?.back ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'buy') Object.assign(entry, { item: st.made?.bought ?? text(d.item ?? d.name, 40), price: st.made?.price != null ? `${st.made.price} coin${st.made.price === 1 ? '' : 's'}, ${st.made.left} left` : null, failed: st.made?.failed ?? null });
     if (st.action === 'cook') Object.assign(entry, { dish: text(d.dish ?? d.name, 60), ingredients: (Array.isArray(d.ingredients) ? d.ingredients : []).slice(0, 4).map((x) => text(x, 40)), failed: st.made?.failed ?? null });
     if (st.action === 'take_photo') Object.assign(entry, { target: text(d.target, 60), caption: text(d.caption, 300), image: st.made?.picture?.image ?? null, failed: st.made?.failed ?? null });

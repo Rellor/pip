@@ -9,6 +9,7 @@
 import { giveForAsk } from './gifts.js';
 import { noteSpark } from './curiosity.js';
 import { NEIGHBOURS, warm, openWishes, MAX_OPEN_WISHES } from './neighbours.js';
+import { moonPhase } from './web/street.js'; // the same moon the page draws over his street
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -20,7 +21,7 @@ const dayNL = (now) => new Date(now).toLocaleDateString('en-CA', { timeZone: 'Eu
 const weekdayNL = (now) => nl(now, { weekday: 'long' });
 
 // The real moon: 0 new, 0.5 full (a new moon was on 6 January 2000, 18:14 UTC; one round takes 29.53 days).
-export const moonPhase = (now = Date.now()) => { const p = ((now - Date.UTC(2000, 0, 6, 18, 14)) / (29.530588853 * DAY)) % 1; return p < 0 ? p + 1 : p; };
+export { moonPhase };
 // Real meteor showers and turning points of the year: [month, day from, day to, what he notices, topic].
 const SKY = [
   [1, 3, 4, 'Tonight the Quadrantids fall: shooting stars from the north.', 'Quadrantids'],

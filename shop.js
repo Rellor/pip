@@ -5,19 +5,8 @@
 // Plain code, no model. Bas can still give him anything.
 import { giveForAsk } from './gifts.js';
 
-export const OPEN_FROM = 9; // Dutch time
-export const OPEN_TO = 18;
-export const CATALOGUE = [
-  ...['bread', 'eggs', 'flour', 'milk', 'cheese', 'butter', 'rice', 'tomatoes', 'apples'].map((item) => ({ item, price: 1, kind: 'food' })),
-  ...['tomato', 'sunflower', 'lettuce', 'carrot', 'lavender', 'pea'].map((k) => ({ item: `${k} seeds`, price: 2, kind: 'seeds' })),
-  { item: 'paper', price: 2, kind: 'material' }, { item: 'beads', price: 2, kind: 'material' }, { item: 'string', price: 2, kind: 'material' },
-  { item: 'clay', price: 3, kind: 'material' }, { item: 'wool', price: 3, kind: 'material' }, { item: 'wire', price: 3, kind: 'material' }, { item: 'wood', price: 3, kind: 'material' },
-  { item: 'ruler', price: 3, kind: 'tool' }, { item: 'drawing supplies', price: 4, kind: 'tool' }, { item: 'sewing kit', price: 6, kind: 'tool' }, { item: 'toolbox', price: 8, kind: 'tool' },
-  { item: 'kalimba', price: 10, kind: 'instrument' }, { item: 'flute', price: 12, kind: 'instrument' }, { item: 'guitar', price: 14, kind: 'instrument' }, { item: 'synthesizer', price: 16, kind: 'instrument' },
-];
-const hourNL = (now) => Number(new Date(now).toLocaleString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', hour12: false }));
-export const shopOpen = (now = Date.now()) => hourNL(now) >= OPEN_FROM && hourNL(now) < OPEN_TO;
-const owns = (s, c) => (c.kind === 'tool' || c.kind === 'instrument' || c.kind === 'material') && (s.tools ?? []).some((t) => `${t.name} ${t.kind ?? ''}`.toLowerCase().includes(c.item.split(' ')[0]));
+import { OPEN_FROM, OPEN_TO, CATALOGUE, shopOpen, owns } from './web/street.js'; // what the shop sells and when it is open: shared with the page
+export { OPEN_FROM, OPEN_TO, CATALOGUE, shopOpen };
 const find = (item) => { const t = String(item ?? '').toLowerCase().replace(/^(a|an|some|the)\s+/, '').trim(); return t ? CATALOGUE.find((c) => c.item === t) ?? CATALOGUE.find((c) => t.includes(c.item) || c.item.includes(t)) ?? null : null; };
 
 // What he might want now, cheapest of each: what a project needs, food when the pantry is empty, then things he does not own.
