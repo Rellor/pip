@@ -3831,10 +3831,19 @@ function renderMind(s) {
         fillBar.style.background = 'var(--make)';
         track.append(fillBar);
         prog.append(track, el('span', `${doneN} of ${steps.length} steps`));
-        const list = el('ul', null, 'psteps');
         const current = steps.findIndex((x) => !x.done);
-        steps.forEach((x, i) => list.append(el('li', `${x.done ? '✓' : i === current && p.status === 'working' ? '➜' : '○'} ${x.text}`, x.done ? 'done' : '')));
-        li.append(prog, list);
+        const code = (p.versions || []).some((v) => v.kind === 'make_app' || v.kind === 'update_app');
+        if (code) { // a program or game: his board, with the tickets he wrote (and the ones a test run added)
+          const board = el('div', null, 'board');
+          const col = (title, items) => { const c = el('div', null, 'bcol'); c.append(el('b', `${title} (${items.length})`)); items.forEach((x) => c.append(el('div', `${x.from === 'test' ? '🐞 ' : ''}${x.text}`, 'ticket' + (x.from === 'test' ? ' bug' : '')))); return c; };
+          const todo = steps.filter((x, i) => !x.done && i !== current);
+          board.append(col('To do', todo), col('Doing', current >= 0 && p.status === 'working' ? [steps[current]] : []), col('Done', steps.filter((x) => x.done).slice(-6).reverse()));
+          li.append(prog, board);
+        } else {
+          const list = el('ul', null, 'psteps');
+          steps.forEach((x, i) => list.append(el('li', `${x.done ? '✓' : i === current && p.status === 'working' ? '➜' : '○'} ${x.text}`, x.done ? 'done' : '')));
+          li.append(prog, list);
+        }
       } else if (p.status === 'working') li.append(el('p', 'No steps yet: he plans them first.', 'next'));
       extra();
       return li;

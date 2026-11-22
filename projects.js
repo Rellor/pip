@@ -177,3 +177,21 @@ export function growGames(s, now = Date.now()) {
   }
   return grown;
 }
+
+// A test found an error in a program: "fix" goes first on the board of the project about that program (or, with no
+// project, on the program's own list), with the error, so the next step repairs it.
+export function addFixTicket(s, appName, error) {
+  const text = `fix ${appName}: ${String(error).slice(0, 140)}`;
+  const p = (s.projects ?? []).find((x) => x.status === 'working' && lastApp(x) === appName);
+  if (p) {
+    if (!(p.steps ?? []).some((x) => !x.done && x.text === text)) {
+      const firstOpen = p.steps.findIndex((x) => !x.done);
+      p.steps.splice(firstOpen < 0 ? p.steps.length : firstOpen, 0, { text, done: false, from: 'test' });
+    }
+    p.stuck = null;
+    return p.title;
+  }
+  const app = (s.apps ?? []).find((a) => a.name === appName);
+  if (app) app.bugs = [...new Set([...(app.bugs ?? []), String(error).slice(0, 140)])].slice(-3);
+  return null;
+}

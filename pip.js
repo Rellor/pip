@@ -17,7 +17,7 @@ import { giveForAsk } from './gifts.js';
 import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
-import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone, realProjectWork, growGames } from './projects.js';
+import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone, realProjectWork, growGames, addFixTicket } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words, dayReport } from './checkup.js';
 import { roomScale, placeKind, sizeWords } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
@@ -47,7 +47,7 @@ import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, capabilityGuide, blueprintGaps, requestAbility } from './blueprints.js';
 import { purposeProblem, purposeHint, setFronts, rehangPictures, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, sketchStyle, MAX_ART_PER_DAY } from './art.js';
-import { cleanApp, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
+import { cleanApp, applyEdits, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { lessonsFrom, themeFatigue } from './mirror.js';
 import { ensureMoves, makeMove, findMove, movesGuide } from './dances.js';
 import { measureThing, sizesGuide, capacityText } from './sizes.js';
@@ -55,7 +55,7 @@ import { bonusRewards } from './rewards.js';
 import { ensureTools, NEEDS, toolsGuide, toolFor, missingTool, toolList, addTool, toolKind, fits, craftTool, MAX_TOOLS } from './tools.js';
 import { ensureMemory, addMemory, recall, markUsed, fade, archiveForgotten, addInterest } from './memory.js';
 import { ensureIdentity, applyIdentity } from './identity.js';
-import { takePhoto, renderFile } from './photo.js';
+import { takePhoto, renderFile, testApp } from './photo.js';
 import { TIMBRES, cleanTracks } from './songs.js';
 import { grantInstruments, instrumentNeeds } from './instruments.js';
 import { moveMusicToStudio, moveMusicBack, keepWindowsClear, HAS_STUDIO } from './web/house.js';
@@ -634,7 +634,7 @@ async function makeIt(s, soul, system, st) {
     const lessons = lessonsFor(s, st.action);
     const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
     const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`, st.details?.project);
-    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, build, lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
+    const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, makerPrompt({ soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` }), 1, [], { group: 'big' });
     if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl), allowed: [...instruments(s), 'drums'] });
     return applyMade(st, reply, { parts: maxParts(lvl), bars: maxBars(lvl) });
   } catch (e) {
@@ -1660,19 +1660,31 @@ async function wakeUp() {
       }
     }
     if (st.action === 'update_app') {
-      const html = cleanApp(d.html);
       const n = text(d.name, 60).toLowerCase();
       const app = n ? state.apps.find((a) => a.name.toLowerCase() === n) ?? state.apps.find((a) => a.name.toLowerCase().includes(n) || n.includes(a.name.toLowerCase())) : null;
+      const before = app ? await readFile(`web/${app.file}`, 'utf8').catch(() => null) : null;
+      const edited = Array.isArray(d.edits) && d.edits.length && before ? applyEdits(before, d.edits) : null; // small edits, like a coder (apps.js)
+      const html = edited ? (edited.html ? cleanApp(edited.html) : null) : cleanApp(d.html);
+      if (edited?.failed) { st.made = { failed: `my edit did not fit: ${edited.failed}` }; }
       const today = state.apps.filter((a) => a.updatedAt && Date.now() - Date.parse(a.updatedAt) < dayMs).length;
-      if (!app) st.made = { failed: 'there is no app with that name on his computer' };
+      if (st.made?.failed) {} // the edit did not fit
+      else if (!app) st.made = { failed: 'there is no app with that name on his computer' };
       else if (updatedApp) st.made = { failed: 'one app change per wake-up is enough' };
       else if (today >= MAX_APP_UPDATES_PER_DAY) st.made = { failed: 'he has already changed enough apps for today' };
       else if (!html) st.made = { failed: 'the new app did not work out (too big, or not a web page)' };
       else {
         updatedApp = true;
         await writeFile(`web/${app.file}`, html);
+        const test = await testApp(app.file); // he runs it, like a coder: an error means the old version comes back and a fix ticket is added
+        if (test.errors?.length && before) {
+          await writeFile(`web/${app.file}`, before);
+          addFixTicket(state, app.name, test.errors[0]);
+          st.made = { failed: `my change broke ${app.name}: ${test.errors[0]}. The old version is back, and "fix" is now the first ticket on my board` };
+          continue;
+        }
         app.updatedAt = new Date().toISOString();
         if (text(d.why, 200)) app.why = text(d.why, 200);
+        app.bugs = []; // it ran without errors
         app.v = (app.v ?? 1) + 1; // each change is a new version, like Pino's train simulator growing day by day
         app.changes = [...(app.changes ?? []), { v: app.v, at: app.updatedAt, change: text(d.change ?? d.what, 160) }].slice(-30);
         st.made = { app: { id: app.id, file: app.file, name: app.name }, changed: true, hint: `version ${app.v}${text(d.change, 120) ? `: ${text(d.change, 120)}` : ''}` };
@@ -1694,6 +1706,8 @@ async function wakeUp() {
         await writeFile(`web/${file}`, html);
         state.apps = [...state.apps, { id, name, why: text(d.why, 200), file, createdAt: new Date().toISOString() }];
         st.made = { app: { id, file, name } };
+        const test = await testApp(file);
+        if (test.errors?.length) { addFixTicket(state, name, test.errors[0]); st.made.warn = `when I ran it, it showed an error: ${test.errors[0]}. Fixing it is my next ticket`; }
       }
     }
   }

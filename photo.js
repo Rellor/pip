@@ -118,3 +118,36 @@ export async function renderFile(file, root = 'web', { width = 800, height = 600
     server.close();
   }
 }
+
+// A test run of one of his programs, like a coder runs their code: it is opened for a moment, a few clicks and keys are
+// tried, and every error is written down. Returns { errors: [..], bytes } or { failed } (no browser here).
+export async function testApp(file, root = 'web') {
+  let pw;
+  try {
+    pw = await import('playwright');
+  } catch {
+    return { failed: 'no browser to test with on this computer' };
+  }
+  const server = await serve(root, '{}');
+  let browser;
+  const errors = [];
+  try {
+    browser = await pw.chromium.launch({ executablePath: process.env.PIP_CHROMIUM || undefined, args: ['--no-sandbox'] });
+    const page = await browser.newPage({ viewport: { width: 900, height: 640 } });
+    page.on('pageerror', (e) => errors.push(String(e.message).split('\n')[0].slice(0, 160)));
+    page.on('console', (m) => { if (m.type() === 'error' && !/favicon|net::ERR/.test(m.text())) errors.push(`console: ${m.text().slice(0, 160)}`); });
+    await page.route(/^https?:\/\/(?!127\.0\.0\.1)/, (r) => r.abort());
+    await page.goto(`http://127.0.0.1:${server.address().port}/${String(file).replace(/^\/+/, '')}`, { waitUntil: 'load', timeout: 20_000 });
+    await page.waitForTimeout(800);
+    for (const [x, y] of [[450, 320], [300, 200], [600, 450]]) { await page.mouse.click(x, y).catch(() => {}); await page.waitForTimeout(150); }
+    for (const k of ['ArrowRight', 'ArrowUp', 'Space', 'Enter']) { await page.keyboard.press(k).catch(() => {}); await page.waitForTimeout(80); }
+    await page.waitForTimeout(500);
+    const bytes = new Uint8Array(await page.screenshot({ type: 'jpeg', quality: 75 }));
+    return { errors: [...new Set(errors)].slice(0, 5), bytes };
+  } catch (e) {
+    return { errors: [...new Set([...errors, `it did not start: ${String(e.message).split('\n')[0].slice(0, 120)}`])].slice(0, 5) };
+  } finally {
+    await browser?.close().catch(() => {});
+    server.close();
+  }
+}
