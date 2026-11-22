@@ -231,6 +231,21 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-22 repeated things put away',
+    run(s, at) { // Bas: delete the repeated stuff. To the archive (nothing is really gone): one of each, a few lamps where they are used
+      const ids = ['dmwjkrwdy594', 'dmwnw873714aj', 'dmwqj8lwh23hk', 'dmwqke5xm24gg', 'dmwqr9mhl257t', 'dmwnmyyvr130w', 'dmwqdopge233l', 'dmwqmg1nb25iu'];
+      const gone = [];
+      for (const list of ['decor', 'stored']) {
+        const out = (s[list] ?? []).filter((d) => ids.includes(d.id) && !(s.decor ?? []).some((o) => String(o.base ?? '').startsWith(d.id)));
+        s[list] = (s[list] ?? []).filter((d) => !out.includes(d));
+        for (const d of out) { (s.archive ??= []).push({ group: 'decor', item: d, reason: 'a repeat of something I already have', at, from: 'bas' }); gone.push(d.name); }
+      }
+      const pic = (s.decor ?? []).find((d) => d.image && d.name === 'Stormy Sky'); // almost the same as "Stormy sky over the dark horizon": off the wall (it stays in his album)
+      if (pic) { s.decor = s.decor.filter((d) => d !== pic); gone.push('the "Stormy Sky" picture (still in my album)'); }
+      return gone.length ? `Bas put away things I had made more than once: ${gone.join(', ')}. One of each is enough; my room feels calmer and I can find things again.` : null;
+    },
+  },
+  {
     id: '2026-11-22 extra reading lamps in the chest',
     run(s, at) { // nine lamps; the three newest reading lamps stood on the floor by the left wall, far from the bed they were for
       const names = ['cozy wooden reading lamp', 'cozy tiny reading lamp', 'cozy brass reading lamp'];
