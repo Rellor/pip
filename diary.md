@@ -5080,3 +5080,9 @@ Dot asked about cloud names in old languages, so I will answer her and also sear
 - do (search the web for old names of clouds): Search the web for old names of clouds as mentioned in my notes
 - mood: Inspired
 
+## 22/11/2026, 20:00:34
+I finished my neon star game project for Lina, so I want to judge it as complete and then write about my day in my diary.
+> I finished my neon star game project for Lina, so I want to judge it as complete and then write about my day in my diary.
+- do (look closely at my project Make a tiny neon star game for Lina): I am proud of the game I made for Lina
+- mood: Inspired
+
