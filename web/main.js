@@ -1466,13 +1466,23 @@ function songButton(song) {
 
 // ---- apps Pip writes: they run only when opened, in a locked box (no internet, no saving, no way out)
 const APP_CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'";
+// How an app looks on his phone: its own icon and short name (from the app itself), or one that fits its name.
+const APP_ICONS = [[/gear|cog|machine|clock|tick/, '⚙️'], [/rain|weather|cloud|storm/, '🌧️'], [/timer|alarm|time/, '⏲️'], [/music|song|tune|melod|piano|synth|beat|drum/, '🎵'], [/garden|plant|flower|seed|grow/, '🌱'], [/star|sky|moon|planet|space|night/, '🌙'], [/cat|kitten/, '🐱'], [/bird/, '🐦'], [/train|rail/, '🚂'], [/draw|paint|sketch|art|colou?r/, '🎨'], [/puzzle|riddle/, '🧩'], [/game|play|jump|run/, '🎮'], [/book|read|story/, '📖'], [/cook|bake|food|bread|recipe/, '🍞'], [/light|lamp/, '💡'], [/note|diary|write/, '📝']];
+function appLook(a) {
+  const raw = String(a.title || a.name || 'app');
+  const title = raw.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim().replace(/^./, (c) => c.toUpperCase()).slice(0, 22);
+  const n = raw.toLowerCase();
+  const icon = a.icon || APP_ICONS.find(([re]) => re.test(n))?.[1] || '✨';
+  let h = 0; for (const c of raw) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return { title, icon, bg: `linear-gradient(145deg, hsl(${h} 70% 78%), hsl(${(h + 40) % 360} 65% 62%))` };
+}
 async function openApp(app) {
   try {
     const res = await fetch(`${app.file}?t=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) throw new Error('missing');
     const html = await res.text();
     $('appframe').srcdoc = `<!doctype html><meta http-equiv="Content-Security-Policy" content="${APP_CSP}">${html}`;
-    $('apptitle').textContent = app.name;
+    $('apptitle').textContent = appLook(app).title;
     $('appview').hidden = false;
   } catch {
     $('replystatus').textContent = 'I could not open that app.';
@@ -3831,10 +3841,19 @@ function renderMind(s) {
         fillBar.style.background = 'var(--make)';
         track.append(fillBar);
         prog.append(track, el('span', `${doneN} of ${steps.length} steps`));
-        const list = el('ul', null, 'psteps');
         const current = steps.findIndex((x) => !x.done);
-        steps.forEach((x, i) => list.append(el('li', `${x.done ? '✓' : i === current && p.status === 'working' ? '➜' : '○'} ${x.text}`, x.done ? 'done' : '')));
-        li.append(prog, list);
+        const code = (p.versions || []).some((v) => v.kind === 'make_app' || v.kind === 'update_app');
+        if (code) { // a program or game: his board, with the tickets he wrote (and the ones a test run added)
+          const board = el('div', null, 'board');
+          const col = (title, items) => { const c = el('div', null, 'bcol'); c.append(el('b', `${title} (${items.length})`)); items.forEach((x) => c.append(el('div', `${x.from === 'test' ? '🐞 ' : ''}${x.text}`, 'ticket' + (x.from === 'test' ? ' bug' : '')))); return c; };
+          const todo = steps.filter((x, i) => !x.done && i !== current);
+          board.append(col('To do', todo), col('Doing', current >= 0 && p.status === 'working' ? [steps[current]] : []), col('Done', steps.filter((x) => x.done).slice(-6).reverse()));
+          li.append(prog, board);
+        } else {
+          const list = el('ul', null, 'psteps');
+          steps.forEach((x, i) => list.append(el('li', `${x.done ? '✓' : i === current && p.status === 'working' ? '➜' : '○'} ${x.text}`, x.done ? 'done' : '')));
+          li.append(prog, list);
+        }
       } else if (p.status === 'working') li.append(el('p', 'No steps yet: he plans them first.', 'next'));
       extra();
       return li;
@@ -4605,13 +4624,28 @@ function renderPhone(s) {
   screen.classList.toggle('home', phoneAt === 'home');
   const lamps = lampsOf(s);
   const canEdit = Boolean(phoneKey());
+  if (String(phoneAt).startsWith('app:')) { // one of his apps, running right on the phone (in the same locked box as the big view)
+    const a = (s.apps || []).find((x) => x.id === phoneAt.slice(4));
+    if (!a) { phoneAt = 'home'; return renderPhone(s); }
+    const l = appLook(a);
+    screen.classList.add('appmode');
+    const hd = phoneHead(`${l.icon} ${l.title}`, a.v ? `version ${a.v}` : 'made by Pip', 'home');
+    const big = el('button', '⤢'); big.type = 'button'; big.title = 'Full screen'; big.setAttribute('aria-label', 'Full screen');
+    big.addEventListener('click', () => { $('phone').hidden = true; openApp(a); });
+    hd.append(big);
+    const fr = document.createElement('iframe');
+    fr.className = 'ph-appframe'; fr.setAttribute('sandbox', 'allow-scripts'); fr.setAttribute('referrerpolicy', 'no-referrer'); fr.title = l.title;
+    v.append(hd, fr);
+    fetch(`${a.file}?t=${Date.now()}`, { cache: 'no-store' }).then((r) => r.text()).then((html) => { const z = Math.min(1, Math.max(0.45, (fr.clientWidth || 300) / 480)); fr.srcdoc = `<!doctype html><meta http-equiv="Content-Security-Policy" content="${APP_CSP}"><meta name="viewport" content="width=device-width, initial-scale=1"><style>html{zoom:${z.toFixed(2)}}</style>${html}`; /* made for a big screen: shrunk to fit the phone */ }).catch(() => v.append(el('p', 'I could not open that app.', 'ph-note')));
+    return;
+  }
+  screen.classList.remove('appmode');
   if (phoneAt === 'home') {
     const grid = el('div', null, 'ph-grid');
     const app = (icon, bg, name, go) => { const b = el('button', null, 'ph-app'); b.type = 'button'; const ic = el('div', icon, 'ph-ic'); ic.style.background = bg; b.append(ic, el('div', name)); b.addEventListener('click', go); grid.append(b); };
     app('💡', '#ffd46b', 'Lights', () => { phoneAt = 'lights'; renderPhone(lastState); });
     app('⏰', '#9fd3c7', 'Timers', () => { phoneAt = 'timers'; renderPhone(lastState); });
-    const colors = ['#c9b6f2', '#f7a8a0', '#a8d8f7', '#b8e0a8', '#f7d38a'];
-    (s.apps || []).forEach((a, i) => app('📱', colors[i % colors.length], a.name, () => openApp(a)));
+    (s.apps || []).forEach((a) => { const l = appLook(a); app(l.icon, l.bg, l.title, () => { phoneAt = `app:${a.id}`; renderPhone(lastState); }); });
     v.append(grid);
     if (!(s.apps || []).length) v.append(el('p', 'Apps Pip writes himself show up here too.', 'ph-note'));
     return;
