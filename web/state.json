@@ -1,8 +1,8 @@
 {
   "mood": "creative",
-  "energy": 9.5,
-  "boredom": 1.07,
-  "loneliness": 6.3,
+  "energy": 10,
+  "boredom": 0,
+  "loneliness": 6.33,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -8993,49 +8993,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-22T16:46:06.372Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 2
-    },
-    "tokens": {
-      "calls": 2,
-      "input": 4252,
-      "output": 3912,
-      "models": {
-        "gemini-3.5-flash-lite": 2
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I have been making things for hours and my head wants something different, so I will go outside for a brief walk to get some fresh air.",
-    "inner": "I have been making things for hours and my head wants something different, so I will go outside for a brief walk to get some fresh air.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "my doorstep",
-          "what": "sit and watch the street",
-          "name": "sit and watch the street"
-        },
-        "detail": "my doorstep",
-        "thought": "Go outside to get some fresh air.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-22T16:54:10.439Z",
+    "via": "outside",
+    "thought": "I am at my doorstep: I sit and watch the street.",
     "action": "go_out",
     "details": {
-      "place": "my doorstep",
-      "what": "sit and watch the street",
-      "name": "sit and watch the street"
+      "place": "doorstep"
     },
-    "detail": "my doorstep",
-    "enjoyment": 6,
+    "detail": "I am at my doorstep: I sit and watch the street.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "doorstep",
+      "phase": "there",
+      "back": "2026-11-22T17:08:06.372Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -9352,21 +9325,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-22T16:46:06.382Z",
-  "fullness": 6.3,
+  "fullness": 6.13,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 8.85,
-  "joy": 5.29,
-  "calm": 5.09,
+  "wonder": 7.68,
+  "joy": 5.2,
+  "calm": 5.07,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.85
+    "excited": 0.51
   },
-  "feelAt": "2026-11-22T16:45:54.901Z",
+  "feelAt": "2026-11-22T16:54:10.424Z",
   "lastAte": "2026-11-22T16:03:44.494Z",
   "studio": {
     "songs": [
@@ -10013,12 +9986,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.17,
-    "curiosity": 0.62,
+    "creativity": 0.25,
+    "curiosity": 0.69,
     "boredom": 0,
-    "loneliness": 6.3,
+    "loneliness": 6.33,
     "tidiness": 2.2,
-    "at": "2026-11-22T16:45:54.901Z",
+    "at": "2026-11-22T16:54:10.424Z",
     "coziness": 3.5
   },
   "recent": {
