@@ -695,6 +695,7 @@ async function makeIt(s, soul, system, st) {
 
 // Pip does not read anyone's name: whoever wrote to him is "someone".
 const noName = (t) => String(t).replace(/\bBas(?='s)\b/g, 'someone').replace(/\bBas\b/g, 'someone');
+const SLOW_REST_MIN = 20; // a model that did not answer in time is tried last for this long
 // The same schema without the ordering hints (for a model that refuses them).
 const plainSchema = (x) => (Array.isArray(x) ? x.map(plainSchema) : x && typeof x === 'object' ? Object.fromEntries(Object.entries(x).filter(([k]) => k !== 'propertyOrdering').map(([k, v]) => [k, plainSchema(v)])) : x);
 async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
@@ -710,6 +711,8 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
   const { order, skipped, first } = candidates(q, group, { reply: Boolean(opts.reply) });
   for (const x of skipped) console.log(`   (${x.model} skipped: ${x.why})`);
   if (!order.length) throw new Error('quota: every model is out for today, back after midnight Pacific');
+  const quick = order.filter((m) => !((q.slow?.[m] ?? 0) > Date.now())); // models that timed out a moment ago go last
+  if (quick.length && quick.length < order.length) order.splice(0, order.length, ...quick, ...order.filter((m) => !quick.includes(m)));
   let res = null;
   for (const model of order) {
     let retried429 = false;
@@ -719,7 +722,7 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
       try {
         res = await fetch(`${API}/models/${model}:generateContent`, {
           method: 'POST',
-          signal: AbortSignal.timeout(150_000), // drawings and apps make long answers
+          signal: AbortSignal.timeout(Number(process.env.PIP_MODEL_TIMEOUT_MS) || 150_000), // drawings and apps make long answers (tests use a short wait)
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
           body: JSON.stringify({
             systemInstruction: { parts: [{ text: system }] },
@@ -729,7 +732,11 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
         });
       } catch (e) {
         res = null;
-        if (e.name === 'TimeoutError' && ++timeouts <= 1) { console.log(`${model} is slow, trying once more...`); continue; }
+        if (e.name === 'TimeoutError') { // a slow model: with another one to try he moves on at once (waiting twice froze him for minutes), and leaves this one alone for a while
+          (q.slow ??= {})[model] = Date.now() + SLOW_REST_MIN * 60_000;
+          if (order.at(-1) === model && ++timeouts <= 1) { console.log(`${model} is slow, trying once more...`); continue; }
+          console.log(`${model} is slow${order.at(-1) !== model ? ', on to the next model' : ''}`);
+        }
         break;
       }
       count(q, model); // every request that reached Google counts toward its quota
