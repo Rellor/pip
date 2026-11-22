@@ -215,3 +215,19 @@ ok('his real room: the one-time change leaves nothing floating, and the blanket 
   assert.deepEqual(applyChanges(s), [], 'only once');
   void stands;
 });
+
+ok('Bas gives him the watercolor paper he asked for: it is with his tools, the ask is done, and only once', () => {
+  const s = JSON.parse(fs.readFileSync(new URL('../web/state.json', import.meta.url), 'utf8'));
+  s.changes = (s.changes ?? []).filter((c) => !/watercolour paper/.test(c));
+  s.tools = (s.tools ?? []).filter((t) => !/watercolou?r paper/i.test(t.name));
+  s.asks = [{ id: 'a1', item: 'new watercolor paper', why: 'a new view', since: '2026-11-21T08:13:17.081Z', status: 'open' }, { id: 'a2', item: 'autumn painting critique', why: 'proud', since: '2026-11-19T19:36:31.605Z', status: 'open' }];
+  const before = s.tools.length;
+  const notes = applyChanges(s);
+  assert.ok(notes.some((n) => /watercolor paper/.test(n)));
+  assert.equal(s.tools.length, before + 1);
+  assert.deepEqual(s.tools.at(-1).kind, 'drawing supplies');
+  assert.deepEqual(s.asks.map((a) => a.status), ['done', 'open'], 'only the paper ask is answered');
+  assert.deepEqual(s.asks[0].given, ['watercolor paper']);
+  assert.deepEqual(applyChanges(s), []);
+  assert.equal(s.tools.length, before + 1);
+});
