@@ -385,6 +385,17 @@ const CHANGES = [
       return 'Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: "outside", or I carry a thing out with move_thing {name, where: "outside"} (and back in with move_thing {name, where: "floor"}).';
     },
   },
+  {
+    id: '2026-11-22 watercolour paper from Bas',
+    run(s, at) { // he asked for new watercolor paper, to paint a new view now that his autumn window is finished
+      const ask = (s.asks ?? []).find((a) => a.status === 'open' && /watercolou?r|paper/i.test(a.item));
+      s.tools ??= [];
+      // his drawing supplies already count as "paper", so the fresh pad is put with his tools by hand
+      if (!s.tools.some((t) => /watercolou?r paper/i.test(t.name))) s.tools.push({ id: `t${Date.parse(at).toString(36)}${s.tools.length}`, name: 'watercolor paper', kind: 'drawing supplies', source: 'given', at });
+      if (ask) Object.assign(ask, { status: 'done', doneAt: at, given: ['watercolor paper'] });
+      return 'Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.';
+    },
+  },
 ];
 
 // What was removed is also forgotten: the studio, the piano, the instruments, the old clothes and what he let go in the tidy.
