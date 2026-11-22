@@ -18,7 +18,16 @@ const LIMITS = {
   surface: { w: 1.0, h: 0.9, d: 1.0 }, // on top of furniture
   wall: { w: 2.0, h: 1.6, d: 0.4 }, // flat things on a wall
 };
-export const MAX_PER_DAY = 6;
+// What kind of thing it is, from its name: "cozy brass reading lamp" is a lamp, "tiny wooden stand for my bird" a stand.
+const KIND_SYNONYM = { light: 'lamp', lantern: 'lamp', candle: 'lamp', sconce: 'lamp', shelves: 'shelf', bookshelf: 'shelf', pedestal: 'stand', riser: 'stand', perch: 'stand' };
+export function kindWord(name) {
+  const words = String(name ?? '').toLowerCase().replace(/\([^)]*\)/g, '').split(/\s+(?:for|with|of|on|from|in)\s+/)[0].replace(/[^a-z\s]/g, ' ').split(/\s+/).filter((w) => w.length > 2);
+  const w = words.at(-1) ?? '';
+  return KIND_SYNONYM[w] ?? w.replace(/s$/, '');
+}
+export const MAX_SAME = 3; // of one kind of thing in his room (stands, shelves, boxes...)
+export const MAX_LAMPS = 5;
+export const MAX_PER_DAY = 3; // new things a day (changing what he has is not counted here): a room fills up fast
 const MAX_PARTS = 40;
 const MAX_DECOR = 30;
 const STORAGE_WORDS = /shelf|shelves|closet|cabinet|wardrobe|drawer|dresser|rack|crate|storage|cupboard|bookcase|locker/i;
@@ -156,6 +165,9 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (!name) return { failed: 'he did not give it a name' };
   if (decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
   if (decor.length >= capOf(decor)) return { failed: FULL };
+  const kind = kindWord(name);
+  const same = kind ? decor.filter((x) => !x.image && !x.art && kindWord(x.name) === kind) : [];
+  if (same.length >= (kind === 'lamp' ? MAX_LAMPS : MAX_SAME)) return { failed: `I already have ${same.length} ${kind === 'lamp' ? 'lamps' : `things that are a ${kind}`} (${same.slice(0, 4).map((x) => x.name).join(', ')}). That is enough of those: I improve one of them (change_thing), move one where it is needed, or put one in my chest first`, hinted: true };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
   return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, near_xz: d.near_xz, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn, ceiling: d.ceiling, next_to: d.next_to, level: d.level, keep: d.keep === true }, atMs, now);
