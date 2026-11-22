@@ -5109,3 +5109,10 @@ I want to search the web about how to make a standing lamp to bring light to my 
 - do (search how a standing lamp is made): Search web for a standing lamp
 - mood: Inspired
 
+## 22/11/2026, 20:41:45
+I want to look up how to build a reading lamp or lantern for the bookshelf so I can see better there.
+> I want to look up how to build a reading lamp or lantern for the bookshelf so I can see better there.
+- phone (opened search_web): Search for how to make a lamp for the dark bookshelf corner
+- do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
+- mood: Inspired
+
