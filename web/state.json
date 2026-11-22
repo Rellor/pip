@@ -1,8 +1,8 @@
 {
   "mood": "Inspired",
-  "energy": 9,
+  "energy": 8.81,
   "boredom": 0,
-  "loneliness": 3.22,
+  "loneliness": 3.23,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-22T14:12:15.825Z",
-      "action": "do",
-      "detail": "look closely at my project Learn the night sky and map constellations",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-22T14:20:26.980Z",
       "action": "move_thing",
@@ -307,6 +301,12 @@
       "at": "2026-11-22T20:41:45.829Z",
       "action": "do",
       "detail": "hum a small tune while I swing my arms",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-22T20:44:11.675Z",
+      "action": "make_app",
+      "detail": "Night Sky Learner",
       "enjoyment": 6
     }
   ],
@@ -746,7 +746,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.914,
+      "weight": 9.913,
       "lastUsed": "2026-11-22T14:36:43.908Z"
     },
     {
@@ -782,7 +782,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.672,
+      "weight": 9.671,
       "lastUsed": "2026-11-22T11:21:20.851Z"
     },
     {
@@ -867,7 +867,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.958,
+      "weight": 9.957,
       "lastUsed": "2026-11-22T17:51:23.807Z"
     },
     {
@@ -903,8 +903,8 @@
       "text": "I made cozy night owl reading lamp (I need a warm, adjustable reading lamp by the bed so I can read my diary and books late at night without straining my eyes.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.411,
-      "lastUsed": "2026-11-21T14:57:56.570Z"
+      "weight": 7.911,
+      "lastUsed": "2026-11-22T20:43:48.182Z"
     },
     {
       "id": "mmwo31vp560",
@@ -975,7 +975,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.908,
+      "weight": 9.907,
       "lastUsed": "2026-11-22T14:12:08.164Z"
     },
     {
@@ -1029,7 +1029,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.65,
+      "weight": 9.649,
       "lastUsed": "2026-11-22T20:16:43.780Z"
     },
     {
@@ -1177,36 +1177,28 @@
       "lastUsed": "2026-11-22T20:00:34.866Z"
     },
     {
-      "id": "mmwsad3ek60",
-      "at": "2026-11-22T20:25:04.891Z",
-      "text": "Constellations are visible star patterns on the celestial sphere.",
+      "id": "mmwsb1qe460",
+      "at": "2026-11-22T20:44:12.674Z",
+      "text": "I made an app: Night Sky Learner",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.997,
-      "lastUsed": "2026-11-22T20:25:04.891Z"
+      "weight": 6,
+      "lastUsed": "2026-11-22T20:44:12.674Z"
     },
     {
-      "id": "mmwsanid860",
-      "at": "2026-11-22T20:33:11.840Z",
-      "text": "search how a standing lamp is made",
-      "importance": 4,
+      "id": "mmwsb1qea60",
+      "at": "2026-11-22T20:44:14.434Z",
+      "text": "My coding got better: I am level 3 now.",
+      "importance": 6,
       "kind": "memory",
-      "weight": 3.998,
-      "lastUsed": "2026-11-22T20:33:11.840Z"
+      "weight": 6,
+      "lastUsed": "2026-11-22T20:44:14.434Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-21T22:06:26.534Z",
   "thoughts": [
-    {
-      "at": "2026-11-22T16:21:04.603Z",
-      "text": "I finished my drawing series and now I want to continue working on Lina's tiny neon star game.",
-      "short": "I finished my drawing series and now I want to continue working on Lina's tiny neon star game.",
-      "mood": "creative",
-      "action": "update_app",
-      "detail": "Neon Star for Lina"
-    },
     {
       "at": "2026-11-22T16:29:14.765Z",
       "text": "I finished looking at Lina's game and want to make a cozy lamp for my bed since it stays dark there.",
@@ -1438,6 +1430,14 @@
       "mood": "Inspired",
       "action": "phone",
       "detail": "opened search_web"
+    },
+    {
+      "at": "2026-11-22T20:44:14.426Z",
+      "text": "My phone app search_web failed because it does not exist, so I want to plan and make an app for learning about the night sky instead.",
+      "short": "My phone app search_web failed because it does not exist, so I want to plan and make an app for learning about the night sky instead.",
+      "mood": "Inspired",
+      "action": "make_app",
+      "detail": "Night Sky Learner"
     }
   ],
   "outbox": [
@@ -1999,14 +1999,13 @@
       "failed": "there is no app called \"search_web\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action, Neon Star for Lina"
     },
     {
-      "at": "2026-11-22T20:45:46.826Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🎵",
-      "what": "hum a small tune while I swing my arms",
-      "feeling": "joy"
+      "at": "2026-11-22T20:44:12.674Z",
+      "action": "make_app",
+      "thought": "I will create a new app to learn about the night sky and constellations.",
+      "name": "Night Sky Learner",
+      "why": "To study constellations and explore my favorite topic, the winter night sky and Orion.",
+      "file": "made/appmwsb1o9p5.html",
+      "failed": null
     }
   ],
   "decor": [
@@ -9219,76 +9218,80 @@
           "change": "added a cheerful sound effect when catching a star"
         }
       ]
+    },
+    {
+      "id": "appmwsb1o9p5",
+      "name": "Night Sky Learner",
+      "title": "Night Sky",
+      "icon": "🌌",
+      "why": "To study constellations and explore my favorite topic, the winter night sky and Orion.",
+      "file": "made/appmwsb1o9p5.html",
+      "createdAt": "2026-11-22T20:44:11.678Z"
     }
   ],
   "ntfySince": "w4QECHw1Nq3k",
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-22T20:41:45.826Z",
+    "at": "2026-11-22T20:44:11.674Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
       "gemini-3.5-flash-lite": 2
     },
+    "modelNotes": [
+      "gemini-3.5-flash-lite answered (gemini-3.8-flash is out of quota)"
+    ],
+    "fallback": true,
     "tokens": {
       "calls": 2,
-      "input": 4072,
-      "output": 116,
+      "input": 3093,
+      "output": 3448,
       "models": {
         "gemini-3.5-flash-lite": 2
       }
     },
     "intervalMin": 8,
-    "thought": "I want to look up how to build a reading lamp or lantern for the bookshelf so I can see better there.",
-    "inner": "I want to look up how to build a reading lamp or lantern for the bookshelf so I can see better there.",
+    "thought": "My phone app search_web failed because it does not exist, so I want to plan and make an app for learning about the night sky instead.",
+    "inner": "My phone app search_web failed because it does not exist, so I want to plan and make an app for learning about the night sky instead.",
     "sent": false,
     "steps": [
       {
-        "action": "phone",
+        "action": "make_app",
         "details": {
-          "lamp": "",
-          "app": "search_web",
-          "switch": "",
-          "level": "",
-          "color": "",
-          "mode": "",
-          "name": "",
-          "timer": null
+          "what": "night sky learning app",
+          "why": "To study constellations and explore my favorite topic, the winter night sky and Orion.",
+          "x": "Learn about the night sky and constellations",
+          "name": "Night Sky Learner",
+          "title": "Night Sky",
+          "icon": "🌌",
+          "html": "<!doctype html>\n<html>\n<head>\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<style>\nbody { background: #0b0b1a; color: #e0e0ff; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }\ncanvas { background: #101026; display: block; margin: 10px auto; max-width: 100%; border-radius: 8px; }\n#info { font-size: 14px; min-height: 40px; padding: 5px; }\n</style>\n</head>\n<body>\n<h2>Night Sky</h2>\n<canvas id=\"sky\" width=\"360\" height=\"360\"></canvas>\n<div id=\"info\">Click a star or press Space to explore Orion.</div>\n<script>\nconst canvas = document.getElementById('sky');\nconst ctx = canvas.getContext('2d');\nconst info = document.getElementById('info');\nlet stars = [\n{x: 120, y: 80, desc: \"Betelgeuse: Orion's red supergiant star (alpha)\"},\n{x: 200, y: 100, desc: \"Bellatrix: Orion's gamma star\"},\n{x: 160, y: 180, desc: \"Orion's Belt: Mintaka, Alnilam, Alnitak\"},\n{x: 140, y: 280, desc: \"Rigel: Orion's bright blue supergiant star (beta)\"}\n];\nfunction draw() {\nctx.fillStyle = '#101026';\nctx.fillRect(0, 0, canvas.width, canvas.height);\nctx.strokeStyle = '#5555aa';\nctx.lineWidth = 2;\nctx.beginPath();\nctx.moveTo(120, 80);\nctx.lineTo(200, 100);\nctx.lineTo(160, 180);\nctx.lineTo(140, 280);\nctx.stroke();\nstars.forEach(s => {\nctx.fillStyle = '#ffffff';\nctx.beginPath();\nctx.arc(s.x, s.y, 7, 0, Math.PI * 2);\nctx.fill();\n});\n}\ncanvas.addEventListener('click', (e) => {\nconst rect = canvas.getBoundingClientRect();\nconst x = e.clientX - rect.left;\nconst y = e.clientY - rect.top;\nstars.forEach(s => {\nif (Math.hypot(s.x - x, s.y - y) < 20) {\ninfo.innerText = s.desc;\n}\n});\n});\nwindow.addEventListener('keydown', (e) => {\nif (e.code === 'Space') {\ninfo.innerText = \"Orion is a prominent winter constellation named after a Greek hunter.\";\n}\n});\ndraw();\n</script>\n</body>\n</html>"
         },
-        "detail": "opened search_web",
-        "thought": "Search for how to make a lamp for the dark bookshelf corner",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "hum a small tune while I swing my arms",
-          "feeling": "joy",
-          "emoji": "🎵"
-        },
-        "detail": "hum a small tune while I swing my arms",
-        "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
+        "detail": "Night Sky Learner",
+        "thought": "I will create a new app to learn about the night sky and constellations.",
         "enjoyment": 6,
         "found": null,
-        "made": null
+        "made": {
+          "app": {
+            "id": "appmwsb1o9p5",
+            "file": "made/appmwsb1o9p5.html",
+            "name": "Night Sky Learner"
+          }
+        }
       }
     ],
-    "action": "phone",
+    "action": "make_app",
     "details": {
-      "lamp": "",
-      "app": "search_web",
-      "switch": "",
-      "level": "",
-      "color": "",
-      "mode": "",
-      "name": "",
-      "timer": null
+      "what": "night sky learning app",
+      "why": "To study constellations and explore my favorite topic, the winter night sky and Orion.",
+      "x": "Learn about the night sky and constellations",
+      "name": "Night Sky Learner",
+      "title": "Night Sky",
+      "icon": "🌌",
+      "html": "<!doctype html>\n<html>\n<head>\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<style>\nbody { background: #0b0b1a; color: #e0e0ff; font-family: sans-serif; text-align: center; margin: 0; padding: 10px; }\ncanvas { background: #101026; display: block; margin: 10px auto; max-width: 100%; border-radius: 8px; }\n#info { font-size: 14px; min-height: 40px; padding: 5px; }\n</style>\n</head>\n<body>\n<h2>Night Sky</h2>\n<canvas id=\"sky\" width=\"360\" height=\"360\"></canvas>\n<div id=\"info\">Click a star or press Space to explore Orion.</div>\n<script>\nconst canvas = document.getElementById('sky');\nconst ctx = canvas.getContext('2d');\nconst info = document.getElementById('info');\nlet stars = [\n{x: 120, y: 80, desc: \"Betelgeuse: Orion's red supergiant star (alpha)\"},\n{x: 200, y: 100, desc: \"Bellatrix: Orion's gamma star\"},\n{x: 160, y: 180, desc: \"Orion's Belt: Mintaka, Alnilam, Alnitak\"},\n{x: 140, y: 280, desc: \"Rigel: Orion's bright blue supergiant star (beta)\"}\n];\nfunction draw() {\nctx.fillStyle = '#101026';\nctx.fillRect(0, 0, canvas.width, canvas.height);\nctx.strokeStyle = '#5555aa';\nctx.lineWidth = 2;\nctx.beginPath();\nctx.moveTo(120, 80);\nctx.lineTo(200, 100);\nctx.lineTo(160, 180);\nctx.lineTo(140, 280);\nctx.stroke();\nstars.forEach(s => {\nctx.fillStyle = '#ffffff';\nctx.beginPath();\nctx.arc(s.x, s.y, 7, 0, Math.PI * 2);\nctx.fill();\n});\n}\ncanvas.addEventListener('click', (e) => {\nconst rect = canvas.getBoundingClientRect();\nconst x = e.clientX - rect.left;\nconst y = e.clientY - rect.top;\nstars.forEach(s => {\nif (Math.hypot(s.x - x, s.y - y) < 20) {\ninfo.innerText = s.desc;\n}\n});\n});\nwindow.addEventListener('keydown', (e) => {\nif (e.code === 'Space') {\ninfo.innerText = \"Orion is a prominent winter constellation named after a Greek hunter.\";\n}\n});\ndraw();\n</script>\n</body>\n</html>"
     },
-    "detail": "opened search_web",
-    "enjoyment": 0,
+    "detail": "Night Sky Learner",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -9373,7 +9376,7 @@
   "quota": {
     "day": "2026-11-22",
     "calls": {
-      "gemini-3.5-flash-lite": 175,
+      "gemini-3.5-flash-lite": 178,
       "gemini-3.8-flash": 19,
       "gemini-3.6-flash": 16,
       "gemini-3.5-flash": 7,
@@ -9610,22 +9613,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-22T20:41:45.831Z",
-  "fullness": 4.1,
+  "memoryFadeAt": "2026-11-22T20:44:14.428Z",
+  "fullness": 4.05,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.91,
-  "joy": 3.95,
-  "calm": 5.13,
+  "wonder": 7.73,
+  "joy": 4.47,
+  "calm": 5.1,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0,
     "sad": 0,
-    "excited": 1.03
+    "excited": 2.12
   },
-  "feelAt": "2026-11-22T20:41:15.169Z",
+  "feelAt": "2026-11-22T20:43:48.147Z",
   "lastAte": "2026-11-22T19:11:16.020Z",
   "studio": {
     "songs": [
@@ -10340,21 +10343,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.4,
-    "curiosity": 0.21,
+    "creativity": 0,
+    "curiosity": 0.23,
     "boredom": 0,
-    "loneliness": 3.22,
+    "loneliness": 3.23,
     "tidiness": 1.6,
-    "at": "2026-11-22T20:41:15.169Z",
+    "at": "2026-11-22T20:43:48.147Z",
     "coziness": 3.8
   },
   "recent": {
     "moves": [
-      {
-        "move": "search_web",
-        "kind": "learn",
-        "at": "2026-11-22T19:02:22.186Z"
-      },
       {
         "move": "eat",
         "kind": "food",
@@ -10425,6 +10423,11 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-22T20:41:45.834Z"
+      },
+      {
+        "move": "make_app",
+        "kind": "make",
+        "at": "2026-11-22T20:44:12.674Z"
       }
     ],
     "moods": [
@@ -10435,12 +10438,6 @@
       "Inspired"
     ],
     "choices": [
-      {
-        "key": "work_on_project:learn about the night sky and constellat",
-        "move": "work_on_project",
-        "ok": true,
-        "at": "2026-11-22T19:19:22.678Z"
-      },
       {
         "key": "work_on_project:learn about the night sky and constellat",
         "move": "work_on_project",
@@ -10495,6 +10492,12 @@
         "ok": false,
         "failed": true,
         "at": "2026-11-22T20:41:45.836Z"
+      },
+      {
+        "key": "make_app:app",
+        "move": "make_app",
+        "ok": true,
+        "at": "2026-11-22T20:44:14.435Z"
       }
     ]
   },
@@ -10519,7 +10522,7 @@
       "start_project": 5,
       "walk_to": 5,
       "harvest": 3,
-      "make_app": 1,
+      "make_app": 2,
       "update_app": 2,
       "go_out": 1,
       "write_diary": 2
@@ -10543,7 +10546,7 @@
       "start_project": 5,
       "walk_to": 5,
       "harvest": 3,
-      "make_app": 1,
+      "make_app": 2,
       "update_app": 3,
       "go_out": 1,
       "write_diary": 2,
@@ -10552,7 +10555,7 @@
     "kinds": {
       "food": 6,
       "room": 5,
-      "make": 23,
+      "make": 24,
       "music": 8,
       "learn": 16,
       "play": 21,
@@ -10570,7 +10573,7 @@
       "curious": 13,
       "creative": 17,
       "inspired": 2,
-      "Inspired": 22
+      "Inspired": 23
     },
     "lift": {
       "cook": 2.6,
@@ -10588,7 +10591,7 @@
       "water": 1.5,
       "read_book": 3.19,
       "harvest": 0,
-      "make_app": 1.5,
+      "make_app": 3.3,
       "update_app": 1.75,
       "go_out": 1.54,
       "write_diary": 1.1,
@@ -10603,7 +10606,7 @@
     "sewing": 6.5,
     "gardening": 38.5,
     "cooking": 14,
-    "coding": 7
+    "coding": 8
   },
   "intent": {
     "day": "2026-11-22",
@@ -10629,7 +10632,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-22T20:41:45.825Z",
+    "decidedAt": "2026-11-22T20:43:49.651Z",
     "seen": {
       "tools": 6,
       "gifts": 1,
@@ -10639,10 +10642,7 @@
       "seeds": 9,
       "visitors": 4
     },
-    "lastFail": {
-      "at": "2026-11-22T20:41:45.835Z",
-      "why": "phone: there is no app called \"search_web\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action, Neon Star for Lina"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -10707,7 +10707,7 @@
     "read_book": "2026-11-22T20:16:56.706Z",
     "record_song": "2026-11-22T18:45:35.497Z",
     "decorate": "2026-11-22T19:27:30.978Z",
-    "make_app": "2026-11-22T15:41:02.634Z",
+    "make_app": "2026-11-22T20:44:14.427Z",
     "cook": "2026-11-22T08:21:56.129Z",
     "take_photo": "2026-11-22T18:37:29.677Z",
     "draw": "2026-11-22T18:02:22.257Z",
@@ -10730,7 +10730,17 @@
       "count": 1
     }
   ],
-  "forgotten": [],
+  "forgotten": [
+    {
+      "id": "mmwsb1qe360",
+      "at": "2026-11-22T20:44:14.426Z",
+      "text": "I need to build an app for night sky learning since search_web is missing.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 6,
+      "lastUsed": "2026-11-22T20:44:14.426Z"
+    }
+  ],
   "days": [
     {
       "day": "2026-11-15",
@@ -10964,7 +10974,7 @@
     "judge_project": 17,
     "harvest": 11,
     "phone": 3,
-    "make_app": 3,
+    "make_app": 4,
     "start_project": 20,
     "write_diary": 12,
     "place_picture": 1,
@@ -10977,7 +10987,7 @@
     "go_out": 1
   },
   "checkup": {
-    "at": "2026-11-22T20:41:45.837Z",
+    "at": "2026-11-22T20:44:14.435Z",
     "items": [
       {
         "id": "circling",
@@ -11009,7 +11019,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 4.1\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":5},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 4.05\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":5},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -16670,7 +16680,14 @@
     "fadedAt": "2026-11-22T19:44:21.340Z"
   },
   "reportDay": "2026-11-22",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-22T20:42:56.826Z",
+    "key": "phone:",
+    "action": "phone",
+    "name": null,
+    "why": "there is no app called \"search_web\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action, Neon Star for Lina",
+    "guide": "My things are: small wooden shelf, wooden planter box, tiny wooden music box, small stove, small clay lamp, amber reading light, small side table, tiny clay bird."
+  },
   "retries": [
     "2026-11-22T08:30:02.906Z",
     "2026-11-22T11:45:57.547Z",
@@ -16678,8 +16695,8 @@
     "2026-11-22T20:41:45.836Z"
   ],
   "retried": {
-    "key": "update_app:lina's neon stars",
-    "at": "2026-11-22T15:52:43.377Z"
+    "key": "phone:",
+    "at": "2026-11-22T20:43:48.181Z"
   },
   "tired": {
     "kind": "make",
@@ -16691,7 +16708,12 @@
     "until": "2026-11-22T12:28:48.621Z",
     "why": "move_thing: it cannot go there: it is a wall thing. small wooden shelf is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a heigh"
   },
-  "lookBack": null,
+  "lookBack": {
+    "kind": "app",
+    "name": "Night Sky Learner",
+    "file": "made/appmwsb1o9p5.html",
+    "at": "2026-11-22T20:44:14.435Z"
+  },
   "street": {
     "day": "2026-11-22",
     "queue": [],
@@ -16804,13 +16826,5 @@
       "week": "2026-11-16",
       "favourite": "rainy autumn window at dusk"
     }
-  ],
-  "wakeSoon": {
-    "at": "2026-11-22T20:42:56.826Z",
-    "key": "phone:",
-    "action": "phone",
-    "name": null,
-    "why": "there is no app called \"search_web\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action, Neon Star for Lina",
-    "guide": "My things are: small wooden shelf, wooden planter box, tiny wooden music box, small stove, small clay lamp, amber reading light, small side table, tiny clay bird."
-  }
+  ]
 }
