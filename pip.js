@@ -23,6 +23,7 @@ import { roomScale, placeKind, sizeWords } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
 import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo } from './loops.js';
 import { planRetry, startRetry, retryLines } from './retry.js';
+import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLetter } from './letters.js';
 import { needsNotes, fakeNotes, neighbourPrompt, neighbourSchema, planNotes, deliverNotes, neighbourLines } from './neighbours.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
@@ -452,8 +453,8 @@ async function notify(msg) {
       method: 'POST',
       body: msg.text,
       headers: {
-        Title: msg.kind === 'ask' ? 'Pip asks for something' : 'Pip wrote to you',
-        Tags: 'speech_balloon',
+        Title: msg.kind === 'ask' ? 'Pip asks for something' : msg.kind === 'letter' ? 'A letter from Pip' : 'Pip wrote to you',
+        Tags: msg.kind === 'letter' ? 'love_letter' : 'speech_balloon',
         ...(process.env.PIP_SITE_URL ? { Click: process.env.PIP_SITE_URL } : {}),
       },
       signal: AbortSignal.timeout(15_000),
@@ -2138,6 +2139,14 @@ async function wakeUp() {
     if (bad.length) console.log(`🩺 check-up: ${bad.join(', ')}`);
   } catch (e) {
     console.error('⚠️  check-up:', e.message);
+  }
+  if (letterDue(state)) { // Sunday evening: his weekly letter to Bas (letters.js)
+    try {
+      const d = weekDigest(state);
+      const reply = process.env.PIP_FAKE ? fakeLetter(d) : await askGemini(system, letterPrompt(soul, d, { first: !(state.letters ?? []).length }), 1, [], { schema: letterSchema, maxTokens: THINK_ROOM + 1500, group: 'big', reply: true });
+      const m = sendLetter(state, reply, d);
+      if (m) { console.log(`💌 Pip wrote his weekly letter${m.imageName ? ` (with "${m.imageName}")` : ''}`); if (!process.env.PIP_FAKE) await notify(m); }
+    } catch (e) { console.error('⚠️  letter:', e.message); }
   }
   await saveState(state);
   await clearInbox(inbox.names);

@@ -4064,7 +4064,7 @@ function render(s) {
   }
   const opened = (m) => (m.private ? privateText.get(m.id) ?? '🔒 private' : m.text); // private texts come from /api/private, with the key
   const thread = [
-    ...outbox.map((m) => ({ at: m.at, kind: m.kind, text: opened(m) })),
+    ...outbox.map((m) => ({ at: m.at, kind: m.kind, text: opened(m), image: m.image })),
     ...(s.inbox || []).map((m) => ({ at: m.at, mine: true, read: m.read, readAt: m.readAt, text: opened(m), via: m.via, image: (s.pictures || []).find((p) => p.id === m.picture)?.image })),
     ...privateWaiting.filter((m) => !gotIds.has(m.id) && !pending.some((p) => p.id === m.id)).map((m) => ({ at: m.at, mine: true, text: m.text })),
     ...ntfyMsgs.filter((m) => !gotIds.has(m.id)).map((m) => ({ at: m.at, mine: true, via: 'ntfy', text: m.text })),
@@ -4076,7 +4076,7 @@ function render(s) {
   fill($('messages'), !store('pip-key') ? [] : thread.length
     ? thread.map((m) => m.mine
       ? entry([when(m.at), m.via === 'ntfy' ? 'You (ntfy)' : 'You', m.sending ? 'on its way…' : m.read ? `✓ Pip read it ${when(m.readAt || m.at)}` : 'Pip has not read it yet'], m.text, 'mine', m.image)
-      : entry([when(m.at), m.kind === 'ask' ? '🙏 Pip asks for something' : '✉️ Pip writes to you'], m.text, m.kind === 'ask' ? 'ask' : ''))
+      : entry([when(m.at), m.kind === 'ask' ? '🙏 Pip asks for something' : m.kind === 'letter' ? '💌 A letter from Pip' : '✉️ Pip writes to you'], m.text, m.kind === 'ask' ? 'ask' : m.kind === 'letter' ? 'letter' : '', m.image))
     : empty('Nothing yet. Pip writes to you when something really matters to him, and you can write to him too.'));
   showTab(tab);
 
