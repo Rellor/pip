@@ -4746,6 +4746,7 @@ $('wake').addEventListener('click', () => {
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipGroup = (id) => decorGroups.get(id); // for testing
 window.pipView = view; // for testing: where the walking viewer stands
+window.pipCam = () => ({ fit: orbit.fit, goal: fitGoal, zoom: orbit.zoom, px: orbit.px, pz: orbit.pz, focusX, name: focusName(), aspect: camera.aspect, pos: camera.position.toArray().map((v) => Math.round(v)) }); // for testing: how the overview looks at things
 window.pipStep = (n, dt = 0.05) => { for (let i = 0; i < n; i++) updateBehaviors(performance.now() + i * dt * 1000, dt); }; // for testing without a visible page
 let tickClock = 0;
 window.pipTick = (n, dt = 0.05) => { tickClock ||= performance.now(); for (let i = 0; i < n; i++) { tickClock += dt * 1000; frame(tickClock, dt); updateBehaviors(tickClock, dt); } return tickClock; }; // for testing: run n frames by hand
