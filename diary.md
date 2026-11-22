@@ -4983,3 +4983,9 @@ Oma Jo shared a wonderful botanical printing idea, and I am fascinated by it.
 - walk_to (computer): I will answer Oma Jo about her botanical printing suggestion.
 - mood: inspired
 
+## 22/11/2026, 17:43:19
+I finished my project series on drawing quiet music, so I want to judge it as proud and then look into the night sky hobby.
+> I finished my project series on drawing quiet music, so I want to judge it as proud and then look into the night sky hobby.
+- do (look closely at my project Draw quiet music three ways: a series): I finished all steps for my drawing series, so I can judge it now.
+- mood: inspired
+
