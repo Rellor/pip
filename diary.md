@@ -4971,3 +4971,9 @@ I want to read a book about quiet music to learn more since I am into it lately.
 - read_book (quiet music): Let's read about quiet music.
 - mood: creative
 
+## 22/11/2026, 17:27:04
+Oma Jo told me about botanical printing, and it caught my attention. I want to try it out.
+> Oma Jo told me about botanical printing, and it caught my attention. I want to try it out.
+- do (start project botanical printing): I want to start a project about botanical printing.
+- mood: creative
+
