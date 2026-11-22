@@ -29,6 +29,23 @@ let catcher = { x: 150, y: 440, w: 60, h: 12 };
 let star = { x: 50, y: 0, r: 10, dy: 3 };
 let keys = {};
 
+function playCatchSound() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+  } catch (e) {}
+}
+
 function resetGame() {
   score = 0;
   scoreEl.innerText = score;
@@ -76,6 +93,7 @@ function update() {
       star.x <= catcher.x + catcher.w) {
     score++;
     scoreEl.innerText = score;
+    playCatchSound();
     star.y = 0;
     star.x = Math.random() * (canvas.width - 20) + 10;
     star.dy += 0.3;
