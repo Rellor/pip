@@ -194,7 +194,7 @@ for (const o2 of [{}, { now: noon, where: 'pond', phase: 'there', unlocked: ['ho
   assert.equal((svg.match(/<g/g) ?? []).length, (svg.match(/<\/g>/g) ?? []).length);
   for (const p of PLACES.filter((x) => x.key !== 'doorstep')) assert.ok(svg.includes(`data-place="${p.key}"`));
 }
-assert.match(worldMapSvg({ unlocked: ['home', 'doorstep', 'shop', 'pond'], known: ['library'] }), /🔒 The library[\s\S]*❔ Somewhere new/);
+assert.match(worldMapSvg({ unlocked: ['home', 'doorstep', 'shop', 'pond'], known: ['library'] }), /🔒 The library[\s\S]*>\?<\/text>/); // what he has not heard of is only a question mark
 for (const p of PLACES) for (const weather of [{ kind: 'clear', temp: 12 }, { kind: 'rain', temp: 8 }, { kind: 'snow', temp: -4 }]) for (const at of [iso(noon), iso(noon + 6 * 60 * MIN), iso(Date.parse('2027-06-20T19:30:00Z'))]) {
   const svg = postcardSvg({ place: p.key, at, weather, found: [{ emoji: '🪶' }] });
   assert.ok(svg.includes('</svg>') && !/NaN|undefined/.test(svg), `${p.key} ${weather.kind}`);

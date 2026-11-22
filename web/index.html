@@ -328,7 +328,7 @@
   .mine { border-left:3px solid var(--line); padding-left:10px; }
   /* ---- The Street tab: his street as a picture, the neighbours, wishes, coins and the shop */
   #panel, .pane { min-width:0; } /* a wide picture inside (the street) scrolls by itself and never widens the panel */
-  #street { min-width:0; max-width:100%; overflow:hidden; }
+  #street { min-width:0; max-width:100%; overflow:clip; } /* clip, not hidden: the row of page buttons inside must be able to stick to the top */
   .st-scene { max-width:100%; overflow-x:auto; overflow-y:hidden; border-radius:16px; border:1px solid var(--line); scrollbar-width:none; -webkit-overflow-scrolling:touch; background:var(--card); }
   .st-scene::-webkit-scrollbar { display:none; }
   .st-scene svg { display:block; height:240px; width:720px; max-width:none; }
@@ -429,6 +429,44 @@
   .wd-card figcaption small { color:var(--muted); }
   .wd-card figcaption p { margin:4px 0 6px; font-size:14px; }
   .wd-finds .st-chip { font-size:14px; }
+  /* the four pages of the World tab: a row of buttons that stays in view while you scroll */
+  .wd-nav { position:sticky; top:0; z-index:3; display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; margin:0 0 12px; padding:2px 0 8px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .wd-nav::before { content:''; position:absolute; left:0; right:0; bottom:100%; height:16px; background:var(--panel); } /* hides what scrolls past above it */
+  .wd-nav button { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; min-width:0; padding:5px 2px 5px; border:1.5px solid var(--line); border-radius:13px; background:var(--card); color:var(--ink); font:inherit; font-size:14px; font-weight:600; cursor:pointer; }
+  .wd-nav button:hover { background:var(--chip); }
+  .wd-nav button.on { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .wd-nav .wd-ni { font-size:19px; line-height:1.1; }
+  .wd-nav i { position:absolute; top:-6px; right:-2px; min-width:20px; height:20px; padding:0 5px; border-radius:10px; background:var(--accent); color:#fff; border:2px solid var(--panel); font-style:normal; font-size:12px; font-weight:700; line-height:16px; text-align:center; }
+  .wd-nav i.coin { background:#f2c14e; color:#5a3d0c; }
+  .wd-nav button.on i { background:#fff; color:var(--accent); }
+  .wd-nav button.on i.coin { background:#fbe9b8; color:#5a3d0c; }
+  .wd-now small { display:block; }
+  #street > .wd-now { margin-bottom:16px; } /* room for the cover above the page buttons */
+  .wd-place summary .st-pill, .wd-place summary .st-pill.lock { margin-left:auto; flex:none; }
+  .st-pill.lock { background:var(--chip); color:var(--muted); }
+  .wd-place[open] summary b::after, .wd-place summary b::after { content:''; }
+  .wd-more { display:flex; align-items:center; gap:10px; padding:8px 2px; opacity:.7; }
+  .wd-more small { display:block; color:var(--muted); font-size:13px; }
+  .wd-plot small { display:block; }
+  h2 small { font-weight:500; text-transform:none; letter-spacing:0; color:var(--muted); margin-left:6px; }
+  details.st-person > summary { list-style:none; cursor:pointer; }
+  details.st-person > summary::-webkit-details-marker { display:none; }
+  details.st-person .st-id { flex:1; min-width:0; }
+  .st-arrow { flex:none; font-size:26px; line-height:1; color:var(--muted); transition:transform .2s; }
+  details[open] > summary .st-arrow { transform:rotate(90deg); }
+  .st-flag { display:inline-block; margin-left:8px; padding:1px 8px; border-radius:999px; background:var(--accent); color:#fff; font-size:12px; font-weight:700; vertical-align:middle; white-space:nowrap; }
+  .st-flag.wish { background:#fbe9b8; color:#6b4a12; }
+  details.st-person[open] > summary { margin-bottom:6px; }
+  .st-shelf .st-row > span:last-child { min-width:0; }
+  .st-chip.far { opacity:.5; }
+  .st-chip.has { background:rgba(63,154,90,.2); color:#2c6b3c; }
+  .st-chip.has b { color:inherit; }
+  @media (prefers-color-scheme: dark) { .st-chip.has { color:#a5dcb2; } }
+  .st-shelf .st-chip { white-space:normal; }
+  .st-purse .st-pill { text-align:center; line-height:1.25; padding:4px 12px; }
+  .st-purse .st-pill small { display:block; color:#fff; font-size:12px; font-weight:500; opacity:.9; }
+  .st-key { display:flex; flex-wrap:wrap; gap:6px; margin:0 2px 4px; font-size:13px; }
+  .st-key .st-chip { font-size:13px; }
   .card.out { --kind:#3f9a8a; }
   .card.out .postcard { width:100%; max-width:320px; height:auto; display:block; border-radius:12px; margin-top:10px; border:1px solid var(--line); }
   .awaychip { position:absolute; left:50%; bottom:46px; transform:translateX(-50%); z-index:3; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:8px 16px; font-size:15px; font-weight:600; box-shadow:0 4px 14px rgba(0,0,0,.25); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
