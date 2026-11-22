@@ -22,9 +22,12 @@ export function weekDigest(s, now = Date.now()) {
   const into = (s.curious?.interests ?? []).slice(0, 4).map((i) => i.topic);
   const neighbours = (s.visitors ?? []).filter((v) => v.npc && inWeek(v.at)).map((v) => `${v.name.replace(' (neighbour)', '')}: "${clip(v.text, 90)}"`).slice(-4);
   const gifts = (s.asks ?? []).filter((a) => a.status === 'done' && inWeek(a.doneAt)).map((a) => a.item);
+  const wishes = (s.wishes ?? []).filter((w) => w.status === 'kept' && inWeek(w.keptAt)).map((w) => `${w.with || w.topic} for ${w.from}`);
+  const happenings = (s.teller?.log ?? []).filter((e) => inWeek(e.at) && e.big).map((e) => e.text.slice(0, 110));
+  const bought = (s.bought ?? []).filter((b) => inWeek(b.at)).map((b) => b.item);
   const memories = (s.memories ?? []).filter((m) => inWeek(m.at) && (m.importance ?? 0) >= 7).sort((a, b) => (b.importance ?? 0) - (a.importance ?? 0)).slice(0, 8).map((m) => clip(m.text, 140));
   const days = (s.days ?? []).filter((d) => d.day && Date.parse(d.day) > since - DAY).map((d) => `${d.day}: mostly ${(d.most ?? []).slice(0, 2).join(', ')}, mood ${d.mood}`);
-  return { art, made, apps, songs, done, working, learned: [...new Set(learned)].slice(0, 6), lessons, into, neighbours, gifts, memories, days };
+  return { art, made, apps, songs, done, working, learned: [...new Set(learned)].slice(0, 6), lessons, into, neighbours, gifts, memories, days, wishes, happenings, bought, coins: s.coins ?? null };
 }
 
 export function letterPrompt(soul, d, { first = false } = {}) {
@@ -45,6 +48,9 @@ MY WEEK, IN FACTS
 - What I am into lately: ${list(d.into)}
 - Notes from my neighbours: ${list(d.neighbours)}
 - What Bas gave me: ${list(d.gifts)}
+- Wishes of neighbours I made come true: ${list(d.wishes ?? [])}
+- Things that happened in my street: ${list(d.happenings ?? [])}
+- What I bought at the corner shop: ${list(d.bought ?? [])}${d.coins != null ? ` (I have ${d.coins} coins)` : ''}
 - What I remember most: ${list(d.memories)}
 
 I write a warm, honest letter to Bas, like a real letter from a small friend: 8 to 14 short sentences, plain words, my own voice. Not a list. I pick the two or three moments that mattered most, say one thing that was hard or went wrong and what I learned, say what I am proud of, and what I want to try next week. I end with my name and one short P.S. I also choose my favourite drawing of the week (its exact name from the list, or null).

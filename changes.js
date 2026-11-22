@@ -231,6 +231,14 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-22 a purse and the corner shop',
+    run(s) { // coins, a corner shop, and wishes from the neighbours (shop.js, neighbours.js)
+      if (Number.isFinite(s.coins)) return null;
+      s.coins = 3;
+      return 'The neighbours gave me a little purse with 3 coins in it, to welcome me to the street. There is a corner shop (open from 9 to 18) where I can buy food, seeds, clay, wool, tools, and one day an instrument. I earn coins when I make something a neighbour wished for, when someone buys a drawing, and on market day (Saturday).';
+    },
+  },
+  {
     id: '2026-11-22 repeated things put away',
     run(s, at) { // Bas: delete the repeated stuff. To the archive (nothing is really gone): one of each, a few lamps where they are used
       const ids = ['dmwjkrwdy594', 'dmwnw873714aj', 'dmwqj8lwh23hk', 'dmwqke5xm24gg', 'dmwqr9mhl257t', 'dmwnmyyvr130w', 'dmwqdopge233l', 'dmwqmg1nb25iu'];

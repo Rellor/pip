@@ -12,7 +12,7 @@ export function markSent(saved, items, now = Date.now()) {
   saved.pushedAt = new Date(now).toISOString();
 }
 const DAY = 24 * HOUR;
-const MOVE_WORDS = { record_song: 'recording a song', change_thing: 'changing something he made', move_thing: 'moving something', decorate: 'making something', draw: 'drawing', make_app: 'making a program', make_clothes: 'sewing', plant: 'planting', cook: 'cooking', eat: 'eating', search_web: 'looking things up', browse: 'browsing the web', read_book: 'reading', extend_thing: 'adding to something he made', place_picture: 'hanging a picture', use: 'using something' };
+const MOVE_WORDS = { record_song: 'recording a song', change_thing: 'changing something he made', move_thing: 'moving something', decorate: 'making something', draw: 'drawing', make_app: 'making a program', make_clothes: 'sewing', plant: 'planting', cook: 'cooking', eat: 'eating', search_web: 'looking things up', browse: 'browsing the web', buy: 'shopping', read_book: 'reading', extend_thing: 'adding to something he made', place_picture: 'hanging a picture', use: 'using something' };
 // Words that show up in any thought, so they do not count as "the same topic".
 const COMMON = new Set('that this with have want just then from what will some them they need make made making about would could should still more next step steps project projects little small really little first last again before after work working keep going feel feels like into over time today here there when your mine very also been being because finished finish start started trying tried test testing done good back sure right nice well'.split(' '));
 
@@ -113,7 +113,7 @@ export function checkup(s, health = {}, now = Date.now()) {
 
 // The day in a few lines, for Bas's phone once an evening: what kind of things he did, what he made and learned, and what
 // went wrong. So a loop or a dull day shows up without anyone having to look.
-const KIND_NAMES = { make: 'making', learn: 'learning', music: 'music', garden: 'garden', food: 'food', rest: 'rest', write: 'writing', people: 'talking', room: 'room', look: 'photos', play: 'free "do"', clothes: 'clothes', walk: 'walking' };
+const KIND_NAMES = { shop: 'shopping', world: 'things that happened', make: 'making', learn: 'learning', music: 'music', garden: 'garden', food: 'food', rest: 'rest', write: 'writing', people: 'talking', room: 'room', look: 'photos', play: 'free "do"', clothes: 'clothes', walk: 'walking' };
 export function dayReport(s, kindOf, now = Date.now()) {
   const day = (s.log ?? []).filter((e) => now - Date.parse(e.at) < DAY && Date.parse(e.at) <= now);
   if (!day.length) return null;
@@ -130,6 +130,7 @@ export function dayReport(s, kindOf, now = Date.now()) {
     learned.length ? `Learned about: ${learned.join(', ')}.` : 'Did not look anything up.',
     into.length ? `Into lately: ${into.join(', ')}.` : '',
     failed ? `${failed} steps did not work.` : '',
-    `Fullness ${Math.round(s.fullness ?? 0)}/10, mood ${s.mood ?? '?'}.`,
+    (s.wishes ?? []).some((w) => w.status === 'kept' && now - Date.parse(w.keptAt) < DAY) ? `Made a neighbour's wish come true: ${(s.wishes ?? []).filter((w) => w.status === 'kept' && now - Date.parse(w.keptAt) < DAY).map((w) => `${w.topic} for ${w.from}`).join(', ')}.` : '',
+    `Fullness ${Math.round(s.fullness ?? 0)}/10, mood ${s.mood ?? '?'}${Number.isFinite(s.coins) ? `, ${s.coins} coins` : ''}.`,
   ].filter(Boolean).join('\n');
 }
