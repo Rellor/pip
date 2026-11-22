@@ -386,6 +386,12 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-23 building anywhere in his world',
+    run() {
+      return 'Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in "where", like "outside by the pond" or "outside in the street in front of my house". If it fits there, it stands there. Out there a thing can be bigger than a house: I say how big with "metres" (its longest side).';
+    },
+  },
+  {
     id: '2026-11-22 watercolour paper from Bas',
     run(s, at) { // he asked for new watercolor paper, to paint a new view now that his autumn window is finished
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /watercolou?r|paper/i.test(a.item));

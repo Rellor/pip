@@ -2,10 +2,10 @@
 // of his world has a spot in the street. (The drawing itself is checked by eye, in a real browser.)
 // Run: node tests/town.mjs
 import assert from 'node:assert/strict';
-import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, ROUTES, POND, HILL, WORLD_RANGE, groundAt, inTown, townBlocked, atTownDoor } from '../web/town.js';
+import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, ROUTES, POND, HILL, WORLD_RANGE, groundAt, inTown, townBlocked, atTownDoor, buildProblem, buildPlace } from '../web/town.js';
 import { PLACES } from '../web/world.js';
 import { PLOT } from '../web/town.js';
-import { makeDecor, moveThing, updateDecor, storeAway, takeOut, outsideThings, sizeOf, setFurniture, setChest, MAX_OUTSIDE } from '../decor.js';
+import { makeDecor, moveThing, updateDecor, storeAway, takeOut, outsideThings, sizeOf, setFurniture, setChest, MAX_OUTSIDE, isOutside, outsideChoice, outsideIn } from '../decor.js';
 import { spotNote, misplaced, designate } from '../placement.js';
 import { availableMoves } from '../moves.js';
 import { streetData } from '../web/streetview.js';
@@ -77,7 +77,7 @@ assert.deepEqual(designate({ decor }, { name: 'stone arch', where: 'outside' }),
 ok('a thing made for his plot stands on it, at its full size, apart from the others');
 
 for (let i = 0; i < 40; i++) decor.push({ id: `room${i}`, name: `thing ${i}`, kind: 'floor', zone: 'floor', pos: [0, 0, 0], parts: cube(0.3, 0.3, 0.3), createdAt: new Date(t - 9 * 86_400_000).toISOString() });
-assert.match(add({ name: 'one more vase', parts: cube(0.3, 0.4, 0.3) }).failed, /his room is full.*outside on his plot/);
+assert.match(add({ name: 'one more vase', parts: cube(0.3, 0.4, 0.3) }).failed, /his room is full.*it can stand outside/);
 assert.ok(add({ name: 'stone arch', where: 'outside', parts: cube(3, 3, 1) }).entry, 'a full room does not close the plot');
 decor.splice(decor.findIndex((d) => d.id === 'room0'), 40);
 ok('a full room is no end: the plot has room');
@@ -98,15 +98,92 @@ assert.equal(takeOut(decor, stored, 'garden bench', null, t, t).entry.kind, 'out
 ok('he can carry a thing out to his plot and back in, change it there, and store it');
 
 const many = [];
-for (let i = 0; i < MAX_OUTSIDE; i++) { const r = makeDecor(many, { name: `zorb${String.fromCharCode(97 + i)}`, where: 'outside', parts: cube(1, 2, 1) }, t, t + i); assert.ok(r.entry, `${i}: ${r.failed}`); many.push({ ...r.entry, createdAt: new Date(t - 5 * 86_400_000).toISOString() }); }
+for (let i = 0; i < MAX_OUTSIDE; i++) { const r = makeDecor(many, { name: `zorb${String.fromCharCode(97 + (i % 26))}${String.fromCharCode(97 + Math.floor(i / 26))}`, where: 'outside', parts: cube(1, 2, 1) }, t, t + i); assert.ok(r.entry, `${i}: ${r.failed}`); many.push({ ...r.entry, createdAt: new Date(t - 5 * 86_400_000).toISOString() }); }
 assert.ok(many.every(onPlot));
 for (const a of many) for (const b of many) if (a !== b) assert.ok(Math.abs(a.pos[0] - b.pos[0]) >= 1.5 || Math.abs(a.pos[2] - b.pos[2]) >= 1.5, 'no two things overlap');
-assert.match(makeDecor(many, { name: 'one too many', where: 'outside', parts: cube(1, 1, 1) }, t, t + 99).failed, /my plot is full/);
+assert.match(makeDecor(many, { name: 'one too many', where: 'outside', parts: cube(1, 1, 1) }, t, t + 99).failed, /40 things of mine outside/);
 ok(`the plot holds ${MAX_OUTSIDE} things, none on top of another`);
 
-assert.match(spotNote({ decor }, { what: 'a big wooden windmill for my plot outside' }), /outside, on my own plot.*up to 3\.7 m wide.*"where": "outside"/);
+{
+  const note = spotNote({ decor }, { what: 'a big wooden windmill for my plot outside' });
+  assert.match(note, /a place I pick myself[\s\S]*"outside by the pond"[\s\S]*bigger than a house[\s\S]*"metres"/);
+  assert.ok(!/library|hill/.test(note), 'only places he knows the way to are named');
+  assert.match(spotNote({ decor, world: { open: { hill: true }, known: { library: true } } }, { what: 'a tower', where: 'outside on top of the hill' }), /on top of the hill[\s\S]*by the library[\s\S]*I said: "outside on top of the hill"/);
+  assert.equal(spotNote({ decor }, { what: 'a small painting of the pond' }).includes('a place I pick myself'), false, 'a thing about the pond is not a thing by the pond');
+}
 const live = { decor, energy: 8, fullness: 8, body: { creativity: 6, boredom: 3, curiosity: 4, coziness: 6 }, tools: [{ name: 'toolbox', kind: 'toolbox' }], log: [], projects: [], pantry: [], garden: { seeds: [], plots: [] } };
 const line = availableMoves(live, { now: t, random: () => 0.5 }).find((m) => m.name === 'decorate')?.line ?? '';
-assert.ok(line === '' || (line.length < 240 && /outside on my plot|stove|desk is full|lamp/.test(line)), line);
+assert.ok(line === '' || (line.length < 240 && /outside at a place I pick|stove|desk is full|lamp/.test(line)), line);
 assert.deepEqual(streetData({ decor }, t).world.plot, outsideThings(decor).map((d) => d.name));
 ok('the maker hears how big a thing can be out there, and the page lists what stands on his plot');
+
+// ---- He builds anywhere in his world: he names the place, and it stands there when it fits (web/town.js, decor.js)
+{
+  const part = (w, h, d) => { const k = 2 / Math.max(w, h, d); return [{ shape: 'box', size: [w * k, h * k, d * k], pos: [0, (h * k) / 2, 0], rot: [0, 0, 0], color: '#c96' }]; };
+  const world = [];
+  let n = 0;
+  const build = (name, where, w, h, d, extra = {}) => { const r = makeDecor(world, { name, why: 'x', where, parts: part(w, h, d), metres: Math.max(w, h, d), ...extra }, t, t + n++); if (r.entry) world.push({ ...r.entry, createdAt: new Date(t - 5 * 86_400_000).toISOString() }); return r; };
+  const at = (e) => [e.pos[0] - TOWN_X, e.pos[2]];
+  const foot = (e) => { const [w, , d] = sizeOf(e); const [x, z] = at(e); return [x - w / 2, x + w / 2, z - d / 2, z + d / 2]; };
+
+  const light = build('tall lighthouse', 'outside by the pond', 5, 16, 5).entry;
+  assert.ok(light && light.kind === 'outside' && light.spot === 'pond' && /by the pond/.test(light.label));
+  assert.deepEqual(sizeOf(light).map(Math.round), [5, 16, 5], 'as big as he said: higher than every house');
+  assert.ok(Math.hypot(at(light)[0] - POND.x, at(light)[1] - POND.z) < 22 && ((at(light)[0] - POND.x) / POND.rx) ** 2 + ((at(light)[1] - POND.z) / POND.rz) ** 2 > 1, 'beside the water, not in it');
+  const robot = build('giant robot', 'outside in the street in front of my house', 7, 12, 5).entry;
+  assert.ok(robot && Math.abs(at(robot)[0]) < 6 && at(robot)[1] > 2.5 && at(robot)[1] < 9, `on the road before his door: ${at(robot)}`);
+  const whale = build('big whale', 'outside left of the pond', 8, 4, 5).entry;
+  assert.ok(whale && at(whale)[0] < POND.x - POND.rx, 'left of the pond is left of it');
+  const arch = build('garden arch', 'outside behind the pond', 4, 4, 1).entry;
+  assert.ok(arch && at(arch)[1] < POND.z - POND.rz);
+  ok('he names the place and it stands there: by the pond, in the street, on the side he says, bigger than a house');
+
+  // on the hill it stands on the ground as it is
+  const tower = build('stone tower', 'outside on top of the hill', 4, 10, 4, { worldOpen: ['pond', 'hill'] }).entry;
+  assert.ok(tower && tower.pos[1] > 3 && tower.pos[1] <= groundAt(...at(tower)) + 0.001, `on the slope: ${tower.pos}`);
+  assert.match(build('second tower', 'outside on top of the hill', 4, 10, 4, { worldOpen: ['pond'] }).failed, /do not know the way[\s\S]*by the pond/);
+  ok('the hill: on the slope, and only when he knows the way');
+
+  // what does not fit is not placed, and he hears why and what would fit
+  const castle = build('huge castle', 'outside by the swing', 20, 9, 16);
+  assert.match(castle.failed, /does not fit by the swing[\s\S]*20 x 16 m[\s\S]*fits there[\s\S]*another place/);
+  assert.match(build('sky bridge', 'outside by the old boat', 30, 40, 4).failed ?? '', /does not fit|my world ends/);
+  assert.match(makeDecor(world, { name: 'far too big barn', why: 'x', where: 'outside', parts: part(20, 6, 18), metres: 20 }, t, t + 50).failed, /no room on my plot[\s\S]*another place outside/);
+  ok('too big for the place: he hears why, how big would fit, and where else');
+
+  // nothing he builds stands in a house, in the water, on a walkway or on another thing of his
+  const spots = ['outside by the pond', 'outside in the park', 'outside in the street by the bakery', 'outside in the street by the corner shop', 'outside by Lina’s house', 'outside by the willow', 'outside in the street by Mo’s house', 'outside', 'outside right of the pond', 'outside by the green stone'];
+  const fails = [];
+  for (let i = 0; i < 24; i++) { const r = build(`q${String.fromCharCode(97 + i)}rk${String.fromCharCode(110 + (i % 12))}um`, spots[i % spots.length], 2 + (i % 4) * 2, 3 + (i % 5), 2 + (i % 3) * 2); if (r.failed) fails.push(`${spots[i % spots.length]}: ${r.failed}`); }
+  if (process.env.SHOW) console.log(fails.join('\n'));
+  assert.ok(world.length >= 20, `most of them found a place: ${world.length}`);
+  for (const e of world) {
+    const [x0, x1, z0, z1] = foot(e);
+    assert.equal(buildProblem(x0 + 0.02, x1 - 0.02, z0 + 0.02, z1 - 0.02), null, `${e.name} at ${at(e)}`);
+    for (const [x, z] of [[x0, z0], [x1, z0], [x0, z1], [x1, z1], at(e)]) assert.equal(townBlocked(TOWN_X + x, z, 0), false, `${e.name}: a corner in something`);
+    for (const o of world) if (o !== e) { const [a0, a1, b0, b1] = foot(o); assert.ok(x1 <= a0 + 0.01 || a1 <= x0 + 0.01 || z1 <= b0 + 0.01 || b1 <= z0 + 0.01, `${e.name} and ${o.name} overlap`); }
+  }
+  // the ways he walks stay free: every spot and every corner of every route
+  for (const [k, sp] of Object.entries(TOWN_SPOTS)) for (const e of world) { const [x0, x1, z0, z1] = foot(e); assert.ok(!(sp.x > x0 - 0.9 && sp.x < x1 + 0.9 && sp.z > z0 - 0.9 && sp.z < z1 + 0.9), `${e.name} stands on ${k}`); }
+  ok('nothing stands in a house, in the water, on a walkway or on another thing');
+
+  // moving: to another place outside it keeps its size; a giant does not come into his room
+  const moved = moveThing(world, null, { name: 'tall lighthouse', where: 'outside in the park' }, t, t + 200);
+  assert.ok(!moved.failed && /in the park/.test(moved.label) && Math.round(sizeOf(world.find((e) => e.name === 'tall lighthouse'))[1]) === 16, JSON.stringify(moved).slice(0, 200));
+  assert.match(moveThing(world, null, { name: 'tall lighthouse', where: 'floor' }, t, t + 201).failed, /too big for my room/);
+  ok('a giant moves to another place outside at its own size, and does not fit in his room');
+
+  // words: a place outside is a place outside, a thing in his room is not
+  for (const w of ['outside', 'outside by the pond', 'by the pond', 'in the park', 'on top of the hill', 'in the street']) assert.ok(isOutside(w), w);
+  for (const w of ['floor', 'on the desk', 'wall_left', 'next to the street lamp', 'by the pond painting', 'floor_front', 'ceiling']) assert.ok(!isOutside(w), w);
+  assert.equal(buildPlace('outside in the park by the swing').key, 'swing');
+  assert.equal(buildPlace('outside'), null);
+  assert.equal(outsideChoice('outside by the pond', 'outside'), 'outside by the pond');
+  assert.equal(outsideChoice('outside', 'outside by the willow'), 'outside by the willow');
+  assert.equal(outsideChoice(null, 'on the desk'), 'on the desk');
+  assert.equal(outsideIn('a lighthouse outside by the pond'), 'outside by the pond');
+  assert.equal(outsideIn('a small clay cup'), null);
+  const d = streetData({ decor: world }, t).world.built;
+  assert.ok(d.some((b) => b.name === 'giant robot' && /in the street in front of his house/.test(b.where) && b.metres === 12), JSON.stringify(d.slice(0, 3)));
+  ok('the words he uses for places, and the World tab lists what he built and where');
+}

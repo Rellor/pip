@@ -3,7 +3,9 @@
 // wall. When Pip does not say where a new thing goes, it goes to its right place. He may put it somewhere else (it is his
 // room), but then he notices it would be better elsewhere, and putting it right is offered to him.
 import { placeFor } from './web/lighting.js';
-import { supportsInfo, sizeOf, fitsOnATop, accessProblem, coverKind, coverTarget, freeSpaceOn, MIN_SHRINK, isOutside, outsideThings, MAX_OUTSIDE } from './decor.js';
+import { supportsInfo, sizeOf, fitsOnATop, accessProblem, coverKind, coverTarget, freeSpaceOn, MIN_SHRINK, isOutside, saysOutside, outsideThings, outsidePlaces, outsideChoice, outsideIn, MAX_OUTSIDE } from './decor.js';
+import { BUILD_MAX } from './web/town.js';
+import { unlockedKeys, knownKeys } from './world.js';
 import { box, ROOM_SCALE } from './scale.js';
 import { needLampSpots } from './growth.js';
 
@@ -151,9 +153,13 @@ export function spotNote(s, details = {}) {
   const said = `${details.name ?? ''} ${details.what ?? ''}`.trim();
   if (!said) return '';
   const lines = [];
-  if (isOutside(details.where) || isOutside(said)) { // for his plot across the street: there is room for big things
+  if (isOutside(details.where) || saysOutside(said)) { // out in his world: he picks the place himself, and it can be big
     const n = outsideThings(decor).length;
-    return `WHERE IT WILL GO: outside, on my own plot across the street (a field of 46 x 14 m; ${n ? `${n} of my things stand${n === 1 ? 's' : ''} there` : 'nothing stands there yet'}, room for ${MAX_OUTSIDE}). Out there a thing can be big: up to 3.7 m wide and 3 m high in everyday size. Everyone who walks down my street sees it, from all sides, so I give it a back too. It stands on the grass: it needs feet or a base. I answer with "where": "outside".`;
+    const places = outsidePlaces([...new Set([...unlockedKeys(s), ...knownKeys(s)])]).filter((x) => x !== 'on my plot');
+    const chosen = outsideChoice(details.where ?? outsideIn(said), null);
+    return `WHERE IT WILL GO: outside, at a place I pick myself. I name it in "where". "outside" alone is my own plot across the street (46 x 14 m). Or "outside" and a place of my world, like "outside by the pond". The places: ${places.join(', ')}. I can add a side: "outside left of the pond", "outside behind the willow". If it fits there, it stands there; if it does not, I hear why and pick again.${chosen && chosen !== 'outside' ? ` I said: "${chosen}".` : ''}
+HOW BIG: out there a thing can be bigger than a house (up to ${BUILD_MAX.w} m wide and ${BUILD_MAX.h} m high). I design it from shapes as always, and say its real size with "metres": its longest side in metres (a bench 2, a shed 4, a house 9, a tower 16). Without "metres" it is built like a thing for my room.
+Everyone who walks by sees it from all sides, so I give it a back too. It stands on the ground: it needs feet or a base. ${n ? `${n} of my things stand${n === 1 ? 's' : ''} outside` : 'Nothing of mine stands outside yet'} (room for ${MAX_OUTSIDE}).`;
   }
   const cloth = CLOTH_WORD.exec(said)?.[1];
   const host = cloth ? coverTarget(decor, { name: cloth, on: details.on }) : null;
