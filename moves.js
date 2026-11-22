@@ -134,7 +134,7 @@ export const MOVES = [
   // --- writing and people ---
   { name: 'write_diary', line: () => 'write in my diary: {text}', when: () => true, score: (s, n) => 0.3 + (new Date(n).getHours() >= 20 ? 1 : 0) },
   { name: 'tell', line: () => 'write a message to Bas: {text}', when: (s, n) => s.plan?.unread > 0 || (s.body.loneliness >= 7 && daysSince(s.outbox?.filter((m) => m.kind === 'tell').at(-1)?.at, n) >= 1), score: (s) => (s.plan?.unread ? 5 : 1) },
-  { name: 'answer_visitor', line: (s) => `answer a visitor's message on my page (${names((s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => v.id))}): {id, text}`, when: (s) => (s.visitors ?? []).some((v) => !v.answer), score: () => 2 },
+  { name: 'answer_visitor', line: (s) => `answer a visitor's or a neighbour's note (${names((s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => v.id))}): {id, text}`, when: (s) => (s.visitors ?? []).some((v) => !v.answer), score: () => 2 },
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
   { name: 'dream', line: () => 'tell Bas about a big dream, something far too big to make myself (he might build it): {what, why}', when: (s, n) => daysSince(s.bigDreamAt, n) >= 3 && s.body.creativity >= 6, score: () => 0.8 },

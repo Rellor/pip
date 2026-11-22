@@ -3274,7 +3274,7 @@ function renderVisitors(s) {
   renderMyVisits(s);
   const list = (s.visitors || []).slice().reverse();
   fill($('visitlist'), list.length
-    ? list.flatMap((v) => [entry([when(v.at), v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
+    ? list.flatMap((v) => [entry([when(v.at), v.npc ? `${String(v.name || '').replace(' (neighbour)', '')}, a neighbour in Pip's world` : v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
     : empty('No messages yet. Be the first to say hello.'));
 }
 const pageOpenedAt = Date.now();
