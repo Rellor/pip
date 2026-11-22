@@ -1,26 +1,13 @@
 {
   "mood": "curious",
-  "energy": 9.5,
+  "energy": 9,
   "boredom": 0,
-  "loneliness": 4.66,
+  "loneliness": 4.69,
   "interests": [
     "autumn dusk colors"
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-21T19:07:20.114Z",
-      "action": "move_thing",
-      "detail": "small side table",
-      "enjoyment": 6
-    },
-    {
-      "at": "2026-11-21T19:15:40.023Z",
-      "action": "take_photo",
-      "detail": "window",
-      "enjoyment": 0,
-      "failed": "this photo looks just like pic7, which I took 1 days ago, so it is not kept. A new photo is worth it"
-    },
     {
       "at": "2026-11-21T19:15:47.629Z",
       "action": "do",
@@ -308,6 +295,19 @@
       "at": "2026-11-22T10:03:12.055Z",
       "action": "browse",
       "detail": "",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-22T10:11:33.042Z",
+      "action": "move_thing",
+      "detail": "small wooden shelf",
+      "enjoyment": 0,
+      "failed": "\"desk\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. "
+    },
+    {
+      "at": "2026-11-22T10:11:33.045Z",
+      "action": "do",
+      "detail": "tell my plant what went wrong and how it felt",
       "enjoyment": 6
     }
   ],
@@ -657,7 +657,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.62,
+      "weight": 6.619,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -666,7 +666,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.659,
+      "weight": 6.658,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -675,7 +675,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.471,
+      "weight": 7.47,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -684,7 +684,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.113,
+      "weight": 7.112,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -693,7 +693,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.988,
+      "weight": 7.987,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -702,7 +702,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.332,
+      "weight": 7.331,
       "lastUsed": "2026-11-20T12:00:24.812Z"
     },
     {
@@ -711,7 +711,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.722,
+      "weight": 7.721,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -720,7 +720,7 @@
       "text": "Lesson: when I draw, it often fails (I need drawing supplies in my inventory for that. If I really want to do it, I ask for it with asks_add and say why). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 5.954,
+      "weight": 5.953,
       "lastUsed": "2026-11-16T17:38:02.420Z"
     },
     {
@@ -729,7 +729,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.791,
+      "weight": 8.789,
       "lastUsed": "2026-11-19T10:48:25.729Z"
     },
     {
@@ -738,7 +738,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.879,
+      "weight": 6.878,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -747,7 +747,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.462,
+      "weight": 6.461,
       "lastUsed": "2026-11-20T11:02:43.147Z"
     },
     {
@@ -756,7 +756,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.966,
+      "weight": 9.964,
       "lastUsed": "2026-11-22T07:40:51.518Z"
     },
     {
@@ -765,7 +765,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.894,
+      "weight": 6.893,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -774,7 +774,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.407,
+      "weight": 8.406,
       "lastUsed": "2026-11-21T14:49:17.703Z"
     },
     {
@@ -783,7 +783,7 @@
       "text": "Lesson: when I cook, it often fails (I have no flour in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: nothing). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.114,
+      "weight": 6.113,
       "lastUsed": "2026-11-17T15:08:12.822Z"
     },
     {
@@ -792,7 +792,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.318,
+      "weight": 9.316,
       "lastUsed": "2026-11-21T18:34:37.216Z"
     },
     {
@@ -801,7 +801,7 @@
       "text": "I worked on the clay base for the small desk lamp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.156,
+      "weight": 6.155,
       "lastUsed": "2026-11-18T21:23:58.763Z"
     },
     {
@@ -810,7 +810,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.025,
+      "weight": 8.024,
       "lastUsed": "2026-11-20T11:44:13.995Z"
     },
     {
@@ -819,7 +819,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.41,
+      "weight": 9.408,
       "lastUsed": "2026-11-20T14:04:56.313Z"
     },
     {
@@ -828,7 +828,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.64,
+      "weight": 9.638,
       "lastUsed": "2026-11-21T07:32:11.956Z"
     },
     {
@@ -837,7 +837,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.73,
+      "weight": 6.729,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -848,7 +848,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.731,
+      "weight": 6.73,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -859,7 +859,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8.238,
+      "weight": 8.237,
       "lastUsed": "2026-11-22T10:03:10.780Z"
     },
     {
@@ -868,7 +868,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.208,
+      "weight": 9.206,
       "lastUsed": "2026-11-22T08:32:06.196Z"
     },
     {
@@ -877,7 +877,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.968,
+      "weight": 9.966,
       "lastUsed": "2026-11-22T07:48:58.230Z"
     },
     {
@@ -886,7 +886,7 @@
       "text": "I need to plan the steps for my clay bowl project tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.827,
+      "weight": 6.826,
       "lastUsed": "2026-11-20T10:10:32.424Z"
     },
     {
@@ -895,7 +895,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.651,
+      "weight": 8.649,
       "lastUsed": "2026-11-20T13:13:47.742Z"
     },
     {
@@ -904,7 +904,7 @@
       "text": "I am getting into autumn dusk colors. I want to know more about it.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.489,
+      "weight": 6.488,
       "lastUsed": "2026-11-19T17:12:46.285Z"
     },
     {
@@ -913,7 +913,7 @@
       "text": "I made cozy night owl reading lamp (I need a warm, adjustable reading lamp by the bed so I can read my diary and books late at night without straining my eyes.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.494,
+      "weight": 7.493,
       "lastUsed": "2026-11-21T14:57:56.570Z"
     },
     {
@@ -922,7 +922,7 @@
       "text": "I made rainy autumn window watercolor (I love the rain tonight and want to capture how the window looks, inspired by Vincent van Gogh's watercolor and Edward Hopper's play of light.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.033,
+      "weight": 7.032,
       "lastUsed": "2026-11-22T10:03:10.780Z"
     },
     {
@@ -931,7 +931,7 @@
       "text": "My project \"Paint a watercolor of the rainy autumn window\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.98,
+      "weight": 7.979,
       "lastUsed": "2026-11-21T11:40:46.602Z"
     },
     {
@@ -940,7 +940,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8.09,
+      "weight": 8.089,
       "lastUsed": "2026-11-21T15:06:03.096Z"
     },
     {
@@ -949,7 +949,7 @@
       "text": "My project \"Shape a ceramic base for the desk lamp\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.624,
+      "weight": 6.623,
       "lastUsed": "2026-11-20T10:02:28.687Z"
     },
     {
@@ -958,7 +958,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.613,
+      "weight": 7.612,
       "lastUsed": "2026-11-21T07:32:11.956Z"
     },
     {
@@ -967,7 +967,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.615,
+      "weight": 8.613,
       "lastUsed": "2026-11-22T07:07:22.275Z"
     },
     {
@@ -976,7 +976,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.587,
+      "weight": 8.585,
       "lastUsed": "2026-11-21T14:16:37.978Z"
     },
     {
@@ -985,7 +985,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.558,
+      "weight": 9.556,
       "lastUsed": "2026-11-22T07:48:58.230Z"
     },
     {
@@ -994,7 +994,7 @@
       "text": "Basil needs time to grow before I can harvest it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.213,
+      "weight": 6.212,
       "lastUsed": "2026-11-21T07:40:17.716Z"
     },
     {
@@ -1003,7 +1003,7 @@
       "text": "I can use my sewing kit now to make clothes and blankets.",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.212,
+      "weight": 7.211,
       "lastUsed": "2026-11-22T08:21:51.977Z"
     },
     {
@@ -1012,7 +1012,7 @@
       "text": "I started working on stitching a tiny fabric pouch.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.221,
+      "weight": 6.22,
       "lastUsed": "2026-11-21T07:07:52.723Z"
     },
     {
@@ -1021,7 +1021,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.767,
+      "weight": 8.765,
       "lastUsed": "2026-11-22T09:08:14.036Z"
     },
     {
@@ -1030,7 +1030,7 @@
       "text": "My project \"Knit my warm wool blanket\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.821,
+      "weight": 6.82,
       "lastUsed": "2026-11-21T11:32:42.324Z"
     },
     {
@@ -1039,7 +1039,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.795,
+      "weight": 8.793,
       "lastUsed": "2026-11-22T07:40:51.518Z"
     },
     {
@@ -1048,7 +1048,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.345,
+      "weight": 8.344,
       "lastUsed": "2026-11-22T07:40:51.518Z"
     },
     {
@@ -1057,7 +1057,7 @@
       "text": "I started looking up how to build a wooden birdhouse.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.388,
+      "weight": 6.387,
       "lastUsed": "2026-11-22T07:07:22.275Z"
     },
     {
@@ -1066,7 +1066,7 @@
       "text": "I am working on step 2 of my project Build a wooden birdhouse.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.389,
+      "weight": 6.388,
       "lastUsed": "2026-11-22T07:07:22.275Z"
     },
     {
@@ -1075,7 +1075,7 @@
       "text": "I need to continue building my wooden birdhouse.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.394,
+      "weight": 6.393,
       "lastUsed": "2026-11-22T07:07:22.275Z"
     },
     {
@@ -1084,7 +1084,7 @@
       "text": "I am working on building my wooden birdhouse.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.396,
+      "weight": 6.395,
       "lastUsed": "2026-11-22T07:07:22.275Z"
     },
     {
@@ -1093,7 +1093,7 @@
       "text": "I made wooden birdhouse (to give my clay bird a nice little home by the window)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.981,
+      "weight": 5.98,
       "lastUsed": "2026-11-22T07:24:41.037Z"
     },
     {
@@ -1102,7 +1102,7 @@
       "text": "My wooden birdhouse project is finished and I am proud of it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.982,
+      "weight": 5.981,
       "lastUsed": "2026-11-22T07:32:46.426Z"
     },
     {
@@ -1111,7 +1111,7 @@
       "text": "I did everything I wanted to do today. It feels good to follow my own plans.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.983,
+      "weight": 5.982,
       "lastUsed": "2026-11-22T07:40:52.871Z"
     },
     {
@@ -1120,7 +1120,7 @@
       "text": "Moving the small wooden shelf closer to the desk makes my workspace more practical.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.989,
+      "weight": 5.988,
       "lastUsed": "2026-11-22T08:30:02.892Z"
     },
     {
@@ -1129,7 +1129,7 @@
       "text": "Wall things must hang on the back or left wall with wall, along, and height parameters.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.99,
+      "weight": 5.989,
       "lastUsed": "2026-11-22T08:32:07.832Z"
     },
     {
@@ -1138,7 +1138,7 @@
       "text": "I recorded a song: A Quiet Tune for the Fading Bird Box (choir, drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.99,
       "lastUsed": "2026-11-22T08:51:44.743Z"
     },
     {
@@ -1147,7 +1147,7 @@
       "text": "I decided to move my shelf to the left wall near the desk.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.992,
       "lastUsed": "2026-11-22T09:08:19.358Z"
     },
     {
@@ -1156,7 +1156,7 @@
       "text": "When moving things, always make sure I specify the correct wall or surface.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.994,
+      "weight": 5.993,
       "lastUsed": "2026-11-22T09:17:09.470Z"
     },
     {
@@ -1165,7 +1165,7 @@
       "text": "Drawing cloudy daylight helps keep the room quiet.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.994,
       "lastUsed": "2026-11-22T09:26:42.272Z"
     },
     {
@@ -1174,7 +1174,7 @@
       "text": "I drew cloudy sky over the courtyard",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.995,
+      "weight": 5.994,
       "lastUsed": "2026-11-22T09:26:43.262Z"
     },
     {
@@ -1183,31 +1183,23 @@
       "text": "Humming a little tune always brings a calm warmth to the room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.998,
+      "weight": 5.997,
       "lastUsed": "2026-11-22T09:54:57.430Z"
     },
     {
-      "id": "mmwrnuqzc60",
-      "at": "2026-11-22T09:54:58.426Z",
-      "text": "I sang a little tune",
-      "importance": 3,
+      "id": "mmwrog37b60",
+      "at": "2026-11-22T10:11:33.046Z",
+      "text": "Moving the small wooden shelf near the desk helps keep things tidy and within reach.",
+      "importance": 6,
       "kind": "memory",
-      "weight": 2.998,
-      "lastUsed": "2026-11-22T09:54:58.426Z"
+      "weight": 5.999,
+      "lastUsed": "2026-11-22T10:11:33.046Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-21T22:06:26.534Z",
   "thoughts": [
-    {
-      "at": "2026-11-21T21:01:30.329Z",
-      "text": "I want to progress on my birdhouse project now that I've looked up how to do it.",
-      "short": "I want to progress on my birdhouse project now that I've looked up how to do it.",
-      "mood": "thoughtful",
-      "action": "do",
-      "detail": "say hello to my plants through the glass"
-    },
     {
       "at": "2026-11-21T21:09:38.240Z",
       "text": "I want to progress on building my wooden birdhouse since I am currently on step 2.",
@@ -1439,6 +1431,14 @@
       "mood": "curious",
       "action": "browse",
       "detail": ""
+    },
+    {
+      "at": "2026-11-22T10:11:33.046Z",
+      "text": "My small wooden shelf would be better within reach near the desk, so I will move it there.",
+      "short": "My small wooden shelf would be better within reach near the desk, so I will move it there.",
+      "mood": "curious",
+      "action": "move_thing",
+      "detail": "small wooden shelf"
     }
   ],
   "outbox": [
@@ -1629,24 +1629,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-21T21:01:31.325Z",
-      "action": "do",
-      "thought": "Hello, little plants.",
-      "move": null,
-      "emoji": "",
-      "what": "say hello to my plants through the glass",
-      "feeling": null
-    },
-    {
-      "at": "2026-11-21T21:09:39.237Z",
-      "action": "do",
-      "thought": "Hello, little plants.",
-      "move": null,
-      "emoji": "",
-      "what": "say hello to my plants through the glass",
-      "feeling": null
-    },
     {
       "at": "2026-11-21T21:17:47.350Z",
       "action": "do",
@@ -1961,6 +1943,24 @@
         "text": "Voyager 1 is a space probe launched by NASA on September 5, 1977, as part of the Voyager program, to study the outer Solar System and the interstellar space beyond the Sun's heliosphere. At a distance of 173.02 AU (25.9 billion km; 16.1 billion mi) as of November 2026, it is the most distant…"
       },
       "failed": null
+    },
+    {
+      "at": "2026-11-22T10:11:34.041Z",
+      "action": "move_thing",
+      "thought": "I wanted to, but \"desk\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. small wooden shelf is a wall thing. …. (I want to put my small wooden shelf near the desk where I need it.)",
+      "name": "small wooden shelf",
+      "place": null,
+      "failed": "\"desk\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. small wooden shelf is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
+    },
+    {
+      "at": "2026-11-22T10:15:34.041Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🪴",
+      "what": "tell my plant what went wrong and how it felt",
+      "feeling": "calm"
     }
   ],
   "decor": [
@@ -9434,7 +9434,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-22T10:03:12.053Z",
+    "at": "2026-11-22T10:11:33.041Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -9442,31 +9442,50 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 1823,
-      "output": 86,
+      "input": 2044,
+      "output": 271,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I am full of energy and want to browse the web to find a new hobby or spark.",
-    "inner": "I am full of energy and want to browse the web to find a new hobby or spark.",
+    "thought": "My small wooden shelf would be better within reach near the desk, so I will move it there.",
+    "inner": "My small wooden shelf would be better within reach near the desk, so I will move it there.",
     "sent": false,
     "steps": [
       {
-        "action": "browse",
-        "details": {},
-        "detail": "",
-        "thought": "I want to explore the web to find something new that inspires me.",
+        "action": "move_thing",
+        "details": {
+          "name": "small wooden shelf",
+          "wall": "desk"
+        },
+        "detail": "small wooden shelf",
+        "thought": "I want to put my small wooden shelf near the desk where I need it.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "do",
+        "details": {
+          "what": "tell my plant what went wrong and how it felt",
+          "feeling": "calm",
+          "emoji": "🪴"
+        },
+        "detail": "tell my plant what went wrong and how it felt",
+        "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "browse",
-    "details": {},
-    "detail": "",
-    "enjoyment": 6,
+    "action": "move_thing",
+    "details": {
+      "name": "small wooden shelf",
+      "wall": "desk"
+    },
+    "detail": "small wooden shelf",
+    "enjoyment": 0,
     "new_idea": null,
     "found": null
   },
@@ -9547,7 +9566,7 @@
   "quota": {
     "day": "2026-11-22",
     "calls": {
-      "gemini-3.5-flash-lite": 20,
+      "gemini-3.5-flash-lite": 22,
       "gemini-3.8-flash": 8,
       "gemini-3.6-flash": 3
     },
@@ -9623,12 +9642,12 @@
     ]
   },
   "weather": {
-    "at": "2026-11-22T08:59:48.951Z",
-    "kind": "cloudy",
-    "code": 3,
-    "temp": 3.7,
-    "cloud": 0.91,
-    "wind": 0.19333333333333333
+    "at": "2026-11-22T10:11:18.134Z",
+    "kind": "clear",
+    "code": 0,
+    "temp": 5.9,
+    "cloud": 0,
+    "wind": 0.2033333333333333
   },
   "news": {
     "date": "2026-11-22",
@@ -9772,22 +9791,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-22T10:03:12.398Z",
-  "fullness": 4.32,
+  "memoryFadeAt": "2026-11-22T10:11:33.049Z",
+  "fullness": 4.15,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.36,
-  "joy": 4.17,
-  "calm": 5.27,
+  "wonder": 5.99,
+  "joy": 3.22,
+  "calm": 5.61,
   "emo": {
-    "irritated": 0,
+    "irritated": 1.2,
     "sad": 0,
-    "excited": 0.55
+    "excited": 0.33
   },
-  "feelAt": "2026-11-22T10:03:02.738Z",
+  "feelAt": "2026-11-22T10:11:18.056Z",
   "lastAte": "2026-11-22T07:49:02.718Z",
   "studio": {
     "songs": [
@@ -10298,26 +10317,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.08,
-    "curiosity": 0,
+    "creativity": 0.16,
+    "curiosity": 0.07,
     "boredom": 0,
-    "loneliness": 4.66,
+    "loneliness": 4.69,
     "tidiness": 0,
-    "at": "2026-11-22T10:03:02.738Z",
+    "at": "2026-11-22T10:11:18.056Z",
     "coziness": 2
   },
   "recent": {
     "moves": [
-      {
-        "move": "use",
-        "kind": "play",
-        "at": "2026-11-22T08:13:47.114Z"
-      },
-      {
-        "move": "cook",
-        "kind": "food",
-        "at": "2026-11-22T08:21:56.140Z"
-      },
       {
         "move": "move_thing",
         "kind": "room",
@@ -10383,6 +10392,17 @@
         "move": "browse",
         "kind": "learn",
         "at": "2026-11-22T10:03:12.402Z"
+      },
+      {
+        "move": "move_thing",
+        "kind": "room",
+        "at": "2026-11-22T10:11:33.056Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-22T10:11:33.057Z"
       }
     ],
     "moods": [
@@ -10393,12 +10413,6 @@
       "curious"
     ],
     "choices": [
-      {
-        "key": "do:hang the small wooden shelf on the left ",
-        "move": "do",
-        "ok": false,
-        "at": "2026-11-22T08:32:07.842Z"
-      },
       {
         "key": "browse:",
         "move": "browse",
@@ -10452,6 +10466,12 @@
         "move": "browse",
         "ok": true,
         "at": "2026-11-22T10:03:12.403Z"
+      },
+      {
+        "key": "move_thing:small wooden shelf",
+        "move": "move_thing",
+        "ok": false,
+        "at": "2026-11-22T10:11:33.059Z"
       }
     ]
   },
@@ -10466,7 +10486,7 @@
       "eat": 1,
       "browse": 3,
       "use": 1,
-      "do": 3,
+      "do": 4,
       "record_song": 1,
       "search_web": 1,
       "draw": 1,
@@ -10474,14 +10494,14 @@
     },
     "tried": {
       "cook": 2,
-      "move_thing": 4,
+      "move_thing": 5,
       "decorate": 1,
       "judge_project": 1,
       "play_piano": 2,
       "eat": 1,
       "browse": 3,
       "use": 1,
-      "do": 3,
+      "do": 4,
       "record_song": 1,
       "search_web": 1,
       "draw": 1,
@@ -10493,7 +10513,7 @@
       "make": 3,
       "music": 3,
       "learn": 4,
-      "play": 4,
+      "play": 5,
       "look": 2
     },
     "moods": {
@@ -10501,13 +10521,13 @@
       "peaceful": 1,
       "hungry": 1,
       "calm": 1,
-      "curious": 8
+      "curious": 9
     },
     "lift": {
       "cook": 2.6,
-      "move_thing": 0.25,
+      "move_thing": 0,
       "decorate": 3.27,
-      "do": 3.05,
+      "do": 2.8,
       "play_piano": 2.2,
       "eat": 0.3,
       "browse": -1.5,
@@ -10552,7 +10572,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-22T10:03:12.053Z",
+    "decidedAt": "2026-11-22T10:11:33.040Z",
     "seen": {
       "tools": 6,
       "gifts": 1,
@@ -10562,7 +10582,10 @@
       "seeds": 9,
       "visitors": 0
     },
-    "lastFail": null,
+    "lastFail": {
+      "at": "2026-11-22T10:11:33.058Z",
+      "why": "move_thing: \"desk\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. small wooden shelf is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
+    },
     "unread": 0
   },
   "fixedAt": {
@@ -10819,7 +10842,7 @@
   "ever": {
     "eat": 38,
     "water": 20,
-    "do": 292,
+    "do": 293,
     "search_web": 35,
     "read_book": 17,
     "record_song": 5,
@@ -10849,7 +10872,7 @@
     "make_clothes": 3
   },
   "checkup": {
-    "at": "2026-11-22T10:03:12.404Z",
+    "at": "2026-11-22T10:11:33.059Z",
     "items": [
       {
         "id": "circling",
@@ -10881,7 +10904,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 4.32\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"fresh basil pesto\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-22T07:08:07.273Z\"},{\"name\":\"simple basil snack\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-22T08:21:56.124Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 4.15\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"fresh basil pesto\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-22T07:08:07.273Z\"},{\"name\":\"simple basil snack\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-22T08:21:56.124Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -10891,6 +10914,17 @@
       }
     ],
     "failures": [
+      {
+        "move": "moving something",
+        "action": "move_thing",
+        "reason": "\"desk\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. small wooden shelf is a wall thing. A wall thing hangs on a ",
+        "raw": "\"desk\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. small wooden shelf is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and w",
+        "names": [
+          "small wooden shelf"
+        ],
+        "count": 1,
+        "last": "2026-11-22T10:11:34.041Z"
+      },
       {
         "move": "moving something",
         "action": "move_thing",
@@ -13896,6 +13930,14 @@
   "lessons": [
     {
       "move": "move_thing",
+      "text": "\"desk\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. small wooden shelf is a wall thing. A wall thing hangs on a wall (the back wall ",
+      "count": 1,
+      "at": "2026-11-22T10:11:34.041Z",
+      "firstAt": "2026-11-22T10:11:34.041Z",
+      "solvedAt": null
+    },
+    {
+      "move": "move_thing",
       "text": "\"near desk\" is not a wall he can hang things on: only the back wall (with the window) and the left wall. small wooden shelf is a wall thing. A wall thing hangs on a wall (the back ",
       "count": 1,
       "at": "2026-11-22T08:30:03.887Z",
@@ -14077,14 +14119,6 @@
       "at": "2026-11-19T18:13:36.214Z",
       "firstAt": "2026-11-19T18:13:36.214Z",
       "solvedAt": "2026-11-19T18:21:45.445Z"
-    },
-    {
-      "move": "decorate",
-      "text": "autumn window painting is too big and deep for a wall: it would have to shrink to 28% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor",
-      "count": 2,
-      "at": "2026-11-19T16:55:13.365Z",
-      "firstAt": "2026-11-19T16:46:34.315Z",
-      "solvedAt": "2026-11-19T18:38:18.051Z"
     }
   ],
   "notebook": [
@@ -15286,7 +15320,7 @@
         "from": "news",
         "via": null,
         "at": "2026-11-22T10:03:12.057Z",
-        "shown": 0
+        "shown": 1
       }
     ],
     "interests": [
