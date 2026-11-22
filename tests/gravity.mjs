@@ -4,7 +4,7 @@
 // Run: node tests/gravity.mjs
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { makeDecor, moveThing, updateDecor, settleRoom, supportsInfo, sizeOf, setFurniture, setChest, coverKind, MIN_SHRINK, removeDecor, freeSpaceOn } from '../decor.js';
+import { makeDecor, moveThing, updateDecor, settleRoom, supportsInfo, sizeOf, setFurniture, setChest, coverKind, MIN_SHRINK, removeDecor, freeSpaceOn, liesFlat, accessProblem, obstacles, roomMap } from '../decor.js';
 import { designate, spotNote, fitFact, forHint, misplaced } from '../placement.js';
 import { applyChanges } from '../changes.js';
 import { checkThing } from '../verify.js';
@@ -170,6 +170,36 @@ ok('before he designs it, he hears where it will go and how big that is', () => 
   assert.equal(fitFact(s, { name: 'warm blanket', parts: [box(1.2, 0.05, 1.3)] }), null, 'cloth is fitted by the game');
   assert.deepEqual(checkThing({ name: 'warm blanket', parts: [box(1.2, 0.05, 1.3), box(1.2, 0.01, 0.2, 0.055, '#fff')] }, { maxParts: 12 }), [], 'a blanket of two layers is fine');
   void bird;
+});
+
+ok('a rug he makes is floor to walk on: furniture stands on it, and it does not lie on the big rug', () => {
+  const decor = [];
+  const s = { decor };
+  const rugParts = () => [box(1.6, 0.03, 1.1, 0.015, '#884433'), box(1.4, 0.01, 0.9, 0.035, '#ddbb88')];
+  const rug = add(decor, { name: 'woven bedside rug', parts: rugParts(), ...designate(s, { name: 'woven bedside rug' }) }).entry;
+  assert.ok(liesFlat(rug), 'it lies flat');
+  const r = { x0: rug.pos[0] - 0.8, x1: rug.pos[0] + 0.8, z0: rug.pos[2] - 0.55, z1: rug.pos[2] + 0.55 };
+  assert.ok(!(r.x0 < 1.9 && r.x1 > -1.9 && r.z0 < 2.7 && r.z1 > -1.1), `not on the big rug in the middle: ${rug.label}`);
+  assert.ok(Math.hypot(rug.pos[0] - 3.4, rug.pos[2] - 3) < 3.2, `by the bed: ${rug.label}`);
+  assert.ok(!obstacles(decor).some((o) => o.n === 'woven bedside rug'), 'it is not in the way of anything');
+  assert.ok(!roomMap(decor).legend.some((l) => /rug/.test(l)));
+  assert.equal(accessProblem(decor, rug), null);
+  assert.equal(misplaced(s, rug), null);
+  // a stool is put right on the rug
+  const stool = makeDecor(decor, { name: 'wooden stool', parts: [box(0.4, 0.5, 0.4)], x: rug.pos[0], z: rug.pos[2], turn: 0 }, tick(), clock);
+  assert.ok(stool.entry && Math.hypot(stool.entry.pos[0] - rug.pos[0], stool.entry.pos[2] - rug.pos[2]) < 0.2, stool.failed ?? stool.entry.label);
+  decor.push(stool.entry);
+  yesterday(decor);
+  // a second rug does not lie on the first
+  const two = add(decor, { name: 'little door mat', parts: [box(0.9, 0.02, 0.6, 0.01, '#556677')], x: rug.pos[0], z: rug.pos[2] }).entry;
+  const t = { x0: two.pos[0] - 0.45, x1: two.pos[0] + 0.45, z0: two.pos[2] - 0.3, z1: two.pos[2] + 0.3 };
+  const over = Math.max(0, Math.min(r.x1, t.x1) - Math.max(r.x0, t.x0)) * Math.max(0, Math.min(r.z1, t.z1) - Math.max(r.z0, t.z0));
+  assert.ok(over < 0.02, `two rugs do not overlap (${over} m2): ${two.label}`);
+  settleRoom(decor, clock);
+  assert.ok(rug.flat && two.flat && !stool.entry.flat, 'the page knows what he can walk over');
+  // a thick cushion is not a rug
+  assert.ok(!liesFlat({ kind: 'floor', parts: [box(0.6, 0.3, 0.6)], scale: 1 }));
+  assert.match(spotNote(s, { what: 'a soft rug' }), /flat on the floor.*beside my bed/);
 });
 
 ok('his real room: the one-time change leaves nothing floating, and the blanket covers the bed', () => {

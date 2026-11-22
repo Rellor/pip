@@ -443,7 +443,7 @@ const floorBlocked = (x, z, skipId, goal = null) => {
       if (x > r.x0 - 0.25 && x < r.x1 + 0.25 && z > r.z0 - 0.25 && z < r.z1 + 0.25) return true;
     }
   }
-  return (lastState?.decor || []).some((o) => o.id !== skipId && o.kind === 'floor' && !o.image && o.pos && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.55 && !(goal && Math.hypot(o.pos[0] - goal.x, o.pos[2] - goal.z) < 0.55));
+  return (lastState?.decor || []).some((o) => o.id !== skipId && o.kind === 'floor' && !o.image && !o.flat && o.pos && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.55 && !(goal && Math.hypot(o.pos[0] - goal.x, o.pos[2] - goal.z) < 0.55));
 };
 const DEFAULT_MOTION = [{ forward: 1.0 }, { turn: 90, forward: 0.9 }, { turn: 90, forward: 1.0 }, { turn: 120, forward: 0.8 }];
 // The steps of a drive as little legs: turn on the spot, roll forward or back, hop, wait. It stops at the first thing in the way, then comes back.

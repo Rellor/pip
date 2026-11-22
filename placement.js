@@ -17,7 +17,8 @@ const RULES = [
   { re: /\b(greenhouse|planter|flower ?pot|plant ?pot|seed tray|herb (box|garden)|window box|garden bed)\b/i, kind: 'floor', near: ['window'], why: 'plants need the light from the window' },
   { re: /\b(bookshelf|bookshelves|bookcase|cabinet|cupboard|dresser|wardrobe|closet|chest of drawers|sideboard)\b/i, kind: 'floor', near: ['bookshelf', 'desk'], why: 'big storage stands on the floor against a wall' },
   { re: /\b(shelf|shelves|rack)\b/i, kind: 'wall', near: ['desk', 'bed', 'stove'], why: 'a shelf hangs on a wall within reach, near where I use what is on it' },
-  { re: /\b(rug|mat|carpet|cushion|pillow|beanbag|pouf)\b/i, kind: 'floor', near: ['middle of the room', 'bed'], why: 'it lies on the floor' },
+  { re: /\b(rug|mat|carpet|doormat)\b/i, kind: 'floor', near: ['bed', 'desk'], why: 'a small rug lies beside the bed or by the desk (the big rug has the middle of the room)' },
+  { re: /\b(cushion|pillow|beanbag|pouf)\b/i, kind: 'floor', near: ['middle of the room', 'bed'], why: 'it lies on the floor' },
   { re: /\b(chair|stool|seat|bench|armchair|sofa|couch)\b/i, kind: 'floor', near: ['desk', 'window'], why: 'a seat stands where I sit: at the desk or by the window' },
   { re: /\b(table|nightstand|bedside table|desk)\b/i, kind: 'floor', near: ['bed', 'desk'], why: 'a table stands on the floor' },
   { re: /\b(easel|loom|workbench|potter'?s wheel)\b/i, kind: 'floor', near: ['window'], why: 'I work at it in good light' },
@@ -162,7 +163,8 @@ export function spotNote(s, details = {}) {
       const best = tops[0].f;
       lines.push(`WHERE IT WILL GO: on a top. The free tops in my room, in everyday size: ${tops.map(({ b, f }) => `${b.label} (${every(f.w)} x ${every(f.d)} m free, ${every(f.h)} m high)`).join('; ')}. So I design it at most ${every(best.w)} m wide and ${every(best.d)} m deep. A thing that is bigger does not fit on a top: the game then stands it on the floor.`);
     } else lines.push('WHERE IT WILL GO: every top in my room is full, so it will stand on the floor (or wait in my chest). Something for the floor is at least 0.45 m big in everyday size, so it does not get lost.');
-  } else if (rp?.kind === 'wall') lines.push('WHERE IT WILL GO: on a wall. It hangs flat against it: at most 0.25 m deep, 1.25 m wide and 1 m high in everyday size. Its back is at z 0.');
+  } else if (/\b(rug|carpet|doormat|floor mat|mat)\b/i.test(said) && rp?.kind === 'floor') lines.push('WHERE IT WILL GO: flat on the floor, beside my bed or by my desk (the big round rug already lies in the middle of my room). I walk over it and furniture may stand on it, so it lies flat: at most 0.05 m thick in everyday size, about 1.2 x 0.8 m. I design how it looks from above: a base layer with a border, stripes or a pattern lying flat on it.');
+  else if (rp?.kind === 'wall') lines.push('WHERE IT WILL GO: on a wall. It hangs flat against it: at most 0.25 m deep, 1.25 m wide and 1 m high in everyday size. Its back is at z 0.');
   else if (rp?.kind === 'ceiling') lines.push('WHERE IT WILL GO: it hangs from the ceiling. I build it from its top down: the part that hangs highest is at the top.');
   // "a stand for my clay bird": what it is for, and how big that is
   const m = /\bfor (?:my |the |his )?([a-z][a-z ]{2,40})/i.exec(said);

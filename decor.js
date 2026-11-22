@@ -635,7 +635,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   if (!want && !dx && !dz && !hasXZ && !d.next_to && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null && turnRad(d.turn) === null) return { failed: 'he did not say where to move it' };
   if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const at = new Date(atMs + 6000).toISOString();
-  const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
+  const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && !liesFlat(o) && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
 
   if (/chest/.test(n)) {
     const cur = chest ?? CHEST_HOME;
@@ -986,8 +986,11 @@ export const useSpots = (skipKey = null) => MOVABLE.filter((k) => k !== skipKey 
   const [x, z] = worldPoint(k, placeOf(furnNow, k), FURNITURE[k].spot.p);
   return { n: `the spot where I stand to use ${FURNITURE[k].n}`, x0: x - 0.3, x1: x + 0.3, z0: z - 0.3, z1: z + 0.3 };
 });
+// A rug, a mat, a carpet: it lies flat on the floor. He walks over it and furniture stands on it, like the big rug in the
+// middle of his room. (A rug he made used to be a wall nobody could pass: nothing could stand on it or near it.)
+export const liesFlat = (o) => { if (!o || o.kind !== 'floor' || o.image || !o.parts?.length) return false; const z = sizeOf(o); return Boolean(z) && z[1] <= 0.12 && Math.max(z[0], z[2]) >= 0.4; };
 export function obstacles(decor, skip = null, withChest = true, skipKey = null) {
-  const list = [...fixedRects(skipKey), ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
+  const list = [...fixedRects(skipKey), ...decor.filter((o) => o !== skip && o.kind === 'floor' && !o.image && o.pos && !liesFlat(o)).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
   if (withChest) {
     const c = chestNow ?? CHEST_HOME;
     list.push({ n: 'the chest', ...rectAt([0.5, 0.3], c.x, c.z, c.rotY) });
@@ -1061,13 +1064,18 @@ function fitSpots(tryFn, x, z) {
 function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false) {
   const scale = fit(parts, 'floor', {});
   const [hw, hd] = halfFoot(parts, scale);
-  const obs = [...obstacles(decor, null, true), ...useSpots()]; // and never where he stands to use the desk, the bed...
+  const rug = liesFlat({ kind: 'floor', parts, scale });
+  const solid = obstacles(decor, null, true);
+  const rugs = [...MOVABLE.filter((k) => FURNITURE[k].flat && !furnNow?.[k]?.gone).flatMap((k) => furnRects(furnNow, k).map((r) => ({ n: r.n, x0: r.x0, x1: r.x1, z0: r.z0, z1: r.z1 }))), ...decor.filter((o) => o.pos && liesFlat(o)).map((o) => ({ n: o.name, ...rectAt(footOf(o), o.pos[0], o.pos[2], o.rotY) }))];
+  // A rug: not on another rug, and its middle on free floor (its edge may lie under a bed or between table legs). Anything else: not in anything solid, and never where he stands to use the desk, the bed...
+  const obs = rug ? [...rugs.map((r) => ({ ...r, x0: r.x0 + 0.1, x1: r.x1 - 0.1, z0: r.z0 + 0.1, z1: r.z1 - 0.1 })), ...solid.map((o) => ({ ...o, x0: o.x0 + hw + 0.2, x1: o.x1 - hw - 0.2, z0: o.z0 + hd + 0.2, z1: o.z1 - hd - 0.2 })).map((o) => (o.x0 < o.x1 && o.z0 < o.z1 ? o : null)).filter(Boolean)] : [...solid, ...useSpots()];
   const turned = turnRad(spec.turn); // he said how it is turned: it stands that way, not flush against a wall
   const tryRaw = (x, z) => {
-    if (turned !== null) {
-      const r0 = rectAt([hw, hd], 0, 0, turned);
-      const f = { rotY: turned, x: r3(Math.min(EDGE - r0.x1, Math.max(-EDGE - r0.x0, x))), z: r3(Math.min(EDGE - r0.z1, Math.max(-EDGE - r0.z0, z))) };
-      return blocker(rectAt([hw, hd], f.x, f.z, turned), obs) ? null : f;
+    if (turned !== null || rug) { // a rug lies where it is put (it is not pushed flush against a wall like a cupboard)
+      const rot = turned ?? 0;
+      const r0 = rectAt([hw, hd], 0, 0, rot);
+      const f = { rotY: rot, x: r3(Math.min(EDGE - r0.x1, Math.max(-EDGE - r0.x0, x))), z: r3(Math.min(EDGE - r0.z1, Math.max(-EDGE - r0.z0, z))) };
+      return blocker(rectAt([hw, hd], f.x, f.z, rot), obs) ? null : f;
     }
     const f = faceAndSnap(hw, hd, Math.min(EDGE, Math.max(-EDGE, x)), Math.min(EDGE, Math.max(-EDGE, z)));
     return blocker(rectAt([hw, hd], f.x, f.z, f.rotY), obs) ? null : f;
@@ -1136,7 +1144,7 @@ function placeFloor(decor, spec, parts, want, anchor, atMs, now, moving = false)
 // A picture of the room in text, so he can see what stands where. Every character is half a metre.
 export function roomMap(decor) {
   const symbols = { 'the piano': 'P', 'the piano stool': 'o', 'the bookshelf': 'B', 'the desk and screen': 'D', 'the bed': 'E', 'the plant': 'L', 'the chest': 'C', 'the door to the hall': 'Z' };
-  const mine = decor.filter((o) => o.kind === 'floor' && !o.image && o.pos);
+  const mine = decor.filter((o) => o.kind === 'floor' && !o.image && o.pos && !liesFlat(o)); // the same list as obstacles(): a rug is floor to walk on
   const marks = '123456789abcdefghijklmnopqrstuvwxyz';
   const obs = obstacles(decor, null, true);
   const nFixed = fixedRects().length;
@@ -1216,7 +1224,7 @@ export function spaceLeft(decor) {
 // Things stand where they can still be used. Returns why a floor thing that was just put down is in a bad place, or null.
 // 1) it covers the spot where Pip stands to use something else. 2) it stands in front of the window, where the window stool should be reachable.
 export function accessProblem(decor, e) {
-  if (!e || e.kind !== 'floor' || !e.pos || e.image) return null;
+  if (!e || e.kind !== 'floor' || !e.pos || e.image || liesFlat(e)) return null; // a rug is never in the way: he stands on it
   const [hw, hd] = footOf(e);
   const r = rectAt([hw, hd], e.pos[0], e.pos[2], e.rotY);
   const hit = (px, pz, m = 0.2) => px > r.x0 - m && px < r.x1 + m && pz > r.z0 - m && pz < r.z1 + m;
@@ -2154,6 +2162,7 @@ function levelRiders(decor, at = new Date().toISOString()) {
 export function settleRoom(decor, now = Date.now()) {
   const fixed = [];
   const at = new Date(now).toISOString();
+  for (const o of decor) { if (liesFlat(o)) o.flat = true; else if (o.flat) delete o.flat; } // for the page: he walks over a rug he made
   for (const o of decor.filter((x) => x.cover && x.pos)) { // cloth first: things stand on it
     const laid = relayCover(decor, o, now);
     if (laid === 'laid') { o.updatedAt = at; fixed.push(`${o.name} lies neatly over ${baseByKey(decor, o.cover)?.n ?? 'it'} again`); }
