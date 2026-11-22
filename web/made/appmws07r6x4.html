@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Star for Lina</title>
+<style>
+  body { background: #0b0b1a; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+  #gameCanvas { background: #12122c; border: 2px solid #ff77ff; box-shadow: 0 0 15px #ff77ff; max-width: 100%; width: 360px; height: 480px; display: block; }
+  h1 { font-size: 1.2rem; color: #77ffff; margin: 5px; text-shadow: 0 0 5px #77ffff; }
+  p { font-size: 0.9rem; margin: 5px; color: #ffccff; }
+  button { background: #ff77ff; border: none; padding: 8px 16px; font-weight: bold; color: #12122c; border-radius: 4px; cursor: pointer; margin-top: 5px; }
+</style>
+</head>
+<body>
+<h1>Neon Star for Lina</h1>
+<p>Score: <span id="score">0</span></p>
+<canvas id="gameCanvas" width="360" height="480"></canvas>
+<button id="restartBtn">Start / Restart</button>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const restartBtn = document.getElementById('restartBtn');
+
+let score = 0;
+let isPlaying = false;
+let catcher = { x: 150, y: 440, w: 60, h: 12 };
+let star = { x: 50, y: 0, r: 10, dy: 3 };
+let keys = {};
+
+function resetGame() {
+  score = 0;
+  scoreEl.innerText = score;
+  catcher.x = 150;
+  star.y = 0;
+  star.x = Math.random() * (canvas.width - 20) + 10;
+  star.dy = 3;
+  isPlaying = true;
+}
+
+restartBtn.addEventListener('click', resetGame);
+
+window.addEventListener('keydown', (e) => {
+  keys[e.key] = true;
+  if (e.key === ' ' && !isPlaying) resetGame();
+});
+window.addEventListener('keyup', (e) => {
+  keys[e.key] = false;
+});
+
+canvas.addEventListener('click', (e) => {
+  if (!isPlaying) resetGame();
+  const rect = canvas.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  if (clickX < canvas.width / 2) catcher.x -= 30;
+  else catcher.x += 30;
+});
+
+function update() {
+  if (!isPlaying) return;
+
+  if (keys['ArrowLeft'] || keys['a']) catcher.x -= 6;
+  if (keys['ArrowRight'] || keys['d']) catcher.x += 6;
+
+  if (catcher.x < 0) catcher.x = 0;
+  if (catcher.x + catcher.w > canvas.width) catcher.x = canvas.width - catcher.w;
+
+  star.y += star.dy;
+  if (star.y > canvas.height) {
+    isPlaying = false;
+  }
+
+  if (star.y + star.r >= catcher.y &&
+      star.x >= catcher.x &&
+      star.x <= catcher.x + catcher.w) {
+    score++;
+    scoreEl.innerText = score;
+    star.y = 0;
+    star.x = Math.random() * (canvas.width - 20) + 10;
+    star.dy += 0.3;
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.beginPath();
+  ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+  ctx.fillStyle = '#ffff77';
+  ctx.shadowBlur = 12;
+  ctx.shadowColor = '#ffff77';
+  ctx.fill();
+  ctx.closePath();
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = '#77ffff';
+  ctx.shadowBlur = 12;
+  ctx.shadowColor = '#77ffff';
+  ctx.fillRect(catcher.x, catcher.y, catcher.w, catcher.h);
+  ctx.shadowBlur = 0;
+
+  if (!isPlaying) {
+    ctx.fillStyle = 'rgba(18, 18, 44, 0.85)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ff77ff';
+    ctx.font = '20px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(score > 0 ? 'Game Over!' : 'Press Start to Play', canvas.width / 2, canvas.height / 2);
+  }
+}
+
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>
