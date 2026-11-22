@@ -12,6 +12,7 @@ import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sid
 import { streetData, renderStreet } from './streetview.js';
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
+import { makeGrain } from './grain.js';
 import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround } from './town.js';
 
 const $ = (id) => document.getElementById(id);
@@ -33,6 +34,27 @@ Object.values(G).forEach((g) => scene.add(g));
 scene.background = new THREE.Color(getComputedStyle(document.body).backgroundColor);
 
 const camera = new THREE.PerspectiveCamera(35, 1, 1, 1000);
+// The look of his whole world: rough, grainy skins on everything and big pixels, like an old game console, so nothing
+// looks like smooth plastic (?style=clean shows the old smooth look).
+const ROUGH = new URLSearchParams(location.search).get('style') !== 'clean';
+const grain = makeGrain(THREE);
+function roughen(root) { // a grainy skin for every plain, solid thing that has none yet
+  if (!ROUGH) return;
+  root.traverse((o) => {
+    const m = o.material;
+    if (!o.isMesh || !m || Array.isArray(m) || !m.isMeshStandardMaterial || m.map || m.transparent || m.userData.smooth) return;
+    m.map = grain('plain');
+    m.roughness = Math.max(m.roughness, 0.85);
+    m.needsUpdate = true;
+  });
+}
+// How many pixels the picture is drawn with: few, so they are big (walking: bigger still).
+function applyPixels() {
+  if (!ROUGH) return;
+  const w = stage.clientWidth || 800;
+  renderer.domElement.style.imageRendering = 'pixelated';
+  renderer.setPixelRatio(Math.max(0.2, Math.min(1, (view.mode === 'walk' ? 460 : 720) / w)));
+}
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
 const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
@@ -96,6 +118,7 @@ function resetOrbit() {
 function fitCamera() {
   const w = stage.clientWidth || 1;
   const h = stage.clientHeight || 1;
+  applyPixels();
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
@@ -255,7 +278,7 @@ function buildDecor(d) {
     if (!geo) continue;
     const mesh = new THREE.Mesh(
       geo(p.size, p),
-      new THREE.MeshStandardMaterial({ color: p.color, roughness: p.glass ? 0.1 : p.soft ? 0.96 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0, ...(p.glass ? { transparent: true, opacity: 0.2, depthWrite: false } : {}) })
+      new THREE.MeshStandardMaterial({ color: p.color, ...(ROUGH && !p.glass ? { map: grain('plain') } : {}), roughness: p.glass ? 0.1 : p.soft ? 0.96 : ROUGH ? 0.9 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0, ...(p.glass ? { transparent: true, opacity: 0.2, depthWrite: false } : {}) })
     );
     mesh.position.set(...p.pos);
     mesh.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
@@ -648,7 +671,7 @@ function buildClothes(c) {
   for (const p of c.parts || []) {
     const geo = SHAPE_GEO[p.shape];
     if (!geo) continue;
-    const mesh = new THREE.Mesh(geo(p.size), new THREE.MeshStandardMaterial({ color: p.color, roughness: 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0 }));
+    const mesh = new THREE.Mesh(geo(p.size), new THREE.MeshStandardMaterial({ color: p.color, ...(ROUGH ? { map: grain('plain') } : {}), roughness: ROUGH ? 0.9 : 0.7, emissive: p.glow ? p.color : 0x000000, emissiveIntensity: p.glow ? 0.9 : 0 }));
     mesh.position.set(...p.pos);
     mesh.rotation.set(...p.rot.map((r) => (r * Math.PI) / 180));
     mesh.castShadow = true;
@@ -2201,8 +2224,6 @@ function updateWalk(dt) {
 }
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
 let walkOut = false;
-let retroNow = false;
-const RETRO = new URLSearchParams(location.search).get('style') !== 'clean'; // outside is drawn in big pixels, like an old game console (?style=clean switches it off)
 function skyNow() {
   const h = forceLook.hour ?? new Date().getHours() + new Date().getMinutes() / 60;
   const se = seasonInfo(new Date());
@@ -2216,10 +2237,6 @@ function walkPlace() {
   scene.userData.sky = out ? town.skyFog() : null; // look.js keeps the background: this tells it to show the sky's own colour
   if (out) scene.background.set(town.skyFog());
   scene.fog = out ? new THREE.Fog(town.skyFog(), 140, 700) : null; // far things fade into the sky
-  // A look to try (?style=retro): everything outside drawn in big pixels, like an old game console.
-  retroNow = out && RETRO;
-  renderer.domElement.style.imageRendering = retroNow ? 'pixelated' : '';
-  renderer.setPixelRatio(retroNow ? Math.max(0.22, 520 / (stage.clientWidth || 800)) : pixels);
   fitCamera();
   home.full.visible = view.mode === 'walk' && !out;
   home.roof.visible = view.mode === 'walk' && !out;
@@ -3042,7 +3059,7 @@ function loop(now) {
     const want = avg > 0.026 ? Math.max(0.75, pixels - 0.25) : avg < 0.015 ? Math.min(SHARP, pixels + 0.25) : pixels;
     if (want !== pixels) {
       pixels = want;
-      if (!retroNow) renderer.setPixelRatio(pixels);
+      if (!ROUGH) renderer.setPixelRatio(pixels);
       fitCamera();
     }
     slowSum = 0;
@@ -3090,6 +3107,7 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 fitCamera();
+roughen(scene); // his room and his house get their rough skins (the street outside has its own)
 requestAnimationFrame(loop);
 
 // ---------------------------------------------------------------- panel + polling

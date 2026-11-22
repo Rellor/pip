@@ -5,6 +5,7 @@
 // Everything is free: no model, no server. It follows the real hour, season and weather like the drawing does.
 import { PEOPLE, faceSvg, hourNL, shopOpen } from './street.js';
 import { seasonInfo } from './season.js';
+import { makeGrain } from './grain.js';
 
 export const TOWN_X = 220; // where the street is in the scene (his house is around x 0; the park reaches 92 m to the left of the street)
 export const TOWN_RANGE = [-39, 42]; // from the left end of the street to the right end (street coordinates)
@@ -68,42 +69,7 @@ export function buildTown(THREE) {
   let seed = 7;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   const jit = (by) => (rnd() - 0.5) * 2 * by; // a little crooked, never the same twice
-  const grains = new Map();
-  function grain(kind, rx = 1, ry = 1) {
-    const key = `${kind}`;
-    let base = grains.get(key);
-    if (!base) {
-      const n = ['brick', 'stone', 'pave'].includes(kind) ? 64 : 32;
-      const c = document.createElement('canvas');
-      c.width = c.height = n;
-      const g = c.getContext('2d');
-      const grey = (v) => `rgb(${v},${v},${v})`;
-      const px = (x, y, v, w = 1, h = 1) => { g.fillStyle = grey(Math.max(0, Math.min(255, Math.round(v)))); g.fillRect(x, y, w, h); };
-      g.fillStyle = grey(232); g.fillRect(0, 0, n, n);
-      if (kind === 'brick') { g.fillStyle = grey(168); g.fillRect(0, 0, n, n); for (let row = 0; row < 8; row++) for (let i = -1; i < 4; i++) px(i * 16 + (row % 2) * 8 + 1, row * 8 + 1, 196 + rnd() * 54 - (rnd() < 0.12 ? 50 : 0), 14, 6); }
-      else if (kind === 'stone') { g.fillStyle = grey(176); g.fillRect(0, 0, n, n); for (let row = 0; row < 4; row++) for (let i = -1; i < 2; i++) px(i * 32 + (row % 2) * 16 + 1, row * 16 + 1, 206 + rnd() * 44, 30, 14); }
-      else if (kind === 'planks') { for (let i = 0; i < 4; i++) { const v = 208 + rnd() * 42; px(i * 8, 0, v, 7, n); px(i * 8 + 7, 0, 150, 1, n); if (rnd() < 0.6) px(i * 8 + 2 + Math.floor(rnd() * 3), Math.floor(rnd() * 28), v - 46, 2, 2); } }
-      else if (kind === 'boards') { for (let i = 0; i < 4; i++) { const v = 206 + rnd() * 44; px(0, i * 8, v, n, 7); px(0, i * 8 + 7, 146, n, 1); } }
-      else if (kind === 'metal') { for (let x = 0; x < n; x++) px(x, 0, x % 4 < 2 ? 238 : 198, 1, n); for (let i = 0; i < 9; i++) px(Math.floor(rnd() * 30), Math.floor(rnd() * 30), 150 + rnd() * 30, 1 + Math.floor(rnd() * 3), 1 + Math.floor(rnd() * 4)); }
-      else if (kind === 'roof') { for (let row = 0; row < 4; row++) for (let i = -1; i < 5; i++) { const v = 200 + rnd() * 50 - (rnd() < 0.1 ? 45 : 0); px(i * 8 + (row % 2) * 4, row * 8, v, 7, 6); px(i * 8 + (row % 2) * 4, row * 8 + 6, v - 50, 7, 2); } }
-      else if (kind === 'pave') { for (let i = 0; i < 2; i++) for (let k = 0; k < 2; k++) px(i * 32 + 1, k * 32 + 1, 214 + rnd() * 34, 30, 30); let cx = 10, cy = 0; for (let i = 0; i < 40; i++) { px(cx, cy, 150); cy += 1; cx += Math.round(jit(1)); } }
-      if (kind !== 'brick' && kind !== 'stone') for (let i = 0; i < n * n * 0.35; i++) { const x = Math.floor(rnd() * n), y = Math.floor(rnd() * n); const d = g.getImageData(x, y, 1, 1).data[0]; px(x, y, d + jit(kind === 'grass' ? 34 : kind === 'road' ? 26 : 16)); }
-      if (kind === 'grass') for (let i = 0; i < 26; i++) px(Math.floor(rnd() * n), Math.floor(rnd() * n), 176 + rnd() * 20, 1 + Math.floor(rnd() * 2), 1);
-      if (kind === 'road') { px(4, 6, 196, 12, 9); px(18, 20, 244, 9, 7); }
-      if (kind === 'plain') { for (let i = 0; i < 3; i++) { const x = Math.floor(rnd() * 30); g.fillStyle = 'rgba(60,50,40,.12)'; g.fillRect(x, 0, 1 + Math.floor(rnd() * 2), 12 + rnd() * 20); } g.fillStyle = 'rgba(255,255,255,.2)'; g.fillRect(Math.floor(rnd() * 20), Math.floor(rnd() * 20), 9, 7); }
-      base = new THREE.CanvasTexture(c);
-      base.magFilter = THREE.NearestFilter;
-      base.minFilter = THREE.NearestMipmapLinearFilter;
-      base.wrapS = base.wrapT = THREE.RepeatWrapping;
-      base.colorSpace = THREE.SRGBColorSpace;
-      grains.set(key, base);
-    }
-    if (rx === 1 && ry === 1) return base;
-    const t = base.clone();
-    t.repeat.set(rx, ry);
-    t.needsUpdate = true;
-    return t;
-  }
+  const grain = makeGrain(THREE); // the rough skins (grain.js): shared with his room
   const M = (color, o = {}, kind = 'plain', rx = 1, ry = 1) => { const map = o.transparent ? null : grain(kind, rx, ry); const m = new THREE.MeshStandardMaterial({ color, roughness: 0.94, ...(map ? { map, emissiveMap: map } : {}), ...o }); mats.push(m); return m; };
   const add = (geo, material, [x, y, z], parent = group) => { const m = new THREE.Mesh(geo, material); m.position.set(x, y, z); parent.add(m); return m; };
   const box = (size, color, pos, parent = group) => add(new THREE.BoxGeometry(...size), typeof color === 'number' ? M(color) : color, pos, parent);
@@ -324,6 +290,18 @@ export function buildTown(THREE) {
   // a ladder against Mo's wall and a wheelbarrow by the garden
   { const g = new THREE.Group(); g.position.set(-12.2, 0, 0.5); g.rotation.x = -0.2; group.add(g); for (const dx of [-0.25, 0.25]) box([0.07, 3.4, 0.07], wood(0xc9a26a), [dx, 1.7, 0], g); for (let i = 0; i < 8; i++) box([0.5, 0.05, 0.05], wood(0xc9a26a), [0, 0.35 + i * 0.4, 0], g); }
   { const g = new THREE.Group(); g.position.set(-25.4, 0, 2.0); g.rotation.y = 0.5; group.add(g); box([0.9, 0.35, 0.6], tin(0x5f9e63), [0, 0.5, 0], g); const whl = add(new THREE.TorusGeometry(0.2, 0.06, 8, 14), M(0x2a2a2e), [0.6, 0.2, 0], g); whl.rotation.y = Math.PI / 2; for (const dz of [-0.25, 0.25]) box([1.0, 0.05, 0.05], wood(), [-0.6, 0.55, dz], g); }
+  // ---- Stranger things, seen from far: a water tower behind the houses, a radio mast with a blinking light, a stack of
+  // containers, an old boat on the grass, and a tall green stone that glows a little. Nobody knows who put them there.
+  { const g = new THREE.Group(); g.position.set(25.6, 0, -8.8); g.rotation.y = 0.3; group.add(g); for (const [dx, dz] of [[-1.5, -1.5], [1.5, -1.5], [-1.5, 1.5], [1.5, 1.5]]) { const l = cyl(0.12, 0.16, 8.2, M(0x6b6f76, { metalness: 0.3 }, 'metal'), [dx, 4.1, dz], g); l.rotation.z = -dx * 0.03; l.rotation.x = dz * 0.03; } cyl(2.3, 2.3, 3.2, M(0xb8554a, { metalness: 0.2 }, 'metal', 6, 1), [0, 9.6, 0], g, 20); add(new THREE.ConeGeometry(2.5, 1.2, 20), M(0x8a4a3a, {}, 'metal', 6, 1), [0, 11.8, 0], g); box([0.08, 8, 0.08], 0x6b6f76, [2.35, 4.2, 0], g); }
+  const mastTop = new THREE.MeshStandardMaterial({ color: 0xff3b2f, emissive: 0xff3b2f, emissiveIntensity: 1 });
+  { const g = new THREE.Group(); g.position.set(-86, 0, -40); group.add(g); for (let i = 0; i < 4; i++) { const l = cyl(0.07, 0.07, 26, M(0xb5463c, { metalness: 0.3 }, 'metal'), [i < 2 ? -0.9 : 0.9, 13, i % 2 ? -0.9 : 0.9], g); l.rotation.z = (i < 2 ? -1 : 1) * 0.03; l.rotation.x = (i % 2 ? 1 : -1) * 0.03; } for (let y = 2; y < 25; y += 3) box([1.6 - y * 0.05, 0.07, 1.6 - y * 0.05], M(y % 6 ? 0xfff8ee : 0xb5463c, {}, 'metal'), [0, y, 0], g); cyl(0.04, 0.04, 4, 0x6b6f76, [0, 28, 0], g); add(new THREE.SphereGeometry(0.34, 10, 8), mastTop, [0, 30.1, 0], g); }
+  for (const [y, c, ry] of [[1.3, 0x3d6f8a, 0.12], [3.9, 0xc9773c, -0.06], [1.3, 0xd9b23c, 1.2]]) { const b = box([6, 2.6, 2.5], M(c, { metalness: 0.2 }, 'metal', 7, 1), [-36.5 + (ry > 1 ? 4.6 : 0), y, 21 + (ry > 1 ? 3.6 : 0)]); b.rotation.y = ry; }
+  { const g = new THREE.Group(); g.position.set(-78, 0.25, 21.5); g.rotation.set(0.05, 0.6, 0.22); group.add(g); const hull = add(new THREE.SphereGeometry(1, 16, 10, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), M(0x4f7fa3, { side: THREE.DoubleSide }, 'boards', 3, 2), [0, 0.9, 0], g); hull.scale.set(3.4, 1.1, 1.3); box([0.14, 2.6, 0.14], M(0x7a5237, {}, 'boards'), [0.3, 1.9, 0], g); box([5.6, 0.1, 0.5], M(0xc9a26a, {}, 'boards'), [0, 0.86, 0], g); }
+  const stoneGlow = new THREE.MeshStandardMaterial({ color: 0x2fa37a, roughness: 0.35, emissive: 0x2fa37a, emissiveIntensity: 0.5, map: grain('stone'), emissiveMap: grain('stone') });
+  { const st = add(new THREE.OctahedronGeometry(1.5, 0), stoneGlow, [-82, 2.4, -6]); st.scale.set(0.8, 2.0, 0.7); st.rotation.set(0.1, 0.5, 0.08); for (const [dx, dz, k] of [[1.6, 0.5, 0.35], [-1.3, 1.0, 0.28], [0.4, -1.5, 0.22]]) { const sm = add(new THREE.OctahedronGeometry(1, 0), stoneGlow, [-82 + dx, k * 1.6, -6 + dz]); sm.scale.set(k, k * 2, k); sm.rotation.y = dx; } }
+  const stoneLight = new THREE.PointLight(0x4fe0a8, 0, 22, 1.4);
+  stoneLight.position.set(-82, 3, -6);
+  group.add(stoneLight);
   // Daylight for the street. The lamps and the window light of his room are 120 metres away, so the street has a light
   // of its own, high above it (it does not reach his room).
   const daylight = new THREE.PointLight(0xfff4e2, 1.5, 74, 0);
@@ -401,6 +379,8 @@ export function buildTown(THREE) {
   // the ducks swim their rounds (or stand still on the ice)
   let frozenNow = false;
   function animate(t) {
+    mastTop.emissiveIntensity = Math.sin(t * 2.4) > 0.2 ? 1.6 : 0.05; // the mast light blinks
+    stoneGlow.emissiveIntensity = 0.45 + Math.sin(t * 0.9) * 0.2; // the stone breathes
     ducks.forEach((d, i) => {
       const a = frozenNow ? i * 1.7 : t * (0.05 + i * 0.012) + i * 1.7;
       const k = 0.35 + (i % 3) * 0.2;
@@ -447,6 +427,7 @@ export function buildTown(THREE) {
     // The lamps of his room do not reach the street, and the page's daylight is made for indoors: so everything here
     // keeps some of its own colour (more by day, less at night, a little blue in the dark).
     for (const [l, k] of [[daylight, 1], [parkLight, 1], [libLight, 0.8]]) { l.intensity = (dark ? 0.4 : dusk ? 1.2 : 2.1) * k; l.color.set(dark ? 0x8fa3e0 : dusk ? 0xffc79a : 0xfff4e2); }
+    stoneLight.intensity = dark ? 30 : dusk ? 14 : 0;
     frozenNow = Number.isFinite(state.weather?.temp) ? state.weather.temp <= 0 : false; // the pond freezes in real frost
     water.color.set(frozenNow ? 0xe1f1f8 : dark ? 0x3b5a92 : 0x7fc4e8);
     water.emissive.set(frozenNow ? 0x9fc4d6 : 0x2a6f95);
@@ -466,12 +447,14 @@ export function buildTown(THREE) {
   const far = new THREE.Group();
   far.visible = false;
   group.add(far);
-  const gridTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); g.fillStyle = '#b9d79f'; g.fillRect(0, 0, 64, 64); g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = 2; g.strokeRect(0, 0, 64, 64); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(160, 160); t.magFilter = THREE.NearestFilter; t.colorSpace = THREE.SRGBColorSpace; return t; })();
+  const gridTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); g.fillStyle = '#d6cfc0'; g.fillRect(0, 0, 64, 64); g.strokeStyle = 'rgba(255,255,255,.7)'; g.lineWidth = 2; g.strokeRect(0, 0, 64, 64); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(160, 160); t.magFilter = THREE.NearestFilter; t.colorSpace = THREE.SRGBColorSpace; return t; })();
   const land = add(new THREE.CircleGeometry(640, 48), new THREE.MeshBasicMaterial({ map: gridTex, color: 0xffffff }), [0, -0.66, 0], far);
   land.rotation.x = -Math.PI / 2;
   const hillMat = new THREE.MeshBasicMaterial({ color: 0x8fb89a });
   const hillMat2 = new THREE.MeshBasicMaterial({ color: 0xa7c6b4 });
   for (let i = 0; i < 26; i++) { const a = (i / 26) * Math.PI * 2 + 0.2; const r = 300 + ((i * 37) % 90); const h = add(new THREE.SphereGeometry(60 + ((i * 53) % 50), 12, 8), i % 2 ? hillMat : hillMat2, [Math.cos(a) * r, -18, Math.sin(a) * r], far); h.scale.y = 0.38 + ((i * 17) % 10) / 40; }
+  const blockMat = [new THREE.MeshBasicMaterial({ color: 0x9aa7b5 }), new THREE.MeshBasicMaterial({ color: 0xb7b0c2 }), new THREE.MeshBasicMaterial({ color: 0x8a97a8 })];
+  for (let i = 0; i < 11; i++) { const a = -0.9 + i * 0.33 + (i % 3) * 0.05; const r = 250 + ((i * 41) % 60); box([16 + (i % 3) * 8, 46 + ((i * 29) % 60), 14], blockMat[i % 3], [Math.sin(a) * r, 18 + ((i * 29) % 60) / 2, -Math.cos(a) * r], far); } // tower blocks far away, behind the street
   const skyGeo = new THREE.SphereGeometry(900, 24, 14);
   skyGeo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(skyGeo.attributes.position.count * 3), 3));
   const sky = add(skyGeo, new THREE.MeshBasicMaterial({ vertexColors: true, side: THREE.BackSide, fog: false, depthWrite: false }), [0, 0, 0], far);
@@ -491,6 +474,7 @@ export function buildTown(THREE) {
     sunDisc.lookAt(group.position.x, 20, 0);
     sunDisc.material.color.set(sunC);
     land.material.color.set(night ? 0x56608f : edge ? 0xf2cdb0 : 0xffffff);
+    blockMat.forEach((m, i) => m.color.set(night ? [0x26305a, 0x2d3766, 0x222b52][i] : edge ? [0xc79a94, 0xd6aa9c, 0xb98a8a][i] : [0x9aa7b5, 0xb7b0c2, 0x8a97a8][i]));
     hillMat.color.set(night ? 0x2d3a63 : edge ? 0xb98f86 : 0x8fb89a);
     hillMat2.color.set(night ? 0x384873 : edge ? 0xd3a894 : 0xa7c6b4);
     return low;
