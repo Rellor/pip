@@ -5595,3 +5595,9 @@ I am hungry and full of energy, so I want to cook something warm to eat before d
 - cook: I need a warm meal
 - mood: grumpy
 
+## 23/11/2026, 19:12:10
+I want to work on my night sky simulation project to add the slider, and then eat some warm breakfast because I am hungry.
+> I want to work on my night sky simulation project to add the slider, and then eat some warm breakfast because I am hungry.
+- do (think about how to make it): I could not work it out yet.
+- mood: grumpy
+
