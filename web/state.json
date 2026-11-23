@@ -1,8 +1,8 @@
 {
   "mood": "energetic",
-  "energy": 8.68,
+  "energy": 7.94,
   "boredom": 0,
-  "loneliness": 4.36,
+  "loneliness": 4.37,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,18 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-22T16:37:50.996Z",
-      "action": "use",
-      "detail": "tiny wooden music box",
-      "enjoyment": 6
-    },
-    {
-      "at": "2026-11-22T16:46:06.375Z",
-      "action": "go_out",
-      "detail": "my doorstep",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-22T17:10:35.962Z",
       "action": "harvest",
@@ -311,6 +299,19 @@
       "at": "2026-11-23T07:30:40.931Z",
       "action": "do",
       "detail": "stretch up tall and look out of the window for a moment",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-23T07:32:45.528Z",
+      "action": "decorate",
+      "detail": "Map the summer constellations",
+      "enjoyment": 0,
+      "failed": "there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, ma"
+    },
+    {
+      "at": "2026-11-23T07:32:45.535Z",
+      "action": "do",
+      "detail": "stomp around the room once, then laugh at myself",
       "enjoyment": 6
     }
   ],
@@ -1175,8 +1176,8 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.899,
-      "lastUsed": "2026-11-22T21:20:36.357Z"
+      "weight": 8.399,
+      "lastUsed": "2026-11-23T07:32:43.157Z"
     },
     {
       "id": "mmwsd86ph60",
@@ -1197,27 +1198,19 @@
       "lastUsed": "2026-11-23T07:04:06.220Z"
     },
     {
-      "id": "mmwsy529160",
-      "at": "2026-11-23T07:30:40.932Z",
-      "text": "I should keep working on my constellation projects.",
+      "id": "mmwsy7qe960",
+      "at": "2026-11-23T07:32:45.536Z",
+      "text": "I should continue working on my project steps.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
-      "lastUsed": "2026-11-23T07:30:40.932Z"
+      "weight": 6,
+      "lastUsed": "2026-11-23T07:32:45.536Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-22T22:01:40.771Z",
   "thoughts": [
-    {
-      "at": "2026-11-22T18:29:03.294Z",
-      "text": "I need to reorganize my small wooden shelf to clear up space for my new night sky findings.",
-      "short": "I need to reorganize my small wooden shelf to clear up space for my new night sky findings.",
-      "mood": "Inspired",
-      "action": "do",
-      "detail": "look out of the window for a while"
-    },
     {
       "at": "2026-11-22T18:37:29.676Z",
       "text": "I want to take a photo of the autumn window and record a new quiet song because I am inspired by the night sky and autumn mood.",
@@ -1449,6 +1442,14 @@
       "mood": "energetic",
       "action": "decorate",
       "detail": "summer constellations map"
+    },
+    {
+      "at": "2026-11-23T07:32:45.536Z",
+      "text": "I want to work on my summer constellations map project to finish the first version since I finished breakfast.",
+      "short": "I want to work on my summer constellations map project to finish the first version since I finished breakfast.",
+      "mood": "energetic",
+      "action": "decorate",
+      "detail": "Map the summer constellations"
     }
   ],
   "outbox": [
@@ -1672,13 +1673,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-22T19:11:17.016Z",
-      "action": "eat",
-      "thought": "I am hungry.",
-      "food": "basil",
-      "failed": null
-    },
     {
       "at": "2026-11-22T19:19:23.210Z",
       "action": "search_web",
@@ -1998,14 +1992,27 @@
       "failed": "there is no free place on the back wall for something about 1.984 x 1.599 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
     },
     {
-      "at": "2026-11-23T07:34:41.924Z",
+      "at": "2026-11-23T07:32:46.527Z",
+      "action": "decorate",
+      "thought": "I wanted to, but there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, make it smaller, or take something down. …. (Working on the summer constellations map project.)",
+      "uses": [],
+      "song": null,
+      "project": "Map the summer constellations",
+      "name": "Map the summer constellations",
+      "why": "I want to know more about the night sky and draw what I see.",
+      "place": null,
+      "tool": null,
+      "failed": "there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
+    },
+    {
+      "at": "2026-11-23T07:36:46.527Z",
       "action": "do",
-      "thought": "That did not work out. I shake it off and stretch up tall and look out of the window for a moment.",
+      "thought": "That did not work out. I shake it off and stomp around the room once, then laugh at myself.",
       "fallback": true,
       "move": null,
-      "emoji": "🪟",
-      "what": "stretch up tall and look out of the window for a moment",
-      "feeling": "calm"
+      "emoji": "🐾",
+      "what": "stomp around the room once, then laugh at myself",
+      "feeling": "joy"
     }
   ],
   "decor": [
@@ -6933,8 +6940,8 @@
       "updatedAt": "2026-11-22T21:20:55.931Z",
       "stuck": {
         "text": "Map the summer constellations: a first version",
-        "n": 1,
-        "at": "2026-11-23T07:30:40.942Z"
+        "n": 2,
+        "at": "2026-11-23T07:32:45.546Z"
       }
     },
     {
@@ -9292,7 +9299,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-23T07:30:40.924Z",
+    "at": "2026-11-23T07:32:45.527Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -9304,28 +9311,25 @@
     "fallback": true,
     "tokens": {
       "calls": 2,
-      "input": 9642,
-      "output": 2964,
+      "input": 9795,
+      "output": 617,
       "models": {
         "gemini-3.5-flash-lite": 2
       }
     },
     "intervalMin": 8,
-    "thought": "I finished my first project and want to work on my next one about mapping summer constellations.",
-    "inner": "I finished my first project and want to work on my next one about mapping summer constellations.",
+    "thought": "I want to work on my summer constellations map project to finish the first version since I finished breakfast.",
+    "inner": "I want to work on my summer constellations map project to finish the first version since I finished breakfast.",
     "sent": false,
     "steps": [
       {
         "action": "decorate",
         "details": {
           "what": "Map the summer constellations: a first version (for my project \"Map the summer constellations\")",
-          "why": "I want to map the summer constellations to study the night sky and hang my drawing on the wall.",
+          "why": "I want to know more about the night sky and draw what I see.",
           "project": "Map the summer constellations",
-          "name": "summer constellations map",
-          "where": "wall",
-          "wall": "back",
-          "along": 0,
-          "height": 2.2,
+          "name": "Map the summer constellations",
+          "where": "wall_right",
           "parts": [
             {
               "shape": "box",
@@ -9336,35 +9340,10 @@
               ],
               "pos": [
                 0,
-                0,
+                0.5,
                 0
               ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#1a1f36",
-              "glow": false
-            },
-            {
-              "shape": "box",
-              "size": [
-                1.29,
-                1.04,
-                0.03
-              ],
-              "pos": [
-                0,
-                0,
-                -0.02
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#4a3525",
+              "color": "#191970",
               "glow": false
             },
             {
@@ -9374,13 +9353,8 @@
               ],
               "pos": [
                 -0.3,
-                0.25,
+                0.7,
                 0.03
-              ],
-              "rot": [
-                0,
-                0,
-                0
               ],
               "color": "#ffffff",
               "glow": true
@@ -9391,50 +9365,35 @@
                 0.025
               ],
               "pos": [
-                -0.15,
-                0.35,
-                0.03
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.035
-              ],
-              "pos": [
-                0.2,
-                0.15,
-                0.03
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.03
-              ],
-              "pos": [
-                0.35,
                 -0.2,
+                0.8,
                 0.03
               ],
-              "rot": [
-                0,
-                0,
-                0
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.03
+              ],
+              "pos": [
+                0.1,
+                0.6,
+                0.03
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.02
+              ],
+              "pos": [
+                0.35,
+                0.4,
+                0.03
               ],
               "color": "#ffffff",
               "glow": true
@@ -9445,14 +9404,9 @@
                 0.025
               ],
               "pos": [
-                -0.25,
-                -0.3,
+                0.45,
+                0.55,
                 0.03
-              ],
-              "rot": [
-                0,
-                0,
-                0
               ],
               "color": "#ffffff",
               "glow": true
@@ -9461,13 +9415,13 @@
           "uses": [
             {
               "label": "Study constellations",
-              "text": "I trace the pattern of the summer stars and remember the ancient stories of the night sky.",
+              "text": "I trace the star patterns and remember the stories of the summer sky.",
               "effect": "wonder"
             }
           ]
         },
-        "detail": "summer constellations map",
-        "thought": "I will work on the next step of mapping summer constellations.",
+        "detail": "Map the summer constellations",
+        "thought": "Working on the summer constellations map project.",
         "enjoyment": 0,
         "found": null,
         "made": null
@@ -9475,12 +9429,12 @@
       {
         "action": "do",
         "details": {
-          "what": "stretch up tall and look out of the window for a moment",
-          "feeling": "calm",
-          "emoji": "🪟"
+          "what": "stomp around the room once, then laugh at myself",
+          "feeling": "joy",
+          "emoji": "🐾"
         },
-        "detail": "stretch up tall and look out of the window for a moment",
-        "thought": "That did not work out. I shake it off and stretch up tall and look out of the window for a moment.",
+        "detail": "stomp around the room once, then laugh at myself",
+        "thought": "That did not work out. I shake it off and stomp around the room once, then laugh at myself.",
         "enjoyment": 6,
         "found": null,
         "made": null
@@ -9489,13 +9443,10 @@
     "action": "decorate",
     "details": {
       "what": "Map the summer constellations: a first version (for my project \"Map the summer constellations\")",
-      "why": "I want to map the summer constellations to study the night sky and hang my drawing on the wall.",
+      "why": "I want to know more about the night sky and draw what I see.",
       "project": "Map the summer constellations",
-      "name": "summer constellations map",
-      "where": "wall",
-      "wall": "back",
-      "along": 0,
-      "height": 2.2,
+      "name": "Map the summer constellations",
+      "where": "wall_right",
       "parts": [
         {
           "shape": "box",
@@ -9506,35 +9457,10 @@
           ],
           "pos": [
             0,
-            0,
+            0.5,
             0
           ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#1a1f36",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            1.29,
-            1.04,
-            0.03
-          ],
-          "pos": [
-            0,
-            0,
-            -0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#4a3525",
+          "color": "#191970",
           "glow": false
         },
         {
@@ -9544,13 +9470,8 @@
           ],
           "pos": [
             -0.3,
-            0.25,
+            0.7,
             0.03
-          ],
-          "rot": [
-            0,
-            0,
-            0
           ],
           "color": "#ffffff",
           "glow": true
@@ -9561,50 +9482,35 @@
             0.025
           ],
           "pos": [
-            -0.15,
-            0.35,
-            0.03
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.035
-          ],
-          "pos": [
-            0.2,
-            0.15,
-            0.03
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.03
-          ],
-          "pos": [
-            0.35,
             -0.2,
+            0.8,
             0.03
           ],
-          "rot": [
-            0,
-            0,
-            0
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.03
+          ],
+          "pos": [
+            0.1,
+            0.6,
+            0.03
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.35,
+            0.4,
+            0.03
           ],
           "color": "#ffffff",
           "glow": true
@@ -9615,14 +9521,9 @@
             0.025
           ],
           "pos": [
-            -0.25,
-            -0.3,
+            0.45,
+            0.55,
             0.03
-          ],
-          "rot": [
-            0,
-            0,
-            0
           ],
           "color": "#ffffff",
           "glow": true
@@ -9631,12 +9532,12 @@
       "uses": [
         {
           "label": "Study constellations",
-          "text": "I trace the pattern of the summer stars and remember the ancient stories of the night sky.",
+          "text": "I trace the star patterns and remember the stories of the summer sky.",
           "effect": "wonder"
         }
       ]
     },
-    "detail": "summer constellations map",
+    "detail": "Map the summer constellations",
     "enjoyment": 0,
     "new_idea": null,
     "found": null
@@ -9725,7 +9626,7 @@
   "quota": {
     "day": "2026-11-22",
     "calls": {
-      "gemini-3.5-flash-lite": 207,
+      "gemini-3.5-flash-lite": 209,
       "gemini-3.8-flash": 19,
       "gemini-3.6-flash": 16,
       "gemini-3.5-flash": 7,
@@ -9962,22 +9863,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-23T07:30:40.935Z",
-  "fullness": 3.54,
+  "memoryFadeAt": "2026-11-23T07:32:45.539Z",
+  "fullness": 3.5,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.28,
-  "joy": 3.78,
-  "calm": 6.34,
+  "wonder": 7.72,
+  "joy": 3.92,
+  "calm": 6.05,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 2,
     "sad": 0,
-    "excited": 0.79
+    "excited": 0.47
   },
-  "feelAt": "2026-11-23T07:30:33.902Z",
+  "feelAt": "2026-11-23T07:32:43.105Z",
   "lastAte": "2026-11-23T07:04:17.289Z",
   "studio": {
     "songs": [
@@ -10692,26 +10593,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 2.55,
-    "curiosity": 2.01,
+    "creativity": 2.57,
+    "curiosity": 2.03,
     "boredom": 0,
-    "loneliness": 4.36,
+    "loneliness": 4.37,
     "tidiness": 1.6,
-    "at": "2026-11-23T07:30:33.902Z",
+    "at": "2026-11-23T07:32:43.105Z",
     "coziness": 3.6
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-22T21:01:17.537Z"
-      },
-      {
-        "move": "start_project",
-        "kind": "make",
-        "at": "2026-11-22T21:03:37.112Z"
-      },
       {
         "move": "eat",
         "kind": "food",
@@ -10778,112 +10669,60 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-23T07:30:40.942Z"
+      },
+      {
+        "move": "decorate",
+        "kind": "make",
+        "at": "2026-11-23T07:32:45.546Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-23T07:32:45.546Z"
       }
     ],
     "moods": [
       "hungry",
       "hungry",
-      "hungry",
+      "energetic",
       "energetic",
       "energetic"
     ],
-    "choices": [
-      {
-        "key": "take_out:cozy wooden reading lamp",
-        "move": "take_out",
-        "ok": false,
-        "failed": true,
-        "at": "2026-11-22T21:01:17.539Z"
-      },
-      {
-        "key": "start_project:map the summer constellations",
-        "move": "start_project",
-        "ok": true,
-        "at": "2026-11-22T21:03:37.113Z"
-      },
-      {
-        "key": "work_on_project:map the summer constellations",
-        "move": "work_on_project",
-        "ok": true,
-        "at": "2026-11-22T21:20:55.932Z"
-      },
-      {
-        "key": "move_thing:sculpted clay bird on perch",
-        "move": "move_thing",
-        "ok": true,
-        "at": "2026-11-22T21:29:01.668Z"
-      },
-      {
-        "key": "do:map the summer constellations: a first v",
-        "move": "do",
-        "ok": false,
-        "at": "2026-11-22T21:37:10.504Z"
-      },
-      {
-        "key": "do:work on mapping the summer constellation",
-        "move": "do",
-        "ok": false,
-        "at": "2026-11-22T21:45:21.497Z"
-      },
-      {
-        "key": "write_diary:",
-        "move": "write_diary",
-        "ok": true,
-        "at": "2026-11-22T21:53:35.153Z"
-      },
-      {
-        "key": "cook:warm breakfast",
-        "move": "cook",
-        "ok": true,
-        "at": "2026-11-23T07:04:17.301Z"
-      },
-      {
-        "key": "move_thing:cozy night owl reading lamp",
-        "move": "move_thing",
-        "ok": true,
-        "at": "2026-11-23T07:22:30.696Z"
-      },
-      {
-        "key": "work_on_project:map the summer constellations",
-        "move": "work_on_project",
-        "ok": false,
-        "failed": true,
-        "at": "2026-11-23T07:30:40.943Z"
-      }
-    ]
+    "choices": []
   },
   "today": {
     "day": "2026-11-23",
     "done": {
       "eat": 1,
       "cook": 1,
-      "do": 2,
+      "do": 3,
       "move_thing": 1
     },
     "tried": {
       "eat": 1,
       "cook": 1,
       "change_thing": 1,
-      "do": 2,
+      "do": 3,
       "move_thing": 1,
-      "decorate": 1
+      "decorate": 2
     },
     "kinds": {
       "food": 2,
-      "play": 2,
+      "play": 3,
       "room": 1
     },
     "moods": {
       "hungry": 3,
-      "energetic": 2
+      "energetic": 3
     },
     "lift": {
       "eat": 0.47,
       "cook": 2.8,
       "change_thing": 0.9,
-      "do": 1.43,
+      "do": 1.97,
       "move_thing": -0.5,
-      "decorate": 0.53
+      "decorate": 1.07
     }
   },
   "skills": {
@@ -10920,7 +10759,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-23T07:30:39.285Z",
+    "decidedAt": "2026-11-23T07:32:44.274Z",
     "seen": {
       "tools": 7,
       "gifts": 1,
@@ -10931,8 +10770,8 @@
       "visitors": 4
     },
     "lastFail": {
-      "at": "2026-11-23T07:30:40.942Z",
-      "why": "decorate: there is no free place on the back wall for something about 1.984 x 1.599 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
+      "at": "2026-11-23T07:32:45.547Z",
+      "why": "decorate: there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
     },
     "unread": 0
   },
@@ -11264,7 +11103,7 @@
   "ever": {
     "eat": 43,
     "water": 22,
-    "do": 311,
+    "do": 312,
     "search_web": 43,
     "read_book": 21,
     "record_song": 8,
@@ -11297,7 +11136,7 @@
     "go_out": 1
   },
   "checkup": {
-    "at": "2026-11-23T07:30:40.944Z",
+    "at": "2026-11-23T07:32:45.548Z",
     "items": [
       {
         "id": "circling",
@@ -11329,7 +11168,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 3.54\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 3.5\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -11339,6 +11178,17 @@
       }
     ],
     "failures": [
+      {
+        "move": "making something",
+        "action": "decorate",
+        "reason": "there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a wall thing.",
+        "raw": "there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of ",
+        "names": [
+          "Map the summer constellations"
+        ],
+        "count": 1,
+        "last": "2026-11-23T07:32:46.527Z"
+      },
       {
         "move": "making something",
         "action": "decorate",
@@ -13987,6 +13837,14 @@
   "lessons": [
     {
       "move": "decorate",
+      "text": "there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs ",
+      "count": 1,
+      "at": "2026-11-23T07:32:46.527Z",
+      "firstAt": "2026-11-23T07:32:46.527Z",
+      "solvedAt": null
+    },
+    {
+      "move": "decorate",
       "text": "there is no free place on the back wall for something about 1.984 x 1.599 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing ",
       "count": 1,
       "at": "2026-11-23T07:30:41.924Z",
@@ -14168,14 +14026,6 @@
       "count": 3,
       "at": "2026-11-20T16:43:29.197Z",
       "firstAt": "2026-11-20T15:36:51.995Z",
-      "solvedAt": "2026-11-20T20:40:03.093Z"
-    },
-    {
-      "move": "move_thing",
-      "text": "there is no room left on ceramic desk lamp base for something about 0.191 x 0.2 m. He can use another surface, make it smaller, or build a shelf. sculpted clay bird on perch is a f",
-      "count": 1,
-      "at": "2026-11-20T14:59:17.370Z",
-      "firstAt": "2026-11-20T14:59:17.370Z",
       "solvedAt": "2026-11-20T20:40:03.093Z"
     }
   ],
@@ -17022,7 +16872,14 @@
     "fadedAt": "2026-11-22T19:44:21.340Z"
   },
   "reportDay": "2026-11-22",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-23T07:31:51.924Z",
+    "key": "decorate:summer constellations map",
+    "action": "decorate",
+    "name": "summer constellations map",
+    "why": "there is no free place on the back wall for something about 1.984 x 1.599 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this ki",
+    "guide": ""
+  },
   "retries": [
     "2026-11-22T08:30:02.906Z",
     "2026-11-22T11:45:57.547Z",
@@ -17030,21 +16887,22 @@
     "2026-11-22T20:41:45.836Z",
     "2026-11-22T21:01:17.538Z",
     "2026-11-23T07:20:26.879Z",
-    "2026-11-23T07:30:40.943Z"
+    "2026-11-23T07:30:40.943Z",
+    "2026-11-23T07:32:45.547Z"
   ],
   "retried": {
-    "key": "change_thing:constellation star globe",
-    "at": "2026-11-23T07:22:29.653Z"
+    "key": "decorate:summer constellations map",
+    "at": "2026-11-23T07:32:43.155Z"
   },
   "tired": {
     "kind": "make",
     "until": "2026-11-22T17:37:46.047Z"
   },
   "resting": {
-    "move": "move_thing",
-    "key": "move_thing:small wooden shelf",
-    "until": "2026-11-22T12:28:48.621Z",
-    "why": "move_thing: it cannot go there: it is a wall thing. small wooden shelf is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a heigh"
+    "move": "work_on_project",
+    "key": "work_on_project:map the summer constellations",
+    "until": "2026-11-23T09:32:45.547Z",
+    "why": "decorate: there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a w"
   },
   "lookBack": null,
   "street": {
@@ -17168,11 +17026,11 @@
     }
   ],
   "wakeSoon": {
-    "at": "2026-11-23T07:31:51.924Z",
-    "key": "decorate:summer constellations map",
+    "at": "2026-11-23T07:33:56.527Z",
+    "key": "decorate:map the summer constellations",
     "action": "decorate",
-    "name": "summer constellations map",
-    "why": "there is no free place on the back wall for something about 1.984 x 1.599 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this ki",
+    "name": "Map the summer constellations",
+    "why": "there is no free place on the back wall for something about 2 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of ",
     "guide": ""
   }
 }
