@@ -328,24 +328,48 @@ export function buildTown(THREE) {
   ground.receiveShadow = true;
   { const cx = (WORLD.x0 + WORLD.x1) / 2, cz = (WORLD.z0 + WORLD.z1) / 2; for (const [w, d, x, z] of [[WW + 0.6, 0.3, cx, WORLD.z0 - 0.15], [WW + 0.6, 0.3, cx, WORLD.z1 + 0.15], [0.3, WD, WORLD.x0 - 0.15, cz], [0.3, WD, WORLD.x1 + 0.15, cz]]) box([w, 0.8, d], 0x8a6a4c, [x, -0.42, z]); } // the rim it lies in
   // the village square and the paths from it to every door (there is no road: there are no cars)
-  // The square and the paths: one smooth, even, light surface with a crisp edge and a thin darker border, like fine
-  // gravel raked flat. Tidy on purpose: no tiles, no stains. (They lie flat on the ground, a hair above it.)
+  // The square and the paths: one smooth, even, light surface, like fine gravel raked flat. Tidy, but not drawn with a
+  // ruler: the square has a soft, slightly uneven outline (the same every time), and the paths wind a little and are
+  // not equally wide everywhere. A thin darker rim runs around the square. (All of it lies flat, a hair above the ground.)
   const PAVE = 0xd6c9ae, PAVE_EDGE = 0x9c8c70;
-  const shapeTex = (w, h, r) => { // white inside a rounded rectangle with a sharp edge, black outside
-    const c = document.createElement('canvas'); c.width = w; c.height = h;
-    const g = c.getContext('2d');
-    g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
-    g.fillStyle = '#fff'; g.beginPath(); g.roundRect(1, 1, w - 2, h - 2, r); g.fill();
-    return new THREE.CanvasTexture(c);
+  const flatMesh = (pts, tris, y, color) => { // a flat patch from points [x, z] and triangles
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts.flatMap(([x, z]) => [x, y, z])), 3));
+    geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(pts.flatMap(() => [0, 1, 0])), 3));
+    geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(pts.flatMap(([x, z]) => [x / 4, z / 4])), 2));
+    geo.setIndex(tris);
+    const mesh = add(geo, M(color), [0, 0, 0]);
+    mesh.receiveShadow = true;
+    return mesh;
   };
-  const flat = (w, d, pos, color, alpha) => { const mesh = add(new THREE.PlaneGeometry(w, d), M(color, { transparent: true, alphaMap: alpha, alphaTest: 0.5, depthWrite: false }), pos); mesh.rotation.x = -Math.PI / 2; mesh.receiveShadow = true; return mesh; };
-  const SQW = SQUARE.x1 - SQUARE.x0, SQD = SQUARE.z1 - SQUARE.z0;
   const sqMid = [(SQUARE.x0 + SQUARE.x1) / 2, (SQUARE.z0 + SQUARE.z1) / 2];
-  const pathShape = shapeTex(256, 32, 16);
-  const paths = PATHS.map(([ax, az, bx, bz], i) => { const len = Math.hypot(bx - ax, bz - az); const mesh = flat(len + 2, 2, [(ax + bx) / 2, 0.012 + i * 0.0004, (az + bz) / 2], PAVE, pathShape); mesh.rotation.z = -Math.atan2(bz - az, bx - ax); return { mesh, ax, az, bx, bz }; });
-  flat(SQW + 0.5, SQD + 0.5, [sqMid[0], 0.03, sqMid[1]], PAVE_EDGE, shapeTex(512, Math.round((512 * (SQD + 0.5)) / (SQW + 0.5)), 26)); // its border
-  const square = flat(SQW, SQD, [sqMid[0], 0.034, sqMid[1]], PAVE, shapeTex(512, Math.round((512 * SQD) / SQW), 22));
-  square.receiveShadow = true;
+  const blob = (grow) => { // the outline of the square: a rounded shape with a few gentle bulges, `grow` metres bigger
+    const a = (SQUARE.x1 - SQUARE.x0) / 2 + 0.8 + grow, b = (SQUARE.z1 - SQUARE.z0) / 2 + 0.8 + grow;
+    return Array.from({ length: 96 }, (_, i) => { const t = (i / 96) * Math.PI * 2; const k = 1 + 0.035 * Math.sin(3 * t + 0.7) + 0.028 * Math.sin(5 * t + 2.1) + 0.02 * Math.sin(2 * t + 4.0); const c = Math.cos(t), sn = Math.sin(t); return [sqMid[0] + a * k * Math.sign(c) * Math.abs(c) ** 0.6, sqMid[1] + b * k * Math.sign(sn) * Math.abs(sn) ** 0.6]; });
+  };
+  const fan = (ring, y, color) => flatMesh([sqMid, ...ring], ring.map((_, i) => [0, 1 + ((i + 1) % ring.length), 1 + i]).flat(), y, color);
+  // a path from a to b: it winds a little, is a little wider here and narrower there, and opens up at both ends
+  const paths = PATHS.map(([ax, az, bx, bz], i) => {
+    const len = Math.hypot(bx - ax, bz - az), n = Math.max(4, Math.ceil(len / 1.2));
+    const dx = (bx - ax) / len, dz = (bz - az) / len, px = -dz, pz = dx;
+    const ph = i * 1.7, waves = Math.max(1, Math.round(len / 9));
+    const pts = [];
+    for (let k = 0; k <= n; k++) {
+      const t = k / n, along = -0.9 + t * (len + 1.8);
+      const sway = Math.sin(t * Math.PI) * Math.sin(t * Math.PI * waves + ph) * Math.min(0.45, len * 0.04);
+      const half = 0.92 + 0.14 * Math.sin(t * 7 + ph * 1.3) + 0.3 * (1 - Math.sin(t * Math.PI)) ** 3;
+      const cx = ax + dx * along + px * sway, cz = az + dz * along + pz * sway;
+      pts.push([cx + px * half, cz + pz * half], [cx - px * half, cz - pz * half]);
+    }
+    const tris = [];
+    for (let k = 0; k < n; k++) tris.push(2 * k, 2 * k + 2, 2 * k + 1, 2 * k + 1, 2 * k + 2, 2 * k + 3); // wound so they face up
+    return { mesh: flatMesh(pts, tris, 0.04 + i * 0.0004, PAVE), ax, az, bx, bz };
+  });
+  { // its rim: only a band around the outside (nothing darker under the square itself), and the paths lie over it
+    const inner = blob(-0.06), outer = blob(0.28), n = inner.length;
+    flatMesh([...inner, ...outer], inner.map((_, i) => { const j = (i + 1) % n; return [i, j, n + i, j, n + j, n + i]; }).flat(), 0.03, PAVE_EDGE);
+  }
+  const square = fan(blob(0), 0.034, PAVE);
   things.push({ kind: 'place', key: 'square', object: square });
   const field = add(fieldGeo, M(0xb4dc9a, {}, 'grass', 14, 10), [0, 0, 0]);
   field.material.vertexColors = true;
