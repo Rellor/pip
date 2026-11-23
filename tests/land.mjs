@@ -28,7 +28,7 @@ ok('he plans a hill or a hole at a place he names, and it goes where it fits');
 
 // ---- what he built is not buried
 const withShed = fresh({ decor: [{ name: 'garden shed', kind: 'outside', pos: [TOWN_X + hill.shape.x, 0, hill.shape.z], metres: 4 }] });
-const beside = planLand(withShed, { kind: 'hill', where: 'on my land', size: 'big' }, noon).job.shape;
+const beside = planLand(withShed, { kind: 'hill', where: 'on my land', size: 'small' }, noon).job.shape;
 assert.ok(Math.hypot(beside.x - hill.shape.x, beside.z - hill.shape.z) >= beside.r + 2, 'the hill goes beside his shed, not under it');
 { const two = fresh({ land: [{ id: 'l0', kind: 'hill', name: 'first hill', x: hill.shape.x, z: hill.shape.z, r: 12, h: 5, at: new Date(noon - 3 * 86_400_000).toISOString() }] }); const next = planLand(two, { kind: 'hill', where: 'on my land', size: 'small' }, noon).job.shape; assert.ok(Math.hypot(next.x - hill.shape.x, next.z - hill.shape.z) >= 12, 'a second hill goes beside the first, not on top of it'); assert.ok(planLand(two, { kind: 'hole', where: 'on my land', size: 'small' }, noon).job, 'a hole in a hill is fine'); }
 ok('a hill does not bury what he built');

@@ -21,7 +21,7 @@ const fresh = (more = {}) => ({ energy: 8, fullness: 8, joy: 5, calm: 5, wonder:
 const iso = (ms) => new Date(ms).toISOString();
 
 // ---- the places
-assert.deepEqual(PLACES.map((p) => p.key), ['home', 'doorstep', 'shop', 'pond', 'library', 'board', 'workshop', 'walls', 'land']);
+assert.deepEqual(PLACES.map((p) => p.key), ['home', 'doorstep', 'shop', 'pond', 'library', 'board', 'workshop', 'walls', 'drops', 'land']);
 assert.ok(PLACES.length <= 12, 'a small world: a handful of places besides home');
 for (const p of PLACES.filter((x) => x.key !== 'home' && !x.errand && !x.job)) assert.ok(p.things.length >= 1 && p.stay && p.blurb && p.walk > 0, p.key);
 for (const p of PLACES.filter((x) => x.job)) assert.ok(!p.things && p.stay && p.blurb && p.walk > 0 && !p.locked, `${p.key}: a place he only goes to with something to make there`);
