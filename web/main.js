@@ -62,6 +62,7 @@ function applyPixels() {
 }
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 let turnWithMouse = false; // Settings: the mouse turns the view (then A and D step sideways); otherwise A and D turn
+const jump = { y: 0, v: 0 }; // Space: how high you are off the ground right now, and how fast you rise
 const bob = { walked: 0, moving: false, k: 0 }; // how far you walked (for the bobbing of the view), and how much it shows right now
 let portalOn = false; // the world stands right outside his windows while you are inside his home (see setPortal)
 let portalReady = false;
@@ -2236,7 +2237,7 @@ function updateWalk(dt) {
   const len = Math.hypot(fwd, side);
   bob.moving = false;
   if (len > 0.05) {
-    const speed = 2.4 * dt * Math.min(1, len);
+    const speed = (view.keys.has('shift') ? 4.6 : 2.4) * dt * Math.min(1, len); // Shift: you run
     const dx = ((-Math.sin(view.yaw) * fwd + Math.cos(view.yaw) * side) / len) * speed;
     const dz = ((-Math.cos(view.yaw) * fwd - Math.sin(view.yaw) * side) / len) * speed;
     const wasZ = view.z;
@@ -2257,12 +2258,13 @@ function updateWalk(dt) {
   // his windows at the street. Outside everything is life-size.
   // Bobbing: the view goes a little up and down with every step, and sways a touch from foot to foot. It fades in when
   // you start walking and out when you stop. (Inside everything is 1.6 times bigger, so the steps are too.)
-  bob.k += ((bob.moving && bobOn ? 1 : 0) - bob.k) * Math.min(1, dt * 8);
+  for (let left = Math.min(dt, 0.25); (jump.v || jump.y > 0) && left > 0; left -= 1 / 90) { const h = Math.min(left, 1 / 90); jump.y += jump.v * h; jump.v -= 13 * h; if (jump.y <= 0) { jump.y = 0; jump.v = 0; } } // a hop: up, and gravity brings you down (in small steps, so a slow screen jumps just as high)
+  bob.k += ((bob.moving && bobOn && jump.y <= 0 ? 1 : 0) - bob.k) * Math.min(1, dt * 8);
   const big = inTown(view.x) ? 1 : 1.6;
   const stepLen = 0.78 * big;
   const up = Math.sin((bob.walked / stepLen) * Math.PI * 2) * 0.042 * big * bob.k;
   const sway = Math.sin((bob.walked / stepLen) * Math.PI) * 0.022 * big * bob.k;
-  camera.position.set(view.x + Math.cos(view.yaw) * sway, (inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55) + up, view.z - Math.sin(view.yaw) * sway);
+  camera.position.set(view.x + Math.cos(view.yaw) * sway, (inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55) + up + jump.y * (inTown(view.x) ? 1 : 1.6), view.z - Math.sin(view.yaw) * sway);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
 }
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
@@ -2998,8 +3000,8 @@ function showTurn() { // the two choices (in Settings and on the start screen) a
   turnWithMouse = mouseLook();
   document.querySelectorAll('.setpick [data-turn]').forEach((b) => { const on = (b.dataset.turn === 'mouse') === turnWithMouse; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); });
   const rows = touchOnly ? [['The round stick', 'walk'], ['Drag', 'look around'], ['Tap a thing', 'read about it'], ['Tap the round map', 'go to Pip']]
-    : turnWithMouse ? [['W  S', 'walk'], ['A  D', 'step sideways'], ['Mouse', 'turn and look (click the picture first)'], ['Esc', 'get your mouse back'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']]
-    : [['W  S', 'walk'], ['A  D', 'turn'], ['Drag', 'look up and down'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']];
+    : turnWithMouse ? [['W  S', 'walk'], ['A  D', 'step sideways'], ['Shift', 'run'], ['Space', 'jump'], ['Mouse', 'turn and look (click the picture first)'], ['Esc', 'get your mouse back'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']]
+    : [['W  S', 'walk'], ['A  D', 'turn'], ['Shift', 'run'], ['Space', 'jump'], ['Drag', 'look up and down'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']];
   $('controls').replaceChildren(...rows.map(([k, what]) => { const li = el('li'); li.append(el('b', k), document.createTextNode(what)); return li; }));
 }
 function setTurn(mode) {
@@ -3076,10 +3078,11 @@ stick.addEventListener('pointercancel', stopStick);
 window.addEventListener('keydown', (e) => {
   if (view.mode !== 'walk' || /input|textarea/i.test(document.activeElement?.tagName || '')) return;
   const k = e.key.toLowerCase();
-  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) {
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) {
     view.keys.add(k);
-    e.preventDefault();
+    if (k !== 'shift') e.preventDefault();
   }
+  if (k === ' ' && !e.repeat) { if (jump.y <= 0.001) jump.v = 4.6; e.preventDefault(); } // Space: a hop
   if (k === 'f' && !e.repeat) { interact(); e.preventDefault(); }
   if (k === 'escape' && !document.body.classList.contains('first')) setMode('overview');
 });

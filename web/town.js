@@ -264,7 +264,6 @@ export function buildTown(THREE) {
   for (let x = -42; x <= 90; x += 6) box([2.4, 0.02, 0.16], 0xf4efe6, [x, 0.035, 5.4]);
   const gravel = M(0xe2d5bd);
   box([32, 0.05, 2.2], gravel, [-55, 0.01, 1.4]);
-  for (const [x, z] of STONES) cyl(0.55, 0.6, 0.12, gravel, [x, groundAt(x, z) + 0.04, z]);
   road.receiveShadow = true;
   // his plot: a field marked out with a low fence and a sign
   const field = box([PLOT.x1 - PLOT.x0, 0.05, PLOT.z1 - PLOT.z0], M(0xb4dc9a, {}, 'grass', 14, 4), [(PLOT.x0 + PLOT.x1) / 2, 0.0, (PLOT.z0 + PLOT.z1) / 2]);
@@ -535,6 +534,7 @@ export function buildTown(THREE) {
   const hillMat = new THREE.MeshBasicMaterial({ color: 0x8fb89a });
   const hillMat2 = new THREE.MeshBasicMaterial({ color: 0xa7c6b4 });
   for (let i = 0; i < 26; i++) { const a = (i / 26) * Math.PI * 2 + 0.2; const r = 330 + ((i * 37) % 90); const hl = add(new THREE.SphereGeometry(60 + ((i * 53) % 50), 12, 8), i % 2 ? hillMat : hillMat2, [Math.cos(a) * r, -18, Math.sin(a) * r], far); hl.scale.y = 0.38 + ((i * 17) % 10) / 40; }
+  { const hide = add(new THREE.SphereGeometry(46, 16, 10), hillMat, [-TOWN_X + 1.6, -14, 0], far); hide.scale.y = 0.75; } // (his real rooms stand far to the side of the world: this hill covers them)
   const blockMat = [new THREE.MeshBasicMaterial({ color: 0x9aa7b5 }), new THREE.MeshBasicMaterial({ color: 0xb7b0c2 }), new THREE.MeshBasicMaterial({ color: 0x8a97a8 })];
   for (let i = 0; i < 11; i++) { const a = -0.9 + i * 0.33 + (i % 3) * 0.05; const r = 280 + ((i * 41) % 60); box([16 + (i % 3) * 8, 46 + ((i * 29) % 60), 14], blockMat[i % 3], [Math.sin(a) * r, 18 + ((i * 29) % 60) / 2, -Math.cos(a) * r], far); } // tower blocks far away
   const skyGeo = new THREE.SphereGeometry(900, 24, 14);
