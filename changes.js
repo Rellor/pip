@@ -460,7 +460,7 @@ const CHANGES = [
   {
     id: '2026-11-23 the paint walls stand between the buildings',
     run() { // the walls moved into the gaps between the buildings (web/town.js); what he painted stays on its wall
-      return 'Bas moved the bare walls I paint on. They stand in the gaps between the buildings now, each turned its own way: beside my house, by the internet café, by the flats, by the art workshop and by the build workshop. Somebody has been at them with a spray can before me. Fine. I paint over it.';
+      return 'Bas moved the bare walls I paint on. They stand in the gaps between the buildings now, each turned its own way: beside my house, by the internet café, by the flats, by the art workshop and by the build workshop. They are bare. Nobody has painted on them yet, so the first one is mine.';
     },
   },
   {
