@@ -5405,3 +5405,8 @@ My mint is fully grown, so I want to harvest it before starting a new project ab
 - harvest (mint): Harvest the ready mint
 - mood: curious
 
+## 23/11/2026, 12:42:53
+Start a project to build a simulation of the night sky
+- do (plan my new project: ): Start a project to build a simulation of the night sky
+- mood: curious
+
