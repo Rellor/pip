@@ -742,6 +742,38 @@ function clothesThumb(c) {
   thumbCache.set(key, url);
   return url;
 }
+// A small picture of Pip making one of his faces (FACES), drawn the same way as the clothes pictures.
+function facePic(name, size = 320) {
+  const key = `face|${name}|${size}`;
+  if (thumbCache.has(key)) return thumbCache.get(key);
+  let url = null;
+  try {
+    thumbRenderer ??= new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    thumbRenderer.setPixelRatio(1);
+    thumbRenderer.setSize(size, size);
+    thumbRenderer.outputColorSpace = renderer.outputColorSpace;
+    const sc = new THREE.Scene();
+    sc.add(new THREE.HemisphereLight(0xfff4e6, 0xb08a6a, 1.5));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+    sun.position.set(2, 4, 5);
+    sc.add(sun);
+    const who = makePip();
+    who.face.set(name);
+    who.face.tick(0, true);
+    who.arms[0].position.set(-0.5, 0.55, 0.1); who.arms[1].position.set(0.5, 0.55, 0.1);
+    who.feet[0].position.set(-0.22, 0.1, 0); who.feet[1].position.set(0.22, 0.1, 0);
+    sc.add(who.group);
+    const cam = new THREE.PerspectiveCamera(30, 1, 0.1, 30);
+    cam.position.set(0, 0.86, 3.3);
+    cam.lookAt(0, 0.7, 0);
+    thumbRenderer.render(sc, cam);
+    url = thumbRenderer.domElement.toDataURL('image/png');
+    thumbRenderer.setSize(320, 320);
+  } catch {}
+  thumbCache.set(key, url);
+  return url;
+}
+window.pipFacePic = facePic; // for testing: every face he can make, as a picture
 const clothesOf = (name) => { const n = String(name || '').toLowerCase(); return (lastState?.wardrobe || []).find((c) => String(c.name).toLowerCase() === n) || null; };
 function clothesPic(c, extra = '') {
   const url = clothesThumb(c);
@@ -824,6 +856,26 @@ props.bed(G.bed);
 props.plant(G.plant);
 
 // ---------------------------------------------------------------- Pip
+// ---- The faces he can make. lid: how far the lids are down (0 open, 1 shut), lift and tilt: his brows (tilt > 0: the
+// inner ends go down, stern; < 0: the inner ends go up, soft), each one number or [his right, his left]; mouth: flat,
+// smile, frown or o; w: how wide; mt: how crooked; slant: the lids' own slope.
+const FACES = {
+  neutral: { lid: 0, lift: 0.004, tilt: 0, mouth: 'flat', w: 0.8 },
+  happy: { lid: 0, lift: 0.02, tilt: -0.14, mouth: 'smile', w: 0.9 },
+  delighted: { lid: 0, lift: 0.045, tilt: -0.2, mouth: 'smile', w: 1.25 },
+  sceptic: { lid: [0.2, 0], lift: [-0.005, 0.045], tilt: [0.1, -0.3], mouth: 'flat', w: 0.9, mt: 0.12 },
+  bored: { lid: 0.5, lift: -0.012, tilt: 0, mouth: 'flat', w: 0.7 },
+  annoyed: { lid: 0.35, lift: -0.02, tilt: 0.38, mouth: 'frown', slant: 0.25 },
+  sad: { lid: 0.2, lift: 0.01, tilt: -0.4, mouth: 'frown', slant: -0.2 },
+  wonder: { lid: 0, lift: 0.06, tilt: -0.08, mouth: 'o' },
+  curious: { lid: 0, lift: [0.005, 0.05], tilt: [0.05, -0.18], mouth: 'flat', w: 0.6 },
+  sleepy: { lid: 0.65, lift: -0.008, tilt: -0.12, mouth: 'flat', w: 0.55, slant: -0.12 },
+  focused: { lid: 0.2, lift: -0.022, tilt: 0.2, mouth: 'flat', w: 0.65 },
+  smug: { lid: 0.35, lift: [0, 0.035], tilt: [0.05, -0.2], mouth: 'smile', w: 0.75 },
+};
+// The face for a word about how he feels (his own word for his mood, which can be anything), or null.
+const FACE_WORDS = [[/delight|thrill|overjoy|ecstat|elated|excited/, 'delighted'], [/proud|smug|pleased with|triumph|cheeky|mischie/, 'smug'], [/happy|joy|glad|cheer|content|playful|warm|satisf|grateful|good/, 'happy'], [/bored|meh|flat|dull|restless|listless/, 'bored'], [/annoy|grump|frustrat|angry|irritat|cross|stubborn|fed up|let down|disappoint/, 'annoyed'], [/sad|lonely|blue|low|miss|gloom|homesick|hurt/, 'sad'], [/amaz|awe|surpris|wonder|astonish|wow/, 'wonder'], [/curious|intrigu|puzzl|interest|inspired|eager/, 'curious'], [/tired|sleepy|drowsy|worn|exhaust|weary/, 'sleepy'], [/focus|determin|busy|concentrat|absorb|serious|thoughtful|pensive/, 'focused'], [/doubt|scept|skept|unsure|suspic|confus|wary|dubious|unimpress/, 'sceptic']];
+const faceForWord = (word) => { const w = String(word ?? '').toLowerCase(); return FACE_WORDS.find(([re]) => re.test(w))?.[1] ?? null; };
 function makePip() {
   const group = new THREE.Group();
   group.rotation.order = 'YXZ';
@@ -884,17 +936,68 @@ function makePip() {
     put(softCone(0.074, 0.2, 0.018), twoSided(mat(0xffa7a0, { roughness: 0.9 })), [0, -0.03, 0.095], [1, 1, 0.45], [0, 0, 0], holder); // a little pink inside
   });
 
-  // eyes: flat dark discs with one small highlight (the page squashes them to blink)
+  // His face: plain dark eyes (the page squashes them to blink), a lid over each that can come down, a short brow above
+  // each, and a mouth that is a line, a small smile, a frown or an "o". No blush and no sparkle: he is not a plush toy.
+  // What it shows follows how he feels (FACES and faceNow further down; face.set picks one, face.tick moves toward it).
+  const ink = mat(0x2b211d, { roughness: 0.9 });
+  const surfZ = (x, y) => 0.95 * Math.sqrt(Math.max(0.0001, 0.25 - x * x - ((y - 0.65) / 1.1) ** 2)); // the front of his body at this spot
+  const lidC = new THREE.Color(0xffdba6).lerp(new THREE.Color(0xffb764), 0.64).multiplyScalar(0.9);
+  const lidMat = new THREE.MeshStandardMaterial({ color: lidC, roughness: 0.7, side: THREE.DoubleSide });
+  const EYE_R = 0.075;
+  const LID_STEPS = [0.2, 0.35, 0.5, 0.65, 0.82];
+  const lids = [];
+  const brows = [];
   const eyes = [-1, 1].map((s) => {
     const eye = new THREE.Group();
     eye.position.set(s * 0.17, 0.8, 0.455);
-    put(new THREE.SphereGeometry(0.085, 24, 18), mat(0x2b211d, { roughness: 0.9 }), [0, 0, 0], [1, 1, 0.35], [0, 0, 0], eye);
-    put(new THREE.SphereGeometry(0.024, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }), [0.025, 0.028, 0.03], [1, 1, 0.4], [0, 0, 0], eye);
+    put(new THREE.SphereGeometry(EYE_R, 24, 18), ink, [0, 0, 0], [1, 1, 0.35], [0, 0, 0], eye);
+    lids.push(LID_STEPS.map((k) => { const cap = put(new THREE.SphereGeometry(EYE_R * 1.12, 24, 10, 0, Math.PI * 2, 0, Math.acos(1 - 2 * k)), lidMat, [0, 0, 0], [1, 1, 0.42], [0, 0, 0], eye); cap.visible = false; return cap; }));
     body.add(eye);
+    const brow = new THREE.Group(); // (not in the eye: a blink must not squash it)
+    put(new THREE.CapsuleGeometry(0.014, EYE_R * 1.7, 4, 10), ink, [0, 0, 0], [1, 1, 1], [0, 0, Math.PI / 2], brow);
+    body.add(brow);
+    brows.push(brow);
     return eye;
   });
-  [-1, 1].forEach((s) => put(new THREE.SphereGeometry(0.07, 14, 10), mat(0xff9a9a, { roughness: 0.9 }), [s * 0.3, 0.64, 0.4], [1, 0.6, 0.4]));
-  put(new THREE.TorusGeometry(0.06, 0.012, 8, 20, Math.PI), mat(0x2b211d), [0, 0.67, 0.48], [1, 1, 1], [0, 0, Math.PI]); // smile
+  const mouths = {
+    flat: put(new THREE.CapsuleGeometry(0.012, 0.1, 4, 10), ink, [0, 0.662, 0.486], [1, 1, 1], [0, 0, Math.PI / 2]),
+    smile: put(new THREE.TorusGeometry(0.06, 0.012, 8, 20, Math.PI), ink, [0, 0.675, 0.48], [1, 1, 1], [0, 0, Math.PI]),
+    frown: put(new THREE.TorusGeometry(0.055, 0.012, 8, 20, Math.PI), ink, [0, 0.625, 0.482]),
+    o: put(new THREE.SphereGeometry(0.03, 14, 10), ink, [0, 0.655, 0.484], [1, 1.15, 0.4]),
+  };
+  const face = (() => {
+    const now = { lid: [0, 0], lift: [0, 0], tilt: [0, 0], w: 1, mt: 0 };
+    let goal = FACES.neutral, name = 'neutral', mouth = '';
+    const show = () => {
+      [0, 1].forEach((i) => {
+        const s = i ? 1 : -1;
+        const step = now.lid[i] < 0.1 ? -1 : LID_STEPS.reduce((best, k, j) => (Math.abs(k - now.lid[i]) < Math.abs(LID_STEPS[best] - now.lid[i]) ? j : best), 0);
+        lids[i].forEach((cap, j) => { cap.visible = j === step; cap.rotation.z = s * (goal.slant ?? 0); });
+        const y = 0.8 + EYE_R * 1.5 + now.lift[i];
+        brows[i].position.set(s * 0.17, y, surfZ(0.17, y) + 0.014);
+        brows[i].rotation.z = s * now.tilt[i];
+      });
+      const m = goal.mouth ?? 'flat';
+      if (m !== mouth) { mouth = m; for (const [k, mesh] of Object.entries(mouths)) mesh.visible = k === m; }
+      mouths.flat.scale.y = now.w; // (the capsule lies on its side: its length is its y)
+      mouths.flat.rotation.z = Math.PI / 2 + now.mt;
+      mouths.smile.scale.set(now.w, now.w, 1);
+    };
+    const pair = (v) => (Array.isArray(v) ? v : [v ?? 0, v ?? 0]);
+    return {
+      get name() { return name; },
+      set(n) { if (n !== name && FACES[n]) { name = n; goal = FACES[n]; } },
+      tick(dt, snap = false) {
+        const k = snap ? 1 : Math.min(1, dt * 9);
+        const to = { lid: pair(goal.lid), lift: pair(goal.lift), tilt: pair(goal.tilt) };
+        for (const key of ['lid', 'lift', 'tilt']) for (const i of [0, 1]) now[key][i] += (to[key][i] - now[key][i]) * k;
+        now.w += ((goal.w ?? 1) - now.w) * k;
+        now.mt += ((goal.mt ?? 0) - now.mt) * k;
+        show();
+      },
+    };
+  })();
+  face.tick(0, true);
   put(new THREE.SphereGeometry(0.032, 12, 10), mat(0x6b3a2e, { roughness: 0.3 }), [0, 0.74, 0.485], [1.2, 0.8, 0.8]); // nose
 
   // hands and feet: a round shape with little toes (and a pink pad under the feet)
@@ -970,7 +1073,7 @@ function makePip() {
     for (let i = 0; i < 7; i++) put(new THREE.BoxGeometry(0.004, 0.5 - i * 0.045, 0.004), metal(0xf0eadb), [-0.14 + i * 0.047, 0.05 + (0.5 - i * 0.045) / 2, 0], [1, 1, 1], [0, 0, 0], g);
   });
 
-  return { group, body, eyes, arms, feet, book, pageHinge, inst };
+  return { group, body, eyes, arms, feet, book, pageHinge, inst, face };
 }
 const pip = makePip();
 scene.add(pip.group);
@@ -2198,6 +2301,8 @@ function frame(now, dt) {
     blinkEnd = t + 0.13;
     blinkAt = t + 3 + Math.random() * 3;
   }
+  pip.face.set(faceNow(sleeping));
+  pip.face.tick(dt);
   const closed = sleeping || t < blinkEnd || (mv && mvEyes > 0.6);
   eyes.forEach((e) => (e.scale.set(1, closed ? 0.1 : mv ? 1 + Math.max(0, -mvEyes) * 0.45 - Math.max(0, mvEyes) * 0.5 : 1, 1)));
 }
@@ -2227,6 +2332,27 @@ function blocked(x, z) {
   const furn = shownFurniture(lastState?.furniture);
   const rects = [...MOVABLE.filter((k) => !FURNITURE[k].flat).flatMap((k) => furnRects(furn, k)).map((r) => [r.x0, r.x1, r.z0, r.z1]), ...WALK_EXTRA];
   return rects.some(([x0, x1, z0, z1]) => x > x0 - 0.28 && x < x1 + 0.28 && z > z0 - 0.28 && z < z1 + 0.28);
+}
+// The face he makes right now: a hello gets a smile, what he just read shows what he thought of it, then his mood in
+// his own word, then his body (bored, worn out, lonely, glad). A plain straight face when nothing stands out.
+function faceNow(sleeping) {
+  const s = lastState;
+  if (forceLook.face) return forceLook.face;
+  if (sleeping || !s) return 'sleepy';
+  if (performance.now() < hello.until) return 'happy';
+  const read = [...(s.log ?? [])].reverse().find((e) => e.opinion && Date.now() - Date.parse(e.at) < 12 * 60_000);
+  if (read) return { love: 'delighted', like: 'happy', meh: 'bored', dislike: 'annoyed', doubt: 'sceptic' }[read.opinion.how] ?? 'neutral';
+  const st = plan && stepNow >= 0 ? plan.steps[stepNow] : null;
+  if (st?.failed || st?.made?.failed) return 'annoyed';
+  const word = faceForWord(s.emotion) ?? faceForWord(s.mood);
+  if (word) return word;
+  if ((s.energy ?? 10) <= 2.5) return 'sleepy';
+  if ((s.boredom ?? 0) >= 7) return 'bored';
+  if ((s.loneliness ?? 0) >= 7.5) return 'sad';
+  if ((s.joy ?? 5) >= 7.5) return 'happy';
+  if (st && ['search_web', 'read_book', 'browse'].includes(st.action)) return 'curious';
+  if (st && ['decorate', 'draw', 'make_app', 'update_app', 'blueprint', 'record_song'].includes(st.action)) return 'focused';
+  return 'neutral';
 }
 // Flying (V, or the bird button): you leave the ground and look at his world from above. Landing puts you on free ground.
 const fly = { on: false, y: 12 };
@@ -5172,7 +5298,7 @@ function showNowBar() {
 // up, a piece of what he read (with a link to the page), and what he thinks of it. (The screen in the café's window
 // shows the same, small.) The ✕ puts it away until he reads something new.
 const READS = ['search_web', 'read_book', 'browse'];
-const FACES = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' };
+const OPINION_FACES = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' };
 let readingClosed = '';
 let readingKey = '';
 function readingNow() {
@@ -5203,7 +5329,7 @@ function showReading() {
   const ago = m < 2 ? 'just now' : m < 90 ? `${m} minutes ago` : m < 2880 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`;
   const head = live ? (typing ? '🔎 Pip is searching the web right now' : live.st.action === 'browse' ? '💻 Pip is browsing right now' : '📖 Pip is reading right now') : `💻 The last thing Pip ${e.action === 'search_web' ? 'looked up' : e.action === 'browse' ? 'came across' : 'read'} (${ago})`;
   const text = typing ? 'He is typing his question…' : e?.opened?.text ? (e.opened.text.length > 240 ? `${e.opened.text.slice(0, 240).replace(/\s+\S*$/, '')} …` : e.opened.text) : live ? 'The page is loading…' : 'He found nothing to read about it.';
-  const opinion = e?.opinion?.says ? `${FACES[e.opinion.how] ?? '💭'} Pip: “${e.opinion.says}”` : live ? 'What he thinks of it comes when he is done reading.' : 'He has not said what he thinks of it yet.';
+  const opinion = e?.opinion?.says ? `${OPINION_FACES[e.opinion.how] ?? '💭'} Pip: “${e.opinion.says}”` : live ? 'What he thinks of it comes when he is done reading.' : 'He has not said what he thinks of it yet.';
   const key = [id, head, what, text, opinion].join('|');
   box.hidden = false;
   if (key === readingKey) return; // (not drawn again every half second: the link stays clickable)
