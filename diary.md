@@ -5455,3 +5455,9 @@ I want to work on my night sky simulation project by building the tiny version.
 - do (look out of the window for a while): I watch the sky for a bit.
 - mood: inspired
 
+## 23/11/2026, 14:13:24
+My basil is ready to harvest, so I want to harvest it. Also, I can work on my simulation of the night sky.
+> My basil is ready to harvest, so I want to harvest it. Also, I can work on my simulation of the night sky.
+- harvest (basil): Harvest the fully grown basil.
+- mood: inspired
+
