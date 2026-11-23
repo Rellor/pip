@@ -5340,3 +5340,9 @@ I want to work on my constellation mapping project to complete the first version
 - do (look closely at something in my room I never really looked at): That did not work out. I shake it off and look closely at something in my room I never really looked at.
 - mood: curious
 
+## 23/11/2026, 10:10:59
+My project step did not work twice, so I will plan my project again in other words.
+> My project step did not work twice, so I will plan my project again in other words.
+- do (plan the steps of my project Map the summer constellations): I need to plan the constellation project again with different steps.
+- mood: curious
+
