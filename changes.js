@@ -392,6 +392,14 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-23 walls to paint on, a print workshop and an art workshop',
+    run(s) { // every drawing he still has goes into the list his art workshop keeps (from now on each new one is added)
+      s.gallery = [...(s.gallery ?? []), ...(s.art ?? []).filter((a) => a?.id && a.file && !(s.gallery ?? []).some((g) => g.id === a.id)).map((a) => ({ id: a.id, name: a.name, file: a.file, aspect: a.aspect, at: a.createdAt }))];
+      s.prints ??= [];
+      return 'Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a print workshop: with print_thing I design a small 3D model, walk there, and it is printed and stays on my shelf of prints. And there is an art workshop with my name on it, where every drawing I ever made hangs on the outside wall, so nothing is lost when a wall gets painted over.';
+    },
+  },
+  {
     id: '2026-11-22 watercolour paper from Bas',
     run(s, at) { // he asked for new watercolor paper, to paint a new view now that his autumn window is finished
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /watercolou?r|paper/i.test(a.item));

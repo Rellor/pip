@@ -1,5 +1,5 @@
 // Pip's street: who lives there, the corner shop, the moon over it, and how it is drawn.
-// Shared by the game (neighbours.js, shop.js, story.js) and the page (streetview.js), so both tell the same story.
+// Shared by the game (neighbours.js, shop.js, story.js) and the page, so both tell the same story.
 // Plain data and plain functions that return text (SVG): nothing here touches the page or the files.
 import { seasonInfo } from './season.js';
 

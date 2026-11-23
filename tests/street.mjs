@@ -1,9 +1,8 @@
-// The Street tab (web/street.js, web/streetview.js): what it shows is worked out from his state, and the picture of
+// The street's shared rules and pictures (web/street.js): what is worked out from his state, and the picture of
 // his street is always a whole picture, whatever the hour, the season or the weather.
 // Run: node tests/street.mjs
 import assert from 'node:assert/strict';
 import { PEOPLE, hearts, warmthWord, nextStep, shopOpen, moonPhase, nextFullMoon, streetSvg, faceSvg, sceneOf, CATALOGUE } from '../web/street.js';
-import { streetData } from '../web/streetview.js';
 import { NEIGHBOURS } from '../neighbours.js';
 import { CATALOGUE as SHOP } from '../shop.js';
 
@@ -41,34 +40,6 @@ const s = {
   teller: { log: [{ at: iso(noon - 2 * 3_600_000), key: 'street:loco', text: 'Mo oils a little locomotive.', big: false }, { at: iso(noon - 30 * 3_600_000), key: 'parcel', text: 'A parcel from Lina.', big: true }] },
   bought: [{ item: 'clay', price: 3, at: iso(noon - 86_400_000) }],
 };
-const d = streetData(s, noon);
-assert.equal(d.coins, 7);
-assert.equal(d.open, true);
-assert.ok(d.can.every((c) => c.price <= 7 && c.kind !== 'food') && !d.can.some((c) => c.item === 'clay'), 'what he could buy: not what he has, not more than he has');
-assert.equal(d.saving.item, 'toolbox');
-assert.deepEqual(d.wishes.map((w) => w.from), ['Dot'], 'an old wish has faded');
-assert.equal(d.wishes[0].left, 6);
-assert.equal(d.count, 1);
-assert.deepEqual(d.kept.map((w) => w.with), ['Neon star catcher']);
-const by = Object.fromEntries(d.people.map((p) => [p.name, p]));
-assert.deepEqual([by.Lina.hearts, by.Lina.word, by.Lina.kept], [3, 'a friend', 1]);
-assert.deepEqual([by.Mo.notes, by.Mo.waiting, by.Mo.scene?.key], [1, 0, 'street:loco']);
-assert.deepEqual([by.Dot.waiting, by.Dot.wish?.topic], [1, 'a cat drawing']);
-assert.equal(by.Kees.last, null);
-assert.equal(d.scene.notes, 1, 'one note waits at his door');
-assert.deepEqual(d.scene.today, ['street:loco']);
-assert.deepEqual(d.happened.map((e) => e.emoji), ['🚂', '🎁']);
-assert.match(d.cap, /^Monday 12:00 · clear, 6° · shop open till 18:00$/);
-assert.deepEqual(d.coming.map((c) => c.what), ['Market day', 'Kees’s puzzle of the week', 'Full moon']);
-assert.match(d.coming[0].when, /Saturday \(in 5 days\)/);
-ok('coins, the shop, wishes, friendships, notes and what happened, from his state');
-
-const night = streetData({ ...s, coins: undefined }, noon + 11 * 3_600_000);
-assert.equal(night.open, false);
-assert.equal(night.coins, 0);
-assert.ok(night.people.find((p) => p.name === 'Dot').awake === false && night.people.find((p) => p.name === 'Lina').awake === true);
-assert.deepEqual(streetData({}, noon).people.map((p) => p.hearts), [0, 0, 0, 0, 0], 'an empty state still draws');
-ok('at night the shop is closed and the little ones sleep; a brand-new Pip has a street too');
 
 // ---- the picture
 const pictures = [
@@ -93,18 +64,6 @@ assert.ok(streetSvg(pictures[1]).includes('>2</text>'), 'two notes at his door')
 for (const p of [...PEOPLE.map((x) => x.name), 'Pip', 'nobody']) assert.ok(faceSvg(p).includes('</svg>') && !/NaN|undefined/.test(faceSvg(p)));
 assert.equal(sceneOf('sky:Leonids').emoji, '🌠');
 ok('the street is a whole picture by day and night, in snow and storm, on market day, and when he is out');
-
-// ---- the shop shelf (the Shop page of the World tab)
-{
-  const d2 = streetData({ coins: 4, tools: [{ name: 'clay', kind: 'clay' }] }, noon);
-  assert.deepEqual(d2.shelf.map((g) => g.kind), ['food', 'seeds', 'material', 'tool', 'instrument', 'outdoor']);
-  const all = d2.shelf.flatMap((g) => g.things);
-  assert.equal(all.find((t) => t.item === 'clay').owned, true);
-  assert.equal(all.find((t) => t.item === 'umbrella').can, true);
-  assert.equal(all.find((t) => t.item === 'flute').can, false);
-  assert.ok(all.every((t) => t.price >= 1));
-  ok('the shop shelf: everything for sale, what he has and what he can pay');
-}
 
 // ---- the sky
 assert.equal(shopOpen(noon), true);

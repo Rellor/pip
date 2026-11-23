@@ -3,7 +3,7 @@
 // wall. When Pip does not say where a new thing goes, it goes to its right place. He may put it somewhere else (it is his
 // room), but then he notices it would be better elsewhere, and putting it right is offered to him.
 import { placeFor } from './web/lighting.js';
-import { supportsInfo, sizeOf, fitsOnATop, accessProblem, coverKind, coverTarget, freeSpaceOn, MIN_SHRINK, isOutside, saysOutside, outsideThings, outsidePlaces, outsideChoice, outsideIn, MAX_OUTSIDE } from './decor.js';
+import { supportsInfo, sizeOf, fitsOnATop, accessProblem, coverKind, coverTarget, freeSpaceOn, MIN_SHRINK, isOutside, saysOutside, outsideThings, outsidePlaces, outsideChoice, outsideIn, MAX_OUTSIDE, wallRoom } from './decor.js';
 import { BUILD_MAX } from './web/town.js';
 import { unlockedKeys, knownKeys } from './world.js';
 import { box, ROOM_SCALE } from './scale.js';
@@ -153,6 +153,7 @@ export function spotNote(s, details = {}) {
   const said = `${details.name ?? ''} ${details.what ?? ''}`.trim();
   if (!said) return '';
   const lines = [];
+  if (details.print) return 'WHERE IT WILL GO: to the print workshop. My 3D printer there prints it small, about as big as my hand, and it stays there on my shelf of prints for everyone to see. So I design a little model: one clear shape that can be told from far (an animal, a tool, a tiny building, a toy), from 4 to 14 parts, in one or two colours of plastic. It needs a flat foot to stand on. I leave "where" as it is.';
   if (isOutside(details.where) || saysOutside(said)) { // out in his world: he picks the place himself, and it can be big
     const n = outsideThings(decor).length;
     const places = outsidePlaces([...new Set([...unlockedKeys(s), ...knownKeys(s)])]).filter((x) => x !== 'on my plot');
@@ -176,7 +177,12 @@ Everyone who walks by sees it from all sides, so I give it a back too. It stands
       lines.push(`WHERE IT WILL GO: on a top. The free tops in my room, in everyday size: ${tops.map(({ b, f }) => `${b.label} (${every(f.w)} x ${every(f.d)} m free, ${every(f.h)} m high)`).join('; ')}. So I design it at most ${every(best.w)} m wide and ${every(best.d)} m deep. A thing that is bigger does not fit on a top: the game then stands it on the floor.`);
     } else lines.push('WHERE IT WILL GO: every top in my room is full, so it will stand on the floor (or wait in my chest). Something for the floor is at least 0.45 m big in everyday size, so it does not get lost.');
   } else if (/\b(rug|carpet|doormat|floor mat|mat)\b/i.test(said) && rp?.kind === 'floor') lines.push('WHERE IT WILL GO: flat on the floor, beside my bed or by my desk (the big round rug already lies in the middle of my room). I walk over it and furniture may stand on it, so it lies flat: at most 0.05 m thick in everyday size, about 1.2 x 0.8 m. I design how it looks from above: a base layer with a border, stripes or a pattern lying flat on it.');
-  else if (rp?.kind === 'wall') lines.push('WHERE IT WILL GO: on a wall. It hangs flat against it: at most 0.25 m deep, 1.25 m wide and 1 m high in everyday size. Its back is at z 0.');
+  else if (rp?.kind === 'wall') {
+    const room = wallRoom(decor);
+    const best = [room.back, room.left].filter(Boolean).sort((a, b) => b.w - a.w)[0];
+    const w = Math.min(1.25, best ? every(best.w) : 0.4), h = Math.min(1, best ? every(best.h) : 0.3);
+    lines.push(`WHERE IT WILL GO: on a wall. It hangs flat against it: at most 0.25 m deep. ${best && best.w < 1.99 ? `My walls are getting full: the biggest free place is ${w} m wide and ${h} m high in everyday size, so I make it no bigger than that` : 'At most 1.25 m wide and 1 m high in everyday size'}. Its back is at z 0.`);
+  }
   else if (rp?.kind === 'ceiling') lines.push('WHERE IT WILL GO: it hangs from the ceiling. I build it from its top down: the part that hangs highest is at the top.');
   // "a stand for my clay bird": what it is for, and how big that is
   const m = /\bfor (?:my |the |his )?([a-z][a-z ]{2,40})/i.exec(said);

@@ -162,6 +162,10 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
     const details = { ...d };
     if (!details.name && details.what && !MAKER_MOVES.includes(name) && name !== 'do') details.name = details.what; // "what" and "name" both name the thing
     if (name === 'ask_for') details.reason = details.reason ?? details.why;
+    // Two moves that are another move done somewhere else: a painting on a wall outside is a drawing that is not hung in
+    // his room, a print is a small thing that is not put in his room. The step says which it really is ("as").
+    if (name === 'paint_wall') { steps.push({ action: 'draw', as: 'paint_wall', details: { ...details, wall: clip(details.wall ?? details.where ?? '', 80) || 'any wall', where: undefined }, thought, enjoyment: 7, needs: '', make: true }); continue; }
+    if (name === 'print_thing') { steps.push({ action: 'decorate', as: 'print_thing', details: { ...details, where: 'print', print: true }, thought, enjoyment: 7, needs: '', make: true }); continue; }
     if (name === 'revise_song') { steps.push({ action: 'record_song', details: { revise: details.name ?? details.what, section: details.section, why: details.why }, thought, enjoyment: 6, needs: '', make: true }); continue; }
     if (name === 'search_web' && !details.query) details.query = details.topic ?? details.what;
     if (name === 'read_book' && !details.topic) details.topic = details.query ?? details.what;
