@@ -67,7 +67,7 @@ ${added.length ? added.map((l) => `- ${l.text}`).join('\n') : '- nothing yet'}
 MY LIFE STORY SO FAR
 ${story || '(not written yet)'}
 
-If one of the things that keep coming back says something true about who I am, I write ONE new short line about myself, plain and honest, in the third person like the rest of my soul ("He ..."), and I give its key. Or null, if nothing is true enough yet.
+If one of the things that keep coming back says something true about who I am, I write ONE new short line about myself, plain, dry and honest, in the third person like the rest of my soul ("He ..."), and I give its key. No sweet words like "quiet joy", "gentle" or "cozy": I say it the way I would say it out loud. Or null, if nothing is true enough yet.
 Then I rewrite my life story in at most 8 plain sentences, and I dream something.
 
 Answer in JSON: {"soul_line": {"text": "He ...", "key": "the key in brackets"} or null, "story": "...", "dream": "one or two sentences"}`;
