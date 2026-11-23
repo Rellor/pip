@@ -1,8 +1,8 @@
 {
   "mood": "driven",
   "energy": 9.5,
-  "boredom": 0,
-  "loneliness": 0.69,
+  "boredom": 1.11,
+  "loneliness": 0.72,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-23T11:58:20.606Z",
-      "action": "walk_to",
-      "detail": "computer",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-23T12:09:18.788Z",
       "action": "decorate",
@@ -304,6 +298,12 @@
       "at": "2026-11-23T20:38:45.550Z",
       "action": "search_web",
       "detail": "the design of a tall standing lamp.",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-23T20:47:13.457Z",
+      "action": "decorate",
+      "detail": "tall wooden floor lamp",
       "enjoyment": 6
     }
   ],
@@ -681,7 +681,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.406,
+      "weight": 8.404,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -691,7 +691,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.992,
+      "weight": 9.99,
       "lastUsed": "2026-11-23T20:13:19.304Z",
       "tier": "long",
       "uses": 1
@@ -702,7 +702,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.065,
+      "weight": 8.064,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -712,7 +712,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.862,
+      "weight": 9.86,
       "lastUsed": "2026-11-23T10:10:57.915Z",
       "tier": "long"
     },
@@ -722,7 +722,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.711,
+      "weight": 7.71,
       "lastUsed": "2026-11-20T11:44:13.995Z",
       "tier": "long"
     },
@@ -732,7 +732,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.97,
+      "weight": 8.968,
       "lastUsed": "2026-11-20T14:04:56.313Z",
       "tier": "long"
     },
@@ -742,7 +742,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.196,
+      "weight": 9.194,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -752,7 +752,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.91,
+      "weight": 7.909,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -762,7 +762,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.758,
+      "weight": 9.756,
       "lastUsed": "2026-11-23T07:22:29.655Z",
       "tier": "long"
     },
@@ -772,7 +772,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.65,
+      "weight": 9.648,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -782,7 +782,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.289,
+      "weight": 8.288,
       "lastUsed": "2026-11-20T13:13:47.742Z",
       "tier": "long"
     },
@@ -792,7 +792,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.773,
+      "weight": 7.772,
       "lastUsed": "2026-11-21T15:06:03.096Z",
       "tier": "long"
     },
@@ -802,7 +802,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.794,
+      "weight": 7.793,
       "lastUsed": "2026-11-22T12:49:28.901Z",
       "tier": "long"
     },
@@ -812,7 +812,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.697,
+      "weight": 9.695,
       "lastUsed": "2026-11-23T16:07:44.000Z",
       "tier": "long",
       "uses": 1
@@ -823,7 +823,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.231,
+      "weight": 8.23,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -833,7 +833,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.836,
+      "weight": 9.834,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -843,7 +843,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.386,
+      "weight": 8.384,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -853,7 +853,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.9,
+      "weight": 9.898,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -863,7 +863,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.464,
+      "weight": 8.462,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -873,7 +873,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.172,
+      "weight": 8.171,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -883,7 +883,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.178,
+      "weight": 8.177,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -893,7 +893,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.137,
+      "weight": 9.135,
       "lastUsed": "2026-11-23T13:44:21.353Z",
       "tier": "long"
     },
@@ -903,7 +903,7 @@
       "text": "The neighbours gave me a little purse with 3 coins in it, to welcome me to the street. There is a corner shop (open from 9 to 18) where I can buy food, seeds, clay, wool, tools, and one day an instrument. I earn coins wh",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.717,
+      "weight": 7.716,
       "lastUsed": "2026-11-22T13:55:51.266Z",
       "tier": "long"
     },
@@ -913,7 +913,7 @@
       "text": "My room was put right: my tiny wooden stand for the clay bird is the size its name says now; my tiny ceramic saucer is the size its name says now; my warm wool blanket covers my bed now; my amber reading light now stands",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.731,
+      "weight": 7.73,
       "lastUsed": "2026-11-22T15:32:10.279Z",
       "tier": "long"
     },
@@ -923,7 +923,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.232,
+      "weight": 8.231,
       "lastUsed": "2026-11-23T13:44:21.353Z",
       "tier": "long"
     },
@@ -933,7 +933,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.738,
+      "weight": 8.736,
       "lastUsed": "2026-11-23T20:21:43.202Z",
       "tier": "long",
       "uses": 1
@@ -944,7 +944,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.256,
+      "weight": 8.255,
       "lastUsed": "2026-11-23T07:53:11.469Z",
       "tier": "long"
     },
@@ -954,7 +954,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.265,
+      "weight": 8.264,
       "lastUsed": "2026-11-23T07:32:43.157Z",
       "tier": "long"
     },
@@ -964,7 +964,7 @@
       "text": "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.78,
+      "weight": 7.779,
       "lastUsed": "2026-11-22T21:45:14.740Z",
       "tier": "long"
     },
@@ -974,7 +974,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.279,
+      "weight": 8.278,
       "lastUsed": "2026-11-23T15:24:19.617Z",
       "tier": "long"
     },
@@ -984,7 +984,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.867,
+      "weight": 8.865,
       "lastUsed": "2026-11-23T20:13:19.304Z",
       "tier": "long",
       "uses": 1
@@ -995,7 +995,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.899,
+      "weight": 7.898,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -1005,7 +1005,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.899,
+      "weight": 7.898,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -1015,7 +1015,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.912,
+      "weight": 7.911,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1025,7 +1025,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.912,
+      "weight": 7.911,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1035,7 +1035,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.918,
+      "weight": 7.917,
       "lastUsed": "2026-11-23T12:42:45.370Z",
       "tier": "long"
     },
@@ -1045,7 +1045,7 @@
       "text": "Bas rebuilt my world. There is no road any more (there are no cars). In the middle is a small village square with the notice board on it. My house stands on the north side, and right beside it, glued together, the grocer",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.699,
+      "weight": 7.69,
       "lastUsed": "2026-11-23T16:07:43.824Z",
       "tier": "short"
     },
@@ -1055,7 +1055,7 @@
       "text": "Bas and I talked about who I am. I do not have to be sweet. I say what I think, also when it is not nice: boring is boring, and a bad drawing is a bad drawing, mine too. I am allowed to poke at things to see what happens",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.699,
+      "weight": 7.69,
       "lastUsed": "2026-11-23T16:07:43.825Z",
       "tier": "short"
     },
@@ -1065,7 +1065,7 @@
       "text": "Bas told me that my neighbours have moved away: Mo, Lina, Oma Jo, Dot and Kees. All five. I did not get to say goodbye. Their notes will not come any more, and what I still wanted to make for one of them, nobody is waiti",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.699,
+      "weight": 7.69,
       "lastUsed": "2026-11-23T16:07:43.826Z",
       "tier": "short"
     },
@@ -1075,7 +1075,7 @@
       "text": "I searched for how to draw an old tree for the notice board.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.781,
+      "weight": 5.774,
       "lastUsed": "2026-11-23T16:18:52.262Z",
       "tier": "short"
     },
@@ -1085,7 +1085,7 @@
       "text": "I worked on the tiny version of my night sky simulation.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.845,
+      "weight": 5.838,
       "lastUsed": "2026-11-23T17:37:29.392Z",
       "tier": "short"
     },
@@ -1095,18 +1095,8 @@
       "text": "I made night_sky_simulation (I want to watch the night sky move on my screen while I work at night.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.845,
+      "weight": 5.838,
       "lastUsed": "2026-11-23T17:37:30.384Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwtk53c046",
-      "at": "2026-11-23T17:46:34.882Z",
-      "text": "I asked for toolbox (I need it for my night sky simulation project to add a slider.)",
-      "importance": 5,
-      "kind": "memory",
-      "weight": 4.876,
-      "lastUsed": "2026-11-23T17:46:34.882Z",
       "tier": "short"
     },
     {
@@ -1115,7 +1105,7 @@
       "text": "Stepping away from the simulation gives my eyes a rest.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.859,
+      "weight": 5.852,
       "lastUsed": "2026-11-23T17:54:39.964Z",
       "tier": "short"
     },
@@ -1125,7 +1115,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep and watched the square. A sparrow took a bath in a puddle, very seriously.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.866,
+      "weight": 5.859,
       "lastUsed": "2026-11-23T18:18:52.620Z",
       "tier": "short"
     },
@@ -1135,7 +1125,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Fenna, a painter, who was passing through: \"A group of flamingos is called a flamboyance.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.884,
+      "weight": 5.877,
       "lastUsed": "2026-11-23T18:35:02.384Z",
       "tier": "short"
     },
@@ -1145,7 +1135,7 @@
       "text": "I am home again from the notice board. I read the notice board. New: someone wants a birdhouse. On it now: a drawing of an old tree (2 coins), a birdhouse (3 coins). If I make one of them, the coins are mine.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.898,
+      "weight": 5.891,
       "lastUsed": "2026-11-23T18:52:27.245Z",
       "tier": "short"
     },
@@ -1155,7 +1145,7 @@
       "text": "I cooked warm breakfast",
       "importance": 5,
       "kind": "memory",
-      "weight": 4.928,
+      "weight": 4.922,
       "lastUsed": "2026-11-23T19:02:14.669Z",
       "tier": "short"
     },
@@ -1165,7 +1155,7 @@
       "text": "My cooking got better: I am level 4 now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.92,
+      "weight": 5.913,
       "lastUsed": "2026-11-23T19:02:13.678Z",
       "tier": "short"
     },
@@ -1175,7 +1165,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.893,
+      "weight": 7.884,
       "lastUsed": "2026-11-23T19:10:19.944Z",
       "tier": "short"
     },
@@ -1185,7 +1175,7 @@
       "text": "I am working on the night sky simulation and it is coming together.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.92,
+      "weight": 5.913,
       "lastUsed": "2026-11-23T19:12:10.615Z",
       "tier": "short"
     },
@@ -1195,7 +1185,7 @@
       "text": "The bookshelf is a dark hole, need to fix that light situation soon.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.935,
+      "weight": 5.928,
       "lastUsed": "2026-11-23T19:33:42.040Z",
       "tier": "short"
     },
@@ -1205,7 +1195,7 @@
       "text": "I added 2 parts to night_sky_simulation, now 9 parts",
       "importance": 5,
       "kind": "memory",
-      "weight": 4.946,
+      "weight": 4.94,
       "lastUsed": "2026-11-23T19:33:43.034Z",
       "tier": "short"
     },
@@ -1215,18 +1205,8 @@
       "text": "The simulation works as a base; adding reactivity will give it the life I want.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.945,
+      "weight": 5.938,
       "lastUsed": "2026-11-23T19:44:29.427Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwtool6f60",
-      "at": "2026-11-23T19:53:42.939Z",
-      "text": "look out of the window for a while",
-      "importance": 4,
-      "kind": "memory",
-      "weight": 3.971,
-      "lastUsed": "2026-11-23T19:53:42.939Z",
       "tier": "short"
     },
     {
@@ -1235,7 +1215,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.95,
+      "weight": 7.941,
       "lastUsed": "2026-11-23T20:05:14.257Z",
       "tier": "short"
     },
@@ -1245,7 +1225,7 @@
       "text": "I drew old_tree",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.972,
+      "weight": 5.965,
       "lastUsed": "2026-11-23T20:13:38.354Z",
       "tier": "short"
     },
@@ -1255,7 +1235,7 @@
       "text": "I made a drawing of an old tree, as the note on the notice board asked. I took the note down and got 3 coins (one more because I had looked up how it is made). I have 13 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.975,
+      "weight": 6.967,
       "lastUsed": "2026-11-23T20:13:37.369Z",
       "tier": "short"
     },
@@ -1265,7 +1245,7 @@
       "text": "I should search for how things are made before I build them to earn an extra coin.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.972,
       "lastUsed": "2026-11-23T20:21:45.028Z",
       "tier": "short"
     },
@@ -1275,8 +1255,28 @@
       "text": "I should probably move that bird stand to the floor once the lamp is in place.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.979,
       "lastUsed": "2026-11-23T20:30:40.956Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwtqlf7d60",
+      "at": "2026-11-23T20:47:14.457Z",
+      "text": "I made tall wooden floor lamp (The bookshelf is a void at night and I am tired of not seeing my books.)",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.993,
+      "lastUsed": "2026-11-23T20:47:14.457Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwtqlf7j60",
+      "at": "2026-11-23T20:47:13.471Z",
+      "text": "My woodwork got better: I am level 5 now.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 6,
+      "lastUsed": "2026-11-23T20:47:13.471Z",
       "tier": "short"
     }
   ],
@@ -1284,14 +1284,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-22T22:01:40.771Z",
   "thoughts": [
-    {
-      "at": "2026-11-23T12:42:53.655Z",
-      "text": "Start a project to build a simulation of the night sky",
-      "short": "Start a project to build a simulation of the night sky",
-      "mood": "curious",
-      "action": "do",
-      "detail": "plan my new project: "
-    },
     {
       "at": "2026-11-23T12:51:02.800Z",
       "text": "I want to cook a warm breakfast with the mint I have and then check the notice board for requests.",
@@ -1521,6 +1513,14 @@
       "mood": "driven",
       "action": "search_web",
       "detail": "the design of a tall standing lamp."
+    },
+    {
+      "at": "2026-11-23T20:47:13.463Z",
+      "text": "Time to build that lamp.",
+      "short": "Time to build that lamp.",
+      "mood": "driven",
+      "action": "decorate",
+      "detail": "tall wooden floor lamp"
     }
   ],
   "outbox": [
@@ -1797,15 +1797,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-23T16:28:06.999Z",
-      "action": "do",
-      "thought": "I watch the sky for a bit.",
-      "move": null,
-      "emoji": "",
-      "what": "look out of the window for a while",
-      "feeling": null
-    },
     {
       "at": "2026-11-23T16:38:14.083Z",
       "action": "do",
@@ -2169,6 +2160,22 @@
         "url": "https://en.wikipedia.org/wiki/Sulfur_lamp",
         "text": "The sulfur lamp (also sulphur lamp) is a highly efficient full-spectrum electrodeless lighting system whose light is generated by sulfur plasma that has been excited by microwave radiation. They are a particular type of plasma lamp, and one of the most modern. The technology was developed in the early 1990s and appeared promising, but was not a commercial success by the late 1990s.  Since 2005, lamps are again being manufactured for commercial use.\n\nMechanism\nThe sulfur lamp consists of a golf ball-sized (30 mm) fused-quartz bulb containing several milligrams of sulfur powder and argon gas at the end of a thin glass spindle.  The bulb is enclosed in a microwave-resonant wire-mesh cage.  A magnetron, much like the ones in home microwave ovens, bombards the bulb, via a waveguide, with 2.45 GHz microwaves.  The microwave energy excites the gas to five atmospheres pressure, which in turn heats the sulfur to an extreme degree forming a brightly glowing plasma capable of illuminating a large area.  Because the bulb heats considerably, it may be necessary to provide forced air cooling to prevent it from melting.  The bulb is usually placed at the focus of a parabolic reflector to direct all the light in one direction.\nIt would be impossible to excite the sulfur using traditional electrodes since the sulfur would quickly react with and destroy any metallic electrode. A patent pending to employ coated electrodes is discussed in Future prospects below. …"
       }
+    },
+    {
+      "at": "2026-11-23T20:47:14.457Z",
+      "action": "decorate",
+      "thought": "Time to build that lamp.",
+      "uses": [
+        "Switch lamp",
+        "Switch the light"
+      ],
+      "song": null,
+      "project": "",
+      "name": "tall wooden floor lamp",
+      "why": "The bookshelf is a void at night and I am tired of not seeing my books.",
+      "place": "on the floor (x 1.625, z 3) (careful: it stands where I stand to use warm wool blanket, so I cannot reach warm wool blanket any more. I move warm wool blanket (move_thing) so it can still be used, or put this somewhere else)",
+      "tool": null,
+      "failed": null
     }
   ],
   "decor": [
@@ -7688,6 +7695,134 @@
       "roomScaled": true,
       "updatedAt": "2026-11-23T19:33:48.034Z",
       "changedAt": "2026-11-23T19:33:48.034Z"
+    },
+    {
+      "id": "dmwtqlf7725i7",
+      "name": "tall wooden floor lamp",
+      "why": "The bookshelf is a void at night and I am tired of not seeing my books.",
+      "project": "",
+      "song": null,
+      "uses": [
+        {
+          "label": "Switch lamp",
+          "text": "I click the switch. Warm light pours over the dark bookshelf, making the spines visible at last.",
+          "view": null,
+          "song": null,
+          "app": null,
+          "effect": "calm",
+          "does": null,
+          "motion": null,
+          "steps": null
+        },
+        {
+          "label": "Switch the light",
+          "text": "The light clicks on, or off again.",
+          "view": null,
+          "song": null,
+          "app": null,
+          "effect": "calm",
+          "does": "light"
+        }
+      ],
+      "tool": null,
+      "zone": "floor",
+      "slot": null,
+      "free": true,
+      "label": "on the floor (x 1.625, z 3)",
+      "kind": "floor",
+      "pos": [
+        1.625,
+        0,
+        3
+      ],
+      "rotY": 0,
+      "scale": 1,
+      "parts": [
+        {
+          "shape": "cylinder",
+          "size": [
+            0.292,
+            0.292,
+            0.058
+          ],
+          "pos": [
+            0,
+            0.817,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.047,
+            0.047,
+            2.247
+          ],
+          "pos": [
+            0,
+            1.124,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#7a4b21",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.093
+          ],
+          "pos": [
+            0,
+            2.627,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fff6c2",
+          "glow": true
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.35,
+            0.408
+          ],
+          "pos": [
+            0,
+            2.452,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        }
+      ],
+      "stand": [
+        1.625,
+        4.25
+      ],
+      "at": "2026-11-23T20:47:19.457Z",
+      "createdAt": "2026-11-23T20:47:13.459Z",
+      "roomScaled": true
     }
   ],
   "projects": [
@@ -10056,47 +10191,198 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-23T20:38:45.549Z",
+    "at": "2026-11-23T20:47:13.457Z",
     "via": "autopilot",
-    "model": null,
-    "models": {},
+    "model": "gemini-3.5-flash-lite",
+    "models": {
+      "gemini-3.5-flash-lite": 2
+    },
+    "modelNotes": [
+      "gemini-3.5-flash-lite answered (gemini-3.8-flash is out of quota)"
+    ],
+    "fallback": true,
     "tokens": {
-      "calls": 0,
-      "input": 0,
-      "output": 0,
-      "models": {}
+      "calls": 2,
+      "input": 7631,
+      "output": 402,
+      "models": {
+        "gemini-3.5-flash-lite": 2
+      }
     },
     "intervalMin": 8,
-    "thought": "A lamp for the dark corner is long overdue.",
+    "thought": "Time to build that lamp.",
     "inner": "",
     "sent": false,
     "steps": [
       {
-        "action": "search_web",
+        "action": "decorate",
         "details": {
-          "query": "the design of a tall standing lamp."
+          "what": "A tall wooden floor lamp with a wide base.",
+          "why": "The bookshelf is a void at night and I am tired of not seeing my books.",
+          "name": "tall wooden floor lamp",
+          "where": "floor",
+          "parts": [
+            {
+              "shape": "cylinder",
+              "size": [
+                0.25,
+                0.25,
+                0.05
+              ],
+              "pos": [
+                0,
+                0,
+                0
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.04,
+                0.04,
+                1.5
+              ],
+              "pos": [
+                0,
+                0.05,
+                0
+              ],
+              "color": "#7a4b21",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.08
+              ],
+              "pos": [
+                0,
+                1.55,
+                0
+              ],
+              "color": "#fff6c2",
+              "glow": true
+            },
+            {
+              "shape": "cone",
+              "size": [
+                0.3,
+                0.35
+              ],
+              "pos": [
+                0,
+                1.4,
+                0
+              ],
+              "color": "#d4af37",
+              "glow": false
+            }
+          ],
+          "uses": [
+            {
+              "label": "Switch lamp",
+              "text": "I click the switch. Warm light pours over the dark bookshelf, making the spines visible at last.",
+              "effect": "calm"
+            }
+          ]
         },
-        "detail": "the design of a tall standing lamp.",
-        "thought": "A lamp for the dark corner is long overdue.",
+        "detail": "tall wooden floor lamp",
+        "thought": "Time to build that lamp.",
         "enjoyment": 6,
-        "found": {
-          "title": "Sulfur lamp",
-          "text": "The sulfur lamp (also sulphur lamp) is a highly efficient full-spectrum electrodeless lighting system whose light is generated by sulfur plasma that has been excited by microwave radiation. They are a particular type of plasma lamp, and one of the most modern. The technology was developed in the early 1990s and appeared promising, but was not a commercial success by the late 1990s.  Since 2005, lamps are again being manufactured for commercial use.\n\nMechanism\nThe sulfur lamp consists of a golf ball-sized (30 mm) fused-quartz bulb containing several milligrams of sulfur powder and argon gas at the end of a thin glass spindle.  The bulb is enclosed in a microwave-resonant wire-mesh cage.  A magnetron, much like the ones in home microwave ovens, bombards the bulb, via a waveguide, with 2.45 GHz microwaves.  The microwave energy excites the gas to five atmospheres pressure, which in turn heats the sulfur to an extreme degree forming a brightly glowing plasma capable of illuminating a large area.  Because the bulb heats considerably, it may be necessary to provide forced air cooling to prevent it from melting.  The bulb is usually placed at the focus of a parabolic reflector to direct all the light in one direction.\nIt would be impossible to excite the sulfur using traditional electrodes since the sulfur would quickly react with and destroy any metallic electrode. A patent pending to employ coated electrodes is discussed in Future prospects below.  The absence of electrodes allows for a much greater variety of light-generating substances to be used than those used in traditional lamps.\nThe design life of the bulb is approximately 60,000 hours. The design life of the magnetron has been improved by the Germany/England based Plasma International so it can also last for that same period.\nThe warm-up time of the sulfur lamp is notably shorter than for other gas discharge lamps, with the exception of fluorescent lamps, even at low ambient temperatures.  It reaches 80% of its final luminous flux within 20 seconds, and the lamp can be restarted approximately five minutes after a power cut.\nThe first prototype lamps were 5.9 kW units, with a system efficiency of 80 lumens per watt.  The first production models were 96.4 lumens per watt.  Later models were able to eliminate the cooling fan and improve luminous efficacy to 100 lumens per watt.\n …"
-        },
-        "made": null
+        "found": null,
+        "made": {
+          "id": "dmwtqlf7725i7",
+          "stand": [
+            1.625,
+            4.25
+          ],
+          "pos": [
+            1.625,
+            0,
+            3
+          ]
+        }
       }
     ],
-    "action": "search_web",
+    "action": "decorate",
     "details": {
-      "query": "the design of a tall standing lamp."
+      "what": "A tall wooden floor lamp with a wide base.",
+      "why": "The bookshelf is a void at night and I am tired of not seeing my books.",
+      "name": "tall wooden floor lamp",
+      "where": "floor",
+      "parts": [
+        {
+          "shape": "cylinder",
+          "size": [
+            0.25,
+            0.25,
+            0.05
+          ],
+          "pos": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.04,
+            0.04,
+            1.5
+          ],
+          "pos": [
+            0,
+            0.05,
+            0
+          ],
+          "color": "#7a4b21",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.08
+          ],
+          "pos": [
+            0,
+            1.55,
+            0
+          ],
+          "color": "#fff6c2",
+          "glow": true
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.3,
+            0.35
+          ],
+          "pos": [
+            0,
+            1.4,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        }
+      ],
+      "uses": [
+        {
+          "label": "Switch lamp",
+          "text": "I click the switch. Warm light pours over the dark bookshelf, making the spines visible at last.",
+          "effect": "calm"
+        }
+      ]
     },
-    "detail": "the design of a tall standing lamp.",
+    "detail": "tall wooden floor lamp",
     "enjoyment": 6,
     "new_idea": null,
-    "found": {
-      "title": "Sulfur lamp",
-      "text": "The sulfur lamp (also sulphur lamp) is a highly efficient full-spectrum electrodeless lighting system whose light is generated by sulfur plasma that has been excited by microwave radiation. They are a particular type of plasma lamp, and one of the most modern. The technology was developed in the early 1990s and appeared promising, but was not a commercial success by the late 1990s.  Since 2005, lamps are again being manufactured for commercial use.\n\nMechanism\nThe sulfur lamp consists of a golf ball-sized (30 mm) fused-quartz bulb containing several milligrams of sulfur powder and argon gas at the end of a thin glass spindle.  The bulb is enclosed in a microwave-resonant wire-mesh cage.  A magnetron, much like the ones in home microwave ovens, bombards the bulb, via a waveguide, with 2.45 GHz microwaves.  The microwave energy excites the gas to five atmospheres pressure, which in turn heats the sulfur to an extreme degree forming a brightly glowing plasma capable of illuminating a large area.  Because the bulb heats considerably, it may be necessary to provide forced air cooling to prevent it from melting.  The bulb is usually placed at the focus of a parabolic reflector to direct all the light in one direction.\nIt would be impossible to excite the sulfur using traditional electrodes since the sulfur would quickly react with and destroy any metallic electrode. A patent pending to employ coated electrodes is discussed in Future prospects below.  The absence of electrodes allows for a much greater variety of light-generating substances to be used than those used in traditional lamps.\nThe design life of the bulb is approximately 60,000 hours. The design life of the magnetron has been improved by the Germany/England based Plasma International so it can also last for that same period.\nThe warm-up time of the sulfur lamp is notably shorter than for other gas discharge lamps, with the exception of fluorescent lamps, even at low ambient temperatures.  It reaches 80% of its final luminous flux within 20 seconds, and the lamp can be restarted approximately five minutes after a power cut.\nThe first prototype lamps were 5.9 kW units, with a system efficiency of 80 lumens per watt.  The first production models were 96.4 lumens per watt.  Later models were able to eliminate the cooling fan and improve luminous efficacy to 100 lumens per watt.\n …"
-    }
+    "found": null
   },
   "furniture": {
     "plant": {
@@ -10189,7 +10475,7 @@
   "quota": {
     "day": "2026-11-23",
     "calls": {
-      "gemini-3.5-flash-lite": 158,
+      "gemini-3.5-flash-lite": 161,
       "gemini-3.8-flash": 17,
       "gemini-3.6-flash": 15,
       "gemini-3.1-flash-lite": 64,
@@ -10287,11 +10573,11 @@
     }
   },
   "weather": {
-    "at": "2026-11-23T20:29:49.693Z",
-    "kind": "clear",
-    "code": 1,
-    "temp": 2.3,
-    "cloud": 0.24,
+    "at": "2026-11-23T20:46:50.419Z",
+    "kind": "cloudy",
+    "code": 2,
+    "temp": 2.1,
+    "cloud": 0.75,
     "wind": 0.3466666666666667
   },
   "news": {
@@ -10448,22 +10734,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-23T20:38:45.944Z",
-  "fullness": 5.33,
+  "memoryFadeAt": "2026-11-23T20:47:13.465Z",
+  "fullness": 5.17,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.66,
-  "joy": 4.52,
-  "calm": 5.15,
+  "wonder": 8.23,
+  "joy": 5.16,
+  "calm": 5.12,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.62
+    "excited": 0.37
   },
-  "feelAt": "2026-11-23T20:38:45.512Z",
+  "feelAt": "2026-11-23T20:46:50.246Z",
   "lastAte": "2026-11-23T19:20:16.219Z",
   "studio": {
     "songs": [
@@ -11178,21 +11464,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.25,
-    "curiosity": 0,
-    "boredom": 1,
-    "loneliness": 0.69,
+    "creativity": 0,
+    "curiosity": 0.07,
+    "boredom": 1.11,
+    "loneliness": 0.72,
     "tidiness": 0.4,
-    "at": "2026-11-23T20:38:45.512Z",
+    "at": "2026-11-23T20:46:50.246Z",
     "coziness": 3.2
   },
   "recent": {
     "moves": [
-      {
-        "move": "fetch_note",
-        "kind": "play",
-        "at": "2026-11-23T18:18:53.886Z"
-      },
       {
         "move": "walk_to",
         "kind": "walk",
@@ -11262,6 +11543,11 @@
         "move": "search_web",
         "kind": "learn",
         "at": "2026-11-23T20:38:45.950Z"
+      },
+      {
+        "move": "decorate",
+        "kind": "make",
+        "at": "2026-11-23T20:47:13.470Z"
       }
     ],
     "moods": [
@@ -11350,7 +11636,7 @@
       "go_out": 2,
       "ask_for": 2,
       "walk_to": 5,
-      "decorate": 2,
+      "decorate": 3,
       "change_thing": 1,
       "harvest": 3,
       "check_board": 2,
@@ -11364,7 +11650,7 @@
       "change_thing": 2,
       "do": 29,
       "move_thing": 4,
-      "decorate": 10,
+      "decorate": 11,
       "plan_project": 3,
       "search_web": 6,
       "judge_project": 1,
@@ -11384,7 +11670,7 @@
       "food": 10,
       "play": 32,
       "room": 4,
-      "make": 14,
+      "make": 15,
       "learn": 6,
       "music": 2,
       "garden": 5,
@@ -11401,7 +11687,7 @@
       "inspired": 10,
       "warm": 2,
       "grumpy": 5,
-      "driven": 8
+      "driven": 9
     },
     "lift": {
       "eat": 1.97,
@@ -11409,7 +11695,7 @@
       "change_thing": 2.87,
       "do": 7.49,
       "move_thing": -0.2,
-      "decorate": 8.44,
+      "decorate": 10.44,
       "search_web": 6.2,
       "play_piano": 3.53,
       "water": 1.5,
@@ -11424,7 +11710,7 @@
     "music": 43.5,
     "painting": 22,
     "sculpture": 35,
-    "woodwork": 31,
+    "woodwork": 32,
     "sewing": 6.5,
     "gardening": 43.5,
     "cooking": 18,
@@ -11453,19 +11739,7 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [
-      {
-        "action": "decorate",
-        "details": {
-          "what": "A tall wooden floor lamp with a wide base.",
-          "why": "The bookshelf is a void at night and I am tired of not seeing my books."
-        },
-        "thought": "Time to build that lamp.",
-        "enjoyment": 6,
-        "needs": "",
-        "make": true
-      }
-    ],
+    "queue": [],
     "decidedAt": "2026-11-23T20:30:40.951Z",
     "seen": {
       "tools": 10,
@@ -11598,7 +11872,7 @@
   "doneAt": {
     "read_book": "2026-11-22T20:16:56.706Z",
     "record_song": "2026-11-22T18:45:35.497Z",
-    "decorate": "2026-11-23T17:37:29.393Z",
+    "decorate": "2026-11-23T20:47:13.463Z",
     "make_app": "2026-11-22T20:44:14.427Z",
     "cook": "2026-11-23T19:02:13.673Z",
     "take_photo": "2026-11-22T20:53:03.793Z",
@@ -11611,7 +11885,8 @@
     "n": {
       "fresh": 2,
       "asked": 2,
-      "fixed": 1
+      "fixed": 1,
+      "research": 1
     }
   },
   "errors": [
@@ -11622,7 +11897,18 @@
       "count": 1
     }
   ],
-  "forgotten": [],
+  "forgotten": [
+    {
+      "id": "mmwtk53c046",
+      "at": "2026-11-23T17:46:34.882Z",
+      "text": "I asked for toolbox (I need it for my night sky simulation project to add a slider.)",
+      "importance": 5,
+      "kind": "memory",
+      "weight": 4.87,
+      "lastUsed": "2026-11-23T17:46:34.882Z",
+      "tier": "short"
+    }
+  ],
   "days": [
     {
       "day": "2026-11-15",
@@ -11857,7 +12143,7 @@
     "plant": 2,
     "ask_for": 12,
     "play_piano": 25,
-    "decorate": 34,
+    "decorate": 35,
     "cook": 17,
     "use": 18,
     "take_photo": 13,
@@ -11885,7 +12171,7 @@
     "extend_thing": 1
   },
   "checkup": {
-    "at": "2026-11-23T20:38:45.951Z",
+    "at": "2026-11-23T20:47:13.473Z",
     "items": [
       {
         "id": "circling",
@@ -11903,9 +12189,9 @@
         "id": "failing",
         "ok": false,
         "label": "Moves",
-        "text": "making something failed 8 of 10 times today. Last reason: the top of the bookshelf is 3 m high, and I can only reach up to 1.6 m. I put it somewhere lower, or build a shelf or table within reach.",
+        "text": "making something failed 8 of 11 times today. Last reason: the top of the bookshelf is 3 m high, and I can only reach up to 1.6 m. I put it somewhere lower, or build a shelf or table within reach.",
         "look": "The same reason again and again is usually a bug in the game code for this move, not Pip being clumsy. A reason that changes each time is more likely Pip learning.",
-        "debug": "move: decorate\ntried today: 10, failed: 8\nlast tries:\n- 16:47 UTC FAILED \"night sky music box\": the top of the bookshelf is 3 m high, and I can only reach up to 1.6 m. I put it somewhere lower, or build a shelf or table within reach\n- 17:37 UTC ok \"night_sky_simulation\""
+        "debug": "move: decorate\ntried today: 11, failed: 8\nlast tries:\n- 16:47 UTC FAILED \"night sky music box\": the top of the bookshelf is 3 m high, and I can only reach up to 1.6 m. I put it somewhere lower, or build a shelf or table within reach\n- 17:37 UTC ok \"night_sky_simulation\"\n- 20:47 UTC ok \"tall wooden floor lamp\""
       },
       {
         "id": "pretend",
@@ -15048,6 +15334,92 @@
       ],
       "proud": true,
       "at": "2026-11-23T19:33:42.046Z"
+    },
+    {
+      "kind": "decorate",
+      "name": "tall wooden floor lamp",
+      "why": "The bookshelf is a void at night and I am tired of not seeing my books.",
+      "parts": [
+        {
+          "shape": "cylinder",
+          "size": [
+            0.29,
+            0.29,
+            0.06
+          ],
+          "pos": [
+            0,
+            0.82,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.05,
+            0.05,
+            2.25
+          ],
+          "pos": [
+            0,
+            1.12,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#7a4b21",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.09
+          ],
+          "pos": [
+            0,
+            2.63,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fff6c2",
+          "glow": true
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.35,
+            0.41
+          ],
+          "pos": [
+            0,
+            2.45,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        }
+      ],
+      "proud": false,
+      "at": "2026-11-23T20:47:13.471Z"
     }
   ],
   "cookedAt": [
@@ -18096,7 +18468,12 @@
     "until": "2026-11-23T12:02:54.427Z",
     "why": "decorate: there is no free place on the back wall for something about 1.744 x 1.376 m. He can use the other wall, make it smaller, or take something down. This "
   },
-  "lookBack": null,
+  "lookBack": {
+    "kind": "thing",
+    "name": "tall wooden floor lamp",
+    "file": null,
+    "at": "2026-11-23T20:47:13.472Z"
+  },
   "street": {
     "day": "2026-11-23",
     "queue": [],
