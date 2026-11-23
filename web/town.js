@@ -284,7 +284,7 @@ export function buildTown(THREE) {
     g.position.set(b.at[0], 0, b.at[1]);
     g.rotation.y = ((b.face ?? 0) * Math.PI) / 180;
     group.add(g);
-    const front = b.tex ? { map: Object.assign(tex(b.tex), { magFilter: THREE.NearestFilter }), glow: null } : facade({ ...b.look, seed: i + 1 }, w, h);
+    const front = b.tex ? { map: Object.assign(tex(b.tex), { magFilter: THREE.NearestFilter }), glow: null } : facade({ ...b.look, ...(b.who && b.look.door ? { door: { ...b.look.door, plate: b.name } } : {}), seed: i + 1 }, w, h); // who lives there: only a small nameplate by the door
     const side = facade({ wall: b.look.wall, color: b.look.color, trim: b.look.trim, windows: b.look.sideWindows ?? [[d / 2 - 0.6, 1.1, 1.2, 1.3]], seed: i + 41 }, d, h);
     const back = facade({ wall: b.look.wall, color: b.look.color, trim: b.look.trim, seed: i + 83 }, w, h);
     const top = M(b.roof ?? 0x6b6460, {}, 'roof', w / 3, d / 3);
@@ -294,13 +294,6 @@ export function buildTown(THREE) {
     roofs.push({ m: cap, color: b.roof ?? 0x6b6460 });
     let glow = null;
     if (front.glow) { glow = add(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: front.glow, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0 }), [0, h / 2, 0.02], g); }
-    if (b.who) { // who lives here: a small portrait by the door
-      const dx = (b.look.door?.x ?? w / 2) - w / 2;
-      const px = dx + (dx > 0 ? -1 : 1) * 1.15;
-      box([0.86, 0.86, 0.05], 0xfff8ee, [px, 1.75, 0.03], g);
-      add(new THREE.PlaneGeometry(0.74, 0.74), new THREE.MeshBasicMaterial({ map: svgTex(faceSvg(b.who, 256)), transparent: true }), [px, 1.75, 0.062], g);
-      const s = sign(b.name, 0.86, 0.3, '#fffaf3', '#4a3d35', 150); s.position.set(px, 1.12, 0.035); g.add(s);
-    }
     if (b.low) lowOnes.push(g);
     blocks.push({ b, g, glow });
   });
