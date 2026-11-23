@@ -3044,7 +3044,7 @@ dom.addEventListener('pointerup', (e) => {
   drag = null;
   if (!tap) return;
   if (mouseLook() && view.mode === 'walk' && e.pointerType === 'mouse' && document.pointerLockElement !== dom) { dom.requestPointerLock?.(); return; } // the first click catches the mouse: from now on it turns the view
-  if (document.pointerLockElement === dom) { const r = dom.getBoundingClientRect(); const hit = pickAt(r.left + r.width / 2, r.top + r.height / 2); if (hit) showInfo(hit.info, hit.anchor); else hideInfo(); return; } // a click taps what the dot in the middle is on
+  if (document.pointerLockElement === dom) { const r = dom.getBoundingClientRect(); openIfNear(pickAt(r.left + r.width / 2, r.top + r.height / 2)); return; } // a click taps what the dot in the middle is on
   if (frontPick) {
     if (frontSideAt(e.clientX, e.clientY)) return tapFront(e.clientX, e.clientY);
     const other = teachOn() ? frontTargetAt(e.clientX, e.clientY) : null; // a tap on another thing starts over with that one
@@ -3053,9 +3053,7 @@ dom.addEventListener('pointerup', (e) => {
   }
   const front = teachOn() ? frontTargetAt(e.clientX, e.clientY) : null;
   if (front) return showFrontCard(front);
-  const hit = pickAt(e.clientX, e.clientY);
-  if (hit) showInfo(hit.info, hit.anchor);
-  else hideInfo();
+  openIfNear(pickAt(e.clientX, e.clientY));
 });
 dom.addEventListener('pointercancel', (e) => {
   touches.delete(e.pointerId);
@@ -5424,6 +5422,21 @@ function showReading() {
 
 // ---- Interact. What is in the middle of your view and close by can be opened: a small prompt says what it is, and F
 // (or a tap on the prompt) opens it. At his front door F takes you in or out. While a card is open, F closes it.
+// You have to be close to use something: within USE metres outside, less inside his house (the rooms are small). A bit
+// further off the prompt still names it, greyed out, and says to walk closer. Further than that: nothing.
+const USE = { out: 7, in: 4 }, SEE = { out: 20, in: 9 };
+const useRange = () => (inTown(view.x) ? USE.out : USE.in);
+const seeRange = () => (inTown(view.x) ? SEE.out : SEE.in);
+function howFar(hit) { // from your eyes to what you look at or tapped
+  const at = hit.anchor?.getWorldPosition ? hit.anchor.getWorldPosition(new V3()) : null;
+  return hit.dist ?? (at ? Math.hypot(at.x - view.x, at.z - view.z) : 99);
+}
+// Opens what you tapped or clicked, when you stand close enough to it. Too far: a short line says so.
+function openIfNear(hit) {
+  if (!hit) return hideInfo();
+  if (FIRST && view.mode === 'walk' && hit.info?.title && howFar(hit) > useRange()) { hideInfo(); return toast(`Walk closer to open “${hit.info.title}”.`); }
+  showInfo(hit.info, hit.anchor);
+}
 const prompt = $('interact');
 function lookingAt() {
   if (view.mode !== 'walk' || !$('start').hidden) return null;
@@ -5434,13 +5447,14 @@ function lookingAt() {
   const r = dom.getBoundingClientRect();
   const hit = pickAt(r.left + r.width / 2, r.top + r.height / 2);
   if (!hit?.info?.title) return null;
-  const at = hit.anchor?.getWorldPosition ? hit.anchor.getWorldPosition(new V3()) : null;
-  const far = hit.dist ?? (at ? Math.hypot(at.x - view.x, at.z - view.z) : 99);
-  return far <= (inTown(view.x) ? 14 : 9) ? { kind: 'info', hit, label: hit.info.title } : null;
+  const far = howFar(hit);
+  if (far <= useRange()) return { kind: 'info', hit, label: hit.info.title };
+  return far <= seeRange() ? { kind: 'far', hit, label: `${hit.info.title} · walk closer` } : null; // in sight, out of reach: it says so
 }
 function interact() {
   const f = lookingAt();
   if (!f) return;
+  if (f.kind === 'far') return; // not in reach yet
   if (f.kind === 'close') hideInfo();
   else if (f.kind === 'door') Object.assign(view, f.to === 'out' ? { x: TOWN_X, z: 1.6, yaw: Math.PI, pitch: 0 } : { x: SPOTS.hall_door.p.x, z: -3.7, yaw: Math.PI, pitch: 0 });
   else showInfo(f.hit.info, f.hit.anchor);
@@ -5449,6 +5463,8 @@ function interact() {
 function showPrompt() {
   const f = FIRST ? lookingAt() : null;
   prompt.hidden = !f;
+  prompt.classList.toggle('far', f?.kind === 'far');
+  prompt.disabled = f?.kind === 'far';
   if (f) prompt.lastChild.textContent = f.label;
 }
 prompt.addEventListener('click', interact);
