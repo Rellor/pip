@@ -108,12 +108,15 @@ export const TOWN_SPOTS = {
   rowE: { x: 52.8, z: 1.3, face: Math.PI / 2 }, // past the east end of the north row (the flats)
   sqSE: { x: 27.6, z: 33.4, face: Math.PI / 2 }, rowSE: { x: 40.2, z: 36.4, face: Math.PI / 2 }, // along the south row, past the closed shop
   ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, { x: w.spot[0], z: w.spot[1], face: w.side > 0 ? Math.PI : 0 }])), // in front of each wall he can paint on
+  drop_square: { x: -5.4, z: 25.4, face: Math.PI / 2 }, drop_pond: { x: -14.8, z: 23.6, face: -Math.PI / 2 }, drop_door: { x: 2.4, z: 3.6, face: Math.PI / 2 }, drop_wall: { x: -24, z: 36.2, face: 0 }, // where a note for him can lie (strangers.js): he stands beside it
 };
+// Where things that people leave lie: the notes (by their spot) and the small deeds of visitors (by what they are).
+export const LIE = { drop_square: [-6.2, 25.4], drop_pond: [-15.6, 23.6], drop_door: [3.2, 3.6], drop_wall: [-24, 37.0], flower: [1.1, 0.62], apple: [16.4, 0.7], boat: [POND.x + 4, POND.z - 2], doodle: [BOARD.x + 0.8, BOARD.z + 0.12], hat: [STONE[0], STONE[1]], bookmark: [30.6, 0.8], chalk: [14, 24] };
 // Where Pip is seen for each place of his world: [the spot, 'in' when he goes inside there (then he is out of sight)].
-export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], walls: ['paint_wall_1', ''] };
+export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], walls: ['paint_wall_1', ''], drops: ['drop_square', ''] };
 // The way to each spot from his door: the corners he walks by, one after the other (the way home is the same, backwards).
 // (A route can also be for one spot: the way to each wall he paints on. The page looks for the spot first, then the place.)
-export const ROUTES = { doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], land: ['sqN', 'sqE'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
+export const ROUTES = { doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], land: ['sqN', 'sqE'], drops: ['sqN'], drop_square: ['sqN'], drop_pond: ['sqN', 'sqW'], drop_door: [], drop_wall: ['sqN', 'sqSW'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
 
 // ---- The land itself. It is flat, until Pip shapes it: at the land workshop he takes the land tool and makes a hill or
 // digs a hole (land.js; the list is kept in his state as `land`). Whoever draws the world or puts something on it first
@@ -149,7 +152,7 @@ export const atTownDoor = (x, z) => Math.abs(x - TOWN_X) < 0.75 && z < 0.75 && z
 // and the square and the ways he walks must stay free. It can be bigger than a house.
 export const BUILD_MAX = { w: 20, h: 18, d: 20 };
 // The ways he walks himself (ROUTES): they stay free, from corner to corner. (The sand paths are drawn along them.)
-const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ['studio', 'studio', ROUTES.studio], ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
+const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ['studio', 'studio', ROUTES.studio], ...['drop_pond', 'drop_door', 'drop_wall'].map((k) => ['drops', k, ROUTES[k]]), ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
 // Every stretch of path once: [ax, az, bx, bz] (for drawing them).
 export const PATHS = [...new Map(WALKS.map(([a, b]) => [[a, b].map((p) => `${p.x},${p.z}`).sort().join('|'), [a.x, a.z, b.x, b.z]])).values()];
 // What stands there already: [what it is, x0, x1, z0, z1] and [what it is, x, z, radius] (world coordinates).
@@ -192,7 +195,7 @@ export function buildProblem(x0, x1, z0, z1) {
   { const x = nearX(POND.x); const z = nearZ(POND.z); if (((x - POND.x) / (POND.rx + 1.3)) ** 2 + ((z - POND.z) / (POND.rz + 1.3)) ** 2 < 1) return 'the pond is there'; }
   for (const [a, b, place] of WALKS) {
     const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.6));
-    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : place === 'walls' ? 'a wall I paint on' : place === 'shop' ? 'the grocery store' : place === 'studio' ? 'my art workshop' : place === 'land' ? 'the land workshop' : place === 'workshop' ? 'the print workshop' : `the ${place === 'board' ? 'notice board' : place}`} must stay free`;
+    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : place === 'walls' ? 'a wall I paint on' : place === 'shop' ? 'the grocery store' : place === 'studio' ? 'my art workshop' : place === 'land' ? 'the land workshop' : place === 'workshop' ? 'the print workshop' : place === 'drops' ? 'where people leave notes for me' : `the ${place === 'board' ? 'notice board' : place}`} must stay free`;
   }
   return null;
 }
@@ -324,6 +327,7 @@ export function buildTown(THREE) {
   const sand = M(0xe9dcc0, {}, 'stone', 12, 11);
   const square = box([SQUARE.x1 - SQUARE.x0, 0.07, SQUARE.z1 - SQUARE.z0], sand, [(SQUARE.x0 + SQUARE.x1) / 2, 0.0, (SQUARE.z0 + SQUARE.z1) / 2]);
   square.receiveShadow = true;
+  things.push({ kind: 'place', key: 'square', object: square });
   for (const [x, z] of [[SQUARE.x0, SQUARE.z0], [SQUARE.x1, SQUARE.z0], [SQUARE.x0, SQUARE.z1], [SQUARE.x1, SQUARE.z1]]) cyl(0.5, 0.56, 0.5, 0xd9cdb8, [x, 0.25, z]);
   const pathMat = M(0xe2d5bd);
   PATHS.forEach(([ax, az, bx, bz], i) => { const len = Math.hypot(bx - ax, bz - az); const p = box([len + 2, 0.04, 2.2], pathMat, [(ax + bx) / 2, -0.004 + i * 0.0012, (az + bz) / 2]); p.rotation.y = -Math.atan2(bz - az, bx - ax); p.receiveShadow = true; });
@@ -471,9 +475,12 @@ export function buildTown(THREE) {
   // high above it (they do not reach his room).
   const suns = [[-44, 46, 14, 100], [4, 46, 24, 110], [50, 46, 16, 110], [6, 46, -18, 100]].map(([x, y, z, far]) => { const l = new THREE.PointLight(0xfff4e2, 1.5, far, 0); l.position.set(x, y, z); group.add(l); return l; });
 
+  const lyingThings = new THREE.Group(); // what people left for him (filled further down)
+  group.add(lyingThings);
   let frozenNow = false;
   function animate(t) {
     stoneGlow.emissiveIntensity = 0.45 + Math.sin(t * 0.9) * 0.2; // the stone breathes
+    lyingThings.children.forEach((m, i) => { m.position.y = m.userData.bob + Math.sin(t * 2 + i) * 0.06; }); // what lies waiting for him bobs a little
     ducks.forEach((d, i) => {
       const a = frozenNow ? i * 1.7 : t * (0.05 + i * 0.012) + i * 1.7;
       const k = 0.35 + (i % 3) * 0.2;
@@ -523,6 +530,26 @@ export function buildTown(THREE) {
     });
   }
 
+  // ---- what people left for him: a note from a traveller (an envelope) and the small deeds of visitors. They lie in
+  // his world until he finds them. Each is a little picture that always looks at you.
+  const emojiTex = new Map();
+  const emoji = (ch) => { if (!emojiTex.has(ch)) { const c = document.createElement('canvas'); c.width = c.height = 96; const g = c.getContext('2d'); g.font = '72px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(ch, 48, 54); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; emojiTex.set(ch, t); } return emojiTex.get(ch); };
+  let lyingKey = '';
+  function layDown(s, now) {
+    const notes = (s?.drops ?? []).filter((d) => d.status === 'lying' && Date.parse(d.at) <= now && LIE[d.spot]);
+    const deeds = (s?.deeds ?? []).filter((d) => d.status === 'lying' && LIE[d.deed]);
+    const key = [...notes.map((d) => d.id), ...deeds.map((d) => d.id)].join(',');
+    if (key === lyingKey) return;
+    lyingKey = key;
+    for (const m of lyingThings.children) m.material.dispose();
+    lyingThings.clear();
+    const put = (ch, [x, z], y, size, info) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: emoji(ch), transparent: true, depthWrite: false })); sp.scale.set(size, size, 1); sp.position.set(x, groundAt(x, z) + y, z); sp.userData.info = info; sp.userData.bob = sp.position.y; lyingThings.add(sp); };
+    for (const d of notes) put('💌', LIE[d.spot], 0.55, 0.8, () => ({ title: 'A note for Pip', icon: '💌', subtitle: 'In his world', sections: [{ lines: [`From ${d.from}, ${d.who}${d.madeUp ? ' (a made-up traveller)' : ''}.`, `“${d.text}”`] }, { heading: 'So far', lines: ['Pip has not picked it up yet. He will walk here to get it.'] }] }));
+    for (const d of deeds) put(deedEmoji[d.deed] ?? '🎁', LIE[d.deed], d.deed === 'hat' ? 5.6 : d.deed === 'doodle' ? 1.7 : d.deed === 'chalk' ? 0.25 : 0.45, d.deed === 'chalk' ? 1.6 : 0.6, () => ({ title: deedTitle[d.deed] ?? 'A small deed', icon: deedEmoji[d.deed] ?? '🎁', subtitle: 'In his world', sections: [{ lines: ['A visitor did this for Pip.'] }, { heading: 'So far', lines: ['Pip has not found it yet.'] }] }));
+  }
+  const deedEmoji = { flower: '🌼', apple: '🍎', boat: '⛵', doodle: '✏️', hat: '🎩', bookmark: '🔖', chalk: '🟨' };
+  const deedTitle = { flower: 'A flower on his doorstep', apple: 'An apple for Pip', boat: 'A paper boat', doodle: 'A doodle on the board', hat: 'A tiny hat on the stone', bookmark: 'A bookmark', chalk: 'Hopscotch on the square' };
+
   // ---- what follows the real time: lights in the windows, the shop sign, the clock, the snow
   const nightBlue = new THREE.Color(0x1c2a55);
   let said = '';
@@ -530,6 +557,7 @@ export function buildTown(THREE) {
   function update(s, now = Date.now(), hour = undefined) {
     state.weather = s?.weather ?? null;
     const shaped = reshape(s?.land);
+    layDown(s, now);
     hangArt(s, now);
     boardNotes((s?.wishes ?? []).filter((w) => w.board && w.status === 'open' && now - Date.parse(w.at) < 3 * 86_400_000));
     const h = Number.isFinite(hour) ? hour : hourNL(now); // (a test or a screenshot can ask for an hour)

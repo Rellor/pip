@@ -36,7 +36,8 @@ export function planLand(s, details = {}, now = Date.now()) {
   if (land.length >= LAND_MAX) return { failed: `I made ${land.length} hills and holes already, and that is enough for my world. I make one flat again first (kind: "flat")`, hinted: true };
   const size = LAND_SIZES[/\b(big|large|huge|small|little|tiny|medium|middle)\b/i.test(String(d.size ?? '')) ? (/medium|middle/i.test(d.size) ? 'medium' : sizeOf(d.size)) : sizeOf(said)]; // the size he gave counts; without one, his words say it
   const r = size.r, h = size[kind];
-  const inWay = (x, z) => buildProblem(x - r, x + r, z - r, z + r) ?? (() => { const t = things.find((o) => Math.hypot(o.x - x, o.z - z) < r + o.r); return t ? `my ${t.name} stands there` : null; })();
+  const inWay = (x, z) => buildProblem(x - r, x + r, z - r, z + r) ?? (() => { const t = things.find((o) => Math.hypot(o.x - x, o.z - z) < r + o.r); return t ? `my ${t.name} stands there` : null; })()
+    ?? (() => { const same = land.find((l) => l.kind === kind && Math.hypot(l.x - x, l.z - z) < Math.max(r, l.r)); return same ? `${same.name} is there already` : null; })(); // (a hole in a hill is fine: that is a crater. Two hills on one spot are just one hill)
   const side = spot ? SIDE.find(([re]) => re.test(where))?.[1] ?? (spot.half[0] ? spot.side ?? [0, 1] : [0, 0]) : [0, 0];
   const reach = (half) => (half ? half + r + 1 : 0);
   const tx = spot ? spot.at[0] + side[0] * reach(spot.half[0]) : (PLOT.x0 + PLOT.x1) / 2;

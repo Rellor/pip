@@ -13,6 +13,7 @@ import { warm } from './neighbours.js';
 import { giveForAsk } from './gifts.js';
 import { readBoard } from './board.js';
 import { landDone } from './land.js';
+import { dropFound } from './strangers.js';
 
 // He can go anywhere in his world whenever he is awake: nothing is closed, nothing is locked, and nothing is counted.
 // (Bas, 2026-11-23: "He wants to do it? He can.") The only things that send him home are his own body and his bedtime.
@@ -215,6 +216,10 @@ export function finishOuting(s, now = Date.now()) {
     o.saw = `my painting on ${j.wallName ?? 'the wall'}`;
     if (rnd() < 0.4) { const who = PEOPLE.filter((n) => awake(n, h)); if (who.length) { const n = pick(rnd, who); meet(n.name, `${n.name} came by and stood looking at it for a while.`, 0.3); } }
     up(s, 'joy', 1.5); up(s, 'calm', 0.6); up(s, 'energy', -1);
+  } else if (p.key === 'drops') { // a note someone left for him: he has it now, and reads it
+    o.did = dropFound(s, w.job?.drop, now);
+    o.saw = 'a note that lay waiting for me';
+    up(s, 'wonder', 0.6); up(s, 'loneliness', -0.8);
   } else if (p.key === 'land') { // he shaped the ground with the land tool: a hill, a hole, or flat again
     const j = w.job ?? {};
     o.made = { kind: 'land', name: j.name };

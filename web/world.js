@@ -30,6 +30,7 @@ export const PLACES = [
   { key: 'board', name: 'the notice board', title: 'The notice board', emoji: '📌', walk: 1, stay: [3, 5], hours: [0, 24], at: [270, 292], job: true, blurb: 'People of the town pin notes on it: things they would like made. He reads it, makes one, and earns coins.' },
   { key: 'workshop', name: 'the print workshop', title: 'The print workshop', emoji: '🖨️', walk: 9, stay: [20, 30], hours: [9, 18], at: [560, 300], job: true, blurb: 'A 3D printer hums behind the shutter. What he designs is printed small and kept on the shelf by the door.' },
   { key: 'walls', name: 'the walls', title: 'The walls', emoji: '🎨', walk: 6, stay: [25, 40], hours: 'light', at: [420, 330], job: true, blurb: 'Bare walls all over his world that he paints on, and some back walls too. He needs no paper for it.' },
+  { key: 'drops', name: 'my world', title: 'A note in his world', emoji: '💌', walk: 3, stay: [3, 5], hours: [0, 24], at: [300, 300], job: true, blurb: 'People passing through leave notes for him somewhere in his world. He walks over and picks them up.' },
   { key: 'land', name: 'the land workshop', title: 'The land workshop', emoji: '⛰️', walk: 6, stay: [20, 35], hours: [0, 24], at: [600, 240], job: true, blurb: 'The land tools are kept here. With them he shapes the ground of his world: a hill here, a hole there.' },
 ];
 // Places that were in his world once (the page still shows his old outings to them). He cannot go there any more.

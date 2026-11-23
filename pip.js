@@ -35,6 +35,7 @@ import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKey
 import { postOrders, boardLines } from './board.js';
 import { paintTarget, setLand } from './web/town.js';
 import { planLand, landLine } from './land.js';
+import { postDrop, sweepDrops, dropLines, fetchJob, learnFrom, takeDeed, findDeed } from './strangers.js';
 import { placeOf } from './web/world.js';
 import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
@@ -411,6 +412,7 @@ async function loadVisitors(state) {
   for (const name of (await readdir('visitors').catch(() => [])).filter((n) => n.endsWith('.json'))) {
     try {
       const v = JSON.parse(await readFile(`visitors/${name}`, 'utf8'));
+      if (v.status === 'deed') { if (takeDeed(state, v)) console.log(`🌼 a visitor did a small deed: ${v.deed}`); names.push(name); continue; } // a small deed needs no approval: it has no words (api/deed.js)
       if (v.status !== 'approved') continue;
       if (!state.visitors.some((x) => x.id === v.id)) state.visitors.push({ id: text(v.id, 40), at: v.at, name: text(v.name, 30), text: text(v.text, 300), answer: null });
       names.push(name);
@@ -586,7 +588,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...wishLines(s), ...boardLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -1365,6 +1367,9 @@ async function wakeUp() {
       console.log(`🏘️  ${planNotes(state, reply).length} notes from the neighbours today`);
     } catch (e) { console.error('⚠️  neighbours:', e.message); state.street = { ...(state.street ?? {}), day: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }), queue: [] }; }
   }
+  { const drop = postDrop(state); if (drop) console.log(`💌 ${drop.from} (${drop.who}) left a note ${drop.where}: ${drop.text.slice(0, 70)}`); } // travellers leave notes in his world (strangers.js)
+  for (const line of sweepDrops(state)) { console.log(`💌 ${line.slice(0, 90)}`); addMemory(state, line, 5, 'memory', new Date().toISOString()); }
+  { const found = state.last?.sleeping ? null : findDeed(state); if (found) { console.log(`🌼 ${found}`); addMemory(state, found, 6, 'memory', new Date().toISOString()); happened(state, found); } } // a small thing a visitor did in his world
   { const note = postOrders(state); if (note) console.log(`📌 a new note on the notice board: ${note.topic} (${note.reward} coins)`); } // people pin what they would like made (board.js)
   for (const n of deliverNotes(state)) {
     console.log(`📮 a note from ${n.from} (${n.kind}): ${n.text.slice(0, 80)}`);
@@ -1406,7 +1411,7 @@ async function wakeUp() {
     }
     for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
       const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
-      if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); } // a neighbour: they grow closer, and yes to a wish is a promise
+      if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); const learned = learnFrom(state, v, a.keep !== false); if (learned) addMemory(state, learned, 6, 'memory', new Date().toISOString()); } // a neighbour: they grow closer, and yes to a wish is a promise
     }
     if (!answer.steps.length) answer.steps = fallbackSteps(state, offered);
     answer.steps = decided(state, answer.steps);
@@ -1449,7 +1454,7 @@ async function wakeUp() {
     return true;
   });
   if (!steps.length) steps.push({ action: 'rest', details: {}, thought: 'I could not do what I planned, so I rest a moment.', working_on: '', needs: '', enjoyment: 5 });
-  { const gi = steps.findIndex((x) => x.action === 'go_out' || x.as === 'paint_wall' || x.as === 'print_thing' || x.as === 'shape_land'); if (gi >= 0 && gi < steps.length - 1) steps.push(...steps.splice(gi, 1)); } // going out is always the last thing he does in a wake-up: nothing happens at home while he is away
+  { const gi = steps.findIndex((x) => x.action === 'go_out' || x.as === 'paint_wall' || x.as === 'print_thing' || x.as === 'shape_land' || x.as === 'fetch_note'); if (gi >= 0 && gi < steps.length - 1) steps.push(...steps.splice(gi, 1)); } // going out is always the last thing he does in a wake-up: nothing happens at home while he is away
   // A walk is short, so it takes a quarter of the time of other steps. The page uses the same weights.
   let weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1));
   let wsum = weights.reduce((a, b) => a + b, 0);
@@ -1642,6 +1647,7 @@ async function wakeUp() {
     if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
     if (st.action === 'buy') st.made = buy(state, st.details.item ?? st.details.name ?? st.details.what);
     if (st.action === 'buy' && st.made?.bought && i === steps.length - 1) startOuting(state, { errand: st.made.bought }, stepStart); // a quick walk to the corner shop and back (when nothing else is planned after it)
+    if (st.action === 'go_out' && st.as === 'fetch_note') { const job = fetchJob(state); if (job) st.details = { ...st.details, job }; else st.made = { failed: 'no note lies there for me right now' }; } // he goes to get what someone left for him
     if (st.action === 'go_out' && st.as === 'shape_land') { const plan = planLand(state, st.details.land, stepStart); if (plan.failed) st.made = plan; else st.details = { ...st.details, job: plan.job }; } // he shapes the land: first see if it fits there
     if (st.action === 'go_out' && !st.made?.failed) st.made = startOuting(state, st.details, stepStart);
     if (st.action === 'cook') {

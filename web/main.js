@@ -2592,6 +2592,7 @@ function renderInfo(info) {
   const section = (sec) => {
     const box = el('div', null, 'isec');
     if (sec.heading) box.append(el('h4', sec.heading));
+    if (sec.buttons) { const row = el('div', null, 'ibtns'); for (const b of sec.buttons) { const bt = el('button', b.label, 'small'); bt.type = 'button'; bt.addEventListener('click', () => b.run(bt)); row.append(bt); } box.append(row); }
     if (sec.now) {
       const row = el('div', null, `inow${sec.now.sleepy ? ' sleepy' : ''}`);
       row.append(el('span', null, 'dot'), el('span', `${sec.now.icon} ${sec.now.text}`));
@@ -4995,9 +4996,22 @@ const WORLD_CARDS = {
   studio: { title: 'The art workshop', icon: '🎨', what: 'Every drawing he ever made hangs on its outside walls, so nothing is lost when a wall is painted over.', can: [], none: 'It keeps his art. He does not have to do anything for that.' },
   board: { title: 'The notice board', icon: '📌', place: 'board', can: ['read what people ask for', 'make one of those things and earn the coins'] },
   pond: { title: 'The pond', icon: '🦆', place: 'pond' },
+  square: { title: 'The square', icon: '⛲', what: 'The middle of the village. The notice board stands here, and everyone crosses it.', can: ['walk across it to everything', 'read the notice board'] },
   plot: { title: 'Pip’s land', icon: '🌱', what: 'A big free field of his own, beside the square. It is his to fill.', can: ['build things here, also big ones', 'make hills and holes', 'ask for a new building'] },
   stone: { title: 'The green stone', icon: '💎', what: 'It glows a little at night. Nobody knows who put it there.', can: [], none: 'Nothing. He can build next to it.' },
 };
+// Small deeds: one small thing a visitor can do at a place, for Pip to find later (api/deed.js, strangers.js).
+const DEED_AT = { flower: 'home', apple: 'shop', boat: 'pond', doodle: 'board', hat: 'stone', bookmark: 'library', chalk: 'square' };
+const DEED_LABEL = { flower: '🌼 Leave a flower on his doorstep', apple: '🍎 Leave an apple by the door', boat: '⛵ Put a paper boat on the pond', doodle: '✏️ Pin a doodle on the board', hat: '🎩 Put a tiny hat on the stone', bookmark: '🔖 Leave a bookmark in a book', chalk: '🟨 Draw hopscotch on the square' };
+async function doDeed(deed, bt) {
+  bt.disabled = true;
+  try {
+    const res = await fetch('/api/deed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deed, since: Date.now() - pageOpenedAt, website: '' }) });
+    const out = await res.json().catch(() => ({}));
+    if (res.ok) toast('Done. Pip will find it when he wakes up and looks around. 🤫');
+    else { toast(res.status === 404 ? 'This only works on the live site.' : out.error || 'That did not work. Try again later.'); bt.disabled = false; }
+  } catch { toast('That did not work. Try again later.'); bt.disabled = false; }
+}
 function worldCard(kind, key) {
   const s = lastState || {};
   const ago = (iso) => { const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 60 ? `${Math.max(1, m)} min ago` : m < 1440 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`; };
@@ -5022,6 +5036,8 @@ function worldCard(kind, key) {
   if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
   else if (p && !['shop', 'workshop', 'walls', 'board', 'land'].includes(p.key)) so.push('He has not been here yet.');
   if (so.length) sections.push({ heading: 'So far', lines: so });
+  const deed = Object.entries(DEED_AT).find(([, at]) => at === key);
+  if (deed) sections.push({ heading: 'What you can do here', lines: [(s.deeds ?? []).some((d) => d.deed === deed[0] && d.status === 'lying') ? 'Someone did this already. Pip has not found it yet.' : 'A small thing for Pip to find later. He does not know who did it.'], buttons: [{ label: `${DEED_LABEL[deed[0]]}`, run: (bt) => doDeed(deed[0], bt) }] });
   return { title: c.title, icon: c.icon, subtitle: 'In his world', sections };
 }
 for (const t of town.things) t.object.userData.info = () => worldCard(t.kind, t.key);

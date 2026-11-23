@@ -64,7 +64,7 @@ await ok('approved visitor messages reach Pip; waiting ones stay sealed in the f
   assert.ok(!fs.existsSync(path.join(work, 'visitors/v1.json')));
   assert.ok(fs.existsSync(path.join(work, 'visitors/v2.json')));
   const a = toAnswer({ moves: [{ move: 'answer_visitor', details: { id: 'v1', text: 'Betelgeuse, it bubbles!' } }] }, ['answer_visitor']);
-  assert.deepEqual(a.visitor_answers, [{ id: 'v1', text: 'Betelgeuse, it bubbles!' }]);
+  assert.deepEqual(a.visitor_answers, [{ id: 'v1', text: 'Betelgeuse, it bubbles!', keep: true }]);
 });
 
 // ---- the api/ functions with a fake GitHub
