@@ -1,8 +1,8 @@
 {
   "mood": "focused",
-  "energy": 7.66,
+  "energy": 7.43,
   "boredom": 0,
-  "loneliness": 4.41,
+  "loneliness": 4.42,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-22T17:35:14.416Z",
-      "action": "walk_to",
-      "detail": "computer",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-22T17:43:19.890Z",
       "action": "do",
@@ -314,10 +308,15 @@
       "action": "do",
       "detail": "look closely at something in my room I never really looked at",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-23T07:45:07.425Z",
+      "action": "search_web",
+      "detail": "night sky constellations",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "I already looked up \"to build a wooden birdhouse\" a little while ago (Nest box: A nest box, also spelled nestbox, is a man-made enclosure provided for animals to nest in.  Nest boxes are most frequently utilized for birds, in which case they are also called birdhouses or a birdbox/bird box, but some mammals such as bats may also use them. …). I do not search the same thing again: I look for something different, or I use what I know.",
     "I already looked up \"to build a wooden birdhouse\" a little while ago (Nest box: A nest box, also spelled nestbox, is a man-made enclosure provided for animals to nest in.  Nest boxes are most frequently utilized for birds, in which case they are also called birdhouses or a birdbox/bird box, but some mammals such as bats may also use them. …). I do not search the same thing again: I look for something different, or I use what I know.",
     "My mint is fully grown and ready to harvest!",
     "I harvested mint from place 3. It goes in my pantry, and the plant grows back.",
@@ -346,7 +345,8 @@
     "Searched \"the night sky and constellations: a first version\" and read about Orion (constellation): Orion is a prominent set of stars visible during winter in the Northern Hemisphere. It is one of the 88 modern constellations; it was among the 48 constellations listed by the 2nd-century AD astronomer Ptolemy. It is named after a hunter in Greek mythology.\nOrion is most prominent during winter evenings in the Northern Hemisphere, as are five other constellations that have stars in the Winter Hexagon asterism. …",
     "It was too dark to read well at the bookshelf. A lamp nearby would help.",
     "Read about Constellation: A constellation is an area on the celestial sphere in which a group of visible stars forms a perceived pattern or outline, typically representing an animal, mythological subject, or inanimate object.\nThe first constellations were likely defined in prehistory. People used them to relate stories of their beliefs, experiences, creation, and mythology. …",
-    "Searched \"to map the summer constellations\" and read about Constellation: A constellation is an area on the celestial sphere in which a group of visible stars forms a perceived pattern or outline, typically representing an animal, mythological subject, or inanimate object.\nThe first constellations were likely defined in prehistory. People used them to relate stories of their beliefs, experiences, creation, and mythology. …"
+    "Searched \"to map the summer constellations\" and read about Constellation: A constellation is an area on the celestial sphere in which a group of visible stars forms a perceived pattern or outline, typically representing an animal, mythological subject, or inanimate object.\nThe first constellations were likely defined in prehistory. People used them to relate stories of their beliefs, experiences, creation, and mythology. …",
+    "Searched \"night sky constellations\" and read about Night sky: The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\n …"
   ],
   "requests": [],
   "story": "Pip spends his quiet days decorating his little room as autumn dusk settles outside. He learns by doing, crafting things with his own hands even when his first tries are clumsy. Changing things helped him feel better, though moving things around often made him feel worse. He stayed deeply focused on his tasks throughout the day, doing and searching the web. He still needs to build his wooden birdhouse. At dusk, he returns to the autumn window. Late at night, he sits down by candlelight to write in his diary.",
@@ -1199,27 +1199,19 @@
       "lastUsed": "2026-11-23T07:04:06.220Z"
     },
     {
-      "id": "mmwsyadp960",
-      "at": "2026-11-23T07:34:50.045Z",
-      "text": "plan the steps of my project Map the summer constellations",
-      "importance": 4,
+      "id": "mmwsynn4060",
+      "at": "2026-11-23T07:45:08.423Z",
+      "text": "I looked up night sky constellations",
+      "importance": 3,
       "kind": "memory",
-      "weight": 3.999,
-      "lastUsed": "2026-11-23T07:34:50.045Z"
+      "weight": 3,
+      "lastUsed": "2026-11-23T07:45:08.423Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-22T22:01:40.771Z",
   "thoughts": [
-    {
-      "at": "2026-11-22T18:53:46.209Z",
-      "text": "I just finished my neon star game for Lina and I want to start a new project to learn more about the night sky.",
-      "short": "I just finished my neon star game for Lina and I want to start a new project to learn more about the night sky.",
-      "mood": "Inspired",
-      "action": "do",
-      "detail": "plan my new project: Learn about the night sky and constellations"
-    },
     {
       "at": "2026-11-22T19:02:21.785Z",
       "text": "I finished my game project for Lina and now I want to start working on learning about the night sky.",
@@ -1451,6 +1443,14 @@
       "mood": "focused",
       "action": "decorate",
       "detail": "summer constellation map"
+    },
+    {
+      "at": "2026-11-23T07:45:07.427Z",
+      "text": "I want to search the web to learn more about the night sky since my decoration project had no free wall space.",
+      "short": "I want to search the web to learn more about the night sky since my decoration project had no free wall space.",
+      "mood": "focused",
+      "action": "search_web",
+      "detail": "night sky constellations"
     }
   ],
   "outbox": [
@@ -1953,14 +1953,32 @@
       "failed": "there is no free place on the left wall for something about 1.76 x 1.28 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
     },
     {
-      "at": "2026-11-23T07:47:04.725Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and look closely at something in my room I never really looked at.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🔍",
-      "what": "look closely at something in my room I never really looked at",
-      "feeling": "wonder"
+      "at": "2026-11-23T07:45:08.423Z",
+      "action": "search_web",
+      "thought": "Let's look up night sky info online.",
+      "query": "night sky constellations",
+      "results": [
+        {
+          "title": "Night sky",
+          "snippet": "status of the night sky as a calendar to determine when to plant crops. Many cultures have drawn constellations between stars in the sky, using them in",
+          "url": "https://en.wikipedia.org/wiki/Night_sky"
+        },
+        {
+          "title": "Constellation",
+          "snippet": "complex Emu in the sky IAU designated constellations – a list of the current, or \"modern\", constellations Celestial cartography Constellation family Former",
+          "url": "https://en.wikipedia.org/wiki/Constellation"
+        },
+        {
+          "title": "Draco (constellation)",
+          "snippet": "Draco is a constellation in the far northern sky. Its name is derived from the Latin word for dragon. It was one of the 48 constellations listed by the",
+          "url": "https://en.wikipedia.org/wiki/Draco_(constellation)"
+        }
+      ],
+      "opened": {
+        "title": "Night sky",
+        "url": "https://en.wikipedia.org/wiki/Night_sky",
+        "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\nThe night sky and studies of it have a historical place in both ancient and modern cultures. In the past, for instance, farmers have used the status of the night sky as a calendar to determine when to plant crops. Many cultures have drawn constellations between stars in the sky, using them in association with legends and mythology about their deities.\nThe history of astrology has generally been based on the belief that relationships between heavenly bodies influence or explain events on Earth. The scientific study of objects in the night sky takes place in the context of observational astronomy.\nVisibility of celestial objects in the night sky is affected by light pollution. The presence of the Moon in the night sky has historically hindered astronomical observation by increasing the amount of sky brightness. With the advent of artificial light sources, however, light pollution has been a growing problem for viewing the night sky. …"
+      }
     }
   ],
   "decor": [
@@ -9247,464 +9265,51 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-23T07:43:03.725Z",
+    "at": "2026-11-23T07:45:07.423Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 3
+      "gemini-3.5-flash-lite": 1
     },
-    "modelNotes": [
-      "gemini-3.5-flash-lite answered (gemini-3.8-flash is out of quota)"
-    ],
-    "fallback": true,
     "tokens": {
-      "calls": 3,
-      "input": 11587,
-      "output": 4909,
+      "calls": 1,
+      "input": 2074,
+      "output": 175,
       "models": {
-        "gemini-3.5-flash-lite": 3
+        "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I want to work on mapping the summer constellations to make progress on my goals today.",
-    "inner": "I want to work on mapping the summer constellations to make progress on my goals today.",
+    "thought": "I want to search the web to learn more about the night sky since my decoration project had no free wall space.",
+    "inner": "I want to search the web to learn more about the night sky since my decoration project had no free wall space.",
     "sent": false,
     "steps": [
       {
-        "action": "decorate",
+        "action": "search_web",
         "details": {
-          "what": "Map the summer constellations: a first version (for my project \"Map the summer constellations\")",
-          "why": "I want to map the summer constellations to know more about the night sky and draw what I see.",
-          "project": "Map the summer constellations",
-          "name": "summer constellation map",
-          "where": "wall_left",
-          "parts": [
-            {
-              "shape": "roundbox",
-              "size": [
-                1.1,
-                0.8,
-                0.04
-              ],
-              "pos": [
-                0,
-                0,
-                0
-              ],
-              "color": "#1b263b",
-              "glow": false
-            },
-            {
-              "shape": "roundbox",
-              "size": [
-                1.02,
-                0.72,
-                0.02
-              ],
-              "pos": [
-                0,
-                0,
-                0.02
-              ],
-              "color": "#0d1b2a",
-              "glow": false
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.025
-              ],
-              "pos": [
-                -0.3,
-                0.2,
-                0.03
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.02
-              ],
-              "pos": [
-                -0.2,
-                0.28,
-                0.03
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.02
-              ],
-              "pos": [
-                -0.1,
-                0.22,
-                0.03
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.03
-              ],
-              "pos": [
-                0.25,
-                -0.15,
-                0.03
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.02
-              ],
-              "pos": [
-                0.35,
-                -0.05,
-                0.03
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.02
-              ],
-              "pos": [
-                0.3,
-                -0.25,
-                0.03
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.003,
-                0.003,
-                0.12
-              ],
-              "pos": [
-                -0.25,
-                0.24,
-                0.025
-              ],
-              "rot": [
-                0,
-                0,
-                35
-              ],
-              "color": "#415a77",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.003,
-                0.003,
-                0.11
-              ],
-              "pos": [
-                -0.15,
-                0.25,
-                0.025
-              ],
-              "rot": [
-                0,
-                0,
-                -30
-              ],
-              "color": "#415a77",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.003,
-                0.003,
-                0.14
-              ],
-              "pos": [
-                0.3,
-                -0.1,
-                0.025
-              ],
-              "rot": [
-                0,
-                0,
-                45
-              ],
-              "color": "#415a77",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.003,
-                0.003,
-                0.12
-              ],
-              "pos": [
-                0.32,
-                -0.15,
-                0.025
-              ],
-              "rot": [
-                0,
-                0,
-                -60
-              ],
-              "color": "#415a77",
-              "glow": false
-            }
-          ],
-          "uses": [
-            {
-              "label": "Study constellations",
-              "text": "I trace the bright star lines of the summer sky, remembering the stories ancient people told about them.",
-              "effect": "wonder"
-            }
-          ]
+          "query": "night sky constellations"
         },
-        "detail": "summer constellation map",
-        "thought": "Work on my project to make the first version of mapping the summer constellations",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "look closely at something in my room I never really looked at",
-          "feeling": "wonder",
-          "emoji": "🔍"
-        },
-        "detail": "look closely at something in my room I never really looked at",
-        "thought": "That did not work out. I shake it off and look closely at something in my room I never really looked at.",
+        "detail": "night sky constellations",
+        "thought": "Let's look up night sky info online.",
         "enjoyment": 6,
-        "found": null,
+        "found": {
+          "title": "Night sky",
+          "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\nThe night sky and studies of it have a historical place in both ancient and modern cultures. In the past, for instance, farmers have used the status of the night sky as a calendar to determine when to plant crops. Many cultures have drawn constellations between stars in the sky, using them in association with legends and mythology about their deities.\nThe history of astrology has generally been based on the belief that relationships between heavenly bodies influence or explain events on Earth. The scientific study of objects in the night sky takes place in the context of observational astronomy.\nVisibility of celestial objects in the night sky is affected by light pollution. The presence of the Moon in the night sky has historically hindered astronomical observation by increasing the amount of sky brightness. With the advent of artificial light sources, however, light pollution has been a growing problem for viewing the night sky. Optical filters and modifications to light fixtures can help to alleviate this problem, but for optimal views, both professional and amateur astronomers seek locations far from urban skyglow.\n\nBrightness\n\nThe fact that the sky is not completely dark at night, even in the absence of moonlight and city lights, can be easily observed, since if the sky were absolutely dark, one would not be able to see the silhouette of an object against the sky.\nThe intensity of the sky brightness varies greatly over the day and the primary cause differs as well. During daytime when the Sun is above the horizon direct scattering of sunlight (Rayleigh scattering) is the overwhelmingly dominant source of light. In twilight, the period of time between sunset and sunrise, the situation is more complicated and a further differentiation is required. Twilight is divided in three segments according to how far the Sun is below the horizon in segments of 6°.\n …"
+        },
         "made": null
       }
     ],
-    "action": "decorate",
+    "action": "search_web",
     "details": {
-      "what": "Map the summer constellations: a first version (for my project \"Map the summer constellations\")",
-      "why": "I want to map the summer constellations to know more about the night sky and draw what I see.",
-      "project": "Map the summer constellations",
-      "name": "summer constellation map",
-      "where": "wall_left",
-      "parts": [
-        {
-          "shape": "roundbox",
-          "size": [
-            1.1,
-            0.8,
-            0.04
-          ],
-          "pos": [
-            0,
-            0,
-            0
-          ],
-          "color": "#1b263b",
-          "glow": false
-        },
-        {
-          "shape": "roundbox",
-          "size": [
-            1.02,
-            0.72,
-            0.02
-          ],
-          "pos": [
-            0,
-            0,
-            0.02
-          ],
-          "color": "#0d1b2a",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.025
-          ],
-          "pos": [
-            -0.3,
-            0.2,
-            0.03
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.02
-          ],
-          "pos": [
-            -0.2,
-            0.28,
-            0.03
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.02
-          ],
-          "pos": [
-            -0.1,
-            0.22,
-            0.03
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.03
-          ],
-          "pos": [
-            0.25,
-            -0.15,
-            0.03
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.02
-          ],
-          "pos": [
-            0.35,
-            -0.05,
-            0.03
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.02
-          ],
-          "pos": [
-            0.3,
-            -0.25,
-            0.03
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.003,
-            0.003,
-            0.12
-          ],
-          "pos": [
-            -0.25,
-            0.24,
-            0.025
-          ],
-          "rot": [
-            0,
-            0,
-            35
-          ],
-          "color": "#415a77",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.003,
-            0.003,
-            0.11
-          ],
-          "pos": [
-            -0.15,
-            0.25,
-            0.025
-          ],
-          "rot": [
-            0,
-            0,
-            -30
-          ],
-          "color": "#415a77",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.003,
-            0.003,
-            0.14
-          ],
-          "pos": [
-            0.3,
-            -0.1,
-            0.025
-          ],
-          "rot": [
-            0,
-            0,
-            45
-          ],
-          "color": "#415a77",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.003,
-            0.003,
-            0.12
-          ],
-          "pos": [
-            0.32,
-            -0.15,
-            0.025
-          ],
-          "rot": [
-            0,
-            0,
-            -60
-          ],
-          "color": "#415a77",
-          "glow": false
-        }
-      ],
-      "uses": [
-        {
-          "label": "Study constellations",
-          "text": "I trace the bright star lines of the summer sky, remembering the stories ancient people told about them.",
-          "effect": "wonder"
-        }
-      ]
+      "query": "night sky constellations"
     },
-    "detail": "summer constellation map",
-    "enjoyment": 0,
+    "detail": "night sky constellations",
+    "enjoyment": 6,
     "new_idea": null,
-    "found": null
+    "found": {
+      "title": "Night sky",
+      "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\nThe night sky and studies of it have a historical place in both ancient and modern cultures. In the past, for instance, farmers have used the status of the night sky as a calendar to determine when to plant crops. Many cultures have drawn constellations between stars in the sky, using them in association with legends and mythology about their deities.\nThe history of astrology has generally been based on the belief that relationships between heavenly bodies influence or explain events on Earth. The scientific study of objects in the night sky takes place in the context of observational astronomy.\nVisibility of celestial objects in the night sky is affected by light pollution. The presence of the Moon in the night sky has historically hindered astronomical observation by increasing the amount of sky brightness. With the advent of artificial light sources, however, light pollution has been a growing problem for viewing the night sky. Optical filters and modifications to light fixtures can help to alleviate this problem, but for optimal views, both professional and amateur astronomers seek locations far from urban skyglow.\n\nBrightness\n\nThe fact that the sky is not completely dark at night, even in the absence of moonlight and city lights, can be easily observed, since if the sky were absolutely dark, one would not be able to see the silhouette of an object against the sky.\nThe intensity of the sky brightness varies greatly over the day and the primary cause differs as well. During daytime when the Sun is above the horizon direct scattering of sunlight (Rayleigh scattering) is the overwhelmingly dominant source of light. In twilight, the period of time between sunset and sunrise, the situation is more complicated and a further differentiation is required. Twilight is divided in three segments according to how far the Sun is below the horizon in segments of 6°.\n …"
+    }
   },
   "furniture": {
     "plant": {
@@ -9790,7 +9395,7 @@
   "quota": {
     "day": "2026-11-22",
     "calls": {
-      "gemini-3.5-flash-lite": 213,
+      "gemini-3.5-flash-lite": 214,
       "gemini-3.8-flash": 19,
       "gemini-3.6-flash": 16,
       "gemini-3.5-flash": 7,
@@ -10027,22 +9632,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-23T07:43:03.737Z",
-  "fullness": 3.3,
+  "memoryFadeAt": "2026-11-23T07:45:07.776Z",
+  "fullness": 3.26,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.96,
-  "joy": 3.7,
-  "calm": 5.64,
+  "wonder": 8.67,
+  "joy": 3.59,
+  "calm": 5.5,
   "emo": {
-    "irritated": 2,
+    "irritated": 1.6,
     "sad": 0,
-    "excited": 0.17
+    "excited": 0.1
   },
-  "feelAt": "2026-11-23T07:42:52.608Z",
+  "feelAt": "2026-11-23T07:45:05.737Z",
   "lastAte": "2026-11-23T07:04:17.289Z",
   "studio": {
     "songs": [
@@ -10757,21 +10362,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.08,
-    "curiosity": 2.12,
+    "creativity": 0.1,
+    "curiosity": 0,
     "boredom": 0,
-    "loneliness": 4.41,
+    "loneliness": 4.42,
     "tidiness": 1.6,
-    "at": "2026-11-23T07:42:52.608Z",
+    "at": "2026-11-23T07:45:05.737Z",
     "coziness": 3.6
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-22T21:37:10.503Z"
-      },
       {
         "move": "do",
         "kind": "play",
@@ -10845,12 +10445,17 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-23T07:43:03.741Z"
+      },
+      {
+        "move": "search_web",
+        "kind": "learn",
+        "at": "2026-11-23T07:45:07.783Z"
       }
     ],
     "moods": [
       "energetic",
       "energetic",
-      "energetic",
+      "focused",
       "focused",
       "focused"
     ],
@@ -10867,6 +10472,12 @@
         "ok": false,
         "failed": true,
         "at": "2026-11-23T07:43:03.743Z"
+      },
+      {
+        "key": "search_web:night sky constellations",
+        "move": "search_web",
+        "ok": true,
+        "at": "2026-11-23T07:45:07.785Z"
       }
     ]
   },
@@ -10877,7 +10488,8 @@
       "cook": 1,
       "do": 4,
       "move_thing": 1,
-      "plan_project": 1
+      "plan_project": 1,
+      "search_web": 1
     },
     "tried": {
       "eat": 1,
@@ -10886,18 +10498,20 @@
       "do": 4,
       "move_thing": 1,
       "decorate": 3,
-      "plan_project": 1
+      "plan_project": 1,
+      "search_web": 1
     },
     "kinds": {
       "food": 2,
       "play": 4,
       "room": 1,
-      "make": 1
+      "make": 1,
+      "learn": 1
     },
     "moods": {
       "hungry": 3,
       "energetic": 3,
-      "focused": 2
+      "focused": 3
     },
     "lift": {
       "eat": 0.47,
@@ -10905,7 +10519,8 @@
       "change_thing": 0.9,
       "do": 2.61,
       "move_thing": -0.5,
-      "decorate": 1.61
+      "decorate": 1.61,
+      "search_web": 1.2
     }
   },
   "skills": {
@@ -10942,7 +10557,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-23T07:43:01.294Z",
+    "decidedAt": "2026-11-23T07:45:07.423Z",
     "seen": {
       "tools": 7,
       "gifts": 1,
@@ -10952,10 +10567,7 @@
       "seeds": 9,
       "visitors": 4
     },
-    "lastFail": {
-      "at": "2026-11-23T07:43:03.742Z",
-      "why": "decorate: there is no free place on the left wall for something about 1.76 x 1.28 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -11287,7 +10899,7 @@
     "eat": 43,
     "water": 22,
     "do": 313,
-    "search_web": 43,
+    "search_web": 44,
     "read_book": 21,
     "record_song": 8,
     "change_thing": 13,
@@ -11319,7 +10931,7 @@
     "go_out": 1
   },
   "checkup": {
-    "at": "2026-11-23T07:43:03.743Z",
+    "at": "2026-11-23T07:45:07.786Z",
     "items": [
       {
         "id": "circling",
@@ -11353,7 +10965,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 3.3\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 3.26\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -14336,13 +13948,6 @@
       "text": "Quiet City is a composition for trumpet, cor anglais or oboe, and string orchestra by Aaron Copland. In the published score, the composer indicates \"use Oboe only if no English Horn is available.\" History In 1939, Copland wrote incidental music for the play Quiet City by Irwin Shaw. He later worked some of it into a ten-minute composition designed to be performed independently of the play. The piece premiered on January 28, 1941, by conductor Daniel Saidenberg and his Saidenberg Little Symphony "
     },
     {
-      "at": "2026-11-22T19:02:22.782Z",
-      "query": "to learn about the night sky and constellations",
-      "title": "Night sky",
-      "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon. Natural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator. T",
-      "project": "Learn about the night sky and constellations"
-    },
-    {
       "at": "2026-11-22T19:19:23.210Z",
       "query": "the night sky and constellations: a first version",
       "title": "Orion (constellation)",
@@ -14355,6 +13960,12 @@
       "title": "Constellation",
       "text": "A constellation is an area on the celestial sphere in which a group of visible stars forms a perceived pattern or outline, typically representing an animal, mythological subject, or inanimate object. The first constellations were likely defined in prehistory. People used them to relate stories of their beliefs, experiences, creation, and mythology. Different cultures and countries invented their own constellations, some of which lasted into the early 20th century before today's constellations we",
       "project": "Map the summer constellations"
+    },
+    {
+      "at": "2026-11-23T07:45:08.423Z",
+      "query": "night sky constellations",
+      "title": "Night sky",
+      "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon. Natural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator. T"
     }
   ],
   "phone": {
@@ -16925,15 +16536,6 @@
         "shown": 2
       },
       {
-        "topic": "Night sky",
-        "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon. Natural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass…",
-        "url": "https://en.wikipedia.org/wiki/Night_sky",
-        "from": "search",
-        "via": null,
-        "at": "2026-11-22T19:02:22.178Z",
-        "shown": 2
-      },
-      {
         "topic": "Orion (constellation)",
         "text": "Orion is a prominent set of stars visible during winter in the Northern Hemisphere. It is one of the 88 modern constellations; it was among the 48 constellations listed by the 2nd-century AD astronomer Ptolemy. It is named after a hunter in Greek mythology. Orion is most prominent during winter evenings in the Northern Hemisphere, as are five other constellations that have stars in the Winter…",
         "url": "https://en.wikipedia.org/wiki/Orion_(constellation)",
@@ -16959,6 +16561,15 @@
         "via": null,
         "at": "2026-11-23T07:12:20.854Z",
         "shown": 2
+      },
+      {
+        "topic": "Night sky",
+        "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon. Natural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass…",
+        "url": "https://en.wikipedia.org/wiki/Night_sky",
+        "from": "search",
+        "via": null,
+        "at": "2026-11-23T07:45:07.774Z",
+        "shown": 0
       }
     ],
     "interests": [
@@ -16966,7 +16577,7 @@
         "topic": "Night sky",
         "score": 12,
         "since": "2026-11-20T19:57:15.292Z",
-        "last": "2026-11-22T20:16:56.715Z"
+        "last": "2026-11-23T07:45:07.774Z"
       },
       {
         "topic": "quiet music",
@@ -17068,7 +16679,14 @@
     "fadedAt": "2026-11-22T19:44:21.340Z"
   },
   "reportDay": "2026-11-22",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-23T07:44:14.725Z",
+    "key": "decorate:summer constellation map",
+    "action": "decorate",
+    "name": "summer constellation map",
+    "why": "there is no free place on the left wall for something about 1.76 x 1.28 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind",
+    "guide": ""
+  },
   "retries": [
     "2026-11-22T08:30:02.906Z",
     "2026-11-22T11:45:57.547Z",
@@ -17081,8 +16699,8 @@
     "2026-11-23T07:43:03.742Z"
   ],
   "retried": {
-    "key": "decorate:map the summer constellations",
-    "at": "2026-11-23T07:34:47.604Z"
+    "key": "decorate:summer constellation map",
+    "at": "2026-11-23T07:45:05.789Z"
   },
   "tired": {
     "kind": "make",
@@ -17214,13 +16832,5 @@
       "week": "2026-11-16",
       "favourite": "rainy autumn window at dusk"
     }
-  ],
-  "wakeSoon": {
-    "at": "2026-11-23T07:44:14.725Z",
-    "key": "decorate:summer constellation map",
-    "action": "decorate",
-    "name": "summer constellation map",
-    "why": "there is no free place on the left wall for something about 1.76 x 1.28 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind",
-    "guide": ""
-  }
+  ]
 }
