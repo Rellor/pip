@@ -445,47 +445,9 @@ export function buildTown(THREE) {
   { const g = blockOf('land').g; for (const [x, c] of [[1.4, 0x8a6a48], [2.8, 0x9a7a52], [4.1, 0x7f9a5a]]) { const heap = add(new THREE.ConeGeometry(0.75, 0.9, 9), M(c), [x, 0.45, 0.9], g); heap.scale.set(1, 1, 0.8); } cyl(0.035, 0.035, 1.7, 0x7a5237, [5.3, 0.85, 0.3], g).rotation.z = 0.12; box([0.34, 0.4, 0.04], 0x9aa3a8, [5.2, 0.2, 0.3], g); } // heaps of earth and a spade by the shutter
 
   // ---- walls for his art: bare concrete slabs, standing in the gaps between the buildings, each turned its own way and
-  // the slabs not all equally high. What he paints goes on them, and on the back walls of the houses. Like any bare wall
-  // in a town, somebody has been there with a spray can already: a few old tags are on every wall (he paints over them).
+  // the slabs not all equally high. They are bare until he paints on them: what he paints goes on them, and on the back
+  // walls of the houses. Nothing else is on them.
   const seeded = (a) => () => ((a = (a * 16807) % 2147483647) / 2147483647);
-  const SPRAY = ['#ef6f6c', '#f2c14e', '#3d5a80', '#2f9c8f', '#e9855b', '#7fd6ff', '#8cc27a', '#fff8ee', '#2a2a2e', '#b06fd8'];
-  const WORDS = ['HI!', 'MOO', 'YO', 'OK?', 'ZZZ', 'WOW', 'HEY', 'BOO', 'OI'];
-  // A see-through picture as big as the wall with `many` tags sprayed on it.
-  const tagsOn = (len, h, seed, many) => {
-    const k = 80, c = document.createElement('canvas');
-    c.width = Math.round(len * k); c.height = Math.round(h * k);
-    const g = c.getContext('2d'), r = seeded(seed);
-    const pick = (list) => list[Math.floor(r() * list.length) % list.length];
-    const line = (pts, col, w, closed = false) => { // one go with the can: a soft line, and now and then the paint runs
-      g.save(); g.strokeStyle = col; g.lineWidth = w; g.lineCap = g.lineJoin = 'round'; g.shadowColor = col; g.shadowBlur = w * 0.7;
-      g.beginPath();
-      pts.forEach(([x, y], n) => { if (!n) g.moveTo(x, y); else { const [px, py] = pts[n - 1]; g.quadraticCurveTo(px, py, (px + x) / 2, (py + y) / 2); } });
-      if (closed) g.closePath(); else g.lineTo(...pts.at(-1));
-      g.stroke(); g.shadowBlur = 0;
-      for (const [x, y] of pts) if (r() < 0.14) { g.lineWidth = w * 0.4; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y + w * (2.5 + r() * 5)); g.stroke(); }
-      g.restore();
-    };
-    const ring = (cx, cy, n, f) => Array.from({ length: n }, (_, q) => { const a = (q / n) * Math.PI * 2; const [x, y] = f(a, q); return [cx + x, cy + y]; });
-    const draw = {
-      word: (cx, cy, sz, col) => { const t = pick(WORDS); g.save(); g.translate(cx, cy); g.rotate((r() - 0.5) * 0.3); g.transform(1, 0, -0.18, 1, 0, 0); g.font = `900 ${Math.round(sz * 0.62)}px "Arial Black", "Helvetica Neue", Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = sz * 0.13; g.strokeStyle = col === '#2a2a2e' ? '#fff8ee' : '#2a2a2e'; g.strokeText(t, 0, 0); g.fillStyle = col; g.fillText(t, 0, 0); g.lineWidth = sz * 0.03; g.strokeStyle = 'rgba(255,255,255,0.75)'; g.strokeText(t, -sz * 0.025, -sz * 0.03); g.restore(); },
-      scribble: (cx, cy, sz, col) => { const n = 7 + Math.floor(r() * 4); line(Array.from({ length: n }, (_, q) => [cx + ((q / (n - 1)) - 0.5) * sz * 1.5, cy + (q % 2 ? -1 : 1) * sz * (0.12 + r() * 0.26)]), col, sz * 0.09); line([[cx - sz * 0.8, cy + sz * 0.42], [cx, cy + sz * 0.5], [cx + sz * 0.85, cy + sz * 0.36]], col, sz * 0.05); },
-      star: (cx, cy, sz, col) => line(ring(cx, cy, 10, (a, q) => { const d = sz * (q % 2 ? 0.2 : 0.5); return [Math.sin(a) * d, -Math.cos(a) * d]; }).flatMap((pt, q, all) => [pt, [(pt[0] + all[(q + 1) % all.length][0]) / 2, (pt[1] + all[(q + 1) % all.length][1]) / 2]]), col, sz * 0.09, true),
-      heart: (cx, cy, sz, col) => line(ring(cx, cy, 22, (a) => [sz * 0.03 * 16 * Math.sin(a) ** 3, -sz * 0.03 * (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a))]), col, sz * 0.09, true),
-      arrow: (cx, cy, sz, col) => { const up = (r() - 0.5) * sz * 0.5; line([[cx - sz * 0.6, cy + up], [cx - sz * 0.1, cy - up * 0.4], [cx + sz * 0.6, cy - up]], col, sz * 0.08); line([[cx + sz * 0.3, cy - up - sz * 0.24], [cx + sz * 0.62, cy - up], [cx + sz * 0.32, cy - up + sz * 0.26]], col, sz * 0.08); },
-      crown: (cx, cy, sz, col) => line([[-0.5, 0.3], [-0.5, -0.25], [-0.25, 0.05], [0, -0.35], [0.25, 0.05], [0.5, -0.25], [0.5, 0.3]].flatMap(([x, y]) => [[cx + x * sz, cy + y * sz], [cx + x * sz, cy + y * sz]]), col, sz * 0.09, true),
-      face: (cx, cy, sz, col) => { line(ring(cx, cy, 14, (a) => [Math.cos(a) * sz * 0.45, Math.sin(a) * sz * 0.45]), col, sz * 0.09, true); for (const x of [-0.16, 0.16]) line([[cx + x * sz, cy - sz * 0.14], [cx + x * sz, cy - sz * 0.06]], col, sz * 0.08); line([[cx - sz * 0.2, cy + sz * 0.1], [cx, cy + sz * 0.26], [cx + sz * 0.2, cy + sz * 0.1]], col, sz * 0.06); },
-      swirl: (cx, cy, sz, col) => line(Array.from({ length: 26 }, (_, q) => { const a = q * 0.62, d = sz * 0.02 * q; return [cx + Math.cos(a) * d, cy + Math.sin(a) * d]; }), col, sz * 0.06),
-    };
-    const kinds = Object.keys(draw);
-    for (let n = 0; n < many; n++) {
-      const sz = (0.8 + r() * 0.8) * k * Math.min(1, h / 3.2);
-      const cx = ((n + 0.25 + r() * 0.5) / many) * c.width, cy = sz * 0.7 + r() * Math.max(1, c.height - sz * 1.6);
-      g.globalAlpha = 0.8 + r() * 0.18;
-      draw[n % 3 === 0 && many > 2 ? 'word' : kinds[Math.floor(r() * kinds.length) % kinds.length]](Math.max(sz * 0.8, Math.min(c.width - sz * 0.8, cx)), cy, sz, pick(SPRAY));
-    }
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
-    return t;
-  };
   const sprayed = (map, k = 1) => { const m = skin(map, k); m.transparent = true; m.depthWrite = false; return m; };
   WALLS.forEach((w, i) => {
     const g = new THREE.Group();
@@ -505,26 +467,7 @@ export function buildTown(THREE) {
       for (let v = 16; v < 24; v++) uv.setXY(v, ((v < 20 ? q : n - 1 - q) + uv.getX(v)) / n, (uv.getY(v) * ph) / top);
       add(geo, six, [(q + 0.5) * pw - w.len / 2, ph / 2, 0], g).castShadow = true;
     });
-    const paintSide = PAINT_WALLS.find((x) => x.key === w.key).side;
-    for (const side of [1, -1]) { // old tags: a few on the side he paints on, more on the other side
-      const m = add(new THREE.PlaneGeometry(w.len, w.h), sprayed(tagsOn(w.len, w.h, 7000 + i * 31 + (side > 0 ? 0 : 500), side === paintSide ? 3 : 4 + (i % 2))), [0, w.h / 2, side * 0.206], g);
-      m.rotation.y = side > 0 ? 0 : Math.PI; m.renderOrder = 1;
-    }
-    if (i % 2 === 0) { // someone left the cans
-      const z = paintSide * 0.55;
-      [[SPRAY[i % 7], -w.len / 2 + 0.5, 0], [SPRAY[(i + 3) % 7], -w.len / 2 + 0.72, 0.1], [SPRAY[(i + 5) % 7], w.len / 2 - 0.6, 0.25]].forEach(([col, x, dz], q) => {
-        const can = new THREE.Group(); can.position.set(x, q === 2 ? 0.05 : 0.11, z + paintSide * dz); if (q === 2) { can.rotation.z = Math.PI / 2; can.rotation.y = 0.7; } g.add(can);
-        cyl(0.05, 0.05, 0.2, new THREE.MeshStandardMaterial({ color: col, roughness: 0.45, metalness: 0.3 }), [0, 0, 0], can); cyl(0.022, 0.03, 0.035, 0xf4efe6, [0, 0.115, 0], can);
-      });
-    }
     things.push({ kind: 'wall', key: w.key, object: g });
-  });
-  // and a few tags on the sides of the buildings that look onto a wall (not on his own house, and not on the art
-  // workshop: his drawings hang there). [the building, its side: 1 is its own right, -1 its own left]
-  [['cafe', 1], ['library', 1], ['flats', -1], ['workshop', 1], ['land', -1], ['build', 1]].forEach(([key, sd], i) => {
-    const { b, g } = blockOf(key);
-    const m = add(new THREE.PlaneGeometry(3.6, 2.5), sprayed(tagsOn(3.6, 2.5, 9100 + i * 17, 2)), [sd * (b.size[0] / 2 + 0.012), 1.5, -b.size[2] * 0.76], g);
-    m.rotation.y = (sd * Math.PI) / 2; m.renderOrder = 1;
   });
   // The edge of a painting on a wall: sprayed, so it has no straight sides. Soft and a little ragged, and here and there
   // the paint ran down. (Three of them, each painting takes one.)
