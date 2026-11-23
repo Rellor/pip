@@ -58,7 +58,7 @@ await ok('with the key, Pip reads it; the public state and diary keep it sealed'
 
 await ok('approved visitor messages reach Pip; waiting ones stay sealed in the folder', () => {
   const s = JSON.parse(fs.readFileSync(path.join(work, 'web/state.json'), 'utf8'));
-  const real = s.visitors.filter((v) => !v.npc); // (his neighbours' notes arrive there too)
+  const real = s.visitors.filter((v) => !v.npc); // (the notes travellers leave him arrive there too)
   assert.equal(real.length, 1);
   assert.equal(real[0].name, 'Ann');
   assert.ok(!fs.existsSync(path.join(work, 'visitors/v1.json')));

@@ -98,13 +98,13 @@ export function fetchJob(s) {
   const d = lying(s)[0];
   return d ? { place: 'drops', kind: 'fetch', words: `pick up the note someone left ${d.where}`, drop: d.id, spot: d.spot, name: `a note from ${d.from}` } : null;
 }
-// He picked it up (or the wind brought it): now it is a note he can read and answer, like a note from a neighbour.
+// He picked it up (or the wind brought it): now it is a note he can read and answer (answer_visitor).
 export function dropFound(s, id, now = Date.now(), how = 'fetched') {
   const d = drops(s).find((x) => x.id === id && x.status === 'lying');
   if (!d) return 'I walked there, but the note was gone. The wind, I think.';
   Object.assign(d, { status: 'found', foundAt: new Date(now).toISOString(), how });
   s.visitors = [...(s.visitors ?? []), { id: d.id, at: d.foundAt, name: `${d.from} (${d.who})`, text: d.text, answer: null, npc: true, stranger: true, kind: 'share', topic: d.topic }].slice(-40);
-  if (d.kind !== 'opinion') noteSpark(s, { topic: d.topic, text: d.text, from: 'neighbour' }, now);
+  if (d.kind !== 'opinion') noteSpark(s, { topic: d.topic, text: d.text, from: 'traveller' }, now);
   return how === 'fetched'
     ? `I picked up the note ${d.where}. It is from ${d.from}, ${d.who}, who was passing through: "${d.text}"`
     : `The wind blew a note against my door. It is from ${d.from}, ${d.who}: "${d.text}"`;
@@ -115,7 +115,7 @@ export function sweepDrops(s, now = Date.now()) {
 }
 // He answered a note from a traveller or a visitor: what he keeps, he has learned. Returns the memory it leaves, or null.
 export function learnFrom(s, v, keep = true, now = Date.now()) {
-  if (!v || (v.npc && !v.stranger)) return null; // (the neighbours' notes have their own way: neighbours.js)
+  if (!v || (v.npc && !v.stranger)) return null; // (an old note from a neighbour who has moved away teaches him nothing new)
   const from = clip(String(v.name ?? 'someone').replace(/\s*\(.*\)$/, ''), 30) || 'someone';
   const d = drops(s).find((x) => x.id === v.id);
   if (d) d.kept = Boolean(keep);

@@ -12,7 +12,7 @@ export const PLACES = [
   {
     key: 'doorstep', name: 'my doorstep', title: 'His doorstep', emoji: '🚪', walk: 1, stay: [15, 25], hours: [8, 21], at: [330, 292],
     blurb: 'Sitting in front of his door, watching the square.',
-    things: [{ key: 'watch', words: 'sit and watch the square', match: /watch|sit|street|square|look/ }, { key: 'chat', words: 'say hello to whoever comes by', match: /hello|chat|talk|neighbou?r|visit/ }],
+    things: [{ key: 'watch', words: 'sit and watch the square', match: /watch|sit|street|square|look/ }],
   },
   { key: 'shop', name: 'the grocery store', title: 'The grocery store', emoji: '🛒', walk: 3, stay: [4, 6], hours: [9, 18], at: [452, 262], errand: true, blurb: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.' },
   {

@@ -1,5 +1,5 @@
 // The grocery store and Pip's coins. Until now everything he needed came from Bas (ask, wait, hope). Now he can earn a few
-// coins (a neighbour's wish come true, a print someone buys, market day) and buy small things himself: food, seeds,
+// coins (a thing made for a note on the notice board, the prints he sells on market day) and buy small things himself: food, seeds,
 // materials, a tool, and after saving up, an instrument. Scarcity gives him choices to make, and a reason to finish
 // things. (Research: a small economy and scarce resources drove the most interesting behaviour in similar worlds.)
 // Plain code, no model. Bas can still give him anything.
@@ -30,7 +30,7 @@ export function buy(s, item, now = Date.now()) {
   if (!shopOpen(now)) return { failed: `the grocery store is closed now (it is open from ${OPEN_FROM}:00 to ${OPEN_TO}:00). I go when it is open` };
   if (!c) return { failed: `the grocery store does not have "${String(item ?? '').slice(0, 30)}". It has: ${CATALOGUE.filter((x) => x.kind !== 'food').slice(0, 12).map((x) => x.item).join(', ')}, and simple food` };
   if (owns(s, c) && c.kind !== 'material') return { failed: `I already have a ${c.item}` };
-  if (coins < c.price) return { failed: `${c.item} costs ${c.price} coins and I have ${coins}. I earn coins when I make what a neighbour wished for, or when someone buys a drawing` };
+  if (coins < c.price) return { failed: `${c.item} costs ${c.price} coins and I have ${coins}. I earn coins when I make what a note on the notice board asks for (check_board), and on market day` };
   const given = giveForAsk(s, c.item);
   if (!given.length) return { failed: `I could not carry the ${c.item} home (my bag is full)` };
   s.coins = coins - c.price;

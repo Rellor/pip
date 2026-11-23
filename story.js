@@ -1,15 +1,13 @@
-// The storyteller: small things that happen in Pip's street and sky, with a rhythm. Plain code, no model.
+// The storyteller: small things that happen on Pip's square and in his sky, with a rhythm. Plain code, no model.
 // (Research: the worlds that felt alive had outside events with pacing: a little tension, then rest, never a flood.
 // RimWorld's storyteller works this way.) There are two sizes:
-//   big    a parcel from a neighbour who has grown fond of him, market day, the puzzle maker's weekly puzzle.
-//          At most one about every 20 hours.
-//   small  something to notice: the real moon and meteor showers, the first frost or snow, life in the street.
+//   big    market day on the square. At most one about every 20 hours.
+//   small  something to notice: the real moon and meteor showers, the first frost or snow, life on the square.
 //          At most two a day, hours apart. Each can spark his curiosity.
-// Everything that happens is true in his world: gifts really arrive, coins are really earned, the moon is the real moon.
-import { giveForAsk } from './gifts.js';
+// Everything that happens is true in his world: coins are really earned, the moon is the real moon.
+// (Nobody in these scenes has a name: his neighbours moved away, and the people he sees now are passing through.)
 import { noteSpark } from './curiosity.js';
-import { NEIGHBOURS, warm, openWishes, MAX_OPEN_WISHES } from './neighbours.js';
-import { moonPhase } from './web/street.js'; // the same moon the page draws over his street
+import { moonPhase } from './web/street.js'; // the real moon (shared with world.js)
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -35,21 +33,19 @@ const SKY = [
   [12, 12, 14, 'Tonight the Geminids fall: slow, bright shooting stars.', 'Geminids'],
   [12, 20, 22, 'This is the shortest day of the year. From now on the light comes back.', 'Winter solstice'],
 ];
-// Life in the street: [key, when (hour test), what he notices, a topic it may spark].
+// Life on the square: [key, when (hour test), what he notices, a topic it may spark].
 const STREET = [
-  ['bakery', (h) => h >= 7 && h < 11, 'The smell of fresh bread drifts up from the bakery under Kees\'s flat.', 'Sourdough'],
-  ['synth', (h) => h >= 15 && h < 21, 'Lina is practising: a wobbly synth melody comes through the wall, the same four notes again and again.', 'Arpeggio'],
-  ['loco', (h) => h >= 10 && h < 17, 'Mo sits on his doorstep oiling a little model locomotive, humming.', 'Steam locomotive'],
-  ['herbs', (h) => h >= 9 && h < 18, 'Oma Jo is hanging bunches of herbs to dry under her porch.', 'Drying herbs'],
-  ['chalk', (h) => h >= 13 && h < 18, 'Dot has drawn a huge chalk dinosaur on the pavement. It has seven legs.', 'Dinosaur'],
+  ['sparrows', (h) => h >= 7 && h < 11, 'A row of sparrows sits on top of the notice board, all facing the same way.', 'House sparrow'],
+  ['printer', (h) => h >= 15 && h < 21, 'The printer in the print workshop is humming. It draws the same line again and again, each time a little higher.', '3D printing'],
+  ['traveller', (h) => h >= 10 && h < 17, 'A traveller with a big backpack crosses the square, reads every note on the notice board, and walks on.', 'Hiking'],
+  ['heron', (h) => h >= 9 && h < 18, 'A heron stands in the pond on one leg, as still as a fence post.', 'Grey heron'],
+  ['chalk', (h) => h >= 13 && h < 18, 'Someone has drawn a huge chalk dinosaur on the square. It has seven legs. Nobody saw who did it.', 'Dinosaur'],
   ['cat', (h) => h >= 8 && h < 20, 'A grey cat sits on my window sill, looks in at me for a long time, and leaves.', 'Cat'],
-  ['clock', (h) => h >= 9 && h < 20, 'Kees has taken a clock apart on a table outside: a hundred tiny wheels in rows.', 'Clockwork'],
+  ['typing', (h) => h >= 9 && h < 20, 'The door of the internet café stands open. Someone inside types very fast. It sounds like rain on a roof.', 'Touch typing'],
   ['kite', (h) => h >= 11 && h < 17, 'Someone flies a red kite over the roofs. It dives and climbs.', 'Kite'],
-  ['accordion', (h) => h >= 17 && h < 21, 'Somewhere down the street someone plays an accordion, slow and a little off.', 'Accordion'],
+  ['accordion', (h) => h >= 17 && h < 21, 'Someone passing through plays an accordion on the square, slow and a little off. Then it stops.', 'Accordion'],
   ['geese', (h) => h >= 7 && h < 18, 'A long V of geese goes over, calling.', 'Bird migration'],
 ];
-const PARCELS = { Mo: ['wood', 'a few pieces of good wood, "left over from my model railway"'], Lina: ['wire', 'a coil of wire, "for when you build something that glows"'], 'Oma Jo': ['tomato seeds', 'a paper bag of tomato seeds, "from my best plant"'], Dot: ['beads', 'a handful of beads, "the blue ones are the best"'], Kees: ['paper', 'a stack of good paper, "for plans and puzzles"'] };
-const PUZZLES = ['a game where you catch falling stars', 'a clock that shows the time with dots', 'a maze with exactly one way out', 'a game where two colours must never touch', 'a little machine that sorts things by size', 'a memory game with six pairs', 'a counter that goes up when you find the hidden spot'];
 
 const seenAgo = (s, key, now) => (now - (Date.parse(s.teller?.seen?.[key] ?? 0) || 0)) / DAY;
 
@@ -72,29 +68,13 @@ export function storyTick(s, now = Date.now()) {
     return [{ key, text, big, emoji }];
   };
 
-  // ---- big things (rest in between)
+  // ---- big things (rest in between). Only market day is left: the parcels and the weekly puzzle went with the neighbours.
   if (sinceBig >= BIG_GAP_H && sinceAny >= 2) {
     const madeThisWeek = (s.art ?? []).filter((a) => now - Date.parse(a.createdAt) < 7 * DAY).length + (s.decor ?? []).filter((d) => !d.image && now - Date.parse(d.createdAt) < 7 * DAY).length;
     if (weekdayNL(now) === 'Saturday' && h >= 10 && h < 16 && seenAgo(s, 'market', now) > 5 && madeThisWeek >= 1) {
       const sold = Math.min(6, 1 + Math.floor(madeThisWeek / 3));
       s.coins = (s.coins ?? 0) + sold;
-      return happen('market', `It is market day in my street. I put my week's work on a little table by my door, and people stopped to look. I sold ${sold} small print${sold > 1 ? 's' : ''}: ${sold} coin${sold > 1 ? 's' : ''}. I have ${s.coins} coins now.`, { big: true, emoji: '🧺' });
-    }
-    if (['Wednesday', 'Thursday'].includes(weekdayNL(now)) && h >= 10 && h < 19 && seenAgo(s, 'puzzle', now) > 6 && openWishes(s, now).length < MAX_OPEN_WISHES) {
-      const idea = PUZZLES[Math.floor(now / (7 * DAY)) % PUZZLES.length];
-      const at = new Date(now).toISOString();
-      (s.wishes ??= []).push({ id: `w${now.toString(36)}`, from: 'Kees', text: `Kees's puzzle of the week: could you make ${idea}? A game or a little program.`, topic: idea.replace(/^a (game|clock|maze|little machine|memory game|counter) /, '$1 ').replace(/^a /, ''), at, reward: 5, status: 'open', said: false });
-      warm(s, 'Kees', 0.3);
-      return happen('puzzle', `Kees pinned his puzzle of the week to my door: "Could you make ${idea}?" He gives 5 coins to whoever makes it work.`, { big: true, emoji: '🧩' });
-    }
-    const fond = NEIGHBOURS.filter((n) => (s.street?.people?.[n.name]?.warmth ?? 0) >= 3 && seenAgo(s, `parcel:${n.name}`, now) > 5).sort((a, b) => (s.street.people[b.name].warmth ?? 0) - (s.street.people[a.name].warmth ?? 0))[0];
-    if (fond && h >= 9 && h < 20 && seenAgo(s, 'parcel', now) > 3) {
-      const [item, words] = PARCELS[fond.name];
-      const given = giveForAsk(s, item);
-      if (given.length) {
-        st.seen[`parcel:${fond.name}`] = new Date(now).toISOString();
-        return happen('parcel', `A little parcel was at my door, from ${fond.name}: ${words}. I did not ask for it. It is mine now (${given.join(', ')}).`, { big: true, emoji: '🎁' });
-      }
+      return happen('market', `It is market day on the square. I put my week's work on a little table by the notice board, and people passing through stopped to look. I sold ${sold} small print${sold > 1 ? 's' : ''}: ${sold} coin${sold > 1 ? 's' : ''}. I have ${s.coins} coins now.`, { big: true, emoji: '🧺' });
     }
   }
 
@@ -111,8 +91,8 @@ export function storyTick(s, now = Date.now()) {
     const w = s.weather ?? {};
     if (w.kind === 'snow' && seenAgo(s, 'snow', now) > 60) return happen('snow', 'It is snowing: the first snow. Everything outside goes quiet and white.', { emoji: '❄️', spark: 'Snowflake' });
     if (Number.isFinite(w.temp) && w.temp <= 0 && h < 11 && seenAgo(s, 'frost', now) > 30) return happen('frost', 'There are frost flowers on my window this morning: little ferns of ice.', { emoji: '🧊', spark: 'Frost' });
-    if (w.kind === 'storm' && seenAgo(s, 'storm', now) > 7) return happen('storm', 'A storm is rolling over the street. I count the seconds between the flash and the thunder.', { emoji: '⛈️', spark: 'Thunder' });
-    const turn = Math.floor(now / DAY) + d.getUTCHours(); // which street scene is next: they take turns
+    if (w.kind === 'storm' && seenAgo(s, 'storm', now) > 7) return happen('storm', 'A storm is rolling over the square. I count the seconds between the flash and the thunder.', { emoji: '⛈️', spark: 'Thunder' });
+    const turn = Math.floor(now / DAY) + d.getUTCHours(); // which scene of the square is next: they take turns
     const scene = STREET.map((x, i) => STREET[(i + turn) % STREET.length]).find(([key, when]) => when(h) && seenAgo(s, `street:${key}`, now) > 6);
     if (scene) return happen(`street:${scene[0]}`, scene[2], { emoji: '🏘️', spark: scene[3] });
   }

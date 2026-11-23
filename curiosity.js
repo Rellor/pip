@@ -27,7 +27,7 @@ export function ensureCurious(s) {
   return s.curious;
 }
 
-// Something he came across. from: browse, search, read, news.
+// Something he came across. from: browse, search, read, news, street (the storyteller), outing, traveller (a note someone left).
 export function noteSpark(s, { topic, text = '', url = '', from = 'browse', via = null }, now = Date.now()) {
   const c = ensureCurious(s);
   if (!topic || isHeavy(`${topic} ${text}`)) return null;

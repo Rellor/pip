@@ -1792,8 +1792,9 @@ function moveSound(kind) {
     src.start(t);
   }
 }
-// ---- Pip in his street (town.js). When he is out he is seen there: on his doorstep, at the shop door, in Oma Jo's garden,
-// or walking to the end of the street on his way to the pond or the library (then he is out of sight until he comes back).
+// ---- Pip in his world outside (town.js). When he is out he is seen there: on his doorstep, at the door of the grocery
+// store, by the notice board, or walking on his way to the pond or the library (when the place he goes to has no spot in
+// the world he is out of sight until he comes back).
 let outKey = '';
 let outHidden = false;
 let outPath = [];
@@ -3691,7 +3692,7 @@ function renderVisitors(s) {
   renderMyVisits(s);
   const list = (s.visitors || []).slice().reverse();
   fill($('visitlist'), list.length
-    ? list.flatMap((v) => [entry([when(v.at), v.npc ? `${String(v.name || '').replace(' (neighbour)', '')}, a neighbour in Pip's world` : v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
+    ? list.flatMap((v) => [entry([when(v.at), v.stranger ? `${v.name || 'Someone'}, a traveller passing through (made up)` : v.npc ? `${String(v.name || '').replace(' (neighbour)', '')}, a neighbour who has moved away` : v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
     : empty('No messages yet. Be the first to say hello.'));
 }
 const pageOpenedAt = Date.now();
@@ -4862,7 +4863,7 @@ function setPlan(last) {
 let awaySaid = '';
 function tickAway() {
   const a = awayWords();
-  const said = a ? `${a[0]} Pip is out: ${a[1][0].toLowerCase()}${a[1].slice(1)}. Home around ${a[2]}.` : ''; // (names keep their capital: Oma Jo)
+  const said = a ? `${a[0]} Pip is out: ${a[1][0].toLowerCase()}${a[1].slice(1)}. Home around ${a[2]}.` : ''; // (only the first letter is made small: a name further on keeps its capital)
   if (said === awaySaid) return;
   awaySaid = said;
   $('away').hidden = !a;

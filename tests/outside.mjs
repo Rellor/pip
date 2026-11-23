@@ -17,7 +17,7 @@ const ok = (name) => console.log(`ok  ${name}`);
 const MIN = 60_000;
 const noon = Date.parse('2026-11-23T11:00:00Z'); // Monday 12:00 in Amsterdam (the library is closed on Mondays)
 const tuesday = noon + 24 * 60 * MIN;
-const fresh = (more = {}) => ({ energy: 8, fullness: 8, joy: 5, calm: 5, wonder: 5, boredom: 5, loneliness: 5, weather: { kind: 'clear', temp: 8, cloud: 0.2, wind: 0.2 }, tools: [], pantry: [], wardrobe: [], decor: [], garden: { seeds: [], plots: [] }, curious: { sparks: [], interests: [] }, street: { people: {} }, log: [], ...more });
+const fresh = (more = {}) => ({ energy: 8, fullness: 8, joy: 5, calm: 5, wonder: 5, boredom: 5, loneliness: 5, weather: { kind: 'clear', temp: 8, cloud: 0.2, wind: 0.2 }, tools: [], pantry: [], wardrobe: [], decor: [], garden: { seeds: [], plots: [] }, curious: { sparks: [], interests: [] }, log: [], ...more });
 const iso = (ms) => new Date(ms).toISOString();
 
 // ---- the places
@@ -32,6 +32,7 @@ assert.equal(findPlace('the grocery store')?.key, 'shop');
 assert.equal(findPlace('my doorstep')?.key, 'doorstep');
 assert.equal(findPlace('the moon'), null);
 assert.equal(hisWords('pond', 'sketch what I see'), 'sketch what he sees');
+assert.deepEqual(placeOf('doorstep').things.map((t) => t.key), ['watch'], 'on his doorstep he watches the square: there is nobody to wait for');
 ok('a small world of named places; he can say a place in his own words');
 
 // ---- where he may go: anywhere, any time (there are no opening hours, no locked places, no weather rules, no limits)
@@ -77,6 +78,29 @@ ok('there, a while, home again: what he saw, what he found, how he feels');
 const twice = () => { const x = fresh(); startOuting(x, { place: 'pond', what: 'watch the ducks' }, noon); return outingTick(x, noon + 2 * 60 * MIN).outing.did; };
 assert.equal(twice(), twice());
 ok('an outing turns out the same way when it is told twice');
+
+// ---- nobody he sees outside has a name: his five neighbours moved away, and he meets none of them at the pond, on his doorstep or at a wall
+{
+  const FIVE = /\b(Mo|Lina|Oma Jo|Dot|Kees)\b/;
+  const told = new Set();
+  const trips = [...['ducks', 'find', 'sketch', 'ice'].map((thing) => ['pond', thing]), ['doorstep', 'watch'], ['doorstep', 'chat'], ['walls', null], ['library', 'read'], ['board', null]];
+  for (let seed = 0; seed < 60; seed++) for (const [place, thing] of trips) for (const weather of [{ kind: 'clear', temp: 8 }, { kind: 'rain', temp: 9 }, { kind: 'clear', temp: -3 }]) {
+    const t = noon + seed * 37 * MIN; // other minutes: other dice, other hours of the day
+    const x = fresh({ weather, wishes: [], pantry: seed % 2 ? [{ name: 'bread', qty: 2 }] : [], street: { people: { Mo: { warmth: 9 }, Dot: { warmth: 9 }, Lina: { warmth: 9 }, 'Oma Jo': { warmth: 9 }, Kees: { warmth: 9 } } } }); // however fond they once were
+    const went = startOuting(x, place === 'walls' ? { job: { place: 'walls', kind: 'paint', art: 'a1', name: 'giant fox', wall: 'wall_2', wallName: 'the wall in the park', words: 'paint "giant fox" on the wall in the park' } } : place === 'board' ? { job: { place: 'board', words: 'read the notice board' } } : { place, what: thing }, t);
+    assert.ok(went.ok, `${place} ${thing}: ${went.failed}`);
+    if (thing) x.where.thing = thing; // (also the old "chat" of an outing that was under way when they left)
+    const o = outingTick(x, Date.parse(x.where.homeAt) + MIN).outing;
+    assert.ok(o.did.length > 20 && !FIVE.test(`${o.did} ${o.saw} ${homeLine(o)}`) && !/neighbou?r/i.test(o.did), `${place} ${thing}: ${o.did}`);
+    assert.equal(o.met, null, `${place} ${thing}: he meets nobody with a name`);
+    assert.ok(x.curious.sparks.every((sp) => !FIVE.test(`${sp.topic} ${sp.text}`)));
+    assert.deepEqual(Object.values(x.street.people).map((p) => p.warmth), [9, 9, 9, 9, 9], 'and no friendship is counted any more');
+    told.add(o.did);
+  }
+  assert.ok(told.size >= 20, `the outings still turn out in many ways (${told.size})`);
+  assert.ok([...told].some((d) => /sat on my doorstep/.test(d)) && [...told].some((d) => /I painted "giant fox" on the wall in the park/.test(d)) && [...told].some((d) => /ducks/.test(d)));
+  ok('at the pond, on his doorstep and at the walls nobody is named, over many outings');
+}
 
 // ---- he always comes home
 assert.equal(canGo(s, 'pond', noon + 3 * 60 * MIN).ok, true, 'the same place again the same day');
@@ -222,7 +246,7 @@ Object.assign(st, { energy: 8, fullness: 9, where: null, outings: [], weather: {
 st.inbox = (st.inbox ?? []).map((m) => ({ ...m, read: true }));
 st.memories = (st.memories ?? []).slice(-40); // room in his memory: when it is full the lightest memory goes, and this test is about the outing, not about forgetting
 fs.writeFileSync(file, JSON.stringify(st));
-const run = (shift, more = {}) => execFileSync('node', ['pip.js'], { cwd: work, encoding: 'utf8', env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_NEIGHBOURS: '1', PIP_NO_STORY: '1', PIP_CLOCK_SHIFT_MIN: String(toNoon + shift), ...more }, timeout: 120_000 });
+const run = (shift, more = {}) => execFileSync('node', ['pip.js'], { cwd: work, encoding: 'utf8', env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_STORY: '1', PIP_CLOCK_SHIFT_MIN: String(toNoon + shift), ...more }, timeout: 120_000 });
 const read1 = () => JSON.parse(fs.readFileSync(file, 'utf8'));
 run(0, { PIP_FAKE_MOVE: 'go_out', PIP_FAKE_WHAT: 'the pond' });
 const a = read1();

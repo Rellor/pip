@@ -1,4 +1,4 @@
-// The notice board in his street (board.js): people pin what they would like made, he walks there to read it, and when
+// The notice board on his square (board.js): people pin what they would like made, he walks there to read it, and when
 // he makes one of those things the note comes down and he gets the coins. Run: node tests/board.mjs
 import assert from 'node:assert/strict';
 import { ORDERS, MAX_BOARD, NOTE_DAYS, postOrders, boardNotes, readBoard, boardLines, boardCalls } from '../board.js';
@@ -30,7 +30,7 @@ const b = { wishes: [], log: [], coins: 2, energy: 8, fullness: 8, outings: [] }
 b.wishes.push({ id: 'b1', board: true, from: 'the notice board', topic: 'a toy train', text: 'Wanted: a toy train. 3 coins.', medium: ['decorate'], at: iso(t0), reward: 3, status: 'open', said: false, seen: false });
 b.wishes.push({ id: 'b2', board: true, from: 'the notice board', topic: 'a drawing of a cat', text: 'Wanted: a drawing of a cat. 2 coins.', medium: ['draw'], at: iso(t0), reward: 2, status: 'open', said: false, seen: false });
 assert.deepEqual(boardLines(b, t0 + HOUR), [], 'unread notes are not in his head');
-assert.deepEqual(wishLines(b, t0 + HOUR), [], 'and they are not wishes of a neighbour');
+assert.deepEqual(wishLines(b, t0 + HOUR), [], 'and a note on the board is not told a second time as the wish of someone with a name');
 assert.equal(boardCalls(b, t0 + HOUR), true);
 assert.ok(!goOptions(b, t0 + HOUR).some((o) => o.key === 'board'), 'the board is not a place to hang around');
 assert.equal(canGo(b, 'board', t0 + HOUR).ok, true);

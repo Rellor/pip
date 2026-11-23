@@ -25,7 +25,7 @@ import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropResti
 import { planRetry, startRetry, retryLines } from './retry.js';
 import { challengeLines, challengeSteps } from './curriculum.js';
 import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLetter } from './letters.js';
-import { needsNotes, fakeNotes, neighbourPrompt, neighbourSchema, planNotes, deliverNotes, neighbourLines, noteAnswer, keepWishes, wishLines } from './neighbours.js';
+import { noteLines, noteAnswer, keepWishes, wishLines } from './neighbours.js';
 import { buy } from './shop.js';
 import { storyTick } from './story.js';
 import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines } from './curiosity.js';
@@ -594,7 +594,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     ownWork,
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
     visitors: (s.visitors ?? []).filter((v) => !v.answer && !v.npc).slice(-2).map((v) => `[${v.id}] ${v.name || 'someone'}: "${v.text}"`),
-    neighbours: neighbourLines(s),
+    notes: noteLines(s),
     gifts: unread.length > 0,
   };
 }
@@ -640,7 +640,7 @@ function drawnNote(s) {
     ...(s.outings ?? []).filter((o) => o.saw && Date.now() - Date.parse(o.homeAt) < 36 * 3_600_000).slice(-2).map((o) => o.saw), // what he saw outside comes first: he looked at it to draw it
     ...(s.curious?.sparks ?? []).slice(-3).map((x) => x.topic),
     ...day.filter((e) => ['decorate', 'cook', 'harvest', 'plant'].includes(e.action)).map((e) => e.name ?? e.dish ?? e.plant ?? e.seed).filter(Boolean).slice(-3),
-    ...(s.visitors ?? []).filter((v) => v.npc && v.topic && v.kind !== 'hello').slice(-2).map((v) => v.topic),
+    ...(s.visitors ?? []).filter((v) => v.stranger && v.topic).slice(-2).map((v) => v.topic), // what a traveller told him about
   ].filter(Boolean))].slice(0, 6);
   return [
     often.length ? `WHAT I DREW A LOT LATELY (not again this time): ${often.slice(0, 3).map((o) => `${o.word} (${o.n} times)`).join(', ')}` : '',
@@ -1361,22 +1361,12 @@ async function wakeUp() {
   // Autopilot or brain: the brain is only woken when something calls for it (autopilot.js).
   const offered = availableMoves(state);
   for (const g of growGames(state)) console.log(`🎮 ${g}: a new step to grow it today`); // a game he builds grows a little each day (projects.js)
-  // His neighbours (neighbours.js): once a day their notes are written (one light call), then they arrive spread over the day.
-  if (needsNotes(state) && !process.env.PIP_NO_NEIGHBOURS) { // (tests that count model calls switch them off)
-    try {
-      const reply = process.env.PIP_FAKE ? fakeNotes(state) : await askGemini('I write short, kind notes from neighbours. I answer only in JSON.', neighbourPrompt(state), 1, [], { schema: neighbourSchema, maxTokens: THINK_ROOM + 600 });
-      console.log(`🏘️  ${planNotes(state, reply).length} notes from the neighbours today`);
-    } catch (e) { console.error('⚠️  neighbours:', e.message); state.street = { ...(state.street ?? {}), day: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }), queue: [] }; }
-  }
+  // Notes and wishes come by themselves, from plain code (no model call): travellers and the notice board.
   { const drop = postDrop(state); if (drop) console.log(`💌 ${drop.from} (${drop.who}) left a note ${drop.where}: ${drop.text.slice(0, 70)}`); } // travellers leave notes in his world (strangers.js)
   for (const line of sweepDrops(state)) { console.log(`💌 ${line.slice(0, 90)}`); addMemory(state, line, 5, 'memory', new Date().toISOString()); }
   { const found = state.last?.sleeping ? null : findDeed(state); if (found) { console.log(`🌼 ${found}`); addMemory(state, found, 6, 'memory', new Date().toISOString()); happened(state, found); } } // a small thing a visitor did in his world
   { const note = postOrders(state); if (note) console.log(`📌 a new note on the notice board: ${note.topic} (${note.reward} coins)`); } // people pin what they would like made (board.js)
-  for (const n of deliverNotes(state)) {
-    console.log(`📮 a note from ${n.from} (${n.kind}): ${n.text.slice(0, 80)}`);
-    if (n.kind === 'share' && n.topic) noteSpark(state, { topic: n.topic, text: n.text, from: 'neighbour' }); // what a neighbour loves can become his interest too
-  }
-  // The storyteller (story.js): now and then something happens in his street or sky. He hears it once, and it is in his day.
+  // The storyteller (story.js): now and then something happens on his square or in his sky. He hears it once, and it is in his day.
   if (!process.env.PIP_NO_STORY) for (const ev of storyTick(state)) {
     console.log(`${ev.emoji} ${ev.big ? 'something happened' : 'he notices'}: ${ev.text}`);
     happened(state, ev.text);
@@ -1412,7 +1402,7 @@ async function wakeUp() {
     }
     for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
       const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
-      if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); const learned = learnFrom(state, v, a.keep !== false); if (learned) addMemory(state, learned, 6, 'memory', new Date().toISOString()); } // a neighbour: they grow closer, and yes to a wish is a promise
+      if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); const learned = learnFrom(state, v, a.keep !== false); if (learned) addMemory(state, learned, 6, 'memory', new Date().toISOString()); } // yes to a wish is a promise (neighbours.js), and what he keeps of a traveller's note he has learned (strangers.js)
     }
     if (!answer.steps.length) answer.steps = fallbackSteps(state, offered);
     answer.steps = decided(state, answer.steps);
@@ -2267,7 +2257,7 @@ async function wakeUp() {
   noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state));
   const failedNow = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 && x.failed).at(-1);
   if (failedNow) state.plan.lastFail = { at: new Date().toISOString(), why: `${failedNow.action}: ${failedNow.failed}` };
-  for (const line of keepWishes(state, state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000))) { // he made what a neighbour wished for, or someone bought a print
+  for (const line of keepWishes(state, state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000))) { // he made what a note on the notice board asked for
     console.log(`🪙 ${line}`);
     happened(state, line);
     state.log.push({ at: new Date(Math.max(Date.now(), ...state.log.slice(-6).map((x) => Date.parse(x.at) || 0)) + 1000).toISOString(), action: 'happened', what: line, emoji: '🪙' }); // in his day, right after what he made

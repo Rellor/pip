@@ -6,10 +6,9 @@
 // every step wandered into closed shops and walked in circles. Travel Frog and Finch showed how nice it is when a
 // creature goes off by itself and comes back with something.)
 import { PLACES, placeOf, findPlace, isGone, hoursOf, openNow, isFrozen, isWet, isStorm, FINDS } from './web/world.js';
-import { hourNL, PEOPLE, moonPhase, moonWord } from './web/street.js';
+import { hourNL, moonPhase, moonWord } from './web/street.js';
 import { seasonInfo } from './web/season.js';
 import { noteSpark } from './curiosity.js';
-import { warm } from './neighbours.js';
 import { giveForAsk } from './gifts.js';
 import { readBoard } from './board.js';
 import { landDone } from './land.js';
@@ -137,17 +136,15 @@ export function hurryHome(s, now = Date.now()) {
 }
 
 const up = (s, key, by) => { if (Number.isFinite(s[key])) s[key] = Math.round(clamp(s[key] + by) * 100) / 100; };
-const LIKE_TOPIC = { trains: 'Steam locomotive', maps: 'Cartography', 'old machines': 'Steam engine', tea: 'Tea', synthesizers: 'Synthesizer', 'electronic music': 'Electronic music', 'video games': 'Pixel art', 'neon colours': 'Neon lighting', vegetables: 'Kitchen garden', flowers: 'Flower', knitting: 'Knitting', 'baking bread': 'Sourdough', cats: 'Cat', drawing: 'Sketch (drawing)', dinosaurs: 'Dinosaur', stars: 'Constellation', puzzles: 'Mechanical puzzle', clocks: 'Clockwork', woodwork: 'Woodworking', riddles: 'Riddle' };
-const awake = (n, h) => h >= n.up[0] && h < n.up[1];
 
-// What happened on the outing: decided here, once, when he comes home. Changes his state (how he feels, what he has,
-// who likes him) and returns the outing: { id, place, thing, leftAt, homeAt, did, found, met, gift, read, saw, cut, errand, weather }.
+// What happened on the outing: decided here, once, when he comes home. Changes his state (how he feels, what he has)
+// and returns the outing: { id, place, thing, leftAt, homeAt, did, found, met, gift, read, saw, cut, errand, weather }.
+// (met is always null now: his neighbours moved away, and nobody he sees outside has a name.)
 export function finishOuting(s, now = Date.now()) {
   const w = s.where;
   const p = placeOf(w.place);
   const rnd = dice(w.id);
   const at = new Date(now).toISOString();
-  const h = hourNL(Date.parse(w.arriveAt));
   const se = seasonInfo(new Date(now));
   const month = Number(new Date(now).toLocaleString('en-GB', { timeZone: 'Europe/Amsterdam', month: 'numeric' }));
   const frozen = isFrozen(s.weather, now);
@@ -160,7 +157,6 @@ export function finishOuting(s, now = Date.now()) {
     const [name, emoji, , topic] = pick(rnd, table);
     o.found.push({ name, emoji, topic });
   };
-  const meet = (who, line, by = 0.2) => { o.met = who; o.did += ` ${line}`; warm(s, who, by); };
   if (w.errand) o.did = `I walked to the grocery store and came home with ${w.errand}.`;
   else if (!reached) o.did = `I was on my way to ${p.name}, but ${w.cut}, so I turned around.`;
   else if (p.key === 'pond') {
@@ -174,21 +170,10 @@ export function finishOuting(s, now = Date.now()) {
       o.saw = 'the ducks on the pond';
       find(false);
     }
-    if (!o.met && rnd() < 0.35) { const who = PEOPLE.filter((n) => awake(n, h) && n.name !== 'Lina' && (h < 12 ? n.name !== 'Dot' : true)); if (who.length) { const n = pick(rnd, who); meet(n.name, n.name === 'Oma Jo' ? 'Oma Jo was there too, with a bag of old bread for the ducks. We stood together for a while.' : n.name === 'Dot' ? 'Dot was on the swing by the pond and showed me how high she can go.' : n.name === 'Mo' ? 'Mo sat on the other bench with a flask of tea, and waved.' : 'Kees walked past, counting his steps out loud, and nodded to me.'); } }
     up(s, 'calm', 1.2); up(s, 'joy', 0.7); up(s, 'wonder', 0.5); up(s, 'energy', -0.8);
   } else if (p.key === 'doorstep') {
-    const home = PEOPLE.filter((n) => awake(n, h));
-    if ((w.thing === 'chat' || rnd() < 0.45) && home.length) {
-      const n = [...home].sort((a, b) => (s.street?.people?.[b.name]?.warmth ?? 0) - (s.street?.people?.[a.name]?.warmth ?? 0))[w.thing === 'chat' ? 0 : Math.floor(rnd() * home.length)];
-      const like = pick(rnd, n.likes);
-      o.did = `I sat on my doorstep. ${n.name} came by and stopped to talk, mostly about ${like}.`;
-      o.met = n.name;
-      warm(s, n.name, 0.3);
-      o.spark = { topic: LIKE_TOPIC[like] ?? like, text: `${n.name} told me about ${like} on my doorstep.` };
-    } else {
-      o.did = wet ? 'I sat in my doorway and listened to the rain on the roofs. The gutter sang.' : pick(rnd, ['I sat on my doorstep and watched the square. A sparrow took a bath in a puddle, very seriously.', 'I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling.', 'I sat on my doorstep and counted the people crossing the square. Eleven, and one with a dog.', 'I sat on my doorstep until a grey cat came and sat next to me, as if we had agreed to meet.']);
-      find(false);
-    }
+    o.did = wet ? 'I sat in my doorway and listened to the rain on the roofs. The gutter sang.' : pick(rnd, ['I sat on my doorstep and watched the square. A sparrow took a bath in a puddle, very seriously.', 'I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling.', 'I sat on my doorstep and counted the people crossing the square. Eleven, and one with a dog.', 'I sat on my doorstep until a grey cat came and sat next to me, as if we had agreed to meet.', 'I sat on my doorstep. A traveller crossed the square with a rattling suitcase, looked at my house for a moment, and went on.', 'I sat on my doorstep and watched the door of the grocery store. Nobody went in and nobody came out. I found that restful.']);
+    find(false);
     o.saw = 'the square from my doorstep';
     up(s, 'calm', 0.8); up(s, 'joy', 0.5); up(s, 'loneliness', -1.5); up(s, 'energy', -0.2);
   } else if (p.key === 'library') {
@@ -212,9 +197,8 @@ export function finishOuting(s, now = Date.now()) {
   } else if (p.key === 'walls') { // the painting he designed is on the wall now, for everyone to see
     const j = w.job ?? {};
     o.made = { kind: 'paint', name: j.name, wall: j.wall, on: j.wallName };
-    o.did = `I painted "${j.name}" on ${j.wallName ?? 'a wall'}, big, with my whole arm. ${pick(rnd, ['My hands are full of paint.', 'I stepped back three times to look at it.', 'A sparrow watched me the whole time.', 'The paint ran a little, and I let it.'])}`;
+    o.did = `I painted "${j.name}" on ${j.wallName ?? 'a wall'}, big, with my whole arm. ${pick(rnd, ['My hands are full of paint.', 'I stepped back three times to look at it.', 'A sparrow watched me the whole time.', 'The paint ran a little, and I let it.', 'Someone passing through stopped to look, said nothing, and walked on.'])}`;
     o.saw = `my painting on ${j.wallName ?? 'the wall'}`;
-    if (rnd() < 0.4) { const who = PEOPLE.filter((n) => awake(n, h)); if (who.length) { const n = pick(rnd, who); meet(n.name, `${n.name} came by and stood looking at it for a while.`, 0.3); } }
     up(s, 'joy', 1.5); up(s, 'calm', 0.6); up(s, 'energy', -1);
   } else if (p.key === 'drops') { // a note someone left for him: he has it now, and reads it
     o.did = dropFound(s, w.job?.drop, now);
@@ -232,8 +216,6 @@ export function finishOuting(s, now = Date.now()) {
   up(s, 'boredom', -2.5);
   for (const f of o.found) { (s.finds ??= []).push({ name: f.name, emoji: f.emoji, from: p.key, at }); if (f.topic) noteSpark(s, { topic: f.topic, text: `I found ${f.name} at ${p.name}.`, from: 'outing' }, now); }
   s.finds = (s.finds ?? []).slice(-60);
-  if (o.spark) noteSpark(s, { ...o.spark, from: 'outing' }, now);
-  delete o.spark;
   s.outings = [...(s.outings ?? []), o].slice(-30);
   if (!w.errand && reached) world(s).count += 1;
   s.where = null;

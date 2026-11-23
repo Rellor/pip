@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { PARCELS, TRAVELLERS, DROP_PLACES, DEEDS, MAX_LYING, postDrop, lying, dropLines, fetchJob, sweepDrops, learnFrom, takeDeed, findDeed } from '../strangers.js';
 import { startOuting, outingTick, canGo } from '../world.js';
+import { noteLines, noteAnswer } from '../neighbours.js';
 import { toAnswer } from '../brain.js';
 import { byName } from '../moves.js';
 import { TOWN_SPOTS, LIE, ROUTES, townBlocked, TOWN_X } from '../web/town.js';
@@ -48,7 +49,8 @@ assert.ok(back.home && back.outing.did.includes(first.text) && back.outing.did.i
 const note = s.visitors.find((v) => v.id === first.id);
 assert.ok(note && note.npc && note.stranger && !note.answer && note.text === first.text);
 assert.equal(s.drops.find((d) => d.id === first.id).status, 'found');
-if (first.kind !== 'opinion') assert.ok(s.curious.sparks.some((x) => x.topic === first.topic), 'what a traveller tells him can become an interest');
+if (first.kind !== 'opinion') assert.ok(s.curious.sparks.some((x) => x.topic === first.topic && x.from === 'traveller'), 'what a traveller tells him can become an interest');
+assert.ok(noteLines(s).length === 1 && noteLines(s)[0].startsWith(`[${first.id}] ${first.from} (${first.who}) tells me about something: "${first.text}`), 'the brain is shown the note, with who left it');
 ok('fetch_note: he walks to where it lies, and then it is a note he can read and answer');
 
 // ---- he answers and says if he keeps it
@@ -56,13 +58,15 @@ const a = toAnswer({ moves: [{ move: 'answer_visitor', details: { id: first.id, 
 assert.deepEqual(a.visitor_answers[0], { id: first.id, text: 'I do not believe that, but I will look it up.', keep: true });
 assert.equal(toAnswer({ moves: [{ move: 'answer_visitor', details: { id: 'x', text: 'Not for me.', keep: false }, thought: 'x' }], reason: 'r', mood: 'calm' }, ['answer_visitor']).visitor_answers[0].keep, false);
 note.answer = 'I do not believe that, but I will look it up.';
+noteAnswer(s, note);
+assert.ok(s.street === undefined && (s.wishes ?? []).length === 0 && noteLines(s).length === 0, 'answering a traveller keeps no score and promises nothing');
 const mem = learnFrom(s, note, true, noon + 6 * HOUR);
 assert.ok(mem.startsWith(`${first.from} told me: `) && s.learned.length === 1 && s.learned[0].from === first.from && s.learned[0].said === note.answer && note.kept === true);
 const other = { id: 'v1', name: 'Anna', text: 'Did you know cats sleep 16 hours a day?', answer: 'That is too much sleep.', npc: false };
 assert.equal(learnFrom(s, other, false, noon), null, 'what he lets go, he does not keep');
 assert.equal(s.learned.length, 1);
 assert.ok(learnFrom(s, { ...other, id: 'v2' }, true, noon) && s.learned.at(-1).who === 'a visitor', 'a real visitor teaches him the same way');
-assert.equal(learnFrom(s, { id: 'n1', name: 'Mo (neighbour)', text: 'x', answer: 'y', npc: true }, true, noon), null, 'the neighbours have their own way');
+assert.equal(learnFrom(s, { id: 'n1', name: 'Mo (neighbour)', text: 'x', answer: 'y', npc: true }, true, noon), null, 'an old note of a neighbour who has moved away teaches him nothing new');
 ok('he answers with what he thinks, and what he keeps he has learned');
 
 // ---- a note nobody fetches comes to him by itself

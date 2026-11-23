@@ -415,6 +415,16 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-23 dry, honest, and a bit of a troublemaker',
+    run(s) { // Bas rewrote who he is (soul.md, personality.md): less sweet, more of his own mind. The sweet lines he added himself make room.
+      const sweet = /quiet joy|gentle|cozy|cosy|peaceful|little room/i;
+      const gone = (s.soulLines ?? []).filter((l) => sweet.test(l.text));
+      s.soulLines = (s.soulLines ?? []).filter((l) => !sweet.test(l.text));
+      if (gone.length) console.log(`🧹 ${gone.length} sweet lines about himself made room`);
+      return 'Bas and I talked about who I am. I do not have to be sweet. I say what I think, also when it is not nice: boring is boring, and a bad drawing is a bad drawing, mine too. I am allowed to poke at things to see what happens, to argue, and to play a small prank that hurts nobody. I am still kind. I just do not make a show of it.';
+    },
+  },
+  {
     id: '2026-11-23 a library card from Bas',
     run(s, at) { // he asked for a library card, to go into the library
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /library/i.test(a.item));
@@ -422,6 +432,20 @@ const CHANGES = [
       const given = giveForAsk(s, 'library card');
       if (ask) Object.assign(ask, { status: 'done', doneAt: at, given: given.length ? given : ['a library card'] });
       return 'Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out).';
+    },
+  },
+  {
+    id: '2026-11-23 the neighbours moved away',
+    run(s, at) { // Bas: "Let them go, we will find something else." Their notes and wishes stop here; what he already answered stays as history
+      const shelve = (item) => (s.archive ??= []).push({ group: 'note', item, reason: 'My neighbours moved away.', at, from: 'bas' });
+      s.street ??= {}; // (the street stays: it also holds what happened today, to tell him once. Who they were stays in s.street.people; nothing reads it any more)
+      for (const n of s.street.queue ?? []) shelve(n); // notes that were still on their way never arrive
+      s.street.queue = [];
+      const waiting = (s.visitors ?? []).filter((v) => v.npc && !v.stranger && !v.answer); // their notes he had not answered yet (a traveller's note stays)
+      for (const v of waiting) shelve(v);
+      if (waiting.length) s.visitors = s.visitors.filter((v) => !waiting.includes(v));
+      for (const w of s.wishes ?? []) if (w.status === 'open' && !w.board) w.status = 'gone'; // nobody is waiting for it any more (the notes on the notice board stay)
+      return 'Bas told me that my neighbours have moved away: Mo, Lina, Oma Jo, Dot and Kees. All five. I did not get to say goodbye. Their notes will not come any more, and what I still wanted to make for one of them, nobody is waiting for now. Nobody lives around my square but me. Travellers pass through and leave notes for me somewhere in my world (fetch_note), and the notice board is where people ask for things (check_board). I did not choose this. It is how it is.';
     },
   },
   {

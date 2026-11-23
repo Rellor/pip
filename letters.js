@@ -20,16 +20,16 @@ export function weekDigest(s, now = Date.now()) {
   const learned = (s.notebook ?? []).filter((n) => inWeek(n.at)).map((n) => n.topic ?? n.query ?? n.title).filter(Boolean);
   const lessons = (s.lessons ?? []).filter((l) => inWeek(l.solvedAt)).length;
   const into = (s.curious?.interests ?? []).slice(0, 4).map((i) => i.topic);
-  const neighbours = (s.visitors ?? []).filter((v) => v.npc && inWeek(v.at)).map((v) => `${v.name.replace(' (neighbour)', '')}: "${clip(v.text, 90)}"`).slice(-4);
+  const notes = (s.visitors ?? []).filter((v) => v.stranger && inWeek(v.at)).map((v) => `${v.name}: "${clip(v.text, 90)}"${v.answer ? ` (I answered: "${clip(v.answer, 70)}")` : ''}`).slice(-4); // what travellers passing through left for him
   const gifts = (s.asks ?? []).filter((a) => a.status === 'done' && inWeek(a.doneAt)).map((a) => a.item);
-  const wishes = (s.wishes ?? []).filter((w) => w.status === 'kept' && inWeek(w.keptAt)).map((w) => `${w.with || w.topic} for ${w.from}`);
+  const wishes = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept' && inWeek(w.keptAt)).map((w) => `${w.topic} (${w.reward} coins)`);
   const happenings = (s.teller?.log ?? []).filter((e) => inWeek(e.at) && e.big).map((e) => e.text.slice(0, 110));
   const bought = (s.bought ?? []).filter((b) => inWeek(b.at)).map((b) => b.item);
-  const outings = (s.outings ?? []).filter((o) => !o.errand && inWeek(o.homeAt)).map((o) => `${o.place === 'doorstep' ? 'my doorstep' : o.place === 'garden' ? 'Oma Jo’s garden' : `the ${o.place}`}: ${clip(o.did, 110)}`).slice(-5);
+  const outings = (s.outings ?? []).filter((o) => !o.errand && inWeek(o.homeAt)).map((o) => `${o.place === 'doorstep' ? 'my doorstep' : `the ${o.place}`}: ${clip(o.did, 110)}`).slice(-5);
   const finds = (s.finds ?? []).filter((f) => inWeek(f.at)).map((f) => f.name);
   const memories = (s.memories ?? []).filter((m) => inWeek(m.at) && (m.importance ?? 0) >= 7).sort((a, b) => (b.importance ?? 0) - (a.importance ?? 0)).slice(0, 8).map((m) => clip(m.text, 140));
   const days = (s.days ?? []).filter((d) => d.day && Date.parse(d.day) > since - DAY).map((d) => `${d.day}: mostly ${(d.most ?? []).slice(0, 2).join(', ')}, mood ${d.mood}`);
-  return { art, made, apps, songs, done, working, learned: [...new Set(learned)].slice(0, 6), lessons, into, neighbours, gifts, memories, days, wishes, happenings, bought, outings, finds, coins: s.coins ?? null };
+  return { art, made, apps, songs, done, working, learned: [...new Set(learned)].slice(0, 6), lessons, into, notes, gifts, memories, days, wishes, happenings, bought, outings, finds, coins: s.coins ?? null };
 }
 
 export function letterPrompt(soul, d, { first = false } = {}) {
@@ -48,10 +48,10 @@ MY WEEK, IN FACTS
 - What I looked up and learned about: ${list(d.learned)}
 - Things that went wrong and that I learned to do better: ${d.lessons}
 - What I am into lately: ${list(d.into)}
-- Notes from my neighbours: ${list(d.neighbours)}
+- Notes travellers left for me: ${list(d.notes ?? [])}
 - What Bas gave me: ${list(d.gifts)}
-- Wishes of neighbours I made come true: ${list(d.wishes ?? [])}
-- Things that happened in my street: ${list(d.happenings ?? [])}
+- Things I made for a note on the notice board: ${list(d.wishes ?? [])}
+- Things that happened on the square: ${list(d.happenings ?? [])}
 - Where I went outside: ${list(d.outings ?? [])}
 - What I found and brought home: ${list(d.finds ?? [])}
 - What I bought at the grocery store: ${list(d.bought ?? [])}${d.coins != null ? ` (I have ${d.coins} coins)` : ''}
@@ -61,7 +61,7 @@ I write a warm, honest letter to Bas, like a real letter from a small friend: 8 
 Answer in JSON: {"letter": "Dear Bas, ...", "favourite": "the drawing's exact name or null"}`;
 }
 export const letterSchema = { type: 'OBJECT', properties: { letter: { type: 'STRING' }, favourite: { type: 'STRING', nullable: true } }, required: ['letter'] };
-export const fakeLetter = (d) => ({ letter: `Dear Bas,\n\nThis week I made ${d.art.length} drawings and ${d.made.length} things for my room. (fake)\n\nLove,\nPip\n\nP.S. The neighbours are nice.`, favourite: d.art.at(-1)?.name ?? null });
+export const fakeLetter = (d) => ({ letter: `Dear Bas,\n\nThis week I made ${d.art.length} drawings and ${d.made.length} things for my room. (fake)\n\nLove,\nPip\n\nP.S. The ducks are well.`, favourite: d.art.at(-1)?.name ?? null });
 
 // The letter into his outbox (private, like everything he tells Bas), with the drawing he chose.
 export function sendLetter(s, reply, d, now = Date.now()) {
