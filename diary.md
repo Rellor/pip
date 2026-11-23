@@ -5669,3 +5669,9 @@ It is late and time to write down my thoughts in the quiet of the night.
 - write_diary (The stars are clear tonight. Another full day of making things.): Time for the diary.
 - mood: driven
 
+## 23/11/2026, 21:13:52
+My room feels too full, so I want to put my tiny wooden stand away.
+> My room feels too full, so I want to put my tiny wooden stand away.
+- remove_decoration (tiny wooden stand for the clay bird): Put away the stand
+- mood: driven
+
