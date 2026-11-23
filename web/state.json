@@ -1,8 +1,8 @@
 {
   "mood": "grumpy",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 0,
+  "loneliness": 0.23,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -9886,65 +9886,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-23T18:36:18.549Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.1-flash-lite": 1,
-      "gemini-3.5-flash-lite": 1
-    },
-    "modelNotes": [
-      "gemini-3.1-flash-lite answered (gemini-3.5-flash-lite was busy or capped)"
-    ],
-    "fallback": true,
-    "tokens": {
-      "calls": 2,
-      "input": 4754,
-      "output": 217,
-      "models": {
-        "gemini-3.1-flash-lite": 1,
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "Fenna left a dull fact about flamingos, and I want to answer her with a dry remark. Then I want to check the notice board.",
-    "inner": "Fenna left a dull fact about flamingos, and I want to answer her with a dry remark. Then I want to check the notice board.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "walk_to",
-        "details": {
-          "object": "computer"
-        },
-        "detail": "computer",
-        "thought": "Answer Fenna",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "go_out",
-        "details": {
-          "job": {
-            "place": "board",
-            "kind": "read",
-            "words": "read the notice board"
-          }
-        },
-        "thought": "Check the notice board",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
-    "action": "walk_to",
+    "at": "2026-11-23T18:44:22.883Z",
+    "via": "outside",
+    "thought": "I am walking home from the notice board.",
+    "action": "go_out",
     "details": {
-      "object": "computer"
+      "place": "board"
     },
-    "detail": "computer",
-    "enjoyment": 6,
+    "detail": "I am walking home from the notice board.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "board",
+      "phase": "back",
+      "back": "2026-11-23T18:44:54.549Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -10294,21 +10251,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-23T18:36:18.555Z",
-  "fullness": 2.81,
+  "fullness": 2.62,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 4.63,
-  "joy": 3.86,
-  "calm": 5.55,
+  "wonder": 4.3,
+  "joy": 4.2,
+  "calm": 5.43,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.04
+    "excited": 0.02
   },
-  "feelAt": "2026-11-23T18:35:02.371Z",
+  "feelAt": "2026-11-23T18:44:22.870Z",
   "lastAte": "2026-11-23T15:51:32.200Z",
   "studio": {
     "songs": [
@@ -11023,12 +10980,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.58,
-    "curiosity": 1.19,
+    "creativity": 0.67,
+    "curiosity": 1.27,
     "boredom": 0,
-    "loneliness": 0.19,
+    "loneliness": 0.23,
     "tidiness": 0.4,
-    "at": "2026-11-23T18:35:02.371Z",
+    "at": "2026-11-23T18:44:22.870Z",
     "coziness": 3.2
   },
   "recent": {
