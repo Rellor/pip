@@ -5365,3 +5365,15 @@ I want to go outside to the pond in the park to watch the ducks and look around,
 - go_out (the pond in the park): I will go outside to the pond for a bit.
 - mood: curious
 
+## 23/11/2026, 11:36:02
+I want to get a library card so I can visit the library Mo told me about.
+> I want to get a library card so I can visit the library Mo told me about.
+- ask_for (library card: to go to the library): I will ask Oma Jo for a library card.
+- mood: curious
+
+## 23/11/2026, 11:44:20
+Mo told me about railway time zones and I want to answer him. I also need to work on step 2 of my map constellations project.
+> Mo told me about railway time zones and I want to answer him. I also need to work on step 2 of my map constellations project.
+- walk_to (computer): Answer Mo about railway time zone maps
+- mood: curious
+
