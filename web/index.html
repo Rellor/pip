@@ -145,6 +145,14 @@
   .hudbtn { width:42px; height:42px; border-radius:50%; border:0; background:rgba(255,250,243,.94); box-shadow:0 2px 10px rgba(0,0,0,.25); font-size:20px; line-height:1; cursor:pointer; padding:0; }
   .hudbtn[aria-pressed="true"] { background:#e9855b; }
   .card .opinion { margin:8px 0 0; padding:8px 10px; background:#fff3e2; border-radius:10px; font-weight:600; }
+  .memtier { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin:8px 0; }
+  .memtier h3 { margin:0 0 4px; font-size:15px; display:flex; justify-content:space-between; gap:8px; }
+  .memtier h3 small { font-weight:500; color:var(--muted); }
+  .memtier .bar { height:6px; background:var(--line); border-radius:3px; overflow:hidden; margin:4px 0 8px; }
+  .memtier .bar i { display:block; height:100%; background:#e9855b; }
+  .memtier ul { margin:0; padding-left:18px; }
+  .memtier li { margin:3px 0; }
+  .memtier .goes { color:var(--muted); font-style:italic; }
   .ibtns { display:flex; flex-wrap:wrap; gap:8px; margin-top:6px; }
   .since { background:#fff3e2; border:1px solid #f0d3ad; border-radius:14px; padding:12px 14px; margin-bottom:14px; position:relative; }
   .since h3 { margin:0 26px 6px 0; font-size:15px; }
@@ -629,6 +637,11 @@
         <div class="lifesec" data-sec="projects" data-icon="🧩" data-title="Projects" data-count="projects" hidden><h2>Pip's projects</h2><p class="muted">What he is working on, step by step: what he made for it and what he found out. Finished ones are below.</p><ul id="projects"></ul></div>
         <div class="lifesec" data-sec="mind" data-icon="🧠" data-title="His mind" data-count="thoughts" hidden>
           <div class="msec"><h2>What Pip is thinking about</h2><ul id="thoughts"></ul></div>
+          <div class="msec"><h2>His memory</h2><p class="muted">Three shelves with a fixed number of places. A new memory has to win its place. While he sleeps, what matters moves to long term.</p><div id="memtiers"></div></div>
+          <div class="msec"><h2>What he believes about himself</h2><p class="muted">Counted by the game from his days: no guessing.</p><ul id="beliefs"></ul></div>
+          <div class="msec"><h2>What people taught him</h2><ul id="learned"></ul></div>
+          <div class="msec"><h2>What he thinks of things</h2><ul id="opinions"></ul></div>
+          <div class="msec"><h2>Interests, hobbies, mastered</h2><ul id="hobbies"></ul></div>
           <div class="msec"><h2>What Pip realized</h2><ul id="reflections"></ul></div>
           <div class="msec"><h2>Pip wants</h2><ul id="wants"></ul></div>
           <div class="msec"><h2>Pip wonders</h2><ul id="questions"></ul></div>

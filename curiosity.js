@@ -11,6 +11,7 @@ import { isHeavy } from './news.js';
 export const MAX_SPARKS = 30;
 export const INTEREST_AT = 3; // a topic with this score is an interest
 export const HOBBY_AT = 6; // ...and with this score it pulls at him to make it a hobby
+export const MASTER_AFTER = 12; // a hobby he has done this many times is something he has mastered
 export const MAX_BROWSE_PER_DAY = 8;
 const FADE_PER_DAY = 0.3;
 const DAY = 86_400_000;
@@ -75,6 +76,17 @@ export function fade(s, now = Date.now()) {
 }
 
 export const interests = (s) => ensureCurious(s).interests.filter((i) => i.score >= INTEREST_AT);
+// He did or made something: if it is about one of his interests, that is practice (the page counts it, and a hobby he
+// practised often is mastered). `what` is what he did, in words. Returns the interests it counted for.
+export function practiseInterest(s, what, now = Date.now()) {
+  const t = key(what);
+  if (!t) return [];
+  const hit = ensureCurious(s).interests.filter((i) => i.score >= INTEREST_AT && key(i.topic).split(' ').filter((w) => w.length > 3).some((w) => t.includes(w)));
+  for (const i of hit) { i.practice = (i.practice ?? 0) + 1; i.practisedAt = new Date(now).toISOString(); }
+  return hit;
+}
+// Where an interest stands: an interest, a hobby, or mastered.
+export const levelOf = (i) => (i.score >= HOBBY_AT && (i.practice ?? 0) >= MASTER_AFTER ? 'mastered' : i.score >= HOBBY_AT ? 'hobby' : 'interest');
 const browsedToday = (s, now) => (s.log ?? []).filter((e) => e.action === 'browse' && !e.failed && now - Date.parse(e.at) < DAY).length;
 export const canBrowse = (s, now = Date.now()) => browsedToday(s, now) < MAX_BROWSE_PER_DAY;
 

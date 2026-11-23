@@ -80,3 +80,17 @@ await ok('the sleep prompt is small', () => {
   const p = sleepPrompt({ soul: 'x'.repeat(2500), today: daySummary(s), found: [], added: [], story: 'y'.repeat(900) });
   assert.ok(p.length / 4 < 2000);
 });
+
+// ---- beliefs: counted by the game from his days (night.js)
+{
+  const { beliefs, beliefLines, BELIEF_DAYS } = await import('../night.js');
+  const day = (lifted, lowered = []) => ({ day: 'x', lifted, lowered, most: [], kinds: [] });
+  const s = { days: [day(['draw', 'go_out'], ['rest']), day(['draw'], ['search_web']), day(['draw', 'cook']), day(['go_out'], ['draw']), day(['go_out'], ['rest']), day([], ['rest'])] };
+  const b = beliefs(s);
+  assert.deepEqual(b.map((x) => [x.text, x.days]), [['Drawing lifts me', 3], ['Going outside lifts me', 3], ['Resting wears me down', 3]]);
+  assert.ok(b.every((x) => x.days >= BELIEF_DAYS) && !b.some((x) => /Cooking|Looking things up/.test(x.text)), 'once or twice is not a belief yet');
+  s.beliefs = b;
+  assert.match(beliefLines(s)[0], /Something I know about myself by now: drawing lifts me \(it did on 3 of my days\)/);
+  assert.equal(beliefLines({}).length, 0);
+  console.log('ok  beliefs are counted from his days: three days of the same, and he knows it about himself');
+}

@@ -4237,7 +4237,38 @@ setInterval(() => {
 }, 10_000);
 
 // ---- Mind: his reflections, wants and questions
+// His memory in three shelves (memory.js): how full each is, the strongest few, and the one that will go first.
+function renderMemory(s) {
+  const all = s.memories || [];
+  const shown = (m) => (m.private ? '🔒 something private' : m.text);
+  const tier = (name) => all.filter((m) => (m.tier ?? 'long') === name);
+  const boxes = [['Short term', 'the last days: it fades fast', tier('short'), 24], ['Long term', 'what he keeps: it fades over months', tier('long'), 36], ['Faded', 'one worn sentence is left. It only comes back when something touches it', s.faded || [], 150]].map(([title, what, list, slots]) => {
+    const box = el('div', null, 'memtier');
+    const h = el('h3'); h.append(document.createTextNode(title), el('small', `${list.length} of ${slots}`));
+    const bar = el('div', null, 'bar'); const fillI = document.createElement('i'); fillI.style.width = `${Math.min(100, (list.length / slots) * 100)}%`; bar.append(fillI);
+    const ul = el('ul');
+    if (title === 'Faded') ul.append(...list.slice(-3).reverse().map((m) => el('li', m.text)));
+    else {
+      const byWeight = [...list].sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0));
+      ul.append(...byWeight.slice(0, 3).map((m) => el('li', shown(m))));
+      const last = byWeight.filter((m) => !m.pinned).at(-1);
+      if (last && byWeight.length > 3) ul.append(el('li', `First to go: ${shown(last)}`, 'goes'));
+    }
+    if (!list.length) ul.append(el('li', 'Nothing here yet.', 'muted'));
+    box.append(h, bar, el('p', what, 'muted'), ul);
+    return box;
+  });
+  if (s.nightly?.kept?.length) boxes.push(el('p', `🌙 Last night he kept: ${s.nightly.kept.slice(0, 3).join(' · ')}`, 'muted'));
+  $('memtiers').replaceChildren(...boxes);
+  fill($('beliefs'), (s.beliefs || []).length ? s.beliefs.map((b) => el('li', `${b.lifts ? '⬆️' : '⬇️'} ${b.text} (seen on ${b.days} days)`)) : [el('li', 'Nothing yet. A belief needs three days of the same.', 'muted')]);
+  fill($('learned'), (s.learned || []).length ? s.learned.slice(-6).reverse().map((l) => el('li', `💌 ${l.from} (${l.who}): “${l.text}”${l.said ? ` Pip: “${l.said}”` : ''}`)) : [el('li', 'Nobody has taught him anything yet. Travellers leave notes in his world.', 'muted')]);
+  const face = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' };
+  fill($('opinions'), (s.opinions || []).length ? s.opinions.slice(-6).reverse().map((o) => el('li', `${face[o.how] ?? '💭'} ${o.topic}: “${o.says}”`)) : [el('li', 'He has not said what he thinks of anything yet.', 'muted')]);
+  const ints = (s.curious?.interests || []).filter((i) => i.score >= 3).sort((a, b) => b.score - a.score);
+  fill($('hobbies'), ints.length ? ints.slice(0, 8).map((i) => { const lvl = i.score >= 6 && (i.practice ?? 0) >= 12 ? '🏅 mastered' : i.score >= 6 ? '💛 hobby' : '✨ interest'; return el('li', `${lvl}: ${i.topic} (practised ${i.practice ?? 0} time${(i.practice ?? 0) === 1 ? '' : 's'})`); }) : [el('li', 'No interests yet. Browsing is how he finds them.', 'muted')]);
+}
 function renderMind(s) {
+  renderMemory(s);
   const mems = new Map((s.memories || []).map((m) => [m.id, m.text]));
   fill($('reflections'), (s.reflections || []).length
     ? s.reflections.slice(-8).reverse().map((r) => {

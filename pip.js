@@ -28,7 +28,7 @@ import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLett
 import { needsNotes, fakeNotes, neighbourPrompt, neighbourSchema, planNotes, deliverNotes, neighbourLines, noteAnswer, keepWishes, wishLines } from './neighbours.js';
 import { buy } from './shop.js';
 import { storyTick } from './story.js';
-import { browse, noteSpark, feel, noteOpinion, fade as fadeInterests, curiosityLines } from './curiosity.js';
+import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
 import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo } from './world.js';
@@ -43,7 +43,7 @@ import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf, kindOf } from './body.js';
-import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep } from './night.js';
+import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep, beliefs, beliefLines } from './night.js';
 import { availableMoves, instruments, workable } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply, cookDetails } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
@@ -62,7 +62,7 @@ import { ensureMoves, makeMove, findMove, movesGuide } from './dances.js';
 import { measureThing, sizesGuide, capacityText } from './sizes.js';
 import { bonusRewards } from './rewards.js';
 import { ensureTools, NEEDS, toolsGuide, toolFor, missingTool, toolList, addTool, toolKind, fits, craftTool, MAX_TOOLS } from './tools.js';
-import { ensureMemory, addMemory, recall, markUsed, fade, archiveForgotten, addInterest } from './memory.js';
+import { ensureMemory, addMemory, recall, markUsed, fade, archiveForgotten, addInterest, consolidate, touch } from './memory.js';
 import { ensureIdentity, applyIdentity } from './identity.js';
 import { takePhoto, renderFile, testApp, testHtml } from './photo.js';
 import { checkMade, withOneRetry, revisionsLeft, noteRevision, revisionNote, serious, drawnOften } from './verify.js';
@@ -582,13 +582,13 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     ].filter(Boolean),
     events: [...reasons, ...(s.street?.happened ?? []).slice(-3), ...grew.slice(0, 2)],
     messages: unread.map((m) => `(${ago(m.at)}) "${text(m.text, 400)}"`),
-    memories: markUsed(recall(s, focus, 5)).map((m) => m.text),
+    memories: [...markUsed(recall(s, focus, 5)).map((m) => m.text), ...touch(s, focus)], // (and now and then a faded one that something touched)
     projects: [...projectLines(s), ...s.projects.filter((p) => p.status === 'done').slice(-2).map((p) => `"${p.title}" (done${p.proud ? ', proud of it' : ''})`)],
     goals: (s.intent?.items ?? []).map((i) => `[${i.done ? 'x' : ' '}] ${i.text}`),
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -1179,6 +1179,7 @@ async function goToSleep(state) {
   }
   const at = new Date().toISOString();
   await sleepCall(state);
+  { const { kept, faded } = consolidate(state); state.beliefs = beliefs(state); console.log(`🌙 tucking the day away: ${kept.length} memories kept for long, ${faded.length} old ones faded, ${state.beliefs.length} beliefs`); state.nightly = { at, kept: kept.map((m) => m.text), faded: faded.map((m) => m.text) }; } // (memory.js, night.js: plain code)
   state.mood = 'sleepy';
   state.activities.push({ at, action: 'rest', detail: 'sleeping through the night', enjoyment: 8 });
   state.activities = state.activities.slice(-50);
@@ -2202,6 +2203,7 @@ async function wakeUp() {
     noteMove(state, e.as ?? e.action, { failed: Boolean(e.failed), now: Math.min(Date.now(), Date.parse(e.at)) });
     if (e.failed) continue;
     const up = practise(state, e.action, { ...e, name: e.name ?? e.details?.name, query: e.query, topic: e.topic });
+    if (!e.failed && ['draw', 'decorate', 'make_app', 'update_app', 'record_song', 'play_piano', 'cook', 'read_book', 'search_web', 'blueprint', 'make_clothes', 'take_photo'].includes(e.action)) practiseInterest(state, `${e.name ?? ''} ${e.query ?? ''} ${e.topic ?? ''} ${e.what ?? ''}`); // doing something about an interest is practice (curiosity.js)
     if (up) { addMemory(state, `My ${up.skill} got better: I am level ${up.level} now.`, 6, 'memory', new Date().toISOString()); console.log(`   📈 ${up.skill} is level ${up.level}`); }
   }
   const VERSION_WORK = ['decorate', 'change_thing', 'extend_thing', 'draw', 'record_song', 'make_app', 'update_app', 'make_clothes', 'cook'];
