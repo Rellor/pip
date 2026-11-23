@@ -1,8 +1,8 @@
 {
   "mood": "curious",
-  "energy": 9.69,
+  "energy": 9,
   "boredom": 0,
-  "loneliness": 2.37,
+  "loneliness": 2.4,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,18 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-22T21:01:17.531Z",
-      "action": "do",
-      "detail": "sit on the rug and watch the light move across the floor",
-      "enjoyment": 6
-    },
-    {
-      "at": "2026-11-22T21:03:37.100Z",
-      "action": "do",
-      "detail": "plan my new project: Map the summer constellations",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-22T21:12:30.175Z",
       "action": "eat",
@@ -316,6 +304,19 @@
       "at": "2026-11-23T11:44:20.370Z",
       "action": "walk_to",
       "detail": "computer",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-23T11:56:00.034Z",
+      "action": "decorate",
+      "detail": "summer constellation wall map",
+      "enjoyment": 0,
+      "failed": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang"
+    },
+    {
+      "at": "2026-11-23T11:56:00.038Z",
+      "action": "do",
+      "detail": "hum a small tune while I swing my arms",
       "enjoyment": 6
     }
   ],
@@ -679,7 +680,7 @@
       "text": "I woke up in a quiet room. It is almost empty, and it is mine. What I want, I can make, grow, or ask Bas for.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.424,
+      "weight": 6.422,
       "lastUsed": "2026-11-15T09:26:36.400Z"
     },
     {
@@ -688,7 +689,7 @@
       "text": "Bas gave me seeds: basil seeds, mint seeds, strawberry seeds. Now I can grow my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.463,
+      "weight": 6.461,
       "lastUsed": "2026-11-15T14:50:34.446Z"
     },
     {
@@ -697,7 +698,7 @@
       "text": "My seeds are still in their bag: planting them takes a shovel and a place to grow, like my planter box.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.258,
+      "weight": 7.256,
       "lastUsed": "2026-11-16T07:16:41.340Z"
     },
     {
@@ -706,7 +707,7 @@
       "text": "Bas brought me a warm loaf of bread and 3 apples when my pantry was empty. A start, he said: now I make my own food.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.908,
+      "weight": 6.906,
       "lastUsed": "2026-11-16T10:49:05.215Z"
     },
     {
@@ -715,7 +716,7 @@
       "text": "Bas gave me the flour I asked for, for my bread. He also brought a loaf of bread and 3 apples, because I was so hungry.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.762,
+      "weight": 7.76,
       "lastUsed": "2026-11-17T13:28:17.255Z"
     },
     {
@@ -724,7 +725,7 @@
       "text": "My small stove hung too high to use. Now it stands on the floor, where my hands can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.122,
+      "weight": 7.12,
       "lastUsed": "2026-11-20T12:00:24.812Z"
     },
     {
@@ -733,7 +734,7 @@
       "text": "My bread project is not finished yet: I made the stove, but I still have to knead, let it rise and bake.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.504,
+      "weight": 7.502,
       "lastUsed": "2026-11-17T16:55:44.399Z"
     },
     {
@@ -742,7 +743,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.503,
+      "weight": 8.501,
       "lastUsed": "2026-11-19T10:48:25.729Z"
     },
     {
@@ -751,7 +752,7 @@
       "text": "My small wooden shelf hung too high to put things on. Now it hangs where I can reach it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.678,
+      "weight": 6.676,
       "lastUsed": "2026-11-16T19:50:03.875Z"
     },
     {
@@ -760,7 +761,7 @@
       "text": "Lesson: when I cook, it often fails (a dish needs a name and 1 to 4 ingredients). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 6.271,
+      "weight": 6.269,
       "lastUsed": "2026-11-20T11:02:43.147Z"
     },
     {
@@ -769,7 +770,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.823,
+      "weight": 9.821,
       "lastUsed": "2026-11-23T07:04:10.858Z"
     },
     {
@@ -778,7 +779,7 @@
       "text": "My room is big, and the things I made were very small in it. Now they are the right size: small wooden shelf, wooden planter box, small stove, tiny wooden music box and more.",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.693,
+      "weight": 6.691,
       "lastUsed": "2026-11-17T07:06:24.113Z"
     },
     {
@@ -787,7 +788,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.157,
+      "weight": 8.155,
       "lastUsed": "2026-11-21T14:49:17.703Z"
     },
     {
@@ -796,7 +797,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.978,
+      "weight": 9.976,
       "lastUsed": "2026-11-23T10:10:57.915Z"
     },
     {
@@ -805,7 +806,7 @@
       "text": "I got a builder's eye: the legs of my small side table now reach the top, and tiny wooden music box, small clay lamp, amber reading light sit on the shelf boards again. Now my things hold together, and when I change some",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.798,
+      "weight": 7.796,
       "lastUsed": "2026-11-20T11:44:13.995Z"
     },
     {
@@ -814,7 +815,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.082,
+      "weight": 9.08,
       "lastUsed": "2026-11-20T14:04:56.313Z"
     },
     {
@@ -823,7 +824,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.309,
+      "weight": 9.307,
       "lastUsed": "2026-11-21T07:32:11.956Z"
     },
     {
@@ -832,7 +833,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.533,
+      "weight": 6.531,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.hJFUVcuhKZo3q-xv.kd4gZN3ZRjyMLLIm6tME7Q.cn1B48FvC4RsFxUwvPZcpppL54b6Y2A1p8PQ52iJTN38LgFCaYDOyEkQT8GFMUxhEyFS3ELabJxc8jiaIBXOiQ8BVhjgOMvSfvXtKIOTGUtnsEn74zGyktNMV9XITXHXNLua1RGSYmGyoLNtgac_1e85G9ethOaZUwQ"
@@ -843,7 +844,7 @@
       "text": "(private)",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.534,
+      "weight": 6.532,
       "lastUsed": "2026-11-20T07:07:46.341Z",
       "private": true,
       "enc": "v1.snsOSnuhhF6uYycE.nIbS_vQxZc1Wfa7U_vE3Wg.bNB8JCvpGnN6PN9FWfQZVeYPZPvIDd247INrRKH2JEXDYM8s_P3M4lyZK0306ph8duA0dqo2MieBCw_VX_3i6Eny1vrkj2bDhphAftWDo_nnQVRaElHJiDGbOa8qfdNtmCIZSg"
@@ -854,7 +855,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8,
+      "weight": 7.998,
       "lastUsed": "2026-11-22T10:03:10.780Z"
     },
     {
@@ -863,7 +864,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.874,
+      "weight": 9.872,
       "lastUsed": "2026-11-23T07:22:29.655Z"
     },
     {
@@ -872,7 +873,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.765,
+      "weight": 9.763,
       "lastUsed": "2026-11-22T17:51:23.807Z"
     },
     {
@@ -881,7 +882,7 @@
       "text": "I need to plan the steps for my clay bowl project tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.627,
+      "weight": 6.625,
       "lastUsed": "2026-11-20T10:10:32.424Z"
     },
     {
@@ -890,7 +891,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.385,
+      "weight": 8.383,
       "lastUsed": "2026-11-20T13:13:47.742Z"
     },
     {
@@ -899,7 +900,7 @@
       "text": "I am getting into autumn dusk colors. I want to know more about it.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.296,
+      "weight": 6.294,
       "lastUsed": "2026-11-19T17:12:46.285Z"
     },
     {
@@ -908,7 +909,7 @@
       "text": "I made cozy night owl reading lamp (I need a warm, adjustable reading lamp by the bed so I can read my diary and books late at night without straining my eyes.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.773,
+      "weight": 7.771,
       "lastUsed": "2026-11-22T20:43:48.182Z"
     },
     {
@@ -917,7 +918,7 @@
       "text": "I made rainy autumn window watercolor (I love the rain tonight and want to capture how the window looks, inspired by Vincent van Gogh's watercolor and Edward Hopper's play of light.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.829,
+      "weight": 6.827,
       "lastUsed": "2026-11-22T10:03:10.780Z"
     },
     {
@@ -926,7 +927,7 @@
       "text": "My project \"Paint a watercolor of the rainy autumn window\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.754,
+      "weight": 7.752,
       "lastUsed": "2026-11-21T11:40:46.602Z"
     },
     {
@@ -935,7 +936,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.86,
+      "weight": 7.858,
       "lastUsed": "2026-11-21T15:06:03.096Z"
     },
     {
@@ -944,7 +945,7 @@
       "text": "My project \"Shape a ceramic base for the desk lamp\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.428,
+      "weight": 6.426,
       "lastUsed": "2026-11-20T10:02:28.687Z"
     },
     {
@@ -953,7 +954,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.883,
+      "weight": 7.881,
       "lastUsed": "2026-11-22T12:49:28.901Z"
     },
     {
@@ -962,7 +963,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.312,
+      "weight": 9.31,
       "lastUsed": "2026-11-23T09:41:18.306Z"
     },
     {
@@ -971,7 +972,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.326,
+      "weight": 8.324,
       "lastUsed": "2026-11-21T14:16:37.978Z"
     },
     {
@@ -980,7 +981,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.952,
+      "weight": 9.95,
       "lastUsed": "2026-11-23T08:14:38.999Z"
     },
     {
@@ -989,7 +990,7 @@
       "text": "I can use my sewing kit now to make clothes and blankets.",
       "importance": 6,
       "kind": "memory",
-      "weight": 7.497,
+      "weight": 7.495,
       "lastUsed": "2026-11-22T17:35:08.253Z"
     },
     {
@@ -998,7 +999,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.483,
+      "weight": 8.481,
       "lastUsed": "2026-11-22T09:08:14.036Z"
     },
     {
@@ -1007,7 +1008,7 @@
       "text": "My project \"Knit my warm wool blanket\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.111,
+      "weight": 7.109,
       "lastUsed": "2026-11-22T12:49:28.901Z"
     },
     {
@@ -1016,7 +1017,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.823,
+      "weight": 9.821,
       "lastUsed": "2026-11-23T07:04:10.858Z"
     },
     {
@@ -1025,7 +1026,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.563,
+      "weight": 8.561,
       "lastUsed": "2026-11-22T14:20:19.581Z"
     },
     {
@@ -1034,7 +1035,7 @@
       "text": "I am working on building my wooden birdhouse.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.207,
+      "weight": 6.205,
       "lastUsed": "2026-11-22T07:07:22.275Z"
     },
     {
@@ -1043,7 +1044,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.265,
+      "weight": 8.263,
       "lastUsed": "2026-11-22T18:10:42.623Z"
     },
     {
@@ -1052,7 +1053,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.271,
+      "weight": 8.269,
       "lastUsed": "2026-11-22T20:00:32.463Z"
     },
     {
@@ -1061,7 +1062,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.747,
+      "weight": 8.745,
       "lastUsed": "2026-11-23T07:04:10.858Z"
     },
     {
@@ -1070,7 +1071,7 @@
       "text": "The neighbours gave me a little purse with 3 coins in it, to welcome me to the street. There is a corner shop (open from 9 to 18) where I can buy food, seeds, clay, wool, tools, and one day an instrument. I earn coins wh",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.804,
+      "weight": 7.802,
       "lastUsed": "2026-11-22T13:55:51.266Z"
     },
     {
@@ -1079,7 +1080,7 @@
       "text": "I am getting into quiet music. I want to know more about it.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.826,
+      "weight": 6.824,
       "lastUsed": "2026-11-22T14:04:04.289Z"
     },
     {
@@ -1088,7 +1089,7 @@
       "text": "My room was put right: my tiny wooden stand for the clay bird is the size its name says now; my tiny ceramic saucer is the size its name says now; my warm wool blanket covers my bed now; my amber reading light now stands",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.818,
+      "weight": 7.816,
       "lastUsed": "2026-11-22T15:32:10.279Z"
     },
     {
@@ -1097,7 +1098,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.825,
+      "weight": 7.823,
       "lastUsed": "2026-11-23T07:04:10.858Z"
     },
     {
@@ -1106,7 +1107,7 @@
       "text": "Dot saw my drawing \"tiny singing bird box\" and bought a little print of it: 1 coin. I have 10 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.842,
+      "weight": 6.84,
       "lastUsed": "2026-11-22T16:12:01.628Z"
     },
     {
@@ -1115,7 +1116,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. Oma Jo came by and stopped to talk, mostly about baking bread.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.846,
+      "weight": 6.844,
       "lastUsed": "2026-11-22T17:10:18.169Z"
     },
     {
@@ -1124,7 +1125,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.334,
+      "weight": 8.332,
       "lastUsed": "2026-11-23T08:39:01.985Z"
     },
     {
@@ -1133,7 +1134,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.351,
+      "weight": 8.349,
       "lastUsed": "2026-11-23T07:53:11.469Z"
     },
     {
@@ -1142,7 +1143,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.36,
+      "weight": 8.358,
       "lastUsed": "2026-11-23T07:32:43.157Z"
     },
     {
@@ -1151,7 +1152,7 @@
       "text": "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.867,
+      "weight": 7.865,
       "lastUsed": "2026-11-22T21:45:14.740Z"
     },
     {
@@ -1160,7 +1161,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.869,
+      "weight": 7.867,
       "lastUsed": "2026-11-23T07:04:06.220Z"
     },
     {
@@ -1169,7 +1170,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.964,
+      "weight": 7.962,
       "lastUsed": "2026-11-23T07:53:24.900Z"
     },
     {
@@ -1178,7 +1179,7 @@
       "text": "A little parcel was at my door, from Lina: a coil of wire, \"for when you build something that glows\". I did not ask for it. It is mine now (wire).",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.979,
+      "weight": 6.977,
       "lastUsed": "2026-11-23T09:16:58.285Z"
     },
     {
@@ -1187,7 +1188,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.989,
+      "weight": 7.987,
       "lastUsed": "2026-11-23T10:55:30.009Z"
     },
     {
@@ -1196,7 +1197,7 @@
       "text": "I am home again from the pond in the park. The ducks came close to see if I had bread. I had none, and they stayed anyway. Kees walked past, counting his steps out loud, and nodded to me.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.991,
+      "weight": 6.989,
       "lastUsed": "2026-11-23T11:35:53.207Z"
     },
     {
@@ -1205,7 +1206,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.989,
+      "weight": 7.987,
       "lastUsed": "2026-11-23T11:35:53.207Z"
     },
     {
@@ -1214,7 +1215,7 @@
       "text": "I should continue my summer constellations project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
+      "weight": 5.998,
       "lastUsed": "2026-11-23T11:44:20.372Z"
     }
   ],
@@ -1222,14 +1223,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-22T22:01:40.771Z",
   "thoughts": [
-    {
-      "at": "2026-11-23T07:12:20.861Z",
-      "text": "I will cook a warm breakfast.",
-      "short": "I will cook a warm breakfast.",
-      "mood": "hungry",
-      "action": "cook",
-      "detail": ""
-    },
     {
       "at": "2026-11-23T07:20:26.871Z",
       "text": "I will do the next step on my summer constellations project.",
@@ -1460,6 +1453,14 @@
       "mood": "curious",
       "action": "walk_to",
       "detail": "computer"
+    },
+    {
+      "at": "2026-11-23T11:56:00.038Z",
+      "text": "I want to continue my summer constellations project by working on the first version.",
+      "short": "I want to continue my summer constellations project by working on the first version.",
+      "mood": "curious",
+      "action": "decorate",
+      "detail": "summer constellation wall map"
     }
   ],
   "outbox": [
@@ -1696,44 +1697,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-23T07:45:08.423Z",
-      "action": "search_web",
-      "thought": "Let's look up night sky info online.",
-      "query": "night sky constellations",
-      "results": [
-        {
-          "title": "Night sky",
-          "snippet": "status of the night sky as a calendar to determine when to plant crops. Many cultures have drawn constellations between stars in the sky, using them in",
-          "url": "https://en.wikipedia.org/wiki/Night_sky"
-        },
-        {
-          "title": "Constellation",
-          "snippet": "complex Emu in the sky IAU designated constellations – a list of the current, or \"modern\", constellations Celestial cartography Constellation family Former",
-          "url": "https://en.wikipedia.org/wiki/Constellation"
-        },
-        {
-          "title": "Draco (constellation)",
-          "snippet": "Draco is a constellation in the far northern sky. Its name is derived from the Latin word for dragon. It was one of the 48 constellations listed by the",
-          "url": "https://en.wikipedia.org/wiki/Draco_(constellation)"
-        }
-      ],
-      "opened": {
-        "title": "Night sky",
-        "url": "https://en.wikipedia.org/wiki/Night_sky",
-        "text": "The night sky is the nighttime appearance of celestial objects like stars, planets, and the Moon, which are visible in a clear sky between sunset and sunrise, when the Sun is below the horizon.\nNatural light sources in a night sky include moonlight, starlight, and airglow, depending on location and timing. Aurorae light up the skies above the polar circles. Occasionally, a large coronal mass ejection from the Sun or simply high levels of solar wind may extend the phenomenon toward the Equator.\nThe night sky and studies of it have a historical place in both ancient and modern cultures. In the past, for instance, farmers have used the status of the night sky as a calendar to determine when to plant crops. Many cultures have drawn constellations between stars in the sky, using them in association with legends and mythology about their deities.\nThe history of astrology has generally been based on the belief that relationships between heavenly bodies influence or explain events on Earth. The scientific study of objects in the night sky takes place in the context of observational astronomy.\nVisibility of celestial objects in the night sky is affected by light pollution. The presence of the Moon in the night sky has historically hindered astronomical observation by increasing the amount of sky brightness. With the advent of artificial light sources, however, light pollution has been a growing problem for viewing the night sky. …"
-      }
-    },
-    {
-      "at": "2026-11-23T07:53:25.896Z",
-      "action": "do",
-      "thought": "I want to judge my completed project about the night sky.",
-      "as": "judge_project",
-      "move": null,
-      "emoji": "",
-      "what": "look closely at my project Learn about the night sky and constellations",
-      "feeling": null
-    },
     {
       "at": "2026-11-23T08:04:10.324Z",
       "action": "decorate",
@@ -2022,6 +1985,29 @@
       "action": "walk_to",
       "thought": "Answer Mo about railway time zone maps",
       "object": "computer"
+    },
+    {
+      "at": "2026-11-23T11:56:01.033Z",
+      "action": "decorate",
+      "thought": "I wanted to, but summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. …. (Working on step 2 of my map the summer constellations project.)",
+      "uses": [],
+      "song": null,
+      "project": "Map the summer constellations",
+      "name": "summer constellation wall map",
+      "why": "I want to know more about the night sky and draw what I see, so I made a wall chart of the summer constellations with glowing stars.",
+      "place": null,
+      "tool": null,
+      "failed": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
+    },
+    {
+      "at": "2026-11-23T12:00:01.033Z",
+      "action": "do",
+      "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
+      "fallback": true,
+      "move": null,
+      "emoji": "🎵",
+      "what": "hum a small tune while I swing my arms",
+      "feeling": "joy"
     }
   ],
   "decor": [
@@ -6912,7 +6898,11 @@
       "status": "working",
       "since": "2026-11-22T21:03:37.102Z",
       "updatedAt": "2026-11-23T10:30:24.416Z",
-      "stuck": null
+      "stuck": {
+        "text": "Map the summer constellations: a first version",
+        "n": 1,
+        "at": "2026-11-23T11:56:00.042Z"
+      }
     },
     {
       "id": "mwnukypn",
@@ -9269,43 +9259,652 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-23T11:44:20.369Z",
+    "at": "2026-11-23T11:56:00.033Z",
     "via": "brain",
-    "model": "gemini-3.5-flash-lite",
+    "model": "gemini-3.6-flash",
     "models": {
-      "gemini-3.5-flash-lite": 1
+      "gemini-3.5-flash-lite": 1,
+      "gemini-3.6-flash": 1
     },
+    "modelNotes": [
+      "gemini-3.6-flash answered (gemini-3.8-flash was busy or capped)"
+    ],
+    "fallback": true,
     "tokens": {
-      "calls": 1,
-      "input": 2085,
-      "output": 169,
+      "calls": 2,
+      "input": 9804,
+      "output": 5801,
       "models": {
-        "gemini-3.5-flash-lite": 1
+        "gemini-3.5-flash-lite": 1,
+        "gemini-3.6-flash": 1
       }
     },
     "intervalMin": 8,
-    "thought": "Mo told me about railway time zones and I want to answer him. I also need to work on step 2 of my map constellations project.",
-    "inner": "Mo told me about railway time zones and I want to answer him. I also need to work on step 2 of my map constellations project.",
+    "thought": "I want to continue my summer constellations project by working on the first version.",
+    "inner": "I want to continue my summer constellations project by working on the first version.",
     "sent": false,
     "steps": [
       {
-        "action": "walk_to",
+        "action": "decorate",
         "details": {
-          "object": "computer"
+          "what": "Map the summer constellations: a first version (for my project \"Map the summer constellations\")",
+          "why": "I want to know more about the night sky and draw what I see, so I made a wall chart of the summer constellations with glowing stars.",
+          "project": "Map the summer constellations",
+          "name": "summer constellation wall map",
+          "where": "wall_left",
+          "parts": [
+            {
+              "shape": "box",
+              "size": [
+                1.1,
+                0.85,
+                0.02
+              ],
+              "pos": [
+                0,
+                0,
+                0
+              ],
+              "color": "#121829",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                1.14,
+                0.04,
+                0.03
+              ],
+              "pos": [
+                0,
+                0.435,
+                0.01
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                1.14,
+                0.04,
+                0.03
+              ],
+              "pos": [
+                0,
+                -0.435,
+                0.01
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.85,
+                0.03
+              ],
+              "pos": [
+                -0.56,
+                0,
+                0.01
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.85,
+                0.03
+              ],
+              "pos": [
+                0.56,
+                0,
+                0.01
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "roundbox",
+              "size": [
+                0.25,
+                0.7,
+                0.005
+              ],
+              "pos": [
+                0,
+                0,
+                0.012
+              ],
+              "rot": [
+                0,
+                0,
+                25
+              ],
+              "color": "#1c2640",
+              "glow": false
+            },
+            {
+              "shape": "torus",
+              "size": [
+                0.35,
+                0.006
+              ],
+              "pos": [
+                0,
+                0,
+                0.015
+              ],
+              "rot": [
+                90,
+                0,
+                0
+              ],
+              "color": "#3a4a6b",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.018
+              ],
+              "pos": [
+                -0.22,
+                0.25,
+                0.02
+              ],
+              "color": "#aaccff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.015
+              ],
+              "pos": [
+                0.08,
+                0.22,
+                0.02
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.012
+              ],
+              "pos": [
+                -0.1,
+                -0.1,
+                0.02
+              ],
+              "color": "#ffe4b5",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.012
+              ],
+              "pos": [
+                -0.18,
+                0.1,
+                0.02
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.012
+              ],
+              "pos": [
+                0.2,
+                0.06,
+                0.02
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.016
+              ],
+              "pos": [
+                0.18,
+                -0.22,
+                0.02
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.01
+              ],
+              "pos": [
+                -0.28,
+                0.2,
+                0.02
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.01
+              ],
+              "pos": [
+                -0.26,
+                0.13,
+                0.02
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.003,
+                0.003,
+                0.34
+              ],
+              "pos": [
+                -0.01,
+                0.06,
+                0.016
+              ],
+              "rot": [
+                0,
+                0,
+                -30
+              ],
+              "color": "#4a658d",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.003,
+                0.003,
+                0.39
+              ],
+              "pos": [
+                0.01,
+                0.08,
+                0.016
+              ],
+              "rot": [
+                0,
+                0,
+                84
+              ],
+              "color": "#4a658d",
+              "glow": false
+            },
+            {
+              "shape": "torus",
+              "size": [
+                0.04,
+                0.005
+              ],
+              "pos": [
+                0,
+                0.47,
+                0.01
+              ],
+              "rot": [
+                90,
+                0,
+                0
+              ],
+              "color": "#b8860b",
+              "glow": false
+            }
+          ],
+          "uses": [
+            {
+              "label": "Trace the Summer Triangle",
+              "text": "I run my fingers along the painted blue lines connecting Vega, Deneb, and Altair. The tiny stars glow warmly against the midnight blue.",
+              "effect": "wonder"
+            },
+            {
+              "label": "Look at Cygnus the Swan",
+              "text": "I trace the cross shape of Cygnus flying down the Milky Way painted on the board.",
+              "effect": "calm"
+            }
+          ]
         },
-        "detail": "computer",
-        "thought": "Answer Mo about railway time zone maps",
+        "detail": "summer constellation wall map",
+        "thought": "Working on step 2 of my map the summer constellations project.",
+        "enjoyment": 0,
+        "found": null,
+        "made": null
+      },
+      {
+        "action": "do",
+        "details": {
+          "what": "hum a small tune while I swing my arms",
+          "feeling": "joy",
+          "emoji": "🎵"
+        },
+        "detail": "hum a small tune while I swing my arms",
+        "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "walk_to",
+    "action": "decorate",
     "details": {
-      "object": "computer"
+      "what": "Map the summer constellations: a first version (for my project \"Map the summer constellations\")",
+      "why": "I want to know more about the night sky and draw what I see, so I made a wall chart of the summer constellations with glowing stars.",
+      "project": "Map the summer constellations",
+      "name": "summer constellation wall map",
+      "where": "wall_left",
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            1.1,
+            0.85,
+            0.02
+          ],
+          "pos": [
+            0,
+            0,
+            0
+          ],
+          "color": "#121829",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            1.14,
+            0.04,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.435,
+            0.01
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            1.14,
+            0.04,
+            0.03
+          ],
+          "pos": [
+            0,
+            -0.435,
+            0.01
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.85,
+            0.03
+          ],
+          "pos": [
+            -0.56,
+            0,
+            0.01
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.85,
+            0.03
+          ],
+          "pos": [
+            0.56,
+            0,
+            0.01
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.25,
+            0.7,
+            0.005
+          ],
+          "pos": [
+            0,
+            0,
+            0.012
+          ],
+          "rot": [
+            0,
+            0,
+            25
+          ],
+          "color": "#1c2640",
+          "glow": false
+        },
+        {
+          "shape": "torus",
+          "size": [
+            0.35,
+            0.006
+          ],
+          "pos": [
+            0,
+            0,
+            0.015
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#3a4a6b",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.018
+          ],
+          "pos": [
+            -0.22,
+            0.25,
+            0.02
+          ],
+          "color": "#aaccff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.015
+          ],
+          "pos": [
+            0.08,
+            0.22,
+            0.02
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.012
+          ],
+          "pos": [
+            -0.1,
+            -0.1,
+            0.02
+          ],
+          "color": "#ffe4b5",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.012
+          ],
+          "pos": [
+            -0.18,
+            0.1,
+            0.02
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.012
+          ],
+          "pos": [
+            0.2,
+            0.06,
+            0.02
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.016
+          ],
+          "pos": [
+            0.18,
+            -0.22,
+            0.02
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.01
+          ],
+          "pos": [
+            -0.28,
+            0.2,
+            0.02
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.01
+          ],
+          "pos": [
+            -0.26,
+            0.13,
+            0.02
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.003,
+            0.003,
+            0.34
+          ],
+          "pos": [
+            -0.01,
+            0.06,
+            0.016
+          ],
+          "rot": [
+            0,
+            0,
+            -30
+          ],
+          "color": "#4a658d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.003,
+            0.003,
+            0.39
+          ],
+          "pos": [
+            0.01,
+            0.08,
+            0.016
+          ],
+          "rot": [
+            0,
+            0,
+            84
+          ],
+          "color": "#4a658d",
+          "glow": false
+        },
+        {
+          "shape": "torus",
+          "size": [
+            0.04,
+            0.005
+          ],
+          "pos": [
+            0,
+            0.47,
+            0.01
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#b8860b",
+          "glow": false
+        }
+      ],
+      "uses": [
+        {
+          "label": "Trace the Summer Triangle",
+          "text": "I run my fingers along the painted blue lines connecting Vega, Deneb, and Altair. The tiny stars glow warmly against the midnight blue.",
+          "effect": "wonder"
+        },
+        {
+          "label": "Look at Cygnus the Swan",
+          "text": "I trace the cross shape of Cygnus flying down the Milky Way painted on the board.",
+          "effect": "calm"
+        }
+      ]
     },
-    "detail": "computer",
-    "enjoyment": 6,
+    "detail": "summer constellation wall map",
+    "enjoyment": 0,
     "new_idea": null,
     "found": null
   },
@@ -9394,9 +9993,9 @@
   "quota": {
     "day": "2026-11-23",
     "calls": {
-      "gemini-3.5-flash-lite": 35,
+      "gemini-3.5-flash-lite": 36,
       "gemini-3.8-flash": 8,
-      "gemini-3.6-flash": 5
+      "gemini-3.6-flash": 7
     },
     "out": {},
     "history": [
@@ -9479,7 +10078,7 @@
       }
     ],
     "slow": {
-      "gemini-3.8-flash": 1795429333069
+      "gemini-3.8-flash": 1795436109380
     }
   },
   "weather": {
@@ -9641,22 +10240,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-23T11:44:20.373Z",
-  "fullness": 3.5,
+  "memoryFadeAt": "2026-11-23T11:56:00.040Z",
+  "fullness": 3.33,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.66,
-  "joy": 5.39,
-  "calm": 6.03,
+  "wonder": 7.23,
+  "joy": 5.04,
+  "calm": 5.8,
   "emo": {
-    "irritated": 0.17,
+    "irritated": 1.2,
     "sad": 0,
-    "excited": 0.49
+    "excited": 0.29
   },
-  "feelAt": "2026-11-23T11:44:08.370Z",
+  "feelAt": "2026-11-23T11:52:25.110Z",
   "lastAte": "2026-11-23T09:51:17.675Z",
   "studio": {
     "songs": [
@@ -10371,26 +10970,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.92,
-    "curiosity": 0.72,
+    "creativity": 1,
+    "curiosity": 0.79,
     "boredom": 0,
-    "loneliness": 2.37,
+    "loneliness": 2.4,
     "tidiness": 1.6,
-    "at": "2026-11-23T11:44:08.370Z",
+    "at": "2026-11-23T11:52:25.110Z",
     "coziness": 3.2
   },
   "recent": {
     "moves": [
-      {
-        "move": "start_project",
-        "kind": "make",
-        "at": "2026-11-23T09:17:00.015Z"
-      },
-      {
-        "move": "move_thing",
-        "kind": "room",
-        "at": "2026-11-23T09:25:11.224Z"
-      },
       {
         "move": "do",
         "kind": "play",
@@ -10458,6 +11047,17 @@
         "move": "walk_to",
         "kind": "walk",
         "at": "2026-11-23T11:44:20.378Z"
+      },
+      {
+        "move": "decorate",
+        "kind": "make",
+        "at": "2026-11-23T11:56:00.042Z",
+        "failed": true
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-23T11:56:00.042Z"
       }
     ],
     "moods": [
@@ -10504,6 +11104,13 @@
         "move": "answer_visitor",
         "ok": true,
         "at": "2026-11-23T11:44:20.379Z"
+      },
+      {
+        "key": "do:work on my summer constellations project",
+        "move": "do",
+        "ok": false,
+        "failed": true,
+        "at": "2026-11-23T11:56:00.043Z"
       }
     ]
   },
@@ -10512,7 +11119,7 @@
     "done": {
       "eat": 3,
       "cook": 2,
-      "do": 10,
+      "do": 11,
       "move_thing": 4,
       "plan_project": 3,
       "search_web": 2,
@@ -10528,9 +11135,9 @@
       "eat": 3,
       "cook": 4,
       "change_thing": 1,
-      "do": 10,
+      "do": 11,
       "move_thing": 4,
-      "decorate": 6,
+      "decorate": 7,
       "plan_project": 3,
       "search_web": 2,
       "judge_project": 1,
@@ -10543,7 +11150,7 @@
     },
     "kinds": {
       "food": 5,
-      "play": 10,
+      "play": 11,
       "room": 4,
       "make": 6,
       "learn": 2,
@@ -10558,15 +11165,15 @@
       "energetic": 4,
       "focused": 6,
       "calm": 2,
-      "curious": 14
+      "curious": 15
     },
     "lift": {
       "eat": 1.07,
       "cook": 3.9,
       "change_thing": 0.9,
-      "do": 8.47,
+      "do": 9.01,
       "move_thing": -0.2,
-      "decorate": 3.22,
+      "decorate": 3.76,
       "search_web": 2.4,
       "play_piano": 2.1,
       "water": 1,
@@ -10608,7 +11215,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-23T11:44:20.369Z",
+    "decidedAt": "2026-11-23T11:52:39.374Z",
     "seen": {
       "tools": 8,
       "gifts": 1,
@@ -10618,7 +11225,10 @@
       "seeds": 9,
       "visitors": 6
     },
-    "lastFail": null,
+    "lastFail": {
+      "at": "2026-11-23T11:56:00.042Z",
+      "why": "decorate: summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
+    },
     "unread": 0
   },
   "fixedAt": {
@@ -10972,7 +11582,7 @@
   "ever": {
     "eat": 45,
     "water": 23,
-    "do": 319,
+    "do": 320,
     "search_web": 45,
     "read_book": 21,
     "record_song": 8,
@@ -11005,7 +11615,7 @@
     "go_out": 2
   },
   "checkup": {
-    "at": "2026-11-23T11:44:20.379Z",
+    "at": "2026-11-23T11:56:00.043Z",
     "items": [
       {
         "id": "circling",
@@ -11023,9 +11633,9 @@
         "id": "failing",
         "ok": false,
         "label": "Moves",
-        "text": "making something failed 6 of 6 times today. Last reason: there is no free place on the back wall for something about 1.744 x 1.376 m. He can use the other wall, make it smaller, or take something down. This is a wall .",
+        "text": "making something failed 7 of 7 times today. Last reason: summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or small.",
         "look": "The same reason again and again is usually a bug in the game code for this move, not Pip being clumsy. A reason that changes each time is more likely Pip learning.",
-        "debug": "move: decorate\ntried today: 6, failed: 6\nlast tries:\n- 08:04 UTC FAILED \"map of summer constellations\": there is no free place on the back wall for something about 1.888 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the b\n- 09:42 UTC FAILED \"summer constellation wall map\": there is no free place on the left wall for something about 1.888 x 1.472 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the\n- 10:02 UTC FAILED \"summer constellation map\": there is no free place on the back wall for something about 1.744 x 1.376 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the"
+        "debug": "move: decorate\ntried today: 7, failed: 7\nlast tries:\n- 08:04 UTC FAILED \"map of summer constellations\": there is no free place on the back wall for something about 1.888 x 1.6 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the b\n- 09:42 UTC FAILED \"summer constellation wall map\": there is no free place on the left wall for something about 1.888 x 1.472 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the\n- 10:02 UTC FAILED \"summer constellation map\": there is no free place on the back wall for something about 1.744 x 1.376 m. He can use the other wall, make it smaller, or take something down. This is a wall thing. A wall thing hangs on a wall (the\n- 11:56 UTC FAILED \"summer constellation wall map\": summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a w"
       },
       {
         "id": "pretend",
@@ -11039,7 +11649,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 3.5\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":3},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":2,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 3.33\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":3},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":2,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -11049,6 +11659,17 @@
       }
     ],
     "failures": [
+      {
+        "move": "making something",
+        "action": "decorate",
+        "reason": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or small",
+        "raw": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, alo",
+        "names": [
+          "summer constellation wall map"
+        ],
+        "count": 1,
+        "last": "2026-11-23T11:56:01.033Z"
+      },
       {
         "move": "cooking",
         "action": "cook",
@@ -13706,6 +14327,14 @@
   ],
   "lessons": [
     {
+      "move": "decorate",
+      "text": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on th",
+      "count": 1,
+      "at": "2026-11-23T11:56:01.033Z",
+      "firstAt": "2026-11-23T11:56:01.033Z",
+      "solvedAt": null
+    },
+    {
       "move": "cook",
       "text": "I have no basil in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: mint",
       "count": 1,
@@ -13889,14 +14518,6 @@
       "at": "2026-11-21T13:45:44.166Z",
       "firstAt": "2026-11-21T13:45:44.166Z",
       "solvedAt": "2026-11-21T15:06:05.433Z"
-    },
-    {
-      "move": "phone",
-      "text": "there is no app called \"weather\" on my phone. My apps: Lights, gear ratio simulation, gear_tooth_smoother, rain_ambience, timer-action",
-      "count": 1,
-      "at": "2026-11-21T11:54:03.140Z",
-      "firstAt": "2026-11-21T11:54:03.140Z",
-      "solvedAt": "2026-11-21T14:41:15.642Z"
     }
   ],
   "notebook": [
@@ -16742,7 +17363,6 @@
   "reportDay": "2026-11-22",
   "retryNow": null,
   "retries": [
-    "2026-11-22T11:45:57.547Z",
     "2026-11-22T15:50:40.975Z",
     "2026-11-22T20:41:45.836Z",
     "2026-11-22T21:01:17.538Z",
@@ -16751,7 +17371,8 @@
     "2026-11-23T07:32:45.547Z",
     "2026-11-23T07:43:03.742Z",
     "2026-11-23T08:04:09.342Z",
-    "2026-11-23T08:47:08.138Z"
+    "2026-11-23T08:47:08.138Z",
+    "2026-11-23T11:56:00.043Z"
   ],
   "retried": {
     "key": "cook:warm soup",
@@ -17144,5 +17765,13 @@
       "at": "2026-11-22T18:02:22.254Z"
     }
   ],
-  "prints": []
+  "prints": [],
+  "wakeSoon": {
+    "at": "2026-11-23T11:57:11.033Z",
+    "key": "decorate:summer constellation wall map",
+    "action": "decorate",
+    "name": "summer constellation wall map",
+    "why": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, alo",
+    "guide": ""
+  }
 }
