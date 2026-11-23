@@ -33,6 +33,7 @@ export const BUILDINGS = [
   { key: 'shop', name: 'Corner shop', at: [33, 0], size: [11.6, 4.4, 7.5], look: { wall: 'metal', color: '#4f9c91', door: { x: 7.4, color: '#2f5f58' }, shop: { x0: 0.8, x1: 6.2, awning: '#f2c14e', goods: ['#ef6f6c', '#f2c14e', '#8cc27a'] }, shutter: { x0: 8.6, x1: 11 }, sign: { text: 'CORNER SHOP', bg: '#fff8ee', fg: '#2f5f58', y: 3.3, x: 4.6 } }, roof: 0x3d7d74, lit: [9, 18] },
   { key: 'library', name: 'Library', at: [57, 0.4], size: [16, 7, 9], look: { wall: 'stone', color: '#e3d2b6', columns: 4, door: { x: 8, color: '#7a5237', w: 2.2, h: 3.4 }, windows: [[2.6, 1.6, 1.3, 2.6], [12.1, 1.6, 1.3, 2.6]], sign: { text: 'LIBRARY', bg: '#f1e6d2', fg: '#7a5237', y: 6.0, x: 8, size: 0.55 } }, roof: 0x8a5a3a, lit: [10, 17] },
   { key: 'workshop', name: 'Print workshop', at: [84, 0], size: [11, 5, 8], look: { wall: 'metal', color: '#9aa3a8', door: { x: 1.8, color: '#c9773c' }, shutter: { x0: 3.6, x1: 9.8 }, sign: { text: 'PRINT WORKSHOP', bg: '#2a2a2e', fg: '#f2c14e', y: 3.5, x: 6.7, size: 0.45 } }, roof: 0x5c6468, lit: [9, 18] },
+  { key: 'studio', name: 'Art workshop', at: [58, 11.5], face: 180, size: [12, 5, 8], look: { wall: 'boards', color: '#e8dcc6', door: { x: 2, color: '#e9855b' }, windows: [[4.4, 1.2, 2.2, 1.9], [8.2, 1.2, 2.2, 1.9]], sign: { text: 'PIP’S ART', bg: '#e9855b', fg: '#ffffff', y: 3.6, x: 6 } }, roof: 0xe9855b, lit: [9, 21] },
   { key: 'lina', name: 'Lina', who: 'Lina', at: [-18.5, 11.8], face: 180, low: true, size: [10.2, 4.6, 7.2], look: { wall: 'plaster', color: '#b9a4dd', door: { x: 7.8, color: '#5b3f8f' }, windows: [[1.2, 1.0, 1.6, 1.5], [4.2, 1.0, 1.6, 1.5], [1.2, 3.1, 1.3, 0.9]] }, roof: 0x5b3f8f },
 ];
 // A building's place on the ground: [x0, x1, z0, z1].
@@ -48,6 +49,28 @@ export const WALLS = [
   { key: 'wall_5', name: 'the wall by the workshop', at: [96, -1.2], len: 8 },
 ];
 export const WALL_H = 3.4;
+// ---- Where he can paint (like the tags on the walls of Pino's town). He needs no paper and no supplies for it. He picks
+// the wall himself: one of the art walls, or the back wall of any building in the street; or he leaves it open and one is
+// picked for him. `side` is the face he paints on (1: the one that looks toward the houses' backs, -1: the other).
+const BACK_NAME = { jo: 'Oma Jo’s house', mo: 'Mo’s house', home: 'my own house', bakery: 'the bakery', dot: 'Dot’s house', shop: 'the corner shop', library: 'the library', workshop: 'the print workshop' };
+export const PAINT_WALLS = [
+  { key: 'wall_1', words: /corner shop|shop/, via: ['right'] }, { key: 'wall_2', words: /park|pond/, via: ['left', 'parkGate'] }, { key: 'wall_3', words: /plot/, via: ['right'], side: -1 },
+  { key: 'wall_4', words: /long|behind/, via: ['gap', 'gapBack'] }, { key: 'wall_5', words: /workshop|print/, via: ['right', 'pastShelf'] },
+].map((t) => { const w = WALLS.find((x) => x.key === t.key); const side = t.side ?? 1; return { ...t, name: w.name, x: w.at[0], z: w.at[1] + side * 0.21, len: w.len, h: WALL_H, side, spot: [w.at[0], w.at[1] + side * 1.95] }; })
+  .concat(BUILDINGS.filter((b) => BACK_NAME[b.key]).map((b) => { const z = b.at[1] - b.size[2]; return { key: `back_${b.key}`, back: b.key, name: `the back wall of ${BACK_NAME[b.key]}`, x: b.at[0], z: z - 0.03, len: b.size[0], h: b.size[1], side: -1, spot: [b.at[0], z - 1.9], via: ['gap', 'gapBack'] }; }));
+// "the wall by the corner shop", "the back of the bakery", "any wall": the wall he means. No wall named: one of them, by `seed`.
+export function paintTarget(text, seed = 0) {
+  const norm = (v) => String(v ?? '').toLowerCase().replace(/[’']/g, '');
+  const t = norm(text);
+  const word = (w) => norm(w.name).replace(/^the back wall of (the |my own )?/, '').replace(/s house$/, ''); // "bakery", "oma jo", "house" (his own)
+  const backs = PAINT_WALLS.filter((w) => w.back);
+  const backOf = () => backs.find((w) => w.back !== 'home' && t.includes(word(w))) ?? (/\b(my|own|home)\b/.test(t) ? backs.find((w) => w.back === 'home') : null);
+  return PAINT_WALLS.find((w) => t.includes(norm(w.name)))
+    ?? (/\bback\b/.test(t) ? backOf() : null)
+    ?? PAINT_WALLS.find((w) => !w.back && w.words.test(t))
+    ?? backOf()
+    ?? PAINT_WALLS[Math.abs(Math.floor(seed)) % PAINT_WALLS.length];
+}
 const wallRect = (w) => (w.turn === 90 ? [w.at[0] - 0.25, w.at[0] + 0.25, w.at[1] - w.len / 2, w.at[1] + w.len / 2] : [w.at[0] - w.len / 2, w.at[0] + w.len / 2, w.at[1] - 0.25, w.at[1] + 0.25]);
 
 // Places Pip is seen at (x along the street, z toward the viewer; the house fronts are at z 0).
@@ -67,11 +90,17 @@ export const TOWN_SPOTS = {
   hill: { x: -65.2, z: -23.2, face: 0.5 }, // on the top, by the bench
   libFront: { x: 46, z: 3.6, face: Math.PI / 2 },
   library: { x: 57, z: 3.6, face: Math.PI }, // at the library door
+  workshop: { x: 80.3, z: 1.1, face: Math.PI }, // at the door of the print workshop
+  gap: { x: 5.55, z: 1.2, face: Math.PI }, // the alley between his house and the bakery: the way to the back of the houses
+  gapBack: { x: 5.55, z: -9.6, face: Math.PI },
+  pastShelf: { x: 89.6, z: 1.4, face: Math.PI / 2 }, // past the shelf of prints, on the way to the wall by the workshop
+  ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, { x: w.spot[0], z: w.spot[1], face: w.side > 0 ? Math.PI : 0 }])), // in front of each wall he can paint on
 };
 // Where Pip is seen for each place of his world: [the spot, 'in' when he goes inside there (then he is out of sight)].
-export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], garden: ['garden', ''], pond: ['pond', ''], hill: ['hill', ''], library: ['library', 'in'] };
+export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], garden: ['garden', ''], pond: ['pond', ''], hill: ['hill', ''], library: ['library', 'in'], workshop: ['workshop', ''], walls: ['paint_wall_1', ''] };
 // The way to each spot from his door: the corners he walks by, one after the other (the way home is the same, backwards).
-export const ROUTES = { garden: ['gate', 'gateIn'], pond: ['left', 'parkGate'], hill: ['left', 'parkGate', 'hillFoot', 'hillBend'], library: ['right', 'libFront'] };
+// (A route can also be for one spot: the way to each wall he paints on. The page looks for the spot first, then the place.)
+export const ROUTES = { garden: ['gate', 'gateIn'], pond: ['left', 'parkGate'], hill: ['left', 'parkGate', 'hillFoot', 'hillBend'], library: ['right', 'libFront'], workshop: ['right'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
 export const POND = { x: -64, z: 14, rx: 11.5, rz: 6.5 };
 export const HILL = { x: -66, z: -24, r: 21, h: 8.5 };
 // How high the ground is (the hill): street coordinates in, metres out. Everywhere else the ground is flat.
@@ -81,7 +110,9 @@ export function groundAt(lx, z) {
 }
 export const townGround = (x, z) => groundAt(x - TOWN_X, z);
 // What cannot be walked through: [x0, x1, z0, z1] (every building and wall, and the fence of Oma Jo's garden).
-const BLOCKS = [...BUILDINGS.map(rectOf), ...WALLS.map(wallRect), [-36.2, -35.4, -7.5, 0.3], [-36.2, -24.6, -7.6, -7.2], [-36.2, -26.6, -0.1, 0.25]];
+export const PRINT_SHELF = { x0: 82.3, x1: 88.1, z: 0.42, rows: [0.62, 1.32, 2.02], per: 7 }; // the shelf in front of the print workshop: 21 prints
+export const PRINT_SLOTS = PRINT_SHELF.rows.flatMap((y) => Array.from({ length: PRINT_SHELF.per }, (_, i) => [PRINT_SHELF.x0 + 0.45 + i * ((PRINT_SHELF.x1 - PRINT_SHELF.x0 - 0.9) / (PRINT_SHELF.per - 1)), y, PRINT_SHELF.z]));
+const BLOCKS = [...BUILDINGS.map(rectOf), ...WALLS.map(wallRect), [-36.2, -35.4, -7.5, 0.3], [-36.2, -24.6, -7.6, -7.2], [-36.2, -26.6, -0.1, 0.25], [PRINT_SHELF.x0 - 0.1, PRINT_SHELF.x1 + 0.1, 0, 0.8]];
 export function townBlocked(x, z, pad = 0.3) {
   const lx = x - TOWN_X;
   if (lx < WORLD.x0 + 0.4 || lx > WORLD.x1 - 0.4 || z < WORLD.z0 + 0.4 || z > WORLD.z1 - 0.4) return true; // the rim of the world
@@ -99,10 +130,11 @@ export const BUILD_MAX = { w: 20, h: 18, d: 20 };
 const KEEP_RECTS = [
   ...BUILDINGS.map((b) => { const [x0, x1, z0, z1] = rectOf(b); return [b.who && b.who !== 'Pip' ? `${b.who}’s house stands there` : b.key === 'home' ? 'my own house stands there' : `the ${b.name.toLowerCase()} stands there`, x0 - 0.6, x1 + 0.6, z0 - 0.6, z1 + 0.6]; }),
   ...WALLS.map((w) => { const [x0, x1, z0, z1] = wallRect(w); return ['my drawings hang on the wall there, and people must be able to see them', x0 - 1.6, x1 + 1.6, z0 - 1.6, z1 + 1.6]; }),
+  ...PAINT_WALLS.filter((w) => w.back).map((w) => ['I paint on that back wall, and people must be able to see it', w.x - w.len / 2, w.x + w.len / 2, w.z - 2.6, w.z]),
   ['Oma Jo’s garden is there', -36.6, -24.4, -8, 0.4], ['the pavement along the doors must stay free to walk on', -45, 92, 0.25, 2.5],
   ['the path to the pond must stay free to walk on', -71.5, -39, 0.2, 2.6],
 ];
-const TREES = [[-37.5, -5.5, 1.1], [-25.2, 10.2, 0.9], [5.5, -13.5, 0.8], [-13, 24, 1.1], [40, -5, 1.1], [39.5, 14, 0.9], [-36, 13, 1], [-30, 25, 1.2], [39, 25.5, 1], [-45, -8, 1.1], [-52, -16, 1], [-84, 2, 1.2], [-86, 18, 1], [-78, 24, 1.1], [-47, 22, 0.9], [-86, -14, 1.1], [-50, -34, 1.2], [-84, -36, 1], [-74, 8, 0.8], [47.5, -5, 1], [70, -4, 1.1], [69, 12, 1], [47, 16, 1.1], [60, 22, 1.2]];
+const TREES = [[-37.5, -5.5, 1.1], [-25.2, 10.2, 0.9], [5.5, -13.5, 0.8], [-13, 24, 1.1], [40, -5, 1.1], [39.5, 14, 0.9], [-36, 13, 1], [-30, 25, 1.2], [39, 25.5, 1], [-45, -8, 1.1], [-52, -16, 1], [-84, 2, 1.2], [-86, 18, 1], [-78, 24, 1.1], [-47, 22, 0.9], [-86, -14, 1.1], [-50, -34, 1.2], [-84, -36, 1], [-74, 8, 0.8], [47.5, -5, 1], [70, -4, 1.1], [71.5, 13, 1], [47, 16, 1.1], [68, 25, 1.2]];
 const STONES = [[-60.5, -1.5], [-61.5, -4], [-62, -6.5], [-64, -9], [-67, -11.5], [-70, -13.8], [-72, -16], [-71.2, -18.6], [-69, -20.6], [-66.8, -22.2]];
 const KEEP_ROUND = [
   ...TREES.map(([x, z, k]) => ['a tree stands there', x, z, 1.5 * k]), ...STONES.map(([x, z]) => ['the path up the hill must stay free', x, z, 1.3]),
@@ -110,7 +142,7 @@ const KEEP_ROUND = [
   ['the bench and the flag on the hilltop stand there', HILL.x + 0.8, HILL.z - 0.3, 3.4], ['the green stone stands there', -82, -6, 3], ['the sign of my plot stands there', -2.2, 12.1, 0.9],
 ];
 // The ways he walks himself (ROUTES): they stay free too, from corner to corner.
-const WALKS = Object.entries(TOWN_FOR).flatMap(([place, [spot]]) => { const pts = ['door', ...(ROUTES[place] ?? []), spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
+const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
 const inRect = (x, z, x0, x1, z0, z1, pad = 0) => x > x0 - pad && x < x1 + pad && z > z0 - pad && z < z1 + pad;
 // null when a thing with this footprint (street coordinates) can stand there, otherwise what is in the way, in his words.
 export function buildProblem(x0, x1, z0, z1) {
@@ -123,7 +155,7 @@ export function buildProblem(x0, x1, z0, z1) {
   if (x0 < PLOT.x1 + 0.3 && x1 > PLOT.x0 - 0.3 && z0 < PLOT.z1 + 0.3 && z1 > PLOT.z0 - 0.3 && !(x0 >= PLOT.x0 + 0.3 && x1 <= PLOT.x1 - 0.3 && z0 >= PLOT.z0 + 0.3 && z1 <= PLOT.z1 - 0.3)) return 'the fence of my plot runs there';
   for (const [a, b, place] of WALKS) {
     const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.6));
-    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : `the ${place}`} must stay free`;
+    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : place === 'walls' ? 'a wall I paint on' : `the ${place}`} must stay free`;
   }
   return null;
 }
@@ -164,12 +196,12 @@ const PLACE_WORDS = /\b(by|at|near|in|on|beside|next to|in front of|behind|left 
 export const worldPhrase = (text) => PLACE_WORDS.exec(String(text ?? ''))?.[0] ?? null; // "by the pond" out of a longer sentence
 export const worldWhere = (text) => /\b(outside|outdoors?)\b/i.test(String(text ?? '')) || PLACE_WORDS.test(String(text ?? ''));
 
-// Which wall a drawing hangs on, and where on it: always the same for the same drawing (from its id), so the walls do not
-// reshuffle. Returns { wall (index), u (0..1 along the wall), side (0 or 1), tilt }.
-export function artSpot(id, walls = WALLS.length) {
+// Where on its wall a painting is: always the same for the same painting (from its id), so the walls do not reshuffle.
+// Returns { n (a number made from the id), u (0..1 along the wall), tilt }.
+export function artSpot(id) {
   let h = 2166136261;
   for (const ch of String(id)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
-  return { wall: h % walls, u: ((h >>> 8) % 1000) / 1000, side: (h >>> 20) & 1, tilt: (((h >>> 24) % 100) / 100 - 0.5) * 0.14 };
+  return { n: h, u: ((h >>> 8) % 1000) / 1000, tilt: (((h >>> 24) % 100) / 100 - 0.5) * 0.14 };
 }
 
 export function buildTown(THREE) {
@@ -289,8 +321,8 @@ export function buildTown(THREE) {
   box([11.6, 0.08, 0.06], 0xfff8ee, [-30.4, 0.75, -7.4]); box([0.06, 0.08, 7.5], 0xfff8ee, [-36.2, 0.75, -3.65]); box([9.6, 0.08, 0.06], 0xfff8ee, [-31.4, 0.75, 0.1]);
   box([2.2, 1.9, 2], M(0xb98a5a, {}, 'boards', 1, 2), [-26.2, 0.95, -5.8]); box([2.5, 0.16, 2.3], M(0x7a5237, {}, 'roof'), [-26.2, 1.98, -5.8]);
 
-  // ---- walls for his drawings: bare concrete, both sides
-  const artWalls = WALLS.map((w, i) => {
+  // ---- walls for his art: bare concrete, both sides. What he paints goes on them, and on the back walls of the houses.
+  WALLS.forEach((w, i) => {
     const g = new THREE.Group();
     g.position.set(w.at[0], 0, w.at[1]);
     g.rotation.y = w.turn === 90 ? Math.PI / 2 : 0;
@@ -299,11 +331,17 @@ export function buildTown(THREE) {
     const f2 = facade({ wall: 'concrete', color: '#a39f98', plain: true, seed: 300 + i }, w.len, WALL_H);
     const edge = M(0x8d8880);
     add(new THREE.BoxGeometry(w.len, WALL_H, 0.4), [edge, edge, edge, edge, skin(f.map), skin(f2.map)], [0, WALL_H / 2, 0], g).castShadow = true;
-    const art = new THREE.Group();
-    g.add(art);
-    return { w, g, art };
   });
+  const painted = new THREE.Group(); // his paintings on the walls
+  const gallery = new THREE.Group(); // every drawing he ever made, on the outside of the art workshop
+  group.add(painted, gallery);
   const artTex = new Map(); // a drawing's picture, loaded once
+  // the shelf of the print workshop: three boards under a little roof, in front of the shutter (main.js puts his prints on it)
+  { const sh = PRINT_SHELF; const w = sh.x1 - sh.x0; const cx = (sh.x0 + sh.x1) / 2;
+    for (const y of sh.rows) box([w, 0.06, 0.62], M(0xc9a26a, {}, 'boards', 4, 1), [cx, y - 0.03, sh.z]);
+    for (const x of [sh.x0 + 0.05, cx, sh.x1 - 0.05]) for (const z of [sh.z - 0.27, sh.z + 0.27]) box([0.07, 2.75, 0.07], 0x7a5237, [x, 1.375, z]);
+    box([w + 0.3, 0.07, 0.9], M(0x5c6468, { metalness: 0.3 }, 'metal', 5, 1), [cx, 2.8, sh.z + 0.05]).rotation.x = 0.12;
+    const sg = sign('printed by Pip', 2.2, 0.36, '#2a2a2e', '#f2c14e', 60); sg.position.set(cx, 2.55, sh.z + 0.33); group.add(sg); }
 
   // ---- trees (their leaves follow the real season), lamps, poles with wires
   const leaf = se.leafOn <= 0.05 ? null : se.turn > 0.5 ? 0xd98b3a : se.blossom ? 0xf3b7c8 : 0x6fae5e;
@@ -365,24 +403,43 @@ export function buildTown(THREE) {
   }
   animate(0);
 
-  // ---- his drawings on the walls: every drawing he made is pasted on one of them (always the same wall and place for
-  // the same drawing), newer ones over older ones, like the tags on the walls of Pino's town
+  // ---- his art in the world. What he painted on a wall is on that wall (always at the same place for the same painting),
+  // newer ones over older ones, like the tags on the walls of Pino's town. And every drawing he ever made, on paper or on
+  // a wall, hangs small in a row on the outside of his art workshop: nothing gets lost when a wall is painted over.
   let hung = '';
-  function hangArt(s) {
-    const art = (Array.isArray(s?.art) ? s.art : []).filter((a) => a?.id && a.file).slice(-60);
-    const key = art.map((a) => a.id).join(',');
+  const picture = (a) => { if (!artTex.has(a.id)) artTex.set(a.id, tex(a.file)); return artTex.get(a.id); };
+  const wipe = (holder) => { for (const m of holder.children) { const i = skins.indexOf(m.material); if (i >= 0) skins.splice(i, 1); m.geometry.dispose(); m.material.dispose(); } holder.clear(); };
+  function hangArt(s, now) {
+    const all = (Array.isArray(s?.gallery) ? s.gallery : Array.isArray(s?.art) ? s.art : []).filter((a) => a?.id && a.file && !(Date.parse(a.at ?? a.createdAt) > now));
+    const key = all.map((a) => `${a.id}${a.wall ?? ''}`).join(',');
     if (key === hung) return;
     hung = key;
-    for (const w of artWalls) { for (const m of w.art.children) { const i = skins.indexOf(m.material); if (i >= 0) skins.splice(i, 1); m.geometry.dispose(); m.material.dispose(); } w.art.clear(); }
-    art.forEach((a, i) => {
-      const sp = artSpot(a.id, artWalls.length);
-      const { w, art: holder } = artWalls[sp.wall];
-      const hh = 1.5 + ((i * 37) % 10) / 12; // 1.5 to 2.3 m high
+    wipe(painted);
+    all.filter((a) => a.wall).slice(-80).forEach((a, i) => {
+      const w = PAINT_WALLS.find((x) => x.key === a.wall);
+      if (!w) return;
+      const sp = artSpot(a.id);
+      const hh = Math.min(w.h - 0.9, 1.7 + (sp.n % 9) / 10); // 1.7 to 2.5 m high
       const ww = Math.min(w.len - 0.6, hh * (Number(a.aspect) > 0 ? a.aspect : 1.33));
-      if (!artTex.has(a.id)) artTex.set(a.id, tex(a.file));
-      const m = add(new THREE.PlaneGeometry(ww, hh), skin(artTex.get(a.id), 2.2), [(sp.u - 0.5) * (w.len - ww - 0.3), 0.35 + hh / 2 + ((i * 13) % 7) / 10, (0.205 + i * 0.002) * (sp.side ? -1 : 1)], holder);
-      m.rotation.y = sp.side ? Math.PI : 0;
+      const m = add(new THREE.PlaneGeometry(ww, hh), skin(picture(a), 2.2), [w.x + (sp.u - 0.5) * (w.len - ww - 0.4), 0.4 + hh / 2 + ((sp.n >>> 4) % 5) / 10, w.z + w.side * (0.012 + i * 0.002)], painted);
+      m.rotation.y = w.side > 0 ? 0 : Math.PI;
       m.rotation.z = sp.tilt;
+    });
+    // the gallery: the newest first, on the back wall of the art workshop, then on its two side walls
+    wipe(gallery);
+    const [x0, x1, z0, z1] = rectOf(BUILDINGS.find((b) => b.key === 'studio'));
+    const cells = [];
+    const rows = [3.95, 2.95, 1.95, 0.95];
+    for (const y of rows) for (let x = x0 + 0.85; x < x1 - 0.5; x += 1.32) cells.push([x, y, z1 + 0.03, 0]);
+    for (const y of rows) for (let z = z1 - 0.85; z > z0 + 0.5; z -= 1.32) cells.push([x1 + 0.03, y, z, Math.PI / 2]);
+    for (const y of rows) for (let z = z0 + 0.85; z < z1 - 0.5; z += 1.32) cells.push([x0 - 0.03, y, z, -Math.PI / 2]);
+    const white = M(0xfffaf3);
+    [...all].reverse().slice(0, cells.length).forEach((a, i) => {
+      const [x, y, z, ry] = cells[i];
+      const asp = Number(a.aspect) > 0 ? a.aspect : 1.33;
+      const ww = Math.min(1.12, 0.84 * asp), hh = ww / asp;
+      const f = add(new THREE.PlaneGeometry(ww + 0.1, hh + 0.1), white, [x, y, z], gallery); f.rotation.y = ry;
+      const m = add(new THREE.PlaneGeometry(ww, hh), skin(picture(a), 2.4), [x + Math.sin(ry) * 0.012, y, z + Math.cos(ry) * 0.012], gallery); m.rotation.y = ry;
     });
   }
 
@@ -392,7 +449,7 @@ export function buildTown(THREE) {
   let insideNow = false;
   function update(s, now = Date.now(), hour = undefined) {
     state.weather = s?.weather ?? null;
-    hangArt(s);
+    hangArt(s, now);
     const h = Number.isFinite(hour) ? hour : hourNL(now); // (a test or a screenshot can ask for an hour)
     const dark = h < se.sunrise - 0.4 || h > se.sunset + 0.3;
     const dusk = dark || h > se.sunset - 0.9;

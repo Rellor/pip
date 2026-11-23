@@ -12,7 +12,7 @@ import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sid
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
 import { makeGrain } from './grain.js';
-import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf } from './town.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -1813,8 +1813,9 @@ function tickOutside() {
   }
   const now = Date.now();
   const phase = now < Date.parse(w.arriveAt) && !w.cut ? 'going' : now < Date.parse(w.leaveAt) ? 'there' : 'back';
-  const [name, how] = TOWN_FOR[w.place] ?? ['left', 'in'];
-  const route = ROUTES[w.place] ?? [];
+  const [name0, how] = TOWN_FOR[w.place] ?? ['left', 'in'];
+  const name = w.spot && TOWN_SPOTS[w.spot] ? w.spot : name0; // a spot of its own for this outing (the wall he paints on)
+  const route = ROUTES[name] ?? ROUTES[w.place] ?? [];
   const key = `${w.id}${phase}`;
   if (key !== outKey) {
     const fresh = !inTown(g.position.x); // he steps out of his door (or the page was opened while he is out)
@@ -2277,6 +2278,30 @@ function setPortal(on) {
   for (const o of [land.root, land.mask, sideLand.root, sideLand.mask]) o.visible = !on; // the painted view behind the glass makes way for the real world
   placeOutsideThings();
   town.update(lastState, Date.now(), forceLook.hour);
+}
+// What he printed stands on the shelf in front of the print workshop: each print small, the newest ones (the shelf holds 21).
+let printsKey = '';
+const printModels = new THREE.Group();
+town.group.add(printModels);
+function syncPrints(s) {
+  const list = (s?.prints ?? []).filter((p) => p?.id && Array.isArray(p.parts) && Date.parse(p.at) <= Date.now()).slice(-PRINT_SLOTS.length);
+  const key = list.map((p) => p.id).join(',');
+  if (key === printsKey) return;
+  printsKey = key;
+  printModels.clear();
+  list.forEach((p, i) => {
+    const g = buildDecor({ id: `print-${p.id}`, name: p.name, parts: p.parts, scale: 1, pos: [0, 0, 0], rotY: 0, kind: 'floor', at: p.at });
+    g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.scale.setScalar(1);
+    g.updateMatrixWorld(true);
+    const b = new THREE.Box3().setFromObject(g);
+    const size = b.getSize(new V3()), mid = b.getCenter(new V3());
+    const k = Math.min(0.62 / Math.max(size.x, size.z, 0.01), 0.56 / Math.max(size.y, 0.01)); // every print fits its place on the shelf
+    const [x, y, z] = PRINT_SLOTS[i];
+    g.scale.setScalar(k);
+    g.position.set(x - mid.x * k, y - b.min.y * k, z - mid.z * k);
+    g.rotation.y = 0;
+    printModels.add(g);
+  });
 }
 let walkKey = '';
 function walkPlace() {
@@ -4182,6 +4207,7 @@ function renderStatus(s) {
 }
 function render(s) {
   renderPhone(s);
+  syncPrints(s);
   syncFixedLamps(s);
   $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);

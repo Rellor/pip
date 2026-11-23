@@ -2,7 +2,7 @@
 // of his world has a spot in the street. (The drawing itself is checked by eye, in a real browser.)
 // Run: node tests/town.mjs
 import assert from 'node:assert/strict';
-import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, ROUTES, POND, HILL, WORLD_RANGE, groundAt, inTown, townBlocked, atTownDoor, buildProblem, buildPlace, WORLD, BUILDINGS, WALLS, rectOf, artSpot } from '../web/town.js';
+import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, ROUTES, POND, HILL, WORLD_RANGE, groundAt, inTown, townBlocked, atTownDoor, buildProblem, buildPlace, WORLD, BUILDINGS, WALLS, rectOf, artSpot, PAINT_WALLS, paintTarget, PRINT_SLOTS } from '../web/town.js';
 import { PLACES } from '../web/world.js';
 import { PLOT } from '../web/town.js';
 import { makeDecor, moveThing, updateDecor, storeAway, takeOut, outsideThings, sizeOf, setFurniture, setChest, MAX_OUTSIDE, isOutside, outsideChoice, outsideIn } from '../decor.js';
@@ -199,7 +199,23 @@ ok('the maker hears how big a thing can be out there');
   assert.ok(BUILDINGS.every((b) => b.look && b.size.length === 3 && b.size.every((v) => v > 1)));
   // a drawing always hangs on the same wall, at the same place, and the walls share the drawings
   const ids = Array.from({ length: 60 }, (_, i) => `artm${(i * 7919 + 13).toString(36)}${i}`);
-  for (const id of ids) { const a = artSpot(id); assert.deepEqual(artSpot(id), a); assert.ok(a.wall >= 0 && a.wall < WALLS.length && a.u >= 0 && a.u <= 1 && (a.side === 0 || a.side === 1) && Math.abs(a.tilt) <= 0.08); }
-  assert.ok(new Set(ids.map((id) => artSpot(id).wall)).size === WALLS.length, 'every wall gets some');
-  ok('buildings are blocks that stand apart inside the world, and his drawings hang on the walls, each always at its own place');
+  for (const id of ids) { const a = artSpot(id); assert.deepEqual(artSpot(id), a); assert.ok(a.u >= 0 && a.u <= 1 && Math.abs(a.tilt) <= 0.08 && Number.isInteger(a.n)); }
+  ok('buildings are blocks that stand apart inside the world, and a painting is always at its own place on its wall');
+
+  // the walls he can paint on: the art walls and the back walls of the houses; each has a spot to stand at and a free way to it
+  assert.equal(PAINT_WALLS.length, WALLS.length + 8);
+  assert.deepEqual([...new Set(PAINT_WALLS.map((w) => w.key))].length, PAINT_WALLS.length);
+  for (const w of PAINT_WALLS) {
+    const spot = TOWN_SPOTS[`paint_${w.key}`];
+    assert.ok(spot && Math.hypot(spot.x - w.x, spot.z - w.z) < 2.2, `${w.name}: he stands in front of it`);
+    const pts = ['door', ...(ROUTES[`paint_${w.key}`] ?? []), `paint_${w.key}`].map((k) => TOWN_SPOTS[k]);
+    for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.4); for (let k = 0; k <= n; k++) assert.equal(townBlocked(TOWN_X + a.x + ((b.x - a.x) * k) / n, a.z + ((b.z - a.z) * k) / n, 0.2), false, `${w.name}: the way there is blocked between corner ${i - 1} and ${i}`); }
+    assert.ok(buildProblem(spot.x - 0.5, spot.x + 0.5, spot.z - 0.5, spot.z + 0.5), `${w.name}: nothing may be built where he stands to paint`);
+  }
+  for (const [said, key] of [['the wall by the corner shop', 'wall_1'], ['the back wall of the bakery', 'back_bakery'], ['back of my house', 'back_home'], ['the long wall behind the houses', 'wall_4'], ['the wall in the park', 'wall_2'], ['the back wall of the corner shop', 'back_shop'], ['Mo’s house', 'back_mo'], ['the back of the library', 'back_library']]) assert.equal(paintTarget(said, 1).key, key, said);
+  assert.equal(new Set(Array.from({ length: 40 }, (_, i) => paintTarget('any wall', i * 7 + 1).key)).size, PAINT_WALLS.length, 'no wall named: it can be any of them');
+  { const pts = ['door', ...ROUTES.workshop, 'workshop'].map((k) => TOWN_SPOTS[k]); for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.4); for (let k = 0; k <= n; k++) assert.equal(townBlocked(TOWN_X + a.x + ((b.x - a.x) * k) / n, a.z + ((b.z - a.z) * k) / n, 0.2), false, 'the way to the print workshop'); } }
+  assert.equal(PRINT_SLOTS.length, 21);
+  for (const [x, , z] of PRINT_SLOTS) assert.equal(townBlocked(TOWN_X + x, z, 0), true, 'the shelf of prints is solid');
+  ok('he can paint on 13 walls: each has a place to stand and a free way to it, and he names it in his own words');
 }

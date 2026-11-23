@@ -31,7 +31,8 @@ import { storyTick } from './story.js';
 import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
-import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys } from './world.js';
+import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo } from './world.js';
+import { paintTarget } from './web/town.js';
 import { placeOf } from './web/world.js';
 import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
@@ -683,7 +684,7 @@ async function makeIt(s, soul, system, st) {
     const lessons = lessonsFor(s, st.action);
     const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
     const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`, st.details?.project);
-    const mctx = { spot: st.action === 'decorate' ? spotNote(s, st.details) : '', drawn: st.action === 'draw' ? drawnNote(s) : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
+    const mctx = { spot: st.action === 'decorate' ? spotNote(s, st.details) : '', drawn: st.action === 'draw' ? `${drawnNote(s)}${st.as === 'paint_wall' ? '\nTHIS ONE IS NOT FOR PAPER: I paint it big on a wall outside in my world, like a mural. So: a few strong shapes and colours that can be read from across the street, no frame and no paper edge, the whole picture filled.' : ''}` : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
     const mprompt = makerPrompt(mctx);
     if (process.env.PIP_DUMP) await appendFile(`${process.env.PIP_DUMP}.maker`, `\n\n=================== ${st.action}\n${mprompt}`);
     const think = ['make_app', 'update_app'].includes(st.action) ? { think: 'high' } : {}; // code needs the most thought
@@ -1444,7 +1445,7 @@ async function wakeUp() {
     return true;
   });
   if (!steps.length) steps.push({ action: 'rest', details: {}, thought: 'I could not do what I planned, so I rest a moment.', working_on: '', needs: '', enjoyment: 5 });
-  { const gi = steps.findIndex((x) => x.action === 'go_out'); if (gi >= 0 && gi < steps.length - 1) steps.push(...steps.splice(gi, 1)); } // going out is always the last thing he does in a wake-up: nothing happens at home while he is away
+  { const gi = steps.findIndex((x) => x.action === 'go_out' || x.as === 'paint_wall' || x.as === 'print_thing'); if (gi >= 0 && gi < steps.length - 1) steps.push(...steps.splice(gi, 1)); } // going out is always the last thing he does in a wake-up: nothing happens at home while he is away
   // A walk is short, so it takes a quarter of the time of other steps. The page uses the same weights.
   let weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1));
   let wsum = weights.reduce((a, b) => a + b, 0);
@@ -1476,6 +1477,19 @@ async function wakeUp() {
       if (kind) {
         const parts = cleanParts(st.details.parts);
         st.made = craftTool(state, st.details, kind, parts);
+        return;
+      }
+      if (st.as === 'print_thing') { // a small model for the print workshop: he walks there with his design, and it stays on the shelf there
+        const may = canGo(state, 'workshop', stepStart);
+        const parts = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: 'surface' }).parts.slice(0, 24);
+        const pname = text(st.details.name, 60);
+        if (!pname) st.made = { failed: 'he did not give it a name' };
+        else if (!parts.length) st.made = { failed: 'the shapes did not work out' };
+        else if (!may.ok) st.made = { failed: `${may.why}, so I cannot go to the print workshop now`, hinted: true };
+        else {
+          const went = startOuting(state, { job: { place: 'workshop', kind: 'print', name: pname.replace(/^(a|an|the|my)\s+/i, ''), why: text(st.details.why, 200), parts, words: `print my ${pname.replace(/^(a|an|the|my)\s+/i, '')}` } }, stepStart);
+          st.made = went.failed ? { failed: went.failed, hinted: true } : { printed: pname, outing: went, hint: `I am on my way to the print workshop with my design. I am back ${went.backWords}.` };
+        }
         return;
       }
       const out = isOutside(st.details.where);
@@ -1762,6 +1776,7 @@ async function wakeUp() {
   let updatedApp = false;
   for (const [i, st] of steps.entries()) {
     const d = st.details;
+    const stepStart = startedAt + offsets[i];
     const name = text(d.name, 60);
     if (st.action === 'compose') st.made = composeSong(state.decor, d.name, d.song);
     if (st.action === 'record_song') {
@@ -1777,7 +1792,8 @@ async function wakeUp() {
         st.made = { recording: rec };
       }
     }
-    if (st.action === 'draw' && missingTool(state, 'draw')) st.made = { failed: missingTool(state, 'draw') };
+    const onWall = st.action === 'draw' && st.as === 'paint_wall'; // big, on a wall outside: no paper, no supplies
+    if (st.action === 'draw' && !onWall && missingTool(state, 'draw')) st.made = { failed: missingTool(state, 'draw') };
     else if (st.action === 'draw') {
       const clean = cleanSvg(d.svg);
       const art = clean ? { ...clean, svg: sketchStyle(clean.svg, Date.now() % 97) } : null; // drawn in his sketchbook style (art.js)
@@ -1786,15 +1802,23 @@ async function wakeUp() {
       else if (!name) st.made = { failed: 'he did not give it a name' };
       else if (today >= MAX_ART_PER_DAY) st.made = { failed: 'he has already drawn enough for today' };
       else if (!art) st.made = { failed: 'the drawing did not work out' };
+      else if (onWall && !canGo(state, 'walls', stepStart).ok) st.made = { failed: `${canGo(state, 'walls', stepStart).why}, so I cannot go out to paint now`, hinted: true };
       else {
         drew = true;
         const id = `art${Date.now().toString(36)}${state.art.length}`;
         const file = `made/${id}.svg`;
         await mkdir('web/made', { recursive: true });
         await writeFile(`web/${file}`, art.svg);
-        state.art = [...state.art, { id, name, why: text(d.why, 200), file, aspect: art.aspect, mood: text(state.mood, 30) || null, createdAt: new Date().toISOString() }].slice(-30); // like Pino: each drawing keeps the mood he drew it in
-        const placed = placePicture(state.decor, { id, image: file, caption: name, aspect: art.aspect }, d.where, startedAt + offsets[i], Date.now(), ART_MAX, d);
-        if (placed.entry) {
+        const target = onWall ? paintTarget(d.wall, Date.now()) : null; // the wall he named, or one picked for him
+        state.art = [...state.art, { id, name, why: text(d.why, 200), file, aspect: art.aspect, mood: text(state.mood, 30) || null, createdAt: new Date().toISOString(), ...(target ? { wall: target.key } : {}) }].slice(-30); // like Pino: each drawing keeps the mood he drew it in
+        state.gallery = [...(state.gallery ?? []), { id, name, file, aspect: art.aspect, at: new Date().toISOString(), ...(target ? { wall: target.key } : {}) }].slice(-400); // everything he ever drew: kept at his art workshop
+        const went = target ? startOuting(state, { job: { place: 'walls', kind: 'paint', art: id, name, wall: target.key, wallName: target.name, spot: `paint_${target.key}`, words: `paint "${name}" on ${target.name}` } }, stepStart) : null;
+        if (went?.failed) for (const a of [state.art.at(-1), state.gallery.at(-1)]) delete a.wall; // he could not go after all: it is a drawing in his album
+        else if (went) state.gallery.at(-1).at = new Date((Date.parse(state.where.arriveAt) + Date.parse(state.where.leaveAt)) / 2).toISOString(); // it is on the wall when he has been painting there for a while
+        if (target) { st.made = went.failed ? { drawn: name, image: file, hint: `I could not go out to paint it (${went.failed}), so it is a drawing in my album` } : { drawn: name, image: file, painted: target.name, outing: went, hint: `I am on my way to ${target.name} to paint it there. I am back ${went.backWords}.` }; }
+        const placed = target ? { failed: 'on a wall outside' } : placePicture(state.decor, { id, image: file, caption: name, aspect: art.aspect }, d.where, startedAt + offsets[i], Date.now(), ART_MAX, d);
+        if (target) {} // painted outside: nothing to hang in his room
+        else if (placed.entry) {
           Object.assign(placed.entry, { art: id, name, why: text(d.why, 200) });
           state.decor.push(placed.entry);
           st.made = placed;
@@ -2097,7 +2121,7 @@ async function wakeUp() {
     if (st.action === 'take_down_picture') Object.assign(entry, { name: text(d.id, 20), removed: st.made?.removed ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'record_song') Object.assign(entry, { name: text(d.name, 60), tempo: st.made?.recording?.tempo ?? null, tracks: st.made?.recording?.tracks ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'compose') Object.assign(entry, { name: text(d.name, 60), song: st.made?.song ?? null, failed: st.made?.failed ?? null });
-    if (st.action === 'draw') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), image: st.made?.entry?.image ?? st.made?.image ?? null, place: withWarn(st.made?.entry?.label ?? (st.made?.drawn ? 'in my album' : null), st.made), failed: st.made?.failed ?? null });
+    if (st.action === 'draw') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), image: st.made?.entry?.image ?? st.made?.image ?? null, place: withWarn(st.made?.entry?.label ?? (st.made?.painted ? `on ${st.made.painted}, outside` : st.made?.drawn ? 'in my album' : null), st.made), failed: st.made?.failed ?? null });
     if (st.action === 'make_app') Object.assign(entry, { name: text(d.name, 60), why: text(d.why, 200), file: st.made?.app?.file ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'use') Object.assign(entry, { verdict: text(d.verdict, 240) || null, testNote: st.testNote ?? null });
     if (st.action === 'use') Object.assign(entry, { name: st.made?.used?.name ?? text(d.name, 60), label: st.made?.used?.label ?? text(d.label, 30), text: st.made?.used?.text ?? '', view: st.made?.used?.view ?? null, song: st.made?.used?.song ?? null, app: st.made?.used?.app ?? null, failed: st.made?.failed ?? null });
@@ -2107,7 +2131,7 @@ async function wakeUp() {
     if (st.action === 'make_move') Object.assign(entry, { name: st.made?.move?.name ?? text(d.name, 40), why: text(d.why, 200), frames: st.made?.move?.frames?.length ?? 0, failed: st.made?.failed ?? null });
     if (st.action === 'do' && text(d.move, 60) && !findMove(state, d.move)) entry.failed = `I have no move called "${text(d.move, 60)}". I design one first with make_move`;
     if (st.action === 'do') Object.assign(entry, { move: findMove(state, d.move)?.name ?? null, emoji: [...text(d.emoji, 12)].slice(0, 2).join(''), what: text(d.what, 160), feeling: ['fullness', 'energy', 'wonder', 'joy', 'calm'].includes(d.feeling) ? d.feeling : null });
-    if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: withWarn(st.made?.entry?.label ?? (st.made?.stored ? 'in my chest' : null), st.made), tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
+    if (st.action === 'decorate') Object.assign(entry, { uses: (st.made?.entry?.uses ?? []).map((u) => u.label), song: st.made?.entry?.song ?? null, project: text(d.project, 80), name: text(d.name, 60), why: text(d.why, 200), place: withWarn(st.made?.entry?.label ?? (st.made?.printed ? 'at the print workshop, on my shelf of prints' : st.made?.stored ? 'in my chest' : null), st.made), tool: st.made?.tool?.name ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, side: st.made?.side ?? null, joined: st.made?.joined ?? null, place: withWarn(st.made?.entry?.label ?? null, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'move_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), place: withWarn(st.made?.label ?? (st.made?.chest ? 'in a new place' : null), st.made), failed: st.made?.failed ?? null });
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, place: withWarn(st.made?.label ?? null, st.made), failed: st.made?.failed ?? null });

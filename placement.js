@@ -153,6 +153,7 @@ export function spotNote(s, details = {}) {
   const said = `${details.name ?? ''} ${details.what ?? ''}`.trim();
   if (!said) return '';
   const lines = [];
+  if (details.print) return 'WHERE IT WILL GO: to the print workshop. My 3D printer there prints it small, about as big as my hand, and it stays there on my shelf of prints for everyone to see. So I design a little model: one clear shape that can be told from far (an animal, a tool, a tiny building, a toy), from 4 to 14 parts, in one or two colours of plastic. It needs a flat foot to stand on. I leave "where" as it is.';
   if (isOutside(details.where) || saysOutside(said)) { // out in his world: he picks the place himself, and it can be big
     const n = outsideThings(decor).length;
     const places = outsidePlaces([...new Set([...unlockedKeys(s), ...knownKeys(s)])]).filter((x) => x !== 'on my plot');

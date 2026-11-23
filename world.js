@@ -84,7 +84,7 @@ export const thingsNow = (s, p, now = Date.now()) => [...(p.things ?? [])].sort(
 export function goOptions(s, now = Date.now()) {
   if (process.env.PIP_NO_OUT) return []; // tests of other things keep him in
   const done = (key) => (s.outings ?? []).filter((o) => o.place === key).length;
-  return PLACES.filter((p) => p.key !== 'home' && !p.errand && canGo(s, p.key, now).ok)
+  return PLACES.filter((p) => p.key !== 'home' && !p.errand && !p.job && canGo(s, p.key, now).ok)
     .sort((a, b) => done(a.key) - done(b.key) || a.walk - b.walk)
     .map((p) => ({ key: p.key, name: p.name, walk: p.walk, words: thingsNow(s, p, now).slice(0, 3).map((t) => t.words) }));
 }
@@ -121,7 +121,9 @@ export function startOuting(s, details = {}, now = Date.now()) {
   if (process.env.PIP_NO_OUT) return { failed: 'I stay in today' };
   const d = details && typeof details === 'object' ? details : {};
   const options = goOptions(s, now);
-  let p = d.errand ? placeOf('shop') : findPlace(d.place) ?? findPlace(d.where) ?? findPlace(d.what) ?? findPlace(d.name);
+  const job = d.job && typeof d.job === 'object' && placeOf(d.job.place)?.job ? d.job : null; // something he designed, to be made there: a print, a painting on a wall
+  let p = job ? placeOf(job.place) : d.errand ? placeOf('shop') : findPlace(d.place) ?? findPlace(d.where) ?? findPlace(d.what) ?? findPlace(d.name);
+  if (p?.job && !job) p = null; // nothing to do there without a design
   if (!p && !d.errand) p = options[0] ? placeOf(options[0].key) : null;
   if (!p) return { failed: `I cannot go out right now${options.length ? '' : ` (${canGo(s, 'pond', now).why ?? 'nowhere is open'})`}` };
   const may = canGo(s, p.key, now);
@@ -129,7 +131,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
   const things = thingsNow(s, p, now);
   const said = String(d.what ?? '').toLowerCase();
   const before = (s.outings ?? []).filter((o) => o.place === p.key).map((o) => o.thing);
-  const thing = p.errand ? null : things.find((t) => said && t.match.test(said)) ?? [...things].sort((a, b) => before.filter((k) => k === a.key).length - before.filter((k) => k === b.key).length)[0] ?? null;
+  const thing = p.errand || job ? null : things.find((t) => said && t.match.test(said)) ?? [...things].sort((a, b) => before.filter((k) => k === a.key).length - before.filter((k) => k === b.key).length)[0] ?? null;
   const rnd = dice(`${p.key}${Math.floor(now / MIN)}`);
   const [a, b] = p.stay ?? [5, 5];
   let stay = Math.round(a + rnd() * (b - a));
@@ -137,7 +139,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
   const room = (latest - hourNL(now)) * 60 - 2 * p.walk;
   stay = Math.max(4, Math.min(stay, Math.floor(room), MAX_AWAY_MIN - 2 * p.walk));
   const id = `o${Math.floor(now / 1000).toString(36)}`;
-  s.where = { id, place: p.key, thing: thing?.key ?? null, words: thing?.words ?? (d.errand ? `buy ${d.errand}` : 'look around'), leftAt: new Date(now).toISOString(), arriveAt: new Date(now + p.walk * MIN).toISOString(), leaveAt: new Date(now + (p.walk + stay) * MIN).toISOString(), homeAt: new Date(now + (2 * p.walk + stay) * MIN).toISOString(), ...(d.errand ? { errand: String(d.errand).slice(0, 40) } : {}) };
+  s.where = { id, place: p.key, thing: thing?.key ?? null, words: job?.words ?? thing?.words ?? (d.errand ? `buy ${d.errand}` : 'look around'), leftAt: new Date(now).toISOString(), arriveAt: new Date(now + p.walk * MIN).toISOString(), leaveAt: new Date(now + (p.walk + stay) * MIN).toISOString(), homeAt: new Date(now + (2 * p.walk + stay) * MIN).toISOString(), ...(d.errand ? { errand: String(d.errand).slice(0, 40) } : {}), ...(job ? { job, ...(job.spot ? { spot: job.spot } : {}) } : {}) };
   return { ok: true, place: p.key, name: p.name, words: s.where.words, back: s.where.homeAt, backWords: `around ${hm(now + (2 * p.walk + stay) * MIN)}` };
 }
 
@@ -240,6 +242,21 @@ export function finishOuting(s, now = Date.now()) {
     o.did = `At the library I found a book about ${topic.toLowerCase()} and read it at the big table by the window. It was so quiet I could hear the pages.`;
     o.saw = 'the reading table at the library';
     up(s, 'wonder', 1.5); up(s, 'calm', 0.8); up(s, 'energy', -0.6); up(s, 'boredom', -2);
+  } else if (p.key === 'workshop') { // his design is printed and stays on the shelf there
+    const j = w.job ?? {};
+    (s.prints ??= []).push({ id: `pr${w.id}`, name: String(j.name ?? 'a small thing').slice(0, 60), why: String(j.why ?? '').slice(0, 200), parts: Array.isArray(j.parts) ? j.parts : [], at: w.arriveAt });
+    s.prints = s.prints.slice(-60);
+    o.made = { kind: 'print', name: j.name };
+    o.did = `At the print workshop I watched the printer build my ${j.name}, one thin layer on top of the other. It is small and still warm. I put it on the shelf by the door, with my other prints.`;
+    o.saw = 'the printer at work';
+    up(s, 'joy', 1.3); up(s, 'wonder', 0.9); up(s, 'calm', 0.4); up(s, 'energy', -0.6);
+  } else if (p.key === 'walls') { // the painting he designed is on the wall now, for everyone to see
+    const j = w.job ?? {};
+    o.made = { kind: 'paint', name: j.name, wall: j.wall, on: j.wallName };
+    o.did = `I painted "${j.name}" on ${j.wallName ?? 'a wall'}, big, with my whole arm. ${pick(rnd, ['My hands are full of paint.', 'I stepped back three times to look at it.', 'A sparrow watched me the whole time.', 'The paint ran a little, and I let it.'])}`;
+    o.saw = `my painting on ${j.wallName ?? 'the wall'}`;
+    if (rnd() < 0.4) { const who = PEOPLE.filter((n) => awake(n, h)); if (who.length) { const n = pick(rnd, who); meet(n.name, `${n.name} came by and stood looking at it for a while.`, 0.3); } }
+    up(s, 'joy', 1.5); up(s, 'calm', 0.6); up(s, 'energy', -1);
   } else if (p.key === 'hill') {
     const late = h >= se.sunset - 0.6;
     if (w.thing === 'kite') { o.did = 'I flew my kite from the top of the hill. It pulled on the string like something alive.'; up(s, 'joy', 1.6); o.saw = 'my kite over the hill'; }
@@ -249,6 +266,7 @@ export function finishOuting(s, now = Date.now()) {
     up(s, 'wonder', 1.8); up(s, 'calm', 1); up(s, 'joy', 0.6); up(s, 'energy', -1.3);
   }
   if (w.cut && reached && !w.errand) o.did += ` I went home early, because ${w.cut}.`;
+  if (!reached && w.job?.kind === 'paint') for (const list of [s.art, s.gallery]) { const a = (list ?? []).find((x) => x.id === w.job.art); if (a) delete a.wall; } // he never got to the wall: it stays a drawing in his album
   up(s, 'boredom', -2.5);
   for (const f of o.found) { (s.finds ??= []).push({ name: f.name, emoji: f.emoji, from: p.key, at }); if (f.topic) noteSpark(s, { topic: f.topic, text: `I found ${f.name} at ${p.name}.`, from: 'outing' }, now); }
   s.finds = (s.finds ?? []).slice(-60);
