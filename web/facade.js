@@ -95,6 +95,14 @@ export function makeFacades(THREE) {
       rect(x - dw / 2 + 0.12, dh * 0.52, dw - 0.24, dh * 0.38, css(d, 0.82)); rect(x - dw / 2 + 0.12, 0.14, dw - 0.24, dh * 0.3, css(d, 0.82)); // panels
       rect(x + dw / 2 - 0.2, dh * 0.45, 0.08, 0.08, '#f2d08a');
       rect(x - dw / 2 - 0.2, 0, dw + 0.4, 0.1, css([200, 195, 188])); // the step
+      if (spec.door.plate) { // a small nameplate beside the door, the way a real house has one
+        g.font = `700 ${Math.max(6, Math.round(0.17 * ky))}px system-ui, sans-serif`;
+        const pw = g.measureText(spec.door.plate).width / kx + 0.14;
+        const px = x + dw / 2 + 0.22;
+        rect(px, 1.32, pw, 0.24, css([222, 214, 198]));
+        rect(px, 1.32, pw, 0.03, 'rgba(0,0,0,.25)');
+        g.fillStyle = '#3b2f2a'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(spec.door.plate, X(px + pw / 2), Y(1.44) + 1);
+      }
     }
     if (spec.sign) { // a painted board with its name
       const { text, bg = '#fffaf3', fg = '#4a3d35', y = Math.min(h - 0.95, 3.2), x = w / 2, size = 0.5 } = spec.sign;

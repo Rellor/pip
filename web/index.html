@@ -75,8 +75,56 @@
   body.walking #rooms { display:none; }
   /* always first person: no views from above, and a little round map in the corner with a circle where Pip is (tap it to go to him) */
   body.first #walk, body.first #rooms, body.first #resetview { display:none; }
-  .setrow { display:flex; align-items:center; gap:10px; font-size:16px; font-weight:600; padding:6px 0 2px; cursor:pointer; }
-  .setrow input { width:20px; height:20px; flex:none; }
+  /* Settings: a card for each thing, big choices to tap, switches instead of small boxes */
+  .setcard { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:14px 16px; margin-bottom:12px; }
+  .setcard h3 { margin:0 0 8px; font-size:17px; display:flex; align-items:center; gap:8px; }
+  .setem { font-size:20px; line-height:1; }
+  .setsub { margin:0 0 8px; font-size:15px; font-weight:600; }
+  .setcard .muted { font-size:14px; margin:0 0 10px; }
+  .setpick { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .setpick button { display:flex; flex-direction:column; align-items:center; gap:3px; padding:12px 8px; border:2px solid var(--line); border-radius:14px; background:var(--panel); color:var(--ink); font:inherit; cursor:pointer; text-align:center; }
+  .setpick button b { font-size:16px; }
+  .setpick button small { font-size:13px; color:var(--muted); line-height:1.35; }
+  .setpick button .setem { font-size:26px; }
+  .setpick button:hover { border-color:var(--accent); }
+  .setpick button.on { border-color:var(--accent); background:rgba(233,133,91,.14); box-shadow:inset 0 0 0 1px var(--accent); }
+  .setpick button.on b::after { content:' ✓'; color:var(--accent); }
+  .setkeys { list-style:none; margin:10px 0 2px; padding:0; display:grid; gap:5px; font-size:14px; }
+  .setkeys li { display:flex; align-items:baseline; gap:8px; color:var(--muted); }
+  .setkeys b { flex:none; min-width:92px; color:var(--ink); background:var(--chip); border-radius:7px; padding:1px 8px; font-size:13px; text-align:center; }
+  .setswitch { display:flex; align-items:center; gap:12px; padding:12px 0 4px; margin-top:10px; border-top:1px solid var(--line); cursor:pointer; }
+  .setcard > .setswitch:first-of-type:nth-child(2) { border-top:0; margin-top:0; padding-top:2px; }
+  .setswitch span { flex:1; min-width:0; }
+  .setswitch b { display:block; font-size:15px; }
+  .setswitch small { display:block; color:var(--muted); font-size:13px; line-height:1.4; }
+  .setswitch input { position:absolute; opacity:0; width:1px; height:1px; }
+  .setswitch i { flex:none; width:46px; height:27px; border-radius:14px; background:var(--line); position:relative; transition:background .15s; }
+  .setswitch i::after { content:''; position:absolute; left:3px; top:3px; width:21px; height:21px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.3); transition:transform .15s; }
+  .setswitch input:checked + i { background:var(--accent); }
+  .setswitch input:checked + i::after { transform:translateX(19px); }
+  .setswitch input:focus-visible + i { outline:2px solid var(--accent); outline-offset:2px; }
+  .setlink { margin-top:12px; background:transparent; color:var(--muted); border:1px solid var(--line); }
+  #setlock { display:flex; gap:8px; }
+  #setlock input { flex:1; min-width:0; }
+  /* what you look at and can open: a small prompt under the middle of the picture (F, or tap it) */
+  #interact { position:absolute; left:50%; top:60%; transform:translateX(-50%); z-index:3; display:flex; align-items:center; gap:8px; max-width:min(80%, 340px); padding:7px 14px 7px 8px; border-radius:999px; border:0; background:rgba(45,37,33,.82); color:#fff; font-size:15px; font-weight:600; box-shadow:0 2px 10px rgba(0,0,0,.3); cursor:pointer; }
+  #interact[hidden] { display:none; }
+  #interact kbd { flex:none; min-width:26px; height:26px; display:grid; place-items:center; border-radius:8px; background:#fffaf3; color:#3b2f2a; font:700 14px system-ui, sans-serif; box-shadow:0 2px 0 rgba(0,0,0,.35); }
+  #interact span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  @media (hover:none), (pointer:coarse) { #interact kbd { display:none; } #interact { padding-left:14px; } #interact span::before { content:'👆 '; } }
+  /* the first time: a card in the middle of the picture that asks how you want to turn */
+  #start { position:absolute; inset:0; z-index:6; display:grid; place-items:center; padding:16px; background:rgba(40,30,25,.45); }
+  #start[hidden] { display:none; }
+  .startcard { width:min(460px, 100%); max-height:100%; overflow:auto; background:var(--panel); color:var(--ink); border-radius:20px; padding:20px 20px 16px; box-shadow:0 12px 40px rgba(0,0,0,.35); }
+  .startcard h2 { margin:0 0 6px; font-size:22px; text-transform:none; letter-spacing:0; color:var(--ink); font-weight:700; }
+  .startlead { margin:0 0 12px; font-size:16px; }
+  .setpick.big button { padding:16px 8px; }
+  .setpick.big button .setem { font-size:34px; }
+  .setpick.big button b { font-size:18px; }
+  .startfoot { margin:14px 0 0; font-size:13px; color:var(--muted); text-align:center; line-height:1.5; }
+  #startgo { width:100%; margin-top:12px; padding:12px; font-size:17px; font-weight:700; border-radius:14px; background:var(--accent); border-color:var(--accent); color:#fff; }
+  .touchonly { display:none; }
+  @media (hover:none), (pointer:coarse) { .touchonly { display:block; } .mouseonly { display:none !important; } }
   /* while the mouse turns the view, a small dot in the middle shows what a click will tap */
   #aim { position:absolute; left:50%; top:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:rgba(255,255,255,.9); box-shadow:0 0 0 2px rgba(0,0,0,.35); z-index:3; pointer-events:none; }
   #stage #minimap { position:absolute; left:12px; top:12px; width:110px; height:110px; z-index:3; border-radius:50%; box-shadow:0 2px 12px rgba(0,0,0,.3); cursor:pointer; }
@@ -374,6 +422,23 @@
     <div id="hint"></div>
     <button id="walk" class="stagebtn" type="button">🚶 Walk around</button>
     <div id="aim" hidden></div>
+    <button id="interact" type="button" hidden><kbd>F</kbd><span></span></button>
+    <div id="start" hidden role="dialog" aria-modal="true" aria-labelledby="starttitle">
+      <div class="startcard">
+        <h2 id="starttitle">Welcome to Pip’s world</h2>
+        <p class="startlead mouseonly">You walk around here yourself. How do you want to turn?</p>
+        <div class="setpick big mouseonly" data-pick="start" role="radiogroup" aria-label="How you turn">
+          <button type="button" data-turn="keys" role="radio"><span class="setem">⌨️</span><b>Keys</b><small>W S walk<br>A D turn<br>drag to look up and down</small></button>
+          <button type="button" data-turn="mouse" role="radio"><span class="setem">🖱️</span><b>Mouse</b><small>W S walk<br>the mouse turns<br>Esc gives your mouse back</small></button>
+        </div>
+        <div class="touchonly">
+          <p class="startlead">You walk around here yourself.</p>
+          <ul class="setkeys"><li><b>The round stick</b> walk</li><li><b>Drag</b> look around</li><li><b>Tap a thing</b> read about it</li></ul>
+          <button type="button" id="startgo">Start</button>
+        </div>
+        <p class="startfoot">The round map shows where Pip is. Tap it to go to him.<br>You can change this later in Settings ⚙️.</p>
+      </div>
+    </div>
     <canvas id="minimap" width="220" height="220" hidden role="button" tabindex="0" title="Tap to go to Pip" aria-label="Map of Pip's world. Tap to go to Pip."></canvas>
     <div id="away" class="awaychip" hidden role="status"></div>
     <div id="stick" hidden><div id="knob"></div></div>
@@ -483,32 +548,47 @@
       </div>
     </section>
     <section class="pane" data-pane="settings" hidden>
-      <h2>Settings</h2>
       <div class="err" id="err" style="padding:0 0 8px"></div>
-      <h2>Looking around</h2>
-      <label class="setrow"><input type="checkbox" id="mouselook"> Turn by moving the mouse</label>
-      <p class="muted">Off: you drag to look. On: click the picture once, then the view turns with your mouse, left and right, up and down. Press Esc to get your mouse back. (For a computer with a mouse.)</p>
-      <label class="setrow"><input type="checkbox" id="viewbob"> Bob a little while walking</label>
-      <p class="muted">The view goes gently up and down with your steps.</p>
-      <h2>For whoever looks after Pip</h2>
-      <p class="muted">Enter the reply key here once: it then works for every button (messages, tasks, fronts) on this device.</p>
-      <div id="setlock">
-        <input id="setkey" type="password" autocomplete="off" placeholder="Your reply key">
-        <button type="button" class="small" id="setunlock">Unlock</button>
+      <div class="setcard">
+        <h3><span class="setem">🎮</span> Looking around</h3>
+        <p class="setsub mouseonly">How do you turn?</p>
+        <div class="setpick mouseonly" data-pick="turn" role="radiogroup" aria-label="How you turn">
+          <button type="button" data-turn="keys" role="radio"><span class="setem">⌨️</span><b>Keys</b><small>A and D turn</small></button>
+          <button type="button" data-turn="mouse" role="radio"><span class="setem">🖱️</span><b>Mouse</b><small>the mouse turns</small></button>
+        </div>
+        <ul class="setkeys" id="controls"></ul>
+        <label class="setswitch"><span><b>View bobbing</b><small>The view goes gently up and down with your steps.</small></span><input type="checkbox" id="viewbob"><i aria-hidden="true"></i></label>
+        <button type="button" class="small setlink" id="showstart">Show the start screen again</button>
       </div>
-      <p class="muted" id="setstatus"></p>
+      <div class="setcard">
+        <h3><span class="setem">🔑</span> For whoever looks after Pip</h3>
+        <p class="muted" id="sethint">Enter the reply key once. Then every button works on this device: messages, tasks and the checks below.</p>
+        <div id="setlock">
+          <input id="setkey" type="password" autocomplete="off" placeholder="Your reply key">
+          <button type="button" id="setunlock">Unlock</button>
+        </div>
+        <p class="muted" id="setstatus"></p>
+      </div>
       <div id="setpanel" hidden>
-        <h2>Check-up</h2>
-        <p class="muted">Simple checks on how Pip spends his days, after every wake-up. A new problem also goes to your phone, once a day. Tap "Details for fixing" to see the facts, and copy them to Claude.</p>
-        <ul id="checkup" class="checkup"></ul>
-        <h2>Keeps going wrong</h2>
-        <p class="muted">Moves that failed in the last day, grouped by reason. A number above 1 means the same error repeats.</p>
-        <ul id="failgroups" class="checkup"></ul>
-        <h2>Error log</h2>
-        <p class="muted">Every wake-up that went wrong, newest first. Tap one for details.</p>
-        <div id="errlog"></div>
-        <label><input type="checkbox" id="teachfront"> Teach Pip the front of things</label>
-        <p class="muted">When this is on, tap a piece of furniture, his chest or something he made. A card asks which side of the room its front faces. Pip learns it at his next wake-up. Turn it off to look around as usual.</p>
+        <div class="setcard">
+          <h3><span class="setem">🩺</span> Check-up</h3>
+          <p class="muted">Simple checks on how Pip spends his days, after every wake-up. A new problem also goes to your phone, once a day. Tap "Details for fixing" to see the facts, and copy them to Claude.</p>
+          <ul id="checkup" class="checkup"></ul>
+        </div>
+        <div class="setcard">
+          <h3><span class="setem">🔁</span> Keeps going wrong</h3>
+          <p class="muted">Moves that failed in the last day, grouped by reason. A number above 1 means the same error repeats.</p>
+          <ul id="failgroups" class="checkup"></ul>
+        </div>
+        <div class="setcard">
+          <h3><span class="setem">📋</span> Error log</h3>
+          <p class="muted">Every wake-up that went wrong, newest first. Tap one for details.</p>
+          <div id="errlog"></div>
+        </div>
+        <div class="setcard">
+          <h3><span class="setem">🧭</span> Teaching</h3>
+          <label class="setswitch"><span><b>Teach Pip the front of things</b><small>Tap a piece of furniture, his chest or something he made. A card asks which side its front faces. Pip learns it at his next wake-up.</small></span><input type="checkbox" id="teachfront"><i aria-hidden="true"></i></label>
+        </div>
       </div>
     </section>
 

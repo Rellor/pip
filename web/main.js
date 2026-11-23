@@ -61,6 +61,7 @@ function applyPixels() {
   renderer.setPixelRatio(outside ? Math.max(0.2, Math.min(1, (view.mode === 'walk' ? 460 : 760) / w)) : Math.min(devicePixelRatio, 1.5));
 }
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
+let turnWithMouse = false; // Settings: the mouse turns the view (then A and D step sideways); otherwise A and D turn
 const bob = { walked: 0, moving: false, k: 0 }; // how far you walked (for the bobbing of the view), and how much it shows right now
 let portalOn = false; // the world stands right outside his windows while you are inside his home (see setPortal)
 let portalReady = false;
@@ -2228,7 +2229,10 @@ function blocked(x, z) {
 function updateWalk(dt) {
   if (view.mode !== 'walk') return;
   const fwd = (view.keys.has('w') || view.keys.has('arrowup') ? 1 : 0) - (view.keys.has('s') || view.keys.has('arrowdown') ? 1 : 0) + view.stick.y;
-  const side = (view.keys.has('d') || view.keys.has('arrowright') ? 1 : 0) - (view.keys.has('a') || view.keys.has('arrowleft') ? 1 : 0) + view.stick.x;
+  // A and D (or the arrows left and right) turn you, like in Pino's town. When the mouse turns the view, they step sideways instead.
+  const keyX = (view.keys.has('d') || view.keys.has('arrowright') ? 1 : 0) - (view.keys.has('a') || view.keys.has('arrowleft') ? 1 : 0);
+  if (!turnWithMouse) view.yaw -= keyX * 1.9 * dt;
+  const side = (turnWithMouse ? keyX : 0) + view.stick.x;
   const len = Math.hypot(fwd, side);
   bob.moving = false;
   if (len > 0.05) {
@@ -2707,6 +2711,7 @@ function pickAt(clientX, clientY) {
   for (const h of ray.intersectObjects(scene.children, true)) {
     if (h.object.isSprite || h.object.isPoints || !shown(h.object)) continue;
     const found = infoFor(h);
+    if (found) found.dist = h.distance; // how far away it is (for the F prompt: only what is close)
     if (found?.direct) return found;
     if (found) { place = found; break; }
     if (!h.object.material?.transparent) break; // the first solid thing hides what is behind it
@@ -2988,11 +2993,39 @@ $('teachfront').addEventListener('change', (e) => store('pip-teach', e.target.ch
 // turning by moving the mouse (off unless it is switched on here), and bobbing with your steps (on, unless the device asks for less motion).
 function mouseLook() { return store('pip-mouselook') === '1'; }
 function viewBob() { const v = store('pip-bob'); return v ? v === '1' : !matchMedia('(prefers-reduced-motion: reduce)').matches; }
-$('mouselook').checked = mouseLook();
+const touchOnly = matchMedia('(hover: none), (pointer: coarse)').matches;
+function showTurn() { // the two choices (in Settings and on the start screen) and the list of controls follow what is chosen
+  turnWithMouse = mouseLook();
+  document.querySelectorAll('.setpick [data-turn]').forEach((b) => { const on = (b.dataset.turn === 'mouse') === turnWithMouse; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); });
+  const rows = touchOnly ? [['The round stick', 'walk'], ['Drag', 'look around'], ['Tap a thing', 'read about it'], ['Tap the round map', 'go to Pip']]
+    : turnWithMouse ? [['W  S', 'walk'], ['A  D', 'step sideways'], ['Mouse', 'turn and look (click the picture first)'], ['Esc', 'get your mouse back'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']]
+    : [['W  S', 'walk'], ['A  D', 'turn'], ['Drag', 'look up and down'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']];
+  $('controls').replaceChildren(...rows.map(([k, what]) => { const li = el('li'); li.append(el('b', k), document.createTextNode(what)); return li; }));
+}
+function setTurn(mode) {
+  store('pip-mouselook', mode === 'mouse' ? '1' : '0');
+  if (mode !== 'mouse' && document.pointerLockElement === dom) document.exitPointerLock();
+  showTurn();
+}
+document.querySelectorAll('.setpick[data-pick="turn"] [data-turn]').forEach((b) => b.addEventListener('click', () => setTurn(b.dataset.turn)));
 let bobOn = viewBob();
 $('viewbob').checked = bobOn;
-$('mouselook').addEventListener('change', (e) => { store('pip-mouselook', e.target.checked ? '1' : '0'); if (!e.target.checked && document.pointerLockElement === dom) document.exitPointerLock(); });
 $('viewbob').addEventListener('change', (e) => { store('pip-bob', e.target.checked ? '1' : '0'); bobOn = e.target.checked; });
+showTurn();
+// The start screen: the first time someone comes, a card in the middle asks how they want to turn (on a phone it only says
+// how to walk). After that it stays away, unless it is asked for again in Settings.
+function startScreen(show) {
+  $('start').hidden = !show;
+  if (show) { view.keys.clear(); if (document.pointerLockElement === dom) document.exitPointerLock(); }
+}
+document.querySelectorAll('.setpick[data-pick="start"] [data-turn]').forEach((b) => b.addEventListener('click', () => {
+  setTurn(b.dataset.turn);
+  store('pip-start', '1');
+  startScreen(false);
+  if (b.dataset.turn === 'mouse') dom.requestPointerLock?.(); // they chose the mouse: it turns the view from this click on
+}));
+$('startgo').addEventListener('click', () => { store('pip-start', '1'); startScreen(false); });
+$('showstart').addEventListener('click', () => { showTab(TABS.includes(store('pip-tab')) ? store('pip-tab') : 'day'); startScreen(true); });
 document.addEventListener('pointerlockchange', () => { $('aim').hidden = document.pointerLockElement !== dom; });
 document.addEventListener('mousemove', (e) => {
   if (document.pointerLockElement !== dom || view.mode !== 'walk') return;
@@ -3047,7 +3080,8 @@ window.addEventListener('keydown', (e) => {
     view.keys.add(k);
     e.preventDefault();
   }
-  if (k === 'escape') setMode('overview');
+  if (k === 'f' && !e.repeat) { interact(); e.preventDefault(); }
+  if (k === 'escape' && !document.body.classList.contains('first')) setMode('overview');
 });
 window.addEventListener('keyup', (e) => view.keys.delete(e.key.toLowerCase()));
 
@@ -4827,7 +4861,39 @@ function drawMini() {
     g.fillStyle = '#3b2f2a'; g.beginPath(); g.moveTo(0, -11); g.lineTo(8, 9); g.lineTo(0, 4.5); g.lineTo(-8, 9); g.closePath(); g.fill(); g.restore();
   }
 }
+// ---- Interact. What is in the middle of your view and close by can be opened: a small prompt says what it is, and F
+// (or a tap on the prompt) opens it. At his front door F takes you in or out. While a card is open, F closes it.
+const prompt = $('interact');
+function lookingAt() {
+  if (view.mode !== 'walk' || !$('start').hidden) return null;
+  if (!infoBox.hidden) return { kind: 'close', label: 'Close' };
+  const fz = -Math.cos(view.yaw); // below -0.5: you look toward the door (it is on the far side from the camera's start, both inside and out)
+  if (!inTown(view.x) && Math.abs(view.x - SPOTS.hall_door.p.x) < 1.3 && view.z < -2.4 && fz < -0.5) return { kind: 'door', to: 'out', label: 'Go outside' };
+  if (inTown(view.x) && Math.abs(view.x - TOWN_X) < 1.6 && view.z > 0 && view.z < 3.6 && fz < -0.5) return { kind: 'door', to: 'in', label: 'Go into Pip’s home' };
+  const r = dom.getBoundingClientRect();
+  const hit = pickAt(r.left + r.width / 2, r.top + r.height / 2);
+  if (!hit?.info?.title) return null;
+  const at = hit.anchor?.getWorldPosition ? hit.anchor.getWorldPosition(new V3()) : null;
+  const far = hit.dist ?? (at ? Math.hypot(at.x - view.x, at.z - view.z) : 99);
+  return far <= (inTown(view.x) ? 14 : 9) ? { kind: 'info', hit, label: hit.info.title } : null;
+}
+function interact() {
+  const f = lookingAt();
+  if (!f) return;
+  if (f.kind === 'close') hideInfo();
+  else if (f.kind === 'door') Object.assign(view, f.to === 'out' ? { x: TOWN_X, z: 1.6, yaw: Math.PI, pitch: 0 } : { x: SPOTS.hall_door.p.x, z: -3.7, yaw: Math.PI, pitch: 0 });
+  else showInfo(f.hit.info, f.hit.anchor);
+  showPrompt();
+}
+function showPrompt() {
+  const f = FIRST ? lookingAt() : null;
+  prompt.hidden = !f;
+  if (f) prompt.lastChild.textContent = f.label;
+}
+prompt.addEventListener('click', interact);
 if (FIRST) {
+  setInterval(showPrompt, 220);
+  if (!store('pip-start')) startScreen(true);
   document.body.classList.add('first');
   mini.hidden = false;
   portalReady = true;
