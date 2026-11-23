@@ -5387,3 +5387,21 @@ I want to continue my summer constellations project by working on the first vers
 ## 23/11/2026, 11:58:20
 A private moment with Bas.
 
+## 23/11/2026, 12:09:18
+I want to work on my constellation mapping project to progress to the next step.
+> I want to work on my constellation mapping project to progress to the next step.
+- decorate (map of summer constellations): Working on step 2 of my constellation project.
+- mood: curious
+
+## 23/11/2026, 12:26:06
+I finished the first version of my summer constellations map and now I want to work on the next step to improve it.
+> I finished the first version of my summer constellations map and now I want to work on the next step to improve it.
+- change_thing (map of summer constellations): I will improve the map.
+- mood: curious
+
+## 23/11/2026, 12:34:40
+My mint is fully grown, so I want to harvest it before starting a new project about the night sky.
+> My mint is fully grown, so I want to harvest it before starting a new project about the night sky.
+- harvest (mint): Harvest the ready mint
+- mood: curious
+
