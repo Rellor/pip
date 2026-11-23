@@ -67,7 +67,7 @@ ${added.length ? added.map((l) => `- ${l.text}`).join('\n') : '- nothing yet'}
 MY LIFE STORY SO FAR
 ${story || '(not written yet)'}
 
-If one of the things that keep coming back says something true about who I am, I write ONE new short line about myself, plain and honest, in the third person like the rest of my soul ("He ..."), and I give its key. Or null, if nothing is true enough yet.
+If one of the things that keep coming back says something true about who I am, I write ONE new short line about myself, plain, dry and honest, in the third person like the rest of my soul ("He ..."), and I give its key. No sweet words like "quiet joy", "gentle" or "cozy": I say it the way I would say it out loud. Or null, if nothing is true enough yet.
 Then I rewrite my life story in at most 8 plain sentences, and I dream something.
 
 Answer in JSON: {"soul_line": {"text": "He ...", "key": "the key in brackets"} or null, "story": "...", "dream": "one or two sentences"}`;
@@ -106,6 +106,27 @@ export function applySleep(s, reply, now = Date.now()) {
   }
   return { today, changes };
 }
+
+// ---- Beliefs: what he has learned about himself, counted by the game from his days (no model). Each day says which
+// kinds of things made him feel better or worse (daySummary); something that did so on three days or more, and nearly
+// always the same way, is a belief, with the number of days as its evidence.
+const DOING = { play_piano: 'Playing music', record_song: 'Recording a song', compose: 'Writing music', draw: 'Drawing', decorate: 'Making things', go_out: 'Going outside', search_web: 'Looking things up', read_book: 'Reading', browse: 'Browsing the web', cook: 'Cooking', eat: 'Eating', write_diary: 'Writing in my diary', rest: 'Resting', take_photo: 'Taking photos', make_app: 'Making programs', update_app: 'Working on my programs', water: 'Looking after my plants', plant: 'Planting', harvest: 'Harvesting', move_thing: 'Moving my things around', do: 'Small things around the house', buy: 'Shopping', answer_visitor: 'Writing back to people', make_clothes: 'Making clothes', blueprint: 'Planning how to make something' };
+export const BELIEF_DAYS = 3;
+export function beliefs(s) {
+  const tally = {};
+  for (const d of s.days ?? []) {
+    for (const a of d.lifted ?? []) (tally[a] ??= { up: 0, down: 0 }).up += 1;
+    for (const a of d.lowered ?? []) (tally[a] ??= { up: 0, down: 0 }).down += 1;
+  }
+  return Object.entries(tally)
+    .map(([action, { up, down }]) => ({ action, lifts: up >= down, days: Math.max(up, down), of: up + down }))
+    .filter((b) => b.days >= BELIEF_DAYS && b.days / b.of >= 0.7)
+    .sort((a, b) => b.days - a.days)
+    .slice(0, 8)
+    .map((b) => ({ ...b, text: `${DOING[b.action] ?? `${b.action.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())}`} ${b.lifts ? 'lifts me' : 'wears me down'}` }));
+}
+// For the brain: the two he is surest of.
+export const beliefLines = (s) => (s.beliefs ?? []).slice(0, 2).map((b) => `Something I know about myself by now: ${b.text.charAt(0).toLowerCase()}${b.text.slice(1)} (it did on ${b.days} of my days).`);
 
 // soul.md with the "Added by him" section rewritten from s.soulLines. Bas's [locked] lines are never touched.
 export function withAddedLines(md, lines) {

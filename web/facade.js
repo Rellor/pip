@@ -5,16 +5,20 @@
 //      small and a little dirty, so it looks like a low photo and not like clean plastic.
 // Each front also has a second picture of only its windows: that one glows when the lights are on.
 export function makeFacades(THREE) {
-  const PX = 26; // pixels per metre: low on purpose
+  const PX = 34; // pixels per metre: low on purpose
+  const photos = new Map(); // a photo of a wall, loaded once: src -> promise of the picture (null when it does not load)
+  const photo = (src) => { if (!photos.has(src)) photos.set(src, new Promise((done) => { const im = new Image(); im.onload = () => done(im); im.onerror = () => done(null); im.src = src; })); return photos.get(src); };
   const rgb = (hex) => { const n = parseInt(String(hex).replace('#', ''), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
   const css = ([r, g, b], k = 1, a = 1) => `rgba(${Math.max(0, Math.min(255, Math.round(r * k)))},${Math.max(0, Math.min(255, Math.round(g * k)))},${Math.max(0, Math.min(255, Math.round(b * k)))},${a})`;
 
-  // One wall, w x h metres. spec: { wall, color, trim, door, windows, shop, sign, shutter, columns, seed }
+  // One wall, w x h metres. spec: { wall, color, trim, door, windows, bands, shop, sign, shutter, columns, seed, photo }
+  // photo: { src, m (how many metres one picture covers), tint, glow (a picture of its lit windows), fit } is a real photo
+  // of a wall (web/tex): it replaces the painted wall, and the door, windows and sign are drawn over it.
   return function facade(spec, w, h) {
     let seed = (spec.seed ?? 1) * 7919 + 13;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
-    const W = Math.max(32, Math.min(512, Math.round(w * PX)));
-    const H = Math.max(32, Math.min(512, Math.round(h * PX)));
+    const W = Math.max(32, Math.min(768, Math.round(w * PX)));
+    const H = Math.max(32, Math.min(768, Math.round(h * PX)));
     const kx = W / w, ky = H / h; // metres to pixels
     const c = document.createElement('canvas');
     c.width = W; c.height = H;
@@ -22,6 +26,9 @@ export function makeFacades(THREE) {
     const lit = document.createElement('canvas'); // only the glass, for the light at night
     lit.width = W; lit.height = H;
     const gl = lit.getContext('2d');
+    // (drawn at once with a painted wall; when the wall is a real photo, drawn again as soon as the photo is there)
+    const paint = (wallPhoto, glowPhoto) => {
+    seed = (spec.seed ?? 1) * 7919 + 13;
     gl.fillStyle = '#000'; gl.fillRect(0, 0, W, H);
     const base = rgb(spec.color ?? '#c9b9a3');
     const trim = rgb(spec.trim ?? '#f4efe6');
@@ -32,7 +39,12 @@ export function makeFacades(THREE) {
     // ---- the wall itself
     g.fillStyle = css(base); g.fillRect(0, 0, W, H);
     const kind = spec.wall ?? 'plaster';
-    if (kind === 'brick') {
+    const tile = (cx, im) => { const tw = (spec.photo.m ?? 2) * kx, th = (spec.photo.m ?? 2) * ky * (im.height / im.width); const off = spec.photo.fit ? 0 : Math.round((((spec.seed ?? 1) * 37) % 100) / 100 * tw); for (let y = H; y > -th; y -= th) for (let x = -off; x < W; x += tw) cx.drawImage(im, Math.round(x), Math.round(y - th), Math.ceil(tw) + 1, Math.ceil(th) + 1); }; // the photo at its real size, from the ground up
+    if (wallPhoto) {
+      tile(g, wallPhoto);
+      if (spec.photo.tint) { g.globalCompositeOperation = 'multiply'; g.fillStyle = spec.photo.tint; g.fillRect(0, 0, W, H); g.globalCompositeOperation = 'source-over'; }
+      if (glowPhoto) tile(gl, glowPhoto); // (a photo with windows in it brings its own lit windows)
+    } else if (kind === 'brick') {
       g.fillStyle = css(base, 0.62); g.fillRect(0, 0, W, H); // the mortar
       const bw = 11, bh = 4;
       for (let row = 0; row * (bh + 1) < H; row++) for (let i = -1; i * (bw + 1) < W; i++) { g.fillStyle = css(base, 0.82 + rnd() * 0.36 - (rnd() < 0.08 ? 0.25 : 0)); g.fillRect(i * (bw + 1) + (row % 2) * 6, row * (bh + 1), bw, bh); }
@@ -62,6 +74,8 @@ export function makeFacades(THREE) {
       g.fillStyle = gr; g.fillRect(X(x), Y(y + hh), X(x + ww) - X(x), Y(y) - Y(y + hh));
       gl.fillStyle = '#ffd98a'; gl.fillRect(X(x), Y(y + hh), X(x + ww) - X(x), Y(y) - Y(y + hh));
     };
+    if (spec.ground) { rect(0, 0, w, spec.ground.h, spec.ground.color); rect(0, spec.ground.h, w, 0.16, css(trim, 0.9)); rect(0, 0, w, 0.32, 'rgba(0,0,0,.22)'); } // a plain ground floor under a photo of windows (the door and the shutter go on it)
+    for (const y of spec.bands ?? []) { rect(0, y, w, 0.16, css(trim, 0.86)); rect(0, y - 0.05, w, 0.05, css(base, 0.6)); } // a ledge between two floors
     for (const [x, y, ww, hh] of spec.windows ?? []) {
       rect(x - 0.12, y - 0.14, ww + 0.24, hh + 0.26, css(trim));
       glass(x, y, ww, hh);
@@ -119,14 +133,17 @@ export function makeFacades(THREE) {
     g.fillStyle = gr; g.fillRect(0, 0, W, H);
     for (let i = 0; i < W / 14; i++) { const x = Math.floor(rnd() * W); const len = 10 + Math.floor(rnd() * H * 0.5); const s = g.createLinearGradient(0, 0, 0, len); s.addColorStop(0, `rgba(30,26,22,${0.1 + rnd() * 0.16})`); s.addColorStop(1, 'rgba(30,26,22,0)'); g.fillStyle = s; g.fillRect(x, Math.floor(rnd() * H * 0.3), 1 + Math.floor(rnd() * 2), len); }
     const img = g.getImageData(0, 0, W, H);
-    for (let i = 0; i < img.data.length; i += 4) { const n = (rnd() - 0.5) * 22; img.data[i] += n; img.data[i + 1] += n; img.data[i + 2] += n; }
+    for (let i = 0; i < img.data.length; i += 4) { const n = (rnd() - 0.5) * (wallPhoto ? 8 : 22); img.data[i] += n; img.data[i + 1] += n; img.data[i + 2] += n; }
     g.putImageData(img, 0, 0);
     const soft = document.createElement('canvas'); soft.width = W; soft.height = H;
     const gs = soft.getContext('2d');
     gs.filter = 'blur(0.7px)'; gs.drawImage(c, 0, 0);
-    g.globalAlpha = 0.45; g.drawImage(soft, 0, 0); g.globalAlpha = 1;
-
+    g.globalAlpha = wallPhoto ? 0.2 : 0.45; g.drawImage(soft, 0, 0); g.globalAlpha = 1;
+    };
+    paint(null, null);
     const tex = (cv) => { const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.magFilter = THREE.NearestFilter; return t; };
-    return { map: tex(c), glow: (spec.windows?.length || spec.shop) ? tex(lit) : null };
+    const out = { map: tex(c), glow: (spec.windows?.length || spec.shop || spec.photo?.glow) ? tex(lit) : null };
+    if (spec.photo?.src) Promise.all([photo(spec.photo.src), spec.photo.glow ? photo(spec.photo.glow) : null]).then(([im, glowIm]) => { if (!im) return; paint(im, glowIm); out.map.needsUpdate = true; if (out.glow) out.glow.needsUpdate = true; });
+    return out;
   };
 }

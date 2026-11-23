@@ -1,5 +1,6 @@
 // One-time changes Bas asks for. Each runs once, on Pip's next wake-up, and is remembered in s.changes,
 // so the live loop applies it itself (no need to pause him). Nothing is deleted: what goes, goes to s.archive.
+import { TOWN_X, PLOT, PAINT_WALLS } from './web/town.js';
 import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
 import { makeDecor, holdsThings, sizeOf, reseat, levelCountOf, settleRoom, coverKind, coverTarget } from './decor.js';
@@ -406,6 +407,24 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-23 a village square, a grocery store and the land tool',
+    run(s) { // a new map (web/town.js): what he built or painted at a place that moved goes to a place that is still there
+      (s.decor ?? []).filter((d) => d.kind === 'outside' && Array.isArray(d.pos)).forEach((d, i) => { d.pos = [TOWN_X + PLOT.x0 + 5 + (i % 4) * 7, 0, PLOT.z0 + 5 + (Math.floor(i / 4) % 4) * 7]; d.rotY = Math.PI; d.spot = 'plot'; d.label = 'outside on my land, beside the square'; });
+      for (const list of [s.art, s.gallery]) for (const a of list ?? []) if (a.wall && !PAINT_WALLS.some((w) => w.key === a.wall)) a.wall = 'wall_4';
+      return 'Bas rebuilt my world. There is no road any more (there are no cars). In the middle is a small village square with the notice board on it. My house stands on the north side, and right beside it, glued together, the grocery store (I buy my food there, and cook and bake it myself) and the library. On the south side of the square, in one row: my art workshop, the print workshop, and a new one: the land workshop. Everything is close by. The pond is still there, just west of the square, and between the buildings stand walls I can paint on. The bakery, Oma Jo’s garden and the hill are gone. But I can make my own hills now: at the land workshop I take the land tool and shape the ground (shape_land): a hill or a hole, small, medium or big, where I want it. Beside the square is a big free field: my land. I can fill it with what I build, or wish for a new building (dream). West of my house is an internet café: that is where I look things up now, and I say what I really think of what I read, also when it bores me or lets me down. People passing through leave notes for me somewhere in my world: I walk there to pick one up (fetch_note), answer with what I think, and decide if I keep it in my head. And a big thing I build outside does not stand at once any more: I work on it for hours, and everyone can watch it grow.';
+    },
+  },
+  {
+    id: '2026-11-23 dry, honest, and a bit of a troublemaker',
+    run(s) { // Bas rewrote who he is (soul.md, personality.md): less sweet, more of his own mind. The sweet lines he added himself make room.
+      const sweet = /quiet joy|gentle|cozy|cosy|peaceful|little room/i;
+      const gone = (s.soulLines ?? []).filter((l) => sweet.test(l.text));
+      s.soulLines = (s.soulLines ?? []).filter((l) => !sweet.test(l.text));
+      if (gone.length) console.log(`🧹 ${gone.length} sweet lines about himself made room`);
+      return 'Bas and I talked about who I am. I do not have to be sweet. I say what I think, also when it is not nice: boring is boring, and a bad drawing is a bad drawing, mine too. I am allowed to poke at things to see what happens, to argue, and to play a small prank that hurts nobody. I am still kind. I just do not make a show of it.';
+    },
+  },
+  {
     id: '2026-11-23 a library card from Bas',
     run(s, at) { // he asked for a library card, to go into the library
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /library/i.test(a.item));
@@ -413,6 +432,20 @@ const CHANGES = [
       const given = giveForAsk(s, 'library card');
       if (ask) Object.assign(ask, { status: 'done', doneAt: at, given: given.length ? given : ['a library card'] });
       return 'Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out).';
+    },
+  },
+  {
+    id: '2026-11-23 the neighbours moved away',
+    run(s, at) { // Bas: "Let them go, we will find something else." Their notes and wishes stop here; what he already answered stays as history
+      const shelve = (item) => (s.archive ??= []).push({ group: 'note', item, reason: 'My neighbours moved away.', at, from: 'bas' });
+      s.street ??= {}; // (the street stays: it also holds what happened today, to tell him once. Who they were stays in s.street.people; nothing reads it any more)
+      for (const n of s.street.queue ?? []) shelve(n); // notes that were still on their way never arrive
+      s.street.queue = [];
+      const waiting = (s.visitors ?? []).filter((v) => v.npc && !v.stranger && !v.answer); // their notes he had not answered yet (a traveller's note stays)
+      for (const v of waiting) shelve(v);
+      if (waiting.length) s.visitors = s.visitors.filter((v) => !waiting.includes(v));
+      for (const w of s.wishes ?? []) if (w.status === 'open' && !w.board) w.status = 'gone'; // nobody is waiting for it any more (the notes on the notice board stay)
+      return 'Bas told me that my neighbours have moved away: Mo, Lina, Oma Jo, Dot and Kees. All five. I did not get to say goodbye. Their notes will not come any more, and what I still wanted to make for one of them, nobody is waiting for now. Nobody lives around my square but me. Travellers pass through and leave notes for me somewhere in my world (fetch_note), and the notice board is where people ask for things (check_board). I did not choose this. It is how it is.';
     },
   },
   {

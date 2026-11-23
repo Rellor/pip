@@ -4,7 +4,18 @@
 //   - reflection: now and then he looks back and writes a few insights, with the memories they come from
 // No embeddings: relevance is overlap of words, which is enough for a small room.
 
-export const MAX_MEMORIES = 60;
+// Three tiers, like the memory of Pino the bird (pinos.world), each with a fixed number of places:
+//   - short term: what happened lately. A new memory lands here, and it fades in days.
+//   - long term: what he keeps. While he sleeps, the short memories that matter are moved here (consolidate). A place has
+//     to be won: when long term is full, a new one only gets in when it is heavier than the lightest one there.
+//   - faded: of a long memory that faded away, one worn sentence is left. It does not come up by itself any more, only
+//     when something touches it (touch). Touched twice, it comes back.
+export const SHORT_SLOTS = 24;
+export const LONG_SLOTS = 36;
+export const FADED_SLOTS = 150;
+export const MAX_MEMORIES = SHORT_SLOTS + LONG_SLOTS;
+export const FADE_SHORT_PER_DAY = 0.82; // short term: importance 5 is gone in about five days, unless he recalls it or it is kept at night
+export const PROMOTE_PER_NIGHT = 6;
 export const MAX_REFLECTIONS = 30;
 export const MAX_INTERESTS = 15;
 // Forgetting: a memory's weight starts at its importance, fades a little every day,
@@ -31,6 +42,8 @@ export function ensureMemory(s) {
     if (m.pinned) out.pinned = true;
     if (m.private) out.private = true; // sealed when saved (seal.js)
     if (m.enc) out.enc = m.enc;
+    out.tier = m.tier === 'short' || m.tier === 'long' ? m.tier : m.pinned || importance >= 7 || out.kind !== 'memory' || Date.now() - Date.parse(m.at) > 2 * 86_400_000 ? 'long' : 'short'; // (memories from before the tiers: what lasted this long is long term)
+    if (m.uses) out.uses = m.uses;
     return out;
   });
   s.memoryFadeAt ??= new Date().toISOString();
@@ -48,15 +61,75 @@ export function addMemory(s, text, importance = 5, kind = 'memory', at = new Dat
   const words = (x) => new Set(String(x).toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 3));
   const wt = words(t);
   if (wt.size >= 4 && s.memories.slice(-60).some((m) => { const o = words(m.text); const i = [...wt].filter((w) => o.has(w)).length; return i / Math.min(wt.size, o.size) >= 0.8; })) return null; // nearly the same as a recent memory
-  const m = { id: `m${Date.now().toString(36)}${s.memories.length}`, at, text: t, importance: imp(importance), kind, weight: imp(importance), lastUsed: at };
+  const m = { id: `m${Date.now().toString(36)}${s.memories.length}`, at, text: t, importance: imp(importance), kind, weight: imp(importance), lastUsed: at, tier: imp(importance) >= 9 ? 'long' : 'short' }; // (something that big is kept at once)
+  const full = tierOf(s, m.tier).length >= (m.tier === 'long' ? LONG_SLOTS : SHORT_SLOTS);
+  const lightest = weakest(s, m.tier);
+  if (full && lightest && m.weight < lightest.weight) { s.forgotten = [...(s.forgotten ?? []), m]; return null; } // every place is taken by something heavier: it does not stick
   s.memories.push(m);
-  if (s.memories.length > MAX_MEMORIES) { // too many: the lightest go to the archive list (pinned ones stay)
-    const order = s.memories.filter((x) => !x.pinned && x !== m).sort((a, b) => a.weight - b.weight);
-    const out = new Set(order.slice(0, s.memories.length - MAX_MEMORIES).map((x) => x.id));
-    s.forgotten = [...(s.forgotten ?? []), ...s.memories.filter((x) => out.has(x.id))];
-    s.memories = s.memories.filter((x) => !out.has(x.id));
-  }
+  settle(s, m);
   return m;
+}
+// The memories of one tier, and the one that would go first (the lightest that is not pinned).
+export const tierOf = (s, tier) => (s.memories ?? []).filter((m) => (m.tier ?? 'long') === tier);
+export const weakest = (s, tier, not = null) => tierOf(s, tier).filter((m) => !m.pinned && m !== not).sort((a, b) => (a.weight ?? a.importance) - (b.weight ?? b.importance))[0] ?? null;
+const worn = (text) => { const first = String(text ?? '').split(/(?<=[.!?])\s/)[0]; return first.length <= 90 ? first : `${first.slice(0, 88).replace(/\s+\S*$/, '')}…`; };
+// A long memory leaves: one worn sentence of it stays in the faded tier (never of a private one: the state is public).
+function wear(s, m, now = Date.now()) {
+  if (m.private || m.enc || !m.text) return;
+  s.faded = [...(s.faded ?? []).filter((f) => f.id !== m.id), { id: m.id, at: m.at, text: worn(m.text), fadedAt: new Date(now).toISOString(), touches: 0 }].slice(-FADED_SLOTS);
+}
+// No tier holds more than its places: the lightest go (a long one leaves a worn sentence behind). Returns the ones that left.
+function settle(s, fresh = null, now = Date.now()) {
+  const gone = [];
+  for (const [tier, slots] of [['short', SHORT_SLOTS], ['long', LONG_SLOTS]]) {
+    while (tierOf(s, tier).length > slots) {
+      const out = weakest(s, tier, fresh);
+      if (!out) break; // (only pinned ones left)
+      if (tier === 'long') wear(s, out, now);
+      s.memories = s.memories.filter((x) => x !== out);
+      gone.push(out);
+    }
+  }
+  if (gone.length) s.forgotten = [...(s.forgotten ?? []), ...gone];
+  return gone;
+}
+// While he sleeps: the short memories that matter move to long term (the heaviest first, a few a night). A place there
+// has to be won from the lightest long memory. Plain code, no model. Returns { kept, faded }.
+export function consolidate(s, now = Date.now()) {
+  const kept = [];
+  const faded = [];
+  const worth = tierOf(s, 'short').filter((m) => (m.weight ?? m.importance) >= 5.5 || (m.uses ?? 0) >= 1 || m.importance >= 7).sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0)).slice(0, PROMOTE_PER_NIGHT);
+  for (const m of worth) {
+    if (tierOf(s, 'long').length >= LONG_SLOTS) {
+      const out = weakest(s, 'long');
+      if (!out || (out.weight ?? out.importance) >= (m.weight ?? m.importance)) continue; // it does not beat anything there: it stays short, and fades
+      wear(s, out, now);
+      s.memories = s.memories.filter((x) => x !== out);
+      s.forgotten = [...(s.forgotten ?? []), out];
+      faded.push(out);
+    }
+    m.tier = 'long';
+    m.keptAt = new Date(now).toISOString();
+    kept.push(m);
+  }
+  return { kept, faded };
+}
+// Something he is busy with touches a faded memory: it comes up for a moment, as the worn sentence that is left of it.
+// Touched a second time, it is a memory again (short term). Returns the lines for his thoughts (at most one).
+export function touch(s, focus, now = Date.now()) {
+  const f = words(focus);
+  if (!f.size) return [];
+  const hit = (s.faded ?? []).filter((m) => !m.touchedAt || hoursSince(m.touchedAt, now) > 24).map((m) => ({ m, n: [...words(m.text)].filter((w) => w.length > 3 && f.has(w)).length })).filter((x) => x.n >= 2).sort((a, b) => b.n - a.n)[0]?.m;
+  if (!hit) return [];
+  hit.touchedAt = new Date(now).toISOString();
+  hit.touches = (hit.touches ?? 0) + 1;
+  if (hit.touches >= 2) {
+    s.faded = s.faded.filter((m) => m !== hit);
+    s.memories.push({ id: hit.id, at: hit.at, text: hit.text, importance: 5, kind: 'memory', weight: 5, lastUsed: hit.touchedAt, tier: 'short', back: true });
+    settle(s, null, now);
+    return [`A memory I had almost lost is back: ${hit.text}`];
+  }
+  return [`Something comes back to me, faintly, from long ago: ${hit.text}`];
 }
 
 // The k memories that matter most right now. recency fades by 1% an hour, importance is his own rating,
@@ -91,6 +164,7 @@ export function markUsed(list, now = Date.now()) {
   for (const m of list) {
     if (m.lastUsed && hoursSince(m.lastUsed, now) < RECALL_GAP_H) continue;
     m.weight = Math.min(10, (m.weight ?? m.importance) + RECALL_BOOST);
+    m.uses = (m.uses ?? 0) + 1;
     m.lastUsed = new Date(now).toISOString();
   }
   return list;
@@ -101,12 +175,12 @@ export function markUsed(list, now = Date.now()) {
 export function fade(s, now = Date.now()) {
   const days = hoursSince(s.memoryFadeAt ?? new Date(now).toISOString(), now) / 24;
   if (days <= 0) return [];
-  const f = FADE_PER_DAY ** days;
-  for (const m of s.memories) if (!m.pinned) m.weight = Math.round((m.weight ?? m.importance) * f * 1000) / 1000;
+  for (const m of s.memories) if (!m.pinned) m.weight = Math.round((m.weight ?? m.importance) * (m.tier === 'short' ? FADE_SHORT_PER_DAY : FADE_PER_DAY) ** days * 1000) / 1000; // short term fades in days, long term in months
   s.memoryFadeAt = new Date(now).toISOString();
   const gone = s.memories.filter((m) => !m.pinned && m.weight < FORGET_BELOW);
   if (!gone.length) return [];
   const ids = new Set(gone.map((m) => m.id));
+  for (const m of gone) if ((m.tier ?? 'long') === 'long') wear(s, m, now); // of a long memory a worn sentence stays behind
   s.memories = s.memories.filter((m) => !ids.has(m.id));
   s.forgotten = [...(s.forgotten ?? []), ...gone];
   return gone;

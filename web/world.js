@@ -11,20 +11,14 @@ export const PLACES = [
   { key: 'home', name: 'home', title: 'Home', emoji: '🏠', walk: 0, at: [300, 250] },
   {
     key: 'doorstep', name: 'my doorstep', title: 'His doorstep', emoji: '🚪', walk: 1, stay: [15, 25], hours: [8, 21], at: [330, 292],
-    blurb: 'Sitting in front of his door, watching the street.',
-    things: [{ key: 'watch', words: 'sit and watch the street', match: /watch|sit|street|look/ }, { key: 'chat', words: 'say hello to whoever comes by', match: /hello|chat|talk|neighbou?r|visit/ }],
+    blurb: 'Sitting in front of his door, watching the square.',
+    things: [{ key: 'watch', words: 'sit and watch the square', match: /watch|sit|street|square|look/ }],
   },
-  { key: 'shop', name: 'the corner shop', title: 'The corner shop', emoji: '🛍️', walk: 3, stay: [4, 6], hours: [9, 18], at: [452, 262], errand: true, blurb: 'Where he spends his coins.' },
+  { key: 'shop', name: 'the grocery store', title: 'The grocery store', emoji: '🛒', walk: 3, stay: [4, 6], hours: [9, 18], at: [452, 262], errand: true, blurb: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.' },
   {
     key: 'pond', name: 'the pond in the park', title: 'The pond', emoji: '🦆', walk: 8, stay: [30, 50], hours: 'light', at: [150, 118],
     blurb: 'Ducks, reeds and a bench under the willow. It freezes in real frost.',
     things: [{ key: 'ducks', words: 'watch the ducks', match: /duck|watch|water|bench|sit/ }, { key: 'find', words: 'look for something to bring home', match: /find|look for|collect|bring|search|feather|stone|pebble|leaf|leaves/ }, { key: 'sketch', words: 'sketch what I see', match: /sketch|draw|paint/ }, { key: 'ice', words: 'slide on the ice', match: /ice|slide|skate/, when: 'frozen' }],
-  },
-  {
-    key: 'garden', name: 'Oma Jo’s garden', title: 'Oma Jo’s garden', emoji: '🌻', walk: 2, stay: [25, 40], hours: [9, 18], at: [112, 258],
-    blurb: 'Vegetable beds and a shed that smells of earth. Oma Jo always has a job for him.',
-    locked: 'Oma Jo lets him in once she is friendly with him.', seen: true, // he can see it from his street, so he knows it is there
-    things: [{ key: 'help', words: 'help Oma Jo in her garden', match: /help|dig|weed|plant|water|garden/ }, { key: 'learn', words: 'ask her how she grows things', match: /ask|learn|how|tip/ }],
   },
   {
     key: 'library', name: 'the library', title: 'The library', emoji: '📚', walk: 10, stay: [30, 45], hours: [10, 17], days: [2, 3, 4, 5, 6], at: [478, 118],
@@ -32,25 +26,37 @@ export const PLACES = [
     locked: 'He needs a library card. He can ask for one.',
     things: [{ key: 'read', words: 'read about something I wonder about', match: /read|book|learn|look up|find out/ }],
   },
+  // Places he only goes to with something to do there (job): he designs it first, then walks there and it is made.
+  { key: 'board', name: 'the notice board', title: 'The notice board', emoji: '📌', walk: 1, stay: [3, 5], hours: [0, 24], at: [270, 292], job: true, blurb: 'People of the town pin notes on it: things they would like made. He reads it, makes one, and earns coins.' },
+  { key: 'workshop', name: 'the print workshop', title: 'The print workshop', emoji: '🖨️', walk: 9, stay: [20, 30], hours: [9, 18], at: [560, 300], job: true, blurb: 'A 3D printer hums behind the shutter. What he designs is printed small and kept on the shelf by the door.' },
+  { key: 'walls', name: 'the walls', title: 'The walls', emoji: '🎨', walk: 6, stay: [25, 40], hours: 'light', at: [420, 330], job: true, blurb: 'Bare walls all over his world that he paints on, and some back walls too. He needs no paper for it.' },
+  { key: 'drops', name: 'my world', title: 'A note in his world', emoji: '💌', walk: 3, stay: [3, 5], hours: [0, 24], at: [300, 300], job: true, blurb: 'People passing through leave notes for him somewhere in his world. He walks over and picks them up.' },
+  { key: 'land', name: 'the land workshop', title: 'The land workshop', emoji: '⛰️', walk: 6, stay: [20, 35], hours: [0, 24], at: [600, 240], job: true, blurb: 'The land tools are kept here. With them he shapes the ground of his world: a hill here, a hole there.' },
+];
+// Places that were in his world once (the page still shows his old outings to them). He cannot go there any more.
+export const OLD_PLACES = [
+  {
+    key: 'garden', name: 'Oma Jo’s garden', title: 'Oma Jo’s garden', emoji: '🌻', walk: 2, stay: [25, 40], hours: [9, 18], at: [112, 258],
+    blurb: 'Vegetable beds and a shed that smells of earth. Oma Jo always has a job for him.',
+    locked: 'Oma Jo lets him in once she is friendly with him.', seen: true, // he can see it from his street, so he knows it is there
+    things: [{ key: 'help', words: 'help Oma Jo in her garden', match: /help|dig|weed|plant|water|garden/ }, { key: 'learn', words: 'ask her how she grows things', match: /ask|learn|how|tip/ }],
+  },
   {
     key: 'hill', name: 'the hill behind the houses', title: 'The hill', emoji: '⛰️', walk: 14, stay: [25, 40], hours: 'evening', at: [322, 66],
     blurb: 'The highest spot around: the whole street below, and all of the sky.',
     locked: 'He has not found the path up yet. It shows itself to someone who goes out often.',
     things: [{ key: 'sky', words: 'watch the sky from up there', match: /sky|sun|star|moon|cloud|watch|look/ }, { key: 'kite', words: 'fly my kite', match: /kite|fly/, needs: 'kite' }],
   },
-  // Places he only goes to with something to do there (job): he designs it first, then walks there and it is made.
-  { key: 'board', name: 'the notice board', title: 'The notice board', emoji: '📌', walk: 1, stay: [3, 5], hours: [0, 24], at: [270, 292], job: true, blurb: 'People of the town pin notes on it: things they would like made. He reads it, makes one, and earns coins.' },
-  { key: 'workshop', name: 'the print workshop', title: 'The print workshop', emoji: '🖨️', walk: 9, stay: [20, 30], hours: [9, 18], at: [560, 300], job: true, blurb: 'A 3D printer hums behind the shutter. What he designs is printed small and kept on the shelf by the door.' },
-  { key: 'walls', name: 'the walls', title: 'The walls', emoji: '🎨', walk: 6, stay: [25, 40], hours: 'light', at: [420, 330], job: true, blurb: 'Bare walls all over his world that he paints on, and the back walls of the houses too. He needs no paper for it.' },
 ];
-export const placeOf = (key) => PLACES.find((p) => p.key === key) ?? null;
+export const placeOf = (key) => PLACES.find((p) => p.key === key) ?? OLD_PLACES.find((p) => p.key === key) ?? null;
+export const isGone = (key) => OLD_PLACES.some((p) => p.key === key);
 // What he does there, said about him on the page ("sketch what I see" is his own way of saying it).
 export const hisWords = (place, words) => String(words ?? '').replace(/what I see/g, 'what he sees').replace(/I wonder/g, 'he wonders').replace(/\bmy\b/g, 'his').replace(/\bI\b/g, 'he').replace(/\bme\b/g, 'him');
 // The place he means: its key, its name, or a word of it ("the pond", "park", "Oma Jo's garden").
 export function findPlace(text) {
   const t = String(text ?? '').toLowerCase().replace(/[’']/g, '').trim();
   if (!t) return null;
-  return PLACES.find((p) => p.key === t || p.name.replace(/[’']/g, '') === t) ?? PLACES.find((p) => p.key !== 'home' && (t.includes(p.key) || p.name.replace(/[’']/g, '').split(' ').some((w) => w.length > 3 && !['behind', 'houses', 'corner'].includes(w) && t.includes(w)))) ?? (/park|duck/.test(t) ? placeOf('pond') : /door|street|outside my/.test(t) ? placeOf('doorstep') : /book/.test(t) ? placeOf('library') : null);
+  return PLACES.find((p) => p.key === t || p.name.replace(/[’']/g, '') === t) ?? PLACES.find((p) => p.key !== 'home' && (t.includes(p.key) || p.name.replace(/[’']/g, '').split(' ').some((w) => w.length > 3 && !['behind', 'houses', 'corner', 'workshop', 'notice', 'store'].includes(w) && t.includes(w)))) ?? (/park|duck/.test(t) ? placeOf('pond') : /door|street|outside my/.test(t) ? placeOf('doorstep') : /book/.test(t) ? placeOf('library') : null);
 }
 // Every place is open all day, every day (they used to have opening hours).
 export const hoursOf = () => [0, 24];
@@ -109,7 +115,7 @@ export function worldMapSvg(o = {}) {
   add(`<g>${hut(300, 252, '#fbd98c', '#e9855b', 40, 32)}<path d="M320 222 v-22" stroke="#7a5237" stroke-width="2"/><path d="M321 200 l14 4 -14 5z" fill="#ef6f6c"/></g>`);
   // Oma Jo's garden: beds in rows
   add(`<g opacity="${unlocked.has('garden') ? 1 : 0.45}"><rect x="76" y="232" width="74" height="46" rx="6" fill="${snowy ? '#f7fbff' : '#8a6a48'}"/>${[0, 1, 2].map((i) => `<path d="M84 ${243 + i * 12} h58" stroke="${snowy ? '#dfe8ee' : '#5f9e63'}" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 9"/>`).join('')}<rect x="150" y="238" width="22" height="20" rx="2" fill="#b98a5a"/><path d="M147 240 l14 -11 14 11z" fill="${snowy ? '#fff' : '#7a5237'}"/></g>`);
-  // the corner shop and the library
+  // the grocery store and the library
   add(`<g>${hut(452, 252, '#58a59a', '#3d7d74', 48, 30)}<rect x="436" y="230" width="32" height="7" rx="2" fill="#fff8ee"/></g>`);
   add(`<g opacity="${unlocked.has('library') ? 1 : 0.45}"><rect x="446" y="92" width="64" height="44" rx="3" fill="#e7d3b5"/><path d="M440 94 L478 68 L516 94Z" fill="${snowy ? '#fff' : '#8a5a3a'}"/>${[456, 470, 484, 498].map((x) => `<rect x="${x}" y="100" width="6" height="36" fill="#fff8ee"/>`).join('')}<rect x="472" y="118" width="12" height="18" rx="2" fill="#7a5237"/></g>`);
   // a bench on the hill

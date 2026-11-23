@@ -12,7 +12,7 @@ import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sid
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
 import { makeGrain } from './grain.js';
-import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS } from './town.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -62,6 +62,7 @@ function applyPixels() {
 }
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
 let turnWithMouse = false; // Settings: the mouse turns the view (then A and D step sideways); otherwise A and D turn
+const jump = { y: 0, v: 0 }; // Space: how high you are off the ground right now, and how fast you rise
 const bob = { walked: 0, moving: false, k: 0 }; // how far you walked (for the bobbing of the view), and how much it shows right now
 let portalOn = false; // the world stands right outside his windows while you are inside his home (see setPortal)
 let portalReady = false;
@@ -1791,8 +1792,9 @@ function moveSound(kind) {
     src.start(t);
   }
 }
-// ---- Pip in his street (town.js). When he is out he is seen there: on his doorstep, at the shop door, in Oma Jo's garden,
-// or walking to the end of the street on his way to the pond or the library (then he is out of sight until he comes back).
+// ---- Pip in his world outside (town.js). When he is out he is seen there: on his doorstep, at the door of the grocery
+// store, by the notice board, or walking on his way to the pond or the library (when the place he goes to has no spot in
+// the world he is out of sight until he comes back).
 let outKey = '';
 let outHidden = false;
 let outPath = [];
@@ -2226,6 +2228,38 @@ function blocked(x, z) {
   const rects = [...MOVABLE.filter((k) => !FURNITURE[k].flat).flatMap((k) => furnRects(furn, k)).map((r) => [r.x0, r.x1, r.z0, r.z1]), ...WALK_EXTRA];
   return rects.some(([x0, x1, z0, z1]) => x > x0 - 0.28 && x < x1 + 0.28 && z > z0 - 0.28 && z < z1 + 0.28);
 }
+// Flying (V, or the bird button): you leave the ground and look at his world from above. Landing puts you on free ground.
+const fly = { on: false, y: 12 };
+function setFly(on) {
+  if (on && !inTown(view.x)) { toast('Step outside first. Out there you can fly.'); return; }
+  if (on === fly.on) return;
+  fly.on = on;
+  $('flybtn').setAttribute('aria-pressed', String(on));
+  if (on) { fly.y = townGround(view.x, view.z) + 1.55; view.keys.delete(' '); toast(touchOnly ? 'You fly. Push the stick to fly where you look. Tap the bird to land.' : 'You fly. W S to fly where you look, Space up, C down. V to land.'); return; }
+  view.x = clamp(view.x, TOWN_X + WORLD.x0 + 1, TOWN_X + WORLD.x1 - 1); view.z = clamp(view.z, WORLD.z0 + 1, WORLD.z1 - 1);
+  for (let r = 0; r < 40 && blocked(view.x, view.z); r += 0.5) for (let a = 0; a < 6.28; a += 0.4) { const x = view.x + Math.cos(a) * r, z = view.z + Math.sin(a) * r; if (!blocked(x, z)) { view.x = x; view.z = z; break; } } // not into a house or the pond
+  view.pitch = Math.max(-0.5, Math.min(0.5, view.pitch));
+}
+$('flybtn').addEventListener('click', () => setFly(!fly.on));
+// Saying hello (E, or the hand button): when he is near and awake he looks at you and bobs.
+const hello = { until: 0, off: 0 };
+function sayHello() {
+  const p = pip.group.position;
+  if (lastState?.last?.sleeping) return toast('Pip is asleep. He does not hear you.');
+  if (!pip.group.visible || inTown(p.x) !== inTown(view.x)) return toast(inTown(view.x) ? 'Pip is not out here. The round map shows where he is.' : 'Pip is not here right now. The round map shows where he is.');
+  if (Math.hypot(p.x - view.x, p.z - view.z) > 45) return toast('Pip is too far away to hear you. The round map shows where he is.');
+  hello.until = performance.now() + 1900;
+  toast('Pip looks at you and bobs. 👋');
+}
+$('hellobtn').addEventListener('click', sayHello);
+function helloPose(before) { // (called around the frame that moves him: the bob is only on top of where he is)
+  if (before) { pip.group.position.y -= hello.off; hello.off = 0; return; }
+  const left = hello.until - performance.now();
+  if (left <= 0) return;
+  pip.group.rotation.y = Math.atan2(view.x - pip.group.position.x, view.z - pip.group.position.z);
+  hello.off = Math.abs(Math.sin(left / 1000 * 8)) * 0.16 * (inTown(view.x) ? 1 : 1.6);
+  pip.group.position.y += hello.off;
+}
 function updateWalk(dt) {
   if (view.mode !== 'walk') return;
   const fwd = (view.keys.has('w') || view.keys.has('arrowup') ? 1 : 0) - (view.keys.has('s') || view.keys.has('arrowdown') ? 1 : 0) + view.stick.y;
@@ -2233,10 +2267,30 @@ function updateWalk(dt) {
   const keyX = (view.keys.has('d') || view.keys.has('arrowright') ? 1 : 0) - (view.keys.has('a') || view.keys.has('arrowleft') ? 1 : 0);
   if (!turnWithMouse) view.yaw -= keyX * 1.9 * dt;
   const side = (turnWithMouse ? keyX : 0) + view.stick.x;
+  if (fly.on) { // like a bird: where you look is where you go, through nothing and over everything
+    const sp = (view.keys.has('shift') ? 24 : 10) * dt;
+    const cp = Math.cos(view.pitch);
+    const inHouse = (x, z, y) => BUILDINGS.some((bd) => { const [x0, x1, z0, z1] = rectOf(bd); return y < bd.size[1] + 1 && x - TOWN_X > x0 - 0.7 && x - TOWN_X < x1 + 0.7 && z > z0 - 0.7 && z < z1 + 0.7; }); // you fly over the houses, not through them
+    const nx = view.x + (-Math.sin(view.yaw) * cp * fwd + Math.cos(view.yaw) * side) * sp;
+    const nz = view.z + (-Math.cos(view.yaw) * cp * fwd - Math.sin(view.yaw) * side) * sp;
+    const ny = fly.y + (Math.sin(view.pitch) * fwd + (view.keys.has(' ') ? 0.8 : 0) - (view.keys.has('c') ? 0.8 : 0)) * sp;
+    if (!inHouse(nx, view.z, fly.y)) view.x = nx;
+    if (!inHouse(view.x, nz, fly.y)) view.z = nz;
+    if (!inHouse(view.x, view.z, ny)) fly.y = ny;
+    view.x = clamp(view.x, TOWN_X + WORLD.x0 - 40, TOWN_X + WORLD.x1 + 40);
+    view.z = clamp(view.z, WORLD.z0 - 40, WORLD.z1 + 40);
+    fly.y = clamp(fly.y, townGround(view.x, view.z) + 1.2, 90);
+    bob.moving = false;
+    walkPlace();
+    applyPixels();
+    camera.position.set(view.x, fly.y, view.z);
+    camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
+    return;
+  }
   const len = Math.hypot(fwd, side);
   bob.moving = false;
   if (len > 0.05) {
-    const speed = 2.4 * dt * Math.min(1, len);
+    const speed = (view.keys.has('shift') ? 4.6 : 2.4) * dt * Math.min(1, len); // Shift: you run
     const dx = ((-Math.sin(view.yaw) * fwd + Math.cos(view.yaw) * side) / len) * speed;
     const dz = ((-Math.cos(view.yaw) * fwd - Math.sin(view.yaw) * side) / len) * speed;
     const wasZ = view.z;
@@ -2257,13 +2311,15 @@ function updateWalk(dt) {
   // his windows at the street. Outside everything is life-size.
   // Bobbing: the view goes a little up and down with every step, and sways a touch from foot to foot. It fades in when
   // you start walking and out when you stop. (Inside everything is 1.6 times bigger, so the steps are too.)
-  bob.k += ((bob.moving && bobOn ? 1 : 0) - bob.k) * Math.min(1, dt * 8);
+  for (let left = Math.min(dt, 0.25); (jump.v || jump.y > 0) && left > 0; left -= 1 / 90) { const h = Math.min(left, 1 / 90); jump.y += jump.v * h; jump.v -= 13 * h; if (jump.y <= 0) { jump.y = 0; jump.v = 0; } } // a hop: up, and gravity brings you down (in small steps, so a slow screen jumps just as high)
+  bob.k += ((bob.moving && bobOn && jump.y <= 0 ? 1 : 0) - bob.k) * Math.min(1, dt * 8);
   const big = inTown(view.x) ? 1 : 1.6;
   const stepLen = 0.78 * big;
   const up = Math.sin((bob.walked / stepLen) * Math.PI * 2) * 0.042 * big * bob.k;
   const sway = Math.sin((bob.walked / stepLen) * Math.PI) * 0.022 * big * bob.k;
-  camera.position.set(view.x + Math.cos(view.yaw) * sway, (inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55) + up, view.z - Math.sin(view.yaw) * sway);
+  camera.position.set(view.x + Math.cos(view.yaw) * sway, (inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55) + up + jump.y * (inTown(view.x) ? 1 : 1.6), view.z - Math.sin(view.yaw) * sway);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
+  if (window.pipSky) { const [x, y, z, tx, tz] = window.pipSky; camera.position.set(TOWN_X + x, y, z); camera.lookAt(TOWN_X + tx, 0, tz); } // for testing: a look at the world from above
 }
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
 let walkOut = false;
@@ -2473,6 +2529,10 @@ function showUse(d, use) {
 }
 const USE_ICON = { light: '💡', drive: '🚗', spin: '🌀', stand: '🪜', custom: '✨' };
 function decorInfo(d) {
+  if (d.readyAt && Date.now() < Date.parse(d.readyAt)) { // still being built: the card says how far he is
+    const ready = new Date(Date.parse(d.readyAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' });
+    return { title: d.name, icon: '🔨', subtitle: `Pip is building this · ${d.label}`, sections: [{ lines: [`It is ${Math.round(sitePart(d) * 100)}% built. It grows while he works on it, and stands around ${ready}.`] }, ...(d.why ? [{ heading: 'Why he builds it', quote: `“${d.why}”` }] : [])], refresh: () => decorInfo(d) };
+  }
   if (d.art) return { title: d.name, icon: '🎨', subtitle: `A drawing by Pip · ${d.label}`, image: d.image, sections: d.why ? [{ heading: 'Why he drew it', quote: `“${d.why}”` }] : [] };
   if (d.print) return { title: d.name, icon: '🖨️', subtitle: `A print from Pip's photo printer · ${d.label}`, image: d.image };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
@@ -2537,6 +2597,7 @@ function renderInfo(info) {
   const section = (sec) => {
     const box = el('div', null, 'isec');
     if (sec.heading) box.append(el('h4', sec.heading));
+    if (sec.buttons) { const row = el('div', null, 'ibtns'); for (const b of sec.buttons) { const bt = el('button', b.label, 'small'); bt.type = 'button'; bt.addEventListener('click', () => b.run(bt)); row.append(bt); } box.append(row); }
     if (sec.now) {
       const row = el('div', null, `inow${sec.now.sleepy ? ' sleepy' : ''}`);
       row.append(el('span', null, 'dot'), el('span', `${sec.now.icon} ${sec.now.text}`));
@@ -2997,9 +3058,9 @@ const touchOnly = matchMedia('(hover: none), (pointer: coarse)').matches;
 function showTurn() { // the two choices (in Settings and on the start screen) and the list of controls follow what is chosen
   turnWithMouse = mouseLook();
   document.querySelectorAll('.setpick [data-turn]').forEach((b) => { const on = (b.dataset.turn === 'mouse') === turnWithMouse; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); });
-  const rows = touchOnly ? [['The round stick', 'walk'], ['Drag', 'look around'], ['Tap a thing', 'read about it'], ['Tap the round map', 'go to Pip']]
-    : turnWithMouse ? [['W  S', 'walk'], ['A  D', 'step sideways'], ['Mouse', 'turn and look (click the picture first)'], ['Esc', 'get your mouse back'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']]
-    : [['W  S', 'walk'], ['A  D', 'turn'], ['Drag', 'look up and down'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']];
+  const rows = touchOnly ? [['The round stick', 'walk'], ['Drag', 'look around'], ['Tap a thing', 'read about it'], ['Tap the round map', 'go to Pip'], ['🕊️', 'fly like a bird'], ['👋', 'say hello to Pip']]
+    : turnWithMouse ? [['W  S', 'walk'], ['A  D', 'step sideways'], ['Shift', 'run'], ['Space', 'jump'], ['Mouse', 'turn and look (click the picture first)'], ['Esc', 'get your mouse back'], ['F or click', 'open what you look at'], ['V', 'fly like a bird (Space up, C down)'], ['E', 'say hello to Pip'], ['The round map', 'click it to go to Pip']]
+    : [['W  S', 'walk'], ['A  D', 'turn'], ['Shift', 'run'], ['Space', 'jump'], ['Drag', 'look up and down'], ['F or click', 'open what you look at'], ['V', 'fly like a bird (Space up, C down)'], ['E', 'say hello to Pip'], ['The round map', 'click it to go to Pip']];
   $('controls').replaceChildren(...rows.map(([k, what]) => { const li = el('li'); li.append(el('b', k), document.createTextNode(what)); return li; }));
 }
 function setTurn(mode) {
@@ -3076,14 +3137,19 @@ stick.addEventListener('pointercancel', stopStick);
 window.addEventListener('keydown', (e) => {
   if (view.mode !== 'walk' || /input|textarea/i.test(document.activeElement?.tagName || '')) return;
   const k = e.key.toLowerCase();
-  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) {
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'c'].includes(k)) {
     view.keys.add(k);
-    e.preventDefault();
+    if (k !== 'shift' && k !== 'c') e.preventDefault();
   }
+  if (k === ' ' && fly.on) { view.keys.add(' '); e.preventDefault(); } // Space while flying: up
+  else if (k === ' ' && !e.repeat) { if (jump.y <= 0.001) jump.v = 4.6; e.preventDefault(); } // Space: a hop
+  if (k === 'v' && !e.repeat) { setFly(!fly.on); e.preventDefault(); }
+  if (k === 'e' && !e.repeat) { sayHello(); e.preventDefault(); }
   if (k === 'f' && !e.repeat) { interact(); e.preventDefault(); }
   if (k === 'escape' && !document.body.classList.contains('first')) setMode('overview');
 });
 window.addEventListener('keyup', (e) => view.keys.delete(e.key.toLowerCase()));
+window.addEventListener('blur', () => view.keys.clear());
 
 // Slow device: draw with fewer pixels so it stays smooth; fast again: back to sharp.
 const SHARP = Math.min(devicePixelRatio, 1.5);
@@ -3223,7 +3289,9 @@ function loop(now) {
     syncFixedLamps(lastState);
   }
   updateSlides(now, dt);
+  helloPose(true);
   frame(now, dt);
+  helloPose(false);
   town.animate(now / 1000);
   if (pip.group.visible === (awayNow() && outHidden)) pip.group.visible = !(awayNow() && outHidden); // out of the street too (at the pond, the library): nowhere to be seen
   home.update(now / 1000, studioBusy);
@@ -3240,6 +3308,7 @@ function loop(now) {
   }
   updateFloaters(dt, now);
   popDecor(now);
+  growSites();
   updateBehaviors(now, dt);
   const printing = plan && stepNow >= 0 && plan.steps[stepNow]?.action === 'print_photo';
   printLight.material.color.set(printing && Math.floor(now / 250) % 2 ? 0x6dff8a : 0x2f6b3a);
@@ -3316,7 +3385,7 @@ let lastState = null;
 // he is doing now, the place in his world where that kind of thing is done: he reads at the library, draws at the art
 // workshop, writes by the pond. The page walks him there for that step and home again (like Pino, who walks to
 // whatever he does). Nothing changes in what he did: it only shows where.
-const STEP_PLACE = { read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
+const STEP_PLACE = { search_web: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, browse: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
 function stepOuting() {
   if (!plan || stepNow < 0 || lastState?.last?.sleeping) return null;
   const st = plan.steps[stepNow];
@@ -3328,8 +3397,58 @@ function stepOuting() {
   const iso = (ms) => new Date(ms).toISOString();
   return { id: `step${t0}`, ...hit, step: st, leftAt: iso(t0), arriveAt: iso(t0 + walk), leaveAt: iso(t0 + len - walk), homeAt: iso(t0 + len) };
 }
+// A building site: a big thing he is building outside (its readyAt is still to come). The page shows it growing from the
+// ground up inside a scaffold, and when he has nothing else to do he is at work there.
+const siteNow = () => { const now = Date.now(); return (lastState?.decor ?? []).filter((d) => d.kind === 'outside' && d.readyAt && d.pos && Date.parse(d.at) <= now && now < Date.parse(d.readyAt)).sort((a, b) => Date.parse(a.readyAt) - Date.parse(b.readyAt))[0] ?? null; };
+const sitePart = (d, now = Date.now()) => Math.max(0, Math.min(1, (now - Date.parse(d.at)) / Math.max(1, Date.parse(d.readyAt) - Date.parse(d.at))));
+function siteOuting() {
+  const d = lastState?.last?.sleeping ? null : siteNow();
+  if (!d) return null;
+  const free = plan ? plan.at + plan.total + 20_000 : Date.parse(d.at); // after what he was doing
+  if (Date.now() < free) return null;
+  const x = d.pos[0] - TOWN_X, z = d.pos[2];
+  const r = Math.max(1.2, (Number(d.metres) || 3) / 2 + 0.9);
+  TOWN_SPOTS.site = { x, z: z + r, face: Math.PI }; // he stands in front of it
+  TOWN_FOR.site = ['site', ''];
+  ROUTES.site = z < -8 ? ['alley', 'alleyBack'] : x < -14 ? ['homeW'] : x > 26 ? ['sqN', 'sqE'] : z > 40 ? ['sqN', 'sqSW'] : ['sqN'];
+  const iso = (ms) => new Date(ms).toISOString();
+  const start = Math.max(free, Date.parse(d.at));
+  return { id: `site${d.id}${plan?.at ?? ''}`, place: 'site', spot: 'site', name: `his ${d.name}`, emoji: '🔨', site: d, leftAt: iso(start), arriveAt: iso(start + 70_000), leaveAt: d.readyAt, homeAt: iso(Date.parse(d.readyAt) + 60_000) };
+}
+const siteBoxes = new Map(); // a thing being built: its parts from the ground up, and its scaffold
+function growSites() {
+  const now = Date.now();
+  for (const d of lastState?.decor ?? []) {
+    if (d.kind !== 'outside' || !d.readyAt) continue;
+    const g = decorGroups.get(d.id);
+    if (!g) continue;
+    const p = now < Date.parse(d.at) ? 0 : sitePart(d, now);
+    let site = siteBoxes.get(d.id);
+    if (p >= 1) { if (site) { g.remove(site.scaffold); for (const m of site.parts) m.visible = true; siteBoxes.delete(d.id); } continue; }
+    if (!site || site.g !== g) {
+      const keep = [g.position.clone(), g.rotation.clone(), g.scale.clone()];
+      g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.scale.setScalar(1); g.updateMatrixWorld(true);
+      const parts = []; g.traverse((m) => { if (m.isMesh) parts.push(m); });
+      const low = new Map(parts.map((m) => [m, new THREE.Box3().setFromObject(m).min.y]));
+      parts.sort((a, b) => low.get(a) - low.get(b));
+      const box = new THREE.Box3().setFromObject(g);
+      g.position.copy(keep[0]); g.rotation.copy(keep[1]); g.scale.copy(keep[2]);
+      const scaffold = new THREE.Group();
+      const wood = new THREE.MeshStandardMaterial({ color: 0xb98a5a, roughness: 0.9, emissive: 0xb98a5a, emissiveIntensity: 0.25 });
+      const k = 1 / (d.scale || 1); // (the group is scaled: the poles keep their real thickness)
+      const [x0, x1, z0, z1, h] = [box.min.x - 0.35 * k, box.max.x + 0.35 * k, box.min.z - 0.35 * k, box.max.z + 0.35 * k, box.max.y + 0.4 * k];
+      for (const [x, z] of [[x0, z0], [x1, z0], [x0, z1], [x1, z1]]) { const pole = new THREE.Mesh(new THREE.BoxGeometry(0.1 * k, h, 0.1 * k), wood); pole.position.set(x, h / 2, z); scaffold.add(pole); }
+      for (const y of [h * 0.34, h * 0.67, h]) for (const [ax, az, len, alongX] of [[(x0 + x1) / 2, z0, x1 - x0, true], [(x0 + x1) / 2, z1, x1 - x0, true], [x0, (z0 + z1) / 2, z1 - z0, false], [x1, (z0 + z1) / 2, z1 - z0, false]]) { const bar = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len : 0.07 * k, 0.07 * k, alongX ? 0.07 * k : len), wood); bar.position.set(ax, y, az); scaffold.add(bar); }
+      g.add(scaffold);
+      site = { g, parts, scaffold };
+      siteBoxes.set(d.id, site);
+    }
+    const shown = Math.max(1, Math.ceil(p * site.parts.length));
+    site.parts.forEach((m, i) => { m.visible = i < shown; });
+  }
+}
 const realOuting = () => { const w = lastState?.where; return w && worldPlace(w.place) && w.place !== 'home' && Date.now() >= Date.parse(w.leftAt) + 30_000 ? w : null; };
-const outWhere = () => realOuting() ?? stepOuting();
+const outWhere = () => realOuting() ?? stepOuting() ?? siteOuting();
 const awayNow = () => Boolean(outWhere());
 const awayWords = () => {
   const w = outWhere();
@@ -3338,6 +3457,7 @@ const awayWords = () => {
   const now = Date.now();
   const name = p.name.replace(/^my /, 'his ');
   const back = new Date(Date.parse(w.homeAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' }); // his clock (Dutch time), like the World tab
+  if (w.site && now >= Date.parse(w.arriveAt)) return ['🔨', `Building ${name}: ${Math.round(sitePart(w.site, now) * 100)}%`, back];
   return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? (w.step ? [headline(w.step)[0], `${headline(w.step)[1]}, at ${name}`, back] : [p.emoji, w.job?.words ? `At ${name}: ${w.job.words}` : `At ${name}`, back]) : ['🏠', `Walking home from ${name}`, back];
 };
 let isStatic = false;
@@ -3572,7 +3692,7 @@ function renderVisitors(s) {
   renderMyVisits(s);
   const list = (s.visitors || []).slice().reverse();
   fill($('visitlist'), list.length
-    ? list.flatMap((v) => [entry([when(v.at), v.npc ? `${String(v.name || '').replace(' (neighbour)', '')}, a neighbour in Pip's world` : v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
+    ? list.flatMap((v) => [entry([when(v.at), v.stranger ? `${v.name || 'Someone'}, a traveller passing through (made up)` : v.npc ? `${String(v.name || '').replace(' (neighbour)', '')}, a neighbour who has moved away` : v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
     : empty('No messages yet. Be the first to say hello.'));
 }
 const pageOpenedAt = Date.now();
@@ -3674,7 +3794,7 @@ function headlineBase(st) {
   switch (st.action) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
     case 'browse': return ['🧭', 'Browsing the web, to see what he comes across'];
-    case 'buy': return ['🛍️', `At the corner shop for ${d.item || st.item || 'something'}`];
+    case 'buy': return ['🛍️', `At the grocery store for ${d.item || st.item || 'something'}`];
     case 'go_out': return [worldPlace(d.place ?? st.place)?.emoji ?? '🚶', st.away || awayNow() ? `Out: ${((w) => `${w[0].toLowerCase()}${w.slice(1)}`)(awayWords()?.[1] ?? `at ${worldPlace(d.place ?? st.place)?.name ?? 'somewhere'}`)}` : `Going out, to ${(st.placeName || worldPlace(d.place ?? st.place)?.name || 'somewhere').replace(/^my /, 'his ')}`];
     case 'came_home': return ['🏠', `Home again from ${(st.placeName || 'outside').replace(/^my /, 'his ')}`];
     case 'happened': return [st.emoji || '🌤️', 'Something happened'];
@@ -3790,7 +3910,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the corner shop', out: e.action === 'came_home' ? 'Came home' : e.failed ? 'Wanted to go out' : 'Went out', event: 'Something happened', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the grocery store', out: e.action === 'came_home' ? 'Came home' : e.failed ? 'Wanted to go out' : 'Went out', event: 'Something happened', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3808,12 +3928,14 @@ function dayCard(e) {
     }
     if (e.opened) card.append(pageBlock(e.opened, 'He opened:'));
     else if (e.results && !e.results.length) card.append(el('p', 'He found nothing.', 'muted'));
+    if (e.opinion?.says) card.append(el('p', `${{ love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }[e.opinion.how] ?? '💭'} Pip: “${e.opinion.says}”`, 'opinion'));
   } else if (kind === 'read') {
     card.append(el('h3', e.opened?.title || e.topic || '', 'title'));
     if (e.topic && e.opened) card.append(el('p', e.action === 'browse' ? `He came across it while browsing near “${e.topic}”.` : `He wanted to know about “${e.topic}”.`, 'muted'));
     else if (e.action === 'browse' && e.opened) card.append(el('p', 'He came across it while browsing.', 'muted'));
     if (e.opened) card.append(pageBlock(e.opened, e.action === 'browse' ? 'He found:' : 'He read:'));
     else card.append(el('p', e.action === 'browse' ? 'The pages did not load.' : 'He could not find anything to read about this.', 'muted'));
+    if (e.opinion?.says) card.append(el('p', `${{ love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }[e.opinion.how] ?? '💭'} Pip: “${e.opinion.says}”`, 'opinion'));
   } else if (kind === 'piano' && e.action === 'record_song') {
     card.append(el('h3', e.name || 'A recording', 'title'));
     if (e.failed) card.append(el('p', `That did not work out: ${humanFail(e.failed)}.`, 'muted'));
@@ -3848,7 +3970,7 @@ function dayCard(e) {
     card.append(el('h3', `To ${(e.placeName || 'somewhere').replace(/^my /, 'his ')}`, 'title'));
     card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `${e.what ? `He wants to ${hisWords(e.place, e.what)}. ` : ''}${e.back ? `Home again around ${hm(Date.parse(e.back))}.` : ''}`, 'muted'));
   } else if (kind === 'out') { // home again: a postcard of what he saw, and what he brought
-    card.append(el('h3', e.errand ? `Back from the corner shop with ${e.errand}` : `From ${(e.placeName || 'outside').replace(/^my /, 'his ')}`, 'title'));
+    card.append(el('h3', e.errand ? `Back from the grocery store with ${e.errand}` : `From ${(e.placeName || 'outside').replace(/^my /, 'his ')}`, 'title'));
     if (e.card) { const pc = el('div'); pc.innerHTML = postcardSvg(e.card); card.append(pc); } // drawn by the page from the place, the hour and the weather (no outside text in it)
     if (!e.errand && e.did) card.append(el('p', e.did, 'thought'));
     if (e.found?.length) { const row = el('div', null, 'chips'); for (const f of e.found) row.append(el('span', `${f.emoji || '✨'} ${f.name}`, 'chip')); row.style.marginTop = '8px'; card.append(row); }
@@ -4116,7 +4238,38 @@ setInterval(() => {
 }, 10_000);
 
 // ---- Mind: his reflections, wants and questions
+// His memory in three shelves (memory.js): how full each is, the strongest few, and the one that will go first.
+function renderMemory(s) {
+  const all = s.memories || [];
+  const shown = (m) => (m.private ? '🔒 something private' : m.text);
+  const tier = (name) => all.filter((m) => (m.tier ?? 'long') === name);
+  const boxes = [['Short term', 'the last days: it fades fast', tier('short'), 24], ['Long term', 'what he keeps: it fades over months', tier('long'), 36], ['Faded', 'one worn sentence is left. It only comes back when something touches it', s.faded || [], 150]].map(([title, what, list, slots]) => {
+    const box = el('div', null, 'memtier');
+    const h = el('h3'); h.append(document.createTextNode(title), el('small', `${list.length} of ${slots}`));
+    const bar = el('div', null, 'bar'); const fillI = document.createElement('i'); fillI.style.width = `${Math.min(100, (list.length / slots) * 100)}%`; bar.append(fillI);
+    const ul = el('ul');
+    if (title === 'Faded') ul.append(...list.slice(-3).reverse().map((m) => el('li', m.text)));
+    else {
+      const byWeight = [...list].sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0));
+      ul.append(...byWeight.slice(0, 3).map((m) => el('li', shown(m))));
+      const last = byWeight.filter((m) => !m.pinned).at(-1);
+      if (last && byWeight.length > 3) ul.append(el('li', `First to go: ${shown(last)}`, 'goes'));
+    }
+    if (!list.length) ul.append(el('li', 'Nothing here yet.', 'muted'));
+    box.append(h, bar, el('p', what, 'muted'), ul);
+    return box;
+  });
+  if (s.nightly?.kept?.length) boxes.push(el('p', `🌙 Last night he kept: ${s.nightly.kept.slice(0, 3).join(' · ')}`, 'muted'));
+  $('memtiers').replaceChildren(...boxes);
+  fill($('beliefs'), (s.beliefs || []).length ? s.beliefs.map((b) => el('li', `${b.lifts ? '⬆️' : '⬇️'} ${b.text} (seen on ${b.days} days)`)) : [el('li', 'Nothing yet. A belief needs three days of the same.', 'muted')]);
+  fill($('learned'), (s.learned || []).length ? s.learned.slice(-6).reverse().map((l) => el('li', `💌 ${l.from} (${l.who}): “${l.text}”${l.said ? ` Pip: “${l.said}”` : ''}`)) : [el('li', 'Nobody has taught him anything yet. Travellers leave notes in his world.', 'muted')]);
+  const face = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' };
+  fill($('opinions'), (s.opinions || []).length ? s.opinions.slice(-6).reverse().map((o) => el('li', `${face[o.how] ?? '💭'} ${o.topic}: “${o.says}”`)) : [el('li', 'He has not said what he thinks of anything yet.', 'muted')]);
+  const ints = (s.curious?.interests || []).filter((i) => i.score >= 3).sort((a, b) => b.score - a.score);
+  fill($('hobbies'), ints.length ? ints.slice(0, 8).map((i) => { const lvl = i.score >= 6 && (i.practice ?? 0) >= 12 ? '🏅 mastered' : i.score >= 6 ? '💛 hobby' : '✨ interest'; return el('li', `${lvl}: ${i.topic} (practised ${i.practice ?? 0} time${(i.practice ?? 0) === 1 ? '' : 's'})`); }) : [el('li', 'No interests yet. Browsing is how he finds them.', 'muted')]);
+}
 function renderMind(s) {
+  renderMemory(s);
   const mems = new Map((s.memories || []).map((m) => [m.id, m.text]));
   fill($('reflections'), (s.reflections || []).length
     ? s.reflections.slice(-8).reverse().map((r) => {
@@ -4286,7 +4439,46 @@ function renderStatus(s) {
     ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
     : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
 }
+// "Since you were here": what Pip did while you were away. The page remembers (on this device) when you last looked.
+let sinceShown = false;
+function renderSince(s) {
+  if (sinceShown) return;
+  sinceShown = true;
+  const last = Number(store('pip-seen') || 0);
+  const keep = () => store('pip-seen', String(Date.now()));
+  keep();
+  setInterval(keep, 60_000);
+  if (!last || Date.now() - last < 30 * 60_000) return;
+  const after = (iso) => Date.parse(iso) > last;
+  const names = (list, n = 3) => { const u = [...new Set(list.filter(Boolean))]; return `${u.slice(0, n).join(', ')}${u.length > n ? ` and ${u.length - n} more` : ''}`; };
+  const lines = [];
+  const built = (s.decor ?? []).filter((d) => !d.image && after(d.createdAt));
+  if (built.length) lines.push(`🔨 He made ${names(built.map((d) => d.name))}.`);
+  const drew = (s.gallery ?? s.art ?? []).filter((a) => after(a.at ?? a.createdAt));
+  if (drew.length) lines.push(`🎨 He drew ${names(drew.map((a) => `“${a.name}”`))}${drew.some((a) => a.wall) ? ' (some of it on a wall outside)' : ''}.`);
+  const prints = (s.prints ?? []).filter((x) => after(x.at));
+  if (prints.length) lines.push(`🖨️ He printed ${names(prints.map((x) => x.name))}.`);
+  const land = (s.land ?? []).filter((l) => after(l.at));
+  if (land.length) lines.push(`⛰️ He shaped the land: ${names(land.map((l) => l.name))}.`);
+  const out = (s.outings ?? []).filter((o) => !o.errand && after(o.homeAt));
+  if (out.length) lines.push(`🚶 He went out ${out.length} time${out.length === 1 ? '' : 's'}: ${names(out.map((o) => worldPlace(o.place)?.name?.replace(/^my /, 'his ')))}.`);
+  const learned = (s.learned ?? []).filter((l) => after(l.at));
+  if (learned.length) lines.push(`💌 He learned something from ${names(learned.map((l) => l.from))}.`);
+  const log = (s.log ?? []).filter((e) => after(e.at));
+  const read = log.filter((e) => ['search_web', 'read_book', 'browse'].includes(e.action) && !e.failed).length;
+  if (read) lines.push(`📚 He looked things up or read ${read} time${read === 1 ? '' : 's'}.`);
+  const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept' && after(w.keptAt ?? w.at)).length;
+  if (kept) lines.push(`📌 He made ${kept} thing${kept === 1 ? '' : 's'} from the notice board.`);
+  if (!lines.length) lines.push(log.length ? `He was busy with small things (${log.length} of them), but made nothing new.` : 'Nothing new. He mostly slept.');
+  const ago = (() => { const m = Math.round((Date.now() - last) / 60000); return m < 90 ? `${m} minutes` : m < 2880 ? `${Math.round(m / 60)} hours` : `${Math.round(m / 1440)} days`; })();
+  const box = $('since');
+  const x = el('button', '✕', 'x'); x.type = 'button'; x.setAttribute('aria-label', 'Close'); x.addEventListener('click', () => { box.hidden = true; });
+  const ul = el('ul'); ul.append(...lines.slice(0, 7).map((l) => el('li', l)));
+  box.replaceChildren(x, el('h3', `Since you were here (${ago} ago)`), ul);
+  box.hidden = false;
+}
 function render(s) {
+  renderSince(s);
   renderPhone(s);
   syncPrints(s);
   syncFixedLamps(s);
@@ -4671,7 +4863,7 @@ function setPlan(last) {
 let awaySaid = '';
 function tickAway() {
   const a = awayWords();
-  const said = a ? `${a[0]} Pip is out: ${a[1][0].toLowerCase()}${a[1].slice(1)}. Home around ${a[2]}.` : ''; // (names keep their capital: Oma Jo)
+  const said = a ? `${a[0]} Pip is out: ${a[1][0].toLowerCase()}${a[1].slice(1)}. Home around ${a[2]}.` : ''; // (only the first letter is made small: a name further on keeps its capital)
   if (said === awaySaid) return;
   awaySaid = said;
   $('away').hidden = !a;
@@ -4883,19 +5075,33 @@ function drawMini() {
 // he did there so far. The words come from the places of his world (web/world.js) and from his state.
 const WORLD_CARDS = {
   home: { title: 'Pip’s home', icon: '🏠', what: 'He lives here. Walk in through the red door.', can: ['sleep', 'eat and cook', 'work at his computer', 'keep the things he makes'] },
-  bakery: { title: 'The bakery', icon: '🥖', what: 'It smells of fresh bread from early in the morning.', can: [], none: 'Pip cannot do anything here yet.' },
-  shop: { title: 'The corner shop', icon: '🛍️', what: 'Where he spends his coins.', place: 'shop', can: ['buy food, seeds, things to make with, tools and instruments'] },
+  shop: { title: 'The grocery store', icon: '🛒', what: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.', place: 'shop', can: ['buy food to cook and bake with', 'buy seeds, things to make with, tools and instruments'] },
+  flats: { title: 'The flats', icon: '🏢', what: 'People of the town live here. Downstairs a shop stands empty.', can: [], none: 'Nothing yet. Pip could wish for something to move in.' },
+  cafe: { title: 'The internet café', icon: '💻', what: 'Where he goes to look things up and read on the web. The screen in the window shows the last thing he read, and what he thought of it.', can: ['search the web', 'browse until he stumbles on something', 'say what he really thinks of what he read'] },
+  closed: { title: 'The closed shop', icon: '🚪', what: 'The shutter is down and nobody knows what it used to sell.', can: [], none: 'Nothing yet. Pip could wish for something to open here.' },
+  land: { title: 'The land workshop', icon: '⛰️', what: 'The land tools are kept here. With them he shapes the ground of his world.', place: 'land', can: ['make a hill', 'dig a hole', 'make the ground flat again'] },
   library: { title: 'The library', icon: '📚', place: 'library' },
   workshop: { title: 'The print workshop', icon: '🖨️', place: 'workshop', can: ['design a small 3D model and have it printed'] },
   shelf: { title: 'His shelf of prints', icon: '🖨️', what: 'Everything he printed stands here.', place: 'workshop', can: ['design a small 3D model and have it printed'] },
   studio: { title: 'The art workshop', icon: '🎨', what: 'Every drawing he ever made hangs on its outside walls, so nothing is lost when a wall is painted over.', can: [], none: 'It keeps his art. He does not have to do anything for that.' },
   board: { title: 'The notice board', icon: '📌', place: 'board', can: ['read what people ask for', 'make one of those things and earn the coins'] },
   pond: { title: 'The pond', icon: '🦆', place: 'pond' },
-  hill: { title: 'The hill', icon: '⛰️', place: 'hill' },
-  garden: { title: 'Oma Jo’s garden', icon: '🌻', place: 'garden' },
-  plot: { title: 'Pip’s plot', icon: '🌱', what: 'A field of his own, across the street.', can: ['build things here, also big ones'] },
+  square: { title: 'The square', icon: '⛲', what: 'The middle of the village. The notice board stands here, and everyone crosses it.', can: ['walk across it to everything', 'read the notice board'] },
+  plot: { title: 'Pip’s land', icon: '🌱', what: 'A big free field of his own, beside the square. It is his to fill.', can: ['build things here, also big ones', 'make hills and holes', 'ask for a new building'] },
   stone: { title: 'The green stone', icon: '💎', what: 'It glows a little at night. Nobody knows who put it there.', can: [], none: 'Nothing. He can build next to it.' },
 };
+// Small deeds: one small thing a visitor can do at a place, for Pip to find later (api/deed.js, strangers.js).
+const DEED_AT = { flower: 'home', apple: 'shop', boat: 'pond', doodle: 'board', hat: 'stone', bookmark: 'library', chalk: 'square' };
+const DEED_LABEL = { flower: '🌼 Leave a flower on his doorstep', apple: '🍎 Leave an apple by the door', boat: '⛵ Put a paper boat on the pond', doodle: '✏️ Pin a doodle on the board', hat: '🎩 Put a tiny hat on the stone', bookmark: '🔖 Leave a bookmark in a book', chalk: '🟨 Draw hopscotch on the square' };
+async function doDeed(deed, bt) {
+  bt.disabled = true;
+  try {
+    const res = await fetch('/api/deed', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deed, since: Date.now() - pageOpenedAt, website: '' }) });
+    const out = await res.json().catch(() => ({}));
+    if (res.ok) toast('Done. Pip will find it when he wakes up and looks around. 🤫');
+    else { toast(res.status === 404 ? 'This only works on the live site.' : out.error || 'That did not work. Try again later.'); bt.disabled = false; }
+  } catch { toast('That did not work. Try again later.'); bt.disabled = false; }
+}
 function worldCard(kind, key) {
   const s = lastState || {};
   const ago = (iso) => { const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 60 ? `${Math.max(1, m)} min ago` : m < 1440 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`; };
@@ -4915,10 +5121,15 @@ function worldCard(kind, key) {
   if (wall) { const on = (s.gallery ?? []).filter((a) => a.wall === wall.key); so.push(on.length ? `On it: ${on.slice(-4).map((a) => `“${a.name}”`).join(', ')}.` : 'Nothing is painted on it yet.'); }
   if (key === 'back' || BUILDINGS.some((b) => b.key === key)) { const on = (s.gallery ?? []).filter((a) => a.wall === `back_${key}`); if (on.length) so.push(`Painted on its back wall: ${on.slice(-3).map((a) => `“${a.name}”`).join(', ')}.`); }
   if (key === 'board') { const notes = (s.wishes ?? []).filter((w) => w.board && w.status === 'open' && Date.now() - Date.parse(w.at) < 3 * 86_400_000); so.push(notes.length ? `On it now: ${notes.map((w) => `${w.topic} (${w.reward} coins)`).join(', ')}.` : 'Nothing is pinned on it right now.'); const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept').length; if (kept) so.push(`He made ${kept} of the things people asked for.`); so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); }
+  if (key === 'cafe') { const face = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }; const reads = [...(s.log ?? [])].reverse().filter((e) => ['search_web', 'read_book', 'browse'].includes(e.action) && !e.failed && (e.query || e.opened?.title || e.topic)).slice(0, 4); if (reads.length) so.push(...reads.map((e) => `${e.action === 'search_web' ? '🔎' : '📖'} ${e.query || e.opened?.title || e.topic}${e.opinion ? ` ${face[e.opinion.how] ?? ''} “${e.opinion.says}”` : ''}`)); else so.push('He has not looked anything up yet.'); }
+  if (key === 'land') { const l = s.land ?? []; so.push(l.length ? `He made ${l.filter((x) => x.kind !== 'hole').length} hill${l.filter((x) => x.kind !== 'hole').length === 1 ? '' : 's'} and ${l.filter((x) => x.kind === 'hole').length} hole${l.filter((x) => x.kind === 'hole').length === 1 ? '' : 's'}: ${l.slice(-4).map((x) => x.name).join(', ')}.` : 'He has not shaped the land yet. It is all flat.'); }
+  if (['plot', 'flats', 'closed'].includes(key)) { const wishes = (s.asks ?? []).filter((a) => a.status === 'open' && /^Dream:/i.test(a.item ?? '')).map((a) => String(a.item).replace(/^Dream:\s*/i, '')); if (wishes.length) so.push(`✨ Pip wishes for: ${wishes.slice(-3).join('; ')}. (You find his wishes under Asks.)`); }
   if (key === 'plot') { const mine = (s.decor ?? []).filter((d) => d.kind === 'outside' && (d.spot ?? 'plot') === 'plot'); so.push(mine.length ? `${mine.length} thing${mine.length === 1 ? '' : 's'} he made stand here.` : 'Nothing stands here yet.'); }
   if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
-  else if (p && !['shop', 'workshop', 'walls', 'board'].includes(p.key)) so.push('He has not been here yet.');
+  else if (p && !['shop', 'workshop', 'walls', 'board', 'land'].includes(p.key)) so.push('He has not been here yet.');
   if (so.length) sections.push({ heading: 'So far', lines: so });
+  const deed = Object.entries(DEED_AT).find(([, at]) => at === key);
+  if (deed) sections.push({ heading: 'What you can do here', lines: [(s.deeds ?? []).some((d) => d.deed === deed[0] && d.status === 'lying') ? 'Someone did this already. Pip has not found it yet.' : 'A small thing for Pip to find later. He does not know who did it.'], buttons: [{ label: `${DEED_LABEL[deed[0]]}`, run: (bt) => doDeed(deed[0], bt) }] });
   return { title: c.title, icon: c.icon, subtitle: 'In his world', sections };
 }
 for (const t of town.things) t.object.userData.info = () => worldCard(t.kind, t.key);
@@ -4933,6 +5144,7 @@ function nowStatus() {
   const w = outWhere();
   if (w) {
     const [icon, text] = awayWords();
+    if (w.site && now >= Date.parse(w.arriveAt)) return { icon, text, k: sitePart(w.site, now), left: Date.parse(w.site.readyAt) - now };
     const [a, b] = now < Date.parse(w.arriveAt) && !w.cut ? [w.leftAt, w.arriveAt] : now < Date.parse(w.leaveAt) ? [w.arriveAt, w.leaveAt] : [w.leaveAt, w.homeAt];
     return { icon, text, k: (now - Date.parse(a)) / Math.max(1, Date.parse(b) - Date.parse(a)), left: Date.parse(b) - now };
   }
@@ -4953,6 +5165,57 @@ function showNowBar() {
   $('nowleft').textContent = left === null ? '' : left >= 90_000 ? `${Math.round(left / 60_000)} min` : left >= 1000 ? `${Math.max(1, Math.round(left / 1000))} s` : '';
   $('nowprog').classList.toggle('none', st.k === null);
   $('nowprog').firstChild.style.width = `${Math.round(Math.max(0, Math.min(1, st.k ?? 0)) * 1000) / 10}%`;
+}
+
+// ---- What Pip is reading: a box that floats over the picture, so it is always easy to read. It shows while he looks
+// something up or reads, for a quarter of an hour after, and whenever you stand by the internet café: what he looked
+// up, a piece of what he read (with a link to the page), and what he thinks of it. (The screen in the café's window
+// shows the same, small.) The ✕ puts it away until he reads something new.
+const READS = ['search_web', 'read_book', 'browse'];
+const FACES = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' };
+let readingClosed = '';
+let readingKey = '';
+function readingNow() {
+  const s = lastState;
+  if (!s) return null;
+  const now = Date.now();
+  const log = [...(s.log ?? [])].reverse();
+  let live = null;
+  if (plan && stepNow >= 0 && !s.last?.sleeping) {
+    const st = plan.steps[stepNow], t0 = plan.at + plan.starts[stepNow], len = plan.lengths[stepNow];
+    if (st && READS.includes(st.action) && !st.failed && now >= t0 && now <= t0 + len) live = { st, k: (now - t0) / Math.max(1, len) };
+  }
+  const e = (live ? log.find((x) => x.action === live.st.action && now - Date.parse(x.at) < 40 * 60_000) : null) ?? (live ? null : log.find((x) => READS.includes(x.action) && !x.failed && (x.query || x.opened?.title || x.topic)));
+  if (!e && !live) return null;
+  const near = view.mode === 'walk' && inTown(view.x) && Math.hypot(view.x - TOWN_X - TOWN_SPOTS.cafe.x, view.z - TOWN_SPOTS.cafe.z) < 16;
+  const fresh = e && now - Date.parse(e.at) < 15 * 60_000;
+  return live || near || fresh ? { e, live } : null;
+}
+function showReading() {
+  const r = readingNow();
+  const box = $('reading');
+  const id = r ? `${r.e?.at ?? ''}${r.live ? r.live.st.action : ''}` : '';
+  if (!r || id === readingClosed) { box.hidden = true; readingKey = ''; return; }
+  const { e, live } = r;
+  const what = e?.query ? `“${e.query}”` : e?.opened?.title || e?.topic || (live ? `“${live.st.details?.query ?? live.st.details?.topic ?? '…'}”` : '');
+  const typing = live && live.k < 0.3 && live.st.action === 'search_web';
+  const m = e ? Math.round((Date.now() - Date.parse(e.at)) / 60000) : 0;
+  const ago = m < 2 ? 'just now' : m < 90 ? `${m} minutes ago` : m < 2880 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`;
+  const head = live ? (typing ? '🔎 Pip is searching the web right now' : live.st.action === 'browse' ? '💻 Pip is browsing right now' : '📖 Pip is reading right now') : `💻 The last thing Pip ${e.action === 'search_web' ? 'looked up' : e.action === 'browse' ? 'came across' : 'read'} (${ago})`;
+  const text = typing ? 'He is typing his question…' : e?.opened?.text ? (e.opened.text.length > 240 ? `${e.opened.text.slice(0, 240).replace(/\s+\S*$/, '')} …` : e.opened.text) : live ? 'The page is loading…' : 'He found nothing to read about it.';
+  const opinion = e?.opinion?.says ? `${FACES[e.opinion.how] ?? '💭'} Pip: “${e.opinion.says}”` : live ? 'What he thinks of it comes when he is done reading.' : 'He has not said what he thinks of it yet.';
+  const key = [id, head, what, text, opinion].join('|');
+  box.hidden = false;
+  if (key === readingKey) return; // (not drawn again every half second: the link stays clickable)
+  readingKey = key;
+  $('rhead').textContent = head;
+  $('rtitle').textContent = what;
+  const body = $('rtext');
+  body.replaceChildren(document.createTextNode(`${text} `));
+  if (!typing && e?.opened?.url) body.append(link(e.opened.url, 'Open the page'));
+  $('rop').textContent = opinion;
+  $('rop').classList.toggle('none', !e?.opinion?.says);
+  $('readingx').onclick = () => { readingClosed = id; box.hidden = true; };
 }
 
 // ---- Interact. What is in the middle of your view and close by can be opened: a small prompt says what it is, and F
@@ -4988,9 +5251,11 @@ prompt.addEventListener('click', interact);
 if (FIRST) {
   setInterval(showPrompt, 220);
   setInterval(showNowBar, 500);
+  setInterval(showReading, 500);
   if (!store('pip-start')) startScreen(true);
   document.body.classList.add('first');
   mini.hidden = false;
+  $('hud').hidden = false;
   portalReady = true;
   setMode('walk');
   Object.assign(view, { x: TOWN_X + 2.6, z: 8.8, yaw: 0.28, pitch: 0.04 }); // in the street, looking at his house

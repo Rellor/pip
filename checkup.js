@@ -130,7 +130,7 @@ export function dayReport(s, kindOf, now = Date.now()) {
     learned.length ? `Learned about: ${learned.join(', ')}.` : 'Did not look anything up.',
     into.length ? `Into lately: ${into.join(', ')}.` : '',
     failed ? `${failed} steps did not work.` : '',
-    (s.wishes ?? []).some((w) => w.status === 'kept' && now - Date.parse(w.keptAt) < DAY) ? `Made a neighbour's wish come true: ${(s.wishes ?? []).filter((w) => w.status === 'kept' && now - Date.parse(w.keptAt) < DAY).map((w) => `${w.topic} for ${w.from}`).join(', ')}.` : '',
+    (s.wishes ?? []).some((w) => w.status === 'kept' && now - Date.parse(w.keptAt) < DAY) ? `Made what a note on the notice board asked for: ${(s.wishes ?? []).filter((w) => w.status === 'kept' && now - Date.parse(w.keptAt) < DAY).map((w) => w.topic).join(', ')}.` : '',
     `Fullness ${Math.round(s.fullness ?? 0)}/10, mood ${s.mood ?? '?'}${Number.isFinite(s.coins) ? `, ${s.coins} coins` : ''}.`,
   ].filter(Boolean).join('\n');
 }
