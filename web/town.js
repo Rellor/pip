@@ -328,26 +328,25 @@ export function buildTown(THREE) {
   ground.receiveShadow = true;
   { const cx = (WORLD.x0 + WORLD.x1) / 2, cz = (WORLD.z0 + WORLD.z1) / 2; for (const [w, d, x, z] of [[WW + 0.6, 0.3, cx, WORLD.z0 - 0.15], [WW + 0.6, 0.3, cx, WORLD.z1 + 0.15], [0.3, WD, WORLD.x0 - 0.15, cz], [0.3, WD, WORLD.x1 + 0.15, cz]]) box([w, 0.8, d], 0x8a6a4c, [x, -0.42, z]); } // the rim it lies in
   // the village square and the paths from it to every door (there is no road: there are no cars)
-  // The square and the paths are bare earth, trodden into the grass: a photo of dirt (ambientCG, see web/tex/CREDITS.txt)
-  // laid flat on the ground, fading out at its edges so it is part of the ground and not a floor on top of it.
-  const dirtTex = (rx, ry) => { const t = tex('tex/dirt.jpg'); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 4; return t; };
-  const fadeTex = (w, h, edgeX, edgeY, rough = 0) => { // white where the earth is, black where the grass is, soft and a little ragged in between
+  // The square and the paths: one smooth, even, light surface with a crisp edge and a thin darker border, like fine
+  // gravel raked flat. Tidy on purpose: no tiles, no stains. (They lie flat on the ground, a hair above it.)
+  const PAVE = 0xd6c9ae, PAVE_EDGE = 0x9c8c70;
+  const shapeTex = (w, h, r) => { // white inside a rounded rectangle with a sharp edge, black outside
     const c = document.createElement('canvas'); c.width = w; c.height = h;
     const g = c.getContext('2d');
     g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
-    g.filter = `blur(${Math.max(1, Math.min(edgeX, edgeY) * 0.55)}px)`;
-    g.fillStyle = '#fff'; g.fillRect(edgeX, edgeY, w - 2 * edgeX, h - 2 * edgeY);
-    for (let i = 0; i < rough; i++) { const a = rnd() * Math.PI * 2; const x = w / 2 + Math.cos(a) * (w / 2 - edgeX) * (0.92 + rnd() * 0.12), y = h / 2 + Math.sin(a) * (h / 2 - edgeY) * (0.92 + rnd() * 0.12); g.fillStyle = rnd() < 0.5 ? '#fff' : '#000'; g.beginPath(); g.arc(Math.max(0, Math.min(w, x)), Math.max(0, Math.min(h, y)), 3 + rnd() * 7, 0, 7); g.fill(); }
-    g.filter = 'none';
+    g.fillStyle = '#fff'; g.beginPath(); g.roundRect(1, 1, w - 2, h - 2, r); g.fill();
     return new THREE.CanvasTexture(c);
   };
-  const earth = (w, d, pos, map, alpha) => { const m = skin(map, 0.95); m.color.set(0xd6cbbb); m.alphaMap = alpha; m.transparent = true; m.depthWrite = false; /* (a touch greyer than the photo: earth, not clay) */ const mesh = add(new THREE.PlaneGeometry(w, d), m, pos); mesh.rotation.x = -Math.PI / 2; mesh.receiveShadow = true; return mesh; };
+  const flat = (w, d, pos, color, alpha) => { const mesh = add(new THREE.PlaneGeometry(w, d), M(color, { transparent: true, alphaMap: alpha, alphaTest: 0.5, depthWrite: false }), pos); mesh.rotation.x = -Math.PI / 2; mesh.receiveShadow = true; return mesh; };
   const SQW = SQUARE.x1 - SQUARE.x0, SQD = SQUARE.z1 - SQUARE.z0;
-  const square = earth(SQW + 5, SQD + 5, [(SQUARE.x0 + SQUARE.x1) / 2, 0.02, (SQUARE.z0 + SQUARE.z1) / 2], dirtTex((SQW + 5) / 5, (SQD + 5) / 5), fadeTex(256, 192, 22, 20, 90));
+  const sqMid = [(SQUARE.x0 + SQUARE.x1) / 2, (SQUARE.z0 + SQUARE.z1) / 2];
+  const pathShape = shapeTex(256, 32, 16);
+  const paths = PATHS.map(([ax, az, bx, bz], i) => { const len = Math.hypot(bx - ax, bz - az); const mesh = flat(len + 2, 2, [(ax + bx) / 2, 0.012 + i * 0.0004, (az + bz) / 2], PAVE, pathShape); mesh.rotation.z = -Math.atan2(bz - az, bx - ax); return { mesh, ax, az, bx, bz }; });
+  flat(SQW + 0.5, SQD + 0.5, [sqMid[0], 0.03, sqMid[1]], PAVE_EDGE, shapeTex(512, Math.round((512 * (SQD + 0.5)) / (SQW + 0.5)), 26)); // its border
+  const square = flat(SQW, SQD, [sqMid[0], 0.034, sqMid[1]], PAVE, shapeTex(512, Math.round((512 * SQD) / SQW), 22));
   square.receiveShadow = true;
   things.push({ kind: 'place', key: 'square', object: square });
-  const pathFade = fadeTex(128, 32, 6, 9);
-  const paths = PATHS.map(([ax, az, bx, bz], i) => { const len = Math.hypot(bx - ax, bz - az); const mesh = earth(len + 2.4, 3, [(ax + bx) / 2, 0.012 + i * 0.0012, (az + bz) / 2], dirtTex((len + 2.4) / 5, 0.6), pathFade); mesh.rotation.z = -Math.atan2(bz - az, bx - ax); return { mesh, ax, az, bx, bz }; });
   const field = add(fieldGeo, M(0xb4dc9a, {}, 'grass', 14, 10), [0, 0, 0]);
   field.material.vertexColors = true;
   field.receiveShadow = true;
