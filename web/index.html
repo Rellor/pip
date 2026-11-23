@@ -75,6 +75,10 @@
   body.walking #rooms { display:none; }
   /* always first person: no views from above, and a little round map in the corner with a circle where Pip is (tap it to go to him) */
   body.first #walk, body.first #rooms, body.first #resetview { display:none; }
+  .setrow { display:flex; align-items:center; gap:10px; font-size:16px; font-weight:600; padding:6px 0 2px; cursor:pointer; }
+  .setrow input { width:20px; height:20px; flex:none; }
+  /* while the mouse turns the view, a small dot in the middle shows what a click will tap */
+  #aim { position:absolute; left:50%; top:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:rgba(255,255,255,.9); box-shadow:0 0 0 2px rgba(0,0,0,.35); z-index:3; pointer-events:none; }
   #stage #minimap { position:absolute; left:12px; top:12px; width:110px; height:110px; z-index:3; border-radius:50%; box-shadow:0 2px 12px rgba(0,0,0,.3); cursor:pointer; }
   @media (max-width:640px) { #stage #minimap { width:88px; height:88px; } }
   @media (max-width: 640px) { #rooms { left:auto; right:12px; transform:none; top:60px; flex-direction:column; } #rooms button { padding:7px 9px; font-size:16px; line-height:1; } #rooms .lbl { display:none; } }
@@ -369,6 +373,7 @@
   <div id="stage">
     <div id="hint"></div>
     <button id="walk" class="stagebtn" type="button">🚶 Walk around</button>
+    <div id="aim" hidden></div>
     <canvas id="minimap" width="220" height="220" hidden role="button" tabindex="0" title="Tap to go to Pip" aria-label="Map of Pip's world. Tap to go to Pip."></canvas>
     <div id="away" class="awaychip" hidden role="status"></div>
     <div id="stick" hidden><div id="knob"></div></div>
@@ -480,7 +485,13 @@
     <section class="pane" data-pane="settings" hidden>
       <h2>Settings</h2>
       <div class="err" id="err" style="padding:0 0 8px"></div>
-      <p class="muted">For whoever looks after Pip. Enter the reply key here once: it then works for every button (messages, tasks, fronts) on this device.</p>
+      <h2>Looking around</h2>
+      <label class="setrow"><input type="checkbox" id="mouselook"> Turn by moving the mouse</label>
+      <p class="muted">Off: you drag to look. On: click the picture once, then the view turns with your mouse, left and right, up and down. Press Esc to get your mouse back. (For a computer with a mouse.)</p>
+      <label class="setrow"><input type="checkbox" id="viewbob"> Bob a little while walking</label>
+      <p class="muted">The view goes gently up and down with your steps.</p>
+      <h2>For whoever looks after Pip</h2>
+      <p class="muted">Enter the reply key here once: it then works for every button (messages, tasks, fronts) on this device.</p>
       <div id="setlock">
         <input id="setkey" type="password" autocomplete="off" placeholder="Your reply key">
         <button type="button" class="small" id="setunlock">Unlock</button>
