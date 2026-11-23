@@ -260,7 +260,7 @@ const out2 = run(90, { PIP_FAKE_MOVE: 'rest' });
 const c = read1();
 assert.match(out2, /🏠 home from the pond in the park/);
 assert.equal(c.where, null);
-const came = c.log.find((e) => e.action === 'came_home');
+const came = c.log.findLast((e) => e.action === 'came_home'); // (the newest: the saved day this test starts from may hold older ones)
 assert.ok(came && came.card.place === 'pond' && came.did.length > 20, JSON.stringify(came));
 assert.equal(c.outings.length, 1);
 assert.ok(c.memories.some((m) => /home again from the pond/.test(m.text)), 'he remembers it');
