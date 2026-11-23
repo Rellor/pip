@@ -5636,3 +5636,9 @@ My drawing failed earlier because of an error, so I will try drawing the old tre
 - draw (old_tree): Let us try drawing the old tree again.
 - mood: driven
 
+## 23/11/2026, 20:21:45
+I finished the tree drawing and got my coins. Now I want to look up how to make a birdhouse for the notice board.
+> I finished the tree drawing and got my coins. Now I want to look up how to make a birdhouse for the notice board.
+- search_web (how to make a birdhouse): look up birdhouse
+- mood: driven
+
