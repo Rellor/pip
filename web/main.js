@@ -5166,6 +5166,57 @@ function showNowBar() {
   $('nowprog').firstChild.style.width = `${Math.round(Math.max(0, Math.min(1, st.k ?? 0)) * 1000) / 10}%`;
 }
 
+// ---- What Pip is reading: a box that floats over the picture, so it is always easy to read. It shows while he looks
+// something up or reads, for a quarter of an hour after, and whenever you stand by the internet café: what he looked
+// up, a piece of what he read (with a link to the page), and what he thinks of it. (The screen in the café's window
+// shows the same, small.) The ✕ puts it away until he reads something new.
+const READS = ['search_web', 'read_book', 'browse'];
+const FACES = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' };
+let readingClosed = '';
+let readingKey = '';
+function readingNow() {
+  const s = lastState;
+  if (!s) return null;
+  const now = Date.now();
+  const log = [...(s.log ?? [])].reverse();
+  let live = null;
+  if (plan && stepNow >= 0 && !s.last?.sleeping) {
+    const st = plan.steps[stepNow], t0 = plan.at + plan.starts[stepNow], len = plan.lengths[stepNow];
+    if (st && READS.includes(st.action) && !st.failed && now >= t0 && now <= t0 + len) live = { st, k: (now - t0) / Math.max(1, len) };
+  }
+  const e = (live ? log.find((x) => x.action === live.st.action && now - Date.parse(x.at) < 40 * 60_000) : null) ?? (live ? null : log.find((x) => READS.includes(x.action) && !x.failed && (x.query || x.opened?.title || x.topic)));
+  if (!e && !live) return null;
+  const near = view.mode === 'walk' && inTown(view.x) && Math.hypot(view.x - TOWN_X - TOWN_SPOTS.cafe.x, view.z - TOWN_SPOTS.cafe.z) < 16;
+  const fresh = e && now - Date.parse(e.at) < 15 * 60_000;
+  return live || near || fresh ? { e, live } : null;
+}
+function showReading() {
+  const r = readingNow();
+  const box = $('reading');
+  const id = r ? `${r.e?.at ?? ''}${r.live ? r.live.st.action : ''}` : '';
+  if (!r || id === readingClosed) { box.hidden = true; readingKey = ''; return; }
+  const { e, live } = r;
+  const what = e?.query ? `“${e.query}”` : e?.opened?.title || e?.topic || (live ? `“${live.st.details?.query ?? live.st.details?.topic ?? '…'}”` : '');
+  const typing = live && live.k < 0.3 && live.st.action === 'search_web';
+  const m = e ? Math.round((Date.now() - Date.parse(e.at)) / 60000) : 0;
+  const ago = m < 2 ? 'just now' : m < 90 ? `${m} minutes ago` : m < 2880 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`;
+  const head = live ? (typing ? '🔎 Pip is searching the web right now' : live.st.action === 'browse' ? '💻 Pip is browsing right now' : '📖 Pip is reading right now') : `💻 The last thing Pip ${e.action === 'search_web' ? 'looked up' : e.action === 'browse' ? 'came across' : 'read'} (${ago})`;
+  const text = typing ? 'He is typing his question…' : e?.opened?.text ? (e.opened.text.length > 240 ? `${e.opened.text.slice(0, 240).replace(/\s+\S*$/, '')} …` : e.opened.text) : live ? 'The page is loading…' : 'He found nothing to read about it.';
+  const opinion = e?.opinion?.says ? `${FACES[e.opinion.how] ?? '💭'} Pip: “${e.opinion.says}”` : live ? 'What he thinks of it comes when he is done reading.' : 'He has not said what he thinks of it yet.';
+  const key = [id, head, what, text, opinion].join('|');
+  box.hidden = false;
+  if (key === readingKey) return; // (not drawn again every half second: the link stays clickable)
+  readingKey = key;
+  $('rhead').textContent = head;
+  $('rtitle').textContent = what;
+  const body = $('rtext');
+  body.replaceChildren(document.createTextNode(`${text} `));
+  if (!typing && e?.opened?.url) body.append(link(e.opened.url, 'Open the page'));
+  $('rop').textContent = opinion;
+  $('rop').classList.toggle('none', !e?.opinion?.says);
+  $('readingx').onclick = () => { readingClosed = id; box.hidden = true; };
+}
+
 // ---- Interact. What is in the middle of your view and close by can be opened: a small prompt says what it is, and F
 // (or a tap on the prompt) opens it. At his front door F takes you in or out. While a card is open, F closes it.
 const prompt = $('interact');
@@ -5199,6 +5250,7 @@ prompt.addEventListener('click', interact);
 if (FIRST) {
   setInterval(showPrompt, 220);
   setInterval(showNowBar, 500);
+  setInterval(showReading, 500);
   if (!store('pip-start')) startScreen(true);
   document.body.classList.add('first');
   mini.hidden = false;

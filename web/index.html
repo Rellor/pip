@@ -140,6 +140,16 @@
   #aim { position:absolute; left:50%; top:50%; width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:rgba(255,255,255,.9); box-shadow:0 0 0 2px rgba(0,0,0,.35); z-index:3; pointer-events:none; }
   #stage #minimap { position:absolute; left:12px; top:12px; width:110px; height:110px; z-index:3; border-radius:50%; box-shadow:0 2px 12px rgba(0,0,0,.3); cursor:pointer; }
   @media (max-width:640px) { #stage #minimap { width:88px; height:88px; } }
+  /* What Pip is reading: a box that floats over the picture, so it is always easy to read (the screen of the café shows the same). */
+  #stage #reading { position:absolute; right:12px; top:12px; z-index:3; width:min(360px, calc(100% - 150px)); background:rgba(255,250,243,.97); color:#3b2f2a; border-radius:16px; box-shadow:0 4px 18px rgba(0,0,0,.3); padding:12px 14px 13px; font-size:16px; line-height:1.45; }
+  #reading .x { position:absolute; right:6px; top:4px; border:0; background:none; font-size:20px; line-height:1; padding:6px; cursor:pointer; color:#8a7466; }
+  #reading .rhead { font-size:13px; font-weight:700; letter-spacing:.02em; color:#a0522d; margin:0 26px 4px 0; }
+  #reading .rtitle { font-size:19px; font-weight:800; margin:0 0 6px; overflow-wrap:anywhere; }
+  #reading .rtext { margin:0 0 8px; }
+  #reading .rtext a { font-weight:600; }
+  #reading .rop { background:#ffe9c7; border-radius:10px; padding:8px 10px; font-weight:600; }
+  #reading .rop.none { background:none; padding:0; font-weight:400; color:#8a7466; }
+  @media (max-width:640px) { #stage #reading { left:62px; right:10px; top:112px; width:auto; font-size:15px; } #reading .rtitle { font-size:17px; } }
   #stage #hud { position:absolute; left:12px; top:134px; z-index:3; display:flex; flex-direction:column; gap:8px; }
   @media (max-width:640px) { #stage #hud { top:110px; } }
   .hudbtn { width:42px; height:42px; border-radius:50%; border:0; background:rgba(255,250,243,.94); box-shadow:0 2px 10px rgba(0,0,0,.25); font-size:20px; line-height:1; cursor:pointer; padding:0; }
@@ -471,6 +481,7 @@
       </div>
     </div>
     <canvas id="minimap" width="220" height="220" hidden role="button" tabindex="0" title="Tap to go to Pip" aria-label="Map of Pip's world. Tap to go to Pip."></canvas>
+    <div id="reading" hidden role="status" aria-live="polite"><button type="button" class="x" id="readingx" aria-label="Close">✕</button><div class="rhead" id="rhead"></div><div class="rtitle" id="rtitle"></div><div class="rtext" id="rtext"></div><div class="rop" id="rop"></div></div>
     <div id="hud" hidden><button id="flybtn" type="button" class="hudbtn" title="Fly like a bird (V)" aria-label="Fly like a bird" aria-pressed="false">🕊️</button><button id="hellobtn" type="button" class="hudbtn" title="Say hello to Pip (E)" aria-label="Say hello to Pip">👋</button></div>
     <div id="away" class="awaychip" hidden role="status"></div>
     <div id="stick" hidden><div id="knob"></div></div>
