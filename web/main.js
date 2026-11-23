@@ -12,7 +12,7 @@ import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sid
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
 import { makeGrain } from './grain.js';
-import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS } from './town.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -1801,7 +1801,7 @@ let outSpot = '';
 const townSpot = (n) => ({ p: new V3(TOWN_X + TOWN_SPOTS[n].x, 0, TOWN_SPOTS[n].z), face: TOWN_SPOTS[n].face, y: TOWN_SPOTS[n].y ?? 0 });
 const farFrom = (n) => Math.hypot(pip.group.position.x - TOWN_X - TOWN_SPOTS[n].x, pip.group.position.z - TOWN_SPOTS[n].z);
 function tickOutside() {
-  const w = lastState?.where;
+  const w = outWhere();
   const g = pip.group;
   if (!awayNow()) {
     if (outKey) { // home again: he comes in through the front door
@@ -3312,15 +3312,33 @@ try {
 } catch {}
 let lastState = null;
 // Is Pip out of the house right now (world.js)? A little after he left, so he is first seen walking to the door.
-const awayNow = () => { const w = lastState?.where; return Boolean(w && worldPlace(w.place) && w.place !== 'home' && Date.now() >= Date.parse(w.leftAt) + 30_000); };
+// Where he is out right now. A real outing (state.where: he went somewhere and comes home by himself), or, for the step
+// he is doing now, the place in his world where that kind of thing is done: he reads at the library, draws at the art
+// workshop, writes by the pond. The page walks him there for that step and home again (like Pino, who walks to
+// whatever he does). Nothing changes in what he did: it only shows where.
+const STEP_PLACE = { read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
+function stepOuting() {
+  if (!plan || stepNow < 0 || lastState?.last?.sleeping) return null;
+  const st = plan.steps[stepNow];
+  const hit = st && !st.as && !st.failed && !st.made?.failed ? STEP_PLACE[st.action] : null;
+  if (!hit) return null;
+  const t0 = plan.at + plan.starts[stepNow], len = plan.lengths[stepNow];
+  if (Date.now() < t0 || Date.now() > t0 + len) return null;
+  const walk = Math.min(len * 0.3, 80_000);
+  const iso = (ms) => new Date(ms).toISOString();
+  return { id: `step${t0}`, ...hit, step: st, leftAt: iso(t0), arriveAt: iso(t0 + walk), leaveAt: iso(t0 + len - walk), homeAt: iso(t0 + len) };
+}
+const realOuting = () => { const w = lastState?.where; return w && worldPlace(w.place) && w.place !== 'home' && Date.now() >= Date.parse(w.leftAt) + 30_000 ? w : null; };
+const outWhere = () => realOuting() ?? stepOuting();
+const awayNow = () => Boolean(outWhere());
 const awayWords = () => {
-  const w = lastState?.where;
-  if (!awayNow()) return null;
-  const p = worldPlace(w.place);
+  const w = outWhere();
+  if (!w) return null;
+  const p = w.name ? { name: w.name, emoji: w.emoji } : worldPlace(w.place);
   const now = Date.now();
   const name = p.name.replace(/^my /, 'his ');
   const back = new Date(Date.parse(w.homeAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' }); // his clock (Dutch time), like the World tab
-  return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? [p.emoji, `At ${name}`, back] : ['🏠', `Walking home from ${name}`, back];
+  return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? (w.step ? [headline(w.step)[0], `${headline(w.step)[1]}, at ${name}`, back] : [p.emoji, w.job?.words ? `At ${name}: ${w.job.words}` : `At ${name}`, back]) : ['🏠', `Walking home from ${name}`, back];
 };
 let isStatic = false;
 let fastUntil = 0;
@@ -4861,6 +4879,82 @@ function drawMini() {
     g.fillStyle = '#3b2f2a'; g.beginPath(); g.moveTo(0, -11); g.lineTo(8, 9); g.lineTo(0, 4.5); g.lineTo(-8, 9); g.closePath(); g.fill(); g.restore();
   }
 }
+// ---- Every building and place in the world can be opened (F or a tap): its card says what Pip can do there, and what
+// he did there so far. The words come from the places of his world (web/world.js) and from his state.
+const WORLD_CARDS = {
+  home: { title: 'Pip’s home', icon: '🏠', what: 'He lives here. Walk in through the red door.', can: ['sleep', 'eat and cook', 'work at his computer', 'keep the things he makes'] },
+  bakery: { title: 'The bakery', icon: '🥖', what: 'It smells of fresh bread from early in the morning.', can: [], none: 'Pip cannot do anything here yet.' },
+  shop: { title: 'The corner shop', icon: '🛍️', what: 'Where he spends his coins.', place: 'shop', can: ['buy food, seeds, things to make with, tools and instruments'] },
+  library: { title: 'The library', icon: '📚', place: 'library' },
+  workshop: { title: 'The print workshop', icon: '🖨️', place: 'workshop', can: ['design a small 3D model and have it printed'] },
+  shelf: { title: 'His shelf of prints', icon: '🖨️', what: 'Everything he printed stands here.', place: 'workshop', can: ['design a small 3D model and have it printed'] },
+  studio: { title: 'The art workshop', icon: '🎨', what: 'Every drawing he ever made hangs on its outside walls, so nothing is lost when a wall is painted over.', can: [], none: 'It keeps his art. He does not have to do anything for that.' },
+  board: { title: 'The notice board', icon: '📌', place: 'board', can: ['read what people ask for', 'make one of those things and earn the coins'] },
+  pond: { title: 'The pond', icon: '🦆', place: 'pond' },
+  hill: { title: 'The hill', icon: '⛰️', place: 'hill' },
+  garden: { title: 'Oma Jo’s garden', icon: '🌻', place: 'garden' },
+  plot: { title: 'Pip’s plot', icon: '🌱', what: 'A field of his own, across the street.', can: ['build things here, also big ones'] },
+  stone: { title: 'The green stone', icon: '💎', what: 'It glows a little at night. Nobody knows who put it there.', can: [], none: 'Nothing. He can build next to it.' },
+};
+function worldCard(kind, key) {
+  const s = lastState || {};
+  const ago = (iso) => { const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 60 ? `${Math.max(1, m)} min ago` : m < 1440 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`; };
+  const wall = kind === 'wall' ? PAINT_WALLS.find((w) => w.key === key) : null;
+  const c = wall ? { title: wall.name.replace(/^the /, 'The '), icon: '🎨', what: 'A bare wall for his art.', place: 'walls', can: ['paint something big on it (he needs no paper for that)'] } : WORLD_CARDS[key] ?? { title: key, icon: '📍', can: [] };
+  const p = c.place ? worldPlace(c.place) : null;
+  const can = c.can ?? (p?.things ?? []).map((t) => hisWords(p.key, t.words));
+  const sections = [];
+  if (c.what || p?.blurb) sections.push({ lines: [c.what ?? p.blurb] });
+  sections.push({ heading: 'What Pip can do here', ...(can.length ? { chips: can } : { lines: [c.none ?? 'Nothing yet.'] }) });
+  const so = [];
+  const visits = p ? (s.outings ?? []).filter((o) => o.place === p.key && !o.errand) : [];
+  if (key === 'home') so.push(awayNow() ? 'He is out right now.' : 'He is home right now.');
+  if (key === 'shop') { so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); const b = (s.bought ?? []).slice(-3).map((x) => x.item); if (b.length) so.push(`Bought lately: ${b.join(', ')}.`); }
+  if (key === 'workshop' || key === 'shelf') { const pr = (s.prints ?? []); so.push(pr.length ? `He printed ${pr.length} thing${pr.length === 1 ? '' : 's'}: ${pr.slice(-5).map((x) => x.name).join(', ')}.` : 'He has not printed anything yet.'); }
+  if (key === 'studio') { const n = (s.gallery ?? s.art ?? []).length; so.push(`${n} drawing${n === 1 ? '' : 's'} so far.`); }
+  if (wall) { const on = (s.gallery ?? []).filter((a) => a.wall === wall.key); so.push(on.length ? `On it: ${on.slice(-4).map((a) => `“${a.name}”`).join(', ')}.` : 'Nothing is painted on it yet.'); }
+  if (key === 'back' || BUILDINGS.some((b) => b.key === key)) { const on = (s.gallery ?? []).filter((a) => a.wall === `back_${key}`); if (on.length) so.push(`Painted on its back wall: ${on.slice(-3).map((a) => `“${a.name}”`).join(', ')}.`); }
+  if (key === 'board') { const notes = (s.wishes ?? []).filter((w) => w.board && w.status === 'open' && Date.now() - Date.parse(w.at) < 3 * 86_400_000); so.push(notes.length ? `On it now: ${notes.map((w) => `${w.topic} (${w.reward} coins)`).join(', ')}.` : 'Nothing is pinned on it right now.'); const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept').length; if (kept) so.push(`He made ${kept} of the things people asked for.`); so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); }
+  if (key === 'plot') { const mine = (s.decor ?? []).filter((d) => d.kind === 'outside' && (d.spot ?? 'plot') === 'plot'); so.push(mine.length ? `${mine.length} thing${mine.length === 1 ? '' : 's'} he made stand here.` : 'Nothing stands here yet.'); }
+  if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
+  else if (p && !['shop', 'workshop', 'walls', 'board'].includes(p.key)) so.push('He has not been here yet.');
+  if (so.length) sections.push({ heading: 'So far', lines: so });
+  return { title: c.title, icon: c.icon, subtitle: 'In his world', sections };
+}
+for (const t of town.things) t.object.userData.info = () => worldCard(t.kind, t.key);
+
+// ---- What he is doing right now, in short, at the bottom of the picture, with a bar that fills until he is done with it:
+// walking somewhere, doing something there, walking home, or the step of his plan he is on.
+function nowStatus() {
+  const s = lastState;
+  if (!s?.last) return null;
+  if (s.last.sleeping) return { icon: '💤', text: 'Sleeping', k: null };
+  const now = Date.now();
+  const w = outWhere();
+  if (w) {
+    const [icon, text] = awayWords();
+    const [a, b] = now < Date.parse(w.arriveAt) && !w.cut ? [w.leftAt, w.arriveAt] : now < Date.parse(w.leaveAt) ? [w.arriveAt, w.leaveAt] : [w.leaveAt, w.homeAt];
+    return { icon, text, k: (now - Date.parse(a)) / Math.max(1, Date.parse(b) - Date.parse(a)), left: Date.parse(b) - now };
+  }
+  if (plan && stepNow >= 0 && now <= plan.at + plan.total + 60_000) {
+    const t0 = plan.at + plan.starts[stepNow], len = plan.lengths[stepNow];
+    const [icon, text] = headline(plan.steps[stepNow]);
+    return { icon, text, k: (now - t0) / Math.max(1, len), left: t0 + len - now };
+  }
+  return { icon: '💭', text: 'Thinking about what to do next', k: null };
+}
+function showNowBar() {
+  const st = nowStatus();
+  $('nowbar').hidden = !st;
+  if (!st) return;
+  $('nowicon').textContent = st.icon;
+  $('nowtext').textContent = st.text;
+  const left = st.k === null ? null : Math.max(0, st.left);
+  $('nowleft').textContent = left === null ? '' : left >= 90_000 ? `${Math.round(left / 60_000)} min` : left >= 1000 ? `${Math.max(1, Math.round(left / 1000))} s` : '';
+  $('nowprog').classList.toggle('none', st.k === null);
+  $('nowprog').firstChild.style.width = `${Math.round(Math.max(0, Math.min(1, st.k ?? 0)) * 1000) / 10}%`;
+}
+
 // ---- Interact. What is in the middle of your view and close by can be opened: a small prompt says what it is, and F
 // (or a tap on the prompt) opens it. At his front door F takes you in or out. While a card is open, F closes it.
 const prompt = $('interact');
@@ -4893,6 +4987,7 @@ function showPrompt() {
 prompt.addEventListener('click', interact);
 if (FIRST) {
   setInterval(showPrompt, 220);
+  setInterval(showNowBar, 500);
   if (!store('pip-start')) startScreen(true);
   document.body.classList.add('first');
   mini.hidden = false;
@@ -4953,6 +5048,7 @@ $('wake').addEventListener('click', () => {
 window.pipGroup = (id) => decorGroups.get(id); // for testing
 window.pipView = view; // for testing: where the walking viewer stands
 window.pipEye = () => camera.position.toArray(); // for testing: where the eye is (the bobbing of the view)
+window.pipAt = () => ({ x: Math.round((pip.group.position.x - (inTown(pip.group.position.x) ? TOWN_X : 0)) * 10) / 10, z: Math.round(pip.group.position.z * 10) / 10, out: inTown(pip.group.position.x), shown: pip.group.visible }); // for testing: where Pip is
 window.pipCam = () => ({ fit: orbit.fit, goal: fitGoal, zoom: orbit.zoom, px: orbit.px, pz: orbit.pz, focusX, name: focusName(), aspect: camera.aspect, pos: camera.position.toArray().map((v) => Math.round(v)) }); // for testing: how the overview looks at things
 window.pipStep = (n, dt = 0.05) => { for (let i = 0; i < n; i++) updateBehaviors(performance.now() + i * dt * 1000, dt); }; // for testing without a visible page
 let tickClock = 0;

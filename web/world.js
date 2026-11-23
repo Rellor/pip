@@ -28,7 +28,7 @@ export const PLACES = [
   },
   {
     key: 'library', name: 'the library', title: 'The library', emoji: '📚', walk: 10, stay: [30, 45], hours: [10, 17], days: [2, 3, 4, 5, 6], at: [478, 118],
-    blurb: 'Quiet tables and more books than he can count. He needs a library card.',
+    blurb: 'Quiet tables and more books than he can count.',
     locked: 'He needs a library card. He can ask for one.',
     things: [{ key: 'read', words: 'read about something I wonder about', match: /read|book|learn|look up|find out/ }],
   },
@@ -39,6 +39,7 @@ export const PLACES = [
     things: [{ key: 'sky', words: 'watch the sky from up there', match: /sky|sun|star|moon|cloud|watch|look/ }, { key: 'kite', words: 'fly my kite', match: /kite|fly/, needs: 'kite' }],
   },
   // Places he only goes to with something to do there (job): he designs it first, then walks there and it is made.
+  { key: 'board', name: 'the notice board', title: 'The notice board', emoji: '📌', walk: 1, stay: [3, 5], hours: [0, 24], at: [270, 292], job: true, blurb: 'People of the town pin notes on it: things they would like made. He reads it, makes one, and earns coins.' },
   { key: 'workshop', name: 'the print workshop', title: 'The print workshop', emoji: '🖨️', walk: 9, stay: [20, 30], hours: [9, 18], at: [560, 300], job: true, blurb: 'A 3D printer hums behind the shutter. What he designs is printed small and kept on the shelf by the door.' },
   { key: 'walls', name: 'the walls', title: 'The walls', emoji: '🎨', walk: 6, stay: [25, 40], hours: 'light', at: [420, 330], job: true, blurb: 'Bare walls all over his world that he paints on, and the back walls of the houses too. He needs no paper for it.' },
 ];
@@ -51,15 +52,10 @@ export function findPlace(text) {
   if (!t) return null;
   return PLACES.find((p) => p.key === t || p.name.replace(/[’']/g, '') === t) ?? PLACES.find((p) => p.key !== 'home' && (t.includes(p.key) || p.name.replace(/[’']/g, '').split(' ').some((w) => w.length > 3 && !['behind', 'houses', 'corner'].includes(w) && t.includes(w)))) ?? (/park|duck/.test(t) ? placeOf('pond') : /door|street|outside my/.test(t) ? placeOf('doorstep') : /book/.test(t) ? placeOf('library') : null);
 }
-// What kind of light a place asks for, as hours of today: [from, to].
-export function hoursOf(place, now = Date.now()) {
-  const se = seasonInfo(new Date(now));
-  if (place.hours === 'light') return [Math.max(8, se.sunrise + 0.25), Math.min(21, se.sunset - 0.25)];
-  if (place.hours === 'evening') return [Math.max(8, se.sunrise + 0.25), Math.min(21.25, se.sunset + 1.25)]; // the hill: also for the sunset and the first stars
-  return place.hours ?? [8, 21];
-}
+// Every place is open all day, every day (they used to have opening hours).
+export const hoursOf = () => [0, 24];
 export const dayIndexNL = (now = Date.now()) => new Date(new Date(now).toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' })).getDay();
-export const openNow = (place, now = Date.now()) => { const [a, b] = hoursOf(place, now); const h = hourNL(now); return h >= a && h < b && (!place.days || place.days.includes(dayIndexNL(now))); };
+export const openNow = () => true;
 export const isFrozen = (weather, now = Date.now()) => Number.isFinite(weather?.temp) && weather.temp <= 0 || /snow|ice|frost/.test(String(weather?.kind ?? ''));
 export const isWet = (weather) => /rain|drizzle|shower|storm|thunder/.test(String(weather?.kind ?? ''));
 export const isStorm = (weather) => /storm|thunder/.test(String(weather?.kind ?? '')) || (weather?.wind ?? 0) > 0.85;

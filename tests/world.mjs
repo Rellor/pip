@@ -16,8 +16,10 @@ const s = fresh();
 planNotes(s, { notes: [{ from: 'Dot', kind: 'ask', text: 'Can you draw me a cat with a big tail?', topic: 'a cat drawing' }, { from: 'Mo', kind: 'hello', text: 'Morning!', topic: 'hello' }] }, noon);
 deliverNotes(s, noon + 10 * 3_600_000);
 const later = noon + 10 * 3_600_000;
+assert.equal(openWishes(s, later).length, 0, 'an ask in a note is only a note now: what people want made hangs on the notice board (tests/board.mjs)');
+// (a wish of a neighbour can still exist, like Kees's puzzle of the week: the rest of this test is about those)
+s.wishes = [{ id: s.visitors.find((v) => /Dot/.test(v.name)).id, from: 'Dot', text: 'Can you draw me a cat with a big tail?', topic: 'a cat drawing', at: new Date(later).toISOString(), reward: 2, status: 'open', said: false }];
 assert.equal(openWishes(s, later).length, 1);
-assert.equal(s.wishes[0].reward, 2, 'a drawing is worth 2 coins');
 assert.match(neighbourLines(s).find((l) => /Dot/.test(l)), /would give me 2 coins/);
 const note = s.visitors.find((v) => /Dot/.test(v.name));
 note.answer = 'Yes, Dot! A cat with the biggest tail.';
@@ -48,9 +50,8 @@ assert.equal(warmthWord(6), 'a friend');
 ok('nobody is angry: a wish he does not take just fades');
 
 // ---- the shop
-assert.ok(shopOpen(noon) && !shopOpen(noon + 9 * 3_600_000));
+assert.ok(shopOpen(noon) && shopOpen(noon + 9 * 3_600_000), 'the corner shop is always open');
 assert.match(buy(s, 'toolbox', noon).failed, /costs 8 coins and I have 3/);
-assert.match(buy(s, 'clay', noon + 9 * 3_600_000).failed, /closed/);
 const b = buy(s, 'clay', noon);
 assert.deepEqual([b.bought, b.price, b.left], ['clay', 3, 0]);
 assert.ok(s.tools.some((t) => /clay/.test(t.name)));

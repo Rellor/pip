@@ -11,9 +11,12 @@ import { seasonInfo } from './web/season.js';
 import { noteSpark } from './curiosity.js';
 import { warm } from './neighbours.js';
 import { giveForAsk } from './gifts.js';
+import { readBoard } from './board.js';
 
-export const MAX_OUTINGS_PER_DAY = 2; // real outings; a quick errand to the shop is not counted
-export const CURFEW = 21.5; // home by half past nine (Dutch time)
+// He can go anywhere in his world whenever he is awake: nothing is closed, nothing is locked, and nothing is counted.
+// (Bas, 2026-11-23: "He wants to do it? He can.") The only things that send him home are his own body and his bedtime.
+export const MAX_OUTINGS_PER_DAY = Infinity;
+export const CURFEW = 22.75; // he is home by bedtime (Dutch time)
 export const MAX_AWAY_MIN = 100;
 const MIN = 60_000;
 const HOUR = 60 * MIN;
@@ -34,47 +37,17 @@ export const owns = (s, re) => (s.tools ?? []).some((t) => re.test(`${t.name ?? 
 
 // ---- Which places he knows and can go to
 const world = (s) => { s.world ??= {}; s.world.open ??= {}; s.world.known ??= {}; s.world.count ??= 0; return s.world; };
-export function unlockedKeys(s) {
-  const w = world(s);
-  return PLACES.filter((p) => !p.locked || (p.key === 'library' ? owns(s, GEAR.card) : Boolean(w.open[p.key]))).map((p) => p.key);
-}
-export const knownKeys = (s) => PLACES.filter((p) => world(s).known[p.key] || world(s).open[p.key]).map((p) => p.key);
-// New places open up as he lives: by friendship, by going out, by a gift. Returns what he hears about it (often nothing).
-export function checkUnlocks(s, now = Date.now()) {
-  const w = world(s);
-  const at = new Date(now).toISOString();
-  const said = [];
-  if (!w.open.garden && (s.street?.people?.['Oma Jo']?.warmth ?? 0) >= 2) { w.open.garden = at; said.push('Oma Jo said I may come into her garden whenever I like. It is two minutes from my door, and she always has a job for me (go_out).'); }
-  if (!w.known.library && w.count >= 2) { w.known.library = at; said.push('Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).'); }
-  if (!w.open.library && owns(s, GEAR.card)) { w.open.library = at; w.known.library ??= at; said.push('I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).'); }
-  if (!w.open.hill && w.count >= 4) { w.open.hill = at; said.push('By the pond I found a path that goes up the hill behind the houses. From up there I can see my whole street, and all of the sky (go_out).'); }
-  return said;
-}
+export const unlockedKeys = () => PLACES.map((p) => p.key); // every place is open to him
+export const knownKeys = () => PLACES.map((p) => p.key);
+export const checkUnlocks = () => []; // (places used to open up one by one; now they are all his from the start)
 
 const lastReal = (s) => (s.outings ?? []).filter((o) => !o.errand).at(-1) ?? null;
 const realToday = (s, now) => (s.outings ?? []).filter((o) => !o.errand && dayNL(Date.parse(o.leftAt)) === dayNL(now)).length + (s.where && !s.where.errand ? 1 : 0);
 // May he go there now? { ok: true } or { why, gear } (gear: what would make it possible).
-export function canGo(s, key, now = Date.now()) {
+export function canGo(s, key) {
   const p = placeOf(key);
   if (!p || p.key === 'home') return { why: 'that is not a place I can go to' };
   if (s.where) return { why: 'I am out already' };
-  if (!unlockedKeys(s).includes(p.key)) return { why: p.key === 'library' ? 'I need a library card to go into the library' : `I cannot go to ${p.name} yet`, ...(p.key === 'library' ? { gear: 'a library card' } : {}) };
-  const h = hourNL(now);
-  const [from, to] = hoursOf(p, now);
-  if (!openNow(p, now)) return { why: p.days && !p.days.includes(new Date(new Date(now).toLocaleString('en-US', { timeZone: 'Europe/Amsterdam' })).getDay()) ? `${p.name} is closed today` : h < from ? `it is too early for ${p.name}` : `it is too late for ${p.name} today` };
-  const need = (2 * p.walk + (p.stay?.[0] ?? 5)) / 60;
-  if (h + need > Math.min(CURFEW, to + p.walk / 60 + 0.2)) return { why: `it is too late to get to ${p.name} and back before dark` };
-  if (isStorm(s.weather)) return { why: 'there is a storm outside' };
-  const far = p.walk >= 5;
-  if (isWet(s.weather) && p.key !== 'doorstep' && !owns(s, GEAR.umbrella)) return { why: 'it is raining and I have no umbrella', gear: 'an umbrella' };
-  if (far && Number.isFinite(s.weather?.temp) && s.weather.temp <= 0 && !owns(s, GEAR.warm)) return { why: 'it is freezing and I have nothing warm to wear outside', gear: 'a warm scarf (I can make one with make_clothes, or ask)' };
-  if (p.errand) return { ok: true };
-  if ((s.energy ?? 10) < 3.5) return { why: 'I am too tired to go out' };
-  if ((s.fullness ?? 10) < 3.5) return { why: 'I am too hungry to go out: I eat first' };
-  if (realToday(s, now) >= MAX_OUTINGS_PER_DAY) return { why: 'I have been out twice today already' };
-  const last = lastReal(s);
-  if (last && last.place === p.key && dayNL(Date.parse(last.leftAt)) === dayNL(now)) return { why: `I was at ${p.name} already today` };
-  if (last && now - Date.parse(last.homeAt ?? last.leftAt) < 90 * MIN) return { why: 'I only just came home' };
   return { ok: true };
 }
 // What there is to do at a place right now (the things that fit the weather and what he has). What only this moment
@@ -103,17 +76,7 @@ export function wantsOut(s, now = Date.now()) {
   return 0.5 + (s.body?.boredom ?? 0) / 5 + Math.min(1.6, since / 14) + (nice ? 0.5 : 0) + (last ? 0 : 0.8);
 }
 // When the weather or a missing thing keeps him in, and he has not been out for a while: what he could ask for.
-export function gearWish(s, now = Date.now()) {
-  if (world(s).known.library && !owns(s, GEAR.card) && !(s.asks ?? []).some((a) => a.status === 'open' && GEAR.card.test(a.item))) return 'I would like a library card, so I can read at the library';
-  const last = lastReal(s);
-  if (last && now - Date.parse(last.homeAt ?? last.leftAt) < 20 * HOUR) return null; // the weather only bothers him when he has been in for a day
-  const h = hourNL(now);
-  if (h < 9 || h > 18 || s.where) return null;
-  const why = canGo(s, 'pond', now);
-  if (!why.gear) return null;
-  const re = /umbrella/.test(why.gear) ? GEAR.umbrella : GEAR.warm;
-  return (s.asks ?? []).some((a) => a.status === 'open' && re.test(a.item)) ? null : `${why.why}, so I cannot go out (${why.gear} would help)`;
-}
+export const gearWish = () => null; // (he used to need an umbrella, a scarf or a library card to go out: not any more)
 
 // ---- Going out
 // details: { place, what } as the brain said it (or { place: 'shop', errand: 'clay' } for a quick errand). Returns { ok, ... } or { failed }.
@@ -135,7 +98,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
   const rnd = dice(`${p.key}${Math.floor(now / MIN)}`);
   const [a, b] = p.stay ?? [5, 5];
   let stay = Math.round(a + rnd() * (b - a));
-  const latest = Math.min(CURFEW, hoursOf(p, now)[1] + p.walk / 60 + 0.2); // home by then
+  const latest = Math.max(CURFEW, hourNL(now) + (2 * p.walk + 6) / 60); // home by bedtime (and when it is late already, a short stay)
   const room = (latest - hourNL(now)) * 60 - 2 * p.walk;
   stay = Math.max(4, Math.min(stay, Math.floor(room), MAX_AWAY_MIN - 2 * p.walk));
   const id = `o${Math.floor(now / 1000).toString(36)}`;
@@ -152,7 +115,7 @@ export function outingTick(s, now = Date.now()) {
   const p = placeOf(w.place);
   const t = (k) => Date.parse(w[k]);
   if (now < t('leaveAt') && !w.cut) { // homing: something sends him home early
-    const why = isStorm(s.weather) ? 'a storm came up' : (s.energy ?? 10) <= 2 ? 'I got very tired' : (s.fullness ?? 10) <= 2 ? 'I got very hungry' : isWet(s.weather) && !w.errand && p.key !== 'doorstep' && !owns(s, GEAR.umbrella) ? 'it started to rain and I have no umbrella' : hourNL(now) >= CURFEW - p.walk / 60 ? 'it got late' : null;
+    const why = (s.energy ?? 10) <= 2 ? 'I got very tired' : (s.fullness ?? 10) <= 2 ? 'I got very hungry' : hourNL(now) >= CURFEW - p.walk / 60 ? 'it got late' : null; // (rain and storms no longer send him home)
     if (why) {
       const walked = Math.min(p.walk * MIN, Math.max(0, now - t('leftAt'))); // he walks back the way he came
       Object.assign(w, { cut: why, reached: now >= t('arriveAt'), leaveAt: new Date(now).toISOString(), homeAt: new Date(now + walked).toISOString() });
@@ -243,6 +206,10 @@ export function finishOuting(s, now = Date.now()) {
     o.did = `At the library I found a book about ${topic.toLowerCase()} and read it at the big table by the window. It was so quiet I could hear the pages.`;
     o.saw = 'the reading table at the library';
     up(s, 'wonder', 1.5); up(s, 'calm', 0.8); up(s, 'energy', -0.6); up(s, 'boredom', -2);
+  } else if (p.key === 'board') { // he reads what people pinned on the notice board
+    o.did = readBoard(s, now);
+    o.saw = 'the notice board in my street';
+    up(s, 'boredom', -0.5);
   } else if (p.key === 'workshop') { // his design is printed and stays on the shelf there
     const j = w.job ?? {};
     (s.prints ??= []).push({ id: `pr${w.id}`, name: String(j.name ?? 'a small thing').slice(0, 60), why: String(j.why ?? '').slice(0, 200), parts: Array.isArray(j.parts) ? j.parts : [], at: w.arriveAt });

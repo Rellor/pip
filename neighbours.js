@@ -5,6 +5,7 @@
 // They are characters of his world, and the page says so.
 import { PEOPLE, warmthWord as warmthWordOf } from './web/street.js';
 import { placeOf } from './web/world.js';
+import { researched } from './board.js';
 // Who they are is shared with the page (web/street.js). How each one writes, and what each is a fan of, only the game needs.
 const MORE = {
   Mo: { voice: 'warm, slow, tells little stories', fan: /\b(train|locomotive|rail|station|map|engine|machine|teapot|tea)\b/i },
@@ -93,7 +94,7 @@ export function deliverNotes(s, now = Date.now()) {
     s.visitors.push({ id: n.id, at: n.at, name: `${n.from} (neighbour)`, text: n.text, answer: null, npc: true, kind: n.kind, topic: n.topic });
     const p = person(s, n.from);
     Object.assign(p, { lastAt: n.at, lastKind: n.kind, lastTopic: n.topic || p.lastTopic });
-    if (n.kind === 'ask' && openWishes(s, now).length < MAX_OPEN_WISHES) (s.wishes ??= []).push({ id: n.id, from: n.from, text: n.text, topic: n.topic || 'something', at: n.at, reward: rewardFor(n.text), status: 'open', said: false });
+    // (a neighbour's ask is only a note now: what people want made is pinned on the notice board in the street, board.js)
   }
   s.wishes = (s.wishes ?? []).slice(-30);
   s.visitors = s.visitors.slice(-40);
@@ -122,6 +123,7 @@ const rewardFor = (text) => (/\b(game|program|app|simulat)/i.test(text) ? 5 : /\
 const mediumOf = (text) => (/\b(game|program|app|simulat)/i.test(text) ? ['make_app', 'update_app'] : /\b(song|tune|melody)\b/i.test(text) ? ['record_song'] : /\b(draw|drawing|picture|sketch|paint)/i.test(text) ? ['draw'] : /\b(cook|bake|soup|bread|cake|dish)\b/i.test(text) ? ['cook'] : ['decorate', 'draw', 'make_clothes', 'make_app', 'update_app', 'change_thing', 'record_song', 'cook']);
 const WISH_STOP = new Set('the a an of at in on my for and with from little small tiny big new nice drawing picture sketch game song thing something one some your you me could can please would'.split(' '));
 const keyWords = (t) => String(t ?? '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).map((w) => w.replace(/s$/, '')).filter((w) => w.length > 2 && !WISH_STOP.has(w));
+const BOARD_SKIP = new Set(['about', 'from', 'printer', 'program', 'that', 'draw', 'catching', 'jumping']);
 // Open wishes (old ones fade quietly).
 export function openWishes(s, now = Date.now()) {
   for (const w of s.wishes ?? []) if (w.status === 'open' && now - Date.parse(w.at) > WISH_DAYS * DAY_MS) w.status = 'gone';
@@ -143,11 +145,17 @@ export function keepWishes(s, entries, now = Date.now()) {
     const text = `${e.name ?? ''} ${e.what ?? ''} ${e.why ?? ''} ${e.dish ?? ''} ${e.change ?? ''} ${e.project ?? ''}`;
     const words = new Set(keyWords(text));
     for (const w of openWishes(s, now)) {
-      if (!mediumOf(w.text).includes(e.action)) continue;
+      if (!(w.medium ?? mediumOf(w.text)).includes(e.action)) continue;
       const named = new RegExp(`\\bfor ${w.from}\\b`, 'i').test(text);
-      if (!named && !keyWords(w.topic).some((k) => words.has(k))) continue;
+      if (w.board ? !keyWords(w.topic).filter((k) => !BOARD_SKIP.has(k)).every((k) => words.has(k)) : !named && !keyWords(w.topic).some((k) => words.has(k))) continue; // a note on the board asks for one thing: all of its words ("toy train" is not any toy)
       Object.assign(w, { status: 'kept', keptAt: new Date(now).toISOString(), with: clip(e.name ?? e.dish ?? e.what, 60) });
       s.coins = (s.coins ?? 0) + w.reward;
+      if (w.board) { // a note from the notice board: it comes down, and knowing how it is made pays a coin more
+        const extra = researched(s, w, now) ? 1 : 0;
+        s.coins += extra;
+        lines.push(`I made ${w.topic}, as the note on the notice board asked. I took the note down and got ${w.reward + extra} coins${extra ? ' (one more because I had looked up how it is made)' : ''}. I have ${s.coins} coins now.`);
+        break;
+      }
       const p = warm(s, w.from, 1.5);
       p.thank = { with: w.with, topic: w.topic, at: w.keptAt };
       p.kept = (p.kept ?? 0) + 1;
@@ -168,7 +176,7 @@ export function keepWishes(s, entries, now = Date.now()) {
 }
 // For the brain: wishes still open (a promise he made comes first).
 export function wishLines(s, now = Date.now()) {
-  return openWishes(s, now).sort((a, b) => Number(b.said) - Number(a.said)).slice(0, 3)
+  return openWishes(s, now).filter((w) => !w.board).sort((a, b) => Number(b.said) - Number(a.said)).slice(0, 3)
     .map((w) => `${w.said ? `I told ${w.from} I would make` : `${w.from} wished for`} ${w.topic}${w.said ? '' : ' (I may, or not)'}: ${mediumOf(w.text).length <= 2 ? `with ${mediumOf(w.text)[0].replace(/_/g, ' ')}, ` : ''}${w.reward} coins when it is done.`);
 }
 // For the note writer: where each neighbour stands with Pip.

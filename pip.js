@@ -32,6 +32,7 @@ import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from '
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
 import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo } from './world.js';
+import { postOrders, boardLines } from './board.js';
 import { paintTarget } from './web/town.js';
 import { placeOf } from './web/world.js';
 import { bestHits } from './research.js';
@@ -583,7 +584,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...wishLines(s), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...wishLines(s), ...boardLines(s), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -1362,6 +1363,7 @@ async function wakeUp() {
       console.log(`🏘️  ${planNotes(state, reply).length} notes from the neighbours today`);
     } catch (e) { console.error('⚠️  neighbours:', e.message); state.street = { ...(state.street ?? {}), day: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }), queue: [] }; }
   }
+  { const note = postOrders(state); if (note) console.log(`📌 a new note on the notice board: ${note.topic} (${note.reward} coins)`); } // people pin what they would like made (board.js)
   for (const n of deliverNotes(state)) {
     console.log(`📮 a note from ${n.from} (${n.kind}): ${n.text.slice(0, 80)}`);
     if (n.kind === 'share' && n.topic) noteSpark(state, { topic: n.topic, text: n.text, from: 'neighbour' }); // what a neighbour loves can become his interest too
@@ -1486,6 +1488,7 @@ async function wakeUp() {
         if (!pname) st.made = { failed: 'he did not give it a name' };
         else if (!parts.length) st.made = { failed: 'the shapes did not work out' };
         else if (!may.ok) st.made = { failed: `${may.why}, so I cannot go to the print workshop now`, hinted: true };
+        else if ((state.prints ?? []).filter((x) => Date.now() - Date.parse(x.at) < dayMs).length >= 3) st.made = { failed: 'I have printed three things today already: the printer has to cool down', hinted: true };
         else {
           const went = startOuting(state, { job: { place: 'workshop', kind: 'print', name: pname.replace(/^(a|an|the|my)\s+/i, ''), why: text(st.details.why, 200), parts, words: `print my ${pname.replace(/^(a|an|the|my)\s+/i, '')}` } }, stepStart);
           st.made = went.failed ? { failed: went.failed, hinted: true } : { printed: pname, outing: went, hint: `I am on my way to the print workshop with my design. I am back ${went.backWords}.` };
