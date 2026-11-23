@@ -1,8 +1,8 @@
 {
   "mood": "curious",
-  "energy": 9,
+  "energy": 9.68,
   "boredom": 0,
-  "loneliness": 2.4,
+  "loneliness": 2.42,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-22T21:12:30.175Z",
-      "action": "eat",
-      "detail": "basil",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-22T21:20:55.502Z",
       "action": "search_web",
@@ -317,6 +311,12 @@
       "at": "2026-11-23T11:56:00.038Z",
       "action": "do",
       "detail": "hum a small tune while I swing my arms",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-23T11:58:20.606Z",
+      "action": "walk_to",
+      "detail": "computer",
       "enjoyment": 6
     }
   ],
@@ -1210,27 +1210,21 @@
       "lastUsed": "2026-11-23T11:35:53.207Z"
     },
     {
-      "id": "mmwt779n860",
-      "at": "2026-11-23T11:44:20.372Z",
-      "text": "I should continue my summer constellations project.",
-      "importance": 6,
+      "id": "mmwt7p9z460",
+      "at": "2026-11-23T11:58:20.608Z",
+      "text": "(private)",
+      "importance": 7,
       "kind": "memory",
-      "weight": 5.998,
-      "lastUsed": "2026-11-23T11:44:20.372Z"
+      "weight": 7,
+      "lastUsed": "2026-11-23T11:58:20.608Z",
+      "private": true,
+      "enc": "v1.ylW3vghgeQL7FuOx.CZ5c12VZErw3vZLHQsUQLQ.WaDPmUCZYF5ukOoncLyscCIJIksdpvn_5LmK_r-6DcrR6AdJVgiPLHC8Q5KvZD9x988ff_sbGFqgJxKDDKUl0Wd_sBIf"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-22T22:01:40.771Z",
   "thoughts": [
-    {
-      "at": "2026-11-23T07:20:26.871Z",
-      "text": "I will do the next step on my summer constellations project.",
-      "short": "I will do the next step on my summer constellations project.",
-      "mood": "hungry",
-      "action": "change_thing",
-      "detail": "constellation star globe"
-    },
     {
       "at": "2026-11-23T07:22:30.688Z",
       "text": "I want to move my cozy night owl reading lamp to my desk so I can have better light for reading and writing.",
@@ -1461,6 +1455,15 @@
       "mood": "curious",
       "action": "decorate",
       "detail": "summer constellation wall map"
+    },
+    {
+      "at": "2026-11-23T11:58:20.607Z",
+      "text": "(private)",
+      "short": "(private)",
+      "mood": "curious",
+      "action": "walk_to",
+      "detail": "(private)",
+      "sealed": "v1.sf5SFesPCnMHL29J.5Ih4nMgp0iRMGIoTg3sSfg.ll2O4coVbTEuaWhiXoiIjaT0WIw6Zhwq2fmyoiahNPaaox9YZ300A520F9BMTBwFpgJLjnUabcuf0KVKJq82V9jAmfagjJxY8h1Ft97aCaRIKmNV_C59IJPMw9mXRF7kvyuA0lQvBz89mGQHVEAHfZJpb91oK0aHAfWBaOlZq2wXQ9qH2jc0Q89AEG2KAbW2Z62EDq64QkqW88pTfOlO-Vki0IFrjQEz-GCg4FAg93TJ0DG3CVgd_sNs5z_4TJOu_NtopXaldSvRdqxown0v9HcNzJ9U4iC-CbQTzixwkWk4rDY5hFd2oFwYiOx1Qf73VkWDO5Vy"
     }
   ],
   "outbox": [
@@ -1537,6 +1540,14 @@
       "at": "2026-11-23T11:36:02.652Z",
       "kind": "ask",
       "text": "Pip would like:\n• library card (to go to the library)"
+    },
+    {
+      "id": "mwt7p9z4",
+      "at": "2026-11-23T11:58:20.607Z",
+      "kind": "tell",
+      "text": "(private)",
+      "private": true,
+      "enc": "v1.L7bMetfTQMS1KECi.QC_U1fb_ASHyB41XHZBkww.0Ak3I96k31miaFzeqlwofTjBc4acRKdpjR-8kSPwup84KtGTibSZEOWsb6KAUJwzkRsqx3XBqZg6Eyc0ZO_L7PC4ek0-Km0g9vqqEOunoqB6TBSX7oI"
     }
   ],
   "inbox": [
@@ -1599,22 +1610,33 @@
       "private": true,
       "readAt": "2026-11-22T18:11:29.446Z",
       "enc": "v1.1EYMQi7EMDpgWnK4.9VPY-dGxypdJznT5jUlrag.I8yuQX95aW-niPxzo8Y6TqmUHbTJMQFY8AqUX2OjhyKn6qbHABdN3UM7rSp8OzTDIvdVKpyG933KLHvCfJntS3buVFusLAxGGFBA9FzPmdanADJVWU23Ut-Mw8xaqsJliRLyPOgKicoOXPS4UPghasQ-jhhkr2UTdHsJWkSsQ6IkOvudSLGuXeMEIKOdtOx-4u9dj1FLXwRi0EiG-gddS-Oc5UAH4JwHSuU1JG3WIKV0MplTa3f4CICYPyqO3k0mNpRJT7C6VzH6ViCf9Xg0vs1p23Ezk1srRgfewwDTjd-lpQ9Lg4i4TYoN-pC26oioeW-3gD1fiH39aTDPcfCEFJbaXrBC3quviJE1K0kfPjQussj-gOjc5FOBna1vZ41gvW39B3Yk_p1UzpfR_-vPN7DOuWIwGb2oeDh66sqOFy_yX9KKyX77EtaMCAU2tfoAWEA8FFD3e2XRka_5flxlnkIS7evcP7QoB0fGzaL36Keji_GLT8wPfQkpYXORXcqXtjdiZz-db068kqu9NVb5py_t2LGL1NisvhokFgLZ70sPnbbuIJ7l_llgvRjS_UCDs2fBHkpWGRN0GJdJAHAuLasNiBS4KxRZ-faHRlIHggjoAnGAysy7C3GDMPDPakLpcQ2EWnuGAZ2NKoS_eNrl_UAqm6LnKhW8R8wAy36gigvhn6jXnFmrAIc3uadZ5GHlA4uw6sQNCUOZeMVIjB5c2fjvdZ7jkAaeqMf3RQ4HLNT6FpQ_sallauDHcDu0ul6_tTTUE-AJQYHAiYQdONxLInmmkroiUbq2PowB2S7TghsDy3dbslbM"
+    },
+    {
+      "id": "mwt7n88q-f052ea",
+      "at": "2026-11-23T11:56:45.050Z",
+      "text": "(private)",
+      "read": true,
+      "picture": null,
+      "private": true,
+      "readAt": "2026-11-23T11:58:20.608Z",
+      "enc": "v1._kT17B1IX8jgjKuH.oCkDuPtEbuUyY6YkgBI2GA.djt_vbci9Raq0paKIoW47wOhxrUVFs1C63FtvQ49GRKfHsG4OLo9Veg0iCc0XA"
     }
   ],
   "asks": [
-    {
-      "id": "mwnyb3hx0",
-      "item": "autumn painting critique",
-      "why": "I finished my autumn window painting project and I am proud of it.",
-      "since": "2026-11-19T19:36:31.605Z",
-      "status": "open"
-    },
     {
       "id": "mwt6wllp0",
       "item": "library card",
       "why": "to go to the library",
       "since": "2026-11-23T11:36:02.652Z",
       "status": "open"
+    },
+    {
+      "id": "mwnyb3hx0",
+      "item": "autumn painting critique",
+      "why": "I finished my autumn window painting project and I am proud of it.",
+      "since": "2026-11-19T19:36:31.605Z",
+      "status": "done",
+      "doneAt": "2026-11-23T11:58:02.845Z"
     },
     {
       "id": "mwq4s5960",
@@ -2000,14 +2022,11 @@
       "failed": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
     },
     {
-      "at": "2026-11-23T12:00:01.033Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🎵",
-      "what": "hum a small tune while I swing my arms",
-      "feeling": "joy"
+      "at": "2026-11-23T11:58:21.605Z",
+      "action": "walk_to",
+      "thought": "(private)",
+      "object": "computer",
+      "sealed": "v1.n23FD-jfAHIe2ydy.o89xatBhsALXswEjgiv6vA.hzkF7r1dy0hvtuCxqTshHvJy0unZq2XJ6Jyt_xoF-kJL8o3oYWo4CqLQFJgkExiMEapcgeqPwPG6F0tofKk"
     }
   ],
   "decor": [
@@ -9255,15 +9274,14 @@
       "createdAt": "2026-11-22T20:44:11.678Z"
     }
   ],
-  "ntfySince": "wH1NLxxGJqGL",
+  "ntfySince": "NHRYISeA8FKm",
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-23T11:56:00.033Z",
+    "at": "2026-11-23T11:58:20.605Z",
     "via": "brain",
     "model": "gemini-3.6-flash",
     "models": {
-      "gemini-3.5-flash-lite": 1,
       "gemini-3.6-flash": 1
     },
     "modelNotes": [
@@ -9271,642 +9289,41 @@
     ],
     "fallback": true,
     "tokens": {
-      "calls": 2,
-      "input": 9804,
-      "output": 5801,
+      "calls": 1,
+      "input": 2186,
+      "output": 177,
       "models": {
-        "gemini-3.5-flash-lite": 1,
         "gemini-3.6-flash": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I want to continue my summer constellations project by working on the first version.",
-    "inner": "I want to continue my summer constellations project by working on the first version.",
-    "sent": false,
+    "thought": "(private)",
+    "inner": "(private)",
+    "sent": true,
     "steps": [
       {
-        "action": "decorate",
+        "action": "walk_to",
         "details": {
-          "what": "Map the summer constellations: a first version (for my project \"Map the summer constellations\")",
-          "why": "I want to know more about the night sky and draw what I see, so I made a wall chart of the summer constellations with glowing stars.",
-          "project": "Map the summer constellations",
-          "name": "summer constellation wall map",
-          "where": "wall_left",
-          "parts": [
-            {
-              "shape": "box",
-              "size": [
-                1.1,
-                0.85,
-                0.02
-              ],
-              "pos": [
-                0,
-                0,
-                0
-              ],
-              "color": "#121829",
-              "glow": false
-            },
-            {
-              "shape": "box",
-              "size": [
-                1.14,
-                0.04,
-                0.03
-              ],
-              "pos": [
-                0,
-                0.435,
-                0.01
-              ],
-              "color": "#5c3a21",
-              "glow": false
-            },
-            {
-              "shape": "box",
-              "size": [
-                1.14,
-                0.04,
-                0.03
-              ],
-              "pos": [
-                0,
-                -0.435,
-                0.01
-              ],
-              "color": "#5c3a21",
-              "glow": false
-            },
-            {
-              "shape": "box",
-              "size": [
-                0.04,
-                0.85,
-                0.03
-              ],
-              "pos": [
-                -0.56,
-                0,
-                0.01
-              ],
-              "color": "#5c3a21",
-              "glow": false
-            },
-            {
-              "shape": "box",
-              "size": [
-                0.04,
-                0.85,
-                0.03
-              ],
-              "pos": [
-                0.56,
-                0,
-                0.01
-              ],
-              "color": "#5c3a21",
-              "glow": false
-            },
-            {
-              "shape": "roundbox",
-              "size": [
-                0.25,
-                0.7,
-                0.005
-              ],
-              "pos": [
-                0,
-                0,
-                0.012
-              ],
-              "rot": [
-                0,
-                0,
-                25
-              ],
-              "color": "#1c2640",
-              "glow": false
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.35,
-                0.006
-              ],
-              "pos": [
-                0,
-                0,
-                0.015
-              ],
-              "rot": [
-                90,
-                0,
-                0
-              ],
-              "color": "#3a4a6b",
-              "glow": false
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.018
-              ],
-              "pos": [
-                -0.22,
-                0.25,
-                0.02
-              ],
-              "color": "#aaccff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.015
-              ],
-              "pos": [
-                0.08,
-                0.22,
-                0.02
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.012
-              ],
-              "pos": [
-                -0.1,
-                -0.1,
-                0.02
-              ],
-              "color": "#ffe4b5",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.012
-              ],
-              "pos": [
-                -0.18,
-                0.1,
-                0.02
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.012
-              ],
-              "pos": [
-                0.2,
-                0.06,
-                0.02
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.016
-              ],
-              "pos": [
-                0.18,
-                -0.22,
-                0.02
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.01
-              ],
-              "pos": [
-                -0.28,
-                0.2,
-                0.02
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.01
-              ],
-              "pos": [
-                -0.26,
-                0.13,
-                0.02
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.003,
-                0.003,
-                0.34
-              ],
-              "pos": [
-                -0.01,
-                0.06,
-                0.016
-              ],
-              "rot": [
-                0,
-                0,
-                -30
-              ],
-              "color": "#4a658d",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.003,
-                0.003,
-                0.39
-              ],
-              "pos": [
-                0.01,
-                0.08,
-                0.016
-              ],
-              "rot": [
-                0,
-                0,
-                84
-              ],
-              "color": "#4a658d",
-              "glow": false
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.04,
-                0.005
-              ],
-              "pos": [
-                0,
-                0.47,
-                0.01
-              ],
-              "rot": [
-                90,
-                0,
-                0
-              ],
-              "color": "#b8860b",
-              "glow": false
-            }
-          ],
-          "uses": [
-            {
-              "label": "Trace the Summer Triangle",
-              "text": "I run my fingers along the painted blue lines connecting Vega, Deneb, and Altair. The tiny stars glow warmly against the midnight blue.",
-              "effect": "wonder"
-            },
-            {
-              "label": "Look at Cygnus the Swan",
-              "text": "I trace the cross shape of Cygnus flying down the Milky Way painted on the board.",
-              "effect": "calm"
-            }
-          ]
+          "object": "computer"
         },
-        "detail": "summer constellation wall map",
-        "thought": "Working on step 2 of my map the summer constellations project.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "hum a small tune while I swing my arms",
-          "feeling": "joy",
-          "emoji": "🎵"
-        },
-        "detail": "hum a small tune while I swing my arms",
-        "thought": "That did not work out. I shake it off and hum a small tune while I swing my arms.",
+        "detail": "(private)",
+        "thought": "(private)",
         "enjoyment": 6,
         "found": null,
-        "made": null
+        "made": null,
+        "sealed": "v1.V7KSBChWJLSjGS8L.NPCr3-flMvFPTojKYDhg_g.NHC9iD9cOjfalKq8EdfB8ZPcFySnVCZjKgnDM-cL7MJgDqAlQyLfaamCWPLj27Q9YsCbIVffLZyonxMe86Ty1voVNERB0rahvq3H9vD3g-LGEg"
       }
     ],
-    "action": "decorate",
+    "action": "walk_to",
     "details": {
-      "what": "Map the summer constellations: a first version (for my project \"Map the summer constellations\")",
-      "why": "I want to know more about the night sky and draw what I see, so I made a wall chart of the summer constellations with glowing stars.",
-      "project": "Map the summer constellations",
-      "name": "summer constellation wall map",
-      "where": "wall_left",
-      "parts": [
-        {
-          "shape": "box",
-          "size": [
-            1.1,
-            0.85,
-            0.02
-          ],
-          "pos": [
-            0,
-            0,
-            0
-          ],
-          "color": "#121829",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            1.14,
-            0.04,
-            0.03
-          ],
-          "pos": [
-            0,
-            0.435,
-            0.01
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            1.14,
-            0.04,
-            0.03
-          ],
-          "pos": [
-            0,
-            -0.435,
-            0.01
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.85,
-            0.03
-          ],
-          "pos": [
-            -0.56,
-            0,
-            0.01
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.85,
-            0.03
-          ],
-          "pos": [
-            0.56,
-            0,
-            0.01
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "roundbox",
-          "size": [
-            0.25,
-            0.7,
-            0.005
-          ],
-          "pos": [
-            0,
-            0,
-            0.012
-          ],
-          "rot": [
-            0,
-            0,
-            25
-          ],
-          "color": "#1c2640",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.35,
-            0.006
-          ],
-          "pos": [
-            0,
-            0,
-            0.015
-          ],
-          "rot": [
-            90,
-            0,
-            0
-          ],
-          "color": "#3a4a6b",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.018
-          ],
-          "pos": [
-            -0.22,
-            0.25,
-            0.02
-          ],
-          "color": "#aaccff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.015
-          ],
-          "pos": [
-            0.08,
-            0.22,
-            0.02
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.012
-          ],
-          "pos": [
-            -0.1,
-            -0.1,
-            0.02
-          ],
-          "color": "#ffe4b5",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.012
-          ],
-          "pos": [
-            -0.18,
-            0.1,
-            0.02
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.012
-          ],
-          "pos": [
-            0.2,
-            0.06,
-            0.02
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.016
-          ],
-          "pos": [
-            0.18,
-            -0.22,
-            0.02
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.01
-          ],
-          "pos": [
-            -0.28,
-            0.2,
-            0.02
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.01
-          ],
-          "pos": [
-            -0.26,
-            0.13,
-            0.02
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.003,
-            0.003,
-            0.34
-          ],
-          "pos": [
-            -0.01,
-            0.06,
-            0.016
-          ],
-          "rot": [
-            0,
-            0,
-            -30
-          ],
-          "color": "#4a658d",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.003,
-            0.003,
-            0.39
-          ],
-          "pos": [
-            0.01,
-            0.08,
-            0.016
-          ],
-          "rot": [
-            0,
-            0,
-            84
-          ],
-          "color": "#4a658d",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.04,
-            0.005
-          ],
-          "pos": [
-            0,
-            0.47,
-            0.01
-          ],
-          "rot": [
-            90,
-            0,
-            0
-          ],
-          "color": "#b8860b",
-          "glow": false
-        }
-      ],
-      "uses": [
-        {
-          "label": "Trace the Summer Triangle",
-          "text": "I run my fingers along the painted blue lines connecting Vega, Deneb, and Altair. The tiny stars glow warmly against the midnight blue.",
-          "effect": "wonder"
-        },
-        {
-          "label": "Look at Cygnus the Swan",
-          "text": "I trace the cross shape of Cygnus flying down the Milky Way painted on the board.",
-          "effect": "calm"
-        }
-      ]
+      "object": "computer"
     },
-    "detail": "summer constellation wall map",
-    "enjoyment": 0,
+    "detail": "(private)",
+    "enjoyment": 6,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "sealed": "v1.0gE74faYVoV35-_o._Gs8xidN2WAoSZ-g5VUBUA.sw9Zmzr3h2NfN3wF4EjvEpszyOc3K9ZTJDyC0n29M37wOwMBEnS6m41lRd2Hk1TEdI1wZ7SLS03NJdYTIPwS4HnBGOiGOAc8btnf_9JNt3P3ayZfjCi37L0BQJWjifBxiJkT0w1mNvbczlrcGI-Lq76Fz6bCpgMZsBHau9aocBZABSW5lSS2cmlq2mjkJ2lhUgmGvhPSXP5DNOOAcNoqTp1H45yP3XkBwO4J8aKxWxU7A9RBtspzlze146N3xcOflQdueUlIg-0B7CUVwhjBLgFgcZlTYzT1nku84iB2_8GNEvIkvOKToXqIlBujS9cB4gbd33L43HtQ",
+    "private": true
   },
   "furniture": {
     "plant": {
@@ -9995,7 +9412,7 @@
     "calls": {
       "gemini-3.5-flash-lite": 36,
       "gemini-3.8-flash": 8,
-      "gemini-3.6-flash": 7
+      "gemini-3.6-flash": 8
     },
     "out": {},
     "history": [
@@ -10082,12 +9499,12 @@
     }
   },
   "weather": {
-    "at": "2026-11-23T10:29:06.736Z",
+    "at": "2026-11-23T11:58:02.965Z",
     "kind": "clear",
-    "code": 1,
-    "temp": 4.3,
-    "cloud": 0.33,
-    "wind": 0.2533333333333333
+    "code": 0,
+    "temp": 6.2,
+    "cloud": 0,
+    "wind": 0.2866666666666667
   },
   "news": {
     "date": "2026-11-23",
@@ -10240,22 +9657,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-23T11:56:00.040Z",
-  "fullness": 3.33,
+  "memoryFadeAt": "2026-11-23T11:58:20.609Z",
+  "fullness": 3.22,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.23,
-  "joy": 5.04,
-  "calm": 5.8,
+  "wonder": 6.38,
+  "joy": 6.53,
+  "calm": 5.97,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0,
     "sad": 0,
-    "excited": 0.29
+    "excited": 1.17
   },
-  "feelAt": "2026-11-23T11:52:25.110Z",
+  "feelAt": "2026-11-23T11:58:02.836Z",
   "lastAte": "2026-11-23T09:51:17.675Z",
   "studio": {
     "songs": [
@@ -10970,21 +10387,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 1,
-    "curiosity": 0.79,
+    "creativity": 1.06,
+    "curiosity": 0.84,
     "boredom": 0,
-    "loneliness": 2.4,
+    "loneliness": 0,
     "tidiness": 1.6,
-    "at": "2026-11-23T11:52:25.110Z",
+    "at": "2026-11-23T11:58:02.836Z",
     "coziness": 3.2
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-23T09:33:14.607Z"
-      },
       {
         "move": "decorate",
         "kind": "make",
@@ -11058,6 +10470,11 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-23T11:56:00.042Z"
+      },
+      {
+        "move": "walk_to",
+        "kind": "walk",
+        "at": "2026-11-23T11:58:20.613Z"
       }
     ],
     "moods": [
@@ -11111,6 +10528,12 @@
         "ok": false,
         "failed": true,
         "at": "2026-11-23T11:56:00.043Z"
+      },
+      {
+        "key": "tell:",
+        "move": "tell",
+        "ok": true,
+        "at": "2026-11-23T11:58:20.614Z"
       }
     ]
   },
@@ -11129,7 +10552,7 @@
       "start_project": 2,
       "go_out": 1,
       "ask_for": 1,
-      "walk_to": 1
+      "walk_to": 2
     },
     "tried": {
       "eat": 3,
@@ -11146,7 +10569,7 @@
       "start_project": 2,
       "go_out": 1,
       "ask_for": 1,
-      "walk_to": 1
+      "walk_to": 2
     },
     "kinds": {
       "food": 5,
@@ -11158,14 +10581,14 @@
       "garden": 1,
       "outside": 1,
       "people": 1,
-      "walk": 1
+      "walk": 2
     },
     "moods": {
       "hungry": 6,
       "energetic": 4,
       "focused": 6,
       "calm": 2,
-      "curious": 15
+      "curious": 16
     },
     "lift": {
       "eat": 1.07,
@@ -11215,21 +10638,18 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-23T11:52:39.374Z",
+    "decidedAt": "2026-11-23T11:58:20.604Z",
     "seen": {
       "tools": 8,
       "gifts": 1,
-      "asksDone": 7,
+      "asksDone": 8,
       "projectsDone": 10,
       "tasks": 0,
       "seeds": 9,
       "visitors": 6
     },
-    "lastFail": {
-      "at": "2026-11-23T11:56:00.042Z",
-      "why": "decorate: summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, along and height. He asks himself where this kind of thing normally goes and why it did not fit, and tries a different way"
-    },
-    "unread": 0
+    "lastFail": null,
+    "unread": 1
   },
   "fixedAt": {
     "small wooden shelf": "2026-11-22T09:08:19.359Z",
@@ -11610,12 +11030,12 @@
     "find_picture": 3,
     "remove_decoration": 1,
     "make_clothes": 3,
-    "walk_to": 6,
+    "walk_to": 7,
     "update_app": 2,
     "go_out": 2
   },
   "checkup": {
-    "at": "2026-11-23T11:56:00.043Z",
+    "at": "2026-11-23T11:58:20.615Z",
     "items": [
       {
         "id": "circling",
@@ -11645,11 +11065,9 @@
       },
       {
         "id": "needs",
-        "ok": false,
+        "ok": true,
         "label": "Needs",
-        "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
-        "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 3.33\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":3},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":2,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "text": "He has food, and no ask is waiting long."
       },
       {
         "id": "models",
@@ -17361,7 +16779,14 @@
     "fadedAt": "2026-11-22T19:44:21.340Z"
   },
   "reportDay": "2026-11-22",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-23T11:57:11.033Z",
+    "key": "decorate:summer constellation wall map",
+    "action": "decorate",
+    "name": "summer constellation wall map",
+    "why": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, alo",
+    "guide": ""
+  },
   "retries": [
     "2026-11-22T15:50:40.975Z",
     "2026-11-22T20:41:45.836Z",
@@ -17375,8 +16800,8 @@
     "2026-11-23T11:56:00.043Z"
   ],
   "retried": {
-    "key": "cook:warm soup",
-    "at": "2026-11-23T08:49:10.329Z"
+    "key": "decorate:summer constellation wall map",
+    "at": "2026-11-23T11:58:02.983Z"
   },
   "tired": {
     "kind": "make",
@@ -17765,13 +17190,5 @@
       "at": "2026-11-22T18:02:22.254Z"
     }
   ],
-  "prints": [],
-  "wakeSoon": {
-    "at": "2026-11-23T11:57:11.033Z",
-    "key": "decorate:summer constellation wall map",
-    "action": "decorate",
-    "name": "summer constellation wall map",
-    "why": "summer constellation wall map is too big and deep for a wall: it would have to shrink to 34% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor. This is a wall thing. A wall thing hangs on a wall (the back wall or the left wall) at a height, with wall, alo",
-    "guide": ""
-  }
+  "prints": []
 }
