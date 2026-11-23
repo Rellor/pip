@@ -14,7 +14,7 @@ export const HOBBY_AT = 6; // ...and with this score it pulls at him to make it 
 export const MAX_BROWSE_PER_DAY = 8;
 const FADE_PER_DAY = 0.3;
 const DAY = 86_400_000;
-const LOVE = { love: 3, like: 1.5, meh: -0.5 };
+const LOVE = { love: 3, like: 1.5, meh: -0.5, dislike: -1.5, doubt: -0.3 };
 const clip = (t, n) => { const x = String(t ?? '').replace(/\s+/g, ' ').trim(); return x.length <= n ? x : `${x.slice(0, n).replace(/\s+\S*$/, '')}…`; };
 const key = (t) => String(t ?? '').toLowerCase().replace(/\([^)]*\)/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 const same = (a, b) => { const x = key(a); const y = key(b); return Boolean(x && y) && (x === y || (x.length > 4 && y.includes(x)) || (y.length > 4 && x.includes(y))); };
@@ -36,6 +36,19 @@ export function noteSpark(s, { topic, text = '', url = '', from = 'browse', via 
   return spark;
 }
 
+// His own opinion about something he read or came across: it is kept with what he read (the page shows it there, and on
+// the screen of the internet café), and in a short list of what he thinks about things. Returns the opinion or null.
+export function noteOpinion(s, { topic, how, says }, now = Date.now()) {
+  const t = clip(says, 200);
+  if (!topic || !t) return null;
+  const op = { topic: clip(topic, 80), how, says: t, at: new Date(now).toISOString() };
+  const words = key(topic).split(' ').filter((w) => w.length > 3);
+  const recent = [...(s.log ?? [])].reverse().filter((e) => ['search_web', 'read_book', 'browse'].includes(e.action) && !e.opinion && now - Date.parse(e.at) < 24 * 3_600_000);
+  const entry = recent.find((e) => words.some((w) => key(`${e.query ?? ''} ${e.topic ?? ''} ${e.opened?.title ?? ''}`).includes(w))) ?? (recent[0] && now - Date.parse(recent[0].at) < 3 * 3_600_000 ? recent[0] : null);
+  if (entry) entry.opinion = { how, says: t };
+  s.opinions = [...(s.opinions ?? []).filter((o) => !same(o.topic, op.topic)), op].slice(-30);
+  return op;
+}
 // He felt something about a topic: love, like or meh (or a number).
 export function feel(s, topic, how, now = Date.now()) {
   const c = ensureCurious(s);
@@ -113,7 +126,7 @@ export function curiosityLines(s, projects = [], now = Date.now()) {
   const fresh = c.sparks.filter((x) => x.shown < 2 && now - Date.parse(x.at) < 12 * 3_600_000).slice(-2);
   for (const x of fresh) {
     x.shown += 1;
-    out.push(`I came across ${x.topic}${x.via ? ` (while reading about ${x.via})` : ''}: ${clip(x.text, 220)} If it catches me, I say so in "spark".`);
+    out.push(`I came across ${x.topic}${x.via ? ` (while reading about ${x.via})` : ''}: ${clip(x.text, 220)} In "spark" I say what I really think of it: love, like, meh, dislike or doubt, and one honest sentence of my own (says).`);
   }
   const into = interests(s).slice(0, 4);
   if (into.length) out.push(`Things I am into lately: ${into.map((i) => `${i.topic}${i.score >= HOBBY_AT ? ' (I love it)' : ''}`).join(', ')}.`);

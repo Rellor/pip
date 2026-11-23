@@ -28,7 +28,7 @@ import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLett
 import { needsNotes, fakeNotes, neighbourPrompt, neighbourSchema, planNotes, deliverNotes, neighbourLines, noteAnswer, keepWishes, wishLines } from './neighbours.js';
 import { buy } from './shop.js';
 import { storyTick } from './story.js';
-import { browse, noteSpark, feel, fade as fadeInterests, curiosityLines } from './curiosity.js';
+import { browse, noteSpark, feel, noteOpinion, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
 import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo } from './world.js';
@@ -2319,6 +2319,8 @@ async function wakeUp() {
   fadeInterests(state);
   if (answer.spark?.topic) {
     const f = feel(state, answer.spark.topic, answer.spark.how);
+    const op = noteOpinion(state, answer.spark); // what he thinks of it, in his own words
+    if (op) console.log(`   💭 about ${op.topic} (${op.how}): ${op.says}`);
     if (f?.became === 'interest') { addInterest(state, f.topic); addMemory(state, `I am getting into ${f.topic}. I want to know more about it.`, 7, 'memory', new Date().toISOString()); console.log(`   ✨ new interest: ${f.topic}`); }
     if (f?.became === 'hobby') { addMemory(state, `${f.topic} has become something I love. I could make it a hobby.`, 8, 'memory', new Date().toISOString()); console.log(`   💛 a hobby is calling: ${f.topic}`); }
   }

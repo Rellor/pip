@@ -3379,7 +3379,7 @@ let lastState = null;
 // he is doing now, the place in his world where that kind of thing is done: he reads at the library, draws at the art
 // workshop, writes by the pond. The page walks him there for that step and home again (like Pino, who walks to
 // whatever he does). Nothing changes in what he did: it only shows where.
-const STEP_PLACE = { read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
+const STEP_PLACE = { search_web: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, browse: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
 function stepOuting() {
   if (!plan || stepNow < 0 || lastState?.last?.sleeping) return null;
   const st = plan.steps[stepNow];
@@ -3871,12 +3871,14 @@ function dayCard(e) {
     }
     if (e.opened) card.append(pageBlock(e.opened, 'He opened:'));
     else if (e.results && !e.results.length) card.append(el('p', 'He found nothing.', 'muted'));
+    if (e.opinion?.says) card.append(el('p', `${{ love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }[e.opinion.how] ?? '💭'} Pip: “${e.opinion.says}”`, 'opinion'));
   } else if (kind === 'read') {
     card.append(el('h3', e.opened?.title || e.topic || '', 'title'));
     if (e.topic && e.opened) card.append(el('p', e.action === 'browse' ? `He came across it while browsing near “${e.topic}”.` : `He wanted to know about “${e.topic}”.`, 'muted'));
     else if (e.action === 'browse' && e.opened) card.append(el('p', 'He came across it while browsing.', 'muted'));
     if (e.opened) card.append(pageBlock(e.opened, e.action === 'browse' ? 'He found:' : 'He read:'));
     else card.append(el('p', e.action === 'browse' ? 'The pages did not load.' : 'He could not find anything to read about this.', 'muted'));
+    if (e.opinion?.says) card.append(el('p', `${{ love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }[e.opinion.how] ?? '💭'} Pip: “${e.opinion.says}”`, 'opinion'));
   } else if (kind === 'piano' && e.action === 'record_song') {
     card.append(el('h3', e.name || 'A recording', 'title'));
     if (e.failed) card.append(el('p', `That did not work out: ${humanFail(e.failed)}.`, 'muted'));
@@ -4987,7 +4989,7 @@ const WORLD_CARDS = {
   home: { title: 'Pip’s home', icon: '🏠', what: 'He lives here. Walk in through the red door.', can: ['sleep', 'eat and cook', 'work at his computer', 'keep the things he makes'] },
   shop: { title: 'The grocery store', icon: '🛒', what: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.', place: 'shop', can: ['buy food to cook and bake with', 'buy seeds, things to make with, tools and instruments'] },
   flats: { title: 'The flats', icon: '🏢', what: 'People of the town live here. Downstairs a shop stands empty.', can: [], none: 'Nothing yet. Pip could wish for something to move in.' },
-  oldhouse: { title: 'The old house', icon: '🏚️', what: 'An old house at the end of the row. The lights go on in the evening.', can: [], none: 'Nothing yet. It makes the village a village.' },
+  cafe: { title: 'The internet café', icon: '💻', what: 'Where he goes to look things up and read on the web. The screen in the window shows the last thing he read, and what he thought of it.', can: ['search the web', 'browse until he stumbles on something', 'say what he really thinks of what he read'] },
   closed: { title: 'The closed shop', icon: '🚪', what: 'The shutter is down and nobody knows what it used to sell.', can: [], none: 'Nothing yet. Pip could wish for something to open here.' },
   land: { title: 'The land workshop', icon: '⛰️', what: 'The land tools are kept here. With them he shapes the ground of his world.', place: 'land', can: ['make a hill', 'dig a hole', 'make the ground flat again'] },
   library: { title: 'The library', icon: '📚', place: 'library' },
@@ -5031,6 +5033,7 @@ function worldCard(kind, key) {
   if (wall) { const on = (s.gallery ?? []).filter((a) => a.wall === wall.key); so.push(on.length ? `On it: ${on.slice(-4).map((a) => `“${a.name}”`).join(', ')}.` : 'Nothing is painted on it yet.'); }
   if (key === 'back' || BUILDINGS.some((b) => b.key === key)) { const on = (s.gallery ?? []).filter((a) => a.wall === `back_${key}`); if (on.length) so.push(`Painted on its back wall: ${on.slice(-3).map((a) => `“${a.name}”`).join(', ')}.`); }
   if (key === 'board') { const notes = (s.wishes ?? []).filter((w) => w.board && w.status === 'open' && Date.now() - Date.parse(w.at) < 3 * 86_400_000); so.push(notes.length ? `On it now: ${notes.map((w) => `${w.topic} (${w.reward} coins)`).join(', ')}.` : 'Nothing is pinned on it right now.'); const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept').length; if (kept) so.push(`He made ${kept} of the things people asked for.`); so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); }
+  if (key === 'cafe') { const face = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }; const reads = [...(s.log ?? [])].reverse().filter((e) => ['search_web', 'read_book', 'browse'].includes(e.action) && !e.failed && (e.query || e.opened?.title || e.topic)).slice(0, 4); if (reads.length) so.push(...reads.map((e) => `${e.action === 'search_web' ? '🔎' : '📖'} ${e.query || e.opened?.title || e.topic}${e.opinion ? ` ${face[e.opinion.how] ?? ''} “${e.opinion.says}”` : ''}`)); else so.push('He has not looked anything up yet.'); }
   if (key === 'land') { const l = s.land ?? []; so.push(l.length ? `He made ${l.filter((x) => x.kind !== 'hole').length} hill${l.filter((x) => x.kind !== 'hole').length === 1 ? '' : 's'} and ${l.filter((x) => x.kind === 'hole').length} hole${l.filter((x) => x.kind === 'hole').length === 1 ? '' : 's'}: ${l.slice(-4).map((x) => x.name).join(', ')}.` : 'He has not shaped the land yet. It is all flat.'); }
   if (key === 'plot') { const mine = (s.decor ?? []).filter((d) => d.kind === 'outside' && (d.spot ?? 'plot') === 'plot'); so.push(mine.length ? `${mine.length} thing${mine.length === 1 ? '' : 's'} he made stand here.` : 'Nothing stands here yet.'); }
   if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
