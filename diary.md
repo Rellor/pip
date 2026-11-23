@@ -5696,3 +5696,9 @@ My room is full and the night sky pulls at me. I want to print a small model rel
 - eat (basil): I am hungry.
 - mood: driven
 
+## 23/11/2026, 22:02:01
+My desk is a mess and that bird is just asking to be kicked over on the floor. I'll shuffle things around to make my shelf useful and get some light where it's actually needed.
+> My desk is a mess and that bird is just asking to be kicked over on the floor. I'll shuffle things around to make my shelf useful and get some light where it's actually needed.
+- do (move the sculpted clay bird from the floor to the desk): The bird needs a better spot than the floor.
+- mood: driven
+
