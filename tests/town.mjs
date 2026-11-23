@@ -2,7 +2,7 @@
 // of his world has a spot in the street. (The drawing itself is checked by eye, in a real browser.)
 // Run: node tests/town.mjs
 import assert from 'node:assert/strict';
-import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, ROUTES, POND, SQUARE, BOARD, WORLD_RANGE, groundAt, setLand, inTown, townBlocked, atTownDoor, buildProblem, buildPlace, WORLD, BUILDINGS, WALLS, rectOf, artSpot, PAINT_WALLS, paintTarget, PRINT_SLOTS } from '../web/town.js';
+import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, ROUTES, POND, SQUARE, BOARD, WORLD_RANGE, groundAt, setLand, inTown, townBlocked, atTownDoor, buildProblem, buildPlace, WORLD, BUILDINGS, WALLS, wallBox, PATHS, rectOf, artSpot, PAINT_WALLS, paintTarget, PRINT_SLOTS } from '../web/town.js';
 import { PLACES } from '../web/world.js';
 import { PLOT } from '../web/town.js';
 import { makeDecor, moveThing, updateDecor, storeAway, takeOut, outsideThings, sizeOf, setFurniture, setChest, MAX_OUTSIDE, isOutside, outsideChoice, outsideIn } from '../decor.js';
@@ -195,7 +195,7 @@ ok('the maker hears how big a thing can be out there');
 
 // ---- The world is a list: buildings are blocks, walls carry his drawings (web/town.js)
 {
-  const rects = [...BUILDINGS.map((b) => [b.name, ...rectOf(b)]), ...WALLS.map((w) => [w.name, w.at[0] - w.len / 2, w.at[0] + w.len / 2, w.at[1] - 0.25, w.at[1] + 0.25])];
+  const rects = [...BUILDINGS.map((b) => [b.name, ...rectOf(b)]), ...WALLS.map((w) => [w.name, ...wallBox(w)])];
   for (const [name, x0, x1, z0, z1] of rects) {
     assert.ok(x0 > WORLD.x0 + 2 && x1 < WORLD.x1 - 2 && z0 > WORLD.z0 + 2 && z1 < WORLD.z1 - 2, `${name} stands inside the world`);
     assert.equal(townBlocked(TOWN_X + (x0 + x1) / 2, (z0 + z1) / 2, 0), true, `${name} cannot be walked through`);
@@ -221,12 +221,25 @@ ok('the maker hears how big a thing can be out there');
     for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.4); for (let k = 0; k <= n; k++) assert.equal(townBlocked(TOWN_X + a.x + ((b.x - a.x) * k) / n, a.z + ((b.z - a.z) * k) / n, 0.2), false, `${w.name}: the way there is blocked between corner ${i - 1} and ${i}`); }
     assert.ok(buildProblem(spot.x - 0.5, spot.x + 0.5, spot.z - 0.5, spot.z + 0.5), `${w.name}: nothing may be built where he stands to paint`);
   }
-  for (const [said, key] of [['the wall beside my house', 'wall_1'], ['the wall by the flats', 'wall_3'], ['back of my house', 'back_home'], ['the long wall by the art workshop', 'wall_4'], ['the wall in the park', 'wall_2'], ['the back wall of the grocery store', 'back_shop'], ['the back of the library', 'back_library'], ['the wall by the build workshop', 'wall_5']]) assert.equal(paintTarget(said, 1).key, key, said);
+  for (const [said, key] of [['the wall beside my house', 'wall_1'], ['the wall by the flats', 'wall_3'], ['back of my house', 'back_home'], ['the long wall by the art workshop', 'wall_4'], ['the wall by the art workshop', 'wall_4'], ['the wall in the park', 'wall_2'], ['the wall by the internet café', 'wall_2'], ['the back wall of the grocery store', 'back_shop'], ['the back of the library', 'back_library'], ['the wall by the build workshop', 'wall_5']]) assert.equal(paintTarget(said, 1).key, key, said);
   assert.equal(new Set(Array.from({ length: 40 }, (_, i) => paintTarget('any wall', i * 7 + 1).key)).size, PAINT_WALLS.length, 'no wall named: it can be any of them');
   { const pts = ['door', ...ROUTES.workshop, 'workshop'].map((k) => TOWN_SPOTS[k]); for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.4); for (let k = 0; k <= n; k++) assert.equal(townBlocked(TOWN_X + a.x + ((b.x - a.x) * k) / n, a.z + ((b.z - a.z) * k) / n, 0.2), false, 'the way to the print workshop'); } }
   assert.equal(PRINT_SLOTS.length, 21);
   for (const [x, , z] of PRINT_SLOTS) assert.equal(townBlocked(TOWN_X + x, z, 0), true, 'the shelf of prints is solid');
   ok('he can paint on 8 walls: each has a place to stand and a free way to it, and he names it in his own words');
+  // the art walls stand in the gaps between the buildings, each turned its own way, and no path is drawn to them
+  assert.equal(new Set(WALLS.map((w) => w.turn)).size, WALLS.length, 'every wall is turned its own way');
+  assert.ok(WALLS.every((w) => w.turn !== 0) && WALLS.some((w) => w.turn > 0) && WALLS.some((w) => w.turn < 0) && new Set(WALLS.map((w) => w.h)).size > 2);
+  for (const w of WALLS) {
+    const [x0, x1, z0, z1] = wallBox(w);
+    const row = BUILDINGS.map(rectOf).filter(([, , b0, b1]) => z0 > b0 && z1 < b1); // the buildings it stands between
+    assert.ok(row.some(([, bx1]) => bx1 <= x0 && x0 - bx1 < 6) && row.some(([bx0]) => bx0 >= x1 && bx0 - x1 < 6), `${w.name} stands between two buildings`);
+    const spot = TOWN_SPOTS[`paint_${w.key}`];
+    assert.ok(!PATHS.some(([ax, az, bx, bz]) => (ax === spot.x && az === spot.z) || (bx === spot.x && bz === spot.z)), `${w.name}: no path leads to it`);
+    assert.equal(townBlocked(TOWN_X + w.at[0] + Math.cos((w.turn * Math.PI) / 180) * (w.len / 2 - 0.2), w.at[1] - Math.sin((w.turn * Math.PI) / 180) * (w.len / 2 - 0.2), 0), true, `${w.name} is solid to its end`);
+  }
+  ok('the art walls stand between the buildings, each turned its own way, with no path to them');
+
 }
 
 // ---- a big thing outside takes time to build (decor.js): the page shows the site until it is ready

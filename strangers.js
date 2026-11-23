@@ -65,7 +65,7 @@ export const PARCELS = [
   ['opinion', 'Boredom', 'People say being bored is bad. I think every good idea I ever had came out of being bored.'],
 ];
 // Where a note can lie (the spots are in web/town.js: drop_<key>).
-export const DROP_PLACES = [['square', 'on the square'], ['pond', 'by the pond'], ['door', 'in front of my door'], ['wall', 'by the long wall']];
+export const DROP_PLACES = [['square', 'on the square'], ['pond', 'by the pond'], ['door', 'in front of my door'], ['wall', 'by the wall next to the art workshop']];
 export const MAX_LYING = 2;
 const DROP_EVERY_H = 4; // about this long after the last one, a new note is left (while he is awake)
 const FOUND_AFTER_H = 6; // a note he does not fetch is blown to his door after this long

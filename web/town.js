@@ -3,8 +3,8 @@
 // place is just a spot Pip walks to and does something at. Nothing has an inside, except his own home: the door of his
 // house here leads into his room, and the front door in his hall leads back out here.
 // The layout is a small village square: his home on the north side with the grocery store and the library glued to each
-// other beside it, the notice board in the middle, the three workshops in a row on the south side, and walls for his art
-// in between. Everything is close together. There is no road (there are no cars): sand paths run to every door.
+// other beside it, the notice board in the middle, the workshops in a row on the south side, and walls for his art in
+// the gaps between the buildings, each turned its own way. Everything is close together. There is no road (there are no cars): paths run to every door (not to the walls: he walks to those over the grass).
 //   - To add a building: one line in BUILDINGS (where, how big, what its front looks like, or a photo for it).
 //   - To add a wall for his drawings: one line in WALLS.
 // The world stands in the same scene as his house, far to the side (at x = TOWN_X). The viewer walks through it; when
@@ -19,7 +19,7 @@ export const WORLD = { x0: -66, x1: 78, z0: -38, z1: 64 }; // the whole world: 1
 export const WORLD_RANGE = [WORLD.x0, WORLD.x1];
 export const TOWN_RANGE = [-39, 42]; // around his home: what the view from above shows first
 export const TOWN_Z = [WORLD.z0, WORLD.z1];
-export const SQUARE = { x0: -10, x1: 26, z0: 7, z1: 31 }; // the village square: sand, with the notice board in the middle
+export const SQUARE = { x0: -10, x1: 26, z0: 7, z1: 31 }; // the village square: trodden earth, with the notice board in the middle
 // Pip's own land: a big free field beside the square, where a plain "outside" puts what he makes. It is his to fill.
 export const PLOT = { x0: 30, x1: 62, z0: 4, z1: 34 };
 export const inTown = (x) => x > 60;
@@ -35,41 +35,44 @@ export const BUILDINGS = [
   { key: 'home', name: 'Pip’s home', who: 'Pip', at: [0, 0], size: [9, 5, 7.5], look: { wall: 'plaster', color: '#f3cf7a', photo: { src: 'tex/plaster.jpg', m: 2.4, tint: '#f6cf78' }, door: { x: 4.5, color: '#c0392b', w: 1.2, h: 2.3 }, windows: [[1.0, 1.1, 1.9, 1.7], [6.2, 1.1, 1.9, 1.7], [3.7, 3.5, 1.6, 1.0]] }, roof: 0xe9855b, lit: [8, 23] },
   { key: 'shop', name: 'Grocery store', at: [14, 0], size: [14, 9, 9], look: { wall: 'brick', color: '#c98f6b', trim: '#f1e4cf', photo: { src: 'tex/bricks_red.jpg', m: 2.1 }, bands: [4.5], door: { x: 10.5, color: '#2f5f58' }, shop: { x0: 0.9, x1: 9.2, awning: '#f2c14e', goods: ['#ef6f6c', '#f2c14e', '#8cc27a', '#e9855b'] }, shutter: { x0: 11.7, x1: 13.4 }, windows: upper(14, [5.6]), sign: { text: 'GROCERY STORE', bg: '#2f5f58', fg: '#fff8ee', y: 3.7, x: 5.1 } }, roof: 0x5c5650, lit: [7, 22] },
   { key: 'library', name: 'Library', at: [29.2, 0], size: [16, 11.5, 9], look: { wall: 'stone', color: '#e3d2b6', photo: { src: 'tex/sandstone.jpg', m: 2.6 }, columns: 4, bands: [5.6], door: { x: 8, color: '#7a5237', w: 2.2, h: 3.4 }, windows: [[2.6, 1.4, 1.3, 2.9], [12.1, 1.4, 1.3, 2.9], [2.6, 6.6, 1.3, 2.6], [7.35, 6.6, 1.3, 2.6], [12.1, 6.6, 1.3, 2.6]], sign: { text: 'LIBRARY', bg: '#f1e6d2', fg: '#7a5237', y: 10.3, x: 8, size: 0.6 } }, roof: 0x8a5a3a, lit: [8, 22] },
-  { key: 'flats', name: 'Flats', decor: true, at: [44.4, 0], size: [14, 15, 9], look: { wall: 'brick', color: '#b9856a', trim: '#e9dcc8', photo: { src: 'tex/flats.jpg', m: 14, glow: 'tex/flats_glow.jpg', fit: true }, ground: { h: 3.5, color: '#8a6f62' }, door: { x: 2.2, color: '#4a3d35', w: 1.1, h: 2.3 }, shutter: { x0: 5.2, x1: 12.6 }, sign: { text: 'TO LET', bg: '#f4efe6', fg: '#b8554a', y: 2.9, x: 8.9, size: 0.4 } }, roof: 0x5c5650, lit: [17, 23.5] },
+  { key: 'flats', name: 'Flats', decor: true, at: [51.4, 0], size: [14, 15, 9], look: { wall: 'brick', color: '#b9856a', trim: '#e9dcc8', photo: { src: 'tex/flats.jpg', m: 14, glow: 'tex/flats_glow.jpg', fit: true }, ground: { h: 3.5, color: '#8a6f62' }, door: { x: 2.2, color: '#4a3d35', w: 1.1, h: 2.3 }, shutter: { x0: 5.2, x1: 12.6 }, sign: { text: 'TO LET', bg: '#f4efe6', fg: '#b8554a', y: 2.9, x: 8.9, size: 0.4 } }, roof: 0x5c5650, lit: [17, 23.5] },
   { key: 'cafe', name: 'Internet café', at: [-21.2, 0], size: [14, 9.5, 8], look: { wall: 'brick', color: '#a8745c', trim: '#efe6d6', photo: { src: 'tex/bricks_old.jpg', m: 2.3 }, bands: [4.2], door: { x: 3, color: '#3d5a80', w: 1.1, h: 2.4 }, windows: upper(14, [5.4]), sign: { text: 'INTERNET CAFÉ', bg: '#1f2a44', fg: '#7fd6ff', y: 3.55, x: 9, size: 0.42 } }, roof: 0x6b5a50, lit: [8, 23] },
-  { key: 'studio', name: 'Art workshop', at: [-6, 38], face: 180, size: [12, 8, 8], look: { wall: 'boards', color: '#e8dcc6', photo: { src: 'tex/siding_pale.jpg', m: 1.7 }, bands: [4.3], door: { x: 2, color: '#e9855b' }, windows: [[4.4, 1.2, 2.2, 1.9], [8.2, 1.2, 2.2, 1.9], ...upper(12, [5.1], 3, 1.6, 1.8)], sign: { text: 'PIP’S ART', bg: '#e9855b', fg: '#ffffff', y: 3.6, x: 6 } }, roof: 0xe9855b, lit: [9, 21] },
+  { key: 'studio', name: 'Art workshop', at: [-10, 38], face: 180, size: [12, 8, 8], look: { wall: 'boards', color: '#e8dcc6', photo: { src: 'tex/siding_pale.jpg', m: 1.7 }, bands: [4.3], door: { x: 2, color: '#e9855b' }, windows: [[4.4, 1.2, 2.2, 1.9], [8.2, 1.2, 2.2, 1.9], ...upper(12, [5.1], 3, 1.6, 1.8)], sign: { text: 'PIP’S ART', bg: '#e9855b', fg: '#ffffff', y: 3.6, x: 6 } }, roof: 0xe9855b, lit: [9, 21] },
   { key: 'workshop', name: 'Print workshop', at: [8.7, 38], face: 180, size: [11, 9, 8], look: { wall: 'brick', color: '#8f9aa0', trim: '#dfe5e8', photo: { src: 'tex/steel.jpg', m: 2.4 }, bands: [4.4], door: { x: 1.8, color: '#c9773c' }, shutter: { x0: 3.6, x1: 9.8 }, windows: upper(11, [5.6]), sign: { text: 'PRINT WORKSHOP', bg: '#2a2a2e', fg: '#f2c14e', y: 3.5, x: 6.7, size: 0.45 } }, roof: 0x5c6468, lit: [9, 21] },
   { key: 'land', name: 'Land workshop', at: [20.4, 38], face: 180, size: [12, 7, 8], look: { wall: 'planks', color: '#8fae6a', photo: { src: 'tex/siding_dark.jpg', m: 2.2, tint: '#dff0c0' }, door: { x: 2, color: '#5a4630' }, shutter: { x0: 4.2, x1: 10.8 }, windows: [[6.6, 4.9, 1.8, 1.3]], sign: { text: 'LAND TOOLS', bg: '#5a4630', fg: '#f4e7c6', y: 3.6, x: 7.5, size: 0.5 } }, roof: 0x6f8a52, lit: [9, 21] },
-  { key: 'build', name: 'Build workshop', at: [32.6, 38], face: 180, size: [12, 10, 8], look: { wall: 'plaster', color: '#d8c6a4', trim: '#f4efe6', photo: { src: 'tex/plaster_worn.jpg', m: 3.2 }, bands: [4.2], door: { x: 10.4, color: '#6b4a35' }, shutter: { x0: 1, x1: 8.8 }, windows: upper(12, [5.2, 7.7], 3, 1.3, 1.5), sign: { text: 'BUILD WORKSHOP', bg: '#c9773c', fg: '#fff8ee', y: 3.5, x: 4.9, size: 0.42 } }, roof: 0x7c6a5c, lit: [8, 22] },
+  { key: 'build', name: 'Build workshop', at: [38.6, 38], face: 180, size: [12, 10, 8], look: { wall: 'plaster', color: '#d8c6a4', trim: '#f4efe6', photo: { src: 'tex/plaster_worn.jpg', m: 3.2 }, bands: [4.2], door: { x: 10.4, color: '#6b4a35' }, shutter: { x0: 1, x1: 8.8 }, windows: upper(12, [5.2, 7.7], 3, 1.3, 1.5), sign: { text: 'BUILD WORKSHOP', bg: '#c9773c', fg: '#fff8ee', y: 3.5, x: 4.9, size: 0.42 } }, roof: 0x7c6a5c, lit: [8, 22] },
 ];
 // A building's place on the ground: [x0, x1, z0, z1].
 export const rectOf = (b) => { const [w, , d] = b.size; return b.face === 180 ? [b.at[0] - w / 2, b.at[0] + w / 2, b.at[1], b.at[1] + d] : [b.at[0] - w / 2, b.at[0] + w / 2, b.at[1] - d, b.at[1]]; };
 const bOf = (key) => BUILDINGS.find((b) => b.key === key);
 // Where its door is, and a step in front of it (where he stands): [x, z, the way he looks].
 const doorOf = (key, out = 1.3) => { const b = bOf(key); const f = b.face === 180; return { x: b.at[0] + (f ? b.size[0] / 2 - b.look.door.x : b.look.door.x - b.size[0] / 2), z: b.at[1] + (f ? -out : out), face: f ? 0 : Math.PI }; };
-// ---- Walls for his art (like Pino's numbered walls): a bare concrete wall somewhere in the world. `at` is its middle,
-// `len` how long.
+// ---- Walls for his art (like Pino's numbered walls): bare concrete walls in the gaps between the buildings, like the
+// leftover walls in a town that get tagged. Each is turned its own way and has its own size. `at` is its middle, `len`
+// how long, `turn` how it is turned (degrees; 0 runs east-west), `h` how high. No path leads to them.
+const rad = (deg) => (deg * Math.PI) / 180;
 export const WALLS = [
-  { key: 'wall_1', name: 'the wall beside my house', at: [-11, -2], len: 6 },
-  { key: 'wall_2', name: 'the wall by the pond', at: [-30, 6], len: 8 },
-  { key: 'wall_3', name: 'the wall by the flats', at: [56.5, -3], len: 8 },
-  { key: 'wall_4', name: 'the long wall by the art workshop', at: [-24, 40], len: 12 },
-  { key: 'wall_5', name: 'the wall by the build workshop', at: [44.6, 42], len: 8 },
+  { key: 'wall_1', name: 'the wall beside my house', at: [-7.4, -1.6], len: 5, turn: -28, h: 3.2 },
+  { key: 'wall_2', name: 'the wall by the internet café', at: [-11.5, -5], len: 4.6, turn: 22, h: 3.8 },
+  { key: 'wall_3', name: 'the wall by the flats', at: [40.8, -4.4], len: 6.4, turn: -24, h: 3.6 },
+  { key: 'wall_4', name: 'the wall by the art workshop', at: [-0.4, 42], len: 6, turn: 26, h: 3.4 },
+  { key: 'wall_5', name: 'the wall by the build workshop', at: [29.5, 41], len: 5.4, turn: -18, h: 4 },
 ];
 // ---- The notice board: it stands in the middle of the square. People pin notes on it with what they would like made
 // (board.js). He walks to it to read them. The notes are on both sides.
 export const BOARD = { x: 8, z: 19, w: 2.6, h: 1.5 };
-export const WALL_H = 3.4;
 // ---- Where he can paint (like the tags on the walls of Pino's town). He needs no paper and no supplies for it. He picks
 // the wall himself: one of the art walls, or the back wall of his house, the grocery store or the library; or he leaves
-// it open and one is picked for him. `side` is the face he paints on (1: the one that looks south, -1: north).
+// it open and one is picked for him. `side` is the face he paints on (1: the one that looks south, -1: north, before the
+// wall is turned). For each: `x, z` the middle of that face, `rot` how the wall is turned, `nx, nz` the way the face looks.
 const BACK_NAME = { home: 'my own house', shop: 'the grocery store', library: 'the library' };
 const BACK_VIA = ['alley', 'alleyBack']; // the alley between his house and the grocery store leads to the back of the row
+const faceOf = (x, z, rot, side, more) => { const nx = side * Math.sin(rot), nz = side * Math.cos(rot); return { ...more, x: x + nx * 0.21, z: z + nz * 0.21, rot, side, nx, nz, spot: [x + nx * 1.95, z + nz * 1.95] }; };
 export const PAINT_WALLS = [
-  { key: 'wall_1', words: /beside|my house|my home/, via: ['homeW'] }, { key: 'wall_2', words: /park|pond/, via: ['homeW'] }, { key: 'wall_3', words: /flats|end of the row/, via: ['rowE'] },
-  { key: 'wall_4', words: /long|art/, via: ['sqN', 'sqW'], side: -1 }, { key: 'wall_5', words: /build|land/, via: ['sqN', 'sqE', 'sqSE', 'rowSE'], side: -1 },
-].map((t) => { const w = WALLS.find((x) => x.key === t.key); const side = t.side ?? 1; return { ...t, name: w.name, x: w.at[0], z: w.at[1] + side * 0.21, len: w.len, h: WALL_H, side, spot: [w.at[0], w.at[1] + side * 1.95] }; })
-  .concat(BUILDINGS.filter((b) => BACK_NAME[b.key]).map((b) => { const z = b.at[1] - b.size[2]; return { key: `back_${b.key}`, back: b.key, name: `the back wall of ${BACK_NAME[b.key]}`, x: b.at[0], z: z - 0.03, len: b.size[0], h: b.size[1], side: -1, spot: [b.at[0], z - 1.9], via: BACK_VIA }; }));
+  { key: 'wall_1', words: /beside|my house|my home/, via: ['homeW'] }, { key: 'wall_2', words: /caf|park|pond/, via: ['homeW'] }, { key: 'wall_3', words: /flats|end of the row/, via: ['gapE'] },
+  { key: 'wall_4', words: /long|art/, via: ['sqN', 'sqSW'], side: -1 }, { key: 'wall_5', words: /build|land/, via: ['sqN', 'sqE', 'sqSE'], side: -1 },
+].map((t) => { const w = WALLS.find((x) => x.key === t.key); return faceOf(w.at[0], w.at[1], rad(w.turn), t.side ?? 1, { ...t, name: w.name, len: w.len, h: w.h }); })
+  .concat(BUILDINGS.filter((b) => BACK_NAME[b.key]).map((b) => { const z = b.at[1] - b.size[2]; return faceOf(b.at[0], z + 0.18, 0, -1, { key: `back_${b.key}`, back: b.key, name: `the back wall of ${BACK_NAME[b.key]}`, len: b.size[0], h: b.size[1], via: BACK_VIA }); }));
 // "the wall by the library", "the back of the grocery store", "any wall": the wall he means. No wall named: one of them, by `seed`.
 export function paintTarget(text, seed = 0) {
   const norm = (v) => String(v ?? '').toLowerCase().replace(/[’']/g, '');
@@ -83,7 +86,10 @@ export function paintTarget(text, seed = 0) {
     ?? backOf()
     ?? PAINT_WALLS[Math.abs(Math.floor(seed)) % PAINT_WALLS.length];
 }
-const wallRect = (w) => [w.at[0] - w.len / 2, w.at[0] + w.len / 2, w.at[1] - 0.25, w.at[1] + 0.25];
+// The box around a wall (it is turned, so the box is a little bigger than the wall): [x0, x1, z0, z1].
+export const wallBox = (w) => { const c = Math.abs(Math.cos(rad(w.turn))), sn = Math.abs(Math.sin(rad(w.turn))); const hx = (w.len / 2) * c + 0.25 * sn, hz = (w.len / 2) * sn + 0.25 * c; return [w.at[0] - hx, w.at[0] + hx, w.at[1] - hz, w.at[1] + hz]; };
+// Is this point in a wall? (measured along the wall and across it)
+const inWall = (lx, z, pad) => WALLS.some((w) => { const r = rad(w.turn), dx = lx - w.at[0], dz = z - w.at[1]; return Math.abs(dx * Math.cos(r) - dz * Math.sin(r)) < w.len / 2 + pad && Math.abs(dx * Math.sin(r) + dz * Math.cos(r)) < 0.25 + pad; });
 
 export const POND = { x: -30, z: 20, rx: 12, rz: 8 };
 const WILLOW = [-19, 29];
@@ -107,13 +113,13 @@ export const TOWN_SPOTS = {
   pond: { x: -16.4, z: 19.6, face: -Math.PI / 2 }, // by the bench, looking over the water
   homeW: { x: -6.2, z: 1.2, face: -Math.PI / 2 }, // past the west corner of his house
   alley: { x: 5.75, z: 1.2, face: Math.PI }, alleyBack: { x: 5.75, z: -10.9, face: Math.PI }, // the alley between his house and the grocery store, and out behind the row
-  rowE: { x: 52.8, z: 1.3, face: Math.PI / 2 }, // past the east end of the north row (the flats)
-  sqSE: { x: 27.6, z: 33.4, face: Math.PI / 2 }, rowSE: { x: 40.2, z: 36.4, face: Math.PI / 2 }, // along the south row, past the closed shop
-  ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, { x: w.spot[0], z: w.spot[1], face: w.side > 0 ? Math.PI : 0 }])), // in front of each wall he can paint on
-  drop_square: { x: -5.4, z: 25.4, face: Math.PI / 2 }, drop_pond: { x: -14.8, z: 23.6, face: -Math.PI / 2 }, drop_door: { x: 2.4, z: 3.6, face: Math.PI / 2 }, drop_wall: { x: -24, z: 36.2, face: 0 }, // where a note for him can lie (strangers.js): he stands beside it
+  gapE: { x: 40.4, z: 1.3, face: Math.PI }, // before the gap between the library and the flats
+  sqSE: { x: 27.6, z: 33.4, face: Math.PI / 2 }, // the south-east corner of the square
+  ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, { x: w.spot[0], z: w.spot[1], face: Math.atan2(-w.nx, -w.nz) }])), // in front of each wall he can paint on, looking at it
+  drop_square: { x: -5.4, z: 25.4, face: Math.PI / 2 }, drop_pond: { x: -14.8, z: 23.6, face: -Math.PI / 2 }, drop_door: { x: 2.4, z: 3.6, face: Math.PI / 2 }, drop_wall: { x: 1.3, z: 38.3, face: 0 }, // where a note for him can lie (strangers.js): he stands beside it
 };
 // Where things that people leave lie: the notes (by their spot) and the small deeds of visitors (by what they are).
-export const LIE = { drop_square: [-6.2, 25.4], drop_pond: [-15.6, 23.6], drop_door: [3.2, 3.6], drop_wall: [-24, 37.0], flower: [1.1, 0.62], apple: [16.4, 0.7], boat: [POND.x + 4, POND.z - 2], doodle: [BOARD.x + 0.8, BOARD.z + 0.12], hat: [STONE[0], STONE[1]], bookmark: [30.6, 0.8], chalk: [14, 24] };
+export const LIE = { drop_square: [-6.2, 25.4], drop_pond: [-15.6, 23.6], drop_door: [3.2, 3.6], drop_wall: [2.0, 39.0], flower: [1.1, 0.62], apple: [16.4, 0.7], boat: [POND.x + 4, POND.z - 2], doodle: [BOARD.x + 0.8, BOARD.z + 0.12], hat: [STONE[0], STONE[1]], bookmark: [30.6, 0.8], chalk: [14, 24] };
 // Where Pip is seen for each place of his world: [the spot, 'in' when he goes inside there (then he is out of sight)].
 export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], walls: ['paint_wall_1', ''], drops: ['drop_square', ''] };
 // The way to each spot from his door: the corners he walks by, one after the other (the way home is the same, backwards).
@@ -138,13 +144,13 @@ export const townGround = (x, z) => groundAt(x - TOWN_X, z);
 // The shelf in front of the print workshop: 21 prints. It stands before the shutter, and looks the way the building looks.
 export const PRINT_SHELF = (() => { const b = bOf('workshop'); const f = b.face === 180 ? -1 : 1; const edge = (v) => b.at[0] + (f < 0 ? b.size[0] / 2 - v : v - b.size[0] / 2); const [a, c] = [edge(b.look.shutter.x0 + 0.2), edge(b.look.shutter.x1 - 0.2)]; return { x0: Math.min(a, c), x1: Math.max(a, c), z: b.at[1] + f * 0.42, dir: f, rows: [0.62, 1.32, 2.02], per: 7 }; })();
 export const PRINT_SLOTS = PRINT_SHELF.rows.flatMap((y) => Array.from({ length: PRINT_SHELF.per }, (_, i) => [PRINT_SHELF.x0 + 0.45 + i * ((PRINT_SHELF.x1 - PRINT_SHELF.x0 - 0.9) / (PRINT_SHELF.per - 1)), y, PRINT_SHELF.z]));
-// What cannot be walked through: [x0, x1, z0, z1] (every building and wall, the shelf of prints and the notice board).
-const BLOCKS = [...BUILDINGS.map(rectOf), ...WALLS.map(wallRect), [PRINT_SHELF.x0 - 0.1, PRINT_SHELF.x1 + 0.1, PRINT_SHELF.z - 0.4, PRINT_SHELF.z + 0.4], [BOARD.x - BOARD.w / 2 - 0.1, BOARD.x + BOARD.w / 2 + 0.1, BOARD.z - 0.22, BOARD.z + 0.22]];
+// What cannot be walked through: [x0, x1, z0, z1] (every building, the shelf of prints and the notice board), and the walls.
+const BLOCKS = [...BUILDINGS.map(rectOf), [PRINT_SHELF.x0 - 0.1, PRINT_SHELF.x1 + 0.1, PRINT_SHELF.z - 0.4, PRINT_SHELF.z + 0.4], [BOARD.x - BOARD.w / 2 - 0.1, BOARD.x + BOARD.w / 2 + 0.1, BOARD.z - 0.22, BOARD.z + 0.22]];
 export function townBlocked(x, z, pad = 0.3) {
   const lx = x - TOWN_X;
   if (lx < WORLD.x0 + 0.4 || lx > WORLD.x1 - 0.4 || z < WORLD.z0 + 0.4 || z > WORLD.z1 - 0.4) return true; // the rim of the world
   if (((lx - POND.x) / (POND.rx + pad)) ** 2 + ((z - POND.z) / (POND.rz + pad)) ** 2 < 1) return true; // the water
-  return BLOCKS.some(([x0, x1, z0, z1]) => lx > x0 - pad && lx < x1 + pad && z > z0 - pad && z < z1 + pad);
+  return inWall(lx, z, pad) || BLOCKS.some(([x0, x1, z0, z1]) => lx > x0 - pad && lx < x1 + pad && z > z0 - pad && z < z1 + pad);
 }
 // Standing right in front of Pip's door in the world (for the viewer who walks: this is the way back into the hall).
 export const atTownDoor = (x, z) => Math.abs(x - TOWN_X) < 0.75 && z < 0.75 && z > -0.2;
@@ -153,14 +159,14 @@ export const atTownDoor = (x, z) => Math.abs(x - TOWN_X) < 0.75 && z < 0.75 && z
 // The only rule: it has to fit. It may not stand in a building, in the water, on a tree or on what is already there,
 // and the square and the ways he walks must stay free. It can be bigger than a house.
 export const BUILD_MAX = { w: 20, h: 18, d: 20 };
-// The ways he walks himself (ROUTES): they stay free, from corner to corner. (The sand paths are drawn along them.)
-const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ['studio', 'studio', ROUTES.studio], ['cafe', 'cafe', ROUTES.cafe], ['build', 'build', ROUTES.build], ...['drop_pond', 'drop_door', 'drop_wall'].map((k) => ['drops', k, ROUTES[k]]), ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
-// Every stretch of path once: [ax, az, bx, bz] (for drawing them).
-export const PATHS = [...new Map(WALKS.map(([a, b]) => [[a, b].map((p) => `${p.x},${p.z}`).sort().join('|'), [a.x, a.z, b.x, b.z]])).values()];
+// The ways he walks himself (ROUTES): they stay free, from corner to corner. (The paths are drawn along most of them.)
+const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ['studio', 'studio', ROUTES.studio], ['cafe', 'cafe', ROUTES.cafe], ['build', 'build', ROUTES.build], ...['drop_pond', 'drop_door', 'drop_wall'].map((k) => ['drops', k, ROUTES[k]]), ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place, spot]); });
+// Every stretch of path once: [ax, az, bx, bz] (for drawing them). No path is drawn to a wall: he walks there over the grass.
+export const PATHS = [...new Map(WALKS.filter(([, , place, spot]) => place !== 'walls' && spot !== 'drop_wall').map(([a, b]) => [[a, b].map((p) => `${p.x},${p.z}`).sort().join('|'), [a.x, a.z, b.x, b.z]])).values()];
 // What stands there already: [what it is, x0, x1, z0, z1] and [what it is, x, z, radius] (world coordinates).
 const KEEP_RECTS = [
   ...BUILDINGS.map((b) => { const [x0, x1, z0, z1] = rectOf(b); return [b.key === 'home' ? 'my own house stands there' : b.decor ? `${/^[aeiou]/i.test(b.name) ? 'an' : 'a'} ${b.name.toLowerCase().replace(/^flats$/, 'block of flats')} stands there` : `the ${b.name.toLowerCase()} stands there`, x0 - 0.6, x1 + 0.6, z0 - 0.6, z1 + 0.6]; }),
-  ...WALLS.map((w) => { const [x0, x1, z0, z1] = wallRect(w); return ['my drawings hang on the wall there, and people must be able to see them', x0 - 1.6, x1 + 1.6, z0 - 1.6, z1 + 1.6]; }),
+  ...WALLS.map((w) => { const [x0, x1, z0, z1] = wallBox(w); return ['my drawings hang on the wall there, and people must be able to see them', x0 - 1.6, x1 + 1.6, z0 - 1.6, z1 + 1.6]; }),
   ...PAINT_WALLS.filter((w) => w.back).map((w) => ['I paint on that back wall, and people must be able to see it', w.x - w.len / 2, w.x + w.len / 2, w.z - 2.6, w.z]),
   (() => { const [x0, x1, z0, z1] = rectOf(bOf('studio')); return ['my drawings hang on the walls of my art workshop, and people must be able to see them', x0 - 2.4, x1 + 2.4, z0, z1 + 2.4]; })(),
   ['the shelf with my prints stands there', PRINT_SHELF.x0 - 0.6, PRINT_SHELF.x1 + 0.6, PRINT_SHELF.z - 2, PRINT_SHELF.z + 2],
@@ -327,14 +333,50 @@ export function buildTown(THREE) {
   ground.material.userData.tint = tintOf();
   ground.receiveShadow = true;
   { const cx = (WORLD.x0 + WORLD.x1) / 2, cz = (WORLD.z0 + WORLD.z1) / 2; for (const [w, d, x, z] of [[WW + 0.6, 0.3, cx, WORLD.z0 - 0.15], [WW + 0.6, 0.3, cx, WORLD.z1 + 0.15], [0.3, WD, WORLD.x0 - 0.15, cz], [0.3, WD, WORLD.x1 + 0.15, cz]]) box([w, 0.8, d], 0x8a6a4c, [x, -0.42, z]); } // the rim it lies in
-  // the village square: sand, and sand paths from it to every door (there is no road: there are no cars)
-  const paving = tex('tex/paving.jpg'); paving.wrapS = paving.wrapT = THREE.RepeatWrapping; paving.repeat.set((SQUARE.x1 - SQUARE.x0) / 3, (SQUARE.z1 - SQUARE.z0) / 3); paving.anisotropy = 4; // real cobbles (a photo from ambientCG, see web/tex/CREDITS.txt)
-  const square = box([SQUARE.x1 - SQUARE.x0, 0.07, SQUARE.z1 - SQUARE.z0], skin(paving, 1.2), [(SQUARE.x0 + SQUARE.x1) / 2, 0.0, (SQUARE.z0 + SQUARE.z1) / 2]);
-  square.receiveShadow = true;
+  // the village square and the paths from it to every door (there is no road: there are no cars)
+  // The square and the paths: one smooth, even, light surface, like fine gravel raked flat. Tidy, but not drawn with a
+  // ruler: the square has a soft, slightly uneven outline (the same every time), and the paths wind a little and are
+  // not equally wide everywhere. A thin darker rim runs around the square. (All of it lies flat, a hair above the ground.)
+  const PAVE = 0xd6c9ae, PAVE_EDGE = 0x9c8c70;
+  const flatMesh = (pts, tris, y, color) => { // a flat patch from points [x, z] and triangles
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts.flatMap(([x, z]) => [x, y, z])), 3));
+    geo.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(pts.flatMap(() => [0, 1, 0])), 3));
+    geo.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(pts.flatMap(([x, z]) => [x / 4, z / 4])), 2));
+    geo.setIndex(tris);
+    const mesh = add(geo, M(color), [0, 0, 0]);
+    mesh.receiveShadow = true;
+    return mesh;
+  };
+  const sqMid = [(SQUARE.x0 + SQUARE.x1) / 2, (SQUARE.z0 + SQUARE.z1) / 2];
+  const blob = (grow) => { // the outline of the square: a rounded shape with a few gentle bulges, `grow` metres bigger
+    const a = (SQUARE.x1 - SQUARE.x0) / 2 + 0.8 + grow, b = (SQUARE.z1 - SQUARE.z0) / 2 + 0.8 + grow;
+    return Array.from({ length: 96 }, (_, i) => { const t = (i / 96) * Math.PI * 2; const k = 1 + 0.035 * Math.sin(3 * t + 0.7) + 0.028 * Math.sin(5 * t + 2.1) + 0.02 * Math.sin(2 * t + 4.0); const c = Math.cos(t), sn = Math.sin(t); return [sqMid[0] + a * k * Math.sign(c) * Math.abs(c) ** 0.6, sqMid[1] + b * k * Math.sign(sn) * Math.abs(sn) ** 0.6]; });
+  };
+  const fan = (ring, y, color) => flatMesh([sqMid, ...ring], ring.map((_, i) => [0, 1 + ((i + 1) % ring.length), 1 + i]).flat(), y, color);
+  // a path from a to b: it winds a little, is a little wider here and narrower there, and opens up at both ends
+  const paths = PATHS.map(([ax, az, bx, bz], i) => {
+    const len = Math.hypot(bx - ax, bz - az), n = Math.max(4, Math.ceil(len / 1.2));
+    const dx = (bx - ax) / len, dz = (bz - az) / len, px = -dz, pz = dx;
+    const ph = i * 1.7, waves = Math.max(1, Math.round(len / 9));
+    const pts = [];
+    for (let k = 0; k <= n; k++) {
+      const t = k / n, along = -0.9 + t * (len + 1.8);
+      const sway = Math.sin(t * Math.PI) * Math.sin(t * Math.PI * waves + ph) * Math.min(0.45, len * 0.04);
+      const half = 0.92 + 0.14 * Math.sin(t * 7 + ph * 1.3) + 0.3 * (1 - Math.sin(t * Math.PI)) ** 3;
+      const cx = ax + dx * along + px * sway, cz = az + dz * along + pz * sway;
+      pts.push([cx + px * half, cz + pz * half], [cx - px * half, cz - pz * half]);
+    }
+    const tris = [];
+    for (let k = 0; k < n; k++) tris.push(2 * k, 2 * k + 2, 2 * k + 1, 2 * k + 1, 2 * k + 2, 2 * k + 3); // wound so they face up
+    return { mesh: flatMesh(pts, tris, 0.04 + i * 0.0004, PAVE), ax, az, bx, bz };
+  });
+  { // its rim: only a band around the outside (nothing darker under the square itself), and the paths lie over it
+    const inner = blob(-0.06), outer = blob(0.28), n = inner.length;
+    flatMesh([...inner, ...outer], inner.map((_, i) => { const j = (i + 1) % n; return [i, j, n + i, j, n + j, n + i]; }).flat(), 0.03, PAVE_EDGE);
+  }
+  const square = fan(blob(0), 0.034, PAVE);
   things.push({ kind: 'place', key: 'square', object: square });
-  for (const [x, z] of [[SQUARE.x0, SQUARE.z0], [SQUARE.x1, SQUARE.z0], [SQUARE.x0, SQUARE.z1], [SQUARE.x1, SQUARE.z1]]) cyl(0.5, 0.56, 0.5, 0xd9cdb8, [x, 0.25, z]);
-  const pathMat = M(0xe2d5bd);
-  PATHS.forEach(([ax, az, bx, bz], i) => { const len = Math.hypot(bx - ax, bz - az); const p = box([len + 2, 0.04, 2.2], pathMat, [(ax + bx) / 2, -0.004 + i * 0.0012, (az + bz) / 2]); p.rotation.y = -Math.atan2(bz - az, bx - ax); p.receiveShadow = true; });
   const field = add(fieldGeo, M(0xb4dc9a, {}, 'grass', 14, 10), [0, 0, 0]);
   field.material.vertexColors = true;
   field.receiveShadow = true;
@@ -396,24 +438,114 @@ export function buildTown(THREE) {
     };
   })();
   // small things on some of them: Pip's doorstep and letterbox, the OPEN sign of the grocery store
-  box([1.7, 0.2, 0.75], 0xd9cdb8, [0, 0.1, 0.42]);
-  cyl(0.04, 0.04, 1.0, 0x7a5237, [2.7, 0.5, 0.75]); box([0.5, 0.32, 0.3], 0xc0392b, [2.7, 1.1, 0.75]);
+  const atDoor = [box([1.7, 0.2, 0.75], 0xd9cdb8, [0, 0.1, 0.42]), cyl(0.04, 0.04, 1.0, 0x7a5237, [2.7, 0.5, 0.75]), box([0.5, 0.32, 0.3], 0xc0392b, [2.7, 1.1, 0.75])];
   const letter = box([0.3, 0.2, 0.02], 0xfff8ee, [2.7, 1.32, 0.75]);
   const openSign = sign('OPEN', 0.84, 0.3, '#4caf6a', '#ffffff', 150);
   openSign.position.set(3.5, 1.72, 0.05); blockOf('shop').g.add(openSign);
   { const g = blockOf('land').g; for (const [x, c] of [[1.4, 0x8a6a48], [2.8, 0x9a7a52], [4.1, 0x7f9a5a]]) { const heap = add(new THREE.ConeGeometry(0.75, 0.9, 9), M(c), [x, 0.45, 0.9], g); heap.scale.set(1, 1, 0.8); } cyl(0.035, 0.035, 1.7, 0x7a5237, [5.3, 0.85, 0.3], g).rotation.z = 0.12; box([0.34, 0.4, 0.04], 0x9aa3a8, [5.2, 0.2, 0.3], g); } // heaps of earth and a spade by the shutter
 
-  // ---- walls for his art: bare concrete, both sides. What he paints goes on them, and on the back walls of the houses.
+  // ---- walls for his art: bare concrete slabs, standing in the gaps between the buildings, each turned its own way and
+  // the slabs not all equally high. What he paints goes on them, and on the back walls of the houses. Like any bare wall
+  // in a town, somebody has been there with a spray can already: a few old tags are on every wall (he paints over them).
+  const seeded = (a) => () => ((a = (a * 16807) % 2147483647) / 2147483647);
+  const SPRAY = ['#ef6f6c', '#f2c14e', '#3d5a80', '#2f9c8f', '#e9855b', '#7fd6ff', '#8cc27a', '#fff8ee', '#2a2a2e', '#b06fd8'];
+  const WORDS = ['HI!', 'MOO', 'YO', 'OK?', 'ZZZ', 'WOW', 'HEY', 'BOO', 'OI'];
+  // A see-through picture as big as the wall with `many` tags sprayed on it.
+  const tagsOn = (len, h, seed, many) => {
+    const k = 80, c = document.createElement('canvas');
+    c.width = Math.round(len * k); c.height = Math.round(h * k);
+    const g = c.getContext('2d'), r = seeded(seed);
+    const pick = (list) => list[Math.floor(r() * list.length) % list.length];
+    const line = (pts, col, w, closed = false) => { // one go with the can: a soft line, and now and then the paint runs
+      g.save(); g.strokeStyle = col; g.lineWidth = w; g.lineCap = g.lineJoin = 'round'; g.shadowColor = col; g.shadowBlur = w * 0.7;
+      g.beginPath();
+      pts.forEach(([x, y], n) => { if (!n) g.moveTo(x, y); else { const [px, py] = pts[n - 1]; g.quadraticCurveTo(px, py, (px + x) / 2, (py + y) / 2); } });
+      if (closed) g.closePath(); else g.lineTo(...pts.at(-1));
+      g.stroke(); g.shadowBlur = 0;
+      for (const [x, y] of pts) if (r() < 0.14) { g.lineWidth = w * 0.4; g.beginPath(); g.moveTo(x, y); g.lineTo(x, y + w * (2.5 + r() * 5)); g.stroke(); }
+      g.restore();
+    };
+    const ring = (cx, cy, n, f) => Array.from({ length: n }, (_, q) => { const a = (q / n) * Math.PI * 2; const [x, y] = f(a, q); return [cx + x, cy + y]; });
+    const draw = {
+      word: (cx, cy, sz, col) => { const t = pick(WORDS); g.save(); g.translate(cx, cy); g.rotate((r() - 0.5) * 0.3); g.transform(1, 0, -0.18, 1, 0, 0); g.font = `900 ${Math.round(sz * 0.62)}px "Arial Black", "Helvetica Neue", Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = sz * 0.13; g.strokeStyle = col === '#2a2a2e' ? '#fff8ee' : '#2a2a2e'; g.strokeText(t, 0, 0); g.fillStyle = col; g.fillText(t, 0, 0); g.lineWidth = sz * 0.03; g.strokeStyle = 'rgba(255,255,255,0.75)'; g.strokeText(t, -sz * 0.025, -sz * 0.03); g.restore(); },
+      scribble: (cx, cy, sz, col) => { const n = 7 + Math.floor(r() * 4); line(Array.from({ length: n }, (_, q) => [cx + ((q / (n - 1)) - 0.5) * sz * 1.5, cy + (q % 2 ? -1 : 1) * sz * (0.12 + r() * 0.26)]), col, sz * 0.09); line([[cx - sz * 0.8, cy + sz * 0.42], [cx, cy + sz * 0.5], [cx + sz * 0.85, cy + sz * 0.36]], col, sz * 0.05); },
+      star: (cx, cy, sz, col) => line(ring(cx, cy, 10, (a, q) => { const d = sz * (q % 2 ? 0.2 : 0.5); return [Math.sin(a) * d, -Math.cos(a) * d]; }).flatMap((pt, q, all) => [pt, [(pt[0] + all[(q + 1) % all.length][0]) / 2, (pt[1] + all[(q + 1) % all.length][1]) / 2]]), col, sz * 0.09, true),
+      heart: (cx, cy, sz, col) => line(ring(cx, cy, 22, (a) => [sz * 0.03 * 16 * Math.sin(a) ** 3, -sz * 0.03 * (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a))]), col, sz * 0.09, true),
+      arrow: (cx, cy, sz, col) => { const up = (r() - 0.5) * sz * 0.5; line([[cx - sz * 0.6, cy + up], [cx - sz * 0.1, cy - up * 0.4], [cx + sz * 0.6, cy - up]], col, sz * 0.08); line([[cx + sz * 0.3, cy - up - sz * 0.24], [cx + sz * 0.62, cy - up], [cx + sz * 0.32, cy - up + sz * 0.26]], col, sz * 0.08); },
+      crown: (cx, cy, sz, col) => line([[-0.5, 0.3], [-0.5, -0.25], [-0.25, 0.05], [0, -0.35], [0.25, 0.05], [0.5, -0.25], [0.5, 0.3]].flatMap(([x, y]) => [[cx + x * sz, cy + y * sz], [cx + x * sz, cy + y * sz]]), col, sz * 0.09, true),
+      face: (cx, cy, sz, col) => { line(ring(cx, cy, 14, (a) => [Math.cos(a) * sz * 0.45, Math.sin(a) * sz * 0.45]), col, sz * 0.09, true); for (const x of [-0.16, 0.16]) line([[cx + x * sz, cy - sz * 0.14], [cx + x * sz, cy - sz * 0.06]], col, sz * 0.08); line([[cx - sz * 0.2, cy + sz * 0.1], [cx, cy + sz * 0.26], [cx + sz * 0.2, cy + sz * 0.1]], col, sz * 0.06); },
+      swirl: (cx, cy, sz, col) => line(Array.from({ length: 26 }, (_, q) => { const a = q * 0.62, d = sz * 0.02 * q; return [cx + Math.cos(a) * d, cy + Math.sin(a) * d]; }), col, sz * 0.06),
+    };
+    const kinds = Object.keys(draw);
+    for (let n = 0; n < many; n++) {
+      const sz = (0.8 + r() * 0.8) * k * Math.min(1, h / 3.2);
+      const cx = ((n + 0.25 + r() * 0.5) / many) * c.width, cy = sz * 0.7 + r() * Math.max(1, c.height - sz * 1.6);
+      g.globalAlpha = 0.8 + r() * 0.18;
+      draw[n % 3 === 0 && many > 2 ? 'word' : kinds[Math.floor(r() * kinds.length) % kinds.length]](Math.max(sz * 0.8, Math.min(c.width - sz * 0.8, cx)), cy, sz, pick(SPRAY));
+    }
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
+    return t;
+  };
+  const sprayed = (map, k = 1) => { const m = skin(map, k); m.transparent = true; m.depthWrite = false; return m; };
   WALLS.forEach((w, i) => {
     const g = new THREE.Group();
     g.position.set(w.at[0], 0, w.at[1]);
-    g.rotation.y = w.turn === 90 ? Math.PI / 2 : 0;
+    g.rotation.y = rad(w.turn);
     group.add(g);
-    const f = facade({ wall: 'concrete', color: '#aaa69f', plain: true, photo: { src: 'tex/concrete.jpg', m: 2.6 }, seed: 200 + i }, w.len, WALL_H);
-    const f2 = facade({ wall: 'concrete', color: '#a39f98', plain: true, photo: { src: 'tex/concrete.jpg', m: 2.6 }, seed: 300 + i }, w.len, WALL_H);
+    const n = Math.max(2, Math.round(w.len / 1.7)), pw = w.len / n;
+    const tops = Array.from({ length: n }, (_, q) => w.h + [0, 0.38, 0.12, 0.55, 0.22][(q * 3 + i * 2) % 5]); // every slab its own height
+    const top = Math.max(...tops);
+    const f = facade({ wall: 'concrete', color: '#aaa69f', plain: true, photo: { src: 'tex/concrete.jpg', m: 2.6 }, seed: 200 + i }, w.len, top);
+    const f2 = facade({ wall: 'concrete', color: '#a39f98', plain: true, photo: { src: 'tex/concrete.jpg', m: 2.6 }, seed: 300 + i }, w.len, top);
     const edge = M(0x8d8880);
-    add(new THREE.BoxGeometry(w.len, WALL_H, 0.4), [edge, edge, edge, edge, skin(f.map), skin(f2.map)], [0, WALL_H / 2, 0], g).castShadow = true;
+    const six = [edge, edge, edge, edge, skin(f.map), skin(f2.map)];
+    tops.forEach((ph, q) => {
+      const geo = new THREE.BoxGeometry(pw - 0.035, ph, 0.4);
+      const uv = geo.attributes.uv; // the picture of the whole wall runs on over all its slabs (16..19: the south face, 20..23: the north face)
+      for (let v = 16; v < 24; v++) uv.setXY(v, ((v < 20 ? q : n - 1 - q) + uv.getX(v)) / n, (uv.getY(v) * ph) / top);
+      add(geo, six, [(q + 0.5) * pw - w.len / 2, ph / 2, 0], g).castShadow = true;
+    });
+    const paintSide = PAINT_WALLS.find((x) => x.key === w.key).side;
+    for (const side of [1, -1]) { // old tags: a few on the side he paints on, more on the other side
+      const m = add(new THREE.PlaneGeometry(w.len, w.h), sprayed(tagsOn(w.len, w.h, 7000 + i * 31 + (side > 0 ? 0 : 500), side === paintSide ? 3 : 4 + (i % 2))), [0, w.h / 2, side * 0.206], g);
+      m.rotation.y = side > 0 ? 0 : Math.PI; m.renderOrder = 1;
+    }
+    if (i % 2 === 0) { // someone left the cans
+      const z = paintSide * 0.55;
+      [[SPRAY[i % 7], -w.len / 2 + 0.5, 0], [SPRAY[(i + 3) % 7], -w.len / 2 + 0.72, 0.1], [SPRAY[(i + 5) % 7], w.len / 2 - 0.6, 0.25]].forEach(([col, x, dz], q) => {
+        const can = new THREE.Group(); can.position.set(x, q === 2 ? 0.05 : 0.11, z + paintSide * dz); if (q === 2) { can.rotation.z = Math.PI / 2; can.rotation.y = 0.7; } g.add(can);
+        cyl(0.05, 0.05, 0.2, new THREE.MeshStandardMaterial({ color: col, roughness: 0.45, metalness: 0.3 }), [0, 0, 0], can); cyl(0.022, 0.03, 0.035, 0xf4efe6, [0, 0.115, 0], can);
+      });
+    }
     things.push({ kind: 'wall', key: w.key, object: g });
+  });
+  // and a few tags on the sides of the buildings that look onto a wall (not on his own house, and not on the art
+  // workshop: his drawings hang there). [the building, its side: 1 is its own right, -1 its own left]
+  [['cafe', 1], ['library', 1], ['flats', -1], ['workshop', 1], ['land', -1], ['build', 1]].forEach(([key, sd], i) => {
+    const { b, g } = blockOf(key);
+    const m = add(new THREE.PlaneGeometry(3.6, 2.5), sprayed(tagsOn(3.6, 2.5, 9100 + i * 17, 2)), [sd * (b.size[0] / 2 + 0.012), 1.5, -b.size[2] * 0.76], g);
+    m.rotation.y = (sd * Math.PI) / 2; m.renderOrder = 1;
+  });
+  // The edge of a painting on a wall: sprayed, so it has no straight sides. Soft and a little ragged, and here and there
+  // the paint ran down. (Three of them, each painting takes one.)
+  const sprayEdges = [11, 23, 37].map((seed) => {
+    const c = document.createElement('canvas'); c.width = 320; c.height = 240;
+    const g = c.getContext('2d'), r = seeded(seed);
+    g.fillStyle = '#000'; g.fillRect(0, 0, 320, 240);
+    g.fillStyle = '#fff'; g.shadowColor = '#fff'; g.shadowBlur = 14;
+    const x0 = 30, x1 = 290, y0 = 28, y1 = 196;
+    g.beginPath(); if (g.roundRect) g.roundRect(x0, y0, x1 - x0, y1 - y0, 26); else g.rect(x0, y0, x1 - x0, y1 - y0); g.fill();
+    g.shadowBlur = 6;
+    for (let q = 0; q < 150; q++) { // lumps along the edge
+      const t = r(), on = Math.floor(r() * 4), rr = 4 + r() * 11;
+      const [x, y] = on === 0 ? [x0 + t * (x1 - x0), y0] : on === 1 ? [x0 + t * (x1 - x0), y1] : on === 2 ? [x0, y0 + t * (y1 - y0)] : [x1, y0 + t * (y1 - y0)];
+      g.beginPath(); g.arc(x + (r() - 0.5) * 8, y + (r() - 0.5) * 8, rr, 0, 7); g.fill();
+    }
+    g.shadowBlur = 0;
+    for (let q = 0; q < 260; q++) { g.globalAlpha = 0.25 + r() * 0.5; g.beginPath(); g.arc(8 + r() * 304, 8 + r() * 214, 0.8 + r() * 1.8, 0, 7); g.fill(); } // loose specks of spray
+    g.globalAlpha = 1; g.strokeStyle = '#fff'; g.lineCap = 'round';
+    for (let q = 0; q < 4; q++) { const x = x0 + 20 + r() * (x1 - x0 - 40), d = 12 + r() * 26; g.lineWidth = 3 + r() * 3; g.beginPath(); g.moveTo(x, y1 - 4); g.lineTo(x, y1 + d); g.stroke(); } // the paint ran
+    return new THREE.CanvasTexture(c);
   });
   const painted = new THREE.Group(); // his paintings on the walls
   const gallery = new THREE.Group(); // every drawing he ever made, on the outside of the art workshop
@@ -541,9 +673,14 @@ export function buildTown(THREE) {
       const sp = artSpot(a.id);
       const hh = Math.min(w.h - 0.9, 1.7 + (sp.n % 9) / 10); // 1.7 to 2.5 m high
       const ww = Math.min(w.len - 0.6, hh * (Number(a.aspect) > 0 ? a.aspect : 1.33));
-      const m = add(new THREE.PlaneGeometry(ww, hh), skin(picture(a), 2.2), [w.x + (sp.u - 0.5) * (w.len - ww - 0.4), 0.4 + hh / 2 + ((sp.n >>> 4) % 5) / 10, w.z + w.side * (0.012 + i * 0.002)], painted);
-      m.rotation.y = w.side > 0 ? 0 : Math.PI;
+      const along = (sp.u - 0.5) * (w.len - ww - 0.4), out = 0.012 + i * 0.002; // along the wall (it may be turned), and a hair in front of it
+      const mat = sprayed(picture(a), 2.2);
+      mat.alphaMap = sprayEdges[sp.n % sprayEdges.length];
+      const m = add(new THREE.PlaneGeometry(ww, hh), mat, [w.x + Math.cos(w.rot) * along + w.nx * out, 0.4 + hh / 2 + ((sp.n >>> 4) % 5) / 10, w.z - Math.sin(w.rot) * along + w.nz * out], painted);
+      m.rotation.order = 'YXZ';
+      m.rotation.y = Math.atan2(w.nx, w.nz);
       m.rotation.z = sp.tilt;
+      m.renderOrder = 2 + i;
     });
     // the gallery: the newest first, on the two side walls of the art workshop, then on its back wall
     wipe(gallery);
@@ -627,7 +764,7 @@ export function buildTown(THREE) {
     for (const m of skins) { m.emissive.set(m.userData.tint ?? 0xffffff); if (dark) m.emissive.lerp(nightBlue, 0.3); m.emissiveIntensity = glowLevel * (m.userData.k ?? 1); }
     field.material.color.set(white ? 0xf4f8fa : se.name === 'autumn' ? 0xc9c98a : se.name === 'winter' ? 0xb9c6a4 : 0xb4dc9a);
     for (const r of roofs) r.m.material.color.set(white ? 0xffffff : r.color);
-    letter.visible = (s?.visitors ?? []).some((v) => v.npc && !v.answer);
+    letter.visible = !insideHid && (s?.visitors ?? []).some((v) => v.npc && !v.answer);
   }
 
   // ---- far away (only seen when you walk): the grid goes on to a horizon with hills, under a real sky
@@ -677,7 +814,18 @@ export function buildTown(THREE) {
   setWalk(false);
   // Seen from inside his home (main.js puts the world right outside his real windows then): the buildings that would
   // stand where his rooms are step aside, and the world's lights go off so they do not shine through his walls.
-  const setInside = (on, hide = []) => { insideNow = on; said = ''; for (const { b, g } of blocks) g.visible = !(on && hide.includes(b.key)); };
+  // (His real rooms are wider than the block that stands for his house: so whatever of the world lies where they are
+  // steps aside too: the paths that would run through his floor, and his doorstep and letterbox. `rect` is where his
+  // rooms are, in the world's own measure: [x0, x1, z0, z1].)
+  let insideHid = false;
+  const setInside = (on, hide = [], rect = null) => {
+    insideNow = on; said = '';
+    for (const { b, g } of blocks) g.visible = !(on && hide.includes(b.key));
+    const through = ({ ax, az, bx, bz }) => { if (!rect) return false; const n = Math.max(1, Math.ceil(Math.hypot(bx - ax, bz - az) / 0.5)); for (let i = 0; i <= n; i++) { const x = ax + ((bx - ax) * i) / n, z = az + ((bz - az) * i) / n; if (x > rect[0] - 2 && x < rect[1] + 2 && z > rect[2] - 2 && z < rect[3] + 2) return true; } return false; };
+    for (const p of paths) p.mesh.visible = !(on && through(p));
+    for (const m of atDoor) m.visible = !on;
+    insideHid = on;
+  };
   const skyFog = () => fogColor;
   return { group, update, setWalk, setInside, animate, skyFog, things, reshape };
 }

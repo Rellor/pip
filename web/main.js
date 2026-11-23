@@ -2387,6 +2387,9 @@ function faceNow(sleeping) {
   if (st && ['decorate', 'draw', 'make_app', 'update_app', 'blueprint', 'record_song'].includes(st.action)) return 'focused';
   return 'neutral';
 }
+// How high you look from: Pip's own height (his eyes are at 0.8 m, the top of his head at 1.2), inside and outside. So
+// his world looks to you the way it looks to him. (It used to be a grown person's height outside, and higher still inside.)
+const EYE = 1.05;
 // Flying (V, or the bird button): you leave the ground and look at his world from above. Landing puts you on free ground.
 const fly = { on: false, y: 12 };
 function setFly(on) {
@@ -2394,7 +2397,7 @@ function setFly(on) {
   if (on === fly.on) return;
   fly.on = on;
   $('flybtn').setAttribute('aria-pressed', String(on));
-  if (on) { fly.y = townGround(view.x, view.z) + 1.55; view.keys.delete(' '); toast(touchOnly ? 'You fly. Push the stick to fly where you look. Tap the bird to land.' : 'You fly. W S to fly where you look, Space up, C down. V to land.'); return; }
+  if (on) { fly.y = townGround(view.x, view.z) + EYE; view.keys.delete(' '); toast(touchOnly ? 'You fly. Push the stick to fly where you look. Tap the bird to land.' : 'You fly. W S to fly where you look, Space up, C down. V to land.'); return; }
   view.x = clamp(view.x, TOWN_X + WORLD.x0 + 1, TOWN_X + WORLD.x1 - 1); view.z = clamp(view.z, WORLD.z0 + 1, WORLD.z1 - 1);
   for (let r = 0; r < 40 && blocked(view.x, view.z); r += 0.5) for (let a = 0; a < 6.28; a += 0.4) { const x = view.x + Math.cos(a) * r, z = view.z + Math.sin(a) * r; if (!blocked(x, z)) { view.x = x; view.z = z; break; } } // not into a house or the pond
   view.pitch = Math.max(-0.5, Math.min(0.5, view.pitch));
@@ -2476,7 +2479,7 @@ function updateWalk(dt) {
   const stepLen = 0.78 * big;
   const up = Math.sin((bob.walked / stepLen) * Math.PI * 2) * 0.042 * big * bob.k;
   const sway = Math.sin((bob.walked / stepLen) * Math.PI) * 0.022 * big * bob.k;
-  camera.position.set(view.x + Math.cos(view.yaw) * sway, (inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55) + up + jump.y * (inTown(view.x) ? 1 : 1.6), view.z - Math.sin(view.yaw) * sway);
+  camera.position.set(view.x + Math.cos(view.yaw) * sway, (inTown(view.x) ? EYE + townGround(view.x, view.z) : EYE) + up + jump.y * (inTown(view.x) ? 1 : 1.6), view.z - Math.sin(view.yaw) * sway);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
   if (window.pipSky) { const [x, y, z, tx, tz] = window.pipSky; camera.position.set(TOWN_X + x, y, z); camera.lookAt(TOWN_X + tx, 0, tz); } // for testing: a look at the world from above
 }
@@ -2505,7 +2508,7 @@ function setPortal(on) {
   portalOn = on;
   town.group.position.set(on ? PORTAL.x : TOWN_X, 0, on ? PORTAL.z : 0);
   town.group.rotation.y = on ? Math.PI : 0;
-  town.setInside(on, hideInside);
+  town.setInside(on, hideInside, [PORTAL.x - HOUSE_RECT[1], PORTAL.x - HOUSE_RECT[0], PORTAL.z - HOUSE_RECT[3], PORTAL.z - HOUSE_RECT[2]]); // (and where his real rooms are, in the world's own measure: nothing of the world may show through his floor)
   for (const o of [land.root, land.mask, sideLand.root, sideLand.mask]) o.visible = !on; // the painted view behind the glass makes way for the real world
   placeOutsideThings();
   town.update(lastState, Date.now(), forceLook.hour);
