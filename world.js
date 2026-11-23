@@ -146,6 +146,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
 // ---- While he is out, and coming home. Called at every wake-up. Returns null (he is home), { away, phase, line, back }
 // (still out: nothing else happens this wake-up), or { home: true, outing } (he came home just now).
 export function outingTick(s, now = Date.now()) {
+  if (process.env.PIP_NO_OUT) { s.where = null; return null; } // tests of other things keep him in, also when the saved state they start from has him out
   const w = s.where;
   if (!w || !placeOf(w.place) || w.place === 'home') { s.where = null; return null; }
   const p = placeOf(w.place);
