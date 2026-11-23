@@ -1430,11 +1430,11 @@ async function wakeUp() {
   state.thoughts = state.thoughts.filter((t) => Date.parse(t.at) <= startedAt);
   state.decor = state.decor.filter((d) => Date.parse(d.at) <= startedAt);
   receiveTools(state, answer);
-  // A step that needs a tool he does not have in his inventory does not happen. A tool made or taken back earlier in the same plan counts.
+  // A step that needs an instrument he does not have in his inventory does not happen. One taken back earlier in the same plan counts.
   const blocked = [];
   const bag = state.tools.map((x) => ({ name: x.name, kind: x.kind }));
   const steps = redundantWalks(normalizeSteps(answer)).filter((st) => {
-    const needs = [st.needs || NEEDS[st.action] || '', ...instrumentNeeds(st, { pianoGone: Boolean(state.furniture?.piano?.gone) })].filter(Boolean).find((n) => !bag.some((x) => fits(x, n))) || '';
+    const needs = instrumentNeeds(st, { pianoGone: Boolean(state.furniture?.piano?.gone) }).filter(Boolean).find((n) => !bag.some((x) => fits(x, n))) || ''; // (only an instrument he does not have stops a step: he needs no tools any more, tools.js)
     if (needs) {
       const away = toolList(state).find((x) => !x.usable && fits({ name: x.name, kind: x.kind }, needs));
       blocked.push({ st, why: away ? `my ${away.name} is ${away.where.replace('his ', 'my ')}. take_tool brings it into my inventory first, then I can play it` : `I need ${needs} in my inventory for that. If I really want it, I ask Bas for it (ask_for) and say what it is for, or I make it myself` });

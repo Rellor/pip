@@ -742,6 +742,38 @@ function clothesThumb(c) {
   thumbCache.set(key, url);
   return url;
 }
+// A small picture of a thing he made (for the grid on the card of the building where he made it).
+function decorThumb(d, size = 160) {
+  const key = `thing|${d.id}|${d.changedAt ?? d.at ?? ''}|${(d.parts ?? []).length}|${size}`;
+  if (thumbCache.has(key)) return thumbCache.get(key);
+  let url = null;
+  try {
+    thumbRenderer ??= new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+    thumbRenderer.setPixelRatio(1);
+    thumbRenderer.setSize(size, size);
+    thumbRenderer.outputColorSpace = renderer.outputColorSpace;
+    const sc = new THREE.Scene();
+    sc.add(new THREE.HemisphereLight(0xfff4e6, 0xb08a6a, 1.6));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.5);
+    sun.position.set(2, 4, 5);
+    sc.add(sun);
+    const g = buildDecor({ ...d, id: `thumb-${d.id}`, pos: [0, 0, 0], rotY: 0, kind: 'floor', at: d.at ?? new Date(0).toISOString() });
+    g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.scale.setScalar(1);
+    g.updateMatrixWorld(true);
+    const b = new THREE.Box3().setFromObject(g);
+    const mid = b.getCenter(new V3()), sz = b.getSize(new V3());
+    const r = Math.max(sz.x, sz.y, sz.z, 0.01);
+    sc.add(g);
+    const cam = new THREE.PerspectiveCamera(30, 1, r / 50, r * 40);
+    cam.position.set(mid.x + r * 1.25, mid.y + r * 0.85, mid.z + r * 1.9);
+    cam.lookAt(mid);
+    thumbRenderer.render(sc, cam);
+    url = thumbRenderer.domElement.toDataURL('image/png');
+    thumbRenderer.setSize(320, 320);
+  } catch {}
+  thumbCache.set(key, url);
+  return url;
+}
 // A small picture of Pip making one of his faces (FACES), drawn the same way as the clothes pictures.
 function facePic(name, size = 320) {
   const key = `face|${name}|${size}`;
@@ -774,6 +806,7 @@ function facePic(name, size = 320) {
   return url;
 }
 window.pipFacePic = facePic; // for testing: every face he can make, as a picture
+window.pipOpenCard = (key) => { const t = town.things.find((x) => x.key === key); if (!t) return false; showInfo(t.object.userData.info()); return true; }; // for testing: open the card of a building
 const clothesOf = (name) => { const n = String(name || '').toLowerCase(); return (lastState?.wardrobe || []).find((c) => String(c.name).toLowerCase() === n) || null; };
 function clothesPic(c, extra = '') {
   const url = clothesThumb(c);
@@ -2723,6 +2756,7 @@ function renderInfo(info) {
   const section = (sec) => {
     const box = el('div', null, 'isec');
     if (sec.heading) box.append(el('h4', sec.heading));
+    if (sec.grid) { const g = el('div', null, 'igrid'); for (const t of sec.grid) { const cell = el('div', null, 'icell'); if (t.img) { const im = el('img'); im.src = t.img; im.alt = t.label ?? ''; im.loading = 'lazy'; cell.append(im); } else cell.append(el('div', t.icon ?? '✨', 'iicon')); cell.append(el('b', t.label ?? '')); if (t.sub) cell.append(el('small', t.sub)); g.append(cell); } box.append(g); }
     if (sec.buttons) { const row = el('div', null, 'ibtns'); for (const b of sec.buttons) { const bt = el('button', b.label, 'small'); bt.type = 'button'; bt.addEventListener('click', () => b.run(bt)); row.append(bt); } box.append(row); }
     if (sec.now) {
       const row = el('div', null, `inow${sec.now.sleepy ? ' sleepy' : ''}`);
@@ -3511,7 +3545,7 @@ let lastState = null;
 // he is doing now, the place in his world where that kind of thing is done: he reads at the library, draws at the art
 // workshop, writes by the pond. The page walks him there for that step and home again (like Pino, who walks to
 // whatever he does). Nothing changes in what he did: it only shows where.
-const STEP_PLACE = { search_web: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, browse: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
+const STEP_PLACE = { ...Object.fromEntries(['decorate', 'extend_thing', 'make_clothes', 'blueprint'].map((a) => [a, { place: 'build', spot: 'build', name: 'the build workshop', emoji: '🔨' }])), search_web: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, browse: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
 function stepOuting() {
   if (!plan || stepNow < 0 || lastState?.last?.sleeping) return null;
   const st = plan.steps[stepNow];
@@ -5204,7 +5238,7 @@ const WORLD_CARDS = {
   shop: { title: 'The grocery store', icon: '🛒', what: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.', place: 'shop', can: ['buy food to cook and bake with', 'buy seeds, things to make with, tools and instruments'] },
   flats: { title: 'The flats', icon: '🏢', what: 'People of the town live here. Downstairs a shop stands empty.', can: [], none: 'Nothing yet. Pip could wish for something to move in.' },
   cafe: { title: 'The internet café', icon: '💻', what: 'Where he goes to look things up and read on the web. The screen in the window shows the last thing he read, and what he thought of it.', can: ['search the web', 'browse until he stumbles on something', 'say what he really thinks of what he read'] },
-  closed: { title: 'The closed shop', icon: '🚪', what: 'The shutter is down and nobody knows what it used to sell.', can: [], none: 'Nothing yet. Pip could wish for something to open here.' },
+  build: { title: 'The build workshop', icon: '🔨', what: 'Where he builds the things he thinks up: furniture, machines, toys, towers. Everything he needs for it is here, so he needs no tools of his own.', can: ['build something he invented', 'make a thing bigger or better', 'sew clothes'] },
   land: { title: 'The land workshop', icon: '⛰️', what: 'The land tools are kept here. With them he shapes the ground of his world.', place: 'land', can: ['make a hill', 'dig a hole', 'make the ground flat again'] },
   library: { title: 'The library', icon: '📚', place: 'library' },
   workshop: { title: 'The print workshop', icon: '🖨️', place: 'workshop', can: ['design a small 3D model and have it printed'] },
@@ -5228,6 +5262,21 @@ async function doDeed(deed, bt) {
     else { toast(res.status === 404 ? 'This only works on the live site.' : out.error || 'That did not work. Try again later.'); bt.disabled = false; }
   } catch { toast('That did not work. Try again later.'); bt.disabled = false; }
 }
+// Everything he made or did through a building, the newest first, as tiles for the grid on its card: a picture where
+// there is one (his drawings, his prints, the things he built), otherwise a sign and a few words.
+function madeAt(key, s) {
+  const newest = (list, at) => [...list].sort((a, b) => Date.parse(at(b) ?? 0) - Date.parse(at(a) ?? 0));
+  const day = (iso) => (iso ? new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '');
+  if (key === 'studio') return newest(s.gallery ?? s.art ?? [], (a) => a.at ?? a.createdAt).filter((a) => a.file).map((a) => ({ img: a.file, label: a.name, sub: a.wall ? 'painted on a wall' : day(a.at ?? a.createdAt) }));
+  if (key === 'workshop') return newest(s.prints ?? [], (p) => p.at).filter((p) => Array.isArray(p.parts) && p.parts.length).map((p) => ({ img: decorThumb({ id: `print-${p.id}`, name: p.name, parts: p.parts, at: p.at }), icon: '🖨️', label: p.name, sub: day(p.at) }));
+  if (key === 'build') return newest([...(s.decor ?? []).filter((d) => !d.image && Array.isArray(d.parts) && d.parts.length).map((d) => ({ d, where: d.kind === 'outside' ? (d.readyAt && Date.now() < Date.parse(d.readyAt) ? 'being built outside' : 'stands outside') : 'in his room' })), ...(s.stored ?? []).filter((d) => !d.image && Array.isArray(d.parts) && d.parts.length).map((d) => ({ d, where: 'in his chest' }))], (x) => x.d.createdAt ?? x.d.at).map(({ d, where }) => ({ img: decorThumb(d), icon: '🔨', label: d.name, sub: where }));
+  if (key === 'land') return newest(s.land ?? [], (l) => l.at).map((l) => ({ icon: l.kind === 'hole' ? '🕳️' : '⛰️', label: l.name, sub: `${2 * l.r} m wide, ${l.h} m ${l.kind === 'hole' ? 'deep' : 'high'}` }));
+  if (key === 'cafe') return newest((s.log ?? []).filter((e) => ['search_web', 'browse'].includes(e.action) && !e.failed && (e.query || e.opened?.title)), (e) => e.at).map((e) => ({ icon: e.opinion ? OPINION_FACES[e.opinion.how] ?? '🔎' : '🔎', label: e.query || e.opened.title, sub: e.opinion?.says ?? day(e.at) }));
+  if (key === 'library') return newest([...(s.log ?? []).filter((e) => e.action === 'read_book' && !e.failed && (e.opened?.title || e.topic)).map((e) => ({ at: e.at, label: e.opened?.title || e.topic, sub: e.opinion?.says })), ...(s.outings ?? []).filter((o) => o.place === 'library' && o.read).map((o) => ({ at: o.homeAt, label: o.read }))], (x) => x.at).map((x) => ({ icon: '📖', label: x.label, sub: x.sub ?? day(x.at) }));
+  if (key === 'shop') return newest(s.bought ?? [], (b) => b.at).map((b) => ({ icon: '🛒', label: b.item, sub: day(b.at) }));
+  if (key === 'board') return newest((s.wishes ?? []).filter((w) => w.board && w.status === 'kept'), (w) => w.keptAt ?? w.at).map((w) => ({ icon: '📌', label: w.topic, sub: `${w.reward} coins` }));
+  return [];
+}
 function worldCard(kind, key) {
   const s = lastState || {};
   const ago = (iso) => { const m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 60 ? `${Math.max(1, m)} min ago` : m < 1440 ? `${Math.round(m / 60)} hours ago` : `${Math.round(m / 1440)} days ago`; };
@@ -5249,11 +5298,13 @@ function worldCard(kind, key) {
   if (key === 'board') { const notes = (s.wishes ?? []).filter((w) => w.board && w.status === 'open' && Date.now() - Date.parse(w.at) < 3 * 86_400_000); so.push(notes.length ? `On it now: ${notes.map((w) => `${w.topic} (${w.reward} coins)`).join(', ')}.` : 'Nothing is pinned on it right now.'); const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept').length; if (kept) so.push(`He made ${kept} of the things people asked for.`); so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); }
   if (key === 'cafe') { const face = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }; const reads = [...(s.log ?? [])].reverse().filter((e) => ['search_web', 'read_book', 'browse'].includes(e.action) && !e.failed && (e.query || e.opened?.title || e.topic)).slice(0, 4); if (reads.length) so.push(...reads.map((e) => `${e.action === 'search_web' ? '🔎' : '📖'} ${e.query || e.opened?.title || e.topic}${e.opinion ? ` ${face[e.opinion.how] ?? ''} “${e.opinion.says}”` : ''}`)); else so.push('He has not looked anything up yet.'); }
   if (key === 'land') { const l = s.land ?? []; so.push(l.length ? `He made ${l.filter((x) => x.kind !== 'hole').length} hill${l.filter((x) => x.kind !== 'hole').length === 1 ? '' : 's'} and ${l.filter((x) => x.kind === 'hole').length} hole${l.filter((x) => x.kind === 'hole').length === 1 ? '' : 's'}: ${l.slice(-4).map((x) => x.name).join(', ')}.` : 'He has not shaped the land yet. It is all flat.'); }
-  if (['plot', 'flats', 'closed'].includes(key)) { const wishes = (s.asks ?? []).filter((a) => a.status === 'open' && /^Dream:/i.test(a.item ?? '')).map((a) => String(a.item).replace(/^Dream:\s*/i, '')); if (wishes.length) so.push(`✨ Pip wishes for: ${wishes.slice(-3).join('; ')}. (You find his wishes under Asks.)`); }
+  if (['plot', 'flats'].includes(key)) { const wishes = (s.asks ?? []).filter((a) => a.status === 'open' && /^Dream:/i.test(a.item ?? '')).map((a) => String(a.item).replace(/^Dream:\s*/i, '')); if (wishes.length) so.push(`✨ Pip wishes for: ${wishes.slice(-3).join('; ')}. (You find his wishes under Asks.)`); }
   if (key === 'plot') { const mine = (s.decor ?? []).filter((d) => d.kind === 'outside' && (d.spot ?? 'plot') === 'plot'); so.push(mine.length ? `${mine.length} thing${mine.length === 1 ? '' : 's'} he made stand here.` : 'Nothing stands here yet.'); }
   if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
   else if (p && !['shop', 'workshop', 'walls', 'board', 'land'].includes(p.key)) so.push('He has not been here yet.');
   if (so.length) sections.push({ heading: 'So far', lines: so });
+  const made = madeAt(kind === 'shelf' ? 'workshop' : key, s);
+  if (made.length) sections.push({ heading: `Everything he made here (${made.length})`, grid: made });
   const deed = Object.entries(DEED_AT).find(([, at]) => at === key);
   if (deed) sections.push({ heading: 'What you can do here', lines: [(s.deeds ?? []).some((d) => d.deed === deed[0] && d.status === 'lying') ? 'Someone did this already. Pip has not found it yet.' : 'A small thing for Pip to find later. He does not know who did it.'], buttons: [{ label: `${DEED_LABEL[deed[0]]}`, run: (bt) => doDeed(deed[0], bt) }] });
   return { title: c.title, icon: c.icon, subtitle: 'In his world', sections };

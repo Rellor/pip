@@ -449,6 +449,15 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-23 a toolbox, no more tools needed, and a build workshop',
+    run(s, at) { // he gets the toolbox he never had, tools stop being a rule (tools.js), and open asks for a small tool are done
+      s.tools ??= [];
+      const given = giveForAsk(s, 'toolbox');
+      for (const a of (s.asks ?? []).filter((x) => x.status === 'open' && /toolbox|hammer|ruler|tape measure|light meter|pencil|drawing supplies|sewing kit|shovel|trowel|watering can/i.test(x.item ?? ''))) Object.assign(a, { status: 'done', doneAt: at, given: ['it is in the workshops now'] });
+      return `Bas gave me a toolbox${given.length ? '' : ' (I had one already)'}: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on the square has opened as the build workshop: that is where I build what I think up. If I want to make something that needs a place of its own, I wish for it (dream) and Bas builds the building.`;
+    },
+  },
+  {
     id: '2026-11-22 watercolour paper from Bas',
     run(s, at) { // he asked for new watercolor paper, to paint a new view now that his autumn window is finished
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /watercolou?r|paper/i.test(a.item));
