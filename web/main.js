@@ -4888,6 +4888,9 @@ function drawMini() {
 const WORLD_CARDS = {
   home: { title: 'Pip’s home', icon: '🏠', what: 'He lives here. Walk in through the red door.', can: ['sleep', 'eat and cook', 'work at his computer', 'keep the things he makes'] },
   shop: { title: 'The grocery store', icon: '🛒', what: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.', place: 'shop', can: ['buy food to cook and bake with', 'buy seeds, things to make with, tools and instruments'] },
+  flats: { title: 'The flats', icon: '🏢', what: 'People of the town live here. Downstairs a shop stands empty.', can: [], none: 'Nothing yet. Pip could wish for something to move in.' },
+  oldhouse: { title: 'The old house', icon: '🏚️', what: 'An old house at the end of the row. The lights go on in the evening.', can: [], none: 'Nothing yet. It makes the village a village.' },
+  closed: { title: 'The closed shop', icon: '🚪', what: 'The shutter is down and nobody knows what it used to sell.', can: [], none: 'Nothing yet. Pip could wish for something to open here.' },
   land: { title: 'The land workshop', icon: '⛰️', what: 'The land tools are kept here. With them he shapes the ground of his world.', place: 'land', can: ['make a hill', 'dig a hole', 'make the ground flat again'] },
   library: { title: 'The library', icon: '📚', place: 'library' },
   workshop: { title: 'The print workshop', icon: '🖨️', place: 'workshop', can: ['design a small 3D model and have it printed'] },

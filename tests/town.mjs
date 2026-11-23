@@ -49,7 +49,7 @@ assert.equal(townBlocked(TOWN_X, -3), true, 'inside his own house');
 assert.equal(townBlocked(TOWN_X + 14, -4), true, 'inside the grocery store');
 assert.equal(townBlocked(TOWN_X - 6, 42), true, 'inside the art workshop');
 assert.equal(townBlocked(TOWN_X + 20.4, 42), true, 'inside the land workshop');
-assert.equal(townBlocked(TOWN_X - 20, 0), false, 'open ground beside his house');
+assert.equal(townBlocked(TOWN_X - 20, 3), false, 'open ground beside his house');
 assert.equal(townBlocked(TOWN_X + WORLD_RANGE[1] + 1, 2), true, 'beyond the end of the world');
 assert.equal(townBlocked(TOWN_X + 29, -4), true, 'inside the library');
 { const [g, l] = ['shop', 'library'].map((k) => rectOf(BUILDINGS.find((b) => b.key === k))); assert.ok(l[0] - g[1] < 0.5 && l[0] >= g[1], 'the grocery store and the library stand glued side by side'); }
@@ -221,7 +221,7 @@ ok('the maker hears how big a thing can be out there');
     for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.4); for (let k = 0; k <= n; k++) assert.equal(townBlocked(TOWN_X + a.x + ((b.x - a.x) * k) / n, a.z + ((b.z - a.z) * k) / n, 0.2), false, `${w.name}: the way there is blocked between corner ${i - 1} and ${i}`); }
     assert.ok(buildProblem(spot.x - 0.5, spot.x + 0.5, spot.z - 0.5, spot.z + 0.5), `${w.name}: nothing may be built where he stands to paint`);
   }
-  for (const [said, key] of [['the wall beside my house', 'wall_1'], ['the wall by the library', 'wall_3'], ['back of my house', 'back_home'], ['the long wall by the art workshop', 'wall_4'], ['the wall in the park', 'wall_2'], ['the back wall of the grocery store', 'back_shop'], ['the back of the library', 'back_library'], ['the wall by the land workshop', 'wall_5']]) assert.equal(paintTarget(said, 1).key, key, said);
+  for (const [said, key] of [['the wall beside my house', 'wall_1'], ['the wall by the flats', 'wall_3'], ['back of my house', 'back_home'], ['the long wall by the art workshop', 'wall_4'], ['the wall in the park', 'wall_2'], ['the back wall of the grocery store', 'back_shop'], ['the back of the library', 'back_library'], ['the wall by the closed shop', 'wall_5']]) assert.equal(paintTarget(said, 1).key, key, said);
   assert.equal(new Set(Array.from({ length: 40 }, (_, i) => paintTarget('any wall', i * 7 + 1).key)).size, PAINT_WALLS.length, 'no wall named: it can be any of them');
   { const pts = ['door', ...ROUTES.workshop, 'workshop'].map((k) => TOWN_SPOTS[k]); for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.4); for (let k = 0; k <= n; k++) assert.equal(townBlocked(TOWN_X + a.x + ((b.x - a.x) * k) / n, a.z + ((b.z - a.z) * k) / n, 0.2), false, 'the way to the print workshop'); } }
   assert.equal(PRINT_SLOTS.length, 21);

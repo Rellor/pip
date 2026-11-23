@@ -9,7 +9,7 @@ export function makeFacades(THREE) {
   const rgb = (hex) => { const n = parseInt(String(hex).replace('#', ''), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
   const css = ([r, g, b], k = 1, a = 1) => `rgba(${Math.max(0, Math.min(255, Math.round(r * k)))},${Math.max(0, Math.min(255, Math.round(g * k)))},${Math.max(0, Math.min(255, Math.round(b * k)))},${a})`;
 
-  // One wall, w x h metres. spec: { wall, color, trim, door, windows, shop, sign, shutter, columns, seed }
+  // One wall, w x h metres. spec: { wall, color, trim, door, windows, bands, shop, sign, shutter, columns, seed }
   return function facade(spec, w, h) {
     let seed = (spec.seed ?? 1) * 7919 + 13;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
@@ -62,6 +62,7 @@ export function makeFacades(THREE) {
       g.fillStyle = gr; g.fillRect(X(x), Y(y + hh), X(x + ww) - X(x), Y(y) - Y(y + hh));
       gl.fillStyle = '#ffd98a'; gl.fillRect(X(x), Y(y + hh), X(x + ww) - X(x), Y(y) - Y(y + hh));
     };
+    for (const y of spec.bands ?? []) { rect(0, y, w, 0.16, css(trim, 0.86)); rect(0, y - 0.05, w, 0.05, css(base, 0.6)); } // a ledge between two floors
     for (const [x, y, ww, hh] of spec.windows ?? []) {
       rect(x - 0.12, y - 0.14, ww + 0.24, hh + 0.26, css(trim));
       glass(x, y, ww, hh);
