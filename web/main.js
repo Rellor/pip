@@ -61,6 +61,7 @@ function applyPixels() {
   renderer.setPixelRatio(outside ? Math.max(0.2, Math.min(1, (view.mode === 'walk' ? 460 : 760) / w)) : Math.min(devicePixelRatio, 1.5));
 }
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
+const bob = { walked: 0, moving: false, k: 0 }; // how far you walked (for the bobbing of the view), and how much it shows right now
 let portalOn = false; // the world stands right outside his windows while you are inside his home (see setPortal)
 let portalReady = false;
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
@@ -2229,13 +2230,17 @@ function updateWalk(dt) {
   const fwd = (view.keys.has('w') || view.keys.has('arrowup') ? 1 : 0) - (view.keys.has('s') || view.keys.has('arrowdown') ? 1 : 0) + view.stick.y;
   const side = (view.keys.has('d') || view.keys.has('arrowright') ? 1 : 0) - (view.keys.has('a') || view.keys.has('arrowleft') ? 1 : 0) + view.stick.x;
   const len = Math.hypot(fwd, side);
+  bob.moving = false;
   if (len > 0.05) {
     const speed = 2.4 * dt * Math.min(1, len);
     const dx = ((-Math.sin(view.yaw) * fwd + Math.cos(view.yaw) * side) / len) * speed;
     const dz = ((-Math.cos(view.yaw) * fwd - Math.sin(view.yaw) * side) / len) * speed;
     const wasZ = view.z;
+    const fromX = view.x, fromZ = view.z;
     if (!blocked(view.x + dx, view.z)) view.x += dx;
     if (!blocked(view.x, view.z + dz)) view.z += dz;
+    bob.walked += Math.hypot(view.x - fromX, view.z - fromZ); // only real steps count: pushing against a wall does not bob
+    bob.moving = Math.hypot(view.x - fromX, view.z - fromZ) > 1e-4;
     // The front door in the hall leads to the street, and the door of his house in the street leads back in:
     // walking into the door (pushing on although the wall stops you) takes you through.
     const pushing = dz < 0 && view.z === wasZ;
@@ -2246,7 +2251,14 @@ function updateWalk(dt) {
   applyPixels();
   // His room is built 1.6 times bigger than life (so is he): inside you stand as tall as he does, and can look out of
   // his windows at the street. Outside everything is life-size.
-  camera.position.set(view.x, inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55, view.z);
+  // Bobbing: the view goes a little up and down with every step, and sways a touch from foot to foot. It fades in when
+  // you start walking and out when you stop. (Inside everything is 1.6 times bigger, so the steps are too.)
+  bob.k += ((bob.moving && bobOn ? 1 : 0) - bob.k) * Math.min(1, dt * 8);
+  const big = inTown(view.x) ? 1 : 1.6;
+  const stepLen = 0.78 * big;
+  const up = Math.sin((bob.walked / stepLen) * Math.PI * 2) * 0.042 * big * bob.k;
+  const sway = Math.sin((bob.walked / stepLen) * Math.PI) * 0.022 * big * bob.k;
+  camera.position.set(view.x + Math.cos(view.yaw) * sway, (inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55) + up, view.z - Math.sin(view.yaw) * sway);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
 }
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
@@ -2778,6 +2790,8 @@ dom.addEventListener('pointerup', (e) => {
   const tap = !drag.moved && performance.now() - drag.t < 500;
   drag = null;
   if (!tap) return;
+  if (mouseLook() && view.mode === 'walk' && e.pointerType === 'mouse' && document.pointerLockElement !== dom) { dom.requestPointerLock?.(); return; } // the first click catches the mouse: from now on it turns the view
+  if (document.pointerLockElement === dom) { const r = dom.getBoundingClientRect(); const hit = pickAt(r.left + r.width / 2, r.top + r.height / 2); if (hit) showInfo(hit.info, hit.anchor); else hideInfo(); return; } // a click taps what the dot in the middle is on
   if (frontPick) {
     if (frontSideAt(e.clientX, e.clientY)) return tapFront(e.clientX, e.clientY);
     const other = teachOn() ? frontTargetAt(e.clientX, e.clientY) : null; // a tap on another thing starts over with that one
@@ -2970,6 +2984,21 @@ $('setkey').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') unlockSettings($('setkey').value.trim());
 });
 $('teachfront').addEventListener('change', (e) => store('pip-teach', e.target.checked ? '1' : '0'));
+// Two choices for whoever looks around (kept on this device; anyone can set them, no key needed):
+// turning by moving the mouse (off unless it is switched on here), and bobbing with your steps (on, unless the device asks for less motion).
+function mouseLook() { return store('pip-mouselook') === '1'; }
+function viewBob() { const v = store('pip-bob'); return v ? v === '1' : !matchMedia('(prefers-reduced-motion: reduce)').matches; }
+$('mouselook').checked = mouseLook();
+let bobOn = viewBob();
+$('viewbob').checked = bobOn;
+$('mouselook').addEventListener('change', (e) => { store('pip-mouselook', e.target.checked ? '1' : '0'); if (!e.target.checked && document.pointerLockElement === dom) document.exitPointerLock(); });
+$('viewbob').addEventListener('change', (e) => { store('pip-bob', e.target.checked ? '1' : '0'); bobOn = e.target.checked; });
+document.addEventListener('pointerlockchange', () => { $('aim').hidden = document.pointerLockElement !== dom; });
+document.addEventListener('mousemove', (e) => {
+  if (document.pointerLockElement !== dom || view.mode !== 'walk') return;
+  view.yaw -= e.movementX * 0.0024;
+  view.pitch = Math.max(-1.2, Math.min(1.2, view.pitch - e.movementY * 0.0024));
+});
 if (localHost) {
   $('setlock').hidden = true;
   $('setpanel').hidden = false;
@@ -4857,6 +4886,7 @@ $('wake').addEventListener('click', () => {
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipGroup = (id) => decorGroups.get(id); // for testing
 window.pipView = view; // for testing: where the walking viewer stands
+window.pipEye = () => camera.position.toArray(); // for testing: where the eye is (the bobbing of the view)
 window.pipCam = () => ({ fit: orbit.fit, goal: fitGoal, zoom: orbit.zoom, px: orbit.px, pz: orbit.pz, focusX, name: focusName(), aspect: camera.aspect, pos: camera.position.toArray().map((v) => Math.round(v)) }); // for testing: how the overview looks at things
 window.pipStep = (n, dt = 0.05) => { for (let i = 0; i < n; i++) updateBehaviors(performance.now() + i * dt * 1000, dt); }; // for testing without a visible page
 let tickClock = 0;
