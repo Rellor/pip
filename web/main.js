@@ -2528,6 +2528,10 @@ function showUse(d, use) {
 }
 const USE_ICON = { light: '💡', drive: '🚗', spin: '🌀', stand: '🪜', custom: '✨' };
 function decorInfo(d) {
+  if (d.readyAt && Date.now() < Date.parse(d.readyAt)) { // still being built: the card says how far he is
+    const ready = new Date(Date.parse(d.readyAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' });
+    return { title: d.name, icon: '🔨', subtitle: `Pip is building this · ${d.label}`, sections: [{ lines: [`It is ${Math.round(sitePart(d) * 100)}% built. It grows while he works on it, and stands around ${ready}.`] }, ...(d.why ? [{ heading: 'Why he builds it', quote: `“${d.why}”` }] : [])], refresh: () => decorInfo(d) };
+  }
   if (d.art) return { title: d.name, icon: '🎨', subtitle: `A drawing by Pip · ${d.label}`, image: d.image, sections: d.why ? [{ heading: 'Why he drew it', quote: `“${d.why}”` }] : [] };
   if (d.print) return { title: d.name, icon: '🖨️', subtitle: `A print from Pip's photo printer · ${d.label}`, image: d.image };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
@@ -3303,6 +3307,7 @@ function loop(now) {
   }
   updateFloaters(dt, now);
   popDecor(now);
+  growSites();
   updateBehaviors(now, dt);
   const printing = plan && stepNow >= 0 && plan.steps[stepNow]?.action === 'print_photo';
   printLight.material.color.set(printing && Math.floor(now / 250) % 2 ? 0x6dff8a : 0x2f6b3a);
@@ -3391,8 +3396,58 @@ function stepOuting() {
   const iso = (ms) => new Date(ms).toISOString();
   return { id: `step${t0}`, ...hit, step: st, leftAt: iso(t0), arriveAt: iso(t0 + walk), leaveAt: iso(t0 + len - walk), homeAt: iso(t0 + len) };
 }
+// A building site: a big thing he is building outside (its readyAt is still to come). The page shows it growing from the
+// ground up inside a scaffold, and when he has nothing else to do he is at work there.
+const siteNow = () => { const now = Date.now(); return (lastState?.decor ?? []).filter((d) => d.kind === 'outside' && d.readyAt && d.pos && Date.parse(d.at) <= now && now < Date.parse(d.readyAt)).sort((a, b) => Date.parse(a.readyAt) - Date.parse(b.readyAt))[0] ?? null; };
+const sitePart = (d, now = Date.now()) => Math.max(0, Math.min(1, (now - Date.parse(d.at)) / Math.max(1, Date.parse(d.readyAt) - Date.parse(d.at))));
+function siteOuting() {
+  const d = lastState?.last?.sleeping ? null : siteNow();
+  if (!d) return null;
+  const free = plan ? plan.at + plan.total + 20_000 : Date.parse(d.at); // after what he was doing
+  if (Date.now() < free) return null;
+  const x = d.pos[0] - TOWN_X, z = d.pos[2];
+  const r = Math.max(1.2, (Number(d.metres) || 3) / 2 + 0.9);
+  TOWN_SPOTS.site = { x, z: z + r, face: Math.PI }; // he stands in front of it
+  TOWN_FOR.site = ['site', ''];
+  ROUTES.site = z < -8 ? ['alley', 'alleyBack'] : x < -14 ? ['homeW'] : x > 26 ? ['sqN', 'sqE'] : z > 40 ? ['sqN', 'sqSW'] : ['sqN'];
+  const iso = (ms) => new Date(ms).toISOString();
+  const start = Math.max(free, Date.parse(d.at));
+  return { id: `site${d.id}${plan?.at ?? ''}`, place: 'site', spot: 'site', name: `his ${d.name}`, emoji: '🔨', site: d, leftAt: iso(start), arriveAt: iso(start + 70_000), leaveAt: d.readyAt, homeAt: iso(Date.parse(d.readyAt) + 60_000) };
+}
+const siteBoxes = new Map(); // a thing being built: its parts from the ground up, and its scaffold
+function growSites() {
+  const now = Date.now();
+  for (const d of lastState?.decor ?? []) {
+    if (d.kind !== 'outside' || !d.readyAt) continue;
+    const g = decorGroups.get(d.id);
+    if (!g) continue;
+    const p = now < Date.parse(d.at) ? 0 : sitePart(d, now);
+    let site = siteBoxes.get(d.id);
+    if (p >= 1) { if (site) { g.remove(site.scaffold); for (const m of site.parts) m.visible = true; siteBoxes.delete(d.id); } continue; }
+    if (!site || site.g !== g) {
+      const keep = [g.position.clone(), g.rotation.clone(), g.scale.clone()];
+      g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.scale.setScalar(1); g.updateMatrixWorld(true);
+      const parts = []; g.traverse((m) => { if (m.isMesh) parts.push(m); });
+      const low = new Map(parts.map((m) => [m, new THREE.Box3().setFromObject(m).min.y]));
+      parts.sort((a, b) => low.get(a) - low.get(b));
+      const box = new THREE.Box3().setFromObject(g);
+      g.position.copy(keep[0]); g.rotation.copy(keep[1]); g.scale.copy(keep[2]);
+      const scaffold = new THREE.Group();
+      const wood = new THREE.MeshStandardMaterial({ color: 0xb98a5a, roughness: 0.9, emissive: 0xb98a5a, emissiveIntensity: 0.25 });
+      const k = 1 / (d.scale || 1); // (the group is scaled: the poles keep their real thickness)
+      const [x0, x1, z0, z1, h] = [box.min.x - 0.35 * k, box.max.x + 0.35 * k, box.min.z - 0.35 * k, box.max.z + 0.35 * k, box.max.y + 0.4 * k];
+      for (const [x, z] of [[x0, z0], [x1, z0], [x0, z1], [x1, z1]]) { const pole = new THREE.Mesh(new THREE.BoxGeometry(0.1 * k, h, 0.1 * k), wood); pole.position.set(x, h / 2, z); scaffold.add(pole); }
+      for (const y of [h * 0.34, h * 0.67, h]) for (const [ax, az, len, alongX] of [[(x0 + x1) / 2, z0, x1 - x0, true], [(x0 + x1) / 2, z1, x1 - x0, true], [x0, (z0 + z1) / 2, z1 - z0, false], [x1, (z0 + z1) / 2, z1 - z0, false]]) { const bar = new THREE.Mesh(new THREE.BoxGeometry(alongX ? len : 0.07 * k, 0.07 * k, alongX ? 0.07 * k : len), wood); bar.position.set(ax, y, az); scaffold.add(bar); }
+      g.add(scaffold);
+      site = { g, parts, scaffold };
+      siteBoxes.set(d.id, site);
+    }
+    const shown = Math.max(1, Math.ceil(p * site.parts.length));
+    site.parts.forEach((m, i) => { m.visible = i < shown; });
+  }
+}
 const realOuting = () => { const w = lastState?.where; return w && worldPlace(w.place) && w.place !== 'home' && Date.now() >= Date.parse(w.leftAt) + 30_000 ? w : null; };
-const outWhere = () => realOuting() ?? stepOuting();
+const outWhere = () => realOuting() ?? stepOuting() ?? siteOuting();
 const awayNow = () => Boolean(outWhere());
 const awayWords = () => {
   const w = outWhere();
@@ -3401,6 +3456,7 @@ const awayWords = () => {
   const now = Date.now();
   const name = p.name.replace(/^my /, 'his ');
   const back = new Date(Date.parse(w.homeAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' }); // his clock (Dutch time), like the World tab
+  if (w.site && now >= Date.parse(w.arriveAt)) return ['🔨', `Building ${name}: ${Math.round(sitePart(w.site, now) * 100)}%`, back];
   return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? (w.step ? [headline(w.step)[0], `${headline(w.step)[1]}, at ${name}`, back] : [p.emoji, w.job?.words ? `At ${name}: ${w.job.words}` : `At ${name}`, back]) : ['🏠', `Walking home from ${name}`, back];
 };
 let isStatic = false;
@@ -5035,6 +5091,7 @@ function worldCard(kind, key) {
   if (key === 'board') { const notes = (s.wishes ?? []).filter((w) => w.board && w.status === 'open' && Date.now() - Date.parse(w.at) < 3 * 86_400_000); so.push(notes.length ? `On it now: ${notes.map((w) => `${w.topic} (${w.reward} coins)`).join(', ')}.` : 'Nothing is pinned on it right now.'); const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept').length; if (kept) so.push(`He made ${kept} of the things people asked for.`); so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); }
   if (key === 'cafe') { const face = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }; const reads = [...(s.log ?? [])].reverse().filter((e) => ['search_web', 'read_book', 'browse'].includes(e.action) && !e.failed && (e.query || e.opened?.title || e.topic)).slice(0, 4); if (reads.length) so.push(...reads.map((e) => `${e.action === 'search_web' ? '🔎' : '📖'} ${e.query || e.opened?.title || e.topic}${e.opinion ? ` ${face[e.opinion.how] ?? ''} “${e.opinion.says}”` : ''}`)); else so.push('He has not looked anything up yet.'); }
   if (key === 'land') { const l = s.land ?? []; so.push(l.length ? `He made ${l.filter((x) => x.kind !== 'hole').length} hill${l.filter((x) => x.kind !== 'hole').length === 1 ? '' : 's'} and ${l.filter((x) => x.kind === 'hole').length} hole${l.filter((x) => x.kind === 'hole').length === 1 ? '' : 's'}: ${l.slice(-4).map((x) => x.name).join(', ')}.` : 'He has not shaped the land yet. It is all flat.'); }
+  if (['plot', 'flats', 'closed'].includes(key)) { const wishes = (s.asks ?? []).filter((a) => a.status === 'open' && /^Dream:/i.test(a.item ?? '')).map((a) => String(a.item).replace(/^Dream:\s*/i, '')); if (wishes.length) so.push(`✨ Pip wishes for: ${wishes.slice(-3).join('; ')}. (You find his wishes under Asks.)`); }
   if (key === 'plot') { const mine = (s.decor ?? []).filter((d) => d.kind === 'outside' && (d.spot ?? 'plot') === 'plot'); so.push(mine.length ? `${mine.length} thing${mine.length === 1 ? '' : 's'} he made stand here.` : 'Nothing stands here yet.'); }
   if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
   else if (p && !['shop', 'workshop', 'walls', 'board', 'land'].includes(p.key)) so.push('He has not been here yet.');
@@ -5055,6 +5112,7 @@ function nowStatus() {
   const w = outWhere();
   if (w) {
     const [icon, text] = awayWords();
+    if (w.site && now >= Date.parse(w.arriveAt)) return { icon, text, k: sitePart(w.site, now), left: Date.parse(w.site.readyAt) - now };
     const [a, b] = now < Date.parse(w.arriveAt) && !w.cut ? [w.leftAt, w.arriveAt] : now < Date.parse(w.leaveAt) ? [w.arriveAt, w.leaveAt] : [w.leaveAt, w.homeAt];
     return { icon, text, k: (now - Date.parse(a)) / Math.max(1, Date.parse(b) - Date.parse(a)), left: Date.parse(b) - now };
   }

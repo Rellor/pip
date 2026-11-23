@@ -40,6 +40,10 @@ export function capOf(decor) {
 // ---- Outside (web/town.js): his plot across the street, and every other place of his world that is free. He picks the
 // place himself ("outside by the pond"); the game only checks that it fits there.
 export const MAX_OUTSIDE = 40;
+// A big thing outside is not there at once: he builds it, and that takes time (the page shows the site growing, and him
+// at work there). Minutes for a thing whose longest side is `metres`: 3 m takes over an hour, 20 m most of a day.
+export const BUILD_FROM_M = 3;
+export const buildMinutes = (metres) => (Number(metres) >= BUILD_FROM_M ? Math.round(Math.max(60, Math.min(600, Number(metres) * 25))) : 0);
 const OUTSIDE_WORDS = /\b(outside|outdoors?|my plot|my land|my field|on the plot|across the street|in the street|my yard|the meadow)\b/i;
 export const saysOutside = (text) => OUTSIDE_WORDS.test(String(text ?? '')); // in a sentence about what he makes
 export const isOutside = (where) => saysOutside(where) || worldWhere(where); // as the place he picked: also "by the pond", "beside the square"
@@ -1900,6 +1904,7 @@ function placeOutside(decor, spec, parts, atMs, now, moving = false) {
     label, pos: [r3(TOWN_X + x), r3(Math.min(...[[0, 0], [-hw, -hd], [hw, -hd], [-hw, hd], [hw, hd]].map(([a, b]) => groundAt(x + a, z + b)))), r3(z)], rotY, scale, parts,
     stand: [0.3, -3.9], // he looks out of his window toward it
     at: new Date(atMs + 6000).toISOString(), createdAt: new Date(now).toISOString(),
+    ...(!moving && buildMinutes(metres) ? { readyAt: new Date(atMs + 6000 + buildMinutes(metres) * 60_000).toISOString() } : {}), // big: it stands only after he built it
   });
   if (!spot || spot.key === 'plot') {
     const spots = [];

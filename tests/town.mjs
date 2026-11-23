@@ -228,3 +228,15 @@ ok('the maker hears how big a thing can be out there');
   for (const [x, , z] of PRINT_SLOTS) assert.equal(townBlocked(TOWN_X + x, z, 0), true, 'the shelf of prints is solid');
   ok('he can paint on 8 walls: each has a place to stand and a free way to it, and he names it in his own words');
 }
+
+// ---- a big thing outside takes time to build (decor.js): the page shows the site until it is ready
+{
+  const { buildMinutes, BUILD_FROM_M } = await import('../decor.js');
+  assert.deepEqual([buildMinutes(1), buildMinutes(BUILD_FROM_M), buildMinutes(10), buildMinutes(20), buildMinutes(60)], [0, 75, 250, 500, 600]);
+  const site = [];
+  const big = makeDecor(site, { name: 'tall lighthouse', why: 'x', where: 'outside', parts: [{ shape: 'box', size: [1, 2, 1], pos: [0, 1, 0], rot: [0, 0, 0], color: '#c96' }], metres: 12 }, t, t).entry;
+  assert.ok(big.readyAt && Math.round((Date.parse(big.readyAt) - Date.parse(big.at)) / 60_000) === 300, 'a 12 m lighthouse takes five hours');
+  const small = makeDecor(site, { name: 'garden stool', why: 'x', where: 'outside', parts: [{ shape: 'box', size: [0.5, 0.5, 0.5], pos: [0, 0.25, 0], rot: [0, 0, 0], color: '#c96' }] }, t, t + 1).entry;
+  assert.equal(small.readyAt, undefined, 'a small thing simply stands there');
+  ok('a big thing outside is a building site first: it has a time when it is ready');
+}

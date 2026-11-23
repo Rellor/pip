@@ -1507,6 +1507,7 @@ async function wakeUp() {
       const built = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js); a "tiny" thing is tiny
       const sized = out && Number(st.details.metres) > 0 ? built.parts : roomScale(built.parts, st.details);
       st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: sized, uses: st.uses }, stepStart); // built at the size of his room (outside: as big as he said)
+      if (st.made?.entry?.readyAt) { const hours = Math.round((Date.parse(st.made.entry.readyAt) - Date.parse(st.made.entry.at)) / 360_000) / 10; addMemory(state, `I started building my ${st.made.entry.name} ${st.made.entry.label}. It is big: it will take me about ${hours} hours of work before it stands.`, 6, 'memory', new Date(stepStart).toISOString()); }
       const oldCloth = /^(.+) already lies over /.exec(st.made.failed ?? '')?.[1];
       if (oldCloth && state.stored.length < MAX_STORED && storeAway(state.decor, state.stored, oldCloth).stored) { // a new blanket: the old one is folded into his chest, like anyone would
         st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: sized, uses: st.uses }, stepStart);

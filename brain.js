@@ -116,7 +116,7 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       continue;
     }
     if (name === 'dream') {
-      if (clip(d.what, 140)) answer.asks_add.push({ item: `Dream: ${clip(d.what, 130)}`, why: clip(d.why, 200), big: true });
+      if (clip(d.what, 140)) answer.asks_add.push({ item: `Dream: ${clip(d.what, 130)}${clip(d.where, 60) ? ` (${clip(d.where, 60)})` : ''}`.slice(0, 160), why: clip(d.why, 200), big: true });
       steps.push({ action: 'do', as: 'dream', details: { what: `dream about ${clip(d.what, 100)}` }, thought, enjoyment: 7 });
       continue;
     }
