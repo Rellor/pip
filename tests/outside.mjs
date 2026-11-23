@@ -169,7 +169,7 @@ outingTick(keen, noon + 2 * 60 * MIN);
 assert.ok(wantsOut(keen, noon + 3 * 60 * MIN) < wantsOut(fresh({ body: { boredom: 6 } }), noon), 'just been: less so');
 const live = JSON.parse(fs.readFileSync(new URL('../web/state.json', import.meta.url), 'utf8'));
 delete live.recent; delete live.today; delete live.tired; delete live.resting; delete live.where;
-Object.assign(live, { energy: 8, fullness: 8, weather: { kind: 'clear', temp: 8, cloud: 0.1 } });
+Object.assign(live, { energy: 8, fullness: 8, outings: [], weather: { kind: 'clear', temp: 8, cloud: 0.1 } }); // (his real outings of today would keep him in at the hour this test asks about)
 tickBody(live);
 const line = availableMoves(live, { now: noon, random: () => 0.99 }).find((m) => m.name === 'go_out')?.line ?? '';
 assert.ok(line.length > 60 && line.length < 240 && /\{place, what\}$/.test(line), line);

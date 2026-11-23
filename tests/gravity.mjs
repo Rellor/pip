@@ -221,13 +221,27 @@ ok('Bas gives him the watercolor paper he asked for: it is with his tools, the a
   s.changes = (s.changes ?? []).filter((c) => !/watercolour paper/.test(c));
   s.tools = (s.tools ?? []).filter((t) => !/watercolou?r paper/i.test(t.name));
   s.asks = [{ id: 'a1', item: 'new watercolor paper', why: 'a new view', since: '2026-11-21T08:13:17.081Z', status: 'open' }, { id: 'a2', item: 'autumn painting critique', why: 'proud', since: '2026-11-19T19:36:31.605Z', status: 'open' }];
-  const before = s.tools.length;
+  const paper = () => s.tools.filter((t) => /watercolou?r paper/i.test(t.name)).length;
+  const before = paper();
   const notes = applyChanges(s);
   assert.ok(notes.some((n) => /watercolor paper/.test(n)));
-  assert.equal(s.tools.length, before + 1);
+  assert.equal(paper(), before + 1);
   assert.deepEqual(s.tools.at(-1).kind, 'drawing supplies');
   assert.deepEqual(s.asks.map((a) => a.status), ['done', 'open'], 'only the paper ask is answered');
   assert.deepEqual(s.asks[0].given, ['watercolor paper']);
   assert.deepEqual(applyChanges(s), []);
-  assert.equal(s.tools.length, before + 1);
+  assert.equal(paper(), before + 1);
+});
+
+ok('Bas gives him a library card: the ask is done, and the library is open to him, once', () => {
+  const s = JSON.parse(fs.readFileSync(new URL('../web/state.json', import.meta.url), 'utf8'));
+  s.changes = (s.changes ?? []).filter((c) => !/library card/.test(c));
+  s.tools = (s.tools ?? []).filter((t) => !/library/i.test(t.name));
+  s.asks = [{ id: 'a1', item: 'library card', why: 'to go to the library', since: '2026-11-23T11:36:02.652Z', status: 'open' }, { id: 'a2', item: 'autumn painting critique', why: 'proud', since: '2026-11-19T19:36:31.605Z', status: 'open' }];
+  const notes = applyChanges(s);
+  assert.ok(notes.some((n) => /library card/.test(n)));
+  assert.equal(s.tools.filter((t) => /library card/i.test(t.name)).length, 1);
+  assert.deepEqual(s.asks.map((a) => a.status), ['done', 'open']);
+  assert.deepEqual(applyChanges(s), []);
+  assert.equal(s.tools.filter((t) => /library card/i.test(t.name)).length, 1);
 });

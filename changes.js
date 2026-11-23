@@ -400,6 +400,16 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-23 a library card from Bas',
+    run(s, at) { // he asked for a library card, to go into the library
+      const ask = (s.asks ?? []).find((a) => a.status === 'open' && /library/i.test(a.item));
+      s.tools ??= [];
+      const given = giveForAsk(s, 'library card');
+      if (ask) Object.assign(ask, { status: 'done', doneAt: at, given: given.length ? given : ['a library card'] });
+      return 'Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).';
+    },
+  },
+  {
     id: '2026-11-22 watercolour paper from Bas',
     run(s, at) { // he asked for new watercolor paper, to paint a new view now that his autumn window is finished
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /watercolou?r|paper/i.test(a.item));
