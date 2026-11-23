@@ -21,13 +21,14 @@ const fresh = (more = {}) => ({ energy: 8, fullness: 8, joy: 5, calm: 5, wonder:
 const iso = (ms) => new Date(ms).toISOString();
 
 // ---- the places
-assert.deepEqual(PLACES.map((p) => p.key), ['home', 'doorstep', 'shop', 'pond', 'garden', 'library', 'hill', 'board', 'workshop', 'walls']);
+assert.deepEqual(PLACES.map((p) => p.key), ['home', 'doorstep', 'shop', 'pond', 'library', 'board', 'workshop', 'walls', 'land']);
 assert.ok(PLACES.length <= 12, 'a small world: a handful of places besides home');
 for (const p of PLACES.filter((x) => x.key !== 'home' && !x.errand && !x.job)) assert.ok(p.things.length >= 1 && p.stay && p.blurb && p.walk > 0, p.key);
 for (const p of PLACES.filter((x) => x.job)) assert.ok(!p.things && p.stay && p.blurb && p.walk > 0 && !p.locked, `${p.key}: a place he only goes to with something to make there`);
 assert.equal(findPlace('the pond')?.key, 'pond');
 assert.equal(findPlace('the park, to see the ducks')?.key, 'pond');
-assert.equal(findPlace("Oma Jo's garden")?.key, 'garden');
+assert.equal(findPlace("Oma Jo's garden"), null, 'the garden is gone');
+assert.equal(findPlace('the grocery store')?.key, 'shop');
 assert.equal(findPlace('my doorstep')?.key, 'doorstep');
 assert.equal(findPlace('the moon'), null);
 assert.equal(hisWords('pond', 'sketch what I see'), 'sketch what he sees');
@@ -36,13 +37,13 @@ ok('a small world of named places; he can say a place in his own words');
 // ---- where he may go: anywhere, any time (there are no opening hours, no locked places, no weather rules, no limits)
 const s = fresh();
 assert.deepEqual(unlockedKeys(s), PLACES.map((p) => p.key), 'every place is open to him');
-assert.deepEqual(goOptions(s, noon).map((o) => o.key).sort(), ['doorstep', 'garden', 'hill', 'library', 'pond']);
+assert.deepEqual(goOptions(s, noon).map((o) => o.key).sort(), ['doorstep', 'library', 'pond']);
 assert.ok(goLine(s, noon).length <= 170, goLine(s, noon));
 for (const [who, t] of [[fresh(), noon + 10 * 60 * MIN], [fresh({ energy: 2 }), noon], [fresh({ fullness: 2 }), noon], [fresh({ weather: { kind: 'storm', temp: -4 } }), noon + 7 * 60 * MIN], [fresh({ weather: { kind: 'rain', temp: 9 } }), noon]]) {
   for (const p of PLACES.filter((x) => x.key !== 'home')) assert.equal(canGo(who, p.key, t).ok, true, p.key);
 }
 assert.equal(gearWish(fresh({ weather: { kind: 'rain', temp: 9 } }), noon), null, 'he needs nothing special to go out');
-assert.match(canGo({ ...fresh(), where: { place: 'pond' } }, 'hill', noon).why, /out already/);
+assert.match(canGo({ ...fresh(), where: { place: 'pond' } }, 'library', noon).why, /out already/);
 const cold = fresh({ weather: { kind: 'clear', temp: -3 } });
 assert.ok(goOptions(cold, noon).find((o) => o.key === 'pond').words.includes('slide on the ice'), 'the pond freezes in real frost');
 assert.equal(buy(fresh({ coins: 9 }), 'umbrella', noon + 10 * 60 * MIN).bought, 'umbrella', 'the corner shop is always open');
@@ -82,7 +83,7 @@ assert.equal(canGo(s, 'pond', noon + 3 * 60 * MIN).ok, true, 'the same place aga
 assert.equal(canGo(s, 'doorstep', noon + 70 * MIN).ok, true, 'and right after he came home');
 startOuting(s, { place: 'doorstep' }, noon + 3 * 60 * MIN);
 outingTick(s, noon + 4 * 60 * MIN);
-assert.ok(goOptions(s, noon + 6 * 60 * MIN).length >= 4, 'there is no limit to how often he goes out in a day');
+assert.ok(goOptions(s, noon + 6 * 60 * MIN).length >= 3, 'there is no limit to how often he goes out in a day');
 for (const [why, change] of [['very tired', { energy: 1.5 }], ['very hungry', { fullness: 1.5 }]]) {
   const x = fresh();
   startOuting(x, { place: 'pond' }, noon);
@@ -116,18 +117,15 @@ ok('he comes home: when very tired or hungry, at bedtime, always');
 // ---- every place is his from the start
 const g = fresh({ world: { count: 1 } });
 assert.deepEqual(checkUnlocks(g, noon), [], 'nothing has to be unlocked');
-assert.ok(goOptions(g, noon).some((x) => x.key === 'garden'));
-startOuting(g, { place: "Oma Jo's garden" }, noon);
-const visit = outingTick(g, noon + 2 * 60 * MIN).outing;
-assert.ok(visit.met === 'Oma Jo' && visit.gift, JSON.stringify(visit));
-assert.ok(g.garden.seeds.length + g.pantry.length >= 1, 'what she gives him is real');
+assert.ok(!goOptions(g, noon).some((x) => x.key === 'garden' || x.key === 'hill'), 'the garden and the hill are gone');
+assert.match(canGo(g, 'hill', noon).why, /not a place/);
+{ const old = fresh({ where: { id: 'o1', place: 'hill', leftAt: iso(noon), arriveAt: iso(noon + 14 * MIN), leaveAt: iso(noon + 40 * MIN), homeAt: iso(noon + 54 * MIN) } }); assert.equal(outingTick(old, noon + 5 * MIN), null, 'he was on his way to a place that is gone: he is simply home'); assert.equal(old.where, null); }
+assert.equal(placeOf('garden')?.title, 'Oma Jo’s garden', 'the page can still show his old outings there');
 g.curious.interests = [{ topic: 'Lighthouse' }];
 assert.ok(startOuting(g, { place: 'library' }, noon + 3 * 60 * MIN).ok, 'the library, on a Monday, without a card');
 const read = outingTick(g, noon + 6 * 60 * MIN).outing;
 assert.deepEqual([read.read, /book about lighthouse/.test(read.did)], ['Lighthouse', true]);
-assert.ok(startOuting(g, { place: 'the hill' }, noon + 7 * 60 * MIN).ok, 'and the hill');
-outingTick(g, noon + 10 * 60 * MIN);
-ok('the garden, the library and the hill are open to him from the first day');
+ok('the library is open to him from the first day; the garden and the hill are gone');
 
 // ---- he wants to go out, but not all the time
 const keen = fresh({ body: { boredom: 6, curiosity: 5 } });
@@ -152,9 +150,9 @@ ok('going out is one of his moves, with a short line that names where he can go'
     assert.ok(availableMoves(live, { now: noon + 10 * 60 * MIN, random: () => 0.99 }).some((x) => x.name === name), `${name}: at any hour he is awake`);
   }
   delete process.env.PIP_FAKE_MOVE;
-  const a = toAnswer({ moves: [{ move: 'paint_wall', details: { what: 'a giant fox', why: 'I want the street to see it', wall: 'the back wall of the bakery' }, thought: 'x' }, { move: 'print_thing', details: { what: 'a tiny lighthouse', why: 'for my shelf' }, thought: 'y' }], reason: 'r', mood: 'calm' }, ['paint_wall', 'print_thing']);
+  const a = toAnswer({ moves: [{ move: 'paint_wall', details: { what: 'a giant fox', why: 'I want the street to see it', wall: 'the back wall of the library' }, thought: 'x' }, { move: 'print_thing', details: { what: 'a tiny lighthouse', why: 'for my shelf' }, thought: 'y' }], reason: 'r', mood: 'calm' }, ['paint_wall', 'print_thing']);
   assert.deepEqual(a.steps.map((st) => [st.action, st.as, st.make]), [['draw', 'paint_wall', true], ['decorate', 'print_thing', true]]);
-  assert.equal(a.steps[0].details.wall, 'the back wall of the bakery');
+  assert.equal(a.steps[0].details.wall, 'the back wall of the library');
   assert.equal(a.steps[1].details.print, true);
   ok('painting a wall and printing are moves of his own: a drawing and a small thing, made somewhere else');
 }
@@ -165,14 +163,14 @@ ok('going out is one of his moves, with a short line that names where he can go'
   assert.ok(!goOptions(j, noon).some((o) => ['workshop', 'walls'].includes(o.key)), 'he does not just wander there');
   assert.notEqual(startOuting(fresh(), { place: 'the walls' }, noon).place, 'walls', 'without a design there is nothing to do at a wall');
   // a painting on a wall
-  j.art = [{ id: 'artx1', name: 'giant fox', file: 'made/artx1.svg', aspect: 1.33, createdAt: iso(noon), wall: 'back_bakery' }];
-  j.gallery = [{ id: 'artx1', name: 'giant fox', file: 'made/artx1.svg', aspect: 1.33, at: iso(noon), wall: 'back_bakery' }];
-  const went = startOuting(j, { job: { place: 'walls', kind: 'paint', art: 'artx1', name: 'giant fox', wall: 'back_bakery', wallName: 'the back wall of the bakery', spot: 'paint_back_bakery', words: 'paint "giant fox" on the back wall of the bakery' } }, noon);
-  assert.ok(went.ok && j.where.place === 'walls' && j.where.spot === 'paint_back_bakery' && j.where.job.art === 'artx1', JSON.stringify(went));
-  assert.match(outingTick(j, noon + 15 * MIN).line, /I am at the walls: I paint "giant fox" on the back wall of the bakery/);
+  j.art = [{ id: 'artx1', name: 'giant fox', file: 'made/artx1.svg', aspect: 1.33, createdAt: iso(noon), wall: 'back_library' }];
+  j.gallery = [{ id: 'artx1', name: 'giant fox', file: 'made/artx1.svg', aspect: 1.33, at: iso(noon), wall: 'back_library' }];
+  const went = startOuting(j, { job: { place: 'walls', kind: 'paint', art: 'artx1', name: 'giant fox', wall: 'back_library', wallName: 'the back wall of the library', spot: 'paint_back_library', words: 'paint "giant fox" on the back wall of the library' } }, noon);
+  assert.ok(went.ok && j.where.place === 'walls' && j.where.spot === 'paint_back_library' && j.where.job.art === 'artx1', JSON.stringify(went));
+  assert.match(outingTick(j, noon + 15 * MIN).line, /I am at the walls: I paint "giant fox" on the back wall of the library/);
   const back = outingTick(j, Date.parse(j.where.homeAt) + MIN);
-  assert.ok(back.home && /I painted "giant fox" on the back wall of the bakery/.test(back.outing.did) && back.outing.made.wall === 'back_bakery', back.outing.did);
-  assert.equal(j.gallery[0].wall, 'back_bakery', 'it stays on that wall');
+  assert.ok(back.home && /I painted "giant fox" on the back wall of the library/.test(back.outing.did) && back.outing.made.wall === 'back_library', back.outing.did);
+  assert.equal(j.gallery[0].wall, 'back_library', 'it stays on that wall');
   assert.equal(canGo(j, 'walls', noon + 3 * 60 * MIN).ok, true, 'and he can go and paint again');
   // a print: it is on the shelf when he has been there, with its shapes
   const k = fresh();
@@ -197,7 +195,7 @@ ok('going out is one of his moves, with a short line that names where he can go'
 }
 
 // ---- the page
-for (const o2 of [{}, { now: noon, where: 'pond', phase: 'there', unlocked: ['home', 'doorstep', 'shop', 'pond'], known: ['library'], weather: { kind: 'snow', temp: -2 } }, { now: noon + 11 * 60 * MIN, where: 'hill', phase: 'going', open: { pond: false } }, { where: 'garden', phase: 'back' }]) {
+for (const o2 of [{}, { now: noon, where: 'pond', phase: 'there', unlocked: ['home', 'doorstep', 'shop', 'pond'], known: ['library'], weather: { kind: 'snow', temp: -2 } }, { now: noon + 11 * 60 * MIN, where: 'library', phase: 'going', open: { pond: false } }, { where: 'pond', phase: 'back' }]) {
   const svg = worldMapSvg(o2);
   assert.ok(svg.startsWith('<svg') && svg.endsWith('</svg>') && !/NaN|undefined/.test(svg), svg.match(/.{40}(NaN|undefined).{20}/)?.[0]);
   assert.equal((svg.match(/<g/g) ?? []).length, (svg.match(/<\/g>/g) ?? []).length);

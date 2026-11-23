@@ -5,13 +5,14 @@
 // (Research: named places and one committed outing keep a small model on the rails; worlds where the model steered
 // every step wandered into closed shops and walked in circles. Travel Frog and Finch showed how nice it is when a
 // creature goes off by itself and comes back with something.)
-import { PLACES, placeOf, findPlace, hoursOf, openNow, isFrozen, isWet, isStorm, FINDS } from './web/world.js';
+import { PLACES, placeOf, findPlace, isGone, hoursOf, openNow, isFrozen, isWet, isStorm, FINDS } from './web/world.js';
 import { hourNL, PEOPLE, moonPhase, moonWord } from './web/street.js';
 import { seasonInfo } from './web/season.js';
 import { noteSpark } from './curiosity.js';
 import { warm } from './neighbours.js';
 import { giveForAsk } from './gifts.js';
 import { readBoard } from './board.js';
+import { landDone } from './land.js';
 
 // He can go anywhere in his world whenever he is awake: nothing is closed, nothing is locked, and nothing is counted.
 // (Bas, 2026-11-23: "He wants to do it? He can.") The only things that send him home are his own body and his bedtime.
@@ -46,7 +47,7 @@ const realToday = (s, now) => (s.outings ?? []).filter((o) => !o.errand && dayNL
 // May he go there now? { ok: true } or { why, gear } (gear: what would make it possible).
 export function canGo(s, key) {
   const p = placeOf(key);
-  if (!p || p.key === 'home') return { why: 'that is not a place I can go to' };
+  if (!p || p.key === 'home' || isGone(p.key)) return { why: 'that is not a place I can go to' };
   if (s.where) return { why: 'I am out already' };
   return { ok: true };
 }
@@ -111,7 +112,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
 export function outingTick(s, now = Date.now()) {
   if (process.env.PIP_NO_OUT) { s.where = null; return null; } // tests of other things keep him in, also when the saved state they start from has him out
   const w = s.where;
-  if (!w || !placeOf(w.place) || w.place === 'home') { s.where = null; return null; }
+  if (!w || !placeOf(w.place) || w.place === 'home' || isGone(w.place)) { s.where = null; return null; }
   const p = placeOf(w.place);
   const t = (k) => Date.parse(w[k]);
   if (now < t('leaveAt') && !w.cut) { // homing: something sends him home early
@@ -159,7 +160,7 @@ export function finishOuting(s, now = Date.now()) {
     o.found.push({ name, emoji, topic });
   };
   const meet = (who, line, by = 0.2) => { o.met = who; o.did += ` ${line}`; warm(s, who, by); };
-  if (w.errand) o.did = `I walked to the corner shop and came home with ${w.errand}.`;
+  if (w.errand) o.did = `I walked to the grocery store and came home with ${w.errand}.`;
   else if (!reached) o.did = `I was on my way to ${p.name}, but ${w.cut}, so I turned around.`;
   else if (p.key === 'pond') {
     if (w.thing === 'ice') { o.did = 'The pond was frozen all the way across. I slid over the ice on my feet, there and back, and fell once.'; up(s, 'joy', 1.4); o.saw = 'the frozen pond'; }
@@ -184,22 +185,11 @@ export function finishOuting(s, now = Date.now()) {
       warm(s, n.name, 0.3);
       o.spark = { topic: LIKE_TOPIC[like] ?? like, text: `${n.name} told me about ${like} on my doorstep.` };
     } else {
-      o.did = wet ? 'I sat in my doorway and listened to the rain on the roofs. The gutter sang.' : pick(rnd, ['I sat on my doorstep and watched the street. A sparrow took a bath in a puddle, very seriously.', 'I sat on my doorstep. The baker carried trays past, and the whole street smelled of bread.', 'I sat on my doorstep and counted bicycles. Eleven, and one with a dog in the basket.', 'I sat on my doorstep until a grey cat came and sat next to me, as if we had agreed to meet.']);
+      o.did = wet ? 'I sat in my doorway and listened to the rain on the roofs. The gutter sang.' : pick(rnd, ['I sat on my doorstep and watched the square. A sparrow took a bath in a puddle, very seriously.', 'I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling.', 'I sat on my doorstep and counted the people crossing the square. Eleven, and one with a dog.', 'I sat on my doorstep until a grey cat came and sat next to me, as if we had agreed to meet.']);
       find(false);
     }
-    o.saw = 'my street from my doorstep';
+    o.saw = 'the square from my doorstep';
     up(s, 'calm', 0.8); up(s, 'joy', 0.5); up(s, 'loneliness', -1.5); up(s, 'energy', -0.2);
-  } else if (p.key === 'garden') {
-    const job = se.name === 'winter' ? 'spread straw over the beds for the cold' : se.name === 'spring' ? 'sow peas in a long straight row' : se.name === 'summer' ? 'tie up the tomato plants and water everything' : 'pull up the last carrots and turn the compost';
-    if (w.thing === 'learn') { const tip = pick(rnd, [['Compost', 'how old leaves and peels turn into earth again'], ['Companion planting', 'which plants like to stand next to each other'], ['Crop rotation', 'why she never grows the same thing twice in one bed'], ['Seed saving', 'how she keeps seeds of her best plants for next year']]); o.did = `I asked Oma Jo how she grows things. She showed me ${tip[1]}.`; o.spark = { topic: tip[0], text: `Oma Jo showed me ${tip[1]}.` }; up(s, 'wonder', 1); }
-    else { o.did = `I helped Oma Jo ${job}. My hands smell of earth.`; up(s, 'energy', -0.6); }
-    const given = month >= 6 && month <= 11 && rnd() < 0.6 ? giveForAsk(s, pick(rnd, ['carrots', 'tomatoes', 'apples'])) : giveForAsk(s, `${pick(rnd, ['pea', 'lettuce', 'sunflower', 'carrot'])} seeds`);
-    if (given.length) { o.gift = given.join(', '); o.did += ` She gave me ${o.gift} to take home, and a slice of bread with butter.`; up(s, 'fullness', 1); }
-    find(false);
-    o.met = 'Oma Jo';
-    o.saw = 'Oma Jo’s garden';
-    warm(s, 'Oma Jo', 0.4);
-    up(s, 'joy', 1); up(s, 'calm', 0.6); up(s, 'loneliness', -2); up(s, 'energy', -0.8);
   } else if (p.key === 'library') {
     const topic = (s.curious?.interests ?? [])[0]?.topic ?? (s.curious?.sparks ?? []).at(-1)?.topic ?? pick(rnd, ['Constellation', 'Origami', 'Lighthouse', 'Hedgehog', 'Kite', 'Clockwork']);
     o.read = topic;
@@ -208,7 +198,7 @@ export function finishOuting(s, now = Date.now()) {
     up(s, 'wonder', 1.5); up(s, 'calm', 0.8); up(s, 'energy', -0.6); up(s, 'boredom', -2);
   } else if (p.key === 'board') { // he reads what people pinned on the notice board
     o.did = readBoard(s, now);
-    o.saw = 'the notice board in my street';
+    o.saw = 'the notice board on the square';
     up(s, 'boredom', -0.5);
   } else if (p.key === 'workshop') { // his design is printed and stays on the shelf there
     const j = w.job ?? {};
@@ -225,13 +215,12 @@ export function finishOuting(s, now = Date.now()) {
     o.saw = `my painting on ${j.wallName ?? 'the wall'}`;
     if (rnd() < 0.4) { const who = PEOPLE.filter((n) => awake(n, h)); if (who.length) { const n = pick(rnd, who); meet(n.name, `${n.name} came by and stood looking at it for a while.`, 0.3); } }
     up(s, 'joy', 1.5); up(s, 'calm', 0.6); up(s, 'energy', -1);
-  } else if (p.key === 'hill') {
-    const late = h >= se.sunset - 0.6;
-    if (w.thing === 'kite') { o.did = 'I flew my kite from the top of the hill. It pulled on the string like something alive.'; up(s, 'joy', 1.6); o.saw = 'my kite over the hill'; }
-    else if (late) { o.did = `I sat on the bench on the hill and watched the sun go down behind the roofs. My whole street turned orange, and then the first star came. Tonight: ${moonWord(moonPhase(now))}.`; o.saw = 'the sunset over my street'; o.spark = { topic: 'Sunset', text: 'I watched the sun go down from the hill.' }; }
-    else { o.did = wet ? 'From the hill I watched the rain walk across the fields like a grey curtain.' : pick(rnd, ['I lay on my back on the hill and watched the clouds. One looked like a whale, and then like a teapot.', 'From the hill I could see every roof of my street, and the smoke from the bakery going straight up.', 'On the hill the wind was so strong I had to lean into it. A hawk hung in the air without moving.']); o.saw = 'my street seen from the hill'; }
-    find(false);
-    up(s, 'wonder', 1.8); up(s, 'calm', 1); up(s, 'joy', 0.6); up(s, 'energy', -1.3);
+  } else if (p.key === 'land') { // he shaped the ground with the land tool: a hill, a hole, or flat again
+    const j = w.job ?? {};
+    o.made = { kind: 'land', name: j.name };
+    o.did = landDone(s, j, at);
+    o.saw = j.name ? `my ${j.name}` : 'the land tools';
+    up(s, 'joy', 1.2); up(s, 'wonder', 0.8); up(s, 'energy', -1.4);
   }
   if (w.cut && reached && !w.errand) o.did += ` I went home early, because ${w.cut}.`;
   if (!reached && w.job?.kind === 'paint') for (const list of [s.art, s.gallery]) { const a = (list ?? []).find((x) => x.id === w.job.art); if (a) delete a.wall; } // he never got to the wall: it stays a drawing in his album

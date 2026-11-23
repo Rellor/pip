@@ -33,7 +33,8 @@ import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
 import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo } from './world.js';
 import { postOrders, boardLines } from './board.js';
-import { paintTarget } from './web/town.js';
+import { paintTarget, setLand } from './web/town.js';
+import { planLand, landLine } from './land.js';
 import { placeOf } from './web/world.js';
 import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
@@ -251,6 +252,7 @@ async function loadState() {
   grantInstruments(state);
   if (HAS_STUDIO && moveMusicToStudio(state)) addMemory(state, 'I have a little house now. My piano and my music things moved into my new music studio: through the door in my bedroom, across the hall, and through the next door.', 7, 'memory', new Date().toISOString());
   for (const note of applyChanges(state)) addMemory(state, note, 8, 'memory', new Date().toISOString()); // one-time changes from Bas
+  setLand(state.land); // the ground as he shaped it (what he builds outside stands on it)
   moveMusicBack(state); // once: the piano and studio things come back from the old studio (no memory of it: Bas wants it forgotten)
   keepWindowsClear(state);
   const tidied = settleRoom(state.decor); // nothing floats: what stands on something really stands on it (decor.js)
@@ -584,7 +586,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...wishLines(s), ...boardLines(s), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...wishLines(s), ...boardLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -1447,7 +1449,7 @@ async function wakeUp() {
     return true;
   });
   if (!steps.length) steps.push({ action: 'rest', details: {}, thought: 'I could not do what I planned, so I rest a moment.', working_on: '', needs: '', enjoyment: 5 });
-  { const gi = steps.findIndex((x) => x.action === 'go_out' || x.as === 'paint_wall' || x.as === 'print_thing'); if (gi >= 0 && gi < steps.length - 1) steps.push(...steps.splice(gi, 1)); } // going out is always the last thing he does in a wake-up: nothing happens at home while he is away
+  { const gi = steps.findIndex((x) => x.action === 'go_out' || x.as === 'paint_wall' || x.as === 'print_thing' || x.as === 'shape_land'); if (gi >= 0 && gi < steps.length - 1) steps.push(...steps.splice(gi, 1)); } // going out is always the last thing he does in a wake-up: nothing happens at home while he is away
   // A walk is short, so it takes a quarter of the time of other steps. The page uses the same weights.
   let weights = steps.map((x) => (x.action === 'walk_to' ? 0.25 : 1));
   let wsum = weights.reduce((a, b) => a + b, 0);
@@ -1640,7 +1642,8 @@ async function wakeUp() {
     if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
     if (st.action === 'buy') st.made = buy(state, st.details.item ?? st.details.name ?? st.details.what);
     if (st.action === 'buy' && st.made?.bought && i === steps.length - 1) startOuting(state, { errand: st.made.bought }, stepStart); // a quick walk to the corner shop and back (when nothing else is planned after it)
-    if (st.action === 'go_out') st.made = startOuting(state, st.details, stepStart);
+    if (st.action === 'go_out' && st.as === 'shape_land') { const plan = planLand(state, st.details.land, stepStart); if (plan.failed) st.made = plan; else st.details = { ...st.details, job: plan.job }; } // he shapes the land: first see if it fits there
+    if (st.action === 'go_out' && !st.made?.failed) st.made = startOuting(state, st.details, stepStart);
     if (st.action === 'cook') {
       const d0 = st.details ?? {};
       if (!text(d0.dish ?? d0.name, 60) || !(Array.isArray(d0.ingredients) && d0.ingredients.length)) { // he only said "cook": a simple dish from what is there

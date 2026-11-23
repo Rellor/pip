@@ -42,7 +42,7 @@ export function capOf(decor) {
 export const MAX_OUTSIDE = 40;
 const OUTSIDE_WORDS = /\b(outside|outdoors?|my plot|my land|my field|on the plot|across the street|in the street|my yard|the meadow)\b/i;
 export const saysOutside = (text) => OUTSIDE_WORDS.test(String(text ?? '')); // in a sentence about what he makes
-export const isOutside = (where) => saysOutside(where) || worldWhere(where); // as the place he picked: also "by the pond", "on top of the hill"
+export const isOutside = (where) => saysOutside(where) || worldWhere(where); // as the place he picked: also "by the pond", "beside the square"
 export const outsideThings = (decor) => decor.filter((d) => d.kind === 'outside');
 const roomCount = (decor) => decor.filter((d) => d.kind !== 'outside').length; // what stands on his plot does not fill his room
 const FULL = 'his room is full. He can put things in his chest, build storage (a shelf or a closet makes room for more), or ask for more space';
@@ -57,7 +57,7 @@ export const ZONES = {
   floor_right: { label: 'on the floor on the right side of the room', kind: 'floor', lim: { w: 1.1, d: 1.4 }, rotY: -Math.PI / 2, off: [-1.2, 0], slots: [[4.4, 0, -1.6], [4.4, 0, -0.2]] },
   floor: { label: 'on the floor', kind: 'floor', rotY: 0, off: [0, 1.1], slots: [], free: true }, // anywhere on the floor that has room
   surface: { label: 'on furniture', kind: 'surface', rotY: 0, off: [0, 1.1], slots: [], free: true },
-  outside: { label: 'outside on my plot', kind: 'outside', lim: {}, rotY: Math.PI, off: [0, -1.5], slots: [], free: true },
+  outside: { label: 'outside on my land', kind: 'outside', lim: {}, rotY: Math.PI, off: [0, -1.5], slots: [], free: true },
   wall_free: { label: 'on a wall', kind: 'wall', rotY: 0, side: null, slots: [], free: true },
   on_piano: { label: 'on top of the piano', kind: 'surface', lim: { w: 1.1, d: 0.8 }, rotY: 0, off: [0, 1.5], slots: [[-3.4, 1.4, -4.5], [-1.9, 1.4, -4.5]] },
   on_bookshelf: { label: 'on top of the bookshelf', kind: 'surface', lim: { w: 1.0, d: 0.55 }, rotY: 0, off: [0, 1.4], slots: [[2.0, 3.0, -4.65], [3.2, 3.0, -4.65]] },
@@ -1883,7 +1883,7 @@ export const outsidePlaces = (open = null) => BUILD_PLACES.filter((p) => !p.need
 const SIDE = [[/\bleft\b/i, [-1, 0]], [/\bright\b/i, [1, 0]], [/\b(behind|back of|north)\b/i, [0, -1]], [/\b(in front|front of|south)\b/i, [0, 1]]];
 // A place outside. A plain "outside" is his plot: the front row first (by the street, across from his door), then
 // further back. Anywhere else he names the place himself: the thing goes as close to it as it fits (within 10 m), on
-// the ground as it is there (on the hill it stands on the slope). When it does not fit he hears why, and what would.
+// the ground as it is there (on a hill he made it stands on the slope). When it does not fit he hears why, and what would.
 function placeOutside(decor, spec, parts, atMs, now, moving = false) {
   const mine = outsideThings(decor);
   if (mine.length >= MAX_OUTSIDE) return { failed: `there are ${mine.length} things of mine outside, and that is enough. I take one back inside or put one in my chest first`, hinted: true };
@@ -1903,11 +1903,11 @@ function placeOutside(decor, spec, parts, atMs, now, moving = false) {
   });
   if (!spot || spot.key === 'plot') {
     const spots = [];
-    for (let x = PLOT.x0 + hw + 0.6; x <= PLOT.x1 - hw - 0.6; x += 1) for (let z = PLOT.z0 + hd + 0.8; z <= PLOT.z1 - hd - 0.6; z += 1) spots.push([x, z, (z - PLOT.z0) * 1.6 + Math.abs(x - 1) * 0.35]);
+    for (let x = PLOT.x0 + hw + 0.6; x <= PLOT.x1 - hw - 0.6; x += 1) for (let z = PLOT.z0 + hd + 0.8; z <= PLOT.z1 - hd - 0.6; z += 1) spots.push([x, z, (x - PLOT.x0) * 1.6 + Math.abs(z - (PLOT.z0 + PLOT.z1) / 2) * 0.35]);
     spots.sort((a, b) => a[2] - b[2]);
     const free = spots.find(([x, z]) => !inWay(x, z));
-    if (!free) return { failed: `there is no room on my plot for something about ${Math.round(hw * 20) / 10} x ${Math.round(hd * 20) / 10} m (my plot is ${PLOT.x1 - PLOT.x0} x ${r3(PLOT.z1 - PLOT.z0)} m). I pick another place outside (${outsidePlaces(spec.worldOpen).slice(1, 6).join(', ')}), or make it smaller`, hinted: true };
-    return { entry: entry(free[0], free[1], 'outside on my plot, across the street from my door', Math.PI) };
+    if (!free) return { failed: `there is no room on my land for something about ${Math.round(hw * 20) / 10} x ${Math.round(hd * 20) / 10} m (my land is ${PLOT.x1 - PLOT.x0} x ${r3(PLOT.z1 - PLOT.z0)} m). I pick another place outside (${outsidePlaces(spec.worldOpen).slice(1, 6).join(', ')}), or make it smaller`, hinted: true };
+    return { entry: entry(free[0], free[1], 'outside on my land, beside the square', Math.PI) };
   }
   // the place he named: beside it when it is something that stands there (the pond, the library), on the side he said
   const words = String(spec.where ?? '');

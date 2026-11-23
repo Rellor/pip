@@ -2266,6 +2266,7 @@ function updateWalk(dt) {
   const sway = Math.sin((bob.walked / stepLen) * Math.PI) * 0.022 * big * bob.k;
   camera.position.set(view.x + Math.cos(view.yaw) * sway, (inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55) + up + jump.y * (inTown(view.x) ? 1 : 1.6), view.z - Math.sin(view.yaw) * sway);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
+  if (window.pipSky) { const [x, y, z, tx, tz] = window.pipSky; camera.position.set(TOWN_X + x, y, z); camera.lookAt(TOWN_X + tx, 0, tz); } // for testing: a look at the world from above
 }
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
 let walkOut = false;
@@ -3677,7 +3678,7 @@ function headlineBase(st) {
   switch (st.action) {
     case 'search_web': return ['🌐', `Searching the web for “${d.query || st.query || '…'}”`];
     case 'browse': return ['🧭', 'Browsing the web, to see what he comes across'];
-    case 'buy': return ['🛍️', `At the corner shop for ${d.item || st.item || 'something'}`];
+    case 'buy': return ['🛍️', `At the grocery store for ${d.item || st.item || 'something'}`];
     case 'go_out': return [worldPlace(d.place ?? st.place)?.emoji ?? '🚶', st.away || awayNow() ? `Out: ${((w) => `${w[0].toLowerCase()}${w.slice(1)}`)(awayWords()?.[1] ?? `at ${worldPlace(d.place ?? st.place)?.name ?? 'somewhere'}`)}` : `Going out, to ${(st.placeName || worldPlace(d.place ?? st.place)?.name || 'somewhere').replace(/^my /, 'his ')}`];
     case 'came_home': return ['🏠', `Home again from ${(st.placeName || 'outside').replace(/^my /, 'his ')}`];
     case 'happened': return [st.emoji || '🌤️', 'Something happened'];
@@ -3793,7 +3794,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the corner shop', out: e.action === 'came_home' ? 'Came home' : e.failed ? 'Wanted to go out' : 'Went out', event: 'Something happened', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the grocery store', out: e.action === 'came_home' ? 'Came home' : e.failed ? 'Wanted to go out' : 'Went out', event: 'Something happened', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -3851,7 +3852,7 @@ function dayCard(e) {
     card.append(el('h3', `To ${(e.placeName || 'somewhere').replace(/^my /, 'his ')}`, 'title'));
     card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `${e.what ? `He wants to ${hisWords(e.place, e.what)}. ` : ''}${e.back ? `Home again around ${hm(Date.parse(e.back))}.` : ''}`, 'muted'));
   } else if (kind === 'out') { // home again: a postcard of what he saw, and what he brought
-    card.append(el('h3', e.errand ? `Back from the corner shop with ${e.errand}` : `From ${(e.placeName || 'outside').replace(/^my /, 'his ')}`, 'title'));
+    card.append(el('h3', e.errand ? `Back from the grocery store with ${e.errand}` : `From ${(e.placeName || 'outside').replace(/^my /, 'his ')}`, 'title'));
     if (e.card) { const pc = el('div'); pc.innerHTML = postcardSvg(e.card); card.append(pc); } // drawn by the page from the place, the hour and the weather (no outside text in it)
     if (!e.errand && e.did) card.append(el('p', e.did, 'thought'));
     if (e.found?.length) { const row = el('div', null, 'chips'); for (const f of e.found) row.append(el('span', `${f.emoji || '✨'} ${f.name}`, 'chip')); row.style.marginTop = '8px'; card.append(row); }
@@ -4886,17 +4887,15 @@ function drawMini() {
 // he did there so far. The words come from the places of his world (web/world.js) and from his state.
 const WORLD_CARDS = {
   home: { title: 'Pip’s home', icon: '🏠', what: 'He lives here. Walk in through the red door.', can: ['sleep', 'eat and cook', 'work at his computer', 'keep the things he makes'] },
-  bakery: { title: 'The bakery', icon: '🥖', what: 'It smells of fresh bread from early in the morning.', can: [], none: 'Pip cannot do anything here yet.' },
-  shop: { title: 'The corner shop', icon: '🛍️', what: 'Where he spends his coins.', place: 'shop', can: ['buy food, seeds, things to make with, tools and instruments'] },
+  shop: { title: 'The grocery store', icon: '🛒', what: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.', place: 'shop', can: ['buy food to cook and bake with', 'buy seeds, things to make with, tools and instruments'] },
+  land: { title: 'The land workshop', icon: '⛰️', what: 'The land tools are kept here. With them he shapes the ground of his world.', place: 'land', can: ['make a hill', 'dig a hole', 'make the ground flat again'] },
   library: { title: 'The library', icon: '📚', place: 'library' },
   workshop: { title: 'The print workshop', icon: '🖨️', place: 'workshop', can: ['design a small 3D model and have it printed'] },
   shelf: { title: 'His shelf of prints', icon: '🖨️', what: 'Everything he printed stands here.', place: 'workshop', can: ['design a small 3D model and have it printed'] },
   studio: { title: 'The art workshop', icon: '🎨', what: 'Every drawing he ever made hangs on its outside walls, so nothing is lost when a wall is painted over.', can: [], none: 'It keeps his art. He does not have to do anything for that.' },
   board: { title: 'The notice board', icon: '📌', place: 'board', can: ['read what people ask for', 'make one of those things and earn the coins'] },
   pond: { title: 'The pond', icon: '🦆', place: 'pond' },
-  hill: { title: 'The hill', icon: '⛰️', place: 'hill' },
-  garden: { title: 'Oma Jo’s garden', icon: '🌻', place: 'garden' },
-  plot: { title: 'Pip’s plot', icon: '🌱', what: 'A field of his own, across the street.', can: ['build things here, also big ones'] },
+  plot: { title: 'Pip’s land', icon: '🌱', what: 'A big free field of his own, beside the square. It is his to fill.', can: ['build things here, also big ones', 'make hills and holes', 'ask for a new building'] },
   stone: { title: 'The green stone', icon: '💎', what: 'It glows a little at night. Nobody knows who put it there.', can: [], none: 'Nothing. He can build next to it.' },
 };
 function worldCard(kind, key) {
@@ -4918,9 +4917,10 @@ function worldCard(kind, key) {
   if (wall) { const on = (s.gallery ?? []).filter((a) => a.wall === wall.key); so.push(on.length ? `On it: ${on.slice(-4).map((a) => `“${a.name}”`).join(', ')}.` : 'Nothing is painted on it yet.'); }
   if (key === 'back' || BUILDINGS.some((b) => b.key === key)) { const on = (s.gallery ?? []).filter((a) => a.wall === `back_${key}`); if (on.length) so.push(`Painted on its back wall: ${on.slice(-3).map((a) => `“${a.name}”`).join(', ')}.`); }
   if (key === 'board') { const notes = (s.wishes ?? []).filter((w) => w.board && w.status === 'open' && Date.now() - Date.parse(w.at) < 3 * 86_400_000); so.push(notes.length ? `On it now: ${notes.map((w) => `${w.topic} (${w.reward} coins)`).join(', ')}.` : 'Nothing is pinned on it right now.'); const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept').length; if (kept) so.push(`He made ${kept} of the things people asked for.`); so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); }
+  if (key === 'land') { const l = s.land ?? []; so.push(l.length ? `He made ${l.filter((x) => x.kind !== 'hole').length} hill${l.filter((x) => x.kind !== 'hole').length === 1 ? '' : 's'} and ${l.filter((x) => x.kind === 'hole').length} hole${l.filter((x) => x.kind === 'hole').length === 1 ? '' : 's'}: ${l.slice(-4).map((x) => x.name).join(', ')}.` : 'He has not shaped the land yet. It is all flat.'); }
   if (key === 'plot') { const mine = (s.decor ?? []).filter((d) => d.kind === 'outside' && (d.spot ?? 'plot') === 'plot'); so.push(mine.length ? `${mine.length} thing${mine.length === 1 ? '' : 's'} he made stand here.` : 'Nothing stands here yet.'); }
   if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
-  else if (p && !['shop', 'workshop', 'walls', 'board'].includes(p.key)) so.push('He has not been here yet.');
+  else if (p && !['shop', 'workshop', 'walls', 'board', 'land'].includes(p.key)) so.push('He has not been here yet.');
   if (so.length) sections.push({ heading: 'So far', lines: so });
   return { title: c.title, icon: c.icon, subtitle: 'In his world', sections };
 }

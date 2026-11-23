@@ -1,67 +1,73 @@
 // Pip's world in 3D. It is set up the easy way, like the town of Pino the bird (pinos.world): one big flat ground with a
-// grid on it, and on it plain blocks. A block becomes a bakery or a house by the picture on its front (facade.js), and a
+// grid on it, and on it plain blocks. A block becomes a shop or a house by the picture on its front (facade.js), and a
 // place is just a spot Pip walks to and does something at. Nothing has an inside, except his own home: the door of his
 // house here leads into his room, and the front door in his hall leads back out here.
+// The layout is a small village square: his home on the north side with the grocery store and the library glued to each
+// other beside it, the notice board in the middle, the three workshops in a row on the south side, and walls for his art
+// in between. Everything is close together. There is no road (there are no cars): sand paths run to every door.
 //   - To add a building: one line in BUILDINGS (where, how big, what its front looks like, or a photo for it).
 //   - To add a wall for his drawings: one line in WALLS.
-// The world stands in the same scene as his house, far to the side (at x = TOWN_X). The viewer can look at it from above
-// or walk through it; when Pip goes out, he is seen here. It follows the real hour, season and weather. No model, no server.
-import { PEOPLE, faceSvg, hourNL, shopOpen } from './street.js';
+// The world stands in the same scene as his house, far to the side (at x = TOWN_X). The viewer walks through it; when
+// Pip goes out, he is seen here. It follows the real hour, season and weather. No model, no server.
+import { hourNL, shopOpen } from './street.js';
 import { seasonInfo } from './season.js';
 import { makeGrain } from './grain.js';
 import { makeFacades } from './facade.js';
 
 export const TOWN_X = 220; // where the world is in the scene (his room is around x 0)
-export const WORLD = { x0: -112, x1: 112, z0: -72, z1: 64 }; // the whole world: 224 x 136 m. Beyond the rim there is nothing to walk on
+export const WORLD = { x0: -66, x1: 78, z0: -38, z1: 64 }; // the whole world: 144 x 102 m. Beyond the rim there is nothing to walk on
 export const WORLD_RANGE = [WORLD.x0, WORLD.x1];
-export const TOWN_RANGE = [-39, 42]; // the high street, around his home: what the view from above shows first
+export const TOWN_RANGE = [-39, 42]; // around his home: what the view from above shows first
 export const TOWN_Z = [WORLD.z0, WORLD.z1];
-// Pip's own plot: a piece of land across the street from his house, where a plain "outside" puts what he makes.
-export const PLOT = { x0: -11, x1: 35, z0: 12.4, z1: 26.6 };
+export const SQUARE = { x0: -10, x1: 26, z0: 7, z1: 31 }; // the village square: sand, with the notice board in the middle
+// Pip's own land: a big free field beside the square, where a plain "outside" puts what he makes. It is his to fill.
+export const PLOT = { x0: 30, x1: 62, z0: 4, z1: 36 };
 export const inTown = (x) => x > 60;
 
-// ---- The buildings. `at` is the middle of the front on the ground, `size` is wide, high, deep. The front looks toward the
-// viewer (+z) unless `face` is 180. `look` says what the front is made of (facade.js); `tex` is a photo to use instead.
-// `who` lives there (a neighbour of street.js), `lit` are the hours its windows are lit, `low` buildings on the near side
-// of the street are shown low from above, so they do not hide the street.
+// ---- The buildings. `at` is the middle of the front on the ground, `size` is wide, high, deep. The front looks toward
+// +z (south, to the square) unless `face` is 180. `look` says what the front is made of (facade.js); `tex` is a photo to
+// use instead. `lit` are the hours its windows are lit.
 export const BUILDINGS = [
   { key: 'home', name: 'Pip’s home', who: 'Pip', at: [0, 0], size: [9, 5, 7.5], look: { wall: 'plaster', color: '#f3cf7a', door: { x: 4.5, color: '#c0392b', w: 1.2, h: 2.3 }, windows: [[1.0, 1.1, 1.9, 1.7], [6.2, 1.1, 1.9, 1.7], [3.7, 3.5, 1.6, 1.0]] }, roof: 0xe9855b, lit: [8, 23] },
-  { key: 'bakery', name: 'Bakery', at: [11.5, 0], size: [9.8, 6.2, 7.5], look: { wall: 'brick', color: '#d9cbb2', door: { x: 8.3, color: '#6b4a35' }, shop: { x0: 0.8, x1: 6.2, awning: '#d9483b' }, windows: [[1.4, 3.9, 1.5, 1.4], [5.2, 3.9, 1.5, 1.4]], sign: { text: 'BAKERY', bg: '#6b4a35', fg: '#fff3d6', y: 3.05, x: 3.5 } }, roof: 0x7c6a5c, lit: [6.5, 18] },
-  { key: 'shop', name: 'Corner shop', at: [33, 0], size: [11.6, 4.4, 7.5], look: { wall: 'metal', color: '#4f9c91', door: { x: 7.4, color: '#2f5f58' }, shop: { x0: 0.8, x1: 6.2, awning: '#f2c14e', goods: ['#ef6f6c', '#f2c14e', '#8cc27a'] }, shutter: { x0: 8.6, x1: 11 }, sign: { text: 'CORNER SHOP', bg: '#fff8ee', fg: '#2f5f58', y: 3.3, x: 4.6 } }, roof: 0x3d7d74, lit: [9, 18] },
-  { key: 'library', name: 'Library', at: [57, 0.4], size: [16, 7, 9], look: { wall: 'stone', color: '#e3d2b6', columns: 4, door: { x: 8, color: '#7a5237', w: 2.2, h: 3.4 }, windows: [[2.6, 1.6, 1.3, 2.6], [12.1, 1.6, 1.3, 2.6]], sign: { text: 'LIBRARY', bg: '#f1e6d2', fg: '#7a5237', y: 6.0, x: 8, size: 0.55 } }, roof: 0x8a5a3a, lit: [10, 17] },
-  { key: 'workshop', name: 'Print workshop', at: [84, 0], size: [11, 5, 8], look: { wall: 'metal', color: '#9aa3a8', door: { x: 1.8, color: '#c9773c' }, shutter: { x0: 3.6, x1: 9.8 }, sign: { text: 'PRINT WORKSHOP', bg: '#2a2a2e', fg: '#f2c14e', y: 3.5, x: 6.7, size: 0.45 } }, roof: 0x5c6468, lit: [9, 18] },
-  { key: 'studio', name: 'Art workshop', at: [58, 11.5], face: 180, size: [12, 5, 8], look: { wall: 'boards', color: '#e8dcc6', door: { x: 2, color: '#e9855b' }, windows: [[4.4, 1.2, 2.2, 1.9], [8.2, 1.2, 2.2, 1.9]], sign: { text: 'PIP’S ART', bg: '#e9855b', fg: '#ffffff', y: 3.6, x: 6 } }, roof: 0xe9855b, lit: [9, 21] },
+  { key: 'shop', name: 'Grocery store', at: [14, 0], size: [14, 4.8, 9], look: { wall: 'metal', color: '#4f9c91', door: { x: 10.5, color: '#2f5f58' }, shop: { x0: 0.9, x1: 9.2, awning: '#f2c14e', goods: ['#ef6f6c', '#f2c14e', '#8cc27a', '#e9855b'] }, shutter: { x0: 11.7, x1: 13.4 }, sign: { text: 'GROCERY STORE', bg: '#fff8ee', fg: '#2f5f58', y: 3.6, x: 5.1 } }, roof: 0x3d7d74, lit: [7, 22] },
+  { key: 'library', name: 'Library', at: [29.2, 0], size: [16, 7, 9], look: { wall: 'stone', color: '#e3d2b6', columns: 4, door: { x: 8, color: '#7a5237', w: 2.2, h: 3.4 }, windows: [[2.6, 1.6, 1.3, 2.6], [12.1, 1.6, 1.3, 2.6]], sign: { text: 'LIBRARY', bg: '#f1e6d2', fg: '#7a5237', y: 6.0, x: 8, size: 0.55 } }, roof: 0x8a5a3a, lit: [8, 22] },
+  { key: 'studio', name: 'Art workshop', at: [-6, 38], face: 180, size: [12, 5, 8], look: { wall: 'boards', color: '#e8dcc6', door: { x: 2, color: '#e9855b' }, windows: [[4.4, 1.2, 2.2, 1.9], [8.2, 1.2, 2.2, 1.9]], sign: { text: 'PIP’S ART', bg: '#e9855b', fg: '#ffffff', y: 3.6, x: 6 } }, roof: 0xe9855b, lit: [9, 21] },
+  { key: 'workshop', name: 'Print workshop', at: [8.7, 38], face: 180, size: [11, 5, 8], look: { wall: 'metal', color: '#9aa3a8', door: { x: 1.8, color: '#c9773c' }, shutter: { x0: 3.6, x1: 9.8 }, sign: { text: 'PRINT WORKSHOP', bg: '#2a2a2e', fg: '#f2c14e', y: 3.5, x: 6.7, size: 0.45 } }, roof: 0x5c6468, lit: [9, 21] },
+  { key: 'land', name: 'Land workshop', at: [20.4, 38], face: 180, size: [12, 5, 8], look: { wall: 'planks', color: '#8fae6a', door: { x: 2, color: '#5a4630' }, shutter: { x0: 4.2, x1: 10.8 }, sign: { text: 'LAND TOOLS', bg: '#5a4630', fg: '#f4e7c6', y: 3.6, x: 7.5, size: 0.5 } }, roof: 0x6f8a52, lit: [9, 21] },
 ];
 // A building's place on the ground: [x0, x1, z0, z1].
 export const rectOf = (b) => { const [w, , d] = b.size; return b.face === 180 ? [b.at[0] - w / 2, b.at[0] + w / 2, b.at[1], b.at[1] + d] : [b.at[0] - w / 2, b.at[0] + w / 2, b.at[1] - d, b.at[1]]; };
-// ---- Walls for his art (like Pino's numbered walls): a bare concrete wall somewhere in the world. Every drawing he makes
-// is also pasted on one of them, over the older ones. `at` is its middle, `len` how long, `turn` 90 for a wall that runs
-// away from the viewer.
+const bOf = (key) => BUILDINGS.find((b) => b.key === key);
+// Where its door is, and a step in front of it (where he stands): [x, z, the way he looks].
+const doorOf = (key, out = 1.3) => { const b = bOf(key); const f = b.face === 180; return { x: b.at[0] + (f ? b.size[0] / 2 - b.look.door.x : b.look.door.x - b.size[0] / 2), z: b.at[1] + (f ? -out : out), face: f ? 0 : Math.PI }; };
+// ---- Walls for his art (like Pino's numbered walls): a bare concrete wall somewhere in the world. `at` is its middle,
+// `len` how long.
 export const WALLS = [
-  { key: 'wall_1', name: 'the wall by the corner shop', at: [44, -1.2], len: 7 },
-  { key: 'wall_2', name: 'the wall in the park', at: [-53, -6.5], len: 8 },
-  { key: 'wall_3', name: 'the wall by my plot', at: [41.5, 20.5], len: 8 },
-  { key: 'wall_4', name: 'the long wall behind the houses', at: [-2, -14], len: 16 },
-  { key: 'wall_5', name: 'the wall by the workshop', at: [96, -1.2], len: 8 },
+  { key: 'wall_1', name: 'the wall beside my house', at: [-11, -2], len: 6 },
+  { key: 'wall_2', name: 'the wall by the pond', at: [-30, 6], len: 8 },
+  { key: 'wall_3', name: 'the wall by the library', at: [43, -3], len: 8 },
+  { key: 'wall_4', name: 'the long wall by the art workshop', at: [-24, 40], len: 12 },
+  { key: 'wall_5', name: 'the wall by the land workshop', at: [33, 42], len: 8 },
 ];
-// ---- The notice board: it stands in the street beside his house. People pin notes on it with what they would like made
-// (board.js). He walks to it to read them.
-export const BOARD = { x: -8.6, z: 0.62, w: 2.6, h: 1.5 };
+// ---- The notice board: it stands in the middle of the square. People pin notes on it with what they would like made
+// (board.js). He walks to it to read them. The notes are on both sides.
+export const BOARD = { x: 8, z: 19, w: 2.6, h: 1.5 };
 export const WALL_H = 3.4;
 // ---- Where he can paint (like the tags on the walls of Pino's town). He needs no paper and no supplies for it. He picks
-// the wall himself: one of the art walls, or the back wall of any building in the street; or he leaves it open and one is
-// picked for him. `side` is the face he paints on (1: the one that looks toward the houses' backs, -1: the other).
-const BACK_NAME = { home: 'my own house', bakery: 'the bakery', shop: 'the corner shop', library: 'the library', workshop: 'the print workshop' };
+// the wall himself: one of the art walls, or the back wall of his house, the grocery store or the library; or he leaves
+// it open and one is picked for him. `side` is the face he paints on (1: the one that looks south, -1: north).
+const BACK_NAME = { home: 'my own house', shop: 'the grocery store', library: 'the library' };
+const BACK_VIA = ['alley', 'alleyBack']; // the alley between his house and the grocery store leads to the back of the row
 export const PAINT_WALLS = [
-  { key: 'wall_1', words: /corner shop|shop/, via: ['right'] }, { key: 'wall_2', words: /park|pond/, via: ['left', 'parkGate'] }, { key: 'wall_3', words: /plot/, via: ['right'], side: -1 },
-  { key: 'wall_4', words: /long|behind/, via: ['gap', 'gapBack'] }, { key: 'wall_5', words: /workshop|print/, via: ['right', 'pastShelf'] },
+  { key: 'wall_1', words: /beside|my house|my home/, via: ['homeW'] }, { key: 'wall_2', words: /park|pond/, via: ['homeW'] }, { key: 'wall_3', words: /library/, via: ['libE'] },
+  { key: 'wall_4', words: /long|art/, via: ['sqN', 'sqW'], side: -1 }, { key: 'wall_5', words: /land/, via: ['sqN', 'sqE', 'landE'], side: -1 },
 ].map((t) => { const w = WALLS.find((x) => x.key === t.key); const side = t.side ?? 1; return { ...t, name: w.name, x: w.at[0], z: w.at[1] + side * 0.21, len: w.len, h: WALL_H, side, spot: [w.at[0], w.at[1] + side * 1.95] }; })
-  .concat(BUILDINGS.filter((b) => BACK_NAME[b.key]).map((b) => { const z = b.at[1] - b.size[2]; return { key: `back_${b.key}`, back: b.key, name: `the back wall of ${BACK_NAME[b.key]}`, x: b.at[0], z: z - 0.03, len: b.size[0], h: b.size[1], side: -1, spot: [b.at[0], z - 1.9], via: ['gap', 'gapBack'] }; }));
-// "the wall by the corner shop", "the back of the bakery", "any wall": the wall he means. No wall named: one of them, by `seed`.
+  .concat(BUILDINGS.filter((b) => BACK_NAME[b.key]).map((b) => { const z = b.at[1] - b.size[2]; return { key: `back_${b.key}`, back: b.key, name: `the back wall of ${BACK_NAME[b.key]}`, x: b.at[0], z: z - 0.03, len: b.size[0], h: b.size[1], side: -1, spot: [b.at[0], z - 1.9], via: BACK_VIA }; }));
+// "the wall by the library", "the back of the grocery store", "any wall": the wall he means. No wall named: one of them, by `seed`.
 export function paintTarget(text, seed = 0) {
   const norm = (v) => String(v ?? '').toLowerCase().replace(/[’']/g, '');
   const t = norm(text);
-  const word = (w) => norm(w.name).replace(/^the back wall of (the |my own )?/, '').replace(/s house$/, ''); // "bakery", "oma jo", "house" (his own)
+  const word = (w) => norm(w.name).replace(/^the back wall of (the |my own )?/, '').replace(/ store$/, ''); // "grocery", "library", "house" (his own)
   const backs = PAINT_WALLS.filter((w) => w.back);
   const backOf = () => backs.find((w) => w.back !== 'home' && t.includes(word(w))) ?? (/\b(my|own|home)\b/.test(t) ? backs.find((w) => w.back === 'home') : null);
   return PAINT_WALLS.find((w) => t.includes(norm(w.name)))
@@ -70,82 +76,106 @@ export function paintTarget(text, seed = 0) {
     ?? backOf()
     ?? PAINT_WALLS[Math.abs(Math.floor(seed)) % PAINT_WALLS.length];
 }
-const wallRect = (w) => (w.turn === 90 ? [w.at[0] - 0.25, w.at[0] + 0.25, w.at[1] - w.len / 2, w.at[1] + w.len / 2] : [w.at[0] - w.len / 2, w.at[0] + w.len / 2, w.at[1] - 0.25, w.at[1] + 0.25]);
+const wallRect = (w) => [w.at[0] - w.len / 2, w.at[0] + w.len / 2, w.at[1] - 0.25, w.at[1] + 0.25];
 
-// Places Pip is seen at (x along the street, z toward the viewer; the house fronts are at z 0).
+export const POND = { x: -30, z: 20, rx: 12, rz: 8 };
+const WILLOW = [-19, 29];
+const STONE = [-54, -16]; // the green stone
+const BENCHES = [[-15.6, 17.4, -Math.PI / 2], [-30, 30.4, Math.PI]]; // [x, z, the way it looks]
+const PLOT_SIGN = [28.8, 6.2];
+// Places Pip is seen at (x to the east, z to the south; the front of his house is at z 0, the square lies south of it).
 export const TOWN_SPOTS = {
   door: { x: 0, z: 1.1, face: 0 }, // in front of Pip's own door
   step: { x: 0.2, z: 0.62, face: 0, y: 0.2 }, // on his own doorstep
-  shop: { x: 34.6, z: 1.0, face: Math.PI },
-  garden: { x: -29.5, z: -3.4, face: 0.6 }, // between Oma Jo's vegetable beds
-  gate: { x: -25.6, z: 0.9, face: Math.PI }, // her garden gate: the way in and out
-  gateIn: { x: -25.7, z: -1.3, face: Math.PI }, // just inside it
-  left: { x: -38, z: 1.2, face: -Math.PI / 2 }, // the way to the pond, and up the hill
-  right: { x: 41, z: 1.2, face: Math.PI / 2 }, // the way to the library
-  parkGate: { x: -44, z: 1.4, face: -Math.PI / 2 },
-  pond: { x: -58.5, z: 5.6, face: 0.25 }, // by the bench under the willow, looking over the water
-  hillFoot: { x: -62, z: -6, face: Math.PI },
-  hillBend: { x: -72, z: -15, face: Math.PI },
-  hill: { x: -65.2, z: -23.2, face: 0.5 }, // on the top, by the bench
-  libFront: { x: 46, z: 3.6, face: Math.PI / 2 },
-  library: { x: 57, z: 3.6, face: Math.PI }, // at the library door
-  workshop: { x: 80.3, z: 1.1, face: Math.PI }, // at the door of the print workshop
-  board: { x: BOARD.x, z: 1.75, face: Math.PI }, // in front of the notice board
-  studio: { x: 62, z: 10.2, face: 0 }, // at the door of the art workshop (he draws there)
-  gap: { x: 5.55, z: 1.2, face: Math.PI }, // the alley between his house and the bakery: the way to the back of the houses
-  gapBack: { x: 5.55, z: -9.6, face: Math.PI },
-  pastShelf: { x: 89.6, z: 1.4, face: Math.PI / 2 }, // past the shelf of prints, on the way to the wall by the workshop
+  sqN: { x: 0, z: 5.5, face: 0 }, // the north edge of the square, before his door
+  sqW: { x: -10, z: 12, face: -Math.PI / 2 }, sqE: { x: 15, z: 10, face: Math.PI / 2 }, sqSW: { x: -2, z: 33, face: 0 }, // corners of the square he walks by
+  shop: doorOf('shop'), // at the door of the grocery store
+  library: doorOf('library', 1.5),
+  studio: doorOf('studio'), // at the door of the art workshop (he draws there)
+  workshop: doorOf('workshop'), // at the door of the print workshop
+  land: doorOf('land'), // at the door of the land workshop
+  board: { x: BOARD.x, z: BOARD.z - 1.15, face: 0 }, // in front of the notice board
+  pond: { x: -16.4, z: 19.6, face: -Math.PI / 2 }, // by the bench, looking over the water
+  homeW: { x: -6.2, z: 1.2, face: -Math.PI / 2 }, // past the west corner of his house
+  alley: { x: 5.75, z: 1.2, face: Math.PI }, alleyBack: { x: 5.75, z: -10.9, face: Math.PI }, // the alley between his house and the grocery store, and out behind the row
+  libE: { x: 38.6, z: 1.3, face: Math.PI / 2 }, // past the east corner of the library
+  landE: { x: 28.4, z: 36.5, face: Math.PI / 2 }, // past the east corner of the land workshop
   ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, { x: w.spot[0], z: w.spot[1], face: w.side > 0 ? Math.PI : 0 }])), // in front of each wall he can paint on
 };
 // Where Pip is seen for each place of his world: [the spot, 'in' when he goes inside there (then he is out of sight)].
-export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], garden: ['garden', ''], pond: ['pond', ''], hill: ['hill', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], walls: ['paint_wall_1', ''] };
+export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], walls: ['paint_wall_1', ''] };
 // The way to each spot from his door: the corners he walks by, one after the other (the way home is the same, backwards).
 // (A route can also be for one spot: the way to each wall he paints on. The page looks for the spot first, then the place.)
-export const ROUTES = { garden: ['gate', 'gateIn'], pond: ['left', 'parkGate'], hill: ['left', 'parkGate', 'hillFoot', 'hillBend'], library: ['right', 'libFront'], workshop: ['right'], studio: ['right'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
-export const POND = { x: -64, z: 14, rx: 11.5, rz: 6.5 };
-export const HILL = { x: -66, z: -24, r: 21, h: 8.5 };
-// How high the ground is (the hill): street coordinates in, metres out. Everywhere else the ground is flat.
+export const ROUTES = { doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], land: ['sqN', 'sqE'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
+
+// ---- The land itself. It is flat, until Pip shapes it: at the land workshop he takes the land tool and makes a hill or
+// digs a hole (land.js; the list is kept in his state as `land`). Whoever draws the world or puts something on it first
+// says what he made, with setLand.
+export const LAND_MAX = 12; // hills and holes at one time
+export const LAND_SIZES = { small: { r: 5, hill: 1.6, hole: 1.2 }, medium: { r: 8, hill: 3, hole: 2 }, big: { r: 12, hill: 5, hole: 3 } }; // how wide (radius) and how high or deep, in metres
+let LAND = [];
+export function setLand(list) { LAND = (Array.isArray(list) ? list : []).filter((s) => s && Number.isFinite(s.x) && Number.isFinite(s.z) && s.r > 0 && s.h > 0).slice(-LAND_MAX); return LAND; }
+export const landNow = () => LAND;
+// How high the ground is: world coordinates in, metres out. Flat (0) everywhere he has not shaped it.
 export function groundAt(lx, z) {
-  const d = Math.hypot(lx - HILL.x, z - HILL.z) / HILL.r;
-  return d >= 1 ? 0 : HILL.h * (1 - d * d) ** 2;
+  let y = 0;
+  for (const s of LAND) { const d = Math.hypot(lx - s.x, z - s.z) / s.r; if (d < 1) y += s.kind === 'hole' ? -s.h * (1 - d ** 4) ** 2 : s.h * (1 - d * d) ** 2; } // a hill is round; a hole has a flat bottom and steeper sides
+  return Math.max(-3, Math.min(9, y));
 }
 export const townGround = (x, z) => groundAt(x - TOWN_X, z);
-// What cannot be walked through: [x0, x1, z0, z1] (every building and wall, and the fence of Oma Jo's garden).
-export const PRINT_SHELF = { x0: 82.3, x1: 88.1, z: 0.42, rows: [0.62, 1.32, 2.02], per: 7 }; // the shelf in front of the print workshop: 21 prints
+// The shelf in front of the print workshop: 21 prints. It stands before the shutter, and looks the way the building looks.
+export const PRINT_SHELF = (() => { const b = bOf('workshop'); const f = b.face === 180 ? -1 : 1; const edge = (v) => b.at[0] + (f < 0 ? b.size[0] / 2 - v : v - b.size[0] / 2); const [a, c] = [edge(b.look.shutter.x0 + 0.2), edge(b.look.shutter.x1 - 0.2)]; return { x0: Math.min(a, c), x1: Math.max(a, c), z: b.at[1] + f * 0.42, dir: f, rows: [0.62, 1.32, 2.02], per: 7 }; })();
 export const PRINT_SLOTS = PRINT_SHELF.rows.flatMap((y) => Array.from({ length: PRINT_SHELF.per }, (_, i) => [PRINT_SHELF.x0 + 0.45 + i * ((PRINT_SHELF.x1 - PRINT_SHELF.x0 - 0.9) / (PRINT_SHELF.per - 1)), y, PRINT_SHELF.z]));
-const BLOCKS = [...BUILDINGS.map(rectOf), ...WALLS.map(wallRect), [-36.2, -35.4, -7.5, 0.3], [-36.2, -24.6, -7.6, -7.2], [-36.2, -26.6, -0.1, 0.25], [PRINT_SHELF.x0 - 0.1, PRINT_SHELF.x1 + 0.1, 0, 0.8], [BOARD.x - BOARD.w / 2 - 0.1, BOARD.x + BOARD.w / 2 + 0.1, BOARD.z - 0.25, BOARD.z + 0.2]];
+// What cannot be walked through: [x0, x1, z0, z1] (every building and wall, the shelf of prints and the notice board).
+const BLOCKS = [...BUILDINGS.map(rectOf), ...WALLS.map(wallRect), [PRINT_SHELF.x0 - 0.1, PRINT_SHELF.x1 + 0.1, PRINT_SHELF.z - 0.4, PRINT_SHELF.z + 0.4], [BOARD.x - BOARD.w / 2 - 0.1, BOARD.x + BOARD.w / 2 + 0.1, BOARD.z - 0.22, BOARD.z + 0.22]];
 export function townBlocked(x, z, pad = 0.3) {
   const lx = x - TOWN_X;
   if (lx < WORLD.x0 + 0.4 || lx > WORLD.x1 - 0.4 || z < WORLD.z0 + 0.4 || z > WORLD.z1 - 0.4) return true; // the rim of the world
   if (((lx - POND.x) / (POND.rx + pad)) ** 2 + ((z - POND.z) / (POND.rz + pad)) ** 2 < 1) return true; // the water
   return BLOCKS.some(([x0, x1, z0, z1]) => lx > x0 - pad && lx < x1 + pad && z > z0 - pad && z < z1 + pad);
 }
-// Standing right in front of Pip's door in the street (for the viewer who walks: this is the way back into the hall).
+// Standing right in front of Pip's door in the world (for the viewer who walks: this is the way back into the hall).
 export const atTownDoor = (x, z) => Math.abs(x - TOWN_X) < 0.75 && z < 0.75 && z > -0.2;
 
-// ---- Where Pip may build (decor.js). He picks the place himself, anywhere in his world. The only rule: it has to fit.
-// It may not stand in a building, in the water, on a tree or on what is already there, and the ways people walk must stay
-// free (the pavement along the doors, the path to the pond, the way up the hill). It can be bigger than a house.
+// ---- Where Pip may build (decor.js) and shape the land (land.js). He picks the place himself, anywhere in his world.
+// The only rule: it has to fit. It may not stand in a building, in the water, on a tree or on what is already there,
+// and the square and the ways he walks must stay free. It can be bigger than a house.
 export const BUILD_MAX = { w: 20, h: 18, d: 20 };
-// What stands there already: [what it is, x0, x1, z0, z1] and [what it is, x, z, radius] (street coordinates).
+// The ways he walks himself (ROUTES): they stay free, from corner to corner. (The sand paths are drawn along them.)
+const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ['studio', 'studio', ROUTES.studio], ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
+// Every stretch of path once: [ax, az, bx, bz] (for drawing them).
+export const PATHS = [...new Map(WALKS.map(([a, b]) => [[a, b].map((p) => `${p.x},${p.z}`).sort().join('|'), [a.x, a.z, b.x, b.z]])).values()];
+// What stands there already: [what it is, x0, x1, z0, z1] and [what it is, x, z, radius] (world coordinates).
 const KEEP_RECTS = [
-  ...BUILDINGS.map((b) => { const [x0, x1, z0, z1] = rectOf(b); return [b.who && b.who !== 'Pip' ? `${b.who}’s house stands there` : b.key === 'home' ? 'my own house stands there' : `the ${b.name.toLowerCase()} stands there`, x0 - 0.6, x1 + 0.6, z0 - 0.6, z1 + 0.6]; }),
+  ...BUILDINGS.map((b) => { const [x0, x1, z0, z1] = rectOf(b); return [b.key === 'home' ? 'my own house stands there' : `the ${b.name.toLowerCase()} stands there`, x0 - 0.6, x1 + 0.6, z0 - 0.6, z1 + 0.6]; }),
   ...WALLS.map((w) => { const [x0, x1, z0, z1] = wallRect(w); return ['my drawings hang on the wall there, and people must be able to see them', x0 - 1.6, x1 + 1.6, z0 - 1.6, z1 + 1.6]; }),
   ...PAINT_WALLS.filter((w) => w.back).map((w) => ['I paint on that back wall, and people must be able to see it', w.x - w.len / 2, w.x + w.len / 2, w.z - 2.6, w.z]),
-  ['Oma Jo’s garden is there', -36.6, -24.4, -8, 0.4], ['the pavement along the doors must stay free to walk on', -45, 92, 0.25, 2.5],
-  ['the path to the pond must stay free to walk on', -71.5, -39, 0.2, 2.6],
+  (() => { const [x0, x1, z0, z1] = rectOf(bOf('studio')); return ['my drawings hang on the walls of my art workshop, and people must be able to see them', x0 - 2.4, x1 + 2.4, z0, z1 + 2.4]; })(),
+  ['the shelf with my prints stands there', PRINT_SHELF.x0 - 0.6, PRINT_SHELF.x1 + 0.6, PRINT_SHELF.z - 2, PRINT_SHELF.z + 2],
+  ['the square must stay free: everyone walks there', SQUARE.x0 - 0.4, SQUARE.x1 + 0.4, SQUARE.z0 - 0.4, SQUARE.z1 + 0.4],
 ];
-const TREES = [[-37.5, -5.5, 1.1], [-25.2, 10.2, 0.9], [5.5, -13.5, 0.8], [-13, 24, 1.1], [40, -5, 1.1], [39.5, 14, 0.9], [-36, 13, 1], [-30, 25, 1.2], [39, 25.5, 1], [-45, -8, 1.1], [-52, -16, 1], [-84, 2, 1.2], [-86, 18, 1], [-78, 24, 1.1], [-47, 22, 0.9], [-86, -14, 1.1], [-50, -34, 1.2], [-84, -36, 1], [-74, 8, 0.8], [47.5, -5, 1], [70, -4, 1.1], [71.5, 13, 1], [47, 16, 1.1], [68, 25, 1.2]];
-const STONES = [[-60.5, -1.5], [-61.5, -4], [-62, -6.5], [-64, -9], [-67, -11.5], [-70, -13.8], [-72, -16], [-71.2, -18.6], [-69, -20.6], [-66.8, -22.2]];
-const KEEP_ROUND = [
-  ...TREES.map(([x, z, k]) => ['a tree stands there', x, z, 1.5 * k]), ...STONES.map(([x, z]) => ['the path up the hill must stay free', x, z, 1.3]),
-  ['the willow stands there', -52.8, 6.4, 3], ['a bench stands there', -60.5, 5.2, 2.2], ['a bench stands there', -69, 5.6, 1.8],
-  ['the bench and the flag on the hilltop stand there', HILL.x + 0.8, HILL.z - 0.3, 3.4], ['the green stone stands there', -82, -6, 3], ['the sign of my plot stands there', -2.2, 12.1, 0.9],
-];
-// The ways he walks himself (ROUTES): they stay free too, from corner to corner.
-const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
 const inRect = (x, z, x0, x1, z0, z1, pad = 0) => x > x0 - pad && x < x1 + pad && z > z0 - pad && z < z1 + pad;
-// null when a thing with this footprint (street coordinates) can stand there, otherwise what is in the way, in his words.
+const nearWalk = (x, z, pad) => WALKS.some(([a, b]) => { const dx = b.x - a.x, dz = b.z - a.z; const t = Math.max(0, Math.min(1, ((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz || 1))); return Math.hypot(x - a.x - dx * t, z - a.z - dz * t) < pad; });
+// The trees: scattered over the grass, always the same, and never on a path, the square, his land or against a building.
+const TREES = (() => {
+  let a = 20261123;
+  const rnd = () => ((a = (a * 16807) % 2147483647) / 2147483647);
+  const out = [];
+  for (let i = 0; i < 400 && out.length < 30; i++) {
+    const x = WORLD.x0 + 5 + rnd() * (WORLD.x1 - WORLD.x0 - 10), z = WORLD.z0 + 5 + rnd() * (WORLD.z1 - WORLD.z0 - 10), k = 0.8 + rnd() * 0.45;
+    if (KEEP_RECTS.some(([, x0, x1, z0, z1]) => inRect(x, z, x0, x1, z0, z1, 3.5)) || inRect(x, z, PLOT.x0, PLOT.x1, PLOT.z0, PLOT.z1, 3) || inRect(x, z, -16, 40, 0, 7, 1)) continue; // (and not on the strip between the row of houses and the square)
+    if (((x - POND.x) / (POND.rx + 3)) ** 2 + ((z - POND.z) / (POND.rz + 3)) ** 2 < 1 || nearWalk(x, z, 3.6) || out.some(([tx, tz]) => Math.hypot(tx - x, tz - z) < 9)) continue;
+    if ([WILLOW, STONE, ...BENCHES, PLOT_SIGN].some(([tx, tz]) => Math.hypot(tx - x, tz - z) < 6)) continue;
+    out.push([Math.round(x * 10) / 10, Math.round(z * 10) / 10, Math.round(k * 100) / 100]);
+  }
+  return out;
+})();
+const KEEP_ROUND = [
+  ...TREES.map(([x, z, k]) => ['a tree stands there', x, z, 1.5 * k]),
+  ['the willow stands there', ...WILLOW, 3], ...BENCHES.map(([x, z]) => ['a bench stands there', x, z, 2]),
+  ['the green stone stands there', ...STONE, 3], ['the sign of my land stands there', ...PLOT_SIGN, 0.9],
+];
+// null when a thing with this footprint (world coordinates) can stand there, otherwise what is in the way, in his words.
 export function buildProblem(x0, x1, z0, z1) {
   if (x0 < WORLD.x0 + 0.5 || x1 > WORLD.x1 - 0.5 || z0 < WORLD.z0 + 0.5 || z1 > WORLD.z1 - 0.5) return 'my world ends there';
   for (const [why, a, b, c, d] of KEEP_RECTS) if (x0 < b && x1 > a && z0 < d && z1 > c) return why;
@@ -153,43 +183,42 @@ export function buildProblem(x0, x1, z0, z1) {
   const nearZ = (z) => Math.max(z0, Math.min(z1, z));
   for (const [why, x, z, r] of KEEP_ROUND) if (Math.hypot(nearX(x) - x, nearZ(z) - z) < r) return why;
   { const x = nearX(POND.x); const z = nearZ(POND.z); if (((x - POND.x) / (POND.rx + 1.3)) ** 2 + ((z - POND.z) / (POND.rz + 1.3)) ** 2 < 1) return 'the pond is there'; }
-  if (x0 < PLOT.x1 + 0.3 && x1 > PLOT.x0 - 0.3 && z0 < PLOT.z1 + 0.3 && z1 > PLOT.z0 - 0.3 && !(x0 >= PLOT.x0 + 0.3 && x1 <= PLOT.x1 - 0.3 && z0 >= PLOT.z0 + 0.3 && z1 <= PLOT.z1 - 0.3)) return 'the fence of my plot runs there';
   for (const [a, b, place] of WALKS) {
     const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.6));
-    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : place === 'walls' ? 'a wall I paint on' : `the ${place}`} must stay free`;
+    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : place === 'walls' ? 'a wall I paint on' : place === 'shop' ? 'the grocery store' : place === 'studio' ? 'my art workshop' : place === 'land' ? 'the land workshop' : place === 'workshop' ? 'the print workshop' : `the ${place === 'board' ? 'notice board' : place}`} must stay free`;
   }
   return null;
 }
-// The places he can name. `at` is the middle, `half` how far it reaches (a thing goes beside it, not in it), `needs` the
-// place of his world he must know first (world.js). The first place named in his words counts.
+// The places he can name. `at` is the middle, `half` how far it reaches (a thing goes beside it, not in it), `side` the
+// side it goes to when he names none. The first place named in his words counts.
 export const BUILD_PLACES = [
-  { key: 'plot', name: 'on my plot', words: /\b(my |the )?(plot|own land|own field|yard)\b/i, at: [12, 19.5], half: [0, 0] },
-  { key: 'pond', name: 'by the pond', words: /\bpond\b/i, at: [POND.x, POND.z], half: [POND.rx + 1.3, POND.rz + 1.3], needs: 'pond' },
-  { key: 'willow', name: 'by the willow', words: /\bwillow\b/i, at: [-52.8, 6.4], half: [3, 3], needs: 'pond' },
-  { key: 'stone', name: 'by the green stone', words: /\b(green|glowing) stone\b/i, at: [-82, -6], half: [3, 3], needs: 'pond' },
-  { key: 'hilltop', name: 'on top of the hill', words: /\b(hill ?top|top of the hill|on the hill|up the hill)\b/i, at: [HILL.x - 5.5, HILL.z + 1], half: [0, 0], needs: 'hill' },
-  { key: 'hillfoot', name: 'at the foot of the hill', words: /\b(foot|bottom) of the hill\b/i, at: [-54, -4], half: [0, 0], needs: 'hill' },
-  { key: 'hillside', name: 'on the side of the hill', words: /\b(hill ?side|slope|hill)\b/i, at: [-55, -18], half: [0, 0], needs: 'hill' },
-  { key: 'library', name: 'by the library', words: /\blibrary\b/i, at: [57, -4.1], half: [8.6, 5.1], needs: 'library' },
-  { key: 'workshop', name: 'by the print workshop', words: /\b(print )?workshop\b/i, at: [84, -4], half: [6.1, 4.6] },
-  { key: 'bakery', name: 'in the street by the bakery', words: /\b(bakery|kees)\b/i, at: [11.5, 5.4], half: [0, 0] },
-  { key: 'shop', name: 'in the street by the corner shop', words: /\b(corner )?shop\b/i, at: [33, 5.4], half: [0, 0] },
-  { key: 'north', name: 'in the north field', words: /\bnorth(ern)? field\b|\bbehind (the|my) houses?\b/i, at: [18, -36], half: [0, 0] }, // the big empty land behind the houses
-  { key: 'south', name: 'in the south field', words: /\bsouth(ern)? field\b/i, at: [10, 44], half: [0, 0] },
-  { key: 'east', name: 'in the east field', words: /\beast(ern)? field\b/i, at: [92, 30], half: [0, 0] },
-  { key: 'park', name: 'in the park', words: /\b(park|meadow)\b/i, at: [-46, 16], half: [0, 0], needs: 'pond', wide: true },
-  { key: 'street', name: 'in the street in front of my house', words: /\b(street|road|my (front )?door|my house|my home|doorstep)\b/i, at: [0, 5.4], half: [0, 0], wide: true },
+  { key: 'plot', name: 'on my land', words: /\b(my |the )?(plot|own land|own field|yard)\b|\bmy land\b/i, at: [(PLOT.x0 + PLOT.x1) / 2, (PLOT.z0 + PLOT.z1) / 2], half: [0, 0] },
+  { key: 'pond', name: 'by the pond', words: /\bpond\b/i, at: [POND.x, POND.z], half: [POND.rx + 1.3, POND.rz + 1.3], side: [-1, 0] },
+  { key: 'willow', name: 'by the willow', words: /\bwillow\b/i, at: WILLOW, half: [3, 3] },
+  { key: 'stone', name: 'by the green stone', words: /\b(green|glowing) stone\b/i, at: STONE, half: [3, 3] },
+  { key: 'library', name: 'by the library', words: /\blibrary\b/i, at: [29.2, -4.5], half: [8.6, 5.1], side: [1, 0] },
+  { key: 'studio', name: 'by my art workshop', words: /\bart (work)?shop\b|\bstudio\b/i, at: [-6, 42], half: [8.4, 6.4], side: [-1, 0] },
+  { key: 'landshop', name: 'by the land workshop', words: /\bland (work)?shop\b|\bland tools?\b/i, at: [20.4, 42], half: [6.6, 4.6], side: [1, 0] },
+  { key: 'workshop', name: 'by the print workshop', words: /\b(print )?workshop\b|\bprinter\b/i, at: [8.7, 42], half: [6.1, 4.6], side: [0, 1] },
+  { key: 'shop', name: 'by the grocery store', words: /\b(grocery( store)?|grocer|shop|store)\b/i, at: [14, -4.5], half: [7.6, 5.1], side: [0, 1] },
+  { key: 'north', name: 'in the north field', words: /\bnorth(ern)? field\b|\bbehind (the|my) houses?\b/i, at: [8, -28], half: [0, 0] }, // the big empty land behind the row of houses
+  { key: 'west', name: 'in the west field', words: /\bwest(ern)? field\b/i, at: [-58, 6], half: [0, 0] },
+  { key: 'east', name: 'in the east field', words: /\beast(ern)? field\b/i, at: [70, 20], half: [0, 0] },
+  { key: 'south', name: 'in the south field', words: /\bsouth(ern)? field\b/i, at: [6, 55], half: [0, 0] },
+  { key: 'park', name: 'in the meadow by the pond', words: /\b(park|meadow)\b/i, at: [-46, 40], half: [0, 0], wide: true },
+  { key: 'square', name: 'beside the square', words: /\b(village )?square\b|\bnotice board\b/i, at: [(SQUARE.x0 + SQUARE.x1) / 2, (SQUARE.z0 + SQUARE.z1) / 2], half: [18.6, 12.6], side: [1, 0], wide: true },
+  { key: 'street', name: 'in front of my house', words: /\b(street|my (front )?door|my house|my home|doorstep)\b/i, at: [-12, 4.6], half: [0, 0], wide: true },
 ];
-// "outside by the pond", "in the park", "on top of the hill" -> the place he means (null for a plain "outside").
+// "outside by the pond", "in the meadow", "beside the square" -> the place he means (null for a plain "outside").
 export function buildPlace(text) {
   const t = String(text ?? '');
   const hits = BUILD_PLACES.map((p) => ({ p, i: t.search(p.words) })).filter((h) => h.i >= 0);
   if (!hits.length) return null;
-  const exact = hits.filter((h) => !h.p.wide); // "in the park by the pond" is the pond, "in the street by the shop" the shop
+  const exact = hits.filter((h) => !h.p.wide); // "in the meadow by the pond" is the pond
   return (exact.length ? exact : hits).sort((a, b) => a.i - b.i)[0].p;
 }
 // Is this "where" a place out in his world? "outside ...", or one of the places with a word like by, in, on, at before it.
-const PLACE_WORDS = /\b(by|at|near|in|on|beside|next to|in front of|behind|left of|right of|top of|foot of|across from|up)\s+(the |my )?(pond|park|hill|hilltop|hillside|library|street|road|meadow|willow|green stone|bakery|corner shop|plot|print workshop|workshop|north field|south field|east field)\b(?!\s+(lamp|light|sign|map|picture|painting|drawing|photo|model|book|shelf|poster|print|view))/i;
+const PLACE_WORDS = /\b(by|at|near|in|on|beside|next to|in front of|behind|left of|right of|across from)\s+(the |my )?(pond|park|library|square|street|meadow|willow|green stone|grocery store|grocery|plot|land workshop|art workshop|print workshop|workshop|north field|south field|east field|west field|land)\b(?!\s+(lamp|light|sign|map|picture|painting|drawing|photo|model|book|shelf|poster|print|view))/i;
 export const worldPhrase = (text) => PLACE_WORDS.exec(String(text ?? ''))?.[0] ?? null; // "by the pond" out of a longer sentence
 export const worldWhere = (text) => /\b(outside|outdoors?)\b/i.test(String(text ?? '')) || PLACE_WORDS.test(String(text ?? ''));
 
@@ -237,8 +266,8 @@ export function buildTown(THREE) {
     return mesh;
   };
 
-  // ---- the ground: one big flat field, with the hill pushed up out of it. Its colour follows the season (white in snow);
-  // a faint line every 4 m shows how far things are.
+  // ---- the ground: one big flat field. Its colour follows the season (white in snow); a faint line every 4 m shows how
+  // far things are. Where Pip shaped the land it goes up or down (reshape).
   const tintOf = () => (snowy() ? 0xf4f8fa : se.name === 'autumn' ? 0xa8c373 : se.name === 'winter' ? 0xadc49a : 0x8fcf7c);
   const gridTex = (() => {
     const c = document.createElement('canvas'); c.width = c.height = 64;
@@ -253,24 +282,49 @@ export function buildTown(THREE) {
   const groundGeo = new THREE.PlaneGeometry(WW, WD, Math.round(WW / 2), Math.round(WD / 2));
   groundGeo.rotateX(-Math.PI / 2);
   groundGeo.translate((WORLD.x0 + WORLD.x1) / 2, 0, (WORLD.z0 + WORLD.z1) / 2);
-  { const pos = groundGeo.attributes.position; for (let i = 0; i < pos.count; i++) pos.setY(i, groundAt(pos.getX(i), pos.getZ(i)) - 0.03); groundGeo.computeVertexNormals(); }
+  // his own land: a lighter field that lies on the ground and follows it
+  const fieldGeo = new THREE.PlaneGeometry(PLOT.x1 - PLOT.x0, PLOT.z1 - PLOT.z0, Math.round((PLOT.x1 - PLOT.x0) / 2), Math.round((PLOT.z1 - PLOT.z0) / 2));
+  fieldGeo.rotateX(-Math.PI / 2);
+  fieldGeo.translate((PLOT.x0 + PLOT.x1) / 2, 0, (PLOT.z0 + PLOT.z1) / 2);
+  // (a slope is a little darker and a hole darker still, so a hill and a hole can be seen from far)
+  const lift = (geo, by) => {
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++) pos.setY(i, groundAt(pos.getX(i), pos.getZ(i)) + by);
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+    if (!geo.attributes.color) geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(pos.count * 3), 3));
+    const col = geo.attributes.color, nor = geo.attributes.normal;
+    for (let i = 0; i < pos.count; i++) { const y = pos.getY(i) - by; const k = Math.max(0.45, 1 - 3.4 * (1 - nor.getY(i))); const e = Math.min(1, Math.max(0, -y / 0.7)); col.setXYZ(i, k * (1 - e * 0.08), k * (1 - e * 0.42), k * (1 - e * 0.4)); } // (in a hole the grass is gone: bare earth)
+    col.needsUpdate = true;
+  };
+  let landKey = '';
+  const reshape = (list) => { // what he made of the land: hills and holes (the list of his state)
+    const key = (Array.isArray(list) ? list : []).map((l) => `${l.id}${l.kind}${l.x},${l.z},${l.r},${l.h}`).join('|');
+    if (key === landKey) return false;
+    landKey = key;
+    setLand(list);
+    lift(groundGeo, -0.03); lift(fieldGeo, 0.012);
+    return true;
+  };
+  lift(groundGeo, -0.03); lift(fieldGeo, 0.012);
   const groundTex = gridTex.clone(); groundTex.needsUpdate = true; groundTex.repeat.set(WW / 4, WD / 4);
   const ground = add(groundGeo, skin(groundTex), [0, 0, 0]);
+  ground.material.vertexColors = true;
   ground.material.userData.tint = tintOf();
   ground.receiveShadow = true;
-  box([WW + 0.6, 0.7, WD + 0.6], 0x8a6a4c, [(WORLD.x0 + WORLD.x1) / 2, -0.4, (WORLD.z0 + WORLD.z1) / 2]); // the slab it lies on
-  // the high street: a strip of asphalt past the doors, and a path of gravel on to the pond
-  const road = box([138, 0.05, 5.8], M(0x8f8a86, {}, 'road', 34, 2), [23.5, 0.0, 5.4]);
-  for (let x = -42; x <= 90; x += 6) box([2.4, 0.02, 0.16], 0xf4efe6, [x, 0.035, 5.4]);
-  const gravel = M(0xe2d5bd);
-  box([32, 0.05, 2.2], gravel, [-55, 0.01, 1.4]);
-  road.receiveShadow = true;
-  // his plot: a field marked out with a low fence and a sign
-  const field = box([PLOT.x1 - PLOT.x0, 0.05, PLOT.z1 - PLOT.z0], M(0xb4dc9a, {}, 'grass', 14, 4), [(PLOT.x0 + PLOT.x1) / 2, 0.0, (PLOT.z0 + PLOT.z1) / 2]);
+  { const cx = (WORLD.x0 + WORLD.x1) / 2, cz = (WORLD.z0 + WORLD.z1) / 2; for (const [w, d, x, z] of [[WW + 0.6, 0.3, cx, WORLD.z0 - 0.15], [WW + 0.6, 0.3, cx, WORLD.z1 + 0.15], [0.3, WD, WORLD.x0 - 0.15, cz], [0.3, WD, WORLD.x1 + 0.15, cz]]) box([w, 0.8, d], 0x8a6a4c, [x, -0.42, z]); } // the rim it lies in
+  // the village square: sand, and sand paths from it to every door (there is no road: there are no cars)
+  const sand = M(0xe9dcc0, {}, 'stone', 12, 11);
+  const square = box([SQUARE.x1 - SQUARE.x0, 0.07, SQUARE.z1 - SQUARE.z0], sand, [(SQUARE.x0 + SQUARE.x1) / 2, 0.0, (SQUARE.z0 + SQUARE.z1) / 2]);
+  square.receiveShadow = true;
+  for (const [x, z] of [[SQUARE.x0, SQUARE.z0], [SQUARE.x1, SQUARE.z0], [SQUARE.x0, SQUARE.z1], [SQUARE.x1, SQUARE.z1]]) cyl(0.5, 0.56, 0.5, 0xd9cdb8, [x, 0.25, z]);
+  const pathMat = M(0xe2d5bd);
+  PATHS.forEach(([ax, az, bx, bz], i) => { const len = Math.hypot(bx - ax, bz - az); const p = box([len + 2, 0.04, 2.2], pathMat, [(ax + bx) / 2, -0.004 + i * 0.0012, (az + bz) / 2]); p.rotation.y = -Math.atan2(bz - az, bx - ax); p.receiveShadow = true; });
+  const field = add(fieldGeo, M(0xb4dc9a, {}, 'grass', 14, 10), [0, 0, 0]);
+  field.material.vertexColors = true;
+  field.receiveShadow = true;
   things.push({ kind: 'place', key: 'plot', object: field });
-  for (let x = PLOT.x0; x <= PLOT.x1 + 0.01; x += 2) for (const z of [PLOT.z0, PLOT.z1]) if (!(z === PLOT.z0 && Math.abs(x - 1) < 2.5)) box([0.14, 0.5, 0.14], 0xfff8ee, [x, 0.25, z]);
-  for (let z = PLOT.z0; z <= PLOT.z1 + 0.01; z += 2) for (const x of [PLOT.x0, PLOT.x1]) box([0.14, 0.5, 0.14], 0xfff8ee, [x, 0.25, z]);
-  { cyl(0.06, 0.06, 1.5, 0x7a5237, [-2.2, 0.75, PLOT.z0 - 0.3]); for (const [dz, ry] of [[-0.36, Math.PI], [-0.24, 0]]) { const sg = sign('Pip’s plot', 2.2, 0.55, '#fde3c4', '#8a4a2c', 84); sg.position.set(-2.2, 1.45, PLOT.z0 + dz); sg.rotation.y = ry; group.add(sg); } }
+  { const [sx, sz] = PLOT_SIGN; cyl(0.06, 0.06, 1.7, 0x7a5237, [sx, 0.85, sz]); for (const [dx, ry] of [[-0.03, -Math.PI / 2], [0.03, Math.PI / 2]]) { const sg = sign('Pip’s land', 2.4, 0.6, '#fde3c4', '#8a4a2c', 84); sg.position.set(sx + dx, 1.6, sz); sg.rotation.y = ry; group.add(sg); } }
 
   // ---- the buildings: a block, a picture on its front, a flat roof
   const blocks = []; // { b, g, glow: the lit windows }
@@ -297,21 +351,13 @@ export function buildTown(THREE) {
     things.push({ kind: 'building', key: b.key, object: g });
   });
   const blockOf = (key) => blocks.find((x) => x.b.key === key);
-  // small things on some of them: Pip's doorstep and letterbox, the clock on the bakery, the OPEN sign of the shop
+  // small things on some of them: Pip's doorstep and letterbox, the OPEN sign of the grocery store
   box([1.7, 0.2, 0.75], 0xd9cdb8, [0, 0.1, 0.42]);
   cyl(0.04, 0.04, 1.0, 0x7a5237, [2.7, 0.5, 0.75]); box([0.5, 0.32, 0.3], 0xc0392b, [2.7, 1.1, 0.75]);
   const letter = box([0.3, 0.2, 0.02], 0xfff8ee, [2.7, 1.32, 0.75]);
-  const handPivots = [];
-  { const g = blockOf('bakery').g; cyl(0.62, 0.62, 0.1, 0xfff8ee, [3.4, 5.25, 0.06], g, 24).rotation.x = Math.PI / 2; for (const [len, wd] of [[0.48, 0.05], [0.32, 0.08]]) { const p = new THREE.Group(); p.position.set(3.4, 5.25, 0.13); g.add(p); box([wd, len, 0.02], 0x3b2f2a, [0, len / 2, 0], p); handPivots.push(p); } }
   const openSign = sign('OPEN', 0.84, 0.3, '#4caf6a', '#ffffff', 150);
-  openSign.position.set(1.6, 1.5, 0.04); blockOf('shop').g.add(openSign);
-  // Oma Jo's vegetable garden: soil, green rows, a low fence, a little shed
-  things.push({ kind: 'place', key: 'garden', object: box([11.4, 0.06, 7.4], M(0x8a6a48), [-30.4, 0.01, -3.7]) });
-  for (let i = 0; i < 4; i++) for (let k = 0; k < 9; k++) add(new THREE.SphereGeometry(0.22, 8, 6), M(se.leafOn <= 0.05 ? 0x9a8f5a : 0x5f9e63), [-35.2 + k * 1.0, 0.2, -6.3 + i * 1.5]);
-  for (let x = -36.2; x <= -24.6; x += 1.45) { box([0.1, 0.9, 0.1], 0xfff8ee, [x, 0.45, -7.4]); if (x < -26.6 || x > -24.7) box([0.1, 0.9, 0.1], 0xfff8ee, [x, 0.45, 0.1]); }
-  for (let z = -7.4; z <= 0.1; z += 1.5) box([0.1, 0.9, 0.1], 0xfff8ee, [-36.2, 0.45, z]);
-  box([11.6, 0.08, 0.06], 0xfff8ee, [-30.4, 0.75, -7.4]); box([0.06, 0.08, 7.5], 0xfff8ee, [-36.2, 0.75, -3.65]); box([9.6, 0.08, 0.06], 0xfff8ee, [-31.4, 0.75, 0.1]);
-  box([2.2, 1.9, 2], M(0xb98a5a, {}, 'boards', 1, 2), [-26.2, 0.95, -5.8]); box([2.5, 0.16, 2.3], M(0x7a5237, {}, 'roof'), [-26.2, 1.98, -5.8]);
+  openSign.position.set(3.5, 1.72, 0.05); blockOf('shop').g.add(openSign);
+  { const g = blockOf('land').g; for (const [x, c] of [[1.4, 0x8a6a48], [2.8, 0x9a7a52], [4.1, 0x7f9a5a]]) { const heap = add(new THREE.ConeGeometry(0.75, 0.9, 9), M(c), [x, 0.45, 0.9], g); heap.scale.set(1, 1, 0.8); } cyl(0.035, 0.035, 1.7, 0x7a5237, [5.3, 0.85, 0.3], g).rotation.z = 0.12; box([0.34, 0.4, 0.04], 0x9aa3a8, [5.2, 0.2, 0.3], g); } // heaps of earth and a spade by the shutter
 
   // ---- walls for his art: bare concrete, both sides. What he paints goes on them, and on the back walls of the houses.
   WALLS.forEach((w, i) => {
@@ -334,8 +380,8 @@ export function buildTown(THREE) {
     const g = new THREE.Group(); group.add(g);
     for (const y of sh.rows) box([w, 0.06, 0.62], M(0xc9a26a, {}, 'boards', 4, 1), [cx, y - 0.03, sh.z], g);
     for (const x of [sh.x0 + 0.05, cx, sh.x1 - 0.05]) for (const z of [sh.z - 0.27, sh.z + 0.27]) box([0.07, 2.75, 0.07], 0x7a5237, [x, 1.375, z], g);
-    box([w + 0.3, 0.07, 0.9], M(0x5c6468, { metalness: 0.3 }, 'metal', 5, 1), [cx, 2.8, sh.z + 0.05], g).rotation.x = 0.12;
-    const sg = sign('printed by Pip', 2.2, 0.36, '#2a2a2e', '#f2c14e', 60); sg.position.set(cx, 2.55, sh.z + 0.33); g.add(sg);
+    box([w + 0.3, 0.07, 0.9], M(0x5c6468, { metalness: 0.3 }, 'metal', 5, 1), [cx, 2.8, sh.z + sh.dir * 0.05], g).rotation.x = sh.dir * 0.12;
+    const sg = sign('printed by Pip', 2.2, 0.36, '#2a2a2e', '#f2c14e', 60); sg.position.set(cx, 2.55, sh.z + sh.dir * 0.33); sg.rotation.y = sh.dir < 0 ? Math.PI : 0; g.add(sg);
     things.push({ kind: 'shelf', key: 'shelf', object: g }); }
   // the notice board: two posts, a board with a little roof, and the notes people pinned on it (drawn again when they change)
   const boardNotes = (() => {
@@ -344,7 +390,7 @@ export function buildTown(THREE) {
     box([BOARD.w + 0.5, 0.08, 0.5], M(0x8a5a3a, {}, 'roof', 2, 1), [0, 2.58, 0.05], g).rotation.x = 0.14;
     const c = document.createElement('canvas'); c.width = 416; c.height = 240;
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-    add(new THREE.BoxGeometry(BOARD.w, BOARD.h, 0.08), [M(0x9a6b47), M(0x9a6b47), M(0x9a6b47), M(0x9a6b47), skin(t, 2.2), M(0x9a6b47, {}, 'boards', 2, 1)], [0, 1.65, 0], g);
+    add(new THREE.BoxGeometry(BOARD.w, BOARD.h, 0.08), [M(0x9a6b47), M(0x9a6b47), M(0x9a6b47), M(0x9a6b47), skin(t, 2.2), skin(t, 2.2)], [0, 1.65, 0], g);
     things.push({ kind: 'board', key: 'board', object: g });
     let shown = null;
     return (notes) => {
@@ -389,25 +435,21 @@ export function buildTown(THREE) {
   };
   for (const [x, z, s] of TREES) tree(x, z, s);
   const lamps = [];
-  for (const x of [-12.6, 16.9, 49.5, 76]) {
-    cyl(0.07, 0.09, 3.6, 0x4a4f66, [x, 1.8, 2.05]);
-    const bulb = add(new THREE.SphereGeometry(0.24, 12, 10), new THREE.MeshStandardMaterial({ color: 0xe6e1d6, emissive: 0xffe9a8, emissiveIntensity: 0 }), [x, 3.7, 2.05]);
-    const light = new THREE.PointLight(0xffe2a0, 0, 16, 1.6);
-    light.position.set(x, 3.5, 2.2);
+  for (const [x, z] of [[SQUARE.x0, SQUARE.z0], [SQUARE.x1, SQUARE.z0], [SQUARE.x0, SQUARE.z1], [SQUARE.x1, SQUARE.z1], [-5.6, 2.7]]) {
+    cyl(0.07, 0.09, 3.6, 0x4a4f66, [x, 1.8, z]);
+    const bulb = add(new THREE.SphereGeometry(0.24, 12, 10), new THREE.MeshStandardMaterial({ color: 0xe6e1d6, emissive: 0xffe9a8, emissiveIntensity: 0 }), [x, 3.7, z]);
+    const light = new THREE.PointLight(0xffe2a0, 0, 18, 1.6);
+    light.position.set(x, 3.5, z);
     group.add(light);
     lamps.push({ bulb, light });
   }
-  // signposts where the street goes on
-  const post = (x, words, flip) => { cyl(0.07, 0.07, 2.6, 0x7a5237, [x, 1.3, 2.0]); const s = sign(words, 3.0, 0.6, '#fffaf3', '#4a3d35', 62); s.position.set(x + (flip ? -0.2 : 0.2), 2.3, 2.09); group.add(s); };
-  post(39.5, 'Library  →', true); post(-40.5, '←  Pond · Hill'); post(74, 'Workshop  →', true);
-  { cyl(0.06, 0.06, 1.6, 0x7a5237, [-60.2, 0.8, -0.6]); const sg = sign('↑ Up the hill', 2.2, 0.5, '#fffaf3', '#4a3d35', 78); sg.position.set(-60.2, 1.5, -0.52); group.add(sg); }
-    // ---- a tall green stone that glows a little. Nobody knows who put it there.
+  // ---- a tall green stone that glows a little. Nobody knows who put it there.
   const stoneGlow = new THREE.MeshStandardMaterial({ color: 0x2fa37a, roughness: 0.35, emissive: 0x2fa37a, emissiveIntensity: 0.5, map: grain('stone'), emissiveMap: grain('stone') });
-  { const st = add(new THREE.OctahedronGeometry(1.5, 0), stoneGlow, [-82, 2.4, -6]); st.scale.set(0.8, 2.0, 0.7); st.rotation.set(0.1, 0.5, 0.08); things.push({ kind: 'place', key: 'stone', object: st }); for (const [dx, dz, k] of [[1.6, 0.5, 0.35], [-1.3, 1.0, 0.25], [0.4, -1.5, 0.3]]) { const s2 = add(new THREE.OctahedronGeometry(1.5, 0), stoneGlow, [-82 + dx, 0.5, -6 + dz]); s2.scale.set(k, k * 1.6, k); } }
+  { const st = add(new THREE.OctahedronGeometry(1.5, 0), stoneGlow, [STONE[0], 2.4, STONE[1]]); st.scale.set(0.8, 2.0, 0.7); st.rotation.set(0.1, 0.5, 0.08); things.push({ kind: 'place', key: 'stone', object: st }); for (const [dx, dz, k] of [[1.6, 0.5, 0.35], [-1.3, 1.0, 0.25], [0.4, -1.5, 0.3]]) { const s2 = add(new THREE.OctahedronGeometry(1.5, 0), stoneGlow, [STONE[0] + dx, 0.5, STONE[1] + dz]); s2.scale.set(k, k * 1.6, k); } }
   const stoneLight = new THREE.PointLight(0x4fe0a8, 0, 22, 1.4);
-  stoneLight.position.set(-82, 3, -6);
+  stoneLight.position.set(STONE[0], 3, STONE[1]);
   group.add(stoneLight);
-  // ---- the pond with its willow and benches; the hill with its bench and flag
+  // ---- the pond with its willow and benches
   const water = new THREE.MeshStandardMaterial({ color: 0x7fc4e8, roughness: 0.25, emissive: 0x2a6f95, emissiveIntensity: 0.35 });
   { const pondMesh = add(new THREE.CylinderGeometry(1, 1, 0.08, 40), water, [POND.x, 0.03, POND.z]); pondMesh.scale.set(POND.rx, 1, POND.rz); things.push({ kind: 'place', key: 'pond', object: pondMesh }); }
   add(new THREE.CylinderGeometry(1, 1, 0.05, 40), M(0xcdbb8e), [POND.x, 0.01, POND.z]).scale.set(POND.rx + 0.7, 1, POND.rz + 0.7);
@@ -416,14 +458,11 @@ export function buildTown(THREE) {
   const duck = (body, head) => { const g = new THREE.Group(); const b = add(new THREE.SphereGeometry(0.42, 12, 8), M(body), [0, 0.22, 0], g); b.scale.set(1.25, 0.7, 0.85); add(new THREE.SphereGeometry(0.2, 10, 8), M(head), [0.42, 0.55, 0], g); const bill = add(new THREE.ConeGeometry(0.08, 0.22, 8), M(0xf2a33c), [0.66, 0.53, 0], g); bill.rotation.z = -Math.PI / 2; group.add(g); ducks.push(g); return g; };
   duck(0xffffff, 0xffffff); duck(0xe8d9b8, 0x3d7d5a); duck(0xd9c7a0, 0x3d7d5a); duck(0xffffff, 0xffffff);
   const benchAt = (x, z, rot = 0) => { const g = new THREE.Group(); g.position.set(x, groundAt(x, z), z); g.rotation.y = rot; group.add(g); box([2.2, 0.1, 0.6], 0x9a6b47, [0, 0.55, 0], g); box([2.2, 0.5, 0.08], 0x9a6b47, [0, 0.95, -0.3], g); for (const dx of [-0.9, 0.9]) box([0.1, 0.55, 0.5], 0x7a5237, [dx, 0.27, 0], g); return g; };
-  benchAt(-60.5, 5.2); benchAt(-69, 5.6, 0.2);
-  { const g = new THREE.Group(); g.position.set(-52.8, 0, 6.4); group.add(g); cyl(0.4, 0.55, 3.4, 0x6b4a35, [0, 1.7, 0], g).castShadow = true; const wl = se.leafOn <= 0.05 ? null : se.turn > 0.5 ? 0xc9b24f : 0x86b96a; if (wl) { add(new THREE.SphereGeometry(2.6, 12, 9), M(wl), [0, 4.4, 0], g).scale.y = 0.75; for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2; cyl(0.5, 0.2, 2.6, M(wl), [Math.cos(a) * 2.1, 2.9, Math.sin(a) * 2.1], g, 6); } } }
-  things.push({ kind: 'place', key: 'hill', object: benchAt(HILL.x + 0.2, HILL.z - 0.6, 0.5) });
-  { const y = groundAt(HILL.x + 2.6, HILL.z); cyl(0.06, 0.06, 3.2, 0x7a5237, [HILL.x + 2.6, y + 1.6, HILL.z]); box([1.1, 0.6, 0.04], 0xf2c14e, [HILL.x + 3.2, y + 2.85, HILL.z]); }
-
+  for (const [x, z, rot] of BENCHES) benchAt(x, z, rot);
+  { const g = new THREE.Group(); g.position.set(WILLOW[0], 0, WILLOW[1]); group.add(g); cyl(0.4, 0.55, 3.4, 0x6b4a35, [0, 1.7, 0], g).castShadow = true; const wl = se.leafOn <= 0.05 ? null : se.turn > 0.5 ? 0xc9b24f : 0x86b96a; if (wl) { add(new THREE.SphereGeometry(2.6, 12, 9), M(wl), [0, 4.4, 0], g).scale.y = 0.75; for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2; cyl(0.5, 0.2, 2.6, M(wl), [Math.cos(a) * 2.1, 2.9, Math.sin(a) * 2.1], g, 6); } } }
   // Daylight for the world. The lamps and the window light of his room are far away, so the world has lights of its own,
   // high above it (they do not reach his room).
-  const suns = [[-70, 46, 0, 100], [-8, 46, 10, 110], [62, 46, 8, 110], [10, 46, -44, 100]].map(([x, y, z, far]) => { const l = new THREE.PointLight(0xfff4e2, 1.5, far, 0); l.position.set(x, y, z); group.add(l); return l; });
+  const suns = [[-44, 46, 14, 100], [4, 46, 24, 110], [50, 46, 16, 110], [6, 46, -18, 100]].map(([x, y, z, far]) => { const l = new THREE.PointLight(0xfff4e2, 1.5, far, 0); l.position.set(x, y, z); group.add(l); return l; });
 
   let frozenNow = false;
   function animate(t) {
@@ -459,14 +498,14 @@ export function buildTown(THREE) {
       m.rotation.y = w.side > 0 ? 0 : Math.PI;
       m.rotation.z = sp.tilt;
     });
-    // the gallery: the newest first, on the back wall of the art workshop, then on its two side walls
+    // the gallery: the newest first, on the two side walls of the art workshop, then on its back wall
     wipe(gallery);
     const [x0, x1, z0, z1] = rectOf(BUILDINGS.find((b) => b.key === 'studio'));
     const cells = [];
     const rows = [3.95, 2.95, 1.95, 0.95];
-    for (const y of rows) for (let x = x0 + 0.85; x < x1 - 0.5; x += 1.32) cells.push([x, y, z1 + 0.03, 0]);
-    for (const y of rows) for (let z = z1 - 0.85; z > z0 + 0.5; z -= 1.32) cells.push([x1 + 0.03, y, z, Math.PI / 2]);
     for (const y of rows) for (let z = z0 + 0.85; z < z1 - 0.5; z += 1.32) cells.push([x0 - 0.03, y, z, -Math.PI / 2]);
+    for (const y of rows) for (let z = z0 + 0.85; z < z1 - 0.5; z += 1.32) cells.push([x1 + 0.03, y, z, Math.PI / 2]);
+    for (const y of rows) for (let x = x1 - 0.85; x > x0 + 0.5; x -= 1.32) cells.push([x, y, z1 + 0.03, 0]);
     const white = M(0xfffaf3);
     [...all].reverse().slice(0, cells.length).forEach((a, i) => {
       const [x, y, z, ry] = cells[i];
@@ -483,6 +522,7 @@ export function buildTown(THREE) {
   let insideNow = false;
   function update(s, now = Date.now(), hour = undefined) {
     state.weather = s?.weather ?? null;
+    const shaped = reshape(s?.land);
     hangArt(s, now);
     boardNotes((s?.wishes ?? []).filter((w) => w.board && w.status === 'open' && now - Date.parse(w.at) < 3 * 86_400_000));
     const h = Number.isFinite(hour) ? hour : hourNL(now); // (a test or a screenshot can ask for an hour)
@@ -490,15 +530,12 @@ export function buildTown(THREE) {
     const dusk = dark || h > se.sunset - 0.9;
     const away = Boolean(s?.where && s.where.place !== 'home' && now >= Date.parse(s.where.leftAt));
     const key = `${Math.floor(h * 4)}${dark}${dusk}${away}${shopOpen(now)}${snowy()}${(s?.visitors ?? []).filter((v) => v.npc && !v.answer).length}${new Date(now).getDay()}${insideNow}`;
-    handPivots[0].rotation.z = -((h % 1) * Math.PI * 2);
-    handPivots[1].rotation.z = -(((h % 12) / 12) * Math.PI * 2);
-    if (key === said) return;
+    if (key === said && !shaped) return;
     said = key;
     fogColor = paintSky(h);
     for (const { b, glow } of blocks) { // the windows are lit when someone is in and it is getting dark
       if (!glow) continue;
-      const p = b.who ? PEOPLE.find((q) => q.name === b.who) : null;
-      const up = b.key === 'home' ? !away && h >= 8 && h < 23 : b.key === 'shop' ? shopOpen(now) : b.lit ? h >= b.lit[0] && h < b.lit[1] : p ? h >= p.up[0] && h < p.up[1] : h >= 7 && h < 22;
+      const up = b.key === 'home' ? !away && h >= 8 && h < 23 : b.key === 'shop' ? shopOpen(now) : b.lit ? h >= b.lit[0] && h < b.lit[1] : h >= 7 && h < 22;
       glow.material.opacity = up && dark ? 0.95 : up && dusk ? 0.6 : 0;
     }
     const open = shopOpen(now);
@@ -528,8 +565,11 @@ export function buildTown(THREE) {
   const far = new THREE.Group();
   far.visible = false;
   group.add(far);
-  const farTex = gridTex.clone(); farTex.needsUpdate = true; farTex.repeat.set(320, 320);
-  const land = add(new THREE.CircleGeometry(640, 48), new THREE.MeshBasicMaterial({ map: farTex, color: tintOf() }), [0, -0.75, 0], far);
+  const farTex = gridTex.clone(); farTex.needsUpdate = true; 
+  const farShape = new THREE.Shape(); farShape.absarc(0, 0, 640, 0, Math.PI * 2, false);
+  { const hole = new THREE.Path(); hole.moveTo(WORLD.x0 - 0.2, -(WORLD.z1 + 0.2)); hole.lineTo(WORLD.x1 + 0.2, -(WORLD.z1 + 0.2)); hole.lineTo(WORLD.x1 + 0.2, -(WORLD.z0 - 0.2)); hole.lineTo(WORLD.x0 - 0.2, -(WORLD.z0 - 0.2)); hole.closePath(); farShape.holes.push(hole); }
+  farTex.repeat.set(0.25, 0.25);
+  const land = add(new THREE.ShapeGeometry(farShape, 48), new THREE.MeshBasicMaterial({ map: farTex, color: tintOf() }), [0, -0.75, 0], far);
   land.rotation.x = -Math.PI / 2;
   const hillMat = new THREE.MeshBasicMaterial({ color: 0x8fb89a });
   const hillMat2 = new THREE.MeshBasicMaterial({ color: 0xa7c6b4 });
@@ -570,5 +610,5 @@ export function buildTown(THREE) {
   // stand where his rooms are step aside, and the world's lights go off so they do not shine through his walls.
   const setInside = (on, hide = []) => { insideNow = on; said = ''; for (const { b, g } of blocks) g.visible = !(on && hide.includes(b.key)); };
   const skyFog = () => fogColor;
-  return { group, update, setWalk, setInside, animate, skyFog, things };
+  return { group, update, setWalk, setInside, animate, skyFog, things, reshape };
 }

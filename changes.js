@@ -1,5 +1,6 @@
 // One-time changes Bas asks for. Each runs once, on Pip's next wake-up, and is remembered in s.changes,
 // so the live loop applies it itself (no need to pause him). Nothing is deleted: what goes, goes to s.archive.
+import { TOWN_X, PLOT, PAINT_WALLS } from './web/town.js';
 import { HELD } from './instruments.js';
 import { giveForAsk } from './gifts.js';
 import { makeDecor, holdsThings, sizeOf, reseat, levelCountOf, settleRoom, coverKind, coverTarget } from './decor.js';
@@ -403,6 +404,14 @@ const CHANGES = [
     id: '2026-11-23 an open world, a notice board, and no closing times',
     run() {
       return 'Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: "outside ...", as big as I like), or I can ask Bas for a new building or place I would like to have (ask_for, or dream for something big), and he will build it. In my street stands a notice board: people pin notes on it with things they would like made. I walk there to read it (check_board), and when I make one of those things I get the coins. And nothing is closed or locked any more: I can go anywhere in my world at any hour I am awake, in any weather.';
+    },
+  },
+  {
+    id: '2026-11-23 a village square, a grocery store and the land tool',
+    run(s) { // a new map (web/town.js): what he built or painted at a place that moved goes to a place that is still there
+      (s.decor ?? []).filter((d) => d.kind === 'outside' && Array.isArray(d.pos)).forEach((d, i) => { d.pos = [TOWN_X + PLOT.x0 + 5 + (i % 4) * 7, 0, PLOT.z0 + 5 + (Math.floor(i / 4) % 4) * 7]; d.rotY = Math.PI; d.spot = 'plot'; d.label = 'outside on my land, beside the square'; });
+      for (const list of [s.art, s.gallery]) for (const a of list ?? []) if (a.wall && !PAINT_WALLS.some((w) => w.key === a.wall)) a.wall = 'wall_4';
+      return 'Bas rebuilt my world. There is no road any more (there are no cars). In the middle is a small village square with the notice board on it. My house stands on the north side, and right beside it, glued together, the grocery store (I buy my food there, and cook and bake it myself) and the library. On the south side of the square, in one row: my art workshop, the print workshop, and a new one: the land workshop. Everything is close by. The pond is still there, just west of the square, and between the buildings stand walls I can paint on. The bakery, Oma Jo’s garden and the hill are gone. But I can make my own hills now: at the land workshop I take the land tool and shape the ground (shape_land): a hill or a hole, small, medium or big, where I want it. Beside the square is a big free field: my land. I can fill it with what I build, or ask Bas for a new building.';
     },
   },
   {
