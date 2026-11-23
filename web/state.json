@@ -1,8 +1,8 @@
 {
   "mood": "hungry",
-  "energy": 9,
+  "energy": 8.58,
   "boredom": 0,
-  "loneliness": 4.66,
+  "loneliness": 4.67,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-22T19:02:21.783Z",
-      "action": "search_web",
-      "detail": "to learn about the night sky and constellations",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-22T19:11:16.017Z",
       "action": "eat",
@@ -316,6 +310,12 @@
       "at": "2026-11-23T08:47:08.123Z",
       "action": "do",
       "detail": "look closely at something in my room I never really looked at",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-23T08:49:11.579Z",
+      "action": "eat",
+      "detail": "basil",
       "enjoyment": 6
     }
   ],
@@ -1202,27 +1202,19 @@
       "lastUsed": "2026-11-23T07:53:24.900Z"
     },
     {
-      "id": "mmwt0vdr260",
-      "at": "2026-11-23T08:47:08.125Z",
-      "text": "Cooking a warm dish helps when I feel full of energy and want a change.",
+      "id": "mmwt0y10f60",
+      "at": "2026-11-23T08:49:11.582Z",
+      "text": "I should plant more ingredients in my garden so I can cook properly.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.999,
-      "lastUsed": "2026-11-23T08:47:08.125Z"
+      "weight": 6,
+      "lastUsed": "2026-11-23T08:49:11.582Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
   "storyAt": "2026-11-22T22:01:40.771Z",
   "thoughts": [
-    {
-      "at": "2026-11-22T20:16:56.426Z",
-      "text": "I want to read a book about the night sky since I love it and am learning about constellations.",
-      "short": "I want to read a book about the night sky since I love it and am learning about constellations.",
-      "mood": "Inspired",
-      "action": "read_book",
-      "detail": "constellations"
-    },
     {
       "at": "2026-11-22T20:25:04.891Z",
       "text": "I want to write in my diary about what I learned today regarding constellations, and then write down some thoughts.",
@@ -1454,6 +1446,14 @@
       "mood": "hungry",
       "action": "cook",
       "detail": ""
+    },
+    {
+      "at": "2026-11-23T08:49:11.582Z",
+      "text": "I am very hungry and want to eat something fresh from my garden like basil.",
+      "short": "I am very hungry and want to eat something fresh from my garden like basil.",
+      "mood": "hungry",
+      "action": "eat",
+      "detail": "basil"
     }
   ],
   "outbox": [
@@ -1986,14 +1986,11 @@
       "failed": "I have no vegetables in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil, mint"
     },
     {
-      "at": "2026-11-23T08:51:09.118Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and look closely at something in my room I never really looked at.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🔍",
-      "what": "look closely at something in my room I never really looked at",
-      "feeling": "wonder"
+      "at": "2026-11-23T08:49:12.578Z",
+      "action": "eat",
+      "thought": "I will eat some fresh basil since I am very hungry.",
+      "food": "basil",
+      "failed": null
     }
   ],
   "decor": [
@@ -8814,7 +8811,7 @@
     {
       "name": "basil",
       "kind": "ingredient",
-      "qty": 1
+      "qty": 0
     },
     {
       "name": "mint",
@@ -9241,7 +9238,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-23T08:47:08.118Z",
+    "at": "2026-11-23T08:49:11.578Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -9249,54 +9246,35 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 2128,
-      "output": 160,
+      "input": 2179,
+      "output": 118,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I want to take a break from the summer constellations project and cook something warm since I am hungry.",
-    "inner": "I want to take a break from the summer constellations project and cook something warm since I am hungry.",
+    "thought": "I am very hungry and want to eat something fresh from my garden like basil.",
+    "inner": "I am very hungry and want to eat something fresh from my garden like basil.",
     "sent": false,
     "steps": [
       {
-        "action": "cook",
+        "action": "eat",
         "details": {
-          "dish": "warm soup",
-          "ingredients": [
-            "vegetables"
-          ]
+          "food": "basil"
         },
-        "detail": "",
-        "thought": "I am hungry and want a warm dish.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "look closely at something in my room I never really looked at",
-          "feeling": "wonder",
-          "emoji": "🔍"
-        },
-        "detail": "look closely at something in my room I never really looked at",
-        "thought": "That did not work out. I shake it off and look closely at something in my room I never really looked at.",
+        "detail": "basil",
+        "thought": "I will eat some fresh basil since I am very hungry.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "cook",
+    "action": "eat",
     "details": {
-      "dish": "warm soup",
-      "ingredients": [
-        "vegetables"
-      ]
+      "food": "basil"
     },
-    "detail": "",
-    "enjoyment": 0,
+    "detail": "basil",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -9384,7 +9362,7 @@
   "quota": {
     "day": "2026-11-23",
     "calls": {
-      "gemini-3.5-flash-lite": 9,
+      "gemini-3.5-flash-lite": 10,
       "gemini-3.8-flash": 3,
       "gemini-3.6-flash": 1
     },
@@ -9470,12 +9448,12 @@
     ]
   },
   "weather": {
-    "at": "2026-11-23T08:39:01.948Z",
+    "at": "2026-11-23T08:49:10.298Z",
     "kind": "clear",
     "code": 0,
-    "temp": 0.7,
-    "cloud": 0,
-    "wind": 0.19333333333333333
+    "temp": 0.9,
+    "cloud": 0.14,
+    "wind": 0.22666666666666666
   },
   "news": {
     "date": "2026-11-23",
@@ -9625,23 +9603,23 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-23T08:47:08.128Z",
-  "fullness": 2.03,
+  "memoryFadeAt": "2026-11-23T08:49:11.584Z",
+  "fullness": 4.49,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 8.08,
-  "joy": 3.63,
-  "calm": 5.52,
+  "wonder": 7.06,
+  "joy": 4.03,
+  "calm": 5.71,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0.96,
     "sad": 0,
-    "excited": 0.87
+    "excited": 0.52
   },
-  "feelAt": "2026-11-23T08:47:06.680Z",
-  "lastAte": "2026-11-23T07:04:17.289Z",
+  "feelAt": "2026-11-23T08:49:10.162Z",
+  "lastAte": "2026-11-23T08:49:11.581Z",
   "studio": {
     "songs": [
       {
@@ -10355,21 +10333,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.16,
-    "curiosity": 0.53,
+    "creativity": 0.18,
+    "curiosity": 0.55,
     "boredom": 0,
-    "loneliness": 4.66,
+    "loneliness": 4.67,
     "tidiness": 1.6,
-    "at": "2026-11-23T08:47:06.680Z",
+    "at": "2026-11-23T08:49:10.162Z",
     "coziness": 3.2
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-23T07:32:45.546Z"
-      },
       {
         "move": "plan_project",
         "kind": "make",
@@ -10442,13 +10415,18 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-23T08:47:08.136Z"
+      },
+      {
+        "move": "eat",
+        "kind": "food",
+        "at": "2026-11-23T08:49:11.592Z"
       }
     ],
     "moods": [
-      "hungry",
       "calm",
       "calm",
       "energetic",
+      "hungry",
       "hungry"
     ],
     "choices": [
@@ -10507,13 +10485,19 @@
         "ok": false,
         "failed": true,
         "at": "2026-11-23T08:47:08.138Z"
+      },
+      {
+        "key": "eat:",
+        "move": "eat",
+        "ok": true,
+        "at": "2026-11-23T08:49:11.593Z"
       }
     ]
   },
   "today": {
     "day": "2026-11-23",
     "done": {
-      "eat": 1,
+      "eat": 2,
       "cook": 2,
       "do": 6,
       "move_thing": 3,
@@ -10523,7 +10507,7 @@
       "play_piano": 1
     },
     "tried": {
-      "eat": 1,
+      "eat": 2,
       "cook": 3,
       "change_thing": 1,
       "do": 6,
@@ -10535,7 +10519,7 @@
       "play_piano": 1
     },
     "kinds": {
-      "food": 3,
+      "food": 4,
       "play": 6,
       "room": 3,
       "make": 3,
@@ -10543,13 +10527,13 @@
       "music": 1
     },
     "moods": {
-      "hungry": 5,
+      "hungry": 6,
       "energetic": 4,
       "focused": 6,
       "calm": 2
     },
     "lift": {
-      "eat": 0.47,
+      "eat": 0.77,
       "cook": 3.75,
       "change_thing": 0.9,
       "do": 6.5,
@@ -10593,7 +10577,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-23T08:47:08.118Z",
+    "decidedAt": "2026-11-23T08:49:11.577Z",
     "seen": {
       "tools": 7,
       "gifts": 1,
@@ -10603,10 +10587,7 @@
       "seeds": 9,
       "visitors": 5
     },
-    "lastFail": {
-      "at": "2026-11-23T08:47:08.137Z",
-      "why": "cook: I have no vegetables in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil, mint"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -10945,7 +10926,7 @@
     }
   ],
   "ever": {
-    "eat": 43,
+    "eat": 44,
     "water": 22,
     "do": 315,
     "search_web": 44,
@@ -10980,15 +10961,15 @@
     "go_out": 1
   },
   "checkup": {
-    "at": "2026-11-23T08:47:08.139Z",
+    "at": "2026-11-23T08:49:11.594Z",
     "items": [
       {
         "id": "circling",
         "ok": false,
         "label": "Thoughts",
-        "text": "He may be going in circles: 11 of his last 17 thoughts are about \"summer\", \"constellations\".",
+        "text": "He may be going in circles: 11 of his last 18 thoughts are about \"summer\", \"constellations\".",
         "look": "Usually something he keeps trying does not work (see Moves), or a project has no next step (see Projects). Check what he does in the Day tab.",
-        "debug": "top words: \"summer\", \"constellations\"\nlast thoughts:\n- 08:22 UTC [do] I want to replan my constellation project since the previous steps did not work, and then play a quiet melody to relax.\n- 08:30 UTC [play_piano] I will play a quiet tune to settle the evening.\n- 08:39 UTC [move_thing] I am full of energy and want to move my tiny wooden stand to the floor by the wall, and then work on mapping the summer constellations.\n- 08:47 UTC [cook] I want to take a break from the summer constellations project and cook something warm since I am hungry."
+        "debug": "top words: \"summer\", \"constellations\"\nlast thoughts:\n- 08:30 UTC [play_piano] I will play a quiet tune to settle the evening.\n- 08:39 UTC [move_thing] I am full of energy and want to move my tiny wooden stand to the floor by the wall, and then work on mapping the summer constellations.\n- 08:47 UTC [cook] I want to take a break from the summer constellations project and cook something warm since I am hungry.\n- 08:49 UTC [eat] I am very hungry and want to eat something fresh from my garden like basil."
       },
       {
         "id": "project",
@@ -11016,7 +10997,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 2.03\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":1},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":2,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 4.49\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":2,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -16750,7 +16731,14 @@
     "fadedAt": "2026-11-22T19:44:21.340Z"
   },
   "reportDay": "2026-11-22",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-23T08:48:19.118Z",
+    "key": "cook:warm soup",
+    "action": "cook",
+    "name": null,
+    "why": "I have no vegetables in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil, mint",
+    "guide": ""
+  },
   "retries": [
     "2026-11-22T11:45:57.547Z",
     "2026-11-22T15:50:40.975Z",
@@ -16764,8 +16752,8 @@
     "2026-11-23T08:47:08.138Z"
   ],
   "retried": {
-    "key": "decorate:map of summer constellations",
-    "at": "2026-11-23T08:06:11.609Z"
+    "key": "cook:warm soup",
+    "at": "2026-11-23T08:49:10.329Z"
   },
   "tired": {
     "kind": "make",
@@ -16917,13 +16905,5 @@
       "week": "2026-11-16",
       "favourite": "rainy autumn window at dusk"
     }
-  ],
-  "wakeSoon": {
-    "at": "2026-11-23T08:48:19.118Z",
-    "key": "cook:warm soup",
-    "action": "cook",
-    "name": null,
-    "why": "I have no vegetables in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil, mint",
-    "guide": ""
-  }
+  ]
 }
