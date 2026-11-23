@@ -40,7 +40,7 @@ export const BUILDINGS = [
   { key: 'studio', name: 'Art workshop', at: [-6, 38], face: 180, size: [12, 8, 8], look: { wall: 'boards', color: '#e8dcc6', photo: { src: 'tex/siding_pale.jpg', m: 1.7 }, bands: [4.3], door: { x: 2, color: '#e9855b' }, windows: [[4.4, 1.2, 2.2, 1.9], [8.2, 1.2, 2.2, 1.9], ...upper(12, [5.1], 3, 1.6, 1.8)], sign: { text: 'PIP’S ART', bg: '#e9855b', fg: '#ffffff', y: 3.6, x: 6 } }, roof: 0xe9855b, lit: [9, 21] },
   { key: 'workshop', name: 'Print workshop', at: [8.7, 38], face: 180, size: [11, 9, 8], look: { wall: 'brick', color: '#8f9aa0', trim: '#dfe5e8', photo: { src: 'tex/steel.jpg', m: 2.4 }, bands: [4.4], door: { x: 1.8, color: '#c9773c' }, shutter: { x0: 3.6, x1: 9.8 }, windows: upper(11, [5.6]), sign: { text: 'PRINT WORKSHOP', bg: '#2a2a2e', fg: '#f2c14e', y: 3.5, x: 6.7, size: 0.45 } }, roof: 0x5c6468, lit: [9, 21] },
   { key: 'land', name: 'Land workshop', at: [20.4, 38], face: 180, size: [12, 7, 8], look: { wall: 'planks', color: '#8fae6a', photo: { src: 'tex/siding_dark.jpg', m: 2.2, tint: '#dff0c0' }, door: { x: 2, color: '#5a4630' }, shutter: { x0: 4.2, x1: 10.8 }, windows: [[6.6, 4.9, 1.8, 1.3]], sign: { text: 'LAND TOOLS', bg: '#5a4630', fg: '#f4e7c6', y: 3.6, x: 7.5, size: 0.5 } }, roof: 0x6f8a52, lit: [9, 21] },
-  { key: 'closed', name: 'Closed shop', decor: true, at: [32.6, 38], face: 180, size: [12, 10, 8], look: { wall: 'plaster', color: '#d8c6a4', trim: '#f4efe6', photo: { src: 'tex/plaster_worn.jpg', m: 3.2 }, bands: [4.2], door: { x: 10.4, color: '#6b4a35' }, shutter: { x0: 1, x1: 8.8 }, windows: upper(12, [5.2, 7.7], 3, 1.3, 1.5), sign: { text: 'CLOSED', bg: '#6b4a35', fg: '#f1e6d2', y: 3.5, x: 4.9, size: 0.42 } }, roof: 0x7c6a5c, lit: [18, 23] },
+  { key: 'build', name: 'Build workshop', at: [32.6, 38], face: 180, size: [12, 10, 8], look: { wall: 'plaster', color: '#d8c6a4', trim: '#f4efe6', photo: { src: 'tex/plaster_worn.jpg', m: 3.2 }, bands: [4.2], door: { x: 10.4, color: '#6b4a35' }, shutter: { x0: 1, x1: 8.8 }, windows: upper(12, [5.2, 7.7], 3, 1.3, 1.5), sign: { text: 'BUILD WORKSHOP', bg: '#c9773c', fg: '#fff8ee', y: 3.5, x: 4.9, size: 0.42 } }, roof: 0x7c6a5c, lit: [8, 22] },
 ];
 // A building's place on the ground: [x0, x1, z0, z1].
 export const rectOf = (b) => { const [w, , d] = b.size; return b.face === 180 ? [b.at[0] - w / 2, b.at[0] + w / 2, b.at[1], b.at[1] + d] : [b.at[0] - w / 2, b.at[0] + w / 2, b.at[1] - d, b.at[1]]; };
@@ -54,7 +54,7 @@ export const WALLS = [
   { key: 'wall_2', name: 'the wall by the pond', at: [-30, 6], len: 8 },
   { key: 'wall_3', name: 'the wall by the flats', at: [56.5, -3], len: 8 },
   { key: 'wall_4', name: 'the long wall by the art workshop', at: [-24, 40], len: 12 },
-  { key: 'wall_5', name: 'the wall by the closed shop', at: [44.6, 42], len: 8 },
+  { key: 'wall_5', name: 'the wall by the build workshop', at: [44.6, 42], len: 8 },
 ];
 // ---- The notice board: it stands in the middle of the square. People pin notes on it with what they would like made
 // (board.js). He walks to it to read them. The notes are on both sides.
@@ -67,7 +67,7 @@ const BACK_NAME = { home: 'my own house', shop: 'the grocery store', library: 't
 const BACK_VIA = ['alley', 'alleyBack']; // the alley between his house and the grocery store leads to the back of the row
 export const PAINT_WALLS = [
   { key: 'wall_1', words: /beside|my house|my home/, via: ['homeW'] }, { key: 'wall_2', words: /park|pond/, via: ['homeW'] }, { key: 'wall_3', words: /flats|end of the row/, via: ['rowE'] },
-  { key: 'wall_4', words: /long|art/, via: ['sqN', 'sqW'], side: -1 }, { key: 'wall_5', words: /closed|land/, via: ['sqN', 'sqE', 'sqSE', 'rowSE'], side: -1 },
+  { key: 'wall_4', words: /long|art/, via: ['sqN', 'sqW'], side: -1 }, { key: 'wall_5', words: /build|land/, via: ['sqN', 'sqE', 'sqSE', 'rowSE'], side: -1 },
 ].map((t) => { const w = WALLS.find((x) => x.key === t.key); const side = t.side ?? 1; return { ...t, name: w.name, x: w.at[0], z: w.at[1] + side * 0.21, len: w.len, h: WALL_H, side, spot: [w.at[0], w.at[1] + side * 1.95] }; })
   .concat(BUILDINGS.filter((b) => BACK_NAME[b.key]).map((b) => { const z = b.at[1] - b.size[2]; return { key: `back_${b.key}`, back: b.key, name: `the back wall of ${BACK_NAME[b.key]}`, x: b.at[0], z: z - 0.03, len: b.size[0], h: b.size[1], side: -1, spot: [b.at[0], z - 1.9], via: BACK_VIA }; }));
 // "the wall by the library", "the back of the grocery store", "any wall": the wall he means. No wall named: one of them, by `seed`.
@@ -102,6 +102,7 @@ export const TOWN_SPOTS = {
   workshop: doorOf('workshop'), // at the door of the print workshop
   land: doorOf('land'), // at the door of the land workshop
   cafe: doorOf('cafe'), // at the door of the internet café (he looks things up there)
+  build: doorOf('build'), // at the door of the build workshop (he makes things there)
   board: { x: BOARD.x, z: BOARD.z - 1.15, face: 0 }, // in front of the notice board
   pond: { x: -16.4, z: 19.6, face: -Math.PI / 2 }, // by the bench, looking over the water
   homeW: { x: -6.2, z: 1.2, face: -Math.PI / 2 }, // past the west corner of his house
@@ -117,7 +118,7 @@ export const LIE = { drop_square: [-6.2, 25.4], drop_pond: [-15.6, 23.6], drop_d
 export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], walls: ['paint_wall_1', ''], drops: ['drop_square', ''] };
 // The way to each spot from his door: the corners he walks by, one after the other (the way home is the same, backwards).
 // (A route can also be for one spot: the way to each wall he paints on. The page looks for the spot first, then the place.)
-export const ROUTES = { doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], cafe: ['homeW'], land: ['sqN', 'sqE'], drops: ['sqN'], drop_square: ['sqN'], drop_pond: ['sqN', 'sqW'], drop_door: [], drop_wall: ['sqN', 'sqSW'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
+export const ROUTES = { doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], cafe: ['homeW'], build: ['sqN', 'sqE', 'sqSE'], land: ['sqN', 'sqE'], drops: ['sqN'], drop_square: ['sqN'], drop_pond: ['sqN', 'sqW'], drop_door: [], drop_wall: ['sqN', 'sqSW'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
 
 // ---- The land itself. It is flat, until Pip shapes it: at the land workshop he takes the land tool and makes a hill or
 // digs a hole (land.js; the list is kept in his state as `land`). Whoever draws the world or puts something on it first
@@ -153,7 +154,7 @@ export const atTownDoor = (x, z) => Math.abs(x - TOWN_X) < 0.75 && z < 0.75 && z
 // and the square and the ways he walks must stay free. It can be bigger than a house.
 export const BUILD_MAX = { w: 20, h: 18, d: 20 };
 // The ways he walks himself (ROUTES): they stay free, from corner to corner. (The sand paths are drawn along them.)
-const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ['studio', 'studio', ROUTES.studio], ['cafe', 'cafe', ROUTES.cafe], ...['drop_pond', 'drop_door', 'drop_wall'].map((k) => ['drops', k, ROUTES[k]]), ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
+const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ['studio', 'studio', ROUTES.studio], ['cafe', 'cafe', ROUTES.cafe], ['build', 'build', ROUTES.build], ...['drop_pond', 'drop_door', 'drop_wall'].map((k) => ['drops', k, ROUTES[k]]), ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
 // Every stretch of path once: [ax, az, bx, bz] (for drawing them).
 export const PATHS = [...new Map(WALKS.map(([a, b]) => [[a, b].map((p) => `${p.x},${p.z}`).sort().join('|'), [a.x, a.z, b.x, b.z]])).values()];
 // What stands there already: [what it is, x0, x1, z0, z1] and [what it is, x, z, radius] (world coordinates).
@@ -196,7 +197,7 @@ export function buildProblem(x0, x1, z0, z1) {
   { const x = nearX(POND.x); const z = nearZ(POND.z); if (((x - POND.x) / (POND.rx + 1.3)) ** 2 + ((z - POND.z) / (POND.rz + 1.3)) ** 2 < 1) return 'the pond is there'; }
   for (const [a, b, place] of WALKS) {
     const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.6));
-    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : place === 'walls' ? 'a wall I paint on' : place === 'shop' ? 'the grocery store' : place === 'studio' ? 'my art workshop' : place === 'land' ? 'the land workshop' : place === 'workshop' ? 'the print workshop' : place === 'drops' ? 'where people leave notes for me' : place === 'cafe' ? 'the internet café' : `the ${place === 'board' ? 'notice board' : place}`} must stay free`;
+    for (let i = 0; i <= n; i++) if (inRect(a.x + ((b.x - a.x) * i) / n, a.z + ((b.z - a.z) * i) / n, x0, x1, z0, z1, 1.1)) return `my own way to ${place === 'doorstep' ? 'my doorstep' : place === 'walls' ? 'a wall I paint on' : place === 'shop' ? 'the grocery store' : place === 'studio' ? 'my art workshop' : place === 'land' ? 'the land workshop' : place === 'workshop' ? 'the print workshop' : place === 'drops' ? 'where people leave notes for me' : place === 'cafe' ? 'the internet café' : place === 'build' ? 'the build workshop' : `the ${place === 'board' ? 'notice board' : place}`} must stay free`;
   }
   return null;
 }
@@ -212,6 +213,7 @@ export const BUILD_PLACES = [
   { key: 'landshop', name: 'by the land workshop', words: /\bland (work)?shop\b|\bland tools?\b/i, at: [20.4, 42], half: [6.6, 4.6], side: [1, 0] },
   { key: 'workshop', name: 'by the print workshop', words: /\b(print )?workshop\b|\bprinter\b/i, at: [8.7, 42], half: [6.1, 4.6], side: [0, 1] },
   { key: 'shop', name: 'by the grocery store', words: /\b(grocery( store)?|grocer|shop|store)\b/i, at: [14, -4.5], half: [7.6, 5.1], side: [0, 1] },
+  { key: 'buildshop', name: 'by the build workshop', words: /\bbuild(ing)? (work)?shop\b/i, at: [32.6, 42], half: [6.6, 4.6], side: [0, 1] },
   { key: 'cafe', name: 'by the internet café', words: /\b(internet )?caf[eé]\b/i, at: [-21.2, -4], half: [7.6, 4.6], side: [-1, 0] },
   { key: 'north', name: 'in the north field', words: /\bnorth(ern)? field\b|\bbehind (the|my) houses?\b/i, at: [8, -28], half: [0, 0] }, // the big empty land behind the row of houses
   { key: 'west', name: 'in the west field', words: /\bwest(ern)? field\b/i, at: [-58, 6], half: [0, 0] },
@@ -230,7 +232,7 @@ export function buildPlace(text) {
   return (exact.length ? exact : hits).sort((a, b) => a.i - b.i)[0].p;
 }
 // Is this "where" a place out in his world? "outside ...", or one of the places with a word like by, in, on, at before it.
-const PLACE_WORDS = /\b(by|at|near|in|on|beside|next to|in front of|behind|left of|right of|across from)\s+(the |my )?(pond|park|library|square|street|meadow|willow|green stone|grocery store|grocery|internet café|internet cafe|café|cafe|plot|land workshop|art workshop|print workshop|workshop|north field|south field|east field|west field|land)\b(?!\s+(lamp|light|sign|map|picture|painting|drawing|photo|model|book|shelf|poster|print|view))/i;
+const PLACE_WORDS = /\b(by|at|near|in|on|beside|next to|in front of|behind|left of|right of|across from)\s+(the |my )?(pond|park|library|square|street|meadow|willow|green stone|grocery store|grocery|internet café|internet cafe|café|cafe|plot|land workshop|art workshop|print workshop|build workshop|workshop|north field|south field|east field|west field|land)\b(?!\s+(lamp|light|sign|map|picture|painting|drawing|photo|model|book|shelf|poster|print|view))/i;
 export const worldPhrase = (text) => PLACE_WORDS.exec(String(text ?? ''))?.[0] ?? null; // "by the pond" out of a longer sentence
 export const worldWhere = (text) => /\b(outside|outdoors?)\b/i.test(String(text ?? '')) || PLACE_WORDS.test(String(text ?? ''));
 

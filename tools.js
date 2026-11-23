@@ -64,10 +64,11 @@ export function toolList(s) {
 export const hasTool = (s, kind) => s.tools.some((t) => t.kind === kind || toolKind(t.name) === kind);
 
 // null when he can do it, otherwise why not.
-export function missingTool(s, action) {
-  const kind = NEEDS[action];
-  if (!kind || hasTool(s, kind)) return null;
-  return `I need ${kind} for that (${TOOL_KINDS[kind].hint}). I can make some with decorate and "tool": "${kind}", or ask for them. It has to be in my inventory${toolList(s).some((x) => x.kind === kind) ? ' (mine is not: I take it back with take_tool)' : ''}`;
+// (He used to need the right tool for some things: pencils to draw, a toolbox to build on, a watering can to water.
+// Bas, 2026-11-23: "make it so that he doesn't need small stuff like that anymore". So nothing is ever missing: what
+// he needs to make something is there, in the workshops of his village. His inventory is simply what he owns.)
+export function missingTool() {
+  return null;
 }
 
 // Something he asked for was given to him. Returns the new inventory tool or null.
@@ -103,11 +104,7 @@ export function craftTool(s, d, kind, parts, at = new Date().toISOString()) {
 }
 
 // The rules for tools never change, so they are part of the fixed instructions.
-export const toolsGuide = () => {
-  const fixed = Object.entries(TOOL_KINDS).map(([kind, k]) => `${k.for} needs ${kind} (${k.hint})`).join('; ');
-  return `TOOLS\nLike a person I think about what I need: ${fixed}. For any other step that needs a tool (a hammer to build, a ladder to reach something high, a telescope to look at stars), I add "needs": "the tool" to that step. If it is not in my inventory, the step does not work out. I can make a tool myself with decorate and "tool": "its name" (I design it and it goes straight into my inventory), or ask for it with asks_add. When it has been given to me I mark the ask as done and write its name in tools_add, and it goes in my inventory. Before I start something bigger (a task I said yes to, a project), I think about what tools it would need. If I am not sure, I look it up first with search_web (like "tools needed to build a bookshelf"). Then for each tool I do not have I choose: I make it myself (decorate with "tool"), or I ask someone to get it or make it for me (asks_add, saying exactly what and why). I can ask for help with anything else too, not only tools, like someone doing a part of a project for me, if I want help. It is my choice each time. place_tool {name, where} puts a tool in my room (then it is not in my inventory), take_tool {name} takes it back.
-`;
-};
+export const toolsGuide = () => `TOOLS\nI do not need a tool for anything I do. What I need to draw, build, sew, plant, water or measure is always there: the workshops in my village have it. My inventory is simply what I own. I never ask for a small tool, and I never write "needs" on a step for one.\n`;
 
 // He wrote "tool": "..." on something he makes. It only counts when the thing really is that tool (pencils are drawing supplies, a car is not).
 export function toolFor(d) {

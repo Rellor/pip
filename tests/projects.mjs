@@ -90,16 +90,13 @@ jp.projects[0].steps.forEach((x, i) => { if (i < 3) x.done = true; });
 if (!judgeProject(jp, 'Bread', { proud: true, why: 'enough' }).done) fail('a project with 3 of 4 steps could not be finished');
 console.log('ok  "good enough" needs most of the steps done');
 
-// A project stuck without a tool: he may ask for it even after his 2 asks today, and the project move skips it.
+// He needs no tools any more (tools.js): a project is never stuck for want of one, and he never asks for one.
 import { askReason, blockedProject } from '../moves.js';
 const paint = { body: { creativity: 6, curiosity: 5, boredom: 3, loneliness: 3, tidiness: 5, coziness: 5 }, calm: 5, energy: 6, joy: 5, wonder: 5, fullness: 6, tools: [], decor: [], recent: { moves: [] }, furniture: {}, asks: [], today: { done: { ask_for: 2 } },
   projects: [{ title: 'Paint the sky', status: 'working', steps: [{ text: 'Paint the grey clouds', done: false }], versions: [], notes: [], needs: [] }] };
-if (blockedProject(paint)?.tool !== 'drawing supplies') fail(`no blocked project: ${JSON.stringify(blockedProject(paint))}`);
-if (!/drawing supplies/.test(askReason(paint) ?? '')) fail('a stuck project gives no reason to ask after 2 asks');
-if (availableMoves(paint, { random: () => 0.5 }).some((m) => m.name === 'work_on_project')) fail('work_on_project offered for a step he cannot do');
-paint.today.done.ask_for = 3;
-if (askReason(paint)) fail('more than one extra ask a day');
-console.log('ok  a project stuck without a tool: he asks for it (one extra ask), and does not keep trying');
+if (blockedProject(paint)) fail(`a project is blocked for a tool: ${JSON.stringify(blockedProject(paint))}`);
+if (/drawing supplies|toolbox|tool/.test(askReason(paint) ?? '')) fail('he still has a reason to ask for a tool');
+console.log('ok  no tools needed: a project to paint goes on without drawing supplies, and he does not ask for them');
 
 // Mixing paint is painting, not cooking; a step whose way keeps failing waits, and he plans it again.
 {
