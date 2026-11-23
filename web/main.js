@@ -12,7 +12,7 @@ import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sid
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
 import { makeGrain } from './grain.js';
-import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS } from './town.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -2227,6 +2227,38 @@ function blocked(x, z) {
   const rects = [...MOVABLE.filter((k) => !FURNITURE[k].flat).flatMap((k) => furnRects(furn, k)).map((r) => [r.x0, r.x1, r.z0, r.z1]), ...WALK_EXTRA];
   return rects.some(([x0, x1, z0, z1]) => x > x0 - 0.28 && x < x1 + 0.28 && z > z0 - 0.28 && z < z1 + 0.28);
 }
+// Flying (V, or the bird button): you leave the ground and look at his world from above. Landing puts you on free ground.
+const fly = { on: false, y: 12 };
+function setFly(on) {
+  if (on && !inTown(view.x)) { toast('Step outside first. Out there you can fly.'); return; }
+  if (on === fly.on) return;
+  fly.on = on;
+  $('flybtn').setAttribute('aria-pressed', String(on));
+  if (on) { fly.y = townGround(view.x, view.z) + 1.55; view.keys.delete(' '); toast(touchOnly ? 'You fly. Push the stick to fly where you look. Tap the bird to land.' : 'You fly. W S to fly where you look, Space up, C down. V to land.'); return; }
+  view.x = clamp(view.x, TOWN_X + WORLD.x0 + 1, TOWN_X + WORLD.x1 - 1); view.z = clamp(view.z, WORLD.z0 + 1, WORLD.z1 - 1);
+  for (let r = 0; r < 40 && blocked(view.x, view.z); r += 0.5) for (let a = 0; a < 6.28; a += 0.4) { const x = view.x + Math.cos(a) * r, z = view.z + Math.sin(a) * r; if (!blocked(x, z)) { view.x = x; view.z = z; break; } } // not into a house or the pond
+  view.pitch = Math.max(-0.5, Math.min(0.5, view.pitch));
+}
+$('flybtn').addEventListener('click', () => setFly(!fly.on));
+// Saying hello (E, or the hand button): when he is near and awake he looks at you and bobs.
+const hello = { until: 0, off: 0 };
+function sayHello() {
+  const p = pip.group.position;
+  if (lastState?.last?.sleeping) return toast('Pip is asleep. He does not hear you.');
+  if (!pip.group.visible || inTown(p.x) !== inTown(view.x)) return toast(inTown(view.x) ? 'Pip is not out here. The round map shows where he is.' : 'Pip is not here right now. The round map shows where he is.');
+  if (Math.hypot(p.x - view.x, p.z - view.z) > 45) return toast('Pip is too far away to hear you. The round map shows where he is.');
+  hello.until = performance.now() + 1900;
+  toast('Pip looks at you and bobs. 👋');
+}
+$('hellobtn').addEventListener('click', sayHello);
+function helloPose(before) { // (called around the frame that moves him: the bob is only on top of where he is)
+  if (before) { pip.group.position.y -= hello.off; hello.off = 0; return; }
+  const left = hello.until - performance.now();
+  if (left <= 0) return;
+  pip.group.rotation.y = Math.atan2(view.x - pip.group.position.x, view.z - pip.group.position.z);
+  hello.off = Math.abs(Math.sin(left / 1000 * 8)) * 0.16 * (inTown(view.x) ? 1 : 1.6);
+  pip.group.position.y += hello.off;
+}
 function updateWalk(dt) {
   if (view.mode !== 'walk') return;
   const fwd = (view.keys.has('w') || view.keys.has('arrowup') ? 1 : 0) - (view.keys.has('s') || view.keys.has('arrowdown') ? 1 : 0) + view.stick.y;
@@ -2234,6 +2266,26 @@ function updateWalk(dt) {
   const keyX = (view.keys.has('d') || view.keys.has('arrowright') ? 1 : 0) - (view.keys.has('a') || view.keys.has('arrowleft') ? 1 : 0);
   if (!turnWithMouse) view.yaw -= keyX * 1.9 * dt;
   const side = (turnWithMouse ? keyX : 0) + view.stick.x;
+  if (fly.on) { // like a bird: where you look is where you go, through nothing and over everything
+    const sp = (view.keys.has('shift') ? 24 : 10) * dt;
+    const cp = Math.cos(view.pitch);
+    const inHouse = (x, z, y) => BUILDINGS.some((bd) => { const [x0, x1, z0, z1] = rectOf(bd); return y < bd.size[1] + 1 && x - TOWN_X > x0 - 0.7 && x - TOWN_X < x1 + 0.7 && z > z0 - 0.7 && z < z1 + 0.7; }); // you fly over the houses, not through them
+    const nx = view.x + (-Math.sin(view.yaw) * cp * fwd + Math.cos(view.yaw) * side) * sp;
+    const nz = view.z + (-Math.cos(view.yaw) * cp * fwd - Math.sin(view.yaw) * side) * sp;
+    const ny = fly.y + (Math.sin(view.pitch) * fwd + (view.keys.has(' ') ? 0.8 : 0) - (view.keys.has('c') ? 0.8 : 0)) * sp;
+    if (!inHouse(nx, view.z, fly.y)) view.x = nx;
+    if (!inHouse(view.x, nz, fly.y)) view.z = nz;
+    if (!inHouse(view.x, view.z, ny)) fly.y = ny;
+    view.x = clamp(view.x, TOWN_X + WORLD.x0 - 40, TOWN_X + WORLD.x1 + 40);
+    view.z = clamp(view.z, WORLD.z0 - 40, WORLD.z1 + 40);
+    fly.y = clamp(fly.y, townGround(view.x, view.z) + 1.2, 90);
+    bob.moving = false;
+    walkPlace();
+    applyPixels();
+    camera.position.set(view.x, fly.y, view.z);
+    camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
+    return;
+  }
   const len = Math.hypot(fwd, side);
   bob.moving = false;
   if (len > 0.05) {
@@ -3000,9 +3052,9 @@ const touchOnly = matchMedia('(hover: none), (pointer: coarse)').matches;
 function showTurn() { // the two choices (in Settings and on the start screen) and the list of controls follow what is chosen
   turnWithMouse = mouseLook();
   document.querySelectorAll('.setpick [data-turn]').forEach((b) => { const on = (b.dataset.turn === 'mouse') === turnWithMouse; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); });
-  const rows = touchOnly ? [['The round stick', 'walk'], ['Drag', 'look around'], ['Tap a thing', 'read about it'], ['Tap the round map', 'go to Pip']]
-    : turnWithMouse ? [['W  S', 'walk'], ['A  D', 'step sideways'], ['Shift', 'run'], ['Space', 'jump'], ['Mouse', 'turn and look (click the picture first)'], ['Esc', 'get your mouse back'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']]
-    : [['W  S', 'walk'], ['A  D', 'turn'], ['Shift', 'run'], ['Space', 'jump'], ['Drag', 'look up and down'], ['F or click', 'open what you look at'], ['The round map', 'click it to go to Pip']];
+  const rows = touchOnly ? [['The round stick', 'walk'], ['Drag', 'look around'], ['Tap a thing', 'read about it'], ['Tap the round map', 'go to Pip'], ['🕊️', 'fly like a bird'], ['👋', 'say hello to Pip']]
+    : turnWithMouse ? [['W  S', 'walk'], ['A  D', 'step sideways'], ['Shift', 'run'], ['Space', 'jump'], ['Mouse', 'turn and look (click the picture first)'], ['Esc', 'get your mouse back'], ['F or click', 'open what you look at'], ['V', 'fly like a bird (Space up, C down)'], ['E', 'say hello to Pip'], ['The round map', 'click it to go to Pip']]
+    : [['W  S', 'walk'], ['A  D', 'turn'], ['Shift', 'run'], ['Space', 'jump'], ['Drag', 'look up and down'], ['F or click', 'open what you look at'], ['V', 'fly like a bird (Space up, C down)'], ['E', 'say hello to Pip'], ['The round map', 'click it to go to Pip']];
   $('controls').replaceChildren(...rows.map(([k, what]) => { const li = el('li'); li.append(el('b', k), document.createTextNode(what)); return li; }));
 }
 function setTurn(mode) {
@@ -3079,15 +3131,19 @@ stick.addEventListener('pointercancel', stopStick);
 window.addEventListener('keydown', (e) => {
   if (view.mode !== 'walk' || /input|textarea/i.test(document.activeElement?.tagName || '')) return;
   const k = e.key.toLowerCase();
-  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift'].includes(k)) {
+  if (['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift', 'c'].includes(k)) {
     view.keys.add(k);
-    if (k !== 'shift') e.preventDefault();
+    if (k !== 'shift' && k !== 'c') e.preventDefault();
   }
-  if (k === ' ' && !e.repeat) { if (jump.y <= 0.001) jump.v = 4.6; e.preventDefault(); } // Space: a hop
+  if (k === ' ' && fly.on) { view.keys.add(' '); e.preventDefault(); } // Space while flying: up
+  else if (k === ' ' && !e.repeat) { if (jump.y <= 0.001) jump.v = 4.6; e.preventDefault(); } // Space: a hop
+  if (k === 'v' && !e.repeat) { setFly(!fly.on); e.preventDefault(); }
+  if (k === 'e' && !e.repeat) { sayHello(); e.preventDefault(); }
   if (k === 'f' && !e.repeat) { interact(); e.preventDefault(); }
   if (k === 'escape' && !document.body.classList.contains('first')) setMode('overview');
 });
 window.addEventListener('keyup', (e) => view.keys.delete(e.key.toLowerCase()));
+window.addEventListener('blur', () => view.keys.clear());
 
 // Slow device: draw with fewer pixels so it stays smooth; fast again: back to sharp.
 const SHARP = Math.min(devicePixelRatio, 1.5);
@@ -3227,7 +3283,9 @@ function loop(now) {
     syncFixedLamps(lastState);
   }
   updateSlides(now, dt);
+  helloPose(true);
   frame(now, dt);
+  helloPose(false);
   town.animate(now / 1000);
   if (pip.group.visible === (awayNow() && outHidden)) pip.group.visible = !(awayNow() && outHidden); // out of the street too (at the pond, the library): nowhere to be seen
   home.update(now / 1000, studioBusy);
@@ -4290,7 +4348,46 @@ function renderStatus(s) {
     ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
     : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
 }
+// "Since you were here": what Pip did while you were away. The page remembers (on this device) when you last looked.
+let sinceShown = false;
+function renderSince(s) {
+  if (sinceShown) return;
+  sinceShown = true;
+  const last = Number(store('pip-seen') || 0);
+  const keep = () => store('pip-seen', String(Date.now()));
+  keep();
+  setInterval(keep, 60_000);
+  if (!last || Date.now() - last < 30 * 60_000) return;
+  const after = (iso) => Date.parse(iso) > last;
+  const names = (list, n = 3) => { const u = [...new Set(list.filter(Boolean))]; return `${u.slice(0, n).join(', ')}${u.length > n ? ` and ${u.length - n} more` : ''}`; };
+  const lines = [];
+  const built = (s.decor ?? []).filter((d) => !d.image && after(d.createdAt));
+  if (built.length) lines.push(`🔨 He made ${names(built.map((d) => d.name))}.`);
+  const drew = (s.gallery ?? s.art ?? []).filter((a) => after(a.at ?? a.createdAt));
+  if (drew.length) lines.push(`🎨 He drew ${names(drew.map((a) => `“${a.name}”`))}${drew.some((a) => a.wall) ? ' (some of it on a wall outside)' : ''}.`);
+  const prints = (s.prints ?? []).filter((x) => after(x.at));
+  if (prints.length) lines.push(`🖨️ He printed ${names(prints.map((x) => x.name))}.`);
+  const land = (s.land ?? []).filter((l) => after(l.at));
+  if (land.length) lines.push(`⛰️ He shaped the land: ${names(land.map((l) => l.name))}.`);
+  const out = (s.outings ?? []).filter((o) => !o.errand && after(o.homeAt));
+  if (out.length) lines.push(`🚶 He went out ${out.length} time${out.length === 1 ? '' : 's'}: ${names(out.map((o) => worldPlace(o.place)?.name?.replace(/^my /, 'his ')))}.`);
+  const learned = (s.learned ?? []).filter((l) => after(l.at));
+  if (learned.length) lines.push(`💌 He learned something from ${names(learned.map((l) => l.from))}.`);
+  const log = (s.log ?? []).filter((e) => after(e.at));
+  const read = log.filter((e) => ['search_web', 'read_book', 'browse'].includes(e.action) && !e.failed).length;
+  if (read) lines.push(`📚 He looked things up or read ${read} time${read === 1 ? '' : 's'}.`);
+  const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept' && after(w.keptAt ?? w.at)).length;
+  if (kept) lines.push(`📌 He made ${kept} thing${kept === 1 ? '' : 's'} from the notice board.`);
+  if (!lines.length) lines.push(log.length ? `He was busy with small things (${log.length} of them), but made nothing new.` : 'Nothing new. He mostly slept.');
+  const ago = (() => { const m = Math.round((Date.now() - last) / 60000); return m < 90 ? `${m} minutes` : m < 2880 ? `${Math.round(m / 60)} hours` : `${Math.round(m / 1440)} days`; })();
+  const box = $('since');
+  const x = el('button', '✕', 'x'); x.type = 'button'; x.setAttribute('aria-label', 'Close'); x.addEventListener('click', () => { box.hidden = true; });
+  const ul = el('ul'); ul.append(...lines.slice(0, 7).map((l) => el('li', l)));
+  box.replaceChildren(x, el('h3', `Since you were here (${ago} ago)`), ul);
+  box.hidden = false;
+}
 function render(s) {
+  renderSince(s);
   renderPhone(s);
   syncPrints(s);
   syncFixedLamps(s);
@@ -4997,6 +5094,7 @@ if (FIRST) {
   if (!store('pip-start')) startScreen(true);
   document.body.classList.add('first');
   mini.hidden = false;
+  $('hud').hidden = false;
   portalReady = true;
   setMode('walk');
   Object.assign(view, { x: TOWN_X + 2.6, z: 8.8, yaw: 0.28, pitch: 0.04 }); // in the street, looking at his house
