@@ -35,7 +35,7 @@ console.log('ok  interests fade when he leaves them alone');
 
 const a = toAnswer({ moves: [{ move: 'browse', details: {} }], reason: 'x', mood: 'calm', spark: { topic: 'Eurorack', how: 'like' } }, ['browse']);
 assert.equal(a.steps[0].action, 'browse');
-assert.deepEqual(a.spark, { topic: 'Eurorack', how: 'like' });
+assert.deepEqual(a.spark, { topic: 'Eurorack', how: 'like', says: '' });
 assert.ok(brainSchema(['browse']).properties.spark);
 console.log('ok  the brain can browse and say what caught him');
 
