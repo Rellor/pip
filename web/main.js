@@ -138,6 +138,30 @@ function fitCamera() {
   }
 }
 new ResizeObserver(fitCamera).observe(stage);
+// On a phone the text is a drawer under the picture. Its handle makes it bigger or smaller: drag it up for more room to
+// read, down for more picture; a tap goes small, half, big. The page remembers the size.
+{
+  const grip = $('grip'), app = $('app'), panel = $('panel');
+  const keep = (key, value) => { try { if (value === undefined) return localStorage.getItem(key); localStorage.setItem(key, value); } catch {} return null; };
+  let size = Number(keep('pip.textH')) || 0; // the share of the screen the text takes, in percent (0: the page decides)
+  const set = (pct, save) => { size = Math.round(Math.max(16, Math.min(86, pct))); app.style.setProperty('--text-h', `${size}%`); if (save) keep('pip.textH', String(size)); };
+  if (size) set(size, false);
+  let drag = null;
+  grip.addEventListener('pointerdown', (e) => { drag = { off: e.clientY - panel.getBoundingClientRect().top, y: e.clientY, moved: false }; try { grip.setPointerCapture(e.pointerId); } catch {} });
+  grip.addEventListener('pointermove', (e) => {
+    if (!drag) return;
+    if (Math.abs(e.clientY - drag.y) > 6 && !drag.moved) { drag.moved = true; grip.classList.add('drag'); document.body.classList.add('sizing'); }
+    if (drag.moved) { const r = app.getBoundingClientRect(); set(((r.bottom - (e.clientY - drag.off)) / r.height) * 100, false); }
+  });
+  const done = () => { if (!drag) return; const moved = drag.moved; drag = null; grip.classList.remove('drag'); document.body.classList.remove('sizing'); if (moved) { keep('pip.textH', String(size)); grip.dataset.moved = '1'; } };
+  grip.addEventListener('pointerup', done);
+  grip.addEventListener('pointercancel', done);
+  grip.addEventListener('click', () => { // a tap (or Enter): the next size
+    if (grip.dataset.moved) { delete grip.dataset.moved; return; }
+    const now = (panel.getBoundingClientRect().height / app.getBoundingClientRect().height) * 100;
+    set(now < 45 ? 58 : now < 70 ? 82 : 34, true);
+  });
+}
 
 const hemi = new THREE.HemisphereLight(0xfff3e6, 0xc9a98d, 0.9);
 scene.add(hemi);
