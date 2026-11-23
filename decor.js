@@ -1329,6 +1329,37 @@ function wallBlocker(r, obs, gap = 0.1) {
   if (r.a0 < -4.9 || r.a1 > 4.9 || r.y0 < 0.2 || r.y1 > WALL_TOP) return 'the edge of the wall';
   return obs.find((o) => r.a0 < o.a1 + gap && r.a1 + gap > o.a0 && r.y0 < o.y1 + gap && r.y1 + gap > o.y0)?.n ?? null;
 }
+// How much free wall there is: the biggest picture-shaped place (5 wide to 4 high) on each wall, in metres.
+export function wallRoom(decor) {
+  const out = {};
+  for (const side of ['back', 'left']) {
+    const obs = wallObstacles(decor, side);
+    out[side] = null;
+    for (let w = LIMITS.wall.w; w >= 0.39 && !out[side]; w -= 0.2) {
+      const hw = w / 2, hh = (w * 0.8) / 2;
+      for (let a = -4.9 + hw; a <= 4.9 - hw + 0.001 && !out[side]; a += 0.25) for (let y = 0.3 + hh; y <= WALL_TOP - hh; y += 0.25) if (!wallBlocker({ a0: a - hw, a1: a + hw, y0: y - hh, y1: y + hh }, obs)) { out[side] = { w: r3(w), h: r3(w * 0.8) }; break; }
+    }
+  }
+  return out;
+}
+// A new thing for a wall. Where he said first; then anywhere on that wall; then on the other wall; and when the walls have
+// no place that big, it is hung a bit smaller (not below 60%) instead of not at all. Only then it fails, and he hears how
+// much room there is. (His walls fill up: a big map failed six times in a row before this.)
+function hangOnWall(decor, spec, parts, side, want, atMs, now) {
+  const copy = (k = 1) => parts.map((p) => ({ ...p, size: p.size.map((v) => r3(v * k)), pos: p.pos.map((v) => r3(v * k)), rot: [...p.rot] }));
+  const other = side === 'back' ? 'left' : 'back';
+  const first = placeWall(decor, spec, copy(), side, want, atMs, now);
+  if (!first.failed || !/no free place on the/.test(first.failed)) return first;
+  for (const [sd, k] of [...(want ? [[side, 1]] : []), [other, 1], [side, 0.85], [other, 0.85], [side, 0.72], [other, 0.72], [side, MIN_SHRINK], [other, MIN_SHRINK]]) {
+    const r = placeWall(decor, spec, copy(k), sd, null, atMs, now);
+    if (r.failed) continue;
+    const [w, h] = sizeOf(r.entry) ?? [0, 0];
+    return { ...r, hint: `${sd !== side ? `there was no room on the ${side} wall, so it hangs on the ${sd} wall` : want ? 'there was no room at that spot, so it hangs a bit further along the wall' : 'my walls are getting full'}${k < 1 ? `, and smaller than I designed it (${r3(w)} m wide, ${r3(h)} m high): that is the room there was` : ''}` };
+  }
+  const room = wallRoom(decor);
+  const best = [room.back, room.left].filter(Boolean).sort((a, b) => b.w - a.w)[0];
+  return { failed: `${first.failed.replace(/\. He can use the other wall, make it smaller, or take something down$/, '')}, and not on the other wall either. ${best ? `The biggest free place on my walls is about ${best.w} x ${best.h} m` : 'My walls are full'}. I make it much smaller, take something down first (remove_decoration), or paint it big on a wall outside instead (paint_wall)`, hinted: true };
+}
 function placeWall(decor, spec, parts, side, want, atMs, now, moving = false) {
   const scale = fit(parts, 'wall', {});
   if (scale < 0.55) return { failed: `${spec.name} is too big and deep for a wall: it would have to shrink to ${Math.round(scale * 100)}% to hang there. Walls hold flat things. He makes it flatter or smaller, or puts it on the floor` };
@@ -1949,7 +1980,7 @@ function placeWhereRaw(decor, spec, parts, want, atMs, now) {
     const along = num2(spec.along) ?? (slot ? (side === 'back' ? slot[0] : slot[2]) : null);
     let height = num2(spec.height) ?? (slot ? slot[1] : null);
     if (holdsThings(spec)) height = Math.min(height ?? 1.7, WALL_SHELF_TOP); // a shelf hangs at a normal shelf height (he stretches for it), not up near the ceiling
-    return placeWall(decor, spec, parts, side, along !== null || height !== null ? [along ?? 0, height ?? 2.6] : null, atMs, now);
+    return hangOnWall(decor, spec, parts, side, along !== null || height !== null ? [along ?? 0, height ?? 2.6] : null, atMs, now);
   }
   const onWhat = spec.on || (want && ZONES[want].kind === 'surface' ? Object.entries(ZONE_BASE).find(([k]) => k === want)?.[1] ?? 'desk' : '');
   if (onWhat) {

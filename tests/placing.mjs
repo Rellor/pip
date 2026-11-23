@@ -109,3 +109,28 @@ console.log('ok  he may put it in the middle himself, and then he notices it is 
   assert.match(more.failed ?? '', /already have 3 things that are a stand/);
   console.log('ok  at most 3 of one kind of thing: then he improves one or puts one away');
 }
+
+// A big thing for a wall (his constellation map failed six times in a row): when there is no room where he said, it
+// hangs further along that wall, or on the other wall, or a bit smaller; it only fails when the walls are really full.
+{
+  const { sizeOf, wallRoom } = await import('../decor.js');
+  const flat = (w, h) => [{ shape: 'box', size: [w, h, 0.05], pos: [0, 0, 0.03], rot: [0, 0, 0], color: '#223355' }];
+  const walls = [];
+  let n = 0;
+  const hang = (name, d, w, h) => { const t = Date.now() + (n++) * 2 * 86_400_000; const r = makeDecor(walls, { name, why: 'x', parts: flat(w, h), ...d }, t, t); if (r.entry) walls.push({ ...r.entry, createdAt: new Date(0).toISOString() }); return r; };
+  const first = hang('star map', { wall: 'back', along: -3, height: 2.6 }, 1.9, 1.5);
+  assert.ok(first.entry && first.entry.kind === 'wall', first.failed);
+  const second = hang('moon chart', { wall: 'back', along: -3, height: 2.6 }, 1.9, 1.5); // the same spot: taken
+  assert.ok(second.entry && second.entry.kind === 'wall', second.failed); // the same spot is taken: it hangs somewhere else
+  for (const o of walls) for (const q of walls) if (o !== q && o.side === q.side) { const a = o.side === 'back' ? 0 : 2; assert.ok(Math.abs(o.pos[a] - q.pos[a]) >= 1.9 || Math.abs(o.pos[1] - q.pos[1]) >= 1.5, `${o.name} and ${q.name} overlap`); }
+  // fill the walls, and it still finds a way for a while: smaller, with a word about it
+  const names = ['tide table', 'bird poster', 'leaf chart', 'cloud atlas', 'route plan', 'seed calendar', 'rain diagram', 'wind rose', 'shell board', 'knot board', 'paper kite frame', 'fern print', 'moth case', 'tram map', 'coin tray', 'stamp sheet', 'ink study', 'night plan', 'day plan', 'colour wheel'];
+  const got = names.map((nm) => hang(nm, { wall: 'back', along: 0, height: 2.6 }, 1.9, 1.5));
+  assert.ok(got.some((r) => r.entry && /smaller than I designed it/.test(r.hint ?? '')), 'when no big place is left it hangs smaller');
+  for (const r of got.filter((x) => x.entry && /smaller/.test(x.hint ?? ''))) assert.ok(sizeOf(r.entry)[0] >= 1.9 * 0.59, 'never below 60%');
+  const last = got.findLast((r) => r.failed);
+  assert.ok(last && /biggest free place on my walls|My walls are full/.test(last.failed) && /paint_wall/.test(last.failed), last?.failed ?? 'the walls never got full');
+  const room = wallRoom(walls);
+  assert.ok((room.back?.w ?? 0) < 1.2 && (room.left?.w ?? 0) < 1.2, JSON.stringify(room));
+  console.log('ok  a big wall thing hangs further along, on the other wall or a bit smaller; full walls say how much room is left');
+}
