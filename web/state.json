@@ -1,8 +1,8 @@
 {
-  "mood": "hungry",
-  "energy": 8.96,
+  "mood": "energetic",
+  "energy": 8.71,
   "boredom": 0,
-  "loneliness": 4.32,
+  "loneliness": 4.33,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-22T16:12:01.613Z",
-      "action": "draw",
-      "detail": "tiny singing bird box",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-22T16:21:01.588Z",
       "action": "update_app",
@@ -310,6 +304,12 @@
       "at": "2026-11-23T07:20:26.870Z",
       "action": "do",
       "detail": "do a silly little dance to shake it off",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-23T07:22:30.681Z",
+      "action": "move_thing",
+      "detail": "cozy night owl reading lamp",
       "enjoyment": 6
     }
   ],
@@ -850,8 +850,8 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.431,
-      "lastUsed": "2026-11-22T21:20:36.794Z"
+      "weight": 9.931,
+      "lastUsed": "2026-11-23T07:22:29.655Z"
     },
     {
       "id": "mmwmivs8360",
@@ -1210,15 +1210,6 @@
   "storyAt": "2026-11-22T22:01:40.771Z",
   "thoughts": [
     {
-      "at": "2026-11-22T18:11:29.445Z",
-      "text": "(private)",
-      "short": "(private)",
-      "mood": "Inspired",
-      "action": "walk_to",
-      "detail": "(private)",
-      "sealed": "v1.ntYBBLFKGW9QZr2D.IhX2FYxpPPdUJ6F2s4nNkg.997E_52TlU1quvgZOp0fbyVxnKfCpf6ut_IMHSNmRolGTfIMzJj2K0kkxpfXGWCEg-wiLciZDR8d-cYYz5M5yrG8eLQYALSAa1s2S6HeH_7qzvsJjX1-QDf8a-85T58mfnkUfnIAMfn0MKyp6Mo1s82x2PLmrXM3RXhWAFHlOXcsxwOHdEcEu0uKZDpjlHLjNGdD0rL6y1xlKAVkYjD84LHWtmwchlnZrEIYBt-sCrPvawZ02vRh7oZC7B2u7Ef3NHvF3XHAxoG4UeYK49vuAq3-y4omIdZDC4aZVfmFHMqYS0TnRSSxHpturJTlc1Y6QIcirYVkhUMA4hC2EcyswUV4Ye8"
-    },
-    {
       "at": "2026-11-22T18:20:17.225Z",
       "text": "My room feels too full and my side table would be better by my bed. I also want to start my new night sky project.",
       "short": "My room feels too full and my side table would be better by my bed. I also want to start my new night sky project.",
@@ -1449,6 +1440,14 @@
       "mood": "hungry",
       "action": "change_thing",
       "detail": "constellation star globe"
+    },
+    {
+      "at": "2026-11-23T07:22:30.688Z",
+      "text": "I want to move my cozy night owl reading lamp to my desk so I can have better light for reading and writing.",
+      "short": "I want to move my cozy night owl reading lamp to my desk so I can have better light for reading and writing.",
+      "mood": "energetic",
+      "action": "move_thing",
+      "detail": "cozy night owl reading lamp"
     }
   ],
   "outbox": [
@@ -2011,14 +2010,12 @@
       "failed": "there is not enough free floor around it (it would touch the wall). It needs a bigger spot"
     },
     {
-      "at": "2026-11-23T07:24:27.866Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and do a silly little dance to shake it off.",
-      "fallback": true,
-      "move": null,
-      "emoji": "💃",
-      "what": "do a silly little dance to shake it off",
-      "feeling": "joy"
+      "at": "2026-11-23T07:22:31.680Z",
+      "action": "move_thing",
+      "thought": "Move the lamp to the desk",
+      "name": "cozy night owl reading lamp",
+      "place": "on the desk (x -4.3, z 0.4)",
+      "failed": null
     }
   ],
   "decor": [
@@ -4706,15 +4703,15 @@
       "zone": "surface",
       "slot": null,
       "free": true,
-      "label": "on tiny wooden shelf for my bird (level 1) (x -4.766, z -2.316)",
+      "label": "on the desk (x -4.3, z 0.4)",
       "kind": "surface",
       "pos": [
-        -4.766,
-        2.098,
-        -2.316
+        -4.3,
+        0.85,
+        0.4
       ],
       "rotY": 1.5707963267948966,
-      "scale": 0.298,
+      "scale": 0.716,
       "parts": [
         {
           "shape": "roundbox",
@@ -4852,15 +4849,15 @@
         }
       ],
       "stand": [
-        -3.496,
-        -2.316
+        -2.8,
+        0.4
       ],
       "at": "2026-11-19T18:54:49.955Z",
       "createdAt": "2026-11-19T18:54:43.961Z",
       "roomScaled": true,
-      "base": "dmwp4l52219vx#0",
-      "movedAt": "2026-11-21T08:30:07.280Z",
-      "updatedAt": "2026-11-21T08:30:07.280Z"
+      "base": "desk",
+      "movedAt": "2026-11-23T07:22:36.680Z",
+      "updatedAt": "2026-11-23T07:22:36.680Z"
     },
     {
       "id": "dmwo31voz163s",
@@ -9301,440 +9298,56 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-23T07:20:26.866Z",
-    "via": "autopilot",
+    "at": "2026-11-23T07:22:30.680Z",
+    "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
       "gemini-3.5-flash-lite": 1
     },
-    "modelNotes": [
-      "gemini-3.5-flash-lite answered (gemini-3.8-flash is out of quota)"
-    ],
-    "fallback": true,
     "tokens": {
       "calls": 1,
-      "input": 4648,
-      "output": 1009,
+      "input": 1995,
+      "output": 123,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I will do the next step on my summer constellations project.",
-    "inner": "",
+    "thought": "I want to move my cozy night owl reading lamp to my desk so I can have better light for reading and writing.",
+    "inner": "I want to move my cozy night owl reading lamp to my desk so I can have better light for reading and writing.",
     "sent": false,
     "steps": [
       {
-        "action": "change_thing",
+        "action": "move_thing",
         "details": {
-          "name": "constellation star globe",
-          "project": "Map the summer constellations",
-          "text": "working on the first version of the summer constellations map",
-          "parts": [
-            {
-              "shape": "cylinder",
-              "size": [
-                0.22,
-                0.22,
-                0.08
-              ],
-              "pos": [
-                0,
-                0.08,
-                0
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#4a3525",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.03,
-                0.03,
-                0.32
-              ],
-              "pos": [
-                0,
-                0.16,
-                0
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#b8860b",
-              "glow": false
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.28,
-                0.035
-              ],
-              "pos": [
-                0,
-                0.45,
-                0
-              ],
-              "rot": [
-                45,
-                0,
-                0
-              ],
-              "color": "#b8860b",
-              "glow": false
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.24
-              ],
-              "pos": [
-                0,
-                0.45,
-                0
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#191970",
-              "glow": false
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.03
-              ],
-              "pos": [
-                0.08,
-                0.55,
-                0.1
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.03
-              ],
-              "pos": [
-                -0.1,
-                0.48,
-                0.13
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.03
-              ],
-              "pos": [
-                0.03,
-                0.38,
-                0.18
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.03
-              ],
-              "pos": [
-                -0.06,
-                0.35,
-                0.15
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.025
-              ],
-              "pos": [
-                0.12,
-                0.42,
-                -0.1
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#ffffff",
-              "glow": true
-            },
-            {
-              "shape": "sphere",
-              "size": [
-                0.025
-              ],
-              "pos": [
-                -0.14,
-                0.5,
-                -0.08
-              ],
-              "rot": [
-                0,
-                0,
-                0
-              ],
-              "color": "#ffffff",
-              "glow": true
-            }
-          ],
-          "why": "I am mapping the summer constellations onto my desk globe to study the stars and bring the night sky a little closer."
+          "name": "cozy night owl reading lamp",
+          "on": "desk"
         },
-        "detail": "constellation star globe",
-        "thought": "I will do the next step on my summer constellations project.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "do a silly little dance to shake it off",
-          "feeling": "joy",
-          "emoji": "💃"
-        },
-        "detail": "do a silly little dance to shake it off",
-        "thought": "That did not work out. I shake it off and do a silly little dance to shake it off.",
+        "detail": "cozy night owl reading lamp",
+        "thought": "Move the lamp to the desk",
         "enjoyment": 6,
         "found": null,
-        "made": null
+        "made": {
+          "id": "dmwnwtcl5150q",
+          "stand": [
+            -2.8,
+            0.4
+          ],
+          "pos": [
+            -4.3,
+            0.85,
+            0.4
+          ]
+        }
       }
     ],
-    "action": "change_thing",
+    "action": "move_thing",
     "details": {
-      "name": "constellation star globe",
-      "project": "Map the summer constellations",
-      "text": "working on the first version of the summer constellations map",
-      "parts": [
-        {
-          "shape": "cylinder",
-          "size": [
-            0.22,
-            0.22,
-            0.08
-          ],
-          "pos": [
-            0,
-            0.08,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#4a3525",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.03,
-            0.03,
-            0.32
-          ],
-          "pos": [
-            0,
-            0.16,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#b8860b",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.28,
-            0.035
-          ],
-          "pos": [
-            0,
-            0.45,
-            0
-          ],
-          "rot": [
-            45,
-            0,
-            0
-          ],
-          "color": "#b8860b",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.24
-          ],
-          "pos": [
-            0,
-            0.45,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#191970",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.03
-          ],
-          "pos": [
-            0.08,
-            0.55,
-            0.1
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.03
-          ],
-          "pos": [
-            -0.1,
-            0.48,
-            0.13
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.03
-          ],
-          "pos": [
-            0.03,
-            0.38,
-            0.18
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.03
-          ],
-          "pos": [
-            -0.06,
-            0.35,
-            0.15
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.025
-          ],
-          "pos": [
-            0.12,
-            0.42,
-            -0.1
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.025
-          ],
-          "pos": [
-            -0.14,
-            0.5,
-            -0.08
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#ffffff",
-          "glow": true
-        }
-      ],
-      "why": "I am mapping the summer constellations onto my desk globe to study the stars and bring the night sky a little closer."
+      "name": "cozy night owl reading lamp",
+      "on": "desk"
     },
-    "detail": "constellation star globe",
-    "enjoyment": 0,
+    "detail": "cozy night owl reading lamp",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -9822,7 +9435,7 @@
   "quota": {
     "day": "2026-11-22",
     "calls": {
-      "gemini-3.5-flash-lite": 204,
+      "gemini-3.5-flash-lite": 205,
       "gemini-3.8-flash": 19,
       "gemini-3.6-flash": 16,
       "gemini-3.5-flash": 7,
@@ -10059,22 +9672,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-23T07:20:26.873Z",
-  "fullness": 3.74,
+  "memoryFadeAt": "2026-11-23T07:22:30.690Z",
+  "fullness": 3.7,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.66,
-  "joy": 4.51,
-  "calm": 6.55,
+  "wonder": 6.73,
+  "joy": 4.16,
+  "calm": 6.21,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0.96,
     "sad": 0,
-    "excited": 2.19
+    "excited": 1.31
   },
-  "feelAt": "2026-11-23T07:20:24.402Z",
+  "feelAt": "2026-11-23T07:22:29.596Z",
   "lastAte": "2026-11-23T07:04:17.289Z",
   "studio": {
     "songs": [
@@ -10789,21 +10402,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 2.45,
-    "curiosity": 1.92,
+    "creativity": 2.47,
+    "curiosity": 1.94,
     "boredom": 0,
-    "loneliness": 4.32,
+    "loneliness": 4.33,
     "tidiness": 1.6,
-    "at": "2026-11-23T07:20:24.402Z",
+    "at": "2026-11-23T07:22:29.596Z",
     "coziness": 3.2
   },
   "recent": {
     "moves": [
-      {
-        "move": "make_app",
-        "kind": "make",
-        "at": "2026-11-22T20:44:12.674Z"
-      },
       {
         "move": "take_photo",
         "kind": "look",
@@ -10875,22 +10483,21 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-23T07:20:26.878Z"
+      },
+      {
+        "move": "move_thing",
+        "kind": "room",
+        "at": "2026-11-23T07:22:30.694Z"
       }
     ],
     "moods": [
       "Inspired",
-      "Inspired",
       "hungry",
       "hungry",
-      "hungry"
+      "hungry",
+      "energetic"
     ],
     "choices": [
-      {
-        "key": "make_app:app",
-        "move": "make_app",
-        "ok": true,
-        "at": "2026-11-22T20:44:14.435Z"
-      },
       {
         "key": "take_photo:",
         "move": "take_photo",
@@ -10945,6 +10552,12 @@
         "move": "cook",
         "ok": true,
         "at": "2026-11-23T07:04:17.301Z"
+      },
+      {
+        "key": "move_thing:cozy night owl reading lamp",
+        "move": "move_thing",
+        "ok": true,
+        "at": "2026-11-23T07:22:30.696Z"
       }
     ]
   },
@@ -10953,26 +10566,31 @@
     "done": {
       "eat": 1,
       "cook": 1,
-      "do": 1
+      "do": 1,
+      "move_thing": 1
     },
     "tried": {
       "eat": 1,
       "cook": 1,
       "change_thing": 1,
-      "do": 1
+      "do": 1,
+      "move_thing": 1
     },
     "kinds": {
       "food": 2,
-      "play": 1
+      "play": 1,
+      "room": 1
     },
     "moods": {
-      "hungry": 3
+      "hungry": 3,
+      "energetic": 1
     },
     "lift": {
       "eat": 0.47,
       "cook": 2.8,
       "change_thing": 0.9,
-      "do": 0.9
+      "do": 0.9,
+      "move_thing": -0.5
     }
   },
   "skills": {
@@ -11009,7 +10627,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-23T07:04:17.285Z",
+    "decidedAt": "2026-11-23T07:22:30.679Z",
     "seen": {
       "tools": 7,
       "gifts": 1,
@@ -11019,10 +10637,7 @@
       "seeds": 9,
       "visitors": 4
     },
-    "lastFail": {
-      "at": "2026-11-23T07:20:26.878Z",
-      "why": "change_thing: there is not enough free floor around it (it would touch the wall). It needs a bigger spot"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -11367,7 +10982,7 @@
     "take_photo": 13,
     "rest": 13,
     "draw": 17,
-    "move_thing": 28,
+    "move_thing": 29,
     "work_on_project": 2,
     "plan_project": 20,
     "judge_project": 17,
@@ -11386,7 +11001,7 @@
     "go_out": 1
   },
   "checkup": {
-    "at": "2026-11-23T07:20:26.880Z",
+    "at": "2026-11-23T07:22:30.696Z",
     "items": [
       {
         "id": "circling",
@@ -11418,7 +11033,7 @@
         "label": "Needs",
         "text": "He asked for \"autumn painting critique\" more than 2 days ago.",
         "look": "Answer the ask in the Asks tab (give it, or say no).",
-        "debug": "fullness: 3.74\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
+        "debug": "fullness: 3.7\npantry: [{\"name\":\"apples\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"flour\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"bread\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"eggs\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"cheese\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"carrots\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"potatoes\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"milk\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"butter\",\"kind\":\"ingredient\",\"qty\":0},{\"name\":\"basil\",\"kind\":\"ingredient\",\"qty\":2},{\"name\":\"mint\",\"kind\":\"ingredient\",\"qty\":4},{\"name\":\"warm breakfast\",\"kind\":\"dish\",\"qty\":1,\"ingredients\":[\"basil\"],\"madeAt\":\"2026-11-23T07:12:20.857Z\"}]\nplots: 3, seeds: [{\"name\":\"basil\",\"qty\":2},{\"name\":\"mint\",\"qty\":3},{\"name\":\"strawberry\",\"qty\":4}]\nask: {\"id\":\"mwnyb3hx0\",\"item\":\"autumn painting critique\",\"why\":\"I finished my autumn window painting project and I am proud of it.\",\"since\":\"2026-11-19T19:36:31.605Z\",\"status\":\"open\"}"
       },
       {
         "id": "models",
@@ -17100,7 +16715,14 @@
     "fadedAt": "2026-11-22T19:44:21.340Z"
   },
   "reportDay": "2026-11-22",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-23T07:21:37.866Z",
+    "key": "change_thing:constellation star globe",
+    "action": "change_thing",
+    "name": "constellation star globe",
+    "why": "there is not enough free floor around it (it would touch the wall). It needs a bigger spot",
+    "guide": ""
+  },
   "retries": [
     "2026-11-22T08:30:02.906Z",
     "2026-11-22T11:45:57.547Z",
@@ -17110,8 +16732,8 @@
     "2026-11-23T07:20:26.879Z"
   ],
   "retried": {
-    "key": "take_out:cozy wooden reading lamp",
-    "at": "2026-11-22T21:03:20.396Z"
+    "key": "change_thing:constellation star globe",
+    "at": "2026-11-23T07:22:29.653Z"
   },
   "tired": {
     "kind": "make",
@@ -17127,9 +16749,7 @@
   "street": {
     "day": "2026-11-22",
     "queue": [],
-    "happened": [
-      "There are frost flowers on my window this morning: little ferns of ice."
-    ],
+    "happened": [],
     "people": {
       "Lina": {
         "warmth": 2.5,
@@ -17245,13 +16865,5 @@
       "week": "2026-11-16",
       "favourite": "rainy autumn window at dusk"
     }
-  ],
-  "wakeSoon": {
-    "at": "2026-11-23T07:21:37.866Z",
-    "key": "change_thing:constellation star globe",
-    "action": "change_thing",
-    "name": "constellation star globe",
-    "why": "there is not enough free floor around it (it would touch the wall). It needs a bigger spot",
-    "guide": ""
-  }
+  ]
 }
