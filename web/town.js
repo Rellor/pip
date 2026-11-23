@@ -4,7 +4,7 @@
 // house here leads into his room, and the front door in his hall leads back out here.
 // The layout is a small village square: his home on the north side with the grocery store and the library glued to each
 // other beside it, the notice board in the middle, the three workshops in a row on the south side, and walls for his art
-// in between. Everything is close together. There is no road (there are no cars): sand paths run to every door.
+// in between. Everything is close together. There is no road (there are no cars): paths of trodden earth run to every door.
 //   - To add a building: one line in BUILDINGS (where, how big, what its front looks like, or a photo for it).
 //   - To add a wall for his drawings: one line in WALLS.
 // The world stands in the same scene as his house, far to the side (at x = TOWN_X). The viewer walks through it; when
@@ -19,7 +19,7 @@ export const WORLD = { x0: -66, x1: 78, z0: -38, z1: 64 }; // the whole world: 1
 export const WORLD_RANGE = [WORLD.x0, WORLD.x1];
 export const TOWN_RANGE = [-39, 42]; // around his home: what the view from above shows first
 export const TOWN_Z = [WORLD.z0, WORLD.z1];
-export const SQUARE = { x0: -10, x1: 26, z0: 7, z1: 31 }; // the village square: sand, with the notice board in the middle
+export const SQUARE = { x0: -10, x1: 26, z0: 7, z1: 31 }; // the village square: trodden earth, with the notice board in the middle
 // Pip's own land: a big free field beside the square, where a plain "outside" puts what he makes. It is his to fill.
 export const PLOT = { x0: 30, x1: 62, z0: 4, z1: 34 };
 export const inTown = (x) => x > 60;
@@ -153,7 +153,7 @@ export const atTownDoor = (x, z) => Math.abs(x - TOWN_X) < 0.75 && z < 0.75 && z
 // The only rule: it has to fit. It may not stand in a building, in the water, on a tree or on what is already there,
 // and the square and the ways he walks must stay free. It can be bigger than a house.
 export const BUILD_MAX = { w: 20, h: 18, d: 20 };
-// The ways he walks himself (ROUTES): they stay free, from corner to corner. (The sand paths are drawn along them.)
+// The ways he walks himself (ROUTES): they stay free, from corner to corner. (The earth paths are drawn along them.)
 const WALKS = [...Object.entries(TOWN_FOR).map(([place, [spot]]) => [place, spot, ROUTES[place] ?? []]), ['studio', 'studio', ROUTES.studio], ['cafe', 'cafe', ROUTES.cafe], ['build', 'build', ROUTES.build], ...['drop_pond', 'drop_door', 'drop_wall'].map((k) => ['drops', k, ROUTES[k]]), ...PAINT_WALLS.map((w) => ['walls', `paint_${w.key}`, w.via])].flatMap(([place, spot, via]) => { const pts = ['door', ...via, spot].map((k) => TOWN_SPOTS[k]); return pts.slice(1).map((b, i) => [pts[i], b, place]); });
 // Every stretch of path once: [ax, az, bx, bz] (for drawing them).
 export const PATHS = [...new Map(WALKS.map(([a, b]) => [[a, b].map((p) => `${p.x},${p.z}`).sort().join('|'), [a.x, a.z, b.x, b.z]])).values()];
@@ -327,14 +327,27 @@ export function buildTown(THREE) {
   ground.material.userData.tint = tintOf();
   ground.receiveShadow = true;
   { const cx = (WORLD.x0 + WORLD.x1) / 2, cz = (WORLD.z0 + WORLD.z1) / 2; for (const [w, d, x, z] of [[WW + 0.6, 0.3, cx, WORLD.z0 - 0.15], [WW + 0.6, 0.3, cx, WORLD.z1 + 0.15], [0.3, WD, WORLD.x0 - 0.15, cz], [0.3, WD, WORLD.x1 + 0.15, cz]]) box([w, 0.8, d], 0x8a6a4c, [x, -0.42, z]); } // the rim it lies in
-  // the village square: sand, and sand paths from it to every door (there is no road: there are no cars)
-  const paving = tex('tex/paving.jpg'); paving.wrapS = paving.wrapT = THREE.RepeatWrapping; paving.repeat.set((SQUARE.x1 - SQUARE.x0) / 3, (SQUARE.z1 - SQUARE.z0) / 3); paving.anisotropy = 4; // real cobbles (a photo from ambientCG, see web/tex/CREDITS.txt)
-  const square = box([SQUARE.x1 - SQUARE.x0, 0.07, SQUARE.z1 - SQUARE.z0], skin(paving, 1.2), [(SQUARE.x0 + SQUARE.x1) / 2, 0.0, (SQUARE.z0 + SQUARE.z1) / 2]);
+  // the village square and the paths from it to every door (there is no road: there are no cars)
+  // The square and the paths are bare earth, trodden into the grass: a photo of dirt (ambientCG, see web/tex/CREDITS.txt)
+  // laid flat on the ground, fading out at its edges so it is part of the ground and not a floor on top of it.
+  const dirtTex = (rx, ry) => { const t = tex('tex/dirt.jpg'); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); t.anisotropy = 4; return t; };
+  const fadeTex = (w, h, edgeX, edgeY, rough = 0) => { // white where the earth is, black where the grass is, soft and a little ragged in between
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    g.fillStyle = '#000'; g.fillRect(0, 0, w, h);
+    g.filter = `blur(${Math.max(1, Math.min(edgeX, edgeY) * 0.55)}px)`;
+    g.fillStyle = '#fff'; g.fillRect(edgeX, edgeY, w - 2 * edgeX, h - 2 * edgeY);
+    for (let i = 0; i < rough; i++) { const a = rnd() * Math.PI * 2; const x = w / 2 + Math.cos(a) * (w / 2 - edgeX) * (0.92 + rnd() * 0.12), y = h / 2 + Math.sin(a) * (h / 2 - edgeY) * (0.92 + rnd() * 0.12); g.fillStyle = rnd() < 0.5 ? '#fff' : '#000'; g.beginPath(); g.arc(Math.max(0, Math.min(w, x)), Math.max(0, Math.min(h, y)), 3 + rnd() * 7, 0, 7); g.fill(); }
+    g.filter = 'none';
+    return new THREE.CanvasTexture(c);
+  };
+  const earth = (w, d, pos, map, alpha) => { const m = skin(map, 0.95); m.color.set(0xd6cbbb); m.alphaMap = alpha; m.transparent = true; m.depthWrite = false; /* (a touch greyer than the photo: earth, not clay) */ const mesh = add(new THREE.PlaneGeometry(w, d), m, pos); mesh.rotation.x = -Math.PI / 2; mesh.receiveShadow = true; return mesh; };
+  const SQW = SQUARE.x1 - SQUARE.x0, SQD = SQUARE.z1 - SQUARE.z0;
+  const square = earth(SQW + 5, SQD + 5, [(SQUARE.x0 + SQUARE.x1) / 2, 0.02, (SQUARE.z0 + SQUARE.z1) / 2], dirtTex((SQW + 5) / 5, (SQD + 5) / 5), fadeTex(256, 192, 22, 20, 90));
   square.receiveShadow = true;
   things.push({ kind: 'place', key: 'square', object: square });
-  for (const [x, z] of [[SQUARE.x0, SQUARE.z0], [SQUARE.x1, SQUARE.z0], [SQUARE.x0, SQUARE.z1], [SQUARE.x1, SQUARE.z1]]) cyl(0.5, 0.56, 0.5, 0xd9cdb8, [x, 0.25, z]);
-  const pathMat = M(0xe2d5bd);
-  PATHS.forEach(([ax, az, bx, bz], i) => { const len = Math.hypot(bx - ax, bz - az); const p = box([len + 2, 0.04, 2.2], pathMat, [(ax + bx) / 2, -0.004 + i * 0.0012, (az + bz) / 2]); p.rotation.y = -Math.atan2(bz - az, bx - ax); p.receiveShadow = true; });
+  const pathFade = fadeTex(128, 32, 6, 9);
+  const paths = PATHS.map(([ax, az, bx, bz], i) => { const len = Math.hypot(bx - ax, bz - az); const mesh = earth(len + 2.4, 3, [(ax + bx) / 2, 0.012 + i * 0.0012, (az + bz) / 2], dirtTex((len + 2.4) / 5, 0.6), pathFade); mesh.rotation.z = -Math.atan2(bz - az, bx - ax); return { mesh, ax, az, bx, bz }; });
   const field = add(fieldGeo, M(0xb4dc9a, {}, 'grass', 14, 10), [0, 0, 0]);
   field.material.vertexColors = true;
   field.receiveShadow = true;
@@ -396,8 +409,7 @@ export function buildTown(THREE) {
     };
   })();
   // small things on some of them: Pip's doorstep and letterbox, the OPEN sign of the grocery store
-  box([1.7, 0.2, 0.75], 0xd9cdb8, [0, 0.1, 0.42]);
-  cyl(0.04, 0.04, 1.0, 0x7a5237, [2.7, 0.5, 0.75]); box([0.5, 0.32, 0.3], 0xc0392b, [2.7, 1.1, 0.75]);
+  const atDoor = [box([1.7, 0.2, 0.75], 0xd9cdb8, [0, 0.1, 0.42]), cyl(0.04, 0.04, 1.0, 0x7a5237, [2.7, 0.5, 0.75]), box([0.5, 0.32, 0.3], 0xc0392b, [2.7, 1.1, 0.75])];
   const letter = box([0.3, 0.2, 0.02], 0xfff8ee, [2.7, 1.32, 0.75]);
   const openSign = sign('OPEN', 0.84, 0.3, '#4caf6a', '#ffffff', 150);
   openSign.position.set(3.5, 1.72, 0.05); blockOf('shop').g.add(openSign);
@@ -627,7 +639,7 @@ export function buildTown(THREE) {
     for (const m of skins) { m.emissive.set(m.userData.tint ?? 0xffffff); if (dark) m.emissive.lerp(nightBlue, 0.3); m.emissiveIntensity = glowLevel * (m.userData.k ?? 1); }
     field.material.color.set(white ? 0xf4f8fa : se.name === 'autumn' ? 0xc9c98a : se.name === 'winter' ? 0xb9c6a4 : 0xb4dc9a);
     for (const r of roofs) r.m.material.color.set(white ? 0xffffff : r.color);
-    letter.visible = (s?.visitors ?? []).some((v) => v.npc && !v.answer);
+    letter.visible = !insideHid && (s?.visitors ?? []).some((v) => v.npc && !v.answer);
   }
 
   // ---- far away (only seen when you walk): the grid goes on to a horizon with hills, under a real sky
@@ -677,7 +689,18 @@ export function buildTown(THREE) {
   setWalk(false);
   // Seen from inside his home (main.js puts the world right outside his real windows then): the buildings that would
   // stand where his rooms are step aside, and the world's lights go off so they do not shine through his walls.
-  const setInside = (on, hide = []) => { insideNow = on; said = ''; for (const { b, g } of blocks) g.visible = !(on && hide.includes(b.key)); };
+  // (His real rooms are wider than the block that stands for his house: so whatever of the world lies where they are
+  // steps aside too: the paths that would run through his floor, and his doorstep and letterbox. `rect` is where his
+  // rooms are, in the world's own measure: [x0, x1, z0, z1].)
+  let insideHid = false;
+  const setInside = (on, hide = [], rect = null) => {
+    insideNow = on; said = '';
+    for (const { b, g } of blocks) g.visible = !(on && hide.includes(b.key));
+    const through = ({ ax, az, bx, bz }) => { if (!rect) return false; const n = Math.max(1, Math.ceil(Math.hypot(bx - ax, bz - az) / 0.5)); for (let i = 0; i <= n; i++) { const x = ax + ((bx - ax) * i) / n, z = az + ((bz - az) * i) / n; if (x > rect[0] - 2 && x < rect[1] + 2 && z > rect[2] - 2 && z < rect[3] + 2) return true; } return false; };
+    for (const p of paths) p.mesh.visible = !(on && through(p));
+    for (const m of atDoor) m.visible = !on;
+    insideHid = on;
+  };
   const skyFog = () => fogColor;
   return { group, update, setWalk, setInside, animate, skyFog, things, reshape };
 }
