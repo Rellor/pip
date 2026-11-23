@@ -1,5 +1,5 @@
 // Pip's little world outside his room: a few named places, what there is to do there, and how the page draws it.
-// Shared by the game (world.js: the rules) and the page (the World tab), so both tell the same story.
+// Shared by the game (world.js: the rules) and the page (the cards of his outings), so both tell the same story.
 // Research on worlds for small models and on games like this says: named places, never coordinates; five to seven
 // places are enough; every place has things to do that exist nowhere else, and opening hours; the world starts small.
 import { seasonInfo } from './season.js';

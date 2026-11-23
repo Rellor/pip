@@ -9,11 +9,10 @@ import { isGreenhouse, plantState, slotSpot } from './gardening.js';
 import { lampsOf, lampName, lampNow, PRESETS, LEVELS, timerWords, applyLight, fixedLamp } from './lights.js';
 import { buildHouse, LEFT_WINDOW, nextGoal, walkable, blockedInHouse, roomOf, FOCUS_X, ROOM_X, HAS_STUDIO } from './house.js';
 import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sideOfVector, SIDE_VECTORS, furnRects, isGone } from './furniture.js';
-import { streetData, renderStreet } from './streetview.js';
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
 import { makeGrain } from './grain.js';
-import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround } from './town.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -62,6 +61,8 @@ function applyPixels() {
   renderer.setPixelRatio(outside ? Math.max(0.2, Math.min(1, (view.mode === 'walk' ? 460 : 760) / w)) : Math.min(devicePixelRatio, 1.5));
 }
 const view = { mode: 'overview', x: 0, z: 3.4, yaw: 0, pitch: 0, keys: new Set(), stick: { x: 0, y: 0 } };
+let portalOn = false; // the world stands right outside his windows while you are inside his home (see setPortal)
+let portalReady = false;
 // Overview camera: drag to turn, pinch or scroll to zoom, two fingers (or shift + drag) to move.
 const orbit = { az: 0, el: 0, zoom: 1, px: 0, py: 0, pz: 0, fit: 1 };
 // The parts of the room that can be seen from the front: the floor and the two back walls.
@@ -78,7 +79,7 @@ FOCUS_RANGE.follow = [TOWN_X - 15, TOWN_X + 15];
 Object.defineProperty(FOCUS, 'follow', { get: () => clamp(pip.group.position.x, TOWN_X + WORLD_RANGE[0] + 13, TOWN_X + WORLD_RANGE[1] - 13) });
 const streetish = (n = focusName()) => n === 'street' || n === 'follow';
 const camBase = () => (streetish() ? [5, 9, 15] : [9.5, 9, 11]); // the street is looked at more from the front, so the house fronts show
-const panLimit = () => (streetish() ? 62 : 5); // how far the view can be moved sideways (outside: all the way to the park and the library)
+const panLimit = () => (streetish() ? 100 : 5); // how far the view can be moved sideways (outside: all the way to the park and the library)
 if (!HAS_STUDIO) document.querySelector('#rooms [data-room="studio"]')?.remove();
 let fitGoal = 1;
 const focusName = () => (houseView.want === 'auto' ? (houseView.now === 'street' ? 'follow' : houseView.now) : houseView.want);
@@ -191,7 +192,7 @@ box(extraWalls, [10.6, 0.3, 10.6], 0xe8c9b0, [0, 5.15, 0]);
 extraWalls.traverse((o) => (o.castShadow = false));
 scene.add(extraWalls);
 const home = buildHouse(THREE, scene); // the hall and the music studio
-const town = buildTown(THREE); // his street outside (town.js)
+const town = buildTown(THREE); // his world outside (town.js)
 scene.add(town.group);
 const rug = cyl(G.rug, [2, 2, 0.04], 0xe3a183, [0, 0.02, 0.8]);
 rug.castShadow = false;
@@ -424,6 +425,7 @@ function updateDecor(s) {
     decorGroups.set(d.id, g);
     if (d.song && audio?.state === 'running' && Date.now() - Date.parse(d.at) < 8000) playSong(d.song);
   }
+  if (portalOn) placeOutsideThings();
 }
 // Things Pip placed count from a moment in the near future (so they appear when he walks there). Show them exactly then, not at the next refresh.
 let dueTimer = null;
@@ -2241,7 +2243,9 @@ function updateWalk(dt) {
   }
   walkPlace(); // inside or outside: the sky, the horizon and the look follow where you stand
   applyPixels();
-  camera.position.set(view.x, 1.55 + (inTown(view.x) ? townGround(view.x, view.z) : 0), view.z);
+  // His room is built 1.6 times bigger than life (so is he): inside you stand as tall as he does, and can look out of
+  // his windows at the street. Outside everything is life-size.
+  camera.position.set(view.x, inTown(view.x) ? 1.55 + townGround(view.x, view.z) : portalReady ? 2.5 : 1.55, view.z);
   camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
 }
 // Out in the street the sky is a real colour (in the overview everything stands on the page's own background).
@@ -2251,13 +2255,40 @@ function skyNow() {
   const se = seasonInfo(new Date());
   return h < se.sunrise - 0.6 || h > se.sunset + 0.7 ? 0x1b2347 : h < se.sunrise + 0.7 ? 0xf7c9a8 : h > se.sunset - 0.9 ? 0xf2a988 : 0xa9d8f2;
 }
+// His home from outside is a plain block in the world, but from inside it is his real room. So that you see the real
+// world through his real windows, the whole world is set down right outside his walls while you are inside: the street
+// runs past his front door in the hall, and his plot lies across it. (The block of his own house, and the neighbour
+// whose block would stand in his bedroom, are left out then.) Step out of the door and the world is back in its place.
+const PORTAL = { x: 6.8, z: -5.3 }; // the front door in the hall: where the door of his house in the street is
+const HOUSE_RECT = [-5.5, 8.8, -5.5, 5.5];
+const hideInside = BUILDINGS.filter((b) => { const [x0, x1, z0, z1] = rectOf(b); return PORTAL.x - x1 < HOUSE_RECT[1] && PORTAL.x - x0 > HOUSE_RECT[0] && PORTAL.z - z1 < HOUSE_RECT[3] && PORTAL.z - z0 > HOUSE_RECT[2]; }).map((b) => b.key);
+function placeOutsideThings() { // what he built out there moves along with the world
+  for (const d of lastState?.decor || []) {
+    const g = d.kind === 'outside' && d.pos ? decorGroups.get(d.id) : null;
+    if (!g) continue;
+    if (portalOn) { g.position.set(PORTAL.x - (d.pos[0] - TOWN_X), d.pos[1], PORTAL.z - d.pos[2]); g.rotation.y = (d.rotY || 0) + Math.PI; } else { g.position.set(d.pos[0], d.pos[1], d.pos[2]); g.rotation.y = d.rotY || 0; }
+  }
+}
+function setPortal(on) {
+  portalOn = on;
+  town.group.position.set(on ? PORTAL.x : TOWN_X, 0, on ? PORTAL.z : 0);
+  town.group.rotation.y = on ? Math.PI : 0;
+  town.setInside(on, hideInside);
+  for (const o of [land.root, land.mask, sideLand.root, sideLand.mask]) o.visible = !on; // the painted view behind the glass makes way for the real world
+  placeOutsideThings();
+  town.update(lastState, Date.now(), forceLook.hour);
+}
+let walkKey = '';
 function walkPlace() {
   const out = view.mode === 'walk' && inTown(view.x);
-  if (out === walkOut) return;
+  const inside = portalReady && view.mode === 'walk' && !out;
+  if (`${out}${inside}` === walkKey) return;
+  walkKey = `${out}${inside}`;
   walkOut = out;
-  town.setWalk(out);
-  scene.userData.sky = out ? town.skyFog() : null; // look.js keeps the background: this tells it to show the sky's own colour
-  if (out) scene.background.set(town.skyFog());
+  if (portalOn !== inside) setPortal(inside);
+  town.setWalk(out || inside);
+  scene.userData.sky = out || inside ? town.skyFog() : null; // look.js keeps the background: this tells it to show the sky's own colour
+  if (out || inside) scene.background.set(town.skyFog());
   scene.fog = out ? new THREE.Fog(town.skyFog(), 140, 700) : null; // far things fade into the sky
   fitCamera();
   home.full.visible = view.mode === 'walk' && !out;
@@ -3481,7 +3512,7 @@ async function refreshNtfy() {
 }
 
 // tabs
-const TABS = ['day', 'life', 'street', 'asks', 'messages'];
+const TABS = ['day', 'life', 'asks', 'messages'];
 // Tabs that were folded into another one: Mind and the pictures live under Pip, Tasks under Asks, Visitors under Talk.
 const OLD_TABS = { mind: 'life', tasks: 'asks', photos: 'life', found: 'life', visitors: 'messages', talk: 'messages', pip: 'life' };
 const tabName = (n) => OLD_TABS[n] || n;
@@ -3496,7 +3527,6 @@ function showTab(name) {
   document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
   document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
   if (name === 'life') openLife(null);
-  if (name === 'street' && lastState) { streetSig = null; drawStreet(lastState); } // drawn fresh when it is opened (the picture needs to know how wide the panel is)
   if (name === 'day') loadOlder();
   if (name === 'messages') refreshNtfy(); // look for things typed in the ntfy app as soon as the chat is opened
   if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
@@ -4150,20 +4180,8 @@ function renderStatus(s) {
     ? (s._static ? 'Pip has not woken up yet.' : 'Pip has not woken up yet. Press "Wake Pip now".')
     : s._static ? `Pip last woke up ${new Date(s.last.at).toLocaleString()}` : '';
 }
-// The Street tab (streetview.js): drawn again only when something in it changed, so it does not jump while someone reads.
-let streetSig = null;
-function drawStreet(s) {
-  const d = streetData(s);
-  $('streetcount').textContent = d.count ? String(d.count) : '';
-  const sig = JSON.stringify({ ...d, cap: null, scene: { ...d.scene, now: Math.floor(d.scene.now / 1_800_000) } });
-  if (sig === streetSig) { const c = $('street').querySelector('.st-cap'); if (c) c.textContent = d.cap; return; }
-  if (tab !== 'street') return; // it is drawn when the tab is opened
-  streetSig = sig;
-  renderStreet($('street'), s);
-}
 function render(s) {
   renderPhone(s);
-  drawStreet(s);
   syncFixedLamps(s);
   $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);
@@ -4552,9 +4570,8 @@ function tickAway() {
   $('away').hidden = !a;
   $('away').textContent = said;
   renderNow();
-  if (lastState) { streetSig = null; drawStreet(lastState); }
 }
-$('away').addEventListener('click', () => showTab('street'));
+$('away').addEventListener('click', () => toPip()); // "Pip is out": go to where he is
 setInterval(() => {
   tickPlan();
   tickOutside();
@@ -4712,6 +4729,59 @@ function photoCamera(target) {
 }
 
 PHOTO ? takeSnapshot() : poll();
+
+// ---------------------------------------------------------------- always first person, and a little map to find Pip
+// You are always in his world, on your own two feet: there is no view from above any more. You start in the street in
+// front of his house. The little round map in the corner shows only where Pip is: a circle for him, a small arrow in the
+// middle for you. A tap on it takes you to him. (?overview=1 keeps the old view from above, for checks.)
+const FIRST = !PHOTO && !new URLSearchParams(location.search).has('overview');
+const mini = $('minimap');
+function toPip() {
+  const p = pip.group.position;
+  // a free place to stand a few steps from him, with nothing between you and him (not behind his wardrobe): in front of
+  // him first, then around him; if there is no such place, the nearest free one
+  const spots = [];
+  for (const far of [2.8, 3.6, 2.0, 4.6]) for (const a of [0, 0.7, -0.7, 1.4, -1.4, 2.2, -2.2, Math.PI]) spots.push([p.x + Math.sin(a) * far, p.z + Math.cos(a) * far, far]);
+  const sameRoom = (x) => inTown(p.x) === inTown(x) && (inTown(p.x) || roomOf(x) === roomOf(p.x)); // not in the hall while he is in his bedroom
+  const free = spots.filter(([x, z]) => sameRoom(x) && !blocked(x, z) && !blocked(x + 0.3, z) && !blocked(x - 0.3, z) && !blocked(x, z + 0.3) && !blocked(x, z - 0.3));
+  const clear = ([x, z, far]) => { for (let d = 0.3; d < far - 1.1; d += 0.3) if (blocked(x + ((p.x - x) * d) / far, z + ((p.z - z) * d) / far)) return false; return true; };
+  const pick = free.find(clear) ?? free[0];
+  if (pick) Object.assign(view, { x: pick[0], z: pick[1], yaw: Math.atan2(pick[0] - p.x, pick[1] - p.z), pitch: -0.2 });
+}
+function drawMini() {
+  if (mini.hidden) return;
+  const g = mini.getContext('2d');
+  const W = mini.width, R = W / 2;
+  // where someone is in the world: out there as they are, inside his house at his house
+  const at = (x, z) => (inTown(x) ? [x - TOWN_X, z] : [0, -3.7]);
+  const me = view.mode === 'walk' ? at(view.x, view.z) : [0, 4];
+  const p = at(pip.group.position.x, pip.group.position.z);
+  const k = (R - 16) / 60; // the edge of the map is 60 m away
+  g.clearRect(0, 0, W, W);
+  g.fillStyle = 'rgba(255,250,243,.9)'; g.beginPath(); g.arc(R, R, R - 3, 0, 7); g.fill();
+  g.strokeStyle = 'rgba(59,47,42,.18)'; g.lineWidth = 2; g.beginPath(); g.arc(R, R, (R - 16) / 2, 0, 7); g.stroke();
+  // Pip: a little circle. When he is further away than the map reaches, it waits at the edge on the side where he is.
+  let dx = (p[0] - me[0]) * k, dz = (p[1] - me[1]) * k;
+  const far = Math.hypot(dx, dz);
+  if (far > R - 16) { dx *= (R - 16) / far; dz *= (R - 16) / far; }
+  const beat = 1 + Math.sin(performance.now() / 300) * 0.2;
+  g.fillStyle = 'rgba(233,133,91,.3)'; g.beginPath(); g.arc(R + dx, R + dz, 17 * beat, 0, 7); g.fill();
+  g.fillStyle = '#e9855b'; g.strokeStyle = '#fff'; g.lineWidth = 3; g.beginPath(); g.arc(R + dx, R + dz, 10, 0, 7); g.fill(); g.stroke();
+  if (view.mode === 'walk') { // you: a small arrow in the middle that points where you look
+    g.save(); g.translate(R, R); g.rotate(-view.yaw);
+    g.fillStyle = '#3b2f2a'; g.beginPath(); g.moveTo(0, -11); g.lineTo(8, 9); g.lineTo(0, 4.5); g.lineTo(-8, 9); g.closePath(); g.fill(); g.restore();
+  }
+}
+if (FIRST) {
+  document.body.classList.add('first');
+  mini.hidden = false;
+  portalReady = true;
+  setMode('walk');
+  Object.assign(view, { x: TOWN_X + 2.6, z: 8.8, yaw: 0.28, pitch: 0.04 }); // in the street, looking at his house
+  mini.addEventListener('click', toPip);
+  setInterval(drawMini, 200);
+  drawMini();
+}
 
 // Phones freeze a page in the background, and bring the old picture back when you return. Refresh at once instead of waiting for the timer.
 let hiddenAt = 0;

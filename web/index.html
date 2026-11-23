@@ -73,6 +73,10 @@
   #rooms button { font-size:13px; padding:5px 9px; border-radius:9px; background:transparent; color:inherit; }
   #rooms button.on { background:var(--accent, #e9855b); color:#fff; }
   body.walking #rooms { display:none; }
+  /* always first person: no views from above, and a little round map in the corner with a circle where Pip is (tap it to go to him) */
+  body.first #walk, body.first #rooms, body.first #resetview { display:none; }
+  #stage #minimap { position:absolute; left:12px; top:12px; width:110px; height:110px; z-index:3; border-radius:50%; box-shadow:0 2px 12px rgba(0,0,0,.3); cursor:pointer; }
+  @media (max-width:640px) { #stage #minimap { width:88px; height:88px; } }
   @media (max-width: 640px) { #rooms { left:auto; right:12px; transform:none; top:60px; flex-direction:column; } #rooms button { padding:7px 9px; font-size:16px; line-height:1; } #rooms .lbl { display:none; } }
   #info h3 { margin:0 28px 6px 0; font-size:18px; }
   #info p { margin:6px 0; font-size:15px; }
@@ -328,149 +332,7 @@
   .mine { border-left:3px solid var(--line); padding-left:10px; }
   /* ---- The Street tab: his street as a picture, the neighbours, wishes, coins and the shop */
   #panel, .pane { min-width:0; } /* a wide picture inside (the street) scrolls by itself and never widens the panel */
-  #street { min-width:0; max-width:100%; overflow:clip; } /* clip, not hidden: the row of page buttons inside must be able to stick to the top */
-  .st-scene { max-width:100%; overflow-x:auto; overflow-y:hidden; border-radius:16px; border:1px solid var(--line); scrollbar-width:none; -webkit-overflow-scrolling:touch; background:var(--card); }
-  .st-scene::-webkit-scrollbar { display:none; }
-  .st-scene svg { display:block; height:240px; width:720px; max-width:none; }
-  .st-scene .sthouse { cursor:pointer; }
-  .st-scene .sthouse:hover { filter:brightness(1.06); }
-  .st-cap { margin:6px 2px 14px; font-size:13px; color:var(--muted); text-align:center; }
-  .st-faces { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:4px; margin:0 0 12px; }
-  .st-faces button { background:none; border:0; padding:4px 0; border-radius:12px; color:var(--ink); font:inherit; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:3px; min-width:0; }
-  .st-faces button:hover { background:var(--chip); }
-  .st-faces svg { border-radius:50%; box-shadow:0 0 0 2.5px var(--who); display:block; }
-  .st-faces b { font-size:13px; font-weight:600; white-space:nowrap; }
-  .st-faces .st-hearts i { font-size:11px; margin-right:0; }
-  .st-faces .st-new { position:relative; }
-  .st-faces .st-new::after { content:''; position:absolute; right:-2px; top:-2px; width:11px; height:11px; border-radius:50%; background:var(--accent); border:2px solid var(--panel); }
-  .st-card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:10px; }
-  .st-coins { display:flex; align-items:center; gap:12px; }
-  .st-coin { font-size:34px; line-height:1; }
-  .st-coins b { font-size:30px; line-height:1; display:block; }
-  .st-coins small { color:var(--muted); font-size:13px; }
-  .st-pill { margin-left:auto; border-radius:999px; padding:3px 11px; font-size:13px; font-weight:700; color:#fff; white-space:nowrap; }
-  .st-pill.open { background:#3f9a5a; } .st-pill.closed { background:#9a8c82; }
-  .st-sub { margin-top:10px; font-size:13px; color:var(--muted); }
-  .st-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
-  .st-chip { background:var(--chip); border-radius:999px; padding:2px 10px; font-size:14px; white-space:nowrap; }
-  .st-chip b { color:var(--accent); margin-left:2px; }
-  .st-bar { height:9px; border-radius:6px; background:var(--chip); overflow:hidden; margin-top:6px; }
-  .st-bar span { display:block; height:100%; border-radius:6px; background:linear-gradient(90deg,#f2c14e,#e9855b); }
-  .st-how { margin:10px 0 0; font-size:13px; color:var(--muted); }
-  .st-wish { display:flex; gap:12px; cursor:pointer; border-left:5px solid #f2c14e; }
-  .st-face { flex:none; position:relative; line-height:0; }
-  .st-face svg { border-radius:50%; display:block; }
-  .st-face.big svg { box-shadow:0 0 0 3px var(--who, var(--line)); }
-  .st-zz { position:absolute; right:-6px; bottom:-4px; font-size:16px; line-height:1; }
-  .st-body { min-width:0; }
-  .st-body p { margin:4px 0 8px; font-size:15px; font-style:italic; }
-  .st-tags { display:flex; flex-wrap:wrap; gap:6px; }
-  .st-tag { border:1px solid var(--line); border-radius:999px; padding:1px 9px; font-size:13px; color:var(--muted); white-space:nowrap; }
-  .st-tag.coin { background:#fbe9b8; border-color:#f2c14e; color:#6b4a12; font-weight:700; }
-  .st-tag.yes { background:#dff1e2; border-color:#8fc79b; color:#2c6b3c; font-weight:600; }
-  .st-kept { margin:-2px 0 6px; font-size:14px; }
-  .st-kept summary { cursor:pointer; color:var(--muted); font-weight:600; padding:4px 2px; }
-  .st-keptrow { display:flex; align-items:center; gap:8px; padding:5px 2px; }
-  .st-keptrow svg { border-radius:50%; display:block; }
-  .st-keptrow small { color:var(--muted); display:block; }
-  .st-person { border-left:5px solid var(--who); transition:box-shadow .3s; }
-  .st-person.flash { box-shadow:0 0 0 3px var(--who); }
-  .st-top { display:flex; gap:13px; align-items:center; }
-  .st-name { font-size:19px; font-weight:700; line-height:1.2; }
-  .st-who { font-size:14px; color:var(--muted); }
-  .st-fr { display:flex; align-items:center; gap:8px; margin-top:3px; font-size:14px; font-weight:600; }
-  .st-hearts i { font-style:normal; color:var(--line); font-size:17px; margin-right:1px; }
-  .st-hearts i.on { color:#e5534b; }
-  .st-chips.likes { margin-top:10px; }
-  .st-chips.likes .st-chip { font-size:13px; }
-  .st-today { margin-top:10px; padding:8px 10px; border-radius:10px; background:var(--bg); font-size:14px; }
-  .st-talk { margin-top:10px; display:flex; flex-direction:column; gap:6px; }
-  .st-say { max-width:92%; background:var(--bg); border-radius:14px 14px 14px 4px; padding:8px 11px; font-size:15px; }
-  .st-say b { display:block; font-size:12px; color:var(--muted); font-weight:600; margin-bottom:1px; }
-  .st-say.pip { align-self:flex-end; background:#fde3c4; color:#3b2f2a; border-radius:14px 14px 4px 14px; }
-  .st-say.pip b { color:#8a5a2c; }
-  .st-wait, .st-none { font-size:13px; color:var(--muted); margin:2px 2px 0; }
-  .st-foot { display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:10px; font-size:13px; color:var(--muted); }
-  .st-fine { font-size:13px; margin:2px 2px 0; }
-  .st-row { display:flex; gap:10px; align-items:flex-start; padding:6px 0; }
-  .st-row + .st-row { border-top:1px solid var(--line); }
-  .st-row small, .st-log small { color:var(--muted); }
-  .st-em { flex:none; width:30px; font-size:22px; line-height:1.2; text-align:center; }
-  .st-log { list-style:none; margin:0; padding:0; }
-  .st-log li { display:flex; gap:10px; padding:8px 4px; border-bottom:1px solid var(--line); font-size:15px; }
-  .st-log li.big { background:var(--card); border:1px solid #f2c14e; border-radius:12px; padding:9px 10px; margin:6px 0; }
-  .st-log small { display:block; font-size:12px; }
   /* ---- His world: where he is, the map, the places, postcards */
-  .wd-now { display:flex; align-items:center; gap:12px; }
-  .wd-now.away { border-color:#58a59a; background:linear-gradient(90deg, rgba(88,165,154,.14), transparent); }
-  .wd-em { font-size:32px; line-height:1; }
-  .wd-now b { display:block; font-size:17px; line-height:1.3; }
-  .wd-now small { color:var(--muted); font-size:14px; }
-  .wd-map { border-radius:18px; overflow:hidden; border:1px solid var(--line); line-height:0; }
-  .wd-map svg { width:100%; height:auto; display:block; }
-  .wd-map .wplace { cursor:pointer; }
-  .wd-map .wpip { transition:transform .8s; }
-  .wd-places { margin:10px 0 4px; }
-  .wd-place { border-bottom:1px solid var(--line); }
-  .wd-place summary { display:flex; align-items:center; gap:10px; padding:8px 2px; cursor:pointer; list-style:none; }
-  .wd-place summary::-webkit-details-marker { display:none; }
-  .wd-place.locked summary { opacity:.62; }
-  .wd-pt { display:flex; flex-direction:column; min-width:0; }
-  .wd-pt small { color:var(--muted); font-size:13px; }
-  .wd-place p { margin:0 4px 8px 42px; font-size:14px; }
-  .wd-place p.wd-do { color:var(--muted); }
-  .wd-plot { display:flex; gap:10px; align-items:flex-start; margin-top:10px; }
-  .wd-plot small { color:var(--muted); }
-  .wd-plot p { margin:2px 0 0; font-size:14px; }
-  .wd-cards { display:flex; gap:10px; overflow-x:auto; padding:2px 2px 10px; scroll-snap-type:x proximity; scrollbar-width:thin; }
-  .wd-card { flex:none; width:230px; margin:0; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden; scroll-snap-align:start; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-  .wd-card svg { width:100%; height:auto; display:block; }
-  .wd-card figcaption { padding:8px 11px 11px; font-size:14px; }
-  .wd-card figcaption small { color:var(--muted); }
-  .wd-card figcaption p { margin:4px 0 6px; font-size:14px; }
-  .wd-finds .st-chip { font-size:14px; }
-  /* the four pages of the World tab: a row of buttons that stays in view while you scroll */
-  .wd-nav { position:sticky; top:0; z-index:3; display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px; margin:0 0 12px; padding:2px 0 8px; background:var(--panel); border-bottom:1px solid var(--line); }
-  .wd-nav::before { content:''; position:absolute; left:0; right:0; bottom:100%; height:16px; background:var(--panel); } /* hides what scrolls past above it */
-  .wd-nav button { position:relative; display:flex; flex-direction:column; align-items:center; gap:2px; min-width:0; padding:5px 2px 5px; border:1.5px solid var(--line); border-radius:13px; background:var(--card); color:var(--ink); font:inherit; font-size:14px; font-weight:600; cursor:pointer; }
-  .wd-nav button:hover { background:var(--chip); }
-  .wd-nav button.on { background:var(--accent); border-color:var(--accent); color:#fff; }
-  .wd-nav .wd-ni { font-size:19px; line-height:1.1; }
-  .wd-nav i { position:absolute; top:-6px; right:-2px; min-width:20px; height:20px; padding:0 5px; border-radius:10px; background:var(--accent); color:#fff; border:2px solid var(--panel); font-style:normal; font-size:12px; font-weight:700; line-height:16px; text-align:center; }
-  .wd-nav i.coin { background:#f2c14e; color:#5a3d0c; }
-  .wd-nav button.on i { background:#fff; color:var(--accent); }
-  .wd-nav button.on i.coin { background:#fbe9b8; color:#5a3d0c; }
-  .wd-now small { display:block; }
-  #street > .wd-now { margin-bottom:16px; } /* room for the cover above the page buttons */
-  .wd-place summary .st-pill, .wd-place summary .st-pill.lock { margin-left:auto; flex:none; }
-  .st-pill.lock { background:var(--chip); color:var(--muted); }
-  .wd-place[open] summary b::after, .wd-place summary b::after { content:''; }
-  .wd-more { display:flex; align-items:center; gap:10px; padding:8px 2px; opacity:.7; }
-  .wd-more small { display:block; color:var(--muted); font-size:13px; }
-  .wd-plot small { display:block; }
-  .wd-plot > div { min-width:0; flex:1; }
-  .wd-built { margin:8px 0 0; }
-  .wd-built li { display:flex; flex-direction:column; padding:6px 0; border-top:1px solid var(--line); font-size:15px; }
-  .wd-built li span { color:var(--muted); font-size:13px; }
-  h2 small { font-weight:500; text-transform:none; letter-spacing:0; color:var(--muted); margin-left:6px; }
-  details.st-person > summary { list-style:none; cursor:pointer; }
-  details.st-person > summary::-webkit-details-marker { display:none; }
-  details.st-person .st-id { flex:1; min-width:0; }
-  .st-arrow { flex:none; font-size:26px; line-height:1; color:var(--muted); transition:transform .2s; }
-  details[open] > summary .st-arrow { transform:rotate(90deg); }
-  .st-flag { display:inline-block; margin-left:8px; padding:1px 8px; border-radius:999px; background:var(--accent); color:#fff; font-size:12px; font-weight:700; vertical-align:middle; white-space:nowrap; }
-  .st-flag.wish { background:#fbe9b8; color:#6b4a12; }
-  details.st-person[open] > summary { margin-bottom:6px; }
-  .st-shelf .st-row > span:last-child { min-width:0; }
-  .st-chip.far { opacity:.5; }
-  .st-chip.has { background:rgba(63,154,90,.2); color:#2c6b3c; }
-  .st-chip.has b { color:inherit; }
-  @media (prefers-color-scheme: dark) { .st-chip.has { color:#a5dcb2; } }
-  .st-shelf .st-chip { white-space:normal; }
-  .st-purse .st-pill { text-align:center; line-height:1.25; padding:4px 12px; }
-  .st-purse .st-pill small { display:block; color:#fff; font-size:12px; font-weight:500; opacity:.9; }
-  .st-key { display:flex; flex-wrap:wrap; gap:6px; margin:0 2px 4px; font-size:13px; }
-  .st-key .st-chip { font-size:13px; }
   .card.out { --kind:#3f9a8a; }
   .card.out .postcard { width:100%; max-width:320px; height:auto; display:block; border-radius:12px; margin-top:10px; border:1px solid var(--line); }
   .awaychip { position:absolute; left:50%; bottom:46px; transform:translateX(-50%); z-index:3; background:var(--panel); color:var(--ink); border:1px solid var(--line); border-radius:999px; padding:8px 16px; font-size:15px; font-weight:600; box-shadow:0 4px 14px rgba(0,0,0,.25); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; cursor:pointer; }
@@ -507,9 +369,10 @@
   <div id="stage">
     <div id="hint"></div>
     <button id="walk" class="stagebtn" type="button">🚶 Walk around</button>
+    <canvas id="minimap" width="220" height="220" hidden role="button" tabindex="0" title="Tap to go to Pip" aria-label="Map of Pip's world. Tap to go to Pip."></canvas>
     <div id="away" class="awaychip" hidden role="status"></div>
     <div id="stick" hidden><div id="knob"></div></div>
-    <div id="rooms"><button data-room="auto" class="on" type="button" title="Auto">✨<span class="lbl"> Auto</span></button><button data-room="bedroom" type="button" title="Bedroom">🛏<span class="lbl"> Bedroom</span></button><button data-room="hall" type="button" title="Hall">🚪<span class="lbl"> Hall</span></button><button data-room="studio" type="button" title="Studio">🎵<span class="lbl"> Studio</span></button><button data-room="house" type="button" title="All">🏠<span class="lbl"> All</span></button><button data-room="street" type="button" title="Street">🏘<span class="lbl"> Street</span></button></div>
+    <div id="rooms"><button data-room="auto" class="on" type="button" title="Auto">✨<span class="lbl"> Auto</span></button><button data-room="bedroom" type="button" title="Bedroom">🛏<span class="lbl"> Bedroom</span></button><button data-room="hall" type="button" title="Hall">🚪<span class="lbl"> Hall</span></button><button data-room="studio" type="button" title="Studio">🎵<span class="lbl"> Studio</span></button><button data-room="house" type="button" title="All">🏠<span class="lbl"> All</span></button><button data-room="street" type="button" title="World">🌍<span class="lbl"> World</span></button></div>
     <button id="resetview" class="stagebtn" type="button" aria-label="Reset the view">⟲ View</button>
     <button id="phonebtn" class="stagebtn" type="button" hidden aria-label="Open Pip's phone">📱 Pip's phone</button>
     <div id="phone" hidden role="dialog" aria-label="Pip's phone">
@@ -540,7 +403,6 @@
     <nav id="tabs" role="tablist">
       <button class="tab" role="tab" data-tab="day">📖 Day</button>
       <button class="tab" role="tab" data-tab="life">🐣 Pip</button>
-      <button class="tab" role="tab" data-tab="street">🗺️ World<span class="count" id="streetcount"></span></button>
       <button class="tab" role="tab" data-tab="asks">🙏 Asks<span class="count" id="askcount"></span></button>
       <button class="tab" role="tab" data-tab="messages">💬 Talk<span class="dot" id="msgdot"></span></button>
     </nav>
@@ -555,9 +417,6 @@
     </section>
 
 
-    <section class="pane" data-pane="street" hidden>
-      <div id="street"></div>
-    </section>
 
     <section class="pane" data-pane="asks" hidden>
       <h2>Pip would like from you</h2>

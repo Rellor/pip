@@ -7,7 +7,6 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { canGo, goOptions, goLine, wantsOut, gearWish, startOuting, outingTick, hurryHome, homeLine, checkUnlocks, unlockedKeys, MAX_OUTINGS_PER_DAY, CURFEW } from '../world.js';
 import { PLACES, placeOf, findPlace, openNow, worldMapSvg, postcardSvg, hisWords } from '../web/world.js';
-import { streetData } from '../web/streetview.js';
 import { availableMoves } from '../moves.js';
 import { giveForAsk } from '../gifts.js';
 import { buy } from '../shop.js';
@@ -175,19 +174,6 @@ assert.ok(line.length > 60 && line.length < 240 && /\{place, what\}$/.test(line)
 ok('going out is one of his moves, with a short line that names where he can go');
 
 // ---- the page
-const page = fresh({ outings: g.outings, finds: g.finds, world: g.world, where: null });
-const d0 = streetData(page, tuesday);
-assert.deepEqual([d0.world.away, d0.world.place, d0.world.now.line], [false, 'home', 'Pip is at home.']);
-assert.equal(d0.world.cards.length, 2);
-assert.ok(d0.world.places.every((p) => p.unlocked) && d0.world.places.find((p) => p.key === 'garden').visits === 1);
-const wed = tuesday + 24 * 60 * MIN;
-assert.equal(startOuting(page, { place: 'pond', what: 'sketch what I see' }, wed).ok, true);
-const d1 = streetData(page, wed + 20 * MIN);
-assert.deepEqual([d1.world.away, d1.world.phase, d1.world.map.where, d1.scene.away], [true, 'there', 'pond', true]);
-assert.match(d1.world.now.sub, /He wants to sketch what he sees\. Home again around \d\d:\d\d\./);
-assert.equal(streetData(page, wed + 2 * MIN).world.now.line, 'Pip is walking to the pond in the park.');
-const newbie = streetData(fresh(), noon).world;
-assert.deepEqual(newbie.places.filter((p) => !p.unlocked).map((p) => [p.key, p.heard]), [['garden', true], ['library', false], ['hill', false]]);
 for (const o2 of [{}, { now: noon, where: 'pond', phase: 'there', unlocked: ['home', 'doorstep', 'shop', 'pond'], known: ['library'], weather: { kind: 'snow', temp: -2 } }, { now: noon + 11 * 60 * MIN, where: 'hill', phase: 'going', open: { pond: false } }, { where: 'garden', phase: 'back' }]) {
   const svg = worldMapSvg(o2);
   assert.ok(svg.startsWith('<svg') && svg.endsWith('</svg>') && !/NaN|undefined/.test(svg), svg.match(/.{40}(NaN|undefined).{20}/)?.[0]);
