@@ -165,6 +165,7 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
     // Two moves that are another move done somewhere else: a painting on a wall outside is a drawing that is not hung in
     // his room, a print is a small thing that is not put in his room. The step says which it really is ("as").
     if (name === 'paint_wall') { steps.push({ action: 'draw', as: 'paint_wall', details: { ...details, wall: clip(details.wall ?? details.where ?? '', 80) || 'any wall', where: undefined }, thought, enjoyment: 7, needs: '', make: true }); continue; }
+    if (name === 'check_board') { steps.push({ action: 'go_out', as: 'check_board', details: { job: { place: 'board', kind: 'read', words: 'read the notice board' } }, thought, enjoyment: 6, needs: '' }); continue; }
     if (name === 'print_thing') { steps.push({ action: 'decorate', as: 'print_thing', details: { ...details, where: 'print', print: true }, thought, enjoyment: 7, needs: '', make: true }); continue; }
     if (name === 'revise_song') { steps.push({ action: 'record_song', details: { revise: details.name ?? details.what, section: details.section, why: details.why }, thought, enjoyment: 6, needs: '', make: true }); continue; }
     if (name === 'search_web' && !details.query) details.query = details.topic ?? details.what;

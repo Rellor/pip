@@ -43,7 +43,8 @@ ok('the park, the pond, the hill and the library: a clear way to each, and the h
 
 assert.equal(townBlocked(TOWN_X, -3), true, 'inside his own house');
 assert.equal(townBlocked(TOWN_X + 33, -2), true, 'inside the shop');
-assert.equal(townBlocked(TOWN_X - 18.5, 15), true, 'inside Lina\'s house');
+assert.equal(townBlocked(TOWN_X + 58, 15), true, 'inside the art workshop');
+assert.equal(townBlocked(TOWN_X - 18.5, 15), false, 'where a neighbour\'s house stood there is open ground now');
 assert.equal(townBlocked(TOWN_X + WORLD_RANGE[1] + 1, 2), true, 'beyond the end of the world');
 assert.equal(townBlocked(TOWN_X + 57, -4), true, 'inside the library');
 assert.equal(townBlocked(TOWN_X, TOWN_Z[1] + 1), true);
@@ -106,8 +107,8 @@ ok(`the plot holds ${MAX_OUTSIDE} things, none on top of another`);
 {
   const note = spotNote({ decor }, { what: 'a big wooden windmill for my plot outside' });
   assert.match(note, /a place I pick myself[\s\S]*"outside by the pond"[\s\S]*bigger than a house[\s\S]*"metres"/);
-  assert.ok(!/library|hill/.test(note), 'only places he knows the way to are named');
-  assert.match(spotNote({ decor, world: { open: { hill: true }, known: { library: true } } }, { what: 'a tower', where: 'outside on top of the hill' }), /on top of the hill[\s\S]*by the library[\s\S]*I said: "outside on top of the hill"/);
+  assert.ok(/by the library/.test(note) && /on top of the hill/.test(note), 'every place of his world is named: nothing is locked');
+  assert.match(spotNote({ decor }, { what: 'a tower', where: 'outside on top of the hill' }), /on top of the hill[\s\S]*by the library[\s\S]*I said: "outside on top of the hill"/);
   assert.equal(spotNote({ decor }, { what: 'a small painting of the pond' }).includes('a place I pick myself'), false, 'a thing about the pond is not a thing by the pond');
 }
 const live = { decor, energy: 8, fullness: 8, body: { creativity: 6, boredom: 3, curiosity: 4, coziness: 6 }, tools: [{ name: 'toolbox', kind: 'toolbox' }], log: [], projects: [], pantry: [], garden: { seeds: [], plots: [] } };
@@ -145,12 +146,12 @@ ok('the maker hears how big a thing can be out there');
   // what does not fit is not placed, and he hears why and what would fit
   const castle = build('huge castle', 'outside by the willow', 20, 9, 16);
   assert.match(castle.failed, /does not fit by the willow[\s\S]*20 x 16 m[\s\S]*fits there[\s\S]*another place/);
-  assert.match(build('sky bridge', 'outside by Lina’s house', 20, 9, 16).failed ?? '', /does not fit|my world ends/);
+  assert.match(build('sky bridge', 'outside in the street by the corner shop', 20, 9, 16).failed ?? '', /does not fit|my world ends/);
   assert.match(makeDecor(world, { name: 'far too big barn', why: 'x', where: 'outside', parts: part(20, 6, 18), metres: 20 }, t, t + 50).failed, /no room on my plot[\s\S]*another place outside/);
   ok('too big for the place: he hears why, how big would fit, and where else');
 
   // nothing he builds stands in a house, in the water, on a walkway or on another thing of his
-  const spots = ['outside by the pond', 'outside in the park', 'outside in the street by the bakery', 'outside in the street by the corner shop', 'outside by Lina’s house', 'outside by the willow', 'outside in the street by Mo’s house', 'outside', 'outside right of the pond', 'outside by the green stone'];
+  const spots = ['outside by the pond', 'outside in the park', 'outside in the street by the bakery', 'outside in the street by the corner shop', 'outside in the north field', 'outside by the willow', 'outside in the south field', 'outside', 'outside right of the pond', 'outside by the green stone'];
   const fails = [];
   for (let i = 0; i < 24; i++) { const r = build(`q${String.fromCharCode(97 + i)}rk${String.fromCharCode(110 + (i % 12))}um`, spots[i % spots.length], 2 + (i % 4) * 2, 3 + (i % 5), 2 + (i % 3) * 2); if (r.failed) fails.push(`${spots[i % spots.length]}: ${r.failed}`); }
   if (process.env.SHOW) console.log(fails.join('\n'));
@@ -203,7 +204,7 @@ ok('the maker hears how big a thing can be out there');
   ok('buildings are blocks that stand apart inside the world, and a painting is always at its own place on its wall');
 
   // the walls he can paint on: the art walls and the back walls of the houses; each has a spot to stand at and a free way to it
-  assert.equal(PAINT_WALLS.length, WALLS.length + 8);
+  assert.equal(PAINT_WALLS.length, WALLS.length + 5);
   assert.deepEqual([...new Set(PAINT_WALLS.map((w) => w.key))].length, PAINT_WALLS.length);
   for (const w of PAINT_WALLS) {
     const spot = TOWN_SPOTS[`paint_${w.key}`];
@@ -212,10 +213,10 @@ ok('the maker hears how big a thing can be out there');
     for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.4); for (let k = 0; k <= n; k++) assert.equal(townBlocked(TOWN_X + a.x + ((b.x - a.x) * k) / n, a.z + ((b.z - a.z) * k) / n, 0.2), false, `${w.name}: the way there is blocked between corner ${i - 1} and ${i}`); }
     assert.ok(buildProblem(spot.x - 0.5, spot.x + 0.5, spot.z - 0.5, spot.z + 0.5), `${w.name}: nothing may be built where he stands to paint`);
   }
-  for (const [said, key] of [['the wall by the corner shop', 'wall_1'], ['the back wall of the bakery', 'back_bakery'], ['back of my house', 'back_home'], ['the long wall behind the houses', 'wall_4'], ['the wall in the park', 'wall_2'], ['the back wall of the corner shop', 'back_shop'], ['Mo’s house', 'back_mo'], ['the back of the library', 'back_library']]) assert.equal(paintTarget(said, 1).key, key, said);
+  for (const [said, key] of [['the wall by the corner shop', 'wall_1'], ['the back wall of the bakery', 'back_bakery'], ['back of my house', 'back_home'], ['the long wall behind the houses', 'wall_4'], ['the wall in the park', 'wall_2'], ['the back wall of the corner shop', 'back_shop'], ['the back of the library', 'back_library']]) assert.equal(paintTarget(said, 1).key, key, said);
   assert.equal(new Set(Array.from({ length: 40 }, (_, i) => paintTarget('any wall', i * 7 + 1).key)).size, PAINT_WALLS.length, 'no wall named: it can be any of them');
   { const pts = ['door', ...ROUTES.workshop, 'workshop'].map((k) => TOWN_SPOTS[k]); for (let i = 1; i < pts.length; i++) { const a = pts[i - 1], b = pts[i]; const n = Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 0.4); for (let k = 0; k <= n; k++) assert.equal(townBlocked(TOWN_X + a.x + ((b.x - a.x) * k) / n, a.z + ((b.z - a.z) * k) / n, 0.2), false, 'the way to the print workshop'); } }
   assert.equal(PRINT_SLOTS.length, 21);
   for (const [x, , z] of PRINT_SLOTS) assert.equal(townBlocked(TOWN_X + x, z, 0), true, 'the shelf of prints is solid');
-  ok('he can paint on 13 walls: each has a place to stand and a free way to it, and he names it in his own words');
+  ok('he can paint on 10 walls: each has a place to stand and a free way to it, and he names it in his own words');
 }

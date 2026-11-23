@@ -106,6 +106,17 @@
   .setlink { margin-top:12px; background:transparent; color:var(--muted); border:1px solid var(--line); }
   #setlock { display:flex; gap:8px; }
   #setlock input { flex:1; min-width:0; }
+  /* what Pip is doing right now, in short, with a bar that fills until he is done (like in Pino's town) */
+  #nowbar { position:absolute; left:50%; bottom:14px; transform:translateX(-50%); z-index:3; display:grid; grid-template-columns:auto minmax(0, 1fr) auto; align-items:center; column-gap:8px; width:min(52%, 460px); padding:8px 14px 11px; border-radius:16px; background:rgba(255,250,243,.94); color:#3b2f2a; box-shadow:0 2px 12px rgba(0,0,0,.28); font-size:15px; font-weight:600; pointer-events:none; }
+  #nowbar[hidden] { display:none; }
+  #nowicon { font-size:18px; line-height:1; }
+  #nowtext { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #nowleft { font-size:13px; font-weight:600; color:#7d6e64; white-space:nowrap; }
+  #nowprog { grid-column:1 / -1; height:5px; margin-top:6px; border-radius:3px; background:rgba(59,47,42,.14); overflow:hidden; }
+  #nowprog i { display:block; height:100%; width:0; border-radius:3px; background:#e9855b; transition:width .5s linear; }
+  #nowprog.none { display:none; }
+  body.first #away { display:none; }
+  @media (max-width:640px) { #nowbar { left:106px; right:10px; bottom:auto; top:12px; transform:none; width:auto; padding:7px 11px 9px; font-size:14px; } }
   /* what you look at and can open: a small prompt under the middle of the picture (F, or tap it) */
   #interact { position:absolute; left:50%; top:60%; transform:translateX(-50%); z-index:3; display:flex; align-items:center; gap:8px; max-width:min(80%, 340px); padding:7px 14px 7px 8px; border-radius:999px; border:0; background:rgba(45,37,33,.82); color:#fff; font-size:15px; font-weight:600; box-shadow:0 2px 10px rgba(0,0,0,.3); cursor:pointer; }
   #interact[hidden] { display:none; }
@@ -423,6 +434,7 @@
     <button id="walk" class="stagebtn" type="button">🚶 Walk around</button>
     <div id="aim" hidden></div>
     <button id="interact" type="button" hidden><kbd>F</kbd><span></span></button>
+    <div id="nowbar" hidden role="status" aria-live="off"><span id="nowicon"></span><span id="nowtext"></span><span id="nowleft"></span><div id="nowprog"><i></i></div></div>
     <div id="start" hidden role="dialog" aria-modal="true" aria-labelledby="starttitle">
       <div class="startcard">
         <h2 id="starttitle">Welcome to Pip’s world</h2>

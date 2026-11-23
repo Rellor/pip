@@ -19,8 +19,8 @@ export const hearts = (w) => Math.max(0, Math.min(5, Math.round((w ?? 0) / 2)));
 export const nextStep = (w) => (w >= 8 ? null : w >= 5 ? { at: 8, word: 'a close friend' } : w >= 2 ? { at: 5, word: 'a friend' } : { at: 2, word: 'friendly' });
 
 // ---- The corner shop
-export const OPEN_FROM = 9; // Dutch time
-export const OPEN_TO = 18;
+export const OPEN_FROM = 0; // the corner shop is always open (it used to keep hours)
+export const OPEN_TO = 24;
 export const CATALOGUE = [
   ...['bread', 'eggs', 'flour', 'milk', 'cheese', 'butter', 'rice', 'tomatoes', 'apples'].map((item) => ({ item, price: 1, kind: 'food' })),
   ...['tomato', 'sunflower', 'lettuce', 'carrot', 'lavender', 'pea'].map((k) => ({ item: `${k} seeds`, price: 2, kind: 'seeds' })),

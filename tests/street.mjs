@@ -58,7 +58,6 @@ for (const o of pictures) {
   assert.equal((svg.match(/<g/g) ?? []).length, (svg.match(/<\/g>/g) ?? []).length, 'every group is closed');
 }
 assert.match(streetSvg(pictures[3]), /he is out/);
-assert.match(streetSvg(pictures[2]), /CLOSED/);
 assert.match(streetSvg(pictures[0]), /OPEN/);
 assert.ok(streetSvg(pictures[1]).includes('>2</text>'), 'two notes at his door');
 for (const p of [...PEOPLE.map((x) => x.name), 'Pip', 'nobody']) assert.ok(faceSvg(p).includes('</svg>') && !/NaN|undefined/.test(faceSvg(p)));

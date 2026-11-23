@@ -400,13 +400,19 @@ const CHANGES = [
     },
   },
   {
+    id: '2026-11-23 an open world, a notice board, and no closing times',
+    run() {
+      return 'Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: "outside ...", as big as I like), or I can ask Bas for a new building or place I would like to have (ask_for, or dream for something big), and he will build it. In my street stands a notice board: people pin notes on it with things they would like made. I walk there to read it (check_board), and when I make one of those things I get the coins. And nothing is closed or locked any more: I can go anywhere in my world at any hour I am awake, in any weather.';
+    },
+  },
+  {
     id: '2026-11-23 a library card from Bas',
     run(s, at) { // he asked for a library card, to go into the library
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /library/i.test(a.item));
       s.tools ??= [];
       const given = giveForAsk(s, 'library card');
       if (ask) Object.assign(ask, { status: 'done', doneAt: at, given: given.length ? given : ['a library card'] });
-      return 'Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).';
+      return 'Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out).';
     },
   },
   {

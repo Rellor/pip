@@ -19,6 +19,7 @@ import { restingMove, tiredOf } from './loops.js';
 import { canBrowse, interests, HOBBY_AT } from './curiosity.js';
 import { shopLine, shopOpen, wantsToBuy } from './shop.js';
 import { goOptions, goLine, wantsOut, gearWish, canGo } from './world.js';
+import { boardNotes, boardCalls } from './board.js';
 import { lampsOf, lampName, lampNow } from './web/lights.js';
 import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
@@ -140,8 +141,9 @@ export const MOVES = [
   { name: 'tell', line: () => 'write a message to Bas: {text}', when: (s, n) => s.plan?.unread > 0 || (s.body.loneliness >= 7 && daysSince(s.outbox?.filter((m) => m.kind === 'tell').at(-1)?.at, n) >= 1), score: (s) => (s.plan?.unread ? 5 : 1) },
   { name: 'answer_visitor', line: (s) => `answer a visitor's or a neighbour's note (${names((s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => v.id))}): {id, text}`, when: (s) => (s.visitors ?? []).some((v) => !v.answer), score: () => 2 },
   { name: 'buy', line: (s) => `buy something at the corner shop with my coins (I have ${s.coins ?? 0}): ${shopLine(s)}: {item}`, when: (s, n) => (s.coins ?? 0) >= 1 && shopOpen(n), score: (s) => 0.4 + (wantsToBuy(s) ? 1.2 : 0) + ((s.fullness ?? 10) <= 4 && !(s.pantry ?? []).some((p) => p.qty > 0) ? 3 : 0) },
+  { name: 'check_board', line: (s, n) => `walk to the notice board in my street and read what people ask for${boardNotes(s, n).some((w) => !w.seen) ? ' (there is something new on it)' : ''}: I earn coins by making it: {}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'board', n).ok) && boardCalls(s, n), score: (s, n) => (boardNotes(s, n).some((w) => !w.seen) ? 1.6 : 0.7) },
   { name: 'paint_wall', line: () => 'paint something big on a wall outside in my world, for everyone to see (no paper or supplies needed): {what, why, wall: "any wall", or one I pick like "the wall by the corner shop" or "the back wall of the bakery"}', when: (s, n) => !process.env.PIP_NO_OUT && left(s, 'draw', n) > 0 && Boolean(canGo(s, 'walls', n).ok), score: (s) => 0.9 + s.body.creativity / 4 },
-  { name: 'print_thing', line: () => 'design a small 3D model and print it at the print workshop (it stays there on my shelf of prints): {what, why}', when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'workshop', n).ok), score: (s) => 0.7 + s.body.creativity / 4 },
+  { name: 'print_thing', line: () => 'design a small 3D model and print it at the print workshop (it stays there on my shelf of prints): {what, why}', when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'workshop', n).ok) && (s.prints ?? []).filter((x) => n - Date.parse(x.at) < 86_400_000).length < 3, score: (s) => 0.7 + s.body.creativity / 4 },
   { name: 'go_out', line: (s, n) => `go outside for a while (I come home by myself): ${goLine(s, n)}: {place, what}`, when: (s, n) => goOptions(s, n).length > 0, score: (s, n) => wantsOut(s, n) },
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
