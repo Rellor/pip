@@ -5399,3 +5399,9 @@ I finished the first version of my summer constellations map and now I want to w
 - change_thing (map of summer constellations): I will improve the map.
 - mood: curious
 
+## 23/11/2026, 12:34:40
+My mint is fully grown, so I want to harvest it before starting a new project about the night sky.
+> My mint is fully grown, so I want to harvest it before starting a new project about the night sky.
+- harvest (mint): Harvest the ready mint
+- mood: curious
+
