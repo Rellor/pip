@@ -5619,3 +5619,14 @@ I want to push the simulation further by adding reactive elements, keeping the m
 - play_piano (C4 E4 G4 E4 C4:2): I hum a little tune while I think.
 - mood: driven
 
+## 23/11/2026, 19:53:41
+
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: driven
+
+## 23/11/2026, 20:05:14
+I want to finish making my night sky simulation pretty and then judge the project because I am done with all its steps.
+> I want to finish making my night sky simulation pretty and then judge the project because I am done with all its steps.
+- do (think about how to make make it pretty: colours, a title, a short line about what it): I could not work it out yet.
+- mood: driven
+
