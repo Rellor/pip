@@ -254,6 +254,7 @@ const nowReal = Date.now();
 const toNoon = Math.round((Date.parse(`${new Date(nowReal + 36 * 60 * MIN).toISOString().slice(0, 10)}T11:00:00Z`) - nowReal) / MIN); // the next noon that is at least a day away (so the day is fresh)
 Object.assign(st, { energy: 8, fullness: 9, where: null, outings: [], weather: { at: iso(nowReal + (toNoon + 600) * MIN), kind: 'clear', code: 0, temp: 9, cloud: 0.1, wind: 0.2 } });
 st.inbox = (st.inbox ?? []).map((m) => ({ ...m, read: true }));
+st.memories = (st.memories ?? []).slice(-40); // room in his memory: when it is full the lightest memory goes, and this test is about the outing, not about forgetting
 fs.writeFileSync(file, JSON.stringify(st));
 const run = (shift, more = {}) => execFileSync('node', ['pip.js'], { cwd: work, encoding: 'utf8', env: { ...process.env, PIP_FAKE: '1', PIP_AWAKE: '1', PIP_NO_PHOTO: '1', PIP_NO_NEIGHBOURS: '1', PIP_NO_STORY: '1', PIP_CLOCK_SHIFT_MIN: String(toNoon + shift), ...more }, timeout: 120_000 });
 const read1 = () => JSON.parse(fs.readFileSync(file, 'utf8'));
