@@ -35,6 +35,7 @@ import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKey
 import { postOrders, boardLines } from './board.js';
 import { paintTarget, setLand } from './web/town.js';
 import { planLand, landLine } from './land.js';
+import { sketchPrompt, sketchSchema, fakeSketch, dryRun, budgetNote, keepWithin } from './sketch.js';
 import { postDrop, sweepDrops, dropLines, fetchJob, learnFrom, takeDeed, findDeed } from './strangers.js';
 import { placeOf } from './web/world.js';
 import { bestHits } from './research.js';
@@ -686,10 +687,21 @@ async function makeIt(s, soul, system, st) {
     const thing = ['change_thing', 'extend_thing'].includes(st.action) ? s.decor.find((d) => !d.image && d.parts && d.name.toLowerCase() === String(st.details?.name ?? '').toLowerCase().trim()) ?? s.decor.find((d) => !d.image && d.parts && String(st.details?.name ?? '').trim() && d.name.toLowerCase().includes(String(st.details.name).toLowerCase().trim())) : null;
     const appNow = st.action === 'update_app' ? s.apps.find((a) => a.name.toLowerCase() === String(st.details?.name ?? '').toLowerCase().trim()) ?? s.apps.find((a) => String(st.details?.name ?? '').trim() && a.name.toLowerCase().includes(String(st.details.name).toLowerCase().trim())) : null;
     const build = thing ? partsNow(thing, s.decor) : appNow ? await readFile(`web/${appNow.file}`, 'utf8').catch(() => null) : null; // he sees what he is changing, like a builder looking at his work (a program: its whole file)
+    // Plan first (sketch.js): the small model guesses its size, the game tries that size in the real place. Nothing fits:
+    // he hears why now, and the smart model is not asked. Something fits: that size is the budget for the design.
+    let planned = null;
+    if (st.action === 'decorate' && !st.details?.print && !toolFor(st.details)) {
+      try {
+        const sketch = process.env.PIP_FAKE ? fakeSketch(st.details) : await askGemini('I am Pip. I answer only in JSON.', sketchPrompt(st.details), 1, [], { schema: sketchSchema, maxTokens: THINK_ROOM + 200 });
+        planned = dryRun(s, st.details, sketch);
+        console.log(planned.ok ? `   📐 planned first: about ${planned.budget.join(' x ')} m ${planned.label}${planned.shrunk < 1 ? ` (smaller than he thought: ${Math.round(planned.shrunk * 100)}%)` : ''}` : `   📐 planned first: it would not fit (${String(planned.why).slice(0, 120)}). The smart model is not asked.`);
+      } catch (e) { console.error('⚠️  plan first:', e.message); planned = null; }
+      if (planned && !planned.ok) return { ...st, make: false, planFail: planned.why, planned: { ok: false } };
+    }
     const lessons = lessonsFor(s, st.action);
     const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
     const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`, st.details?.project);
-    const mctx = { spot: st.action === 'decorate' ? spotNote(s, st.details) : '', drawn: st.action === 'draw' ? `${drawnNote(s)}${st.as === 'paint_wall' ? '\nTHIS ONE IS NOT FOR PAPER: I paint it big on a wall outside in my world, like a mural. So: a few strong shapes and colours that can be read from across the street, no frame and no paper edge, the whole picture filled.' : ''}` : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
+    const mctx = { spot: st.action === 'decorate' ? [spotNote(s, st.details), budgetNote(planned)].filter(Boolean).join('\n') : '', drawn: st.action === 'draw' ? `${drawnNote(s)}${st.as === 'paint_wall' ? '\nTHIS ONE IS NOT FOR PAPER: I paint it big on a wall outside in my world, like a mural. So: a few strong shapes and colours that can be read from across the street, no frame and no paper edge, the whole picture filled.' : ''}` : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
     const mprompt = makerPrompt(mctx);
     if (process.env.PIP_DUMP) await appendFile(`${process.env.PIP_DUMP}.maker`, `\n\n=================== ${st.action}\n${mprompt}`);
     const think = ['make_app', 'update_app'].includes(st.action) ? { think: 'high' } : {}; // code needs the most thought
@@ -713,6 +725,7 @@ async function makeIt(s, soul, system, st) {
     });
     if (out.tries === 2) console.log(serious(out.facts).length ? `   🔎 after the second try: ${out.facts.join(' | ').slice(0, 200)}` : '   🔎 the second try passed the check ✓');
     if (out.tries === 2 && !serious(out.facts).length && serious(out.before ?? []).length) addLesson(s, st.action, out.before);
+    if (planned?.ok && out.made) out.made.planned = { ok: true, fit: planned.fit, budget: planned.budget, shrunk: planned.shrunk };
     return out.made;
   } catch (e) {
     console.error('⚠️  maker:', e.message);
@@ -950,6 +963,8 @@ function normalizeSteps(a) {
     ...(x.forStep ? { forStep: x.forStep } : {}),
     ...(x.waits ? { waits: true } : {}),
     ...(x.as ? { as: x.as } : {}),
+    ...(x.planFail ? { planFail: x.planFail } : {}), // the dry run found no place for it (sketch.js)
+    ...(x.planned ? { planned: x.planned } : {}),
   }));
 }
 
@@ -1468,6 +1483,7 @@ async function wakeUp() {
   steps.forEach((st, i) => {
     const stepStart = startedAt + offsets[i];
     if (st.action === 'decorate') {
+      if (st.planFail) { st.made = { failed: st.planFail, hinted: true, planned: true }; return; } // the dry run found no place for it: nothing was designed (sketch.js)
       if (madeOne) {
         st.made = { failed: 'one new thing per wake-up is enough' };
         return;
@@ -1496,7 +1512,7 @@ async function wakeUp() {
       const out = isOutside(st.details.where);
       const placed = { ...designate(state, st.details), ...(out ? { worldOpen: [...new Set([...unlockedKeys(state), ...knownKeys(state)])] } : {}) }; // no place said: the game puts it where it belongs. Outside: only where he knows the way
       const built = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js); a "tiny" thing is tiny
-      const sized = out && Number(st.details.metres) > 0 ? built.parts : roomScale(built.parts, st.details);
+      const sized = keepWithin(out && Number(st.details.metres) > 0 ? built.parts : roomScale(built.parts, st.details), st.planned?.fit); // (never bigger than what the dry run showed to fit)
       st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: sized, uses: st.uses }, stepStart); // built at the size of his room (outside: as big as he said)
       if (st.made?.entry?.readyAt) { const hours = Math.round((Date.parse(st.made.entry.readyAt) - Date.parse(st.made.entry.at)) / 360_000) / 10; addMemory(state, `I started building my ${st.made.entry.name} ${st.made.entry.label}. It is big: it will take me about ${hours} hours of work before it stands.`, 6, 'memory', new Date(stepStart).toISOString()); }
       const oldCloth = /^(.+) already lies over /.exec(st.made.failed ?? '')?.[1];
