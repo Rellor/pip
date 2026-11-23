@@ -2416,7 +2416,7 @@ function updateWalk(dt) {
   const len = Math.hypot(fwd, side);
   bob.moving = false;
   if (len > 0.05) {
-    const speed = (view.keys.has('shift') ? 4.6 : 2.4) * dt * Math.min(1, len); // Shift: you run
+    const speed = (view.keys.has('shift') ? 6.4 : 3.4) * dt * Math.min(1, len); // a brisk walk; Shift: you run
     const dx = ((-Math.sin(view.yaw) * fwd + Math.cos(view.yaw) * side) / len) * speed;
     const dz = ((-Math.cos(view.yaw) * fwd - Math.sin(view.yaw) * side) / len) * speed;
     const wasZ = view.z;
