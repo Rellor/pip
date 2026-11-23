@@ -5630,3 +5630,9 @@ I want to finish making my night sky simulation pretty and then judge the projec
 - do (think about how to make make it pretty: colours, a title, a short line about what it): I could not work it out yet.
 - mood: driven
 
+## 23/11/2026, 20:13:37
+My drawing failed earlier because of an error, so I will try drawing the old tree from the notice board again.
+> My drawing failed earlier because of an error, so I will try drawing the old tree from the notice board again.
+- draw (old_tree): Let us try drawing the old tree again.
+- mood: driven
+
