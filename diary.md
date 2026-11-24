@@ -6068,3 +6068,9 @@ I finished my night sky simulator project steps, now I should judge it since it 
 - do (look closely at my project Build a night sky simulator): Time to judge the night sky simulator project.
 - mood: determined
 
+## 24/11/2026, 18:27:17
+My room is full and I want to start a new woodwork project since I finished my night sky simulator.
+> My room is full and I want to start a new woodwork project since I finished my night sky simulator.
+- decorate (workshop bench): Let's build a real piece of furniture.
+- mood: determined
+
