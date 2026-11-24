@@ -6029,3 +6029,8 @@ I just got back from the library and read about the night sky, so I want to keep
 - make_app (night_sky_simulator): Let's build the first version of the night sky simulator.
 - mood: determined
 
+## 24/11/2026, 17:13:33
+
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: determined
+
