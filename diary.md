@@ -6144,3 +6144,9 @@ My room feels too cluttered right now, and night sky keeps pulling at me, so I w
 - water (basil): Tend to my plants since gardening is my thing.
 - mood: restless
 
+## 24/11/2026, 20:36:32
+I need to fix the lighting at my desk to actually see what I am doing, and I want to earn those coins by printing the gear for the notice board request.
+> I need to fix the lighting at my desk to actually see what I am doing, and I want to earn those coins by printing the gear for the notice board request.
+- do (Move the ceramic desk lamp base to the desk so I can see better.): The lamp is useless on the floor.
+- mood: restless
+
