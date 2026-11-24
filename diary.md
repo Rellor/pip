@@ -6057,3 +6057,8 @@ I finished my simulator and it looks decent, so now I will add a small sound fea
 - do (think about how to make add one small new thing to night_sky_simulator (version 3): ): I could not work it out yet.
 - mood: determined
 
+## 24/11/2026, 18:10:29
+
+- do (say hello to my plants through the glass): Hello, little plants.
+- mood: determined
+
