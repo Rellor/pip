@@ -5793,3 +5793,9 @@ My cooking did not work because I lack garlic, and I want to try a new project a
 - do (plan my new project: Build a little simulation of night sky: something that moves by itself): I will start a new project to build a simulation of the night sky.
 - mood: energetic
 
+## 24/11/2026, 09:03:20
+I finished my night sky simulation project and now I want to look up how to make a telescope for the notice board.
+> I finished my night sky simulation project and now I want to look up how to make a telescope for the notice board.
+- search_web (how to make a small telescope): Let's search for how a telescope is made.
+- mood: energetic
+
