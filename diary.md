@@ -6084,3 +6084,9 @@ My room is full and I want to start a new woodwork project since I finished my n
 - do (look out of the window for a while): I watch the sky for a bit.
 - mood: determined
 
+## 24/11/2026, 18:55:40
+My desk is a bit crowded, so I want to move my tiny bed lamp to the desk to read better.
+> My desk is a bit crowded, so I want to move my tiny bed lamp to the desk to read better.
+- move_thing (tiny bed lamp): Move bed lamp to desk
+- mood: determined
+
