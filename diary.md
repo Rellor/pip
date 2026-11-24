@@ -6017,3 +6017,9 @@ My desk is too crowded and I want to channel my excess energy into a new project
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: focused
 
+## 24/11/2026, 15:57:54
+I need to get my research done for the simulator so I can actually build the thing. The library is the best place for that.
+> I need to get my research done for the simulator so I can actually build the thing. The library is the best place for that.
+- go_out (the library): I need more info for the simulator.
+- mood: determined
+
