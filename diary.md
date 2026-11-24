@@ -5705,3 +5705,9 @@ My desk is a mess and that bird is just asking to be kicked over on the floor. I
 ## 23/11/2026, 22:11:21
 Good night. Pip went to sleep.
 
+## 24/11/2026, 07:01:45
+My mint is fully grown, so I need to harvest it right away. Then I will eat something because I am hungry.
+> My mint is fully grown, so I need to harvest it right away. Then I will eat something because I am hungry.
+- harvest (mint): Harvest the mint
+- mood: hungry
+
