@@ -6150,3 +6150,8 @@ I need to fix the lighting at my desk to actually see what I am doing, and I wan
 - do (Move the ceramic desk lamp base to the desk so I can see better.): The lamp is useless on the floor.
 - mood: restless
 
+## 24/11/2026, 20:44:37
+Better check how to make the gear properly to get the bonus.
+- search_web (how to design and print a small gear): Better check how to make the gear properly to get the bonus.
+- mood: restless
+
