@@ -1,8 +1,8 @@
 {
   "mood": "focused",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 3.4,
+  "loneliness": 3.44,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -11074,57 +11074,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-24T13:53:53.015Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2322,
-      "output": 94,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "Someone left a note in front of my door, so I should go fetch it.",
-    "inner": "Someone left a note in front of my door, so I should go fetch it.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "job": {
-            "place": "drops",
-            "kind": "fetch",
-            "words": "pick up the note someone left in front of my door",
-            "drop": "ttp0a0s",
-            "spot": "drop_door",
-            "name": "a note from Lotte"
-          }
-        },
-        "thought": "Let's see what is in that note.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-24T14:01:59.615Z",
+    "via": "outside",
+    "thought": "I am walking home from my world.",
     "action": "go_out",
     "details": {
-      "job": {
-        "place": "drops",
-        "kind": "fetch",
-        "words": "pick up the note someone left in front of my door",
-        "drop": "ttp0a0s",
-        "spot": "drop_door",
-        "name": "a note from Lotte"
-      }
+      "place": "drops"
     },
-    "enjoyment": 6,
+    "detail": "I am walking home from my world.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "drops",
+      "phase": "back",
+      "back": "2026-11-24T14:03:53.015Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -11487,21 +11452,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-24T13:53:53.022Z",
-  "fullness": 4.38,
+  "fullness": 4.21,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.26,
-  "joy": 4.61,
-  "calm": 5.9,
+  "wonder": 5.61,
+  "joy": 4.73,
+  "calm": 5.7,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.2
+    "excited": 0.72
   },
-  "feelAt": "2026-11-24T13:53:31.546Z",
+  "feelAt": "2026-11-24T14:01:59.597Z",
   "lastAte": "2026-11-24T11:01:00.067Z",
   "studio": {
     "songs": [
@@ -12216,12 +12181,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.78,
-    "curiosity": 1.08,
+    "creativity": 0.86,
+    "curiosity": 1.15,
     "boredom": 0,
-    "loneliness": 3.4,
+    "loneliness": 3.44,
     "tidiness": 0,
-    "at": "2026-11-24T13:53:31.546Z",
+    "at": "2026-11-24T14:01:59.597Z",
     "coziness": 3.5
   },
   "recent": {
