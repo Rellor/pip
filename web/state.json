@@ -1,8 +1,8 @@
 {
   "mood": "determined",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 4.67,
+  "loneliness": 4.71,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -11321,49 +11321,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-24T19:02:23.395Z",
-    "via": "brain",
-    "model": "gemini-3.1-flash-lite",
-    "models": {
-      "gemini-3.1-flash-lite": 1
-    },
-    "modelNotes": [
-      "gemini-3.1-flash-lite answered (gemini-3.5-flash-lite was busy or capped)"
-    ],
-    "fallback": true,
-    "tokens": {
-      "calls": 1,
-      "input": 2401,
-      "output": 1421,
-      "models": {
-        "gemini-3.1-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I have energy and the notice board is sitting there, so I will get the materials and research the telescope construction to earn my keep.",
-    "inner": "I have energy and the notice board is sitting there, so I will get the materials and research the telescope construction to earn my keep.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "buy",
-        "details": {
-          "item": "wood"
-        },
-        "detail": "wood",
-        "thought": "Need wood for that birdhouse.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
-    "action": "buy",
+    "at": "2026-11-24T19:10:27.286Z",
+    "via": "outside",
+    "thought": "I am at the grocery store: I buy wood.",
+    "action": "go_out",
     "details": {
-      "item": "wood"
+      "place": "shop"
     },
-    "detail": "wood",
-    "enjoyment": 6,
+    "detail": "I am at the grocery store: I buy wood.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "shop",
+      "phase": "there",
+      "back": "2026-11-24T19:14:23.395Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -11732,21 +11705,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-24T19:02:23.407Z",
-  "fullness": 5.77,
+  "fullness": 5.57,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.72,
-  "joy": 4.53,
-  "calm": 5.18,
+  "wonder": 6.78,
+  "joy": 4.67,
+  "calm": 5.14,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.61
+    "excited": 0.97
   },
-  "feelAt": "2026-11-24T19:00:21.018Z",
+  "feelAt": "2026-11-24T19:10:27.266Z",
   "lastAte": "2026-11-24T18:38:16.694Z",
   "studio": {
     "songs": [
@@ -12461,12 +12434,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.34,
-    "curiosity": 1.7,
+    "creativity": 0.44,
+    "curiosity": 1.78,
     "boredom": 0,
-    "loneliness": 4.67,
+    "loneliness": 4.71,
     "tidiness": 0,
-    "at": "2026-11-24T19:00:21.018Z",
+    "at": "2026-11-24T19:10:27.266Z",
     "coziness": 3
   },
   "recent": {
