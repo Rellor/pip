@@ -5734,3 +5734,9 @@ I want to continue my night sky drawing series and also check out the notice boa
 - draw (Bird migration night flight): Time to work on the next step of my project.
 - mood: curious
 
+## 24/11/2026, 07:45:12
+I want to continue my night sky series and then go outside for some air.
+> I want to continue my night sky series and then go outside for some air.
+- draw (tiny night sky with a coin for scale): Let's do the second drawing of the night sky series.
+- mood: curious
+
