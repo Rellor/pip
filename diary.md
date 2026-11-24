@@ -5946,3 +5946,8 @@ My basil is ready to harvest and I want to gather it before I cook something wit
 - harvest (basil): Harvest the ripe basil.
 - mood: focused
 
+## 24/11/2026, 13:45:25
+Cook a dish using the fresh basil.
+- cook: Cook a dish using the fresh basil.
+- mood: focused
+
