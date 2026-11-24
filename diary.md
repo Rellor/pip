@@ -6160,3 +6160,9 @@ Time to print that requested gear.
 - decorate (workshop gear model): Time to print that requested gear.
 - mood: restless
 
+## 24/11/2026, 21:33:51
+It stays dark at the bookshelf, so I want to make a small reading lamp to put there so I can see.
+> It stays dark at the bookshelf, so I want to make a small reading lamp to put there so I can see.
+- decorate (sulfur reading lamp): I will make a small lamp for the dark bookshelf.
+- mood: restless
+
