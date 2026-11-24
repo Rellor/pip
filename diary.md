@@ -5859,3 +5859,10 @@ I just finished the simulation project and it looks neat, so I should judge it a
 - do (look closely at my project Build a little simulation of night sky: something that moves): Looks good enough.
 - mood: focused
 
+## 24/11/2026, 10:50:23
+My room feels too full, so I want to put away something I don't need right now to clear up space.
+> My room feels too full, so I want to put away something I don't need right now to clear up space.
+- remove_decoration (small wooden shelf): Put away the small wooden shelf since my desk is crammed.
+- do (stretch up tall and look out of the window for a moment): That did not work out. I shake it off and stretch up tall and look out of the window for a moment.
+- mood: focused
+
