@@ -5722,3 +5722,9 @@ I want to start a new project about the night sky since it keeps pulling at me.
 - do (plan my new project: Draw night sky three ways: a series): Start a project to draw the night sky.
 - mood: curious
 
+## 24/11/2026, 07:27:37
+My room feels a bit cluttered so I want to move my sculpted clay bird onto the small wooden shelf to clear up some space.
+> My room feels a bit cluttered so I want to move my sculpted clay bird onto the small wooden shelf to clear up some space.
+- move_thing (sculpted clay bird on perch): Move the sculpted clay bird to the small wooden shelf
+- mood: curious
+
