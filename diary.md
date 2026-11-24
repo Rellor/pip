@@ -6039,3 +6039,9 @@ I just got back from the library and read about the night sky, so I want to keep
 - do (look out of the window for a while): I watch the sky for a bit.
 - mood: determined
 
+## 24/11/2026, 17:35:22
+My project is on step 3: to look at it and improve one thing. I want to finish it.
+> My project is on step 3: to look at it and improve one thing. I want to finish it.
+- do (think about how to make look at it and improve one thing): I could not work it out yet.
+- mood: determined
+
