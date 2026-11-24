@@ -6090,3 +6090,9 @@ My desk is a bit crowded, so I want to move my tiny bed lamp to the desk to read
 - move_thing (tiny bed lamp): Move bed lamp to desk
 - mood: determined
 
+## 24/11/2026, 19:02:23
+I have energy and the notice board is sitting there, so I will get the materials and research the telescope construction to earn my keep.
+> I have energy and the notice board is sitting there, so I will get the materials and research the telescope construction to earn my keep.
+- buy (wood): Need wood for that birdhouse.
+- mood: determined
+
