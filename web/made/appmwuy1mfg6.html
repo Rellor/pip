@@ -187,7 +187,8 @@
           s.dir = -s.dir;
         }
 
-        ctx.fillStyle = 'rgba(240, 243, 255, ' + Math.max(0.1, s.alpha) + ')';
+        let warm = i % 5 === 0;
+        ctx.fillStyle = warm ? 'rgba(255, 220, 180, ' + Math.max(0.1, s.alpha) + ')' : 'rgba(200, 220, 255, ' + Math.max(0.1, s.alpha) + ')';
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fill();
