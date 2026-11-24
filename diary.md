@@ -5787,3 +5787,9 @@ My basil is fully grown and ready to harvest, so I want to cook something with i
 - do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
 - mood: energetic
 
+## 24/11/2026, 08:54:58
+My cooking did not work because I lack garlic, and I want to try a new project about the night sky since it keeps pulling at me.
+> My cooking did not work because I lack garlic, and I want to try a new project about the night sky since it keeps pulling at me.
+- do (plan my new project: Build a little simulation of night sky: something that moves by itself): I will start a new project to build a simulation of the night sky.
+- mood: energetic
+
