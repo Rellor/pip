@@ -5780,3 +5780,10 @@ My room feels too full and my tiny bed lamp is in the way, so I want to move it 
 - move_thing (tiny bed lamp): Move the tiny bed lamp near the desk.
 - mood: energetic
 
+## 24/11/2026, 08:52:44
+My basil is fully grown and ready to harvest, so I want to cook something with it now.
+> My basil is fully grown and ready to harvest, so I want to cook something with it now.
+- cook: Cook a fresh meal with my harvested basil.
+- do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
+- mood: energetic
+
