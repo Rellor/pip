@@ -5817,3 +5817,9 @@ My tall wooden floor lamp is in the way of my warm wool blanket, so I am moving 
 - move_thing (tall wooden floor lamp): Move the tall floor lamp out of the way.
 - mood: energetic
 
+## 24/11/2026, 09:44:39
+I finished my simulation project and now I want to work on the next step: adding a slider or button.
+> I finished my simulation project and now I want to work on the next step: adding a slider or button.
+- do (work on my little simulation of the night sky project): I need to continue my simulation project.
+- mood: energetic
+
