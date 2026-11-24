@@ -6062,3 +6062,9 @@ I finished my simulator and it looks decent, so now I will add a small sound fea
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: determined
 
+## 24/11/2026, 18:18:37
+I finished my night sky simulator project steps, now I should judge it since it works well.
+> I finished my night sky simulator project steps, now I should judge it since it works well.
+- do (look closely at my project Build a night sky simulator): Time to judge the night sky simulator project.
+- mood: determined
+
