@@ -6166,3 +6166,9 @@ It stays dark at the bookshelf, so I want to make a small reading lamp to put th
 - decorate (sulfur reading lamp): I will make a small lamp for the dark bookshelf.
 - mood: restless
 
+## 24/11/2026, 21:43:51
+My new lamp is finished, but it is sitting on the floor where it is not useful. I should see what the notice board needs before I decide what to build next.
+> My new lamp is finished, but it is sitting on the floor where it is not useful. I should see what the notice board needs before I decide what to build next.
+- do (move the sulfur reading lamp from the floor to the side table): The lamp should be on a table, not the floor.
+- mood: restless
+
