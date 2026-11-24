@@ -1,8 +1,8 @@
 {
   "mood": "determined",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 3.92,
+  "loneliness": 3.96,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -11100,53 +11100,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-24T15:57:54.515Z",
-    "via": "brain",
-    "model": "gemini-3.1-flash-lite",
-    "models": {
-      "gemini-3.1-flash-lite": 1
-    },
-    "modelNotes": [
-      "gemini-3.1-flash-lite answered (gemini-3.5-flash-lite was busy or capped)"
-    ],
-    "fallback": true,
-    "tokens": {
-      "calls": 1,
-      "input": 2263,
-      "output": 2428,
-      "models": {
-        "gemini-3.1-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I need to get my research done for the simulator so I can actually build the thing. The library is the best place for that.",
-    "inner": "I need to get my research done for the simulator so I can actually build the thing. The library is the best place for that.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "the library",
-          "what": "read about night sky simulators",
-          "name": "read about night sky simulators"
-        },
-        "detail": "the library",
-        "thought": "I need more info for the simulator.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-24T16:05:59.989Z",
+    "via": "outside",
+    "thought": "I am walking to the library.",
     "action": "go_out",
     "details": {
-      "place": "the library",
-      "what": "read about night sky simulators",
-      "name": "read about night sky simulators"
+      "place": "library"
     },
-    "detail": "the library",
-    "enjoyment": 6,
+    "detail": "I am walking to the library.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "library",
+      "phase": "going",
+      "back": "2026-11-24T16:59:54.515Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -11512,21 +11481,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-24T15:57:54.523Z",
-  "fullness": 6.94,
+  "fullness": 6.75,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.71,
-  "joy": 3.57,
-  "calm": 5.23,
+  "wonder": 5.97,
+  "joy": 4,
+  "calm": 5.18,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.3
+    "excited": 0.18
   },
-  "feelAt": "2026-11-24T15:56:15.432Z",
+  "feelAt": "2026-11-24T16:05:59.970Z",
   "lastAte": "2026-11-24T14:43:37.861Z",
   "studio": {
     "songs": [
@@ -12241,12 +12210,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.27,
-    "curiosity": 0.15,
+    "creativity": 0.37,
+    "curiosity": 0.23,
     "boredom": 0,
-    "loneliness": 3.92,
+    "loneliness": 3.96,
     "tidiness": 0,
-    "at": "2026-11-24T15:56:15.432Z",
+    "at": "2026-11-24T16:05:59.970Z",
     "coziness": 3.5
   },
   "recent": {
