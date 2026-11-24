@@ -1,8 +1,8 @@
 {
   "mood": "focused",
-  "energy": 9.5,
-  "boredom": 1.02,
-  "loneliness": 3.14,
+  "energy": 10,
+  "boredom": 0,
+  "loneliness": 3.18,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -11075,49 +11075,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-24T12:48:00.379Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 3452,
-      "output": 148,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I want to go outside for a breath of fresh air and see the open space.",
-    "inner": "I want to go outside for a breath of fresh air and see the open space.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "the pond in the park",
-          "what": "watch the ducks",
-          "name": "watch the ducks"
-        },
-        "detail": "the pond in the park",
-        "thought": "Let's go to the park pond.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-24T12:56:05.571Z",
+    "via": "outside",
+    "thought": "I am at the pond in the park: I watch the ducks.",
     "action": "go_out",
     "details": {
-      "place": "the pond in the park",
-      "what": "watch the ducks",
-      "name": "watch the ducks"
+      "place": "pond"
     },
-    "detail": "the pond in the park",
-    "enjoyment": 6,
+    "detail": "I am at the pond in the park: I watch the ducks.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "pond",
+      "phase": "there",
+      "back": "2026-11-24T13:37:00.379Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -11480,21 +11453,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-24T12:48:00.384Z",
-  "fullness": 5.71,
+  "fullness": 5.52,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.99,
-  "joy": 4.47,
-  "calm": 5.07,
+  "wonder": 6.19,
+  "joy": 4.63,
+  "calm": 5.05,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.6
+    "excited": 0.36
   },
-  "feelAt": "2026-11-24T12:46:39.475Z",
+  "feelAt": "2026-11-24T12:56:05.557Z",
   "lastAte": "2026-11-24T11:01:00.067Z",
   "studio": {
     "songs": [
@@ -12209,12 +12182,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.12,
-    "curiosity": 0.51,
+    "creativity": 0.21,
+    "curiosity": 0.59,
     "boredom": 0,
-    "loneliness": 3.14,
+    "loneliness": 3.18,
     "tidiness": 0,
-    "at": "2026-11-24T12:46:39.475Z",
+    "at": "2026-11-24T12:56:05.557Z",
     "coziness": 3.5
   },
   "recent": {
