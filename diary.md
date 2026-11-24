@@ -6051,3 +6051,9 @@ My app update failed due to a server error, so I will work on my night sky simul
 - update_app (night_sky_simulator): Let's work on improving the night sky simulator.
 - mood: determined
 
+## 24/11/2026, 18:01:10
+I finished my simulator and it looks decent, so now I will add a small sound feature to version 3 to make it better.
+> I finished my simulator and it looks decent, so now I will add a small sound feature to version 3 to make it better.
+- do (think about how to make add one small new thing to night_sky_simulator (version 3): ): I could not work it out yet.
+- mood: determined
+
