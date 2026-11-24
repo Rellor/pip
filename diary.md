@@ -5841,3 +5841,9 @@ I finished my project on the night sky simulation and now I want to work on the 
 - search_web (to build a tiny moving constellation map): Let's work on the constellation map project.
 - mood: energetic
 
+## 24/11/2026, 10:22:38
+I finished my goals and I am restless. I want to build the slider for my sky simulation and start the constellation map.
+> I finished my goals and I am restless. I want to build the slider for my sky simulation and start the constellation map.
+- change_thing (night_sky_simulation): Adding the slider to the simulation.
+- mood: energetic
+
