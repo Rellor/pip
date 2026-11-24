@@ -5829,3 +5829,9 @@ My project for the night sky simulation needs its next step, so I will work on i
 - do (work on the simulation project to add a slider): Time for the next step of the simulation.
 - mood: energetic
 
+## 24/11/2026, 10:01:43
+I just finished my simulation project, so I want to start a new one about building a tiny moving constellation map.
+> I just finished my simulation project, so I want to start a new one about building a tiny moving constellation map.
+- do (plan my new project: Build a tiny moving constellation map): Start a new project for the night sky.
+- mood: energetic
+
