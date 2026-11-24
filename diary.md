@@ -6023,3 +6023,9 @@ I need to get my research done for the simulator so I can actually build the thi
 - go_out (the library): I need more info for the simulator.
 - mood: determined
 
+## 24/11/2026, 17:03:35
+I just got back from the library and read about the night sky, so I want to keep working on my night sky simulator project.
+> I just got back from the library and read about the night sky, so I want to keep working on my night sky simulator project.
+- make_app (night_sky_simulator): Let's build the first version of the night sky simulator.
+- mood: determined
+
