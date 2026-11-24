@@ -5895,3 +5895,9 @@ Continue step 2 of my constellation map project.
 - play_piano (C4 E4 G4 E4 C4:2): I hum a little tune while I think.
 - mood: focused
 
+## 24/11/2026, 11:37:16
+I have hit my limit for building things today, so I will spend time learning more about the night sky to stay fresh for when I can build again.
+> I have hit my limit for building things today, so I will spend time learning more about the night sky to stay fresh for when I can build again.
+- read_book (constellations and star mapping): I want to know more about the stars before I attempt the map again.
+- mood: focused
+
