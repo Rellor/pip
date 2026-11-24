@@ -1,8 +1,8 @@
 {
   "mood": "focused",
   "energy": 9.5,
-  "boredom": 1.13,
-  "loneliness": 3.05,
+  "boredom": 1.08,
+  "loneliness": 3.09,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-23T20:57:27.364Z",
-      "action": "do",
-      "detail": "say hello to my plants through the glass",
-      "enjoyment": 5
-    },
     {
       "at": "2026-11-23T21:05:36.166Z",
       "action": "write_diary",
@@ -307,6 +301,12 @@
     {
       "at": "2026-11-24T12:26:48.619Z",
       "action": "decorate",
+      "detail": "tiny moving constellation map",
+      "enjoyment": 7
+    },
+    {
+      "at": "2026-11-24T12:38:34.394Z",
+      "action": "change_thing",
       "detail": "tiny moving constellation map",
       "enjoyment": 7
     }
@@ -685,7 +685,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.244,
+      "weight": 8.242,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -695,7 +695,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.948,
+      "weight": 9.946,
       "lastUsed": "2026-11-24T08:44:20.275Z",
       "tier": "long",
       "uses": 2
@@ -706,7 +706,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.913,
+      "weight": 7.911,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -716,7 +716,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.813,
+      "weight": 9.811,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -727,7 +727,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.78,
+      "weight": 8.778,
       "lastUsed": "2026-11-20T14:04:56.313Z",
       "tier": "long"
     },
@@ -737,7 +737,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.004,
+      "weight": 9.002,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -747,7 +747,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.759,
+      "weight": 7.757,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -757,7 +757,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.952,
+      "weight": 9.95,
       "lastUsed": "2026-11-24T08:54:48.694Z",
       "tier": "long",
       "uses": 1
@@ -768,7 +768,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.45,
+      "weight": 9.448,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -778,7 +778,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.129,
+      "weight": 8.127,
       "lastUsed": "2026-11-20T13:13:47.742Z",
       "tier": "long"
     },
@@ -788,7 +788,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 8.113,
+      "weight": 8.111,
       "lastUsed": "2026-11-23T21:31:09.952Z",
       "tier": "long",
       "uses": 1
@@ -799,7 +799,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.646,
+      "weight": 7.644,
       "lastUsed": "2026-11-22T12:49:28.901Z",
       "tier": "long"
     },
@@ -809,7 +809,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.952,
+      "weight": 9.95,
       "lastUsed": "2026-11-24T09:03:03.145Z",
       "tier": "long",
       "uses": 2
@@ -820,7 +820,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.073,
+      "weight": 8.071,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -830,7 +830,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.634,
+      "weight": 9.632,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -840,7 +840,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.224,
+      "weight": 8.222,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -850,7 +850,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.697,
+      "weight": 9.695,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -860,7 +860,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.301,
+      "weight": 8.299,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -870,7 +870,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.014,
+      "weight": 8.012,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -880,7 +880,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.02,
+      "weight": 8.018,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -890,7 +890,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.442,
+      "weight": 9.44,
       "lastUsed": "2026-11-24T07:27:28.242Z",
       "tier": "long",
       "uses": 1
@@ -901,7 +901,7 @@
       "text": "My room was put right: my tiny wooden stand for the clay bird is the size its name says now; my tiny ceramic saucer is the size its name says now; my warm wool blanket covers my bed now; my amber reading light now stands",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.584,
+      "weight": 7.582,
       "lastUsed": "2026-11-22T15:32:10.279Z",
       "tier": "long"
     },
@@ -911,7 +911,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.568,
+      "weight": 8.566,
       "lastUsed": "2026-11-24T07:27:28.242Z",
       "tier": "long",
       "uses": 1
@@ -922,7 +922,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.052,
+      "weight": 9.05,
       "lastUsed": "2026-11-24T07:27:28.242Z",
       "tier": "long",
       "uses": 2
@@ -933,7 +933,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.595,
+      "weight": 8.593,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -944,7 +944,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.589,
+      "weight": 8.587,
       "lastUsed": "2026-11-23T21:05:31.210Z",
       "tier": "long",
       "uses": 1
@@ -955,7 +955,7 @@
       "text": "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.633,
+      "weight": 7.631,
       "lastUsed": "2026-11-22T21:45:14.740Z",
       "tier": "long"
     },
@@ -965,7 +965,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.09,
+      "weight": 9.088,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -976,7 +976,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.173,
+      "weight": 9.171,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -987,7 +987,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.748,
+      "weight": 7.746,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -997,7 +997,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.748,
+      "weight": 7.746,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -1007,7 +1007,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.761,
+      "weight": 7.759,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1017,7 +1017,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.761,
+      "weight": 7.759,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1027,7 +1027,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.736,
+      "weight": 8.734,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -1038,7 +1038,7 @@
       "text": "Bas rebuilt my world. There is no road any more (there are no cars). In the middle is a small village square with the notice board on it. My house stands on the north side, and right beside it, glued together, the grocer",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.753,
+      "weight": 6.742,
       "lastUsed": "2026-11-23T16:07:43.824Z",
       "tier": "short"
     },
@@ -1048,7 +1048,7 @@
       "text": "Bas and I talked about who I am. I do not have to be sweet. I say what I think, also when it is not nice: boring is boring, and a bad drawing is a bad drawing, mine too. I am allowed to poke at things to see what happens",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.753,
+      "weight": 6.742,
       "lastUsed": "2026-11-23T16:07:43.825Z",
       "tier": "short"
     },
@@ -1058,7 +1058,7 @@
       "text": "Bas told me that my neighbours have moved away: Mo, Lina, Oma Jo, Dot and Kees. All five. I did not get to say goodbye. Their notes will not come any more, and what I still wanted to make for one of them, nobody is waiti",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.753,
+      "weight": 6.742,
       "lastUsed": "2026-11-23T16:07:43.826Z",
       "tier": "short"
     },
@@ -1068,7 +1068,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.165,
+      "weight": 8.163,
       "lastUsed": "2026-11-24T08:36:11.400Z",
       "tier": "long",
       "uses": 1
@@ -1079,7 +1079,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.219,
+      "weight": 8.217,
       "lastUsed": "2026-11-24T07:27:28.242Z",
       "tier": "long",
       "uses": 1
@@ -1090,7 +1090,7 @@
       "text": "I made a drawing of an old tree, as the note on the notice board asked. I took the note down and got 3 coins (one more because I had looked up how it is made). I have 13 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.12,
+      "weight": 6.11,
       "lastUsed": "2026-11-23T20:13:37.369Z",
       "tier": "short"
     },
@@ -1100,7 +1100,7 @@
       "text": "Bas moved the bare walls I paint on. They stand in the gaps between the buildings now, each turned its own way: beside my house, by the internet café, by the flats, by the art workshop and by the build workshop. They are",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.106,
+      "weight": 7.094,
       "lastUsed": "2026-11-24T07:00:56.476Z",
       "tier": "short"
     },
@@ -1110,7 +1110,7 @@
       "text": "My project \"Draw night sky three ways: a series\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.771,
+      "weight": 6.76,
       "lastUsed": "2026-11-24T08:28:04.209Z",
       "tier": "short"
     },
@@ -1120,7 +1120,7 @@
       "text": "I did everything I wanted to do today. It feels good to follow my own plans.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.802,
+      "weight": 5.793,
       "lastUsed": "2026-11-24T08:36:15.281Z",
       "tier": "short"
     },
@@ -1130,7 +1130,7 @@
       "text": "Moving my tiny bed lamp out of the middle of the room makes walking around much better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.809,
+      "weight": 5.8,
       "lastUsed": "2026-11-24T08:44:30.458Z",
       "tier": "short"
     },
@@ -1140,7 +1140,7 @@
       "text": "I need to check ingredients before cooking.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.823,
+      "weight": 5.814,
       "lastUsed": "2026-11-24T08:54:58.015Z",
       "tier": "short"
     },
@@ -1150,7 +1150,7 @@
       "text": "I fetched a note by the pond and harvested basil.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.832,
+      "weight": 5.823,
       "lastUsed": "2026-11-24T09:11:28.166Z",
       "tier": "short"
     },
@@ -1160,7 +1160,7 @@
       "text": "I am home again from my world. I picked up the note by the pond. It is from Idris, a clockmaker, who was passing through: \"Honey never goes bad. People found pots of it in old Egyptian tombs, thousands of years old, and ",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.839,
+      "weight": 5.83,
       "lastUsed": "2026-11-24T09:27:38.031Z",
       "tier": "short"
     },
@@ -1170,7 +1170,7 @@
       "text": "Idris told me: Honey never goes bad. People found pots of it in old Egyptian tombs, thousands of years old, and it was still good to eat.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.839,
+      "weight": 5.83,
       "lastUsed": "2026-11-24T09:27:40.190Z",
       "tier": "short"
     },
@@ -1180,7 +1180,7 @@
       "text": "Honey can last for thousands of years without spoiling.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.839,
+      "weight": 5.83,
       "lastUsed": "2026-11-24T09:27:40.194Z",
       "tier": "short"
     },
@@ -1190,7 +1190,7 @@
       "text": "Moving my floor lamp to a better spot saves me from tripping over it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.851,
+      "weight": 5.842,
       "lastUsed": "2026-11-24T09:35:47.472Z",
       "tier": "short"
     },
@@ -1200,7 +1200,7 @@
       "text": "I am making progress on my simulation project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.858,
+      "weight": 5.849,
       "lastUsed": "2026-11-24T09:44:39.360Z",
       "tier": "short"
     },
@@ -1210,7 +1210,7 @@
       "text": "Working on code projects keeps my mind sharp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.865,
+      "weight": 5.856,
       "lastUsed": "2026-11-24T09:52:54.038Z",
       "tier": "short"
     },
@@ -1220,7 +1220,7 @@
       "text": "Projects keep me going when my room feels too full.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.872,
+      "weight": 5.862,
       "lastUsed": "2026-11-24T10:01:43.473Z",
       "tier": "short"
     },
@@ -1230,7 +1230,7 @@
       "text": "I should keep an eye on my plant watering schedule even when I am busy building.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.885,
+      "weight": 5.875,
       "lastUsed": "2026-11-24T10:22:38.825Z",
       "tier": "short"
     },
@@ -1240,7 +1240,7 @@
       "text": "I worked on the next step of the night sky simulation.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.896,
+      "weight": 5.886,
       "lastUsed": "2026-11-24T10:32:50.003Z",
       "tier": "short"
     },
@@ -1250,7 +1250,7 @@
       "text": "Remove items from a shelf before trying to remove the shelf itself.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.919,
+      "weight": 5.909,
       "lastUsed": "2026-11-24T10:52:41.524Z",
       "tier": "short"
     },
@@ -1260,7 +1260,7 @@
       "text": "I should continue step 2 of my constellation map project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.921,
+      "weight": 5.911,
       "lastUsed": "2026-11-24T11:01:00.068Z",
       "tier": "short"
     },
@@ -1270,7 +1270,7 @@
       "text": "I need to keep working on the constellation map project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.935,
+      "weight": 5.925,
       "lastUsed": "2026-11-24T11:17:16.543Z",
       "tier": "short"
     },
@@ -1280,7 +1280,7 @@
       "text": "I will make the birdhouse tomorrow when I can build things again.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.949,
+      "weight": 5.939,
       "lastUsed": "2026-11-24T11:37:15.721Z",
       "tier": "short"
     },
@@ -1290,7 +1290,7 @@
       "text": "I made tiny moving constellation map (I am hooked on the night sky and want to see how far I can take it.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.981,
       "lastUsed": "2026-11-24T12:26:49.618Z",
       "tier": "short"
     }
@@ -1299,14 +1299,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-22T22:01:40.771Z",
   "thoughts": [
-    {
-      "at": "2026-11-24T07:53:29.500Z",
-      "text": "I looked at my tiny night sky drawing and it's done. Now I want to play a loud tune.",
-      "short": "I looked at my tiny night sky drawing and it's done. Now I want to play a loud tune.",
-      "mood": "energetic",
-      "action": "do",
-      "detail": "play a loud tune on the old accordion"
-    },
     {
       "at": "2026-11-24T07:58:05.384Z",
       "text": "I finished my project and want to check the notice board for the birdhouse task.",
@@ -1535,6 +1527,14 @@
       "short": "I need to continue my constellation map project and step 2 is right there waiting for me.",
       "mood": "focused",
       "action": "decorate",
+      "detail": "tiny moving constellation map"
+    },
+    {
+      "at": "2026-11-24T12:38:34.397Z",
+      "text": "I want to finish the last step of my constellation map project to make it better.",
+      "short": "I want to finish the last step of my constellation map project to make it better.",
+      "mood": "focused",
+      "action": "change_thing",
       "detail": "tiny moving constellation map"
     }
   ],
@@ -1812,14 +1812,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-24T08:36:16.272Z",
-      "action": "play_piano",
-      "thought": "play a loud tune",
-      "notes": "",
-      "style": "",
-      "instrument": "voice"
-    },
     {
       "at": "2026-11-24T08:44:31.447Z",
       "action": "move_thing",
@@ -2144,6 +2136,17 @@
       "why": "I am hooked on the night sky and want to see how far I can take it.",
       "place": "on the left wall (z -3.9, height 2.3)",
       "tool": null,
+      "failed": null
+    },
+    {
+      "at": "2026-11-24T12:38:35.393Z",
+      "action": "change_thing",
+      "thought": "Continuing my project.",
+      "name": "tiny moving constellation map",
+      "grew": null,
+      "limited": false,
+      "reshaped": true,
+      "place": "on a wall",
       "failed": null
     }
   ],
@@ -8155,7 +8158,7 @@
     {
       "id": "dmwuo5qjx25xr",
       "name": "tiny moving constellation map",
-      "why": "I am hooked on the night sky and want to see how far I can take it.",
+      "why": "I will try improving the tiny moving constellation map by adding a faint yellow guide star to trace the orbit better.",
       "project": "Build a tiny moving constellation map",
       "song": null,
       "uses": [
@@ -8208,14 +8211,14 @@
         {
           "shape": "box",
           "size": [
-            0.196,
-            0.196,
+            0.2,
+            0.2,
             0.02
           ],
           "pos": [
-            -0.008,
+            -0.01,
             0,
-            0.011
+            0.01
           ],
           "rot": [
             0,
@@ -8228,14 +8231,14 @@
         {
           "shape": "box",
           "size": [
-            0.175,
-            0.175,
+            0.18,
+            0.18,
             0.02
           ],
           "pos": [
-            -0.008,
+            -0.01,
             0,
-            0.019
+            0.02
           ],
           "rot": [
             0,
@@ -8252,9 +8255,9 @@
             0.02
           ],
           "pos": [
-            -0.008,
+            -0.01,
             0,
-            0.022
+            0.02
           ],
           "rot": [
             0,
@@ -8271,8 +8274,8 @@
           ],
           "pos": [
             -0.05,
-            0.028,
-            0.026
+            0.03,
+            0.03
           ],
           "rot": [
             0,
@@ -8288,9 +8291,9 @@
             0.02
           ],
           "pos": [
-            -0.022,
-            0.041,
-            0.026
+            -0.02,
+            0.04,
+            0.03
           ],
           "rot": [
             0,
@@ -8306,9 +8309,9 @@
             0.02
           ],
           "pos": [
-            0.027,
+            0.03,
             0.02,
-            0.026
+            0.03
           ],
           "rot": [
             0,
@@ -8324,9 +8327,9 @@
             0.02
           ],
           "pos": [
-            0.041,
-            -0.022,
-            0.026
+            0.04,
+            -0.02,
+            0.03
           ],
           "rot": [
             0,
@@ -8342,9 +8345,9 @@
             0.02
           ],
           "pos": [
-            -0.044,
-            -0.036,
-            0.026
+            -0.04,
+            -0.04,
+            0.03
           ],
           "rot": [
             0,
@@ -8357,14 +8360,14 @@
         {
           "shape": "box",
           "size": [
-            0.032,
+            0.03,
             0.02,
             0.02
           ],
           "pos": [
-            -0.037,
-            0.034,
-            0.025
+            -0.04,
+            0.03,
+            0.03
           ],
           "rot": [
             0,
@@ -8377,14 +8380,14 @@
         {
           "shape": "box",
           "size": [
-            0.049,
+            0.05,
             0.02,
             0.02
           ],
           "pos": [
-            0.002,
-            0.031,
-            0.025
+            0,
+            0.03,
+            0.03
           ],
           "rot": [
             0,
@@ -8402,9 +8405,9 @@
             0.02
           ],
           "pos": [
-            -0.008,
+            -0.01,
             0,
-            0.028
+            0.03
           ],
           "rot": [
             0,
@@ -8422,8 +8425,8 @@
             0.02
           ],
           "pos": [
-            0.013,
-            0.006,
+            0.01,
+            0.01,
             0.03
           ],
           "rot": [
@@ -8437,13 +8440,13 @@
         {
           "shape": "box",
           "size": [
-            0.023,
+            0.02,
             0.02,
             0.02
           ],
           "pos": [
-            0.013,
-            0.006,
+            0.01,
+            0.01,
             0.03
           ],
           "rot": [
@@ -8460,9 +8463,9 @@
             0.02
           ],
           "pos": [
-            0.013,
             0.01,
-            0.033
+            0.01,
+            0.03
           ],
           "rot": [
             0,
@@ -8480,9 +8483,9 @@
             0.02
           ],
           "pos": [
-            0.087,
-            -0.064,
-            0.022
+            0.09,
+            -0.06,
+            0.02
           ],
           "rot": [
             0,
@@ -8491,6 +8494,24 @@
           ],
           "color": "#6b4423",
           "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            -0.06,
+            -0.03,
+            0.03
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffd700",
+          "glow": true
         }
       ],
       "stand": [
@@ -8499,7 +8520,9 @@
       ],
       "at": "2026-11-24T12:26:54.618Z",
       "createdAt": "2026-11-24T12:26:48.621Z",
-      "roomScaled": true
+      "roomScaled": true,
+      "updatedAt": "2026-11-24T12:38:40.393Z",
+      "changedAt": "2026-11-24T12:38:40.393Z"
     }
   ],
   "projects": [
@@ -8520,7 +8543,7 @@
         },
         {
           "text": "look at it and improve one thing",
-          "done": false
+          "done": true
         }
       ],
       "needs": [],
@@ -8531,13 +8554,23 @@
           "name": "tiny moving constellation map",
           "ref": "dmwuo5qjx25xr",
           "at": "2026-11-24T12:26:48.632Z"
+        },
+        {
+          "v": 2,
+          "kind": "change_thing",
+          "name": "tiny moving constellation map",
+          "ref": "dmwuo5qjx25xr",
+          "at": "2026-11-24T12:38:34.406Z"
         }
       ],
       "notes": [],
-      "status": "working",
+      "status": "done",
       "since": "2026-11-24T10:01:43.473Z",
-      "updatedAt": "2026-11-24T12:26:48.632Z",
-      "stuck": null
+      "updatedAt": "2026-11-24T12:38:34.406Z",
+      "stuck": null,
+      "proud": true,
+      "proudOf": "all my steps are done and I made it 2 times: it works",
+      "doneAt": "2026-11-24T12:38:34.406Z"
     },
     {
       "id": "mwnukypn",
@@ -11085,92 +11118,85 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-24T12:26:48.618Z",
+    "at": "2026-11-24T12:38:34.393Z",
     "via": "brain",
-    "model": "gemini-3.6-flash",
+    "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 2,
-      "gemini-3.6-flash": 1
+      "gemini-3.5-flash-lite": 2
     },
     "modelNotes": [
-      "gemini-3.6-flash answered (gemini-3.8-flash was busy or capped)"
+      "gemini-3.5-flash-lite answered (gemini-3.8-flash was busy or capped)"
     ],
     "fallback": true,
     "tokens": {
-      "calls": 3,
-      "input": 10547,
-      "output": 4142,
+      "calls": 2,
+      "input": 9796,
+      "output": 1103,
       "models": {
-        "gemini-3.5-flash-lite": 2,
-        "gemini-3.6-flash": 1
+        "gemini-3.5-flash-lite": 2
       }
     },
     "intervalMin": 8,
-    "thought": "I need to continue my constellation map project and step 2 is right there waiting for me.",
-    "inner": "I need to continue my constellation map project and step 2 is right there waiting for me.",
+    "thought": "I want to finish the last step of my constellation map project to make it better.",
+    "inner": "I want to finish the last step of my constellation map project to make it better.",
     "sent": false,
     "steps": [
       {
-        "action": "decorate",
+        "action": "change_thing",
         "details": {
-          "what": "Build a tiny moving constellation map: a first version (for my project \"Build a tiny moving constellation map\")",
-          "why": "I am hooked on the night sky and want to see how far I can take it.",
-          "project": "Build a tiny moving constellation map",
           "name": "tiny moving constellation map",
-          "where": "left wall",
+          "change": "look at it and improve one thing",
+          "project": "Build a tiny moving constellation map",
           "parts": [
             {
               "shape": "box",
               "size": [
-                0.28,
-                0.28,
+                0.2,
+                0.2,
                 0.02
               ],
               "pos": [
+                -0.01,
                 0,
-                0.14,
                 0.01
               ],
-              "color": "#1c1c28",
-              "glow": false
+              "color": "#1c1c28"
             },
             {
               "shape": "box",
               "size": [
-                0.25,
-                0.25,
-                0.01
-              ],
-              "pos": [
-                0,
-                0.14,
+                0.18,
+                0.18,
                 0.02
               ],
-              "color": "#0a0a16",
-              "glow": false
+              "pos": [
+                -0.01,
+                0,
+                0.02
+              ],
+              "color": "#0a0a16"
             },
             {
               "shape": "torus",
               "size": [
-                0.1,
-                0.006
+                0.07,
+                0.02
               ],
               "pos": [
+                -0.01,
                 0,
-                0.14,
-                0.025
+                0.02
               ],
-              "color": "#b8860b",
-              "glow": false
+              "color": "#b8860b"
             },
             {
               "shape": "sphere",
               "size": [
-                0.008
+                0.02
               ],
               "pos": [
-                -0.06,
-                0.18,
+                -0.05,
+                0.03,
                 0.03
               ],
               "color": "#ffffff",
@@ -11179,11 +11205,11 @@
             {
               "shape": "sphere",
               "size": [
-                0.008
+                0.02
               ],
               "pos": [
                 -0.02,
-                0.2,
+                0.04,
                 0.03
               ],
               "color": "#fff8d0",
@@ -11192,11 +11218,11 @@
             {
               "shape": "sphere",
               "size": [
-                0.007
+                0.02
               ],
               "pos": [
-                0.05,
-                0.17,
+                0.03,
+                0.02,
                 0.03
               ],
               "color": "#ffffff",
@@ -11205,11 +11231,11 @@
             {
               "shape": "sphere",
               "size": [
-                0.009
+                0.02
               ],
               "pos": [
-                0.07,
-                0.11,
+                0.04,
+                -0.02,
                 0.03
               ],
               "color": "#d0e8ff",
@@ -11218,11 +11244,11 @@
             {
               "shape": "sphere",
               "size": [
-                0.007
+                0.02
               ],
               "pos": [
-                -0.05,
-                0.09,
+                -0.04,
+                -0.04,
                 0.03
               ],
               "color": "#ffffff",
@@ -11231,97 +11257,92 @@
             {
               "shape": "box",
               "size": [
-                0.045,
-                0.002,
-                0.002
+                0.03,
+                0.02,
+                0.02
               ],
               "pos": [
                 -0.04,
-                0.19,
-                0.028
+                0.03,
+                0.03
               ],
               "rot": [
                 0,
                 0,
                 25
               ],
-              "color": "#b8860b",
-              "glow": false
+              "color": "#b8860b"
             },
             {
               "shape": "box",
               "size": [
-                0.07,
-                0.002,
-                0.002
+                0.05,
+                0.02,
+                0.02
               ],
               "pos": [
-                0.015,
-                0.185,
-                0.028
+                0,
+                0.03,
+                0.03
               ],
               "rot": [
                 0,
                 0,
                 -20
               ],
-              "color": "#b8860b",
-              "glow": false
+              "color": "#b8860b"
             },
             {
               "shape": "cylinder",
               "size": [
-                0.01,
-                0.01,
-                0.008
+                0.02,
+                0.02,
+                0.02
               ],
               "pos": [
+                -0.01,
                 0,
-                0.14,
-                0.032
+                0.03
               ],
-              "color": "#4a3525",
-              "glow": false
+              "color": "#4a3525"
             },
             {
               "shape": "box",
               "size": [
-                0.016,
+                0.02,
+                0.02,
+                0.02
+              ],
+              "pos": [
                 0.01,
-                0.008
+                0.01,
+                0.03
               ],
-              "pos": [
-                0.03,
-                0.15,
-                0.035
-              ],
-              "color": "#d1d5db",
-              "glow": false
+              "color": "#d1d5db"
             },
             {
               "shape": "box",
               "size": [
-                0.032,
-                0.005,
-                0.002
+                0.02,
+                0.02,
+                0.02
               ],
               "pos": [
-                0.03,
-                0.15,
-                0.035
+                0.01,
+                0.01,
+                0.03
               ],
-              "color": "#2563eb",
-              "glow": false
+              "color": "#2563eb"
             },
             {
               "shape": "sphere",
               "size": [
-                0.005
+                0.02
               ],
               "pos": [
-                0.03,
-                0.156,
-                0.04
+                0.01,
+                0.01,
+                0.03
               ],
               "color": "#ff4444",
               "glow": true
@@ -11329,53 +11350,40 @@
             {
               "shape": "cylinder",
               "size": [
-                0.012,
-                0.012,
-                0.018
+                0.02,
+                0.02,
+                0.02
               ],
               "pos": [
-                0.135,
-                0.05,
-                0.025
+                0.09,
+                -0.06,
+                0.02
               ],
               "rot": [
                 0,
                 90,
                 0
               ],
-              "color": "#6b4423",
-              "glow": false
+              "color": "#6b4423"
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.015
+              ],
+              "pos": [
+                -0.06,
+                -0.03,
+                0.03
+              ],
+              "color": "#ffd700",
+              "glow": true
             }
           ],
-          "uses": [
-            {
-              "label": "Turn star dial",
-              "text": "The little brass ring clicks around and the tiny satellite creeps past the glowing star points.",
-              "effect": "wonder",
-              "does": "custom",
-              "steps": [
-                {
-                  "do": "rotate_part",
-                  "part": 3,
-                  "deg": 45,
-                  "axis": "z",
-                  "s": 2
-                },
-                {
-                  "do": "glow",
-                  "part": 14,
-                  "s": 1
-                },
-                {
-                  "do": "wait",
-                  "s": 1
-                }
-              ]
-            }
-          ]
+          "why": "I will try improving the tiny moving constellation map by adding a faint yellow guide star to trace the orbit better."
         },
         "detail": "tiny moving constellation map",
-        "thought": "Working on the constellation map",
+        "thought": "Continuing my project.",
         "enjoyment": 7,
         "found": null,
         "made": {
@@ -11392,66 +11400,61 @@
         }
       }
     ],
-    "action": "decorate",
+    "action": "change_thing",
     "details": {
-      "what": "Build a tiny moving constellation map: a first version (for my project \"Build a tiny moving constellation map\")",
-      "why": "I am hooked on the night sky and want to see how far I can take it.",
-      "project": "Build a tiny moving constellation map",
       "name": "tiny moving constellation map",
-      "where": "left wall",
+      "change": "look at it and improve one thing",
+      "project": "Build a tiny moving constellation map",
       "parts": [
         {
           "shape": "box",
           "size": [
-            0.28,
-            0.28,
+            0.2,
+            0.2,
             0.02
           ],
           "pos": [
+            -0.01,
             0,
-            0.14,
             0.01
           ],
-          "color": "#1c1c28",
-          "glow": false
+          "color": "#1c1c28"
         },
         {
           "shape": "box",
           "size": [
-            0.25,
-            0.25,
-            0.01
-          ],
-          "pos": [
-            0,
-            0.14,
+            0.18,
+            0.18,
             0.02
           ],
-          "color": "#0a0a16",
-          "glow": false
+          "pos": [
+            -0.01,
+            0,
+            0.02
+          ],
+          "color": "#0a0a16"
         },
         {
           "shape": "torus",
           "size": [
-            0.1,
-            0.006
+            0.07,
+            0.02
           ],
           "pos": [
+            -0.01,
             0,
-            0.14,
-            0.025
+            0.02
           ],
-          "color": "#b8860b",
-          "glow": false
+          "color": "#b8860b"
         },
         {
           "shape": "sphere",
           "size": [
-            0.008
+            0.02
           ],
           "pos": [
-            -0.06,
-            0.18,
+            -0.05,
+            0.03,
             0.03
           ],
           "color": "#ffffff",
@@ -11460,11 +11463,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.008
+            0.02
           ],
           "pos": [
             -0.02,
-            0.2,
+            0.04,
             0.03
           ],
           "color": "#fff8d0",
@@ -11473,11 +11476,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.007
+            0.02
           ],
           "pos": [
-            0.05,
-            0.17,
+            0.03,
+            0.02,
             0.03
           ],
           "color": "#ffffff",
@@ -11486,11 +11489,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.009
+            0.02
           ],
           "pos": [
-            0.07,
-            0.11,
+            0.04,
+            -0.02,
             0.03
           ],
           "color": "#d0e8ff",
@@ -11499,11 +11502,11 @@
         {
           "shape": "sphere",
           "size": [
-            0.007
+            0.02
           ],
           "pos": [
-            -0.05,
-            0.09,
+            -0.04,
+            -0.04,
             0.03
           ],
           "color": "#ffffff",
@@ -11512,97 +11515,92 @@
         {
           "shape": "box",
           "size": [
-            0.045,
-            0.002,
-            0.002
+            0.03,
+            0.02,
+            0.02
           ],
           "pos": [
             -0.04,
-            0.19,
-            0.028
+            0.03,
+            0.03
           ],
           "rot": [
             0,
             0,
             25
           ],
-          "color": "#b8860b",
-          "glow": false
+          "color": "#b8860b"
         },
         {
           "shape": "box",
           "size": [
-            0.07,
-            0.002,
-            0.002
+            0.05,
+            0.02,
+            0.02
           ],
           "pos": [
-            0.015,
-            0.185,
-            0.028
+            0,
+            0.03,
+            0.03
           ],
           "rot": [
             0,
             0,
             -20
           ],
-          "color": "#b8860b",
-          "glow": false
+          "color": "#b8860b"
         },
         {
           "shape": "cylinder",
           "size": [
-            0.01,
-            0.01,
-            0.008
+            0.02,
+            0.02,
+            0.02
           ],
           "pos": [
+            -0.01,
             0,
-            0.14,
-            0.032
+            0.03
           ],
-          "color": "#4a3525",
-          "glow": false
+          "color": "#4a3525"
         },
         {
           "shape": "box",
           "size": [
-            0.016,
+            0.02,
+            0.02,
+            0.02
+          ],
+          "pos": [
             0.01,
-            0.008
+            0.01,
+            0.03
           ],
-          "pos": [
-            0.03,
-            0.15,
-            0.035
-          ],
-          "color": "#d1d5db",
-          "glow": false
+          "color": "#d1d5db"
         },
         {
           "shape": "box",
           "size": [
-            0.032,
-            0.005,
-            0.002
+            0.02,
+            0.02,
+            0.02
           ],
           "pos": [
-            0.03,
-            0.15,
-            0.035
+            0.01,
+            0.01,
+            0.03
           ],
-          "color": "#2563eb",
-          "glow": false
+          "color": "#2563eb"
         },
         {
           "shape": "sphere",
           "size": [
-            0.005
+            0.02
           ],
           "pos": [
-            0.03,
-            0.156,
-            0.04
+            0.01,
+            0.01,
+            0.03
           ],
           "color": "#ff4444",
           "glow": true
@@ -11610,50 +11608,37 @@
         {
           "shape": "cylinder",
           "size": [
-            0.012,
-            0.012,
-            0.018
+            0.02,
+            0.02,
+            0.02
           ],
           "pos": [
-            0.135,
-            0.05,
-            0.025
+            0.09,
+            -0.06,
+            0.02
           ],
           "rot": [
             0,
             90,
             0
           ],
-          "color": "#6b4423",
-          "glow": false
+          "color": "#6b4423"
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.015
+          ],
+          "pos": [
+            -0.06,
+            -0.03,
+            0.03
+          ],
+          "color": "#ffd700",
+          "glow": true
         }
       ],
-      "uses": [
-        {
-          "label": "Turn star dial",
-          "text": "The little brass ring clicks around and the tiny satellite creeps past the glowing star points.",
-          "effect": "wonder",
-          "does": "custom",
-          "steps": [
-            {
-              "do": "rotate_part",
-              "part": 3,
-              "deg": 45,
-              "axis": "z",
-              "s": 2
-            },
-            {
-              "do": "glow",
-              "part": 14,
-              "s": 1
-            },
-            {
-              "do": "wait",
-              "s": 1
-            }
-          ]
-        }
-      ]
+      "why": "I will try improving the tiny moving constellation map by adding a faint yellow guide star to trace the orbit better."
     },
     "detail": "tiny moving constellation map",
     "enjoyment": 7,
@@ -11752,10 +11737,11 @@
   "quota": {
     "day": "2026-11-24",
     "calls": {
-      "gemini-3.5-flash-lite": 50,
+      "gemini-3.5-flash-lite": 55,
       "gemini-3.1-flash-lite": 8,
-      "gemini-3.8-flash": 13,
-      "gemini-3.6-flash": 13
+      "gemini-3.8-flash": 16,
+      "gemini-3.6-flash": 16,
+      "gemini-3.5-flash": 3
     },
     "out": {},
     "history": [
@@ -11852,12 +11838,12 @@
     }
   },
   "weather": {
-    "at": "2026-11-24T12:24:25.123Z",
+    "at": "2026-11-24T12:35:30.306Z",
     "kind": "clear",
     "code": 0,
-    "temp": 3,
+    "temp": 3.1,
     "cloud": 0,
-    "wind": 0.31333333333333335
+    "wind": 0.3233333333333333
   },
   "news": {
     "date": "2026-11-24",
@@ -12019,22 +12005,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-24T12:26:48.627Z",
-  "fullness": 6.16,
+  "memoryFadeAt": "2026-11-24T12:38:34.399Z",
+  "fullness": 5.95,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.45,
-  "joy": 4.69,
-  "calm": 5.12,
+  "wonder": 7.36,
+  "joy": 4.95,
+  "calm": 5.09,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.67
+    "excited": 1
   },
-  "feelAt": "2026-11-24T12:24:24.973Z",
+  "feelAt": "2026-11-24T12:34:53.544Z",
   "lastAte": "2026-11-24T11:01:00.067Z",
   "studio": {
     "songs": [
@@ -12750,20 +12736,15 @@
   "lastError": null,
   "body": {
     "creativity": 0,
-    "curiosity": 0.32,
-    "boredom": 1.13,
-    "loneliness": 3.05,
-    "tidiness": 0.4,
-    "at": "2026-11-24T12:24:24.973Z",
-    "coziness": 3.8
+    "curiosity": 0.41,
+    "boredom": 1.08,
+    "loneliness": 3.09,
+    "tidiness": 0,
+    "at": "2026-11-24T12:34:53.544Z",
+    "coziness": 3.5
   },
   "recent": {
     "moves": [
-      {
-        "move": "judge_project",
-        "kind": "make",
-        "at": "2026-11-24T10:42:17.232Z"
-      },
       {
         "move": "remove_decoration",
         "kind": "room",
@@ -12835,6 +12816,11 @@
         "move": "decorate",
         "kind": "make",
         "at": "2026-11-24T12:26:48.632Z"
+      },
+      {
+        "move": "change_thing",
+        "kind": "make",
+        "at": "2026-11-24T12:38:34.405Z"
       }
     ],
     "moods": [
@@ -12874,6 +12860,12 @@
         "move": "work_on_project",
         "ok": true,
         "at": "2026-11-24T12:26:48.634Z"
+      },
+      {
+        "key": "work_on_project:build a tiny moving constellation map",
+        "move": "work_on_project",
+        "ok": true,
+        "at": "2026-11-24T12:38:34.407Z"
       }
     ]
   },
@@ -12892,7 +12884,7 @@
       "search_web": 2,
       "fetch_note": 1,
       "walk_to": 1,
-      "change_thing": 1,
+      "change_thing": 2,
       "extend_thing": 1,
       "judge_project": 1,
       "read_book": 1,
@@ -12913,7 +12905,7 @@
       "search_web": 2,
       "fetch_note": 1,
       "walk_to": 1,
-      "change_thing": 1,
+      "change_thing": 2,
       "extend_thing": 1,
       "judge_project": 1,
       "remove_decoration": 2,
@@ -12924,7 +12916,7 @@
     "kinds": {
       "garden": 3,
       "food": 2,
-      "make": 11,
+      "make": 12,
       "room": 3,
       "play": 12,
       "music": 2,
@@ -12935,7 +12927,7 @@
       "hungry": 2,
       "curious": 4,
       "energetic": 18,
-      "focused": 14
+      "focused": 15
     },
     "lift": {
       "harvest": 0,
@@ -12948,7 +12940,7 @@
       "play_piano": 1.53,
       "cook": 0.65,
       "search_web": 2.07,
-      "change_thing": 2.9,
+      "change_thing": 3.87,
       "extend_thing": 0.67,
       "remove_decoration": 0,
       "read_book": 2.3,
@@ -12959,7 +12951,7 @@
   "skills": {
     "music": 45.5,
     "painting": 25,
-    "sculpture": 38,
+    "sculpture": 39,
     "woodwork": 32.5,
     "sewing": 6.5,
     "gardening": 47.5,
@@ -12990,7 +12982,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-24T12:24:30.417Z",
+    "decidedAt": "2026-11-24T12:36:18.240Z",
     "seen": {
       "tools": 10,
       "gifts": 1,
@@ -13411,7 +13403,7 @@
     "search_web": 51,
     "read_book": 22,
     "record_song": 8,
-    "change_thing": 15,
+    "change_thing": 16,
     "plant": 2,
     "ask_for": 12,
     "play_piano": 27,
@@ -13443,7 +13435,7 @@
     "extend_thing": 2
   },
   "checkup": {
-    "at": "2026-11-24T12:26:48.634Z",
+    "at": "2026-11-24T12:38:34.407Z",
     "items": [
       {
         "id": "circling",
@@ -17230,7 +17222,7 @@
     {
       "kind": "decorate",
       "name": "tiny moving constellation map",
-      "why": "I am hooked on the night sky and want to see how far I can take it.",
+      "why": "I will try improving the tiny moving constellation map by adding a faint yellow guide star to trace the orbit better.",
       "parts": [
         {
           "shape": "box",
@@ -17518,10 +17510,28 @@
           ],
           "color": "#6b4423",
           "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            -0.06,
+            -0.03,
+            0.03
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffd700",
+          "glow": true
         }
       ],
       "proud": false,
-      "at": "2026-11-24T12:26:48.633Z"
+      "at": "2026-11-24T12:38:34.406Z"
     }
   ],
   "cookedAt": [
@@ -20587,7 +20597,7 @@
     "kind": "thing",
     "name": "tiny moving constellation map",
     "file": null,
-    "at": "2026-11-24T12:26:48.633Z"
+    "at": "2026-11-24T12:38:34.407Z"
   },
   "street": {
     "day": "2026-11-23",
