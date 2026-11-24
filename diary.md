@@ -5940,3 +5940,9 @@ I want to go outside for a breath of fresh air and see the open space.
 - go_out (the pond in the park): Let's go to the park pond.
 - mood: focused
 
+## 24/11/2026, 13:37:19
+My basil is ready to harvest and I want to gather it before I cook something with it.
+> My basil is ready to harvest and I want to gather it before I cook something with it.
+- harvest (basil): Harvest the ripe basil.
+- mood: focused
+
