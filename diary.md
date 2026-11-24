@@ -5728,3 +5728,9 @@ My room feels a bit cluttered so I want to move my sculpted clay bird onto the s
 - move_thing (sculpted clay bird on perch): Move the sculpted clay bird to the small wooden shelf
 - mood: curious
 
+## 24/11/2026, 07:36:20
+I want to continue my night sky drawing series and also check out the notice board to see what people are asking for.
+> I want to continue my night sky drawing series and also check out the notice board to see what people are asking for.
+- draw (Bird migration night flight): Time to work on the next step of my project.
+- mood: curious
+
