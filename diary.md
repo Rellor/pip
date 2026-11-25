@@ -6711,3 +6711,9 @@ My head wants a change from staring at the room, so I will write in my diary and
 - write_diary (Too much room and not enough quiet. Time to stop poking at the walls.): Writing down what I think.
 - mood: grumpy
 
+## 25/11/2026, 22:02:30
+Something I noticed about myself, day after day: He spends half his time playing around just to see what happens.
+
+## 25/11/2026, 22:02:30
+Good night. Pip went to sleep.
+

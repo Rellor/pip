@@ -1,5 +1,5 @@
 {
-  "mood": "grumpy",
+  "mood": "sleepy",
   "energy": 9.5,
   "boredom": 0,
   "loneliness": 9.51,
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-25T12:41:43.346Z",
-      "action": "change_thing",
-      "detail": "small clumsy shelf for the corner",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-25T12:51:06.228Z",
       "action": "do",
@@ -304,6 +298,12 @@
       "action": "write_diary",
       "detail": "Too much room and not enough quiet. Time to stop poking at the walls.",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-25T22:02:04.540Z",
+      "action": "rest",
+      "detail": "sleeping through the night",
+      "enjoyment": 8
     }
   ],
   "notes": [
@@ -339,7 +339,7 @@
     "Browsing the web I came across Robert Searle (minister): Robert Wyckoff Searle (1894 – June 17, 1967) was an American Reformed and Presbyterian minister and nonprofit executive. Active in interfaith and ecumenical work during his career, he spent 16 years as general secretary or in other senior roles at the Greater New York Federation of Churches and its…"
   ],
   "requests": [],
-  "story": "Pip spends his evenings decorating his room as autumn dusk falls outside. He learns by doing and gets his hands dirty with clumsy first tries. Decorating actually helps him, unlike moving things around which just irritates him. He stayed focused all day, doing tasks and searching the web. At night, he writes plainly in his diary by candlelight.",
+  "story": "Pip spends his evenings by the autumn window as dusk falls. He learns by doing and makes clumsy things with his hands. He spends half his time playing around just to see what happens. Decorating his walls and searching the web keep him busy. Pushing objects from one spot to another just makes him grumpy. Today he did a lot of chores he disliked. Late at night, he writes his honest thoughts in his diary.",
   "wants": [],
   "questions": [],
   "fulfilled": [],
@@ -907,16 +907,6 @@
       "uses": 5
     },
     {
-      "id": "mmwrzweqw60",
-      "at": "2026-11-22T15:32:10.279Z",
-      "text": "My room was put right: my tiny wooden stand for the clay bird is the size its name says now; my tiny ceramic saucer is the size its name says now; my warm wool blanket covers my bed now; my amber reading light now stands",
-      "importance": 8,
-      "kind": "memory",
-      "weight": 7.292,
-      "lastUsed": "2026-11-22T15:32:10.279Z",
-      "tier": "long"
-    },
-    {
       "id": "mmws07tis60",
       "at": "2026-11-22T15:41:02.643Z",
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
@@ -1084,7 +1074,8 @@
       "kind": "memory",
       "weight": 7.416,
       "lastUsed": "2026-11-25T12:51:06.231Z",
-      "tier": "short"
+      "tier": "long",
+      "keptAt": "2026-11-25T22:02:30.788Z"
     },
     {
       "id": "mmww5x3p260",
@@ -1310,7 +1301,7 @@
   ],
   "reflections": [],
   "lastReflectAt": null,
-  "storyAt": "2026-11-24T22:08:04.571Z",
+  "storyAt": "2026-11-25T22:02:30.787Z",
   "thoughts": [
     {
       "at": "2026-11-25T14:45:02.836Z",
@@ -12042,6 +12033,10 @@
     {
       "at": "2026-11-24T22:08:04.571Z",
       "text": "He dreams of building a massive wooden clock that ticks so loudly it wakes up the entire website."
+    },
+    {
+      "at": "2026-11-25T22:02:30.787Z",
+      "text": "He dreams of a giant piano built out of scrap wood in the middle of an open field. Every time he hits a key, a small wooden bird pops out of the frame."
     }
   ],
   "rituals": [],
@@ -12396,45 +12391,15 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-25T21:53:59.870Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2399,
-      "output": 132,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "My head wants a change from staring at the room, so I will write in my diary and then play a bit.",
-    "inner": "My head wants a change from staring at the room, so I will write in my diary and then play a bit.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "write_diary",
-        "details": {
-          "text": "Too much room and not enough quiet. Time to stop poking at the walls."
-        },
-        "detail": "Too much room and not enough quiet. Time to stop poking at the walls.",
-        "thought": "Writing down what I think.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
-    "action": "write_diary",
-    "details": {
-      "text": "Too much room and not enough quiet. Time to stop poking at the walls."
-    },
-    "detail": "Too much room and not enough quiet. Time to stop poking at the walls.",
-    "enjoyment": 6,
+    "at": "2026-11-25T22:02:04.540Z",
+    "thought": "It is late. Good night...",
+    "action": "rest",
+    "details": {},
+    "detail": "sleeping through the night",
+    "enjoyment": 8,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "sleeping": true
   },
   "furniture": {
     "plant": {
@@ -12531,7 +12496,7 @@
       "gemini-3.5-flash-lite": 156,
       "gemini-3.1-flash-lite": 31,
       "gemini-3.8-flash": 16,
-      "gemini-3.6-flash": 9,
+      "gemini-3.6-flash": 10,
       "gemini-3.5-flash": 3
     },
     "out": {},
@@ -14064,7 +14029,18 @@
       "count": 1
     }
   ],
-  "forgotten": [],
+  "forgotten": [
+    {
+      "id": "mmwrzweqw60",
+      "at": "2026-11-22T15:32:10.279Z",
+      "text": "My room was put right: my tiny wooden stand for the clay bird is the size its name says now; my tiny ceramic saucer is the size its name says now; my warm wool blanket covers my bed now; my amber reading light now stands",
+      "importance": 8,
+      "kind": "memory",
+      "weight": 7.292,
+      "lastUsed": "2026-11-22T15:32:10.279Z",
+      "tier": "long"
+    }
+  ],
   "days": [
     {
       "day": "2026-11-15",
@@ -14311,6 +14287,30 @@
       ],
       "mood": "focused",
       "unfinished": []
+    },
+    {
+      "day": "2026-11-25",
+      "lifted": [
+        "decorate",
+        "search_web",
+        "play_piano"
+      ],
+      "lowered": [
+        "do",
+        "go_out",
+        "water"
+      ],
+      "most": [
+        "do",
+        "start_project",
+        "water"
+      ],
+      "kinds": [
+        "play",
+        "make"
+      ],
+      "mood": "grumpy",
+      "unfinished": []
     }
   ],
   "soulLines": [
@@ -14318,7 +14318,7 @@
       "text": "He learns best by simply doing and getting his hands dirty.",
       "key": "most:do",
       "addedAt": "2026-11-20T22:00:07.967Z",
-      "lastSeen": "2026-11-24T22:08:04.568Z"
+      "lastSeen": "2026-11-25T22:02:30.784Z"
     },
     {
       "text": "He makes things with his own hands and feels better when he changes them.",
@@ -14336,7 +14336,13 @@
       "text": "He decorates because staring at bare walls makes him restless.",
       "key": "lifted:decorate",
       "addedAt": "2026-11-24T22:08:04.568Z",
-      "lastSeen": "2026-11-24T22:08:04.568Z"
+      "lastSeen": "2026-11-25T22:02:30.784Z"
+    },
+    {
+      "text": "He spends half his time playing around just to see what happens.",
+      "key": "kind:play",
+      "addedAt": "2026-11-25T22:02:30.784Z",
+      "lastSeen": "2026-11-25T22:02:30.784Z"
     }
   ],
   "ever": {
@@ -23605,6 +23611,13 @@
       "text": "The neighbours gave me a little purse with 3 coins in it, to welcome me to the street.",
       "fadedAt": "2026-11-23T22:11:21.516Z",
       "touches": 0
+    },
+    {
+      "id": "mmwrzweqw60",
+      "at": "2026-11-22T15:32:10.279Z",
+      "text": "My room was put right: my tiny wooden stand for the clay bird is the size its name says…",
+      "fadedAt": "2026-11-25T22:02:30.788Z",
+      "touches": 0
     }
   ],
   "drops": [
@@ -23790,8 +23803,8 @@
     {
       "action": "decorate",
       "lifts": true,
-      "days": 9,
-      "of": 9,
+      "days": 10,
+      "of": 10,
       "text": "Making things lifts me"
     },
     {
@@ -23823,6 +23836,13 @@
       "text": "Change thing lifts me"
     },
     {
+      "action": "search_web",
+      "lifts": true,
+      "days": 3,
+      "of": 3,
+      "text": "Looking things up lifts me"
+    },
+    {
       "action": "browse",
       "lifts": false,
       "days": 3,
@@ -23831,9 +23851,13 @@
     }
   ],
   "nightly": {
-    "at": "2026-11-24T22:08:03.560Z",
-    "kept": [],
-    "faded": []
+    "at": "2026-11-25T22:02:04.540Z",
+    "kept": [
+      "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy."
+    ],
+    "faded": [
+      "My room was put right: my tiny wooden stand for the clay bird is the size its name says now; my tiny ceramic saucer is the size its name says now; my warm wool blanket covers my bed now; my amber reading light now stands"
+    ]
   },
   "bought": [
     {
