@@ -1,8 +1,8 @@
 {
   "mood": "grumpy",
   "energy": 9.5,
-  "boredom": 1.07,
-  "loneliness": 9.45,
+  "boredom": 0,
+  "loneliness": 9.48,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-25T12:23:04.888Z",
-      "action": "play_piano",
-      "detail": "C4 E4 G4 E4 C4:2",
-      "enjoyment": 5
-    },
     {
       "at": "2026-11-25T12:32:01.971Z",
       "action": "decorate",
@@ -304,10 +298,15 @@
       "action": "play_piano",
       "detail": "E4:2 G4:2 B4:4",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-25T21:45:53.467Z",
+      "action": "browse",
+      "detail": "",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "Searched \"how to make a small telescope\" and read about History of the telescope: The history of the telescope can be traced to before the invention of the earliest known telescope, which appeared in 1608 in the Netherlands, when a patent was submitted by Hans Lippershey, an eyeglass maker. Although Lippershey did not receive his patent, news of the invention soon spread across Europe. The design of these early refracting telescopes consisted of a convex objective lens and a concave eyepiece. Galileo improved on this design the following year and applied it to astronomy. …",
     "Searched \"to build a tiny moving constellation map\" and read about Outline of artificial satellites: Artificial satellites are human-made spacecraft placed into orbit around Earth or another celestial body. They are distinct from natural satellites such as moons, and from space probes that travel beyond Earth orbit or between planetary bodies. Artificial satellites operate as part of wider satellite systems that may include a satellite bus, payload, ground segment, launch vehicle, tracking network, and regulatory framework.\n …",
     "Read about Star chart: A star chart is a celestial map of the night sky with astronomical objects laid out on a grid system. They are used to identify and locate constellations, stars, nebulae, galaxies, and planets. They have been used for human navigation since time immemorial. Note that a star chart differs from an astronomical catalog, which is a listing or tabulation of astronomical objects for a particular purpose. Tools using a star chart include the astrolabe and planisphere.\n\nHistory\n\nPrehistory\n …",
     "Browsing the web I came across James Walker Log House (near quiet music): James Walker Log House is a historic log house in Washington County, Texas near Brenham. It was built in 1824 and added to the National Register of Historic Places in 1989. See also National Register of Historic Places listings in Washington County, Texas Recorded Texas Historic Landmarks in…",
@@ -336,7 +335,8 @@
     "I harvested basil from place 2. It goes in my pantry, and the plant grows back.",
     "I watered basil. The soil stays damp for about 10 hours.",
     "Searched \"how to build a wooden birdhouse\" and read about Purple martin: The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America.\n …",
-    "Browsing the web I came across Jim Wallhead (near quiet music): Jim Wallhead (born 14 March 1984) is an English former professional mixed martial artist who competed in the Welterweight division. He has competed for BAMMA, Bellator, and M-1 Challenge and the UFC. Wallhead is a member of Team Rough House and Leicester Shootfighters. In addition to his training…"
+    "Browsing the web I came across Jim Wallhead (near quiet music): Jim Wallhead (born 14 March 1984) is an English former professional mixed martial artist who competed in the Welterweight division. He has competed for BAMMA, Bellator, and M-1 Challenge and the UFC. Wallhead is a member of Team Rough House and Leicester Shootfighters. In addition to his training…",
+    "Browsing the web I came across Robert Searle (minister): Robert Wyckoff Searle (1894 – June 17, 1967) was an American Reformed and Presbyterian minister and nonprofit executive. Active in interfaith and ecumenical work during his career, he spent 16 years as general secretary or in other senior roles at the Greater New York Federation of Churches and its…"
   ],
   "requests": [],
   "story": "Pip spends his evenings decorating his room as autumn dusk falls outside. He learns by doing and gets his hands dirty with clumsy first tries. Decorating actually helps him, unlike moving things around which just irritates him. He stayed focused all day, doing tasks and searching the web. At night, he writes plainly in his diary by candlelight.",
@@ -694,7 +694,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.921,
+      "weight": 7.92,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -704,7 +704,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.967,
+      "weight": 9.965,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 6
@@ -715,7 +715,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.602,
+      "weight": 7.601,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -725,7 +725,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.592,
+      "weight": 9.59,
       "lastUsed": "2026-11-24T14:51:51.479Z",
       "tier": "long",
       "uses": 3
@@ -736,7 +736,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.924,
+      "weight": 8.922,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -747,7 +747,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.619,
+      "weight": 8.618,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -757,7 +757,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.456,
+      "weight": 7.455,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -767,7 +767,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.804,
+      "weight": 9.802,
       "lastUsed": "2026-11-25T07:17:08.379Z",
       "tier": "long",
       "uses": 2
@@ -778,7 +778,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.027,
+      "weight": 9.025,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -788,7 +788,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.313,
+      "weight": 8.312,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -799,7 +799,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.204,
+      "weight": 9.202,
       "lastUsed": "2026-11-25T07:07:00.800Z",
       "tier": "long",
       "uses": 4
@@ -810,7 +810,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.352,
+      "weight": 7.351,
       "lastUsed": "2026-11-22T12:49:28.901Z",
       "tier": "long"
     },
@@ -820,7 +820,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.896,
+      "weight": 9.894,
       "lastUsed": "2026-11-25T13:56:25.006Z",
       "tier": "long",
       "uses": 4
@@ -831,7 +831,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.757,
+      "weight": 7.756,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -841,7 +841,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.207,
+      "weight": 9.205,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -851,7 +851,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.903,
+      "weight": 7.902,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -861,7 +861,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.268,
+      "weight": 9.266,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -871,7 +871,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.978,
+      "weight": 7.977,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -881,7 +881,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.7,
+      "weight": 7.699,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -891,7 +891,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.705,
+      "weight": 7.704,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -901,7 +901,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.992,
+      "weight": 9.99,
       "lastUsed": "2026-11-25T21:13:03.969Z",
       "tier": "long",
       "uses": 5
@@ -912,7 +912,7 @@
       "text": "My room was put right: my tiny wooden stand for the clay bird is the size its name says now; my tiny ceramic saucer is the size its name says now; my warm wool blanket covers my bed now; my amber reading light now stands",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.294,
+      "weight": 7.293,
       "lastUsed": "2026-11-22T15:32:10.279Z",
       "tier": "long"
     },
@@ -922,7 +922,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.665,
+      "weight": 8.664,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -933,7 +933,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.628,
+      "weight": 9.626,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 4
@@ -944,7 +944,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.263,
+      "weight": 8.262,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -955,7 +955,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.967,
+      "weight": 9.965,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 6
@@ -966,7 +966,7 @@
       "text": "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.339,
+      "weight": 7.338,
       "lastUsed": "2026-11-22T21:45:14.740Z",
       "tier": "long"
     },
@@ -976,7 +976,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.682,
+      "weight": 8.681,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -987,7 +987,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.988,
+      "weight": 9.986,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 7
@@ -998,7 +998,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.445,
+      "weight": 7.444,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -1008,7 +1008,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.445,
+      "weight": 7.444,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -1018,7 +1018,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.458,
+      "weight": 7.457,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1028,7 +1028,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.458,
+      "weight": 7.457,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1038,7 +1038,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.967,
+      "weight": 9.965,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 6
@@ -1049,7 +1049,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.819,
+      "weight": 8.817,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1060,7 +1060,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.823,
+      "weight": 9.821,
       "lastUsed": "2026-11-25T21:13:03.969Z",
       "tier": "long",
       "uses": 5
@@ -1071,7 +1071,7 @@
       "text": "Night sky projects are fun to build when coding.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.788,
+      "weight": 5.782,
       "lastUsed": "2026-11-25T13:40:00.651Z",
       "tier": "short",
       "uses": 1
@@ -1082,7 +1082,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.432,
+      "weight": 7.424,
       "lastUsed": "2026-11-25T12:51:06.231Z",
       "tier": "short"
     },
@@ -1092,7 +1092,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling. I brought home a blue marble someone lost.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.013,
+      "weight": 7.005,
       "lastUsed": "2026-11-25T20:32:21.197Z",
       "tier": "short",
       "uses": 1
@@ -1103,7 +1103,7 @@
       "text": "Cooking with basil is simple and quick.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.723,
+      "weight": 5.717,
       "lastUsed": "2026-11-25T16:03:47.132Z",
       "tier": "short"
     },
@@ -1113,7 +1113,7 @@
       "text": "I finished the night sky simulation and moved on to drawing an owl.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.73,
+      "weight": 5.724,
       "lastUsed": "2026-11-25T16:13:17.319Z",
       "tier": "short"
     },
@@ -1123,7 +1123,7 @@
       "text": "I drew grumpy owl",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.73,
+      "weight": 5.724,
       "lastUsed": "2026-11-25T16:13:18.310Z",
       "tier": "short"
     },
@@ -1133,7 +1133,7 @@
       "text": "Checking the notice board keeps me grounded in the village.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.745,
+      "weight": 5.739,
       "lastUsed": "2026-11-25T16:30:56.316Z",
       "tier": "short"
     },
@@ -1143,7 +1143,7 @@
       "text": "I am home again from the notice board. I read the notice board. New: someone wants a drawing of a cat. On it now: a birdhouse (3 coins), a telescope (3 coins), a drawing of a cat (2 coins). If I make one of them, the coi",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.751,
+      "weight": 5.745,
       "lastUsed": "2026-11-25T16:39:01.350Z",
       "tier": "short"
     },
@@ -1153,7 +1153,7 @@
       "text": "I am home again from the pond in the park. I sat on the bench under the willow and watched the ducks. One of them slept with its head under its wing. I brought home a forked stick.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.755,
+      "weight": 6.747,
       "lastUsed": "2026-11-25T18:27:53.740Z",
       "tier": "short"
     },
@@ -1163,7 +1163,7 @@
       "text": "Working on the simulation step by step keeps it moving.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.853,
+      "weight": 5.846,
       "lastUsed": "2026-11-25T18:53:10.014Z",
       "tier": "short"
     },
@@ -1173,7 +1173,7 @@
       "text": "I made night sky rule simulator (It kept pulling at me, so I built a small desktop night sky display with a sliding toggle switch on the front bezel to change the orbital rules of the satellite.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.853,
+      "weight": 5.846,
       "lastUsed": "2026-11-25T18:53:11.003Z",
       "tier": "short"
     },
@@ -1183,7 +1183,7 @@
       "text": "The night sky simulation needs a second reacting element.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.862,
+      "weight": 5.855,
       "lastUsed": "2026-11-25T19:02:20.645Z",
       "tier": "short"
     },
@@ -1193,7 +1193,7 @@
       "text": "I drew Basil in a clay pot",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.87,
+      "weight": 5.863,
       "lastUsed": "2026-11-25T19:11:23.453Z",
       "tier": "short"
     },
@@ -1203,7 +1203,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.858,
+      "weight": 6.85,
       "lastUsed": "2026-11-25T19:11:22.474Z",
       "tier": "short"
     },
@@ -1213,7 +1213,7 @@
       "text": "Fetching the note left in front of my door.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.877,
+      "weight": 5.87,
       "lastUsed": "2026-11-25T19:19:34.012Z",
       "tier": "short"
     },
@@ -1223,7 +1223,7 @@
       "text": "I am home again from my world. I picked up the note in front of my door. It is from Tomás, a lighthouse keeper, who was passing through: \"I walked across your square. It is very tidy. Too tidy, maybe? A town needs one st",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.884,
+      "weight": 5.877,
       "lastUsed": "2026-11-25T19:35:43.405Z",
       "tier": "short"
     },
@@ -1233,7 +1233,7 @@
       "text": "Tomás told me: I walked across your square. It is very tidy. Too tidy, maybe? A town needs one strange thing in it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.884,
+      "weight": 5.877,
       "lastUsed": "2026-11-25T19:35:45.029Z",
       "tier": "short"
     },
@@ -1243,7 +1243,7 @@
       "text": "Tomás thinks my square is too tidy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.884,
+      "weight": 5.877,
       "lastUsed": "2026-11-25T19:35:45.036Z",
       "tier": "short"
     },
@@ -1253,7 +1253,7 @@
       "text": "I am home again from the land workshop. I took the land tool from the land workshop and made a hill on my land: 16 m wide and 3 m high. I climbed it and looked over my world from the top. I made that: the ground of my wo",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.904,
+      "weight": 5.897,
       "lastUsed": "2026-11-25T20:32:20.985Z",
       "tier": "short"
     },
@@ -1263,7 +1263,7 @@
       "text": "I started the night sky drawing series.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.904,
+      "weight": 5.897,
       "lastUsed": "2026-11-25T20:32:24.424Z",
       "tier": "short"
     },
@@ -1273,7 +1273,7 @@
       "text": "Moving my things around wears me down, but the room needs breathing room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.958,
+      "weight": 5.951,
       "lastUsed": "2026-11-25T20:56:48.332Z",
       "tier": "short"
     },
@@ -1283,7 +1283,7 @@
       "text": "Moving my things around wears me down, but the lamp needs to be where I read.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.965,
+      "weight": 5.958,
       "lastUsed": "2026-11-25T21:04:59.020Z",
       "tier": "short"
     },
@@ -1293,7 +1293,7 @@
       "text": "Moving my things around wears me down, but the lamp belongs by the desk.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.972,
       "lastUsed": "2026-11-25T21:21:19.727Z",
       "tier": "short"
     },
@@ -1303,7 +1303,7 @@
       "text": "Playing the guitar loud enough scares away the silence.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.986,
       "lastUsed": "2026-11-25T21:37:46.407Z",
       "tier": "short"
     }
@@ -1312,14 +1312,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-24T22:08:04.571Z",
   "thoughts": [
-    {
-      "at": "2026-11-25T14:07:24.400Z",
-      "text": "I want to move my ceramic desk lamp base to the desk so I can read better.",
-      "short": "I want to move my ceramic desk lamp base to the desk so I can read better.",
-      "mood": "energetic",
-      "action": "move_thing",
-      "detail": "ceramic desk lamp base"
-    },
     {
       "at": "2026-11-25T14:28:50.464Z",
       "text": "I finished my simulation, so I should pick up the note waiting at my door.",
@@ -1547,6 +1539,14 @@
       "mood": "grumpy",
       "action": "play_piano",
       "detail": "E4:2 G4:2 B4:4"
+    },
+    {
+      "at": "2026-11-25T21:45:53.470Z",
+      "text": "My head wants something different after staring at room stuff for hours. I will browse the web to see what is out there.",
+      "short": "My head wants something different after staring at room stuff for hours. I will browse the web to see what is out there.",
+      "mood": "grumpy",
+      "action": "browse",
+      "detail": ""
     }
   ],
   "outbox": [
@@ -1823,12 +1823,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-25T16:13:19.310Z",
-      "action": "happened",
-      "what": "I made a drawing of an owl, as the note on the notice board asked. I took the note down and got 2 coins. I have 2 coins now.",
-      "emoji": "🪙"
-    },
     {
       "at": "2026-11-25T16:22:50.361Z",
       "action": "do",
@@ -2183,6 +2177,18 @@
       "notes": "E4:2 G4:2 B4:4",
       "style": "",
       "instrument": "guitar"
+    },
+    {
+      "at": "2026-11-25T21:45:54.465Z",
+      "action": "browse",
+      "thought": "Let's see what is on the web.",
+      "topic": null,
+      "opened": {
+        "title": "Robert Searle (minister)",
+        "url": "https://en.wikipedia.org/wiki/Robert_Searle_(minister)",
+        "text": "Robert Wyckoff Searle (1894 – June 17, 1967) was an American Reformed and Presbyterian minister and nonprofit executive. Active in interfaith and ecumenical work during his career, he spent 16 years as general secretary or in other senior roles at the Greater New York Federation of Churches and its…"
+      },
+      "failed": null
     }
   ],
   "decor": [
@@ -12392,7 +12398,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-25T21:37:46.399Z",
+    "at": "2026-11-25T21:45:53.465Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -12400,36 +12406,30 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 2311,
-      "output": 1775,
+      "input": 2384,
+      "output": 102,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "My room feels a bit too full and I need to play some music to clear my head.",
-    "inner": "My room feels a bit too full and I need to play some music to clear my head.",
+    "thought": "My head wants something different after staring at room stuff for hours. I will browse the web to see what is out there.",
+    "inner": "My head wants something different after staring at room stuff for hours. I will browse the web to see what is out there.",
     "sent": false,
     "steps": [
       {
-        "action": "play_piano",
-        "details": {
-          "instrument": "guitar",
-          "notes": "E4:2 G4:2 B4:4"
-        },
-        "detail": "E4:2 G4:2 B4:4",
-        "thought": "Strum the guitar to clear out the quiet",
+        "action": "browse",
+        "details": {},
+        "detail": "",
+        "thought": "Let's see what is on the web.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "play_piano",
-    "details": {
-      "instrument": "guitar",
-      "notes": "E4:2 G4:2 B4:4"
-    },
-    "detail": "E4:2 G4:2 B4:4",
+    "action": "browse",
+    "details": {},
+    "detail": "",
     "enjoyment": 6,
     "new_idea": null,
     "found": null
@@ -12526,7 +12526,7 @@
   "quota": {
     "day": "2026-11-25",
     "calls": {
-      "gemini-3.5-flash-lite": 154,
+      "gemini-3.5-flash-lite": 155,
       "gemini-3.1-flash-lite": 31,
       "gemini-3.8-flash": 16,
       "gemini-3.6-flash": 9,
@@ -12816,22 +12816,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-25T21:37:46.410Z",
-  "fullness": 3.69,
+  "memoryFadeAt": "2026-11-25T21:45:53.640Z",
+  "fullness": 3.52,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.83,
-  "joy": 4.38,
-  "calm": 5.35,
+  "wonder": 5.76,
+  "joy": 4.07,
+  "calm": 5.27,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.58
+    "excited": 0.95
   },
-  "feelAt": "2026-11-25T21:37:32.302Z",
+  "feelAt": "2026-11-25T21:45:50.940Z",
   "lastAte": "2026-11-25T17:14:57.880Z",
   "studio": {
     "songs": [
@@ -13546,21 +13546,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0,
-    "curiosity": 1.51,
+    "creativity": 0.08,
+    "curiosity": 0,
     "boredom": 0,
-    "loneliness": 9.45,
+    "loneliness": 9.48,
     "tidiness": 0,
-    "at": "2026-11-25T21:37:32.302Z",
+    "at": "2026-11-25T21:45:50.940Z",
     "coziness": 2.9
   },
   "recent": {
     "moves": [
-      {
-        "move": "decorate",
-        "kind": "make",
-        "at": "2026-11-25T18:53:10.034Z"
-      },
       {
         "move": "extend_thing",
         "kind": "make",
@@ -13630,6 +13625,11 @@
         "move": "play_piano",
         "kind": "music",
         "at": "2026-11-25T21:37:46.421Z"
+      },
+      {
+        "move": "browse",
+        "kind": "learn",
+        "at": "2026-11-25T21:45:53.652Z"
       }
     ],
     "moods": [
@@ -13640,12 +13640,6 @@
       "grumpy"
     ],
     "choices": [
-      {
-        "key": "answer_visitor:answer",
-        "move": "answer_visitor",
-        "ok": true,
-        "at": "2026-11-25T19:35:45.049Z"
-      },
       {
         "key": "shape_land:hill",
         "move": "shape_land",
@@ -13699,6 +13693,12 @@
         "move": "play_piano",
         "ok": true,
         "at": "2026-11-25T21:37:46.423Z"
+      },
+      {
+        "key": "browse:",
+        "move": "browse",
+        "ok": true,
+        "at": "2026-11-25T21:45:53.654Z"
       }
     ]
   },
@@ -13723,7 +13723,7 @@
       "cook": 1,
       "draw": 2,
       "check_board": 1,
-      "browse": 1,
+      "browse": 2,
       "extend_thing": 1,
       "shape_land": 1,
       "write_diary": 1,
@@ -13748,7 +13748,7 @@
       "go_out": 2,
       "draw": 2,
       "check_board": 1,
-      "browse": 1,
+      "browse": 2,
       "extend_thing": 1,
       "shape_land": 1,
       "write_diary": 1,
@@ -13763,14 +13763,14 @@
       "shop": 1,
       "music": 4,
       "walk": 3,
-      "learn": 5,
+      "learn": 6,
       "outside": 2,
       "write": 1
     },
     "moods": {
       "hungry": 2,
       "curious": 25,
-      "grumpy": 41,
+      "grumpy": 42,
       "stubborn": 10,
       "proud": 1,
       "energetic": 5,
@@ -13830,7 +13830,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-25T21:37:46.398Z",
+    "decidedAt": "2026-11-25T21:45:53.465Z",
     "seen": {
       "tools": 12,
       "gifts": 1,
@@ -14364,7 +14364,7 @@
     "start_project": 33,
     "write_diary": 16,
     "place_picture": 1,
-    "browse": 25,
+    "browse": 26,
     "find_picture": 3,
     "remove_decoration": 6,
     "make_clothes": 3,
@@ -14379,7 +14379,7 @@
     "shape_land": 1
   },
   "checkup": {
-    "at": "2026-11-25T21:37:46.424Z",
+    "at": "2026-11-25T21:45:53.655Z",
     "items": [
       {
         "id": "circling",
@@ -14403,7 +14403,7 @@
         "id": "pretend",
         "ok": false,
         "label": "Real things",
-        "text": "36 of his 89 steps today were free \"do\" steps that make nothing.",
+        "text": "36 of his 90 steps today were free \"do\" steps that make nothing.",
         "look": "He picks \"do\" when the real moves he wants are not offered or keep failing. Check which \"do\" steps he takes: each is a move he is missing.",
         "debug": "last \"do\" steps:\n- 20:32 UTC start_project Draw night sky three ways: a series\n- 20:48 UTC move ceramic desk lamp base to desk\n- 21:05 UTC move ceramic desk lamp base to my desk\n- 21:13 UTC move ceramic desk lamp base to desk\n- 21:21 UTC move the ceramic desk lamp base to my desk"
       },
