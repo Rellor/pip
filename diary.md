@@ -6646,3 +6646,9 @@ My room feels a bit too full and moving things around wears me down, so I want t
 - go_out: I will make something for my plot outside.
 - mood: grumpy
 
+## 25/11/2026, 20:32:24
+I want to start a project about the night sky since it keeps pulling at me, and write about it in my diary.
+> I want to start a project about the night sky since it keeps pulling at me, and write about it in my diary.
+- do (start_project Draw night sky three ways: a series): I want to start the night sky drawing project.
+- mood: grumpy
+
