@@ -6610,3 +6610,9 @@ I finished my night sky simulation project and I want to browse the web to see w
 - browse: Let's see what is on the web.
 - mood: curious
 
+## 25/11/2026, 18:53:10
+I want to continue my night sky simulation project by adding the slider or button.
+> I want to continue my night sky simulation project by adding the slider or button.
+- decorate (night sky rule simulator): Let's get the next step done on the simulation.
+- mood: curious
+
