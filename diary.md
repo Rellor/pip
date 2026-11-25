@@ -6509,3 +6509,9 @@ I finished my simulation, so now I want to move on to the next step and add a sl
 - do (work on project): Time to work on the simulation project again.
 - mood: curious
 
+## 25/11/2026, 15:12:00
+I want to continue my night sky simulation project by adding a slider or button.
+> I want to continue my night sky simulation project by adding a slider or button.
+- do (work on the night sky simulation project): Working on the night sky simulation project.
+- mood: curious
+
