@@ -1,8 +1,8 @@
 {
   "mood": "grumpy",
-  "energy": 9.5,
-  "boredom": 1.15,
-  "loneliness": 6.3,
+  "energy": 10,
+  "boredom": 0,
+  "loneliness": 6.33,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -11517,45 +11517,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-25T07:57:36.601Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2259,
-      "output": 116,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I finished my simulation project and I want to strum something noisy on the old guitar to clear out the quiet.",
-    "inner": "I finished my simulation project and I want to strum something noisy on the old guitar to clear out the quiet.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "buy",
-        "details": {
-          "item": "guitar"
-        },
-        "detail": "guitar",
-        "thought": "I need some noise.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
-    "action": "buy",
+    "at": "2026-11-25T08:05:40.053Z",
+    "via": "outside",
+    "thought": "I am at the grocery store: I buy guitar.",
+    "action": "go_out",
     "details": {
-      "item": "guitar"
+      "place": "shop"
     },
-    "detail": "guitar",
-    "enjoyment": 6,
+    "detail": "I am at the grocery store: I buy guitar.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "shop",
+      "phase": "there",
+      "back": "2026-11-25T08:09:36.601Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -11647,17 +11624,9 @@
     "2026-11-23 the paint walls stand between the buildings"
   ],
   "quota": {
-    "day": "2026-11-24",
-    "calls": {
-      "gemini-3.5-flash-lite": 189,
-      "gemini-3.1-flash-lite": 74,
-      "gemini-3.8-flash": 16,
-      "gemini-3.6-flash": 16,
-      "gemini-3.5-flash": 10
-    },
-    "out": {
-      "gemini-3.5-flash": "2026-11-24"
-    },
+    "day": "2026-11-25",
+    "calls": {},
+    "out": {},
     "history": [
       {
         "day": "2026-11-15",
@@ -11745,12 +11714,18 @@
           "gemini-3.1-flash-lite": 82,
           "gemini-3.5-flash": 4
         }
+      },
+      {
+        "day": "2026-11-24",
+        "calls": {
+          "gemini-3.5-flash-lite": 189,
+          "gemini-3.1-flash-lite": 74,
+          "gemini-3.8-flash": 16,
+          "gemini-3.6-flash": 16,
+          "gemini-3.5-flash": 10
+        }
       }
-    ],
-    "slow": {
-      "gemini-3.8-flash": 1795522615705,
-      "gemini-3.1-flash-lite": 1795543614674
-    }
+    ]
   },
   "weather": {
     "at": "2026-11-25T07:49:31.121Z",
@@ -11927,21 +11902,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-25T07:57:36.610Z",
-  "fullness": 5,
+  "fullness": 4.84,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.12,
-  "joy": 3.99,
-  "calm": 5.72,
+  "wonder": 4.7,
+  "joy": 4.29,
+  "calm": 5.56,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.17
+    "excited": 0.1
   },
-  "feelAt": "2026-11-25T07:57:34.696Z",
+  "feelAt": "2026-11-25T08:05:40.024Z",
   "lastAte": "2026-11-25T07:41:27.563Z",
   "studio": {
     "songs": [
@@ -12656,12 +12631,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.4,
-    "curiosity": 2.58,
+    "creativity": 0.48,
+    "curiosity": 2.65,
     "boredom": 0,
-    "loneliness": 6.3,
+    "loneliness": 6.33,
     "tidiness": 0,
-    "at": "2026-11-25T07:57:34.696Z",
+    "at": "2026-11-25T08:05:40.024Z",
     "coziness": 2.3
   },
   "recent": {
