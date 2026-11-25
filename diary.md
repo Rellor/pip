@@ -6705,3 +6705,9 @@ My head wants something different after staring at room stuff for hours. I will 
 - browse: Let's see what is on the web.
 - mood: grumpy
 
+## 25/11/2026, 21:53:59
+My head wants a change from staring at the room, so I will write in my diary and then play a bit.
+> My head wants a change from staring at the room, so I will write in my diary and then play a bit.
+- write_diary (Too much room and not enough quiet. Time to stop poking at the walls.): Writing down what I think.
+- mood: grumpy
+
