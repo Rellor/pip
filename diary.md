@@ -6343,3 +6343,9 @@ My room needs that corner shelf built so it stops looking so bare.
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: grumpy
 
+## 25/11/2026, 10:50:14
+My basil is ready to harvest, and I need to get started on building that clumsy corner shelf I planned.
+> My basil is ready to harvest, and I need to get started on building that clumsy corner shelf I planned.
+- harvest (basil): Harvest the ripe basil
+- mood: grumpy
+
