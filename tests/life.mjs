@@ -16,7 +16,8 @@ const base = () => { const s = { projects: [], log: [], tools: [], pantry: [], g
 ok('daily goals: 1 to 3, in his words, ticked by kind', () => {
   const s = {};
   assert.ok(setGoals(s, fakeGoals(), '2026-11-16'));
-  assert.equal(s.intent.items.length, 2);
+  assert.equal(s.intent.items.length, 3);
+  assert.ok(s.intent.items.some((i) => i.cat === 'outside'), 'one goal takes him outside');
   assert.ok(!setGoals(s, { goals: [] }, '2026-11-16'));
   setGoals(s, { goals: [1, 2, 3, 4].map((i) => ({ text: `g${i}`, kind: 'weird' })) }, '2026-11-17');
   assert.equal(s.intent.items.length, 3);

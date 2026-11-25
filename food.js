@@ -1,5 +1,6 @@
 // Pip's pantry and kitchen. A small daily stock of plain ingredients refills by itself, so he never starves.
 // Dishes are cooked in a kitchen he builds himself. Eating a dish fills him more than a plain snack.
+import { isToday } from './days.js';
 
 export const BASICS = ['bread', 'rice', 'eggs', 'potatoes', 'carrots', 'apples', 'milk', 'cheese', 'flour', 'butter', 'onions', 'tomatoes'];
 export const MAX_PANTRY = 24;
@@ -56,7 +57,7 @@ export function cook(s, d, now = Date.now()) {
   const wanted = (Array.isArray(d?.ingredients) ? d.ingredients : []).map((x) => clean(x, 40)).filter(Boolean).slice(0, 4);
   if (!dish || !wanted.length) return { failed: 'a dish needs a name and 1 to 4 ingredients' };
   if (!kitchenIn(s.decor)) return { failed: 'I have no kitchen in my room yet. I can build one myself first: a small stove or oven, with decorate (name it a stove, oven or kitchen), and then cook' };
-  if (s.cookedAt.filter((t) => now - Date.parse(t) < 86_400_000).length >= MAX_COOKS_PER_DAY) return { failed: `I already cooked ${MAX_COOKS_PER_DAY} times today` };
+  if (s.cookedAt.filter((t) => isToday(t, now)).length >= MAX_COOKS_PER_DAY) return { failed: `I already cooked ${MAX_COOKS_PER_DAY} times today` };
   const used = [];
   for (const w of wanted) {
     const hit = find(s.pantry, w, 'ingredient');

@@ -1,6 +1,7 @@
 // Clothes Pip can make and wear. Like his other things, they are plain data: a few simple shapes on a spot of his body.
 // The code checks everything: the spot, the size, how many he can have.
 import { cleanParts } from './decor.js';
+import { isToday } from './days.js';
 
 export const MAX_CLOTHES = 12;
 export const MAX_CLOTHES_PER_DAY = 3;
@@ -52,7 +53,7 @@ export function makeClothes(wardrobe, details, atMs, now = Date.now()) {
   if (!parts) return { failed: 'the shapes did not work out' };
   const old = wardrobe.find((x) => x.name.toLowerCase() === name.toLowerCase());
   if (!old && wardrobe.length >= MAX_CLOTHES) return { failed: 'his wardrobe is full' };
-  if (wardrobe.filter((x) => now - Date.parse(x.madeAt || x.createdAt) < 86_400_000).length >= MAX_CLOTHES_PER_DAY) return { failed: 'he has already made enough clothes for today' };
+  if (wardrobe.filter((x) => isToday(x.madeAt || x.createdAt, now)).length >= MAX_CLOTHES_PER_DAY) return { failed: 'he has already made enough clothes for today' };
   const S = SLOTS[slot];
   const scale = fitWorn(parts, S.lim, S.bottom === true);
   const wear = d.wear !== false;

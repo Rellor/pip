@@ -62,5 +62,5 @@ export function tiredOf(s, now = Date.now()) {
 }
 export function tiredLines(s, now = Date.now()) {
   const k = s.tired && Date.parse(s.tired.until) > now ? s.tired.kind : null;
-  return k ? [`I have been ${KIND_WORDS[k] ?? k} for hours. My head wants something different for a while: I read or look something up, play music, care for my garden, write in my diary, cook, or talk to someone. I come back to it later with fresh eyes.`] : [];
+  return k ? [`I have been ${KIND_WORDS[k] ?? k} for hours. My head wants something different for a while: I go outside, read or look something up, play music, care for my garden, write in my diary, cook, or talk to someone. I come back to it later with fresh eyes.`] : [];
 }

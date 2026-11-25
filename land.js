@@ -4,6 +4,7 @@
 // The shapes are kept in his state as `land`: [{ id, kind: 'hill' | 'hole', name, x, z, r, h, where, at }] (world
 // coordinates, metres). web/town.js reads that list to draw the ground and to say how high it is (setLand, groundAt).
 import { TOWN_X, PLOT, LAND_MAX, LAND_SIZES, buildPlace, buildProblem } from './web/town.js';
+import { isToday } from './days.js';
 
 export const LAND_PER_DAY = 2; // it is heavy work
 const r1 = (v) => Math.round(v * 10) / 10;
@@ -13,7 +14,7 @@ const sizeOf = (t) => (/\b(big|large|huge|tall|high|deep|wide|great)\b/i.test(t)
 const SIDE = [[/\bleft\b|\bwest\b/i, [-1, 0]], [/\bright\b|\beast\b/i, [1, 0]], [/\b(behind|back of|north)\b/i, [0, -1]], [/\b(in front|front of|south)\b/i, [0, 1]]];
 // What he built outside: [{ name, x, z, r }] (a round guess of the room each thing takes).
 const built = (s) => (s.decor ?? []).filter((d) => d.kind === 'outside' && Array.isArray(d.pos)).map((d) => ({ name: d.name, x: d.pos[0] - TOWN_X, z: d.pos[2], r: Math.max(1.2, (Number(d.metres) || 3) / 2 + 0.5) }));
-export const landToday = (s, now = Date.now()) => (s.land ?? []).filter((l) => now - Date.parse(l.at) < 86_400_000).length;
+export const landToday = (s, now = Date.now()) => (s.land ?? []).filter((l) => isToday(l.at, now)).length;
 
 // He decided to shape the land: { kind, where, size, name } as the brain said it. Returns { job } (to take to the land
 // workshop: world.js walks him there) or { failed } with what is in the way and what he can do instead.
