@@ -6663,3 +6663,9 @@ I want to move my ceramic lamp to the desk where it actually belongs instead of 
 - do (move ceramic desk lamp base to desk): Move the ceramic desk lamp base to my desk.
 - mood: grumpy
 
+## 25/11/2026, 20:56:48
+My room feels a bit too full and I want to put something away or clear my head.
+> My room feels a bit too full and I want to put something away or clear my head.
+- remove_decoration (wooden planter box): Put away the planter box to clear some space.
+- mood: grumpy
+
