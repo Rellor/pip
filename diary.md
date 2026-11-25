@@ -6224,3 +6224,8 @@ My stomach is empty and I want to strum some noise to wake up the room.
 - eat (mint): Need to eat the mint.
 - mood: grumpy
 
+## 25/11/2026, 07:49:31
+Play the guitar to clear out the quiet.
+- do (strum something noisy on the old guitar): Play the guitar to clear out the quiet.
+- mood: grumpy
+
