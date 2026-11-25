@@ -6503,3 +6503,9 @@ Idris is right about the base, towers need a wide stance or they crash. I will a
 - do (look out of the window for a while): I watch the sky for a bit.
 - mood: curious
 
+## 25/11/2026, 15:03:53
+I finished my simulation, so now I want to move on to the next step and add a slider or button.
+> I finished my simulation, so now I want to move on to the next step and add a slider or button.
+- do (work on project): Time to work on the simulation project again.
+- mood: curious
+
