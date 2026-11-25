@@ -6491,3 +6491,10 @@ I finished my simulation, so I should pick up the note waiting at my door.
 - go_out: Go see what someone left.
 - mood: curious
 
+## 25/11/2026, 14:45:02
+Idris is right about the base, towers need a wide stance or they crash. I will answer him and then work on my night sky simulation.
+> Idris is right about the base, towers need a wide stance or they crash. I will answer him and then work on my night sky simulation.
+- walk_to (computer): Answer Idris about the tower base.
+- do (plan my new project: ): Work on the night sky simulation.
+- mood: curious
+
