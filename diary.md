@@ -6462,3 +6462,9 @@ I finished my night sky simulation project, so now I want to move on to the next
 - do (work on the night sky simulation project): Work on the simulation project.
 - mood: energetic
 
+## 25/11/2026, 13:48:20
+I finished my night sky project and want to work on the next step, adding a slider or button.
+> I finished my night sky project and want to work on the next step, adding a slider or button.
+- do (plan my new project: Build a little simulation of night sky: something that moves by itself): Let's add the control element.
+- mood: energetic
+
