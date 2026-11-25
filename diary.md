@@ -6687,3 +6687,9 @@ My room feels a bit too full and I want to shift the ceramic desk lamp base clos
 - do (move the ceramic desk lamp base to my desk): Moving the lamp to the desk
 - mood: grumpy
 
+## 25/11/2026, 21:29:27
+My room feels too full and cluttered, so I will clear out an unneeded item to make some breathing room.
+> My room feels too full and cluttered, so I will clear out an unneeded item to make some breathing room.
+- remove_decoration (amber reading light): putting away the amber reading light
+- mood: grumpy
+
