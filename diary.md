@@ -6468,3 +6468,9 @@ I finished my night sky project and want to work on the next step, adding a slid
 - do (plan my new project: Build a little simulation of night sky: something that moves by itself): Let's add the control element.
 - mood: energetic
 
+## 25/11/2026, 13:59:03
+The room is full of lights and my project on the night sky needs a mechanism to change the rules. I will research how to build a simple interactive element for my simulation.
+> The room is full of lights and my project on the night sky needs a mechanism to change the rules. I will research how to build a simple interactive element for my simulation.
+- search_web (how to build a simple slider or toggle button for a digital simulation): I need to figure out how to add a slider or button to my code.
+- mood: energetic
+

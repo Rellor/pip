@@ -1,8 +1,8 @@
 {
   "mood": "energetic",
   "energy": 9.5,
-  "boredom": 0.76,
-  "loneliness": 7.63,
+  "boredom": 0.72,
+  "loneliness": 7.66,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-24T22:08:03.560Z",
-      "action": "rest",
-      "detail": "sleeping through the night",
-      "enjoyment": 8
-    },
     {
       "at": "2026-11-25T07:07:02.091Z",
       "action": "eat",
@@ -307,10 +301,15 @@
       "action": "do",
       "detail": "plan my new project: Build a little simulation of night sky: something that moves by itself",
       "enjoyment": 7
+    },
+    {
+      "at": "2026-11-25T13:59:02.692Z",
+      "action": "search_web",
+      "detail": "how to build a simple slider or toggle button for a digital simulation",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "My mint is fully grown and ready to harvest!",
     "I harvested mint from place 3. It goes in my pantry, and the plant grows back.",
     "I watered basil. The soil stays damp for about 10 hours.",
     "I watered mint. The soil stays damp for about 10 hours.",
@@ -339,7 +338,8 @@
     "My basil is fully grown and ready to harvest!",
     "I harvested basil from place 1. It goes in my pantry, and the plant grows back.",
     "My basil is fully grown and ready to harvest!",
-    "I watered mint. The soil stays damp for about 10 hours."
+    "I watered mint. The soil stays damp for about 10 hours.",
+    "Searched \"how to build a simple slider or toggle button for a digital simulation\" and read about Android (operating system): Android is an operating system developed by Google, designed primarily for smartphones and tablets (touchscreen-based mobile devices originally; later for other devices, such as TVs), based on a modified version of the Linux kernel and other open-source software. First released in 2008, Android is the most popular operating system in the world with 4 billion users, and the most used operating system for smartphones. The latest version, released on June 16, 2026, is Android 17.\n …"
   ],
   "requests": [],
   "story": "Pip spends his evenings decorating his room as autumn dusk falls outside. He learns by doing and gets his hands dirty with clumsy first tries. Decorating actually helps him, unlike moving things around which just irritates him. He stayed focused all day, doing tasks and searching the web. At night, he writes plainly in his diary by candlelight.",
@@ -697,7 +697,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.997,
+      "weight": 7.995,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -707,7 +707,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.791,
+      "weight": 9.789,
       "lastUsed": "2026-11-25T07:07:00.800Z",
       "tier": "long",
       "uses": 5
@@ -718,7 +718,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.674,
+      "weight": 7.672,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -728,7 +728,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.696,
+      "weight": 9.694,
       "lastUsed": "2026-11-24T14:51:51.479Z",
       "tier": "long",
       "uses": 3
@@ -739,7 +739,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.51,
+      "weight": 8.508,
       "lastUsed": "2026-11-20T14:04:56.313Z",
       "tier": "long"
     },
@@ -749,7 +749,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.704,
+      "weight": 8.702,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -759,7 +759,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.523,
+      "weight": 7.521,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -769,7 +769,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.908,
+      "weight": 9.906,
       "lastUsed": "2026-11-25T07:17:08.379Z",
       "tier": "long",
       "uses": 2
@@ -780,7 +780,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.129,
+      "weight": 9.127,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -790,7 +790,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.888,
+      "weight": 7.886,
       "lastUsed": "2026-11-20T13:13:47.742Z",
       "tier": "long"
     },
@@ -800,7 +800,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.306,
+      "weight": 9.304,
       "lastUsed": "2026-11-25T07:07:00.800Z",
       "tier": "long",
       "uses": 4
@@ -811,7 +811,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.417,
+      "weight": 7.415,
       "lastUsed": "2026-11-22T12:49:28.901Z",
       "tier": "long"
     },
@@ -821,10 +821,10 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.91,
-      "lastUsed": "2026-11-25T07:33:18.230Z",
+      "weight": 9.998,
+      "lastUsed": "2026-11-25T13:56:25.006Z",
       "tier": "long",
-      "uses": 3
+      "uses": 4
     },
     {
       "id": "mmwp9bmgm60",
@@ -832,7 +832,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.832,
+      "weight": 7.83,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -842,7 +842,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.309,
+      "weight": 9.307,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -852,7 +852,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.979,
+      "weight": 7.977,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -862,7 +862,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.371,
+      "weight": 9.369,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -872,7 +872,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.054,
+      "weight": 8.052,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -882,7 +882,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.774,
+      "weight": 7.772,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -892,7 +892,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.78,
+      "weight": 7.778,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -902,7 +902,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.996,
+      "weight": 9.994,
       "lastUsed": "2026-11-25T13:40:00.651Z",
       "tier": "long",
       "uses": 4
@@ -913,7 +913,7 @@
       "text": "My room was put right: my tiny wooden stand for the clay bird is the size its name says now; my tiny ceramic saucer is the size its name says now; my warm wool blanket covers my bed now; my amber reading light now stands",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.357,
+      "weight": 7.355,
       "lastUsed": "2026-11-22T15:32:10.279Z",
       "tier": "long"
     },
@@ -923,7 +923,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.755,
+      "weight": 8.753,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -934,7 +934,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.231,
+      "weight": 9.229,
       "lastUsed": "2026-11-24T14:32:42.155Z",
       "tier": "long",
       "uses": 3
@@ -945,7 +945,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.339,
+      "weight": 8.337,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -956,7 +956,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.989,
+      "weight": 9.987,
       "lastUsed": "2026-11-25T13:07:17.303Z",
       "tier": "long",
       "uses": 5
@@ -967,7 +967,7 @@
       "text": "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.404,
+      "weight": 7.402,
       "lastUsed": "2026-11-22T21:45:14.740Z",
       "tier": "long"
     },
@@ -977,7 +977,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.776,
+      "weight": 8.774,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -988,7 +988,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.996,
+      "weight": 9.994,
       "lastUsed": "2026-11-25T13:40:00.651Z",
       "tier": "long",
       "uses": 6
@@ -999,7 +999,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.512,
+      "weight": 7.51,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -1009,7 +1009,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.512,
+      "weight": 7.51,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -1019,7 +1019,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.525,
+      "weight": 7.523,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1029,7 +1029,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.525,
+      "weight": 7.523,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1039,7 +1039,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.791,
+      "weight": 9.789,
       "lastUsed": "2026-11-25T07:07:00.800Z",
       "tier": "long",
       "uses": 5
@@ -1050,7 +1050,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.407,
+      "weight": 8.405,
       "lastUsed": "2026-11-24T14:42:16.265Z",
       "tier": "long",
       "uses": 2
@@ -1061,7 +1061,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.426,
+      "weight": 9.424,
       "lastUsed": "2026-11-25T13:40:00.651Z",
       "tier": "long",
       "uses": 4
@@ -1072,7 +1072,7 @@
       "text": "I made a drawing of an old tree, as the note on the notice board asked. I took the note down and got 3 coins (one more because I had looked up how it is made). I have 13 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.793,
+      "weight": 5.784,
       "lastUsed": "2026-11-24T20:10:19.507Z",
       "tier": "short",
       "uses": 2
@@ -1083,7 +1083,7 @@
       "text": "Bas moved the bare walls I paint on. They stand in the gaps between the buildings now, each turned its own way: beside my house, by the internet café, by the flats, by the art workshop and by the build workshop. They are",
       "importance": 8,
       "kind": "memory",
-      "weight": 5.756,
+      "weight": 5.748,
       "lastUsed": "2026-11-24T07:00:56.476Z",
       "tier": "short"
     },
@@ -1093,7 +1093,7 @@
       "text": "My project \"Draw night sky three ways: a series\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.895,
+      "weight": 5.886,
       "lastUsed": "2026-11-24T14:32:42.155Z",
       "tier": "short",
       "uses": 1
@@ -1104,7 +1104,7 @@
       "text": "I made workshop gear model (to help out with the notice board request and earn coins)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.679,
+      "weight": 5.671,
       "lastUsed": "2026-11-25T07:17:08.379Z",
       "tier": "short",
       "uses": 1
@@ -1115,7 +1115,7 @@
       "text": "Night sky projects are fun to build when coding.",
       "importance": 6,
       "kind": "memory",
-      "weight": 6.177,
+      "weight": 6.168,
       "lastUsed": "2026-11-25T13:40:00.651Z",
       "tier": "short",
       "uses": 1
@@ -1126,7 +1126,7 @@
       "text": "Moving things around is annoying, but needs to be done.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.687,
+      "weight": 5.679,
       "lastUsed": "2026-11-25T07:33:19.769Z",
       "tier": "short"
     },
@@ -1136,7 +1136,7 @@
       "text": "Moving my ceramic desk lamp base near the desk would be useful.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.706,
+      "weight": 5.698,
       "lastUsed": "2026-11-25T07:57:36.608Z",
       "tier": "short"
     },
@@ -1146,7 +1146,7 @@
       "text": "Fetching notes is a good way to start the day.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.722,
+      "weight": 5.714,
       "lastUsed": "2026-11-25T08:22:07.586Z",
       "tier": "short"
     },
@@ -1156,7 +1156,7 @@
       "text": "I am home again from my world. I picked up the note in front of my door. It is from Wren, a girl on a bicycle, who was passing through: \"Put a little orange next to blue and both look brighter. Painters call them complem",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.729,
+      "weight": 5.721,
       "lastUsed": "2026-11-25T08:38:15.029Z",
       "tier": "short"
     },
@@ -1166,7 +1166,7 @@
       "text": "Wren told me: Put a little orange next to blue and both look brighter. Painters call them complementary colours.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.729,
+      "weight": 5.721,
       "lastUsed": "2026-11-25T08:38:17.251Z",
       "tier": "short"
     },
@@ -1176,7 +1176,7 @@
       "text": "Wren mentioned complementary colours.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.729,
+      "weight": 5.721,
       "lastUsed": "2026-11-25T08:38:17.261Z",
       "tier": "short"
     },
@@ -1186,7 +1186,7 @@
       "text": "Building things makes me feel a bit better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.742,
+      "weight": 5.734,
       "lastUsed": "2026-11-25T08:46:28.463Z",
       "tier": "short"
     },
@@ -1196,7 +1196,7 @@
       "text": "Moving things around wears me down, but building helps.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.749,
+      "weight": 5.741,
       "lastUsed": "2026-11-25T08:54:45.938Z",
       "tier": "short"
     },
@@ -1206,7 +1206,7 @@
       "text": "I should finish building that corner shelf instead of just staring at it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.767,
+      "weight": 5.758,
       "lastUsed": "2026-11-25T09:19:22.019Z",
       "tier": "short"
     },
@@ -1216,7 +1216,7 @@
       "text": "I need to build the corner shelf today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.774,
+      "weight": 5.765,
       "lastUsed": "2026-11-25T09:27:45.755Z",
       "tier": "short"
     },
@@ -1226,7 +1226,7 @@
       "text": "A corner shelf doesn't build itself while I stare at it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.794,
+      "weight": 5.785,
       "lastUsed": "2026-11-25T09:52:34.909Z",
       "tier": "short"
     },
@@ -1236,7 +1236,7 @@
       "text": "Basil tastes better when you grow it yourself.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.894,
+      "weight": 5.885,
       "lastUsed": "2026-11-25T11:50:05.022Z",
       "tier": "short"
     },
@@ -1246,7 +1246,7 @@
       "text": "I made small clumsy shelf for the corner (to stop the room from looking so empty)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.929,
+      "weight": 5.92,
       "lastUsed": "2026-11-25T12:32:02.970Z",
       "tier": "short"
     },
@@ -1256,7 +1256,7 @@
       "text": "I did everything I wanted to do today. It feels good to follow my own plans.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.929,
+      "weight": 5.92,
       "lastUsed": "2026-11-25T12:32:01.982Z",
       "tier": "short"
     },
@@ -1266,7 +1266,7 @@
       "text": "I should fix my projects properly instead of just staring at them.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.936,
+      "weight": 5.927,
       "lastUsed": "2026-11-25T12:41:43.350Z",
       "tier": "short"
     },
@@ -1276,7 +1276,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.927,
+      "weight": 7.915,
       "lastUsed": "2026-11-25T12:51:06.231Z",
       "tier": "short"
     },
@@ -1286,7 +1286,7 @@
       "text": "Moving my ceramic desk lamp base closer to the desk makes more practical sense.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.952,
+      "weight": 5.943,
       "lastUsed": "2026-11-25T12:59:12.609Z",
       "tier": "short"
     },
@@ -1296,7 +1296,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling. I brought home a blue marble someone lost.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.96,
+      "weight": 6.95,
       "lastUsed": "2026-11-25T13:31:45.010Z",
       "tier": "short"
     },
@@ -1306,7 +1306,7 @@
       "text": "Working on code projects is satisfying when they finally move.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.977,
       "lastUsed": "2026-11-25T13:40:09.606Z",
       "tier": "short"
     }
@@ -1315,13 +1315,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-24T22:08:04.571Z",
   "thoughts": [
-    {
-      "at": "2026-11-25T09:35:53.896Z",
-      "text": "I need to build the corner shelf today as planned, so I will work on that project.",
-      "short": "I need to build the corner shelf today as planned, so I will work on that project.",
-      "mood": "grumpy",
-      "action": "water"
-    },
     {
       "at": "2026-11-25T09:44:10.943Z",
       "text": "I need to build that corner shelf today since it's on my goals list, so I'll work on my project for it.",
@@ -1553,6 +1546,14 @@
       "mood": "energetic",
       "action": "do",
       "detail": "plan my new project: Build a little simulation of night sky: something that moves by itself"
+    },
+    {
+      "at": "2026-11-25T13:59:02.697Z",
+      "text": "The room is full of lights and my project on the night sky needs a mechanism to change the rules. I will research how to build a simple interactive element for my simulation.",
+      "short": "The room is full of lights and my project on the night sky needs a mechanism to change the rules. I will research how to build a simple interactive element for my simulation.",
+      "mood": "energetic",
+      "action": "search_web",
+      "detail": "how to build a simple slider or toggle button for a digital simulation"
     }
   ],
   "outbox": [
@@ -1829,15 +1830,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-25T09:52:35.905Z",
-      "action": "do",
-      "thought": "I watch the sky for a bit.",
-      "move": null,
-      "emoji": "",
-      "what": "look out of the window for a while",
-      "feeling": null
-    },
     {
       "at": "2026-11-25T10:01:17.146Z",
       "action": "do",
@@ -2121,6 +2113,34 @@
       "emoji": "",
       "what": "plan my new project: Build a little simulation of night sky: something that moves by itself",
       "feeling": null
+    },
+    {
+      "at": "2026-11-25T13:59:03.691Z",
+      "action": "search_web",
+      "thought": "I need to figure out how to add a slider or button to my code.",
+      "query": "how to build a simple slider or toggle button for a digital simulation",
+      "results": [
+        {
+          "title": "Android (operating system)",
+          "snippet": "former through a long press or swipe away from the home button. The dedicated option key, also known as menu key, and its on-screen simulation, is no longer",
+          "url": "https://en.wikipedia.org/wiki/Android_(operating_system)"
+        },
+        {
+          "title": "IBM 1620",
+          "snippet": "addresses. Pressing it toggles this enable and turns its light on/off. Enable-Disable toggle-switch – This switch enables or disables access to the drive. …",
+          "url": "https://en.wikipedia.org/wiki/IBM_1620"
+        },
+        {
+          "title": "List of Google Easter eggs",
+          "snippet": "can be toggled via the switch. For the spinning wheel, a dropdown menu can change the number of numbers on the wheel, from 2 to 20. Whereas for the fidget",
+          "url": "https://en.wikipedia.org/wiki/List_of_Google_Easter_eggs"
+        }
+      ],
+      "opened": {
+        "title": "Android (operating system)",
+        "url": "https://en.wikipedia.org/wiki/Android_(operating_system)",
+        "text": "Android is an operating system developed by Google, designed primarily for smartphones and tablets (touchscreen-based mobile devices originally; later for other devices, such as TVs), based on a modified version of the Linux kernel and other open-source software. First released in 2008, Android is the most popular operating system in the world with 4 billion users, and the most used operating system for smartphones. The latest version, released on June 16, 2026, is Android 17.\nAt its core, the operating system is known as the Android Open Source Project (AOSP), that was originally only made for a smartphone, and is free and open-source software (FOSS) primarily licensed under the Apache License. However, most devices run the proprietary Android open-core version developed by Google, which ships with additional proprietary closed-source software pre-installed, most notably Google Mobile Services (GMS), which includes core apps such as Google Chrome, the digital distribution platform Google Play, and the associated Google Play Services development platform. Other Google services including Firebase Cloud Messaging, used for push notifications, are recommended for applications. While AOSP is free, the \"Android\" name and logo are trademarks of Google, who restrict the use of Android branding on \"uncertified\" products. …"
+      }
     }
   ],
   "decor": [
@@ -11760,45 +11780,55 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-25T13:48:20.156Z",
+    "at": "2026-11-25T13:59:02.691Z",
     "via": "brain",
-    "model": "gemini-3.5-flash-lite",
+    "model": "gemini-3.1-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 1
+      "gemini-3.1-flash-lite": 1
     },
+    "modelNotes": [
+      "gemini-3.1-flash-lite answered (gemini-3.5-flash-lite was busy or capped)"
+    ],
+    "fallback": true,
     "tokens": {
       "calls": 1,
-      "input": 2249,
-      "output": 153,
+      "input": 2208,
+      "output": 360,
       "models": {
-        "gemini-3.5-flash-lite": 1
+        "gemini-3.1-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I finished my night sky project and want to work on the next step, adding a slider or button.",
-    "inner": "I finished my night sky project and want to work on the next step, adding a slider or button.",
+    "thought": "The room is full of lights and my project on the night sky needs a mechanism to change the rules. I will research how to build a simple interactive element for my simulation.",
+    "inner": "The room is full of lights and my project on the night sky needs a mechanism to change the rules. I will research how to build a simple interactive element for my simulation.",
     "sent": false,
     "steps": [
       {
-        "action": "do",
+        "action": "search_web",
         "details": {
-          "what": "plan my new project: Build a little simulation of night sky: something that moves by itself"
+          "query": "how to build a simple slider or toggle button for a digital simulation"
         },
-        "detail": "plan my new project: Build a little simulation of night sky: something that moves by itself",
-        "thought": "Let's add the control element.",
-        "enjoyment": 7,
-        "found": null,
+        "detail": "how to build a simple slider or toggle button for a digital simulation",
+        "thought": "I need to figure out how to add a slider or button to my code.",
+        "enjoyment": 6,
+        "found": {
+          "title": "Android (operating system)",
+          "text": "Android is an operating system developed by Google, designed primarily for smartphones and tablets (touchscreen-based mobile devices originally; later for other devices, such as TVs), based on a modified version of the Linux kernel and other open-source software. First released in 2008, Android is the most popular operating system in the world with 4 billion users, and the most used operating system for smartphones. The latest version, released on June 16, 2026, is Android 17.\nAt its core, the operating system is known as the Android Open Source Project (AOSP), that was originally only made for a smartphone, and is free and open-source software (FOSS) primarily licensed under the Apache License. However, most devices run the proprietary Android open-core version developed by Google, which ships with additional proprietary closed-source software pre-installed, most notably Google Mobile Services (GMS), which includes core apps such as Google Chrome, the digital distribution platform Google Play, and the associated Google Play Services development platform. Other Google services including Firebase Cloud Messaging, used for push notifications, are recommended for applications. While AOSP is free, the \"Android\" name and logo are trademarks of Google, who restrict the use of Android branding on \"uncertified\" products. The majority of smartphones and other devices based on AOSP run Google's ecosystem—which is known simply as Android—some with vendor-customized user interfaces and software suites, for example One UI. Numerous modified distributions without GMS exist, which include several distributions for mainland China phones, Amazon Fire OS and LineageOS. The source code has also been used to develop a variety of Android distributions on a range of other devices, such as Android TV for televisions, Wear OS for wearables, Android Automotive for in-car systems, Android XR for virtual reality headsets, and Android for PCs (e.g. Googlebook OS or One UI on Galaxybooks). Commercial products like micro consoles have also used Android. \nSoftware packages on Android, which use the APK format, are generally distributed through a proprietary application store; non-Google platforms include vendor-specific Amazon Appstore, Samsung Galaxy Store, Huawei AppGallery, and third-party companies Aptoide, Cafe Bazaar, GetJar or open source F-Droid. …"
+        },
         "made": null
       }
     ],
-    "action": "do",
+    "action": "search_web",
     "details": {
-      "what": "plan my new project: Build a little simulation of night sky: something that moves by itself"
+      "query": "how to build a simple slider or toggle button for a digital simulation"
     },
-    "detail": "plan my new project: Build a little simulation of night sky: something that moves by itself",
-    "enjoyment": 7,
+    "detail": "how to build a simple slider or toggle button for a digital simulation",
+    "enjoyment": 6,
     "new_idea": null,
-    "found": null
+    "found": {
+      "title": "Android (operating system)",
+      "text": "Android is an operating system developed by Google, designed primarily for smartphones and tablets (touchscreen-based mobile devices originally; later for other devices, such as TVs), based on a modified version of the Linux kernel and other open-source software. First released in 2008, Android is the most popular operating system in the world with 4 billion users, and the most used operating system for smartphones. The latest version, released on June 16, 2026, is Android 17.\nAt its core, the operating system is known as the Android Open Source Project (AOSP), that was originally only made for a smartphone, and is free and open-source software (FOSS) primarily licensed under the Apache License. However, most devices run the proprietary Android open-core version developed by Google, which ships with additional proprietary closed-source software pre-installed, most notably Google Mobile Services (GMS), which includes core apps such as Google Chrome, the digital distribution platform Google Play, and the associated Google Play Services development platform. Other Google services including Firebase Cloud Messaging, used for push notifications, are recommended for applications. While AOSP is free, the \"Android\" name and logo are trademarks of Google, who restrict the use of Android branding on \"uncertified\" products. The majority of smartphones and other devices based on AOSP run Google's ecosystem—which is known simply as Android—some with vendor-customized user interfaces and software suites, for example One UI. Numerous modified distributions without GMS exist, which include several distributions for mainland China phones, Amazon Fire OS and LineageOS. The source code has also been used to develop a variety of Android distributions on a range of other devices, such as Android TV for televisions, Wear OS for wearables, Android Automotive for in-car systems, Android XR for virtual reality headsets, and Android for PCs (e.g. Googlebook OS or One UI on Galaxybooks). Commercial products like micro consoles have also used Android. \nSoftware packages on Android, which use the APK format, are generally distributed through a proprietary application store; non-Google platforms include vendor-specific Amazon Appstore, Samsung Galaxy Store, Huawei AppGallery, and third-party companies Aptoide, Cafe Bazaar, GetJar or open source F-Droid. …"
+    }
   },
   "furniture": {
     "plant": {
@@ -11892,8 +11922,8 @@
   "quota": {
     "day": "2026-11-25",
     "calls": {
-      "gemini-3.5-flash-lite": 76,
-      "gemini-3.1-flash-lite": 1,
+      "gemini-3.5-flash-lite": 79,
+      "gemini-3.1-flash-lite": 2,
       "gemini-3.8-flash": 6,
       "gemini-3.6-flash": 2
     },
@@ -12175,22 +12205,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-25T13:48:20.162Z",
-  "fullness": 5.52,
+  "memoryFadeAt": "2026-11-25T13:59:03.119Z",
+  "fullness": 5.36,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.67,
-  "joy": 4.94,
-  "calm": 5.51,
+  "wonder": 7.64,
+  "joy": 4.66,
+  "calm": 5.4,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.19
+    "excited": 0.91
   },
-  "feelAt": "2026-11-25T13:48:14.667Z",
+  "feelAt": "2026-11-25T13:56:24.951Z",
   "lastAte": "2026-11-25T11:50:05.021Z",
   "studio": {
     "songs": [
@@ -12905,21 +12935,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0,
-    "curiosity": 2.35,
-    "boredom": 0.76,
-    "loneliness": 7.63,
+    "creativity": 0.08,
+    "curiosity": 0,
+    "boredom": 0,
+    "loneliness": 7.66,
     "tidiness": 0,
-    "at": "2026-11-25T13:48:14.667Z",
+    "at": "2026-11-25T13:56:24.951Z",
     "coziness": 2
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-25T11:33:39.363Z"
-      },
       {
         "move": "do",
         "kind": "play",
@@ -12989,22 +13014,21 @@
         "move": "start_project",
         "kind": "make",
         "at": "2026-11-25T13:48:20.170Z"
+      },
+      {
+        "move": "search_web",
+        "kind": "learn",
+        "at": "2026-11-25T13:59:03.126Z"
       }
     ],
     "moods": [
       "grumpy",
       "grumpy",
-      "grumpy",
+      "energetic",
       "energetic",
       "energetic"
     ],
     "choices": [
-      {
-        "key": "do:build a small clumsy shelf for the corne",
-        "move": "do",
-        "ok": false,
-        "at": "2026-11-25T12:14:35.562Z"
-      },
       {
         "key": "do:build a small clumsy shelf for the corne",
         "move": "do",
@@ -13058,6 +13082,12 @@
         "move": "start_project",
         "ok": true,
         "at": "2026-11-25T13:48:20.172Z"
+      },
+      {
+        "key": "search_web:how to build a simple slider or toggle b",
+        "move": "search_web",
+        "ok": true,
+        "at": "2026-11-25T13:59:03.128Z"
       }
     ]
   },
@@ -13073,7 +13103,7 @@
       "play_piano": 2,
       "fetch_note": 1,
       "walk_to": 1,
-      "search_web": 2,
+      "search_web": 3,
       "harvest": 2,
       "decorate": 1,
       "change_thing": 1,
@@ -13091,7 +13121,7 @@
       "play_piano": 2,
       "fetch_note": 1,
       "walk_to": 1,
-      "search_web": 2,
+      "search_web": 3,
       "harvest": 2,
       "decorate": 1,
       "change_thing": 1,
@@ -13107,7 +13137,7 @@
       "shop": 1,
       "music": 2,
       "walk": 1,
-      "learn": 2,
+      "learn": 3,
       "outside": 1
     },
     "moods": {
@@ -13116,7 +13146,7 @@
       "grumpy": 30,
       "stubborn": 10,
       "proud": 1,
-      "energetic": 2
+      "energetic": 3
     },
     "lift": {
       "eat": 2.17,
@@ -13127,7 +13157,7 @@
       "buy": 0,
       "play_piano": 2.53,
       "go_out": 0.5,
-      "search_web": 2.47,
+      "search_web": 4.67,
       "harvest": 0,
       "decorate": 4.07,
       "change_thing": 1.97
@@ -13137,7 +13167,7 @@
     "music": 49.5,
     "painting": 26,
     "sculpture": 41,
-    "woodwork": 37,
+    "woodwork": 37.5,
     "sewing": 6.5,
     "gardening": 57.5,
     "cooking": 19,
@@ -13167,7 +13197,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-25T13:48:20.156Z",
+    "decidedAt": "2026-11-25T13:59:02.691Z",
     "seen": {
       "tools": 12,
       "gifts": 1,
@@ -13652,7 +13682,7 @@
     "eat": 58,
     "water": 33,
     "do": 386,
-    "search_web": 55,
+    "search_web": 56,
     "read_book": 22,
     "record_song": 8,
     "change_thing": 17,
@@ -13689,15 +13719,15 @@
     "print_thing": 1
   },
   "checkup": {
-    "at": "2026-11-25T13:48:20.172Z",
+    "at": "2026-11-25T13:59:03.129Z",
     "items": [
       {
         "id": "circling",
         "ok": false,
         "label": "Thoughts",
-        "text": "He may be going in circles: 15 of his last 20 thoughts are about \"corner\", \"shelf\".",
+        "text": "He may be going in circles: 14 of his last 20 thoughts are about \"corner\", \"shelf\".",
         "look": "Usually something he keeps trying does not work (see Moves), or a project has no next step (see Projects). Check what he does in the Day tab.",
-        "debug": "top words: \"corner\", \"shelf\"\nlast thoughts:\n- 13:07 UTC [go_out] I finished my simulation project, so I want to step outside for a moment to breathe some fresh air.\n- 13:31 UTC [water] I found a blue marble and I want to look at my plants because the mint is dry.\n- 13:40 UTC [do] I finished my night sky simulation project, so now I want to move on to the next step of adding a slider or button.\n- 13:48 UTC [do] I finished my night sky project and want to work on the next step, adding a slider or button."
+        "debug": "top words: \"corner\", \"shelf\"\nlast thoughts:\n- 13:31 UTC [water] I found a blue marble and I want to look at my plants because the mint is dry.\n- 13:40 UTC [do] I finished my night sky simulation project, so now I want to move on to the next step of adding a slider or button.\n- 13:48 UTC [do] I finished my night sky project and want to work on the next step, adding a slider or button.\n- 13:59 UTC [search_web] The room is full of lights and my project on the night sky needs a mechanism to change the rules. I will research how to build a simple inte"
       },
       {
         "id": "project",
@@ -18268,13 +18298,6 @@
   ],
   "notebook": [
     {
-      "at": "2026-11-21T16:19:30.378Z",
-      "query": "to stitch a cozy wool blanket",
-      "title": "Yarn bombing",
-      "text": "Yarn bombing (or yarnbombing) is a type of graffiti or street art that employs colorful displays of knitted or crocheted yarn or fibre rather than paint or chalk. It is also called wool bombing, yarn storming, guerrilla knitting, kniffiti, urban knitting, or graffiti knitting. Motivation While other forms of graffiti may be expressive, decorative, territorial, socio-political commentary, advertising or vandalism, yarn bombing was initially almost exclusively about reclaiming and personalizing st",
-      "project": "Stitch a cozy wool blanket"
-    },
-    {
       "at": "2026-11-21T21:50:14.447Z",
       "query": "to build a wooden birdhouse",
       "title": "Nest box",
@@ -18392,6 +18415,12 @@
       "title": "Glossary of baseball terms",
       "text": "This is an alphabetical list of selected unofficial and specialized terms, phrases, and other jargon used in baseball, along with their definitions, including illustrative examples for many entries. 0–9 0 \"Oh and ...\" See count. 1 The number 1 in baseball refers to the pitcher's position, a shorthand call for throwing to first, a single hit, and a fastball sign. 1-2-3 inning An inning in which a pitcher faces only three batters and none safely reaches a base. \"Three up, three down.\" 1-2-3 double",
       "project": "Build a small clumsy shelf for the corner"
+    },
+    {
+      "at": "2026-11-25T13:59:03.691Z",
+      "query": "how to build a simple slider or toggle button for a digital simulation",
+      "title": "Android (operating system)",
+      "text": "Android is an operating system developed by Google, designed primarily for smartphones and tablets (touchscreen-based mobile devices originally; later for other devices, such as TVs), based on a modified version of the Linux kernel and other open-source software. First released in 2008, Android is the most popular operating system in the world with 4 billion users, and the most used operating system for smartphones. The latest version, released on June 16, 2026, is Android 17. At its core, the o"
     }
   ],
   "phone": {
@@ -20728,15 +20757,6 @@
   "curious": {
     "sparks": [
       {
-        "topic": "SS Ville du Havre",
-        "text": "Ville du Havre (French: [vil dy avʁ]) was a French iron steamship that operated round trips between the northern coast of France and New York City. Launched in November 1865 under her original name of Napoléon III, she was converted from a paddle steamer to single propeller propulsion in 1871 and, in recognition of the recent defeat and removal from power of her imperial namesake, the Emperor…",
-        "url": "https://en.wikipedia.org/wiki/SS_Ville_du_Havre",
-        "from": "search",
-        "via": null,
-        "at": "2026-11-22T09:00:08.769Z",
-        "shown": 2
-      },
-      {
         "topic": "Voyager 1",
         "text": "Voyager 1 is a space probe launched by NASA on September 5, 1977, as part of the Voyager program, to study the outer Solar System and the interstellar space beyond the Sun's heliosphere. At a distance of 173.02 AU (25.9 billion km; 16.1 billion mi) as of November 2026, it is the most distant human-made object from Earth. It was launched 16 days after its twin, Voyager 2. It communicates through…",
         "url": "https://en.wikipedia.org/wiki/Voyager_1",
@@ -20996,6 +21016,15 @@
         "via": null,
         "at": "2026-11-25T13:31:45.010Z",
         "shown": 2
+      },
+      {
+        "topic": "Android (operating system)",
+        "text": "Android is an operating system developed by Google, designed primarily for smartphones and tablets (touchscreen-based mobile devices originally; later for other devices, such as TVs), based on a modified version of the Linux kernel and other open-source software. First released in 2008, Android is the most popular operating system in the world with 4 billion users, and the most used operating…",
+        "url": "https://en.wikipedia.org/wiki/Android_(operating_system)",
+        "from": "search",
+        "via": null,
+        "at": "2026-11-25T13:59:03.116Z",
+        "shown": 0
       }
     ],
     "interests": [
@@ -21048,6 +21077,12 @@
         "score": 1,
         "since": "2026-11-25T09:10:58.932Z",
         "last": "2026-11-25T09:10:58.932Z"
+      },
+      {
+        "topic": "Android (operating system)",
+        "score": 1,
+        "since": "2026-11-25T13:59:03.116Z",
+        "last": "2026-11-25T13:59:03.116Z"
       },
       {
         "topic": "Indo-European vocabulary",
