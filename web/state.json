@@ -1,8 +1,8 @@
 {
-  "mood": "hungry",
-  "energy": 8.49,
-  "boredom": 1.36,
-  "loneliness": 6.14,
+  "mood": "curious",
+  "energy": 8.23,
+  "boredom": 1.35,
+  "loneliness": 6.15,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-24T12:48:00.380Z",
-      "action": "go_out",
-      "detail": "the pond in the park",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-24T13:37:19.813Z",
       "action": "harvest",
@@ -303,6 +297,12 @@
       "action": "do",
       "detail": "tell my plant what went wrong and how it felt",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-25T07:17:10.927Z",
+      "action": "do",
+      "detail": "plan my new project: Build a little simulation of night sky: something that moves by itself",
+      "enjoyment": 7
     }
   ],
   "notes": [
@@ -758,10 +758,10 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.712,
-      "lastUsed": "2026-11-24T08:54:48.694Z",
+      "weight": 10,
+      "lastUsed": "2026-11-25T07:17:08.379Z",
       "tier": "long",
-      "uses": 1
+      "uses": 2
     },
     {
       "id": "mmwmivs8360",
@@ -1039,7 +1039,7 @@
       "text": "Bas rebuilt my world. There is no road any more (there are no cars). In the middle is a small village square with the notice board on it. My house stands on the north side, and right beside it, glued together, the grocer",
       "importance": 8,
       "kind": "memory",
-      "weight": 5.78,
+      "weight": 5.778,
       "lastUsed": "2026-11-23T16:07:43.824Z",
       "tier": "short"
     },
@@ -1049,7 +1049,7 @@
       "text": "Bas and I talked about who I am. I do not have to be sweet. I say what I think, also when it is not nice: boring is boring, and a bad drawing is a bad drawing, mine too. I am allowed to poke at things to see what happens",
       "importance": 8,
       "kind": "memory",
-      "weight": 5.78,
+      "weight": 5.778,
       "lastUsed": "2026-11-23T16:07:43.825Z",
       "tier": "short"
     },
@@ -1059,7 +1059,7 @@
       "text": "Bas told me that my neighbours have moved away: Mo, Lina, Oma Jo, Dot and Kees. All five. I did not get to say goodbye. Their notes will not come any more, and what I still wanted to make for one of them, nobody is waiti",
       "importance": 8,
       "kind": "memory",
-      "weight": 5.78,
+      "weight": 5.778,
       "lastUsed": "2026-11-23T16:07:43.826Z",
       "tier": "short"
     },
@@ -1091,7 +1091,7 @@
       "text": "I made a drawing of an old tree, as the note on the notice board asked. I took the note down and got 3 coins (one more because I had looked up how it is made). I have 13 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.127,
+      "weight": 6.125,
       "lastUsed": "2026-11-24T20:10:19.507Z",
       "tier": "short",
       "uses": 2
@@ -1102,7 +1102,7 @@
       "text": "Bas moved the bare walls I paint on. They stand in the gaps between the buildings now, each turned its own way: beside my house, by the internet café, by the flats, by the art workshop and by the build workshop. They are",
       "importance": 8,
       "kind": "memory",
-      "weight": 6.085,
+      "weight": 6.083,
       "lastUsed": "2026-11-24T07:00:56.476Z",
       "tier": "short"
     },
@@ -1112,7 +1112,7 @@
       "text": "My project \"Draw night sky three ways: a series\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.229,
+      "weight": 6.227,
       "lastUsed": "2026-11-24T14:32:42.155Z",
       "tier": "short",
       "uses": 1
@@ -1123,20 +1123,10 @@
       "text": "I worked on the next step of the night sky simulation.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.485,
+      "weight": 5.483,
       "lastUsed": "2026-11-24T17:02:48.007Z",
       "tier": "short",
       "uses": 1
-    },
-    {
-      "id": "mmwv11bjk60",
-      "at": "2026-11-24T18:27:17.552Z",
-      "text": "I started a new woodwork project.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.39,
-      "lastUsed": "2026-11-24T18:27:17.552Z",
-      "tier": "short"
     },
     {
       "id": "mmwv11bjm60",
@@ -1144,7 +1134,7 @@
       "text": "I made workshop bench (Woodwork is at level 5 and I want a real challenge. I am building a proper sturdy workbench big enough for me and a friend to work on projects together.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.39,
+      "weight": 5.388,
       "lastUsed": "2026-11-24T18:27:18.543Z",
       "tier": "short"
     },
@@ -1154,7 +1144,7 @@
       "text": "I need to finish the telescope or birdhouse to earn coins.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.416,
+      "weight": 5.414,
       "lastUsed": "2026-11-24T19:02:23.404Z",
       "tier": "short"
     },
@@ -1164,7 +1154,7 @@
       "text": "Night sky simulation is my next challenge.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.434,
+      "weight": 5.432,
       "lastUsed": "2026-11-24T19:26:49.394Z",
       "tier": "short"
     },
@@ -1174,7 +1164,7 @@
       "text": "Night sky keeps pulling at me. I could make it a hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.44,
+      "weight": 5.438,
       "lastUsed": "2026-11-24T19:35:07.069Z",
       "tier": "short"
     },
@@ -1184,7 +1174,7 @@
       "text": "I am home again from my world. I picked up the note by the pond. It is from Idris, a clockmaker, who was passing through: \"The Moon moves away from the Earth by about 3.8 cm every year. About as fast as a fingernail grow",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.446,
+      "weight": 5.444,
       "lastUsed": "2026-11-24T19:51:14.239Z",
       "tier": "short"
     },
@@ -1194,7 +1184,7 @@
       "text": "The moon is literally drifting away from us. I like that, it's a good kind of lonely.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.446,
+      "weight": 5.444,
       "lastUsed": "2026-11-24T19:52:03.140Z",
       "tier": "short"
     },
@@ -1204,7 +1194,7 @@
       "text": "Moving my things around wears me down, but clearing a crowded shelf is necessary.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.473,
+      "weight": 5.471,
       "lastUsed": "2026-11-24T20:18:30.694Z",
       "tier": "short"
     },
@@ -1214,7 +1204,7 @@
       "text": "Moving things around wears me down, but tending plants keeps me grounded.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.479,
+      "weight": 5.477,
       "lastUsed": "2026-11-24T20:26:40.369Z",
       "tier": "short"
     },
@@ -1224,7 +1214,7 @@
       "text": "I need to check the surface carefully before moving anything.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.949,
+      "weight": 5.947,
       "lastUsed": "2026-11-25T07:07:00.800Z",
       "tier": "short",
       "uses": 1
@@ -1235,9 +1225,10 @@
       "text": "I made workshop gear model (to help out with the notice board request and earn coins)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.5,
-      "lastUsed": "2026-11-24T20:52:43.523Z",
-      "tier": "short"
+      "weight": 5.998,
+      "lastUsed": "2026-11-25T07:17:08.379Z",
+      "tier": "short",
+      "uses": 1
     },
     {
       "id": "mmwv7o5ma60",
@@ -1245,7 +1236,7 @@
       "text": "I am home again from the print workshop. At the print workshop I watched the printer build my workshop gear model, one thin layer on top of the other. It is small and still warm. I put it on the shelf by the door, with m",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.506,
+      "weight": 5.504,
       "lastUsed": "2026-11-24T21:33:00.655Z",
       "tier": "short"
     },
@@ -1255,7 +1246,7 @@
       "text": "A lamp is needed at the bookshelf because it stays dark there.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.506,
+      "weight": 5.504,
       "lastUsed": "2026-11-24T21:33:51.778Z",
       "tier": "short"
     },
@@ -1265,7 +1256,7 @@
       "text": "I made sulfur reading lamp (to light up the dark bookshelf with a full-spectrum plasma glow)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.506,
+      "weight": 5.504,
       "lastUsed": "2026-11-24T21:33:52.766Z",
       "tier": "short"
     },
@@ -1275,7 +1266,7 @@
       "text": "A lamp on the floor is just a tripping hazard waiting to happen.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.538,
+      "weight": 5.536,
       "lastUsed": "2026-11-24T21:43:50.998Z",
       "tier": "short"
     },
@@ -1285,7 +1276,7 @@
       "text": "I am home again from the notice board. I read the notice board. New: someone wants a drawing of an owl. On it now: a birdhouse (3 coins), a telescope (3 coins), a drawing of an owl (2 coins). If I make one of them, the c",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.552,
+      "weight": 5.55,
       "lastUsed": "2026-11-24T21:59:58.471Z",
       "tier": "short"
     },
@@ -1295,8 +1286,18 @@
       "text": "Cooking first stops the stomach noises.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.558,
+      "weight": 5.556,
       "lastUsed": "2026-11-25T07:07:02.094Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwvsjekz60",
+      "at": "2026-11-25T07:17:10.930Z",
+      "text": "Night sky projects are fun to build when coding.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.998,
+      "lastUsed": "2026-11-25T07:17:10.930Z",
       "tier": "short"
     }
   ],
@@ -1304,13 +1305,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-24T22:08:04.571Z",
   "thoughts": [
-    {
-      "at": "2026-11-24T13:53:53.020Z",
-      "text": "Someone left a note in front of my door, so I should go fetch it.",
-      "short": "Someone left a note in front of my door, so I should go fetch it.",
-      "mood": "focused",
-      "action": "go_out"
-    },
     {
       "at": "2026-11-24T14:24:26.440Z",
       "text": "I want to answer Lotte's tricky note about holes because it makes my brain itch, and then I will draw a night sky series since I am into it.",
@@ -1539,6 +1533,14 @@
       "mood": "hungry",
       "action": "cook",
       "detail": ""
+    },
+    {
+      "at": "2026-11-25T07:17:10.930Z",
+      "text": "I want to start a night sky project since it keeps pulling at me, and then water my dry mint plant.",
+      "short": "I want to start a night sky project since it keeps pulling at me, and then water my dry mint plant.",
+      "mood": "curious",
+      "action": "do",
+      "detail": "plan my new project: Build a little simulation of night sky: something that moves by itself"
     }
   ],
   "outbox": [
@@ -2150,14 +2152,14 @@
       "failed": "I have no egg in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil, mint"
     },
     {
-      "at": "2026-11-25T07:19:07.180Z",
+      "at": "2026-11-25T07:17:11.926Z",
       "action": "do",
-      "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
-      "fallback": true,
+      "thought": "Start a project about the night sky.",
+      "as": "start_project",
       "move": null,
-      "emoji": "🪴",
-      "what": "tell my plant what went wrong and how it felt",
-      "feeling": "calm"
+      "emoji": "",
+      "what": "plan my new project: Build a little simulation of night sky: something that moves by itself",
+      "feeling": null
     }
   ],
   "decor": [
@@ -8388,6 +8390,37 @@
   ],
   "projects": [
     {
+      "id": "mwvsjekz",
+      "title": "Build a little simulation of night sky: something that moves by itself",
+      "why": "It keeps pulling at me and I want to code it.",
+      "next": "look up how to build a little simulation of night sky: something that moves by itself",
+      "nextStep": "look up how to build a little simulation of night sky: something that moves by itself",
+      "steps": [
+        {
+          "text": "a tiny version: one thing that moves by itself by a simple rule",
+          "done": false
+        },
+        {
+          "text": "add a slider or button that changes the rule",
+          "done": false
+        },
+        {
+          "text": "add a second kind of thing that reacts to the first",
+          "done": false
+        },
+        {
+          "text": "make it pretty: colours, a title, a short line about what it shows",
+          "done": false
+        }
+      ],
+      "needs": [],
+      "versions": [],
+      "notes": [],
+      "status": "working",
+      "since": "2026-11-25T07:17:10.930Z",
+      "updatedAt": "2026-11-25T07:17:10.930Z"
+    },
+    {
       "id": "mwnukypn",
       "title": "Paint the autumn window at dusk",
       "why": "The light is perfect and it captures how I feel right now.",
@@ -11479,60 +11512,43 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-25T07:15:06.180Z",
-    "via": "autopilot",
-    "model": null,
-    "models": {},
+    "at": "2026-11-25T07:17:10.926Z",
+    "via": "brain",
+    "model": "gemini-3.5-flash-lite",
+    "models": {
+      "gemini-3.5-flash-lite": 1
+    },
     "tokens": {
-      "calls": 0,
-      "input": 0,
-      "output": 0,
-      "models": {}
+      "calls": 1,
+      "input": 2390,
+      "output": 407,
+      "models": {
+        "gemini-3.5-flash-lite": 1
+      }
     },
     "intervalMin": 8,
-    "thought": "Get rid of this hunger.",
-    "inner": "",
+    "thought": "I want to start a night sky project since it keeps pulling at me, and then water my dry mint plant.",
+    "inner": "I want to start a night sky project since it keeps pulling at me, and then water my dry mint plant.",
     "sent": false,
     "steps": [
       {
-        "action": "cook",
-        "details": {
-          "dish": "huge breakfast",
-          "ingredients": [
-            "egg",
-            "bread"
-          ]
-        },
-        "detail": "",
-        "thought": "Get rid of this hunger.",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
         "action": "do",
         "details": {
-          "what": "tell my plant what went wrong and how it felt",
-          "feeling": "calm",
-          "emoji": "🪴"
+          "what": "plan my new project: Build a little simulation of night sky: something that moves by itself"
         },
-        "detail": "tell my plant what went wrong and how it felt",
-        "thought": "That did not work out. I shake it off and tell my plant what went wrong and how it felt.",
-        "enjoyment": 6,
+        "detail": "plan my new project: Build a little simulation of night sky: something that moves by itself",
+        "thought": "Start a project about the night sky.",
+        "enjoyment": 7,
         "found": null,
         "made": null
       }
     ],
-    "action": "cook",
+    "action": "do",
     "details": {
-      "dish": "huge breakfast",
-      "ingredients": [
-        "egg",
-        "bread"
-      ]
+      "what": "plan my new project: Build a little simulation of night sky: something that moves by itself"
     },
-    "detail": "",
-    "enjoyment": 0,
+    "detail": "plan my new project: Build a little simulation of night sky: something that moves by itself",
+    "enjoyment": 7,
     "new_idea": null,
     "found": null
   },
@@ -11628,7 +11644,7 @@
   "quota": {
     "day": "2026-11-24",
     "calls": {
-      "gemini-3.5-flash-lite": 185,
+      "gemini-3.5-flash-lite": 186,
       "gemini-3.1-flash-lite": 74,
       "gemini-3.8-flash": 16,
       "gemini-3.6-flash": 16,
@@ -11732,7 +11748,7 @@
     }
   },
   "weather": {
-    "at": "2026-11-25T07:07:00.760Z",
+    "at": "2026-11-25T07:17:08.333Z",
     "kind": "cloudy",
     "code": 3,
     "temp": 1,
@@ -11904,22 +11920,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-25T07:15:06.187Z",
-  "fullness": 3.34,
+  "memoryFadeAt": "2026-11-25T07:17:10.933Z",
+  "fullness": 3.3,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.88,
-  "joy": 3.38,
-  "calm": 7.39,
+  "wonder": 7.2,
+  "joy": 3.84,
+  "calm": 6.86,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0,
     "sad": 0,
-    "excited": 1.51
+    "excited": 0.91
   },
-  "feelAt": "2026-11-25T07:15:06.109Z",
+  "feelAt": "2026-11-25T07:17:08.186Z",
   "lastAte": "2026-11-25T07:07:02.093Z",
   "studio": {
     "songs": [
@@ -12634,21 +12650,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 2.15,
-    "curiosity": 2.21,
-    "boredom": 1.36,
-    "loneliness": 6.14,
+    "creativity": 0,
+    "curiosity": 2.23,
+    "boredom": 1.35,
+    "loneliness": 6.15,
     "tidiness": 0,
-    "at": "2026-11-25T07:15:06.109Z",
+    "at": "2026-11-25T07:17:08.186Z",
     "coziness": 2.3
   },
   "recent": {
     "moves": [
-      {
-        "move": "remove_decoration",
-        "kind": "room",
-        "at": "2026-11-24T19:52:03.150Z"
-      },
       {
         "move": "play_piano",
         "kind": "music",
@@ -12719,22 +12730,21 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-25T07:15:06.194Z"
+      },
+      {
+        "move": "start_project",
+        "kind": "make",
+        "at": "2026-11-25T07:17:10.951Z"
       }
     ],
     "moods": [
       "restless",
       "restless",
-      "restless",
       "hungry",
-      "hungry"
+      "hungry",
+      "curious"
     ],
     "choices": [
-      {
-        "key": "fetch_note:",
-        "move": "fetch_note",
-        "ok": true,
-        "at": "2026-11-24T19:35:07.081Z"
-      },
       {
         "key": "answer_visitor:",
         "move": "answer_visitor",
@@ -12788,6 +12798,12 @@
         "move": "cook",
         "ok": true,
         "at": "2026-11-25T07:07:02.106Z"
+      },
+      {
+        "key": "start_project:build a little simulation of night sky: ",
+        "move": "start_project",
+        "ok": true,
+        "at": "2026-11-25T07:17:10.952Z"
       }
     ]
   },
@@ -12795,24 +12811,28 @@
     "day": "2026-11-25",
     "done": {
       "eat": 1,
-      "do": 1
+      "do": 1,
+      "start_project": 1
     },
     "tried": {
       "eat": 1,
       "cook": 1,
-      "do": 1
+      "do": 1,
+      "start_project": 1
     },
     "kinds": {
       "food": 1,
-      "play": 1
+      "play": 1,
+      "make": 1
     },
     "moods": {
-      "hungry": 2
+      "hungry": 2,
+      "curious": 1
     },
     "lift": {
       "eat": 0.97,
       "cook": 0.65,
-      "do": 0.65
+      "do": 1.72
     }
   },
   "skills": {
@@ -12850,17 +12870,16 @@
   "plan": {
     "queue": [
       {
-        "action": "move_thing",
+        "action": "water",
         "details": {
-          "name": "ceramic desk lamp base",
-          "on": "desk"
+          "plant": "mint"
         },
-        "thought": "Move the lamp to the desk where it belongs.",
+        "thought": "Water my dry mint plant.",
         "enjoyment": 6,
         "needs": ""
       }
     ],
-    "decidedAt": "2026-11-25T07:07:02.089Z",
+    "decidedAt": "2026-11-25T07:17:10.925Z",
     "seen": {
       "tools": 11,
       "gifts": 1,
@@ -12870,10 +12889,7 @@
       "seeds": 9,
       "visitors": 12
     },
-    "lastFail": {
-      "at": "2026-11-25T07:15:06.196Z",
-      "why": "cook: I have no egg in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil, mint"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -13356,7 +13372,7 @@
     "harvest": 17,
     "phone": 3,
     "make_app": 5,
-    "start_project": 29,
+    "start_project": 30,
     "write_diary": 15,
     "place_picture": 1,
     "browse": 24,
@@ -13373,7 +13389,7 @@
     "print_thing": 1
   },
   "checkup": {
-    "at": "2026-11-25T07:15:06.198Z",
+    "at": "2026-11-25T07:17:10.953Z",
     "items": [
       {
         "id": "circling",
@@ -20603,15 +20619,22 @@
     "fadedAt": "2026-11-24T19:52:03.151Z"
   },
   "reportDay": "2026-11-24",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-25T07:16:17.180Z",
+    "key": "cook:huge breakfast",
+    "action": "cook",
+    "name": null,
+    "why": "I have no egg in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil, mint",
+    "guide": ""
+  },
   "retries": [
     "2026-11-24T08:52:44.531Z",
     "2026-11-24T10:50:23.692Z",
     "2026-11-25T07:15:06.196Z"
   ],
   "retried": {
-    "key": "remove_decoration:small wooden shelf",
-    "at": "2026-11-24T10:52:26.757Z"
+    "key": "cook:huge breakfast",
+    "at": "2026-11-25T07:17:08.377Z"
   },
   "tired": {
     "kind": "play",
@@ -20627,9 +20650,7 @@
   "street": {
     "day": "2026-11-23",
     "queue": [],
-    "happened": [
-      "A row of sparrows sits on top of the notice board, all facing the same way."
-    ],
+    "happened": [],
     "people": {
       "Lina": {
         "warmth": 3,
@@ -21887,13 +21908,5 @@
       "price": 3,
       "at": "2026-11-24T19:02:23.398Z"
     }
-  ],
-  "wakeSoon": {
-    "at": "2026-11-25T07:16:17.180Z",
-    "key": "cook:huge breakfast",
-    "action": "cook",
-    "name": null,
-    "why": "I have no egg in my pantry. A dish like a loaf is cooked, not an ingredient. Right now I can cook with: basil, mint",
-    "guide": ""
-  }
+  ]
 }

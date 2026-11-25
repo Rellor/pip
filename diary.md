@@ -6201,3 +6201,9 @@ Get rid of this hunger.
 - do (tell my plant what went wrong and how it felt): That did not work out. I shake it off and tell my plant what went wrong and how it felt.
 - mood: hungry
 
+## 25/11/2026, 07:17:10
+I want to start a night sky project since it keeps pulling at me, and then water my dry mint plant.
+> I want to start a night sky project since it keeps pulling at me, and then water my dry mint plant.
+- do (plan my new project: Build a little simulation of night sky: something that moves by itself): Start a project about the night sky.
+- mood: curious
+
