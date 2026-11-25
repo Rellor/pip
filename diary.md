@@ -6241,3 +6241,9 @@ My room feels a bit too full and I want to strum some noise out to break the qui
 - play_piano (E2:2 A2:2 D3:2 G3:2): Strum the guitar.
 - mood: grumpy
 
+## 25/11/2026, 08:22:07
+I finished my night sky project, so now I want to fetch that note left by my door and then look up how to build the telescope someone asked for.
+> I finished my night sky project, so now I want to fetch that note left by my door and then look up how to build the telescope someone asked for.
+- go_out: Let's see what is in that note.
+- mood: grumpy
+
