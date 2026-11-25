@@ -6391,3 +6391,9 @@ I need to build that clumsy corner shelf because I promised myself and the room 
 - do (say hello to my plants through the glass): Hello, little plants.
 - mood: stubborn
 
+## 25/11/2026, 11:50:05
+My basil is ready, so I will harvest and eat it, then finally build that clumsy corner shelf since I have been thinking about it all day.
+> My basil is ready, so I will harvest and eat it, then finally build that clumsy corner shelf since I have been thinking about it all day.
+- eat (basil): Eat some fresh basil from my plant.
+- mood: stubborn
+
