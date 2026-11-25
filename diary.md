@@ -6640,3 +6640,9 @@ Tomás thinks my square is too tidy and needs something strange. I will tell him
 - walk_to (computer): answering Tomás
 - mood: grumpy
 
+## 25/11/2026, 19:43:53
+My room feels a bit too full and moving things around wears me down, so I want to step outside and make something on my plot instead.
+> My room feels a bit too full and moving things around wears me down, so I want to step outside and make something on my plot instead.
+- go_out: I will make something for my plot outside.
+- mood: grumpy
+
