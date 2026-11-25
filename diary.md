@@ -6397,3 +6397,8 @@ My basil is ready, so I will harvest and eat it, then finally build that clumsy 
 - eat (basil): Eat some fresh basil from my plant.
 - mood: stubborn
 
+## 25/11/2026, 11:58:15
+Work on building the corner shelf.
+- do (say hello to my plants through the glass): Hello, little plants.
+- mood: stubborn
+
