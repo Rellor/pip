@@ -6598,3 +6598,9 @@ I finished my night sky simulation project and I want to stretch my legs outside
 - go_out (the pond in the park): Going outside to the pond for a bit of fresh air and sketching.
 - mood: curious
 
+## 25/11/2026, 18:34:23
+I want to work on my night sky simulation project to add the slider, and then browse the web for a bit.
+> I want to work on my night sky simulation project to add the slider, and then browse the web for a bit.
+- do (think about how to make add a slider or button that changes the rule (for my project): I could not work it out yet.
+- mood: curious
+
