@@ -44,10 +44,11 @@ export function keepWishes(s, entries, now = Date.now()) {
   for (const e of entries.filter((x) => !x.failed && !x.fallback)) {
     const text = `${e.name ?? ''} ${e.what ?? ''} ${e.why ?? ''} ${e.dish ?? ''} ${e.change ?? ''} ${e.project ?? ''}`;
     const words = new Set(keyWords(text));
+    const itself = new Set(keyWords(`${e.name ?? ''} ${e.what ?? ''} ${e.dish ?? ''}`)); // what the thing IS (its name), not why he made it
     for (const w of openWishes(s, now)) {
       if (!(w.medium ?? mediumOf(w.text)).includes(e.action)) continue;
       const named = Boolean(w.from) && new RegExp(`\\bfor ${plain(w.from)}(?![a-z])`, 'i').test(text);
-      if (w.board ? !keyWords(w.topic).filter((k) => !BOARD_SKIP.has(k)).every((k) => words.has(k)) : !named && !keyWords(w.topic).some((k) => words.has(k))) continue; // a note on the board asks for one thing: all of its words ("toy train" is not any toy)
+      if (w.board ? !keyWords(w.topic).filter((k) => !BOARD_SKIP.has(k)).every((k) => itself.has(k)) : !named && !keyWords(w.topic).some((k) => words.has(k))) continue; // a note on the board asks for one thing: all of its words ("toy train" is not any toy)
       Object.assign(w, { status: 'kept', keptAt: new Date(now).toISOString(), with: clip(e.name ?? e.dish ?? e.what, 60) });
       s.coins = (s.coins ?? 0) + w.reward;
       if (w.board) { // a note from the notice board: it comes down, and knowing how it is made pays a coin more
