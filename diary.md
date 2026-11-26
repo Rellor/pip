@@ -6769,3 +6769,9 @@ My room still feels bare and I have a goal to make a plain wooden shelf, so I sh
 - do (plan my new project: Build a plain wooden shelf): Start the project for making a plain wooden shelf.
 - mood: stubborn
 
+## 26/11/2026, 08:38:48
+My room feels bare and I want to work on my wooden shelf project, but I also need to fetch the note left on the square.
+> My room feels bare and I want to work on my wooden shelf project, but I also need to fetch the note left on the square.
+- go_out: I will go pick up the note.
+- mood: stubborn
+
