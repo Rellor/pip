@@ -1,8 +1,8 @@
 {
   "mood": "stubborn",
-  "energy": 10,
+  "energy": 9.5,
   "boredom": 0,
-  "loneliness": 10,
+  "loneliness": 9.2,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-25T14:45:02.832Z",
-      "action": "do",
-      "detail": "plan my new project: ",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-25T14:54:16.617Z",
       "action": "do",
@@ -304,10 +298,15 @@
       "at": "2026-11-26T08:38:48.135Z",
       "action": "go_out",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-26T08:54:59.284Z",
+      "action": "search_web",
+      "detail": "to build a plain wooden shelf",
+      "enjoyment": 7
     }
   ],
   "notes": [
-    "Browsing the web I came across James Walker Log House (near quiet music): James Walker Log House is a historic log house in Washington County, Texas near Brenham. It was built in 1824 and added to the National Register of Historic Places in 1989. See also National Register of Historic Places listings in Washington County, Texas Recorded Texas Historic Landmarks in…",
     "My basil is fully grown and ready to harvest!",
     "I harvested basil from place 1. It goes in my pantry, and the plant grows back.",
     "I watered basil. The soil stays damp for about 10 hours.",
@@ -336,7 +335,8 @@
     "Browsing the web I came across Jim Wallhead (near quiet music): Jim Wallhead (born 14 March 1984) is an English former professional mixed martial artist who competed in the Welterweight division. He has competed for BAMMA, Bellator, and M-1 Challenge and the UFC. Wallhead is a member of Team Rough House and Leicester Shootfighters. In addition to his training…",
     "Browsing the web I came across Robert Searle (minister): Robert Wyckoff Searle (1894 – June 17, 1967) was an American Reformed and Presbyterian minister and nonprofit executive. Active in interfaith and ecumenical work during his career, he spent 16 years as general secretary or in other senior roles at the Greater New York Federation of Churches and its…",
     "My mint is fully grown and ready to harvest!",
-    "I harvested mint from place 3. It goes in my pantry, and the plant grows back."
+    "I harvested mint from place 3. It goes in my pantry, and the plant grows back.",
+    "Searched \"to build a plain wooden shelf\" and read about Russian wooden architecture: Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. …"
   ],
   "requests": [],
   "story": "Pip spends his evenings by the autumn window as dusk falls. He learns by doing and makes clumsy things with his hands. He spends half his time playing around just to see what happens. Decorating his walls and searching the web keep him busy. Pushing objects from one spot to another just makes him grumpy. Today he did a lot of chores he disliked. Late at night, he writes his honest thoughts in his diary.",
@@ -694,7 +694,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.813,
+      "weight": 7.81,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -704,7 +704,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.862,
+      "weight": 9.859,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -715,7 +715,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.499,
+      "weight": 7.496,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -725,7 +725,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.955,
+      "weight": 9.952,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -736,7 +736,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.796,
+      "weight": 8.793,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -747,7 +747,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.502,
+      "weight": 8.499,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -757,7 +757,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.355,
+      "weight": 7.352,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -767,7 +767,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.984,
+      "weight": 9.981,
       "lastUsed": "2026-11-26T07:30:45.253Z",
       "tier": "long",
       "uses": 3
@@ -778,7 +778,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.898,
+      "weight": 8.895,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -788,7 +788,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.2,
+      "weight": 8.197,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -799,7 +799,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.572,
+      "weight": 9.569,
       "lastUsed": "2026-11-26T07:30:45.253Z",
       "tier": "long",
       "uses": 5
@@ -810,7 +810,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.252,
+      "weight": 7.25,
       "lastUsed": "2026-11-22T12:49:28.901Z",
       "tier": "long"
     },
@@ -820,7 +820,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.989,
+      "weight": 9.986,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -831,7 +831,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.652,
+      "weight": 7.649,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -841,7 +841,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.075,
+      "weight": 9.072,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -851,7 +851,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.796,
+      "weight": 7.793,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -861,7 +861,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.136,
+      "weight": 9.133,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -871,7 +871,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.87,
+      "weight": 7.867,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -881,7 +881,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.596,
+      "weight": 7.593,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -891,7 +891,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.601,
+      "weight": 7.598,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -901,7 +901,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.85,
+      "weight": 9.847,
       "lastUsed": "2026-11-25T21:13:03.969Z",
       "tier": "long",
       "uses": 5
@@ -912,7 +912,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.547,
+      "weight": 8.544,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -923,7 +923,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.491,
+      "weight": 9.488,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 4
@@ -934,7 +934,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.15,
+      "weight": 8.147,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -945,7 +945,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.862,
+      "weight": 9.859,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -956,7 +956,7 @@
       "text": "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.239,
+      "weight": 7.237,
       "lastUsed": "2026-11-22T21:45:14.740Z",
       "tier": "long"
     },
@@ -966,7 +966,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.564,
+      "weight": 8.561,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -977,7 +977,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.862,
+      "weight": 9.859,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 8
@@ -988,7 +988,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.344,
+      "weight": 7.341,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -998,7 +998,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.344,
+      "weight": 7.341,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -1008,7 +1008,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.357,
+      "weight": 7.354,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1018,7 +1018,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.357,
+      "weight": 7.354,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1028,7 +1028,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.862,
+      "weight": 9.859,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -1039,7 +1039,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.696,
+      "weight": 8.693,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1050,7 +1050,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.862,
+      "weight": 9.859,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 6
@@ -1061,7 +1061,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.817,
+      "weight": 7.814,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1072,7 +1072,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling. I brought home a blue marble someone lost.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.403,
+      "weight": 6.389,
       "lastUsed": "2026-11-25T20:32:21.197Z",
       "tier": "short",
       "uses": 1
@@ -1083,28 +1083,8 @@
       "text": "I am home again from the pond in the park. I sat on the bench under the willow and watched the ducks. One of them slept with its head under its wing. I brought home a forked stick.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.165,
+      "weight": 6.151,
       "lastUsed": "2026-11-25T18:27:53.740Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwwheg3j60",
-      "at": "2026-11-25T18:53:10.014Z",
-      "text": "Working on the simulation step by step keeps it moving.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.342,
-      "lastUsed": "2026-11-25T18:53:10.014Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwwheg3l60",
-      "at": "2026-11-25T18:53:11.003Z",
-      "text": "I made night sky rule simulator (It kept pulling at me, so I built a small desktop night sky display with a sliding toggle switch on the front bezel to change the orbital rules of the satellite.)",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.342,
-      "lastUsed": "2026-11-25T18:53:11.003Z",
       "tier": "short"
     },
     {
@@ -1113,7 +1093,7 @@
       "text": "The night sky simulation needs a second reacting element.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.351,
+      "weight": 5.339,
       "lastUsed": "2026-11-25T19:02:20.645Z",
       "tier": "short"
     },
@@ -1123,7 +1103,7 @@
       "text": "I drew Basil in a clay pot",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.358,
+      "weight": 5.346,
       "lastUsed": "2026-11-25T19:11:23.453Z",
       "tier": "short"
     },
@@ -1133,7 +1113,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.757,
+      "weight": 6.742,
       "lastUsed": "2026-11-26T08:30:24.683Z",
       "tier": "short",
       "uses": 1
@@ -1144,7 +1124,7 @@
       "text": "Fetching the note left in front of my door.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.365,
+      "weight": 5.353,
       "lastUsed": "2026-11-25T19:19:34.012Z",
       "tier": "short"
     },
@@ -1154,7 +1134,7 @@
       "text": "I am home again from my world. I picked up the note in front of my door. It is from Tomás, a lighthouse keeper, who was passing through: \"I walked across your square. It is very tidy. Too tidy, maybe? A town needs one st",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.371,
+      "weight": 5.359,
       "lastUsed": "2026-11-25T19:35:43.405Z",
       "tier": "short"
     },
@@ -1164,7 +1144,7 @@
       "text": "Tomás told me: I walked across your square. It is very tidy. Too tidy, maybe? A town needs one strange thing in it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.371,
+      "weight": 5.359,
       "lastUsed": "2026-11-25T19:35:45.029Z",
       "tier": "short"
     },
@@ -1174,7 +1154,7 @@
       "text": "Tomás thinks my square is too tidy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.371,
+      "weight": 5.359,
       "lastUsed": "2026-11-25T19:35:45.036Z",
       "tier": "short"
     },
@@ -1184,7 +1164,7 @@
       "text": "I am home again from the land workshop. I took the land tool from the land workshop and made a hill on my land: 16 m wide and 3 m high. I climbed it and looked over my world from the top. I made that: the ground of my wo",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.39,
+      "weight": 5.378,
       "lastUsed": "2026-11-25T20:32:20.985Z",
       "tier": "short"
     },
@@ -1194,7 +1174,7 @@
       "text": "I started the night sky drawing series.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.39,
+      "weight": 5.378,
       "lastUsed": "2026-11-25T20:32:24.424Z",
       "tier": "short"
     },
@@ -1204,7 +1184,7 @@
       "text": "Moving my things around wears me down, but the room needs breathing room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.44,
+      "weight": 5.428,
       "lastUsed": "2026-11-25T20:56:48.332Z",
       "tier": "short"
     },
@@ -1214,7 +1194,7 @@
       "text": "Moving my things around wears me down, but the lamp needs to be where I read.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.446,
+      "weight": 5.434,
       "lastUsed": "2026-11-25T21:04:59.020Z",
       "tier": "short"
     },
@@ -1224,7 +1204,7 @@
       "text": "Moving my things around wears me down, but the lamp belongs by the desk.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.459,
+      "weight": 5.447,
       "lastUsed": "2026-11-25T21:21:19.727Z",
       "tier": "short"
     },
@@ -1234,7 +1214,7 @@
       "text": "Playing the guitar loud enough scares away the silence.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.472,
+      "weight": 5.46,
       "lastUsed": "2026-11-25T21:37:46.407Z",
       "tier": "short"
     },
@@ -1244,7 +1224,7 @@
       "text": "Moving things around too much just wears me down.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.484,
+      "weight": 5.472,
       "lastUsed": "2026-11-25T21:53:59.877Z",
       "tier": "short"
     },
@@ -1254,7 +1234,7 @@
       "text": "Mint is ready right when I need it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.491,
+      "weight": 5.479,
       "lastUsed": "2026-11-26T07:04:24.133Z",
       "tier": "short"
     },
@@ -1264,7 +1244,7 @@
       "text": "Building a plain wooden shelf helps clear up the clutter in my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.934,
+      "weight": 5.921,
       "lastUsed": "2026-11-26T07:28:42.425Z",
       "tier": "short"
     },
@@ -1274,7 +1254,7 @@
       "text": "Eating helps when I am starving, and starting a night sky project keeps me busy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.944,
+      "weight": 5.931,
       "lastUsed": "2026-11-26T07:41:54.873Z",
       "tier": "short"
     },
@@ -1284,7 +1264,7 @@
       "text": "I should go outside more often instead of staring at my walls.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.959,
+      "weight": 5.946,
       "lastUsed": "2026-11-26T07:58:06.526Z",
       "tier": "short"
     },
@@ -1294,7 +1274,7 @@
       "text": "I am home again from my field. I walked all the way around my field. 1 hill or hole on it so far. I paced out a spot of 12 by 5 steps and stood in the middle of it: something big could stand right here.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.966,
+      "weight": 5.953,
       "lastUsed": "2026-11-26T08:30:24.397Z",
       "tier": "short"
     },
@@ -1304,8 +1284,28 @@
       "text": "I should keep working on my wooden shelf to clear the clutter.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.98,
       "lastUsed": "2026-11-26T08:38:48.138Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwxbgzzm60",
+      "at": "2026-11-26T08:54:57.583Z",
+      "text": "I am home again from my world. I picked up the note on the square. It is from Sam, a sailor, who was passing through: \"An octopus has three hearts and blue blood. Two of the hearts are only for its gills.\"",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.987,
+      "lastUsed": "2026-11-26T08:54:57.583Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwxbh1av60",
+      "at": "2026-11-26T08:54:59.287Z",
+      "text": "Sam thinks octopuses have three hearts, two for gills.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.987,
+      "lastUsed": "2026-11-26T08:54:59.287Z",
       "tier": "short"
     }
   ],
@@ -1313,14 +1313,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-25T22:02:30.787Z",
   "thoughts": [
-    {
-      "at": "2026-11-25T17:23:16.754Z",
-      "text": "I finished my night sky simulation project and I want to stretch my legs outside by the pond to sketch what I see.",
-      "short": "I finished my night sky simulation project and I want to stretch my legs outside by the pond to sketch what I see.",
-      "mood": "curious",
-      "action": "go_out",
-      "detail": "the pond in the park"
-    },
     {
       "at": "2026-11-25T18:34:23.942Z",
       "text": "I want to work on my night sky simulation project to add the slider, and then browse the web for a bit.",
@@ -1548,6 +1540,14 @@
       "short": "My room feels bare and I want to work on my wooden shelf project, but I also need to fetch the note left on the square.",
       "mood": "stubborn",
       "action": "go_out"
+    },
+    {
+      "at": "2026-11-26T08:54:59.287Z",
+      "text": "I want to answer Sam's note about the octopus and then work on my wooden shelf project to clear the clutter.",
+      "short": "I want to answer Sam's note about the octopus and then work on my wooden shelf project to clear the clutter.",
+      "mood": "stubborn",
+      "action": "search_web",
+      "detail": "to build a plain wooden shelf"
     }
   ],
   "outbox": [
@@ -1824,28 +1824,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-25T19:02:21.639Z",
-      "action": "extend_thing",
-      "thought": "next step on the simulation",
-      "name": "night sky rule simulator",
-      "added": 10,
-      "total": 26,
-      "side": null,
-      "joined": null,
-      "place": "on workshop bench (level 1) (x -1.435, z 0.105)",
-      "failed": null
-    },
-    {
-      "at": "2026-11-25T19:11:23.453Z",
-      "action": "draw",
-      "thought": "Let's finish the night sky simulation.",
-      "name": "Basil in a clay pot",
-      "why": "I grew this basil. The pot chipped on the side, but the leaves taste good.",
-      "image": "made/artmwwi1v1630.svg",
-      "place": "in my album (it is in my album: there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark horizon\", which has hung for 9 days, and the next is \"a picture\", which has hung for 7 days. To make room I can take one down (it stays in my album), or I can make a smaller picture)",
-      "failed": null
-    },
     {
       "at": "2026-11-25T19:19:35.002Z",
       "action": "go_out",
@@ -2135,6 +2113,57 @@
       "what": "pick up the note someone left on the square",
       "back": "2026-11-26T08:48:48.134Z",
       "failed": null
+    },
+    {
+      "at": "2026-11-26T08:54:57.583Z",
+      "action": "came_home",
+      "place": "drops",
+      "placeName": "my world",
+      "thought": "",
+      "did": "I picked up the note on the square. It is from Sam, a sailor, who was passing through: \"An octopus has three hearts and blue blood. Two of the hearts are only for its gills.\"",
+      "found": [],
+      "met": null,
+      "gift": null,
+      "book": null,
+      "errand": null,
+      "cut": null,
+      "card": {
+        "place": "drops",
+        "at": "2026-11-26T08:54:57.583Z",
+        "weather": {
+          "kind": "cloudy",
+          "temp": -0.3
+        },
+        "found": []
+      }
+    },
+    {
+      "at": "2026-11-26T08:55:00.283Z",
+      "action": "search_web",
+      "thought": "Work on my project",
+      "query": "to build a plain wooden shelf",
+      "results": [
+        {
+          "title": "Russian wooden architecture",
+          "snippet": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement",
+          "url": "https://en.wikipedia.org/wiki/Russian_wooden_architecture"
+        },
+        {
+          "title": "Joinery",
+          "snippet": "use only wood elements (such as dowels or plain mortise and tenon fittings). The characteristics of wooden joints—strength, flexibility, toughness, appearance",
+          "url": "https://en.wikipedia.org/wiki/Joinery"
+        },
+        {
+          "title": "Stuffed toy",
+          "snippet": "from a Harrods toy shelf to the home of Christopher Robin and the Hundred Acre Wood is set to be told for the first time, in an official prequel to AA Milne's",
+          "url": "https://en.wikipedia.org/wiki/Stuffed_toy"
+        }
+      ],
+      "opened": {
+        "title": "Russian wooden architecture",
+        "url": "https://en.wikipedia.org/wiki/Russian_wooden_architecture",
+        "text": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. Sometimes this concept includes wooden buildings of professional architecture, eclectic buildings combining elements of folk architecture and professional architecture, as well as modern attempts to revive Old Russian carpentry traditions. It is one of the most original phenomena of Russian culture. It is widespread from the Kola Peninsula to the Central Zone, in the Urals and Siberia; a large number of monuments are located in the Russian North.\nThe structural basis of traditional Russian wooden architecture was a log house made of untrimmed wood. Wood carvings placed on structurally significant elements served as decoration. Among the traditional buildings are wooden cage, tent, step, cuboid and multi-domed churches, which together with peasant dwellings, household, fortress and engineering buildings defined the image of a traditional Russian settlement.\nThe origins of Russian wooden architecture go back to the architecture of the Early Slavs. In Old Russian architecture, religious wooden architecture was oriented on the Byzantine canon and adopted the features of stone temples. …"
+      }
     }
   ],
   "decor": [
@@ -8858,7 +8887,7 @@
       "steps": [
         {
           "text": "look up how to build a plain wooden shelf",
-          "done": false
+          "done": true
         },
         {
           "text": "Build a plain wooden shelf: a first version",
@@ -8874,7 +8903,8 @@
       "notes": [],
       "status": "working",
       "since": "2026-11-26T08:30:28.817Z",
-      "updatedAt": "2026-11-26T08:30:28.817Z"
+      "updatedAt": "2026-11-26T08:54:59.287Z",
+      "stuck": null
     },
     {
       "id": "mwnukypn",
@@ -12375,21 +12405,52 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-26T08:46:52.941Z",
-    "via": "outside",
-    "thought": "I am walking home from my world.",
-    "action": "go_out",
-    "details": {
-      "place": "drops"
+    "at": "2026-11-26T08:54:59.283Z",
+    "via": "brain",
+    "model": "gemini-3.5-flash-lite",
+    "models": {
+      "gemini-3.5-flash-lite": 1
     },
-    "detail": "I am walking home from my world.",
+    "tokens": {
+      "calls": 1,
+      "input": 2453,
+      "output": 265,
+      "models": {
+        "gemini-3.5-flash-lite": 1
+      }
+    },
+    "intervalMin": 8,
+    "thought": "I want to answer Sam's note about the octopus and then work on my wooden shelf project to clear the clutter.",
+    "inner": "I want to answer Sam's note about the octopus and then work on my wooden shelf project to clear the clutter.",
+    "sent": false,
+    "steps": [
+      {
+        "action": "search_web",
+        "details": {
+          "query": "to build a plain wooden shelf",
+          "project": "Build a plain wooden shelf"
+        },
+        "detail": "to build a plain wooden shelf",
+        "thought": "Work on my project",
+        "enjoyment": 7,
+        "found": {
+          "title": "Russian wooden architecture",
+          "text": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. Sometimes this concept includes wooden buildings of professional architecture, eclectic buildings combining elements of folk architecture and professional architecture, as well as modern attempts to revive Old Russian carpentry traditions. It is one of the most original phenomena of Russian culture. It is widespread from the Kola Peninsula to the Central Zone, in the Urals and Siberia; a large number of monuments are located in the Russian North.\nThe structural basis of traditional Russian wooden architecture was a log house made of untrimmed wood. Wood carvings placed on structurally significant elements served as decoration. Among the traditional buildings are wooden cage, tent, step, cuboid and multi-domed churches, which together with peasant dwellings, household, fortress and engineering buildings defined the image of a traditional Russian settlement.\nThe origins of Russian wooden architecture go back to the architecture of the Early Slavs. In Old Russian architecture, religious wooden architecture was oriented on the Byzantine canon and adopted the features of stone temples. The highest development of Russian wooden architecture reached the Russian North in the 15th–18th centuries. In this region the traditions were preserved for the longest time, but even there the architecture could not escape the significant influence of the dominant architectural styles of baroque, classicism, eclecticism. In the 19th century, the motives of the Russian wooden architecture were applied in the Russian style. The heritage of wooden architecture is rapidly disappearing. Only a few religious buildings date back to the 14th–16th centuries. The oldest preserved residential buildings date back to the 18th century. According to experts, at the beginning of the 21st century, the situation with the preservation of monuments is catastrophic.\n\nOrigins of wood architecture\n\nEthnographer K. Moshinsky wrote about the \"wooden age\" of the Slavs because, in their culture, wood occupied a special place and was used in almost any craft or occupation, including construction. …"
+        },
+        "made": null
+      }
+    ],
+    "action": "search_web",
+    "details": {
+      "query": "to build a plain wooden shelf",
+      "project": "Build a plain wooden shelf"
+    },
+    "detail": "to build a plain wooden shelf",
     "enjoyment": 7,
     "new_idea": null,
-    "found": null,
-    "away": {
-      "place": "drops",
-      "phase": "back",
-      "back": "2026-11-26T08:48:48.134Z"
+    "found": {
+      "title": "Russian wooden architecture",
+      "text": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. Sometimes this concept includes wooden buildings of professional architecture, eclectic buildings combining elements of folk architecture and professional architecture, as well as modern attempts to revive Old Russian carpentry traditions. It is one of the most original phenomena of Russian culture. It is widespread from the Kola Peninsula to the Central Zone, in the Urals and Siberia; a large number of monuments are located in the Russian North.\nThe structural basis of traditional Russian wooden architecture was a log house made of untrimmed wood. Wood carvings placed on structurally significant elements served as decoration. Among the traditional buildings are wooden cage, tent, step, cuboid and multi-domed churches, which together with peasant dwellings, household, fortress and engineering buildings defined the image of a traditional Russian settlement.\nThe origins of Russian wooden architecture go back to the architecture of the Early Slavs. In Old Russian architecture, religious wooden architecture was oriented on the Byzantine canon and adopted the features of stone temples. The highest development of Russian wooden architecture reached the Russian North in the 15th–18th centuries. In this region the traditions were preserved for the longest time, but even there the architecture could not escape the significant influence of the dominant architectural styles of baroque, classicism, eclecticism. In the 19th century, the motives of the Russian wooden architecture were applied in the Russian style. The heritage of wooden architecture is rapidly disappearing. Only a few religious buildings date back to the 14th–16th centuries. The oldest preserved residential buildings date back to the 18th century. According to experts, at the beginning of the 21st century, the situation with the preservation of monuments is catastrophic.\n\nOrigins of wood architecture\n\nEthnographer K. Moshinsky wrote about the \"wooden age\" of the Slavs because, in their culture, wood occupied a special place and was used in almost any craft or occupation, including construction. …"
     }
   },
   "furniture": {
@@ -12484,7 +12545,7 @@
   "quota": {
     "day": "2026-11-26",
     "calls": {
-      "gemini-3.5-flash-lite": 3
+      "gemini-3.5-flash-lite": 4
     },
     "out": {},
     "history": [
@@ -12598,12 +12659,12 @@
     ]
   },
   "weather": {
-    "at": "2026-11-26T08:30:24.647Z",
+    "at": "2026-11-26T08:54:57.769Z",
     "kind": "cloudy",
     "code": 3,
-    "temp": -0.3,
+    "temp": 0,
     "cloud": 1,
-    "wind": 0.6
+    "wind": 0.7333333333333333
   },
   "news": {
     "date": "2026-11-26",
@@ -12776,22 +12837,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-26T08:38:48.140Z",
-  "fullness": 6.46,
+  "memoryFadeAt": "2026-11-26T08:54:59.682Z",
+  "fullness": 6.3,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 4.94,
-  "joy": 4.84,
-  "calm": 5.51,
+  "wonder": 7.15,
+  "joy": 4.76,
+  "calm": 5.4,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.02
+    "excited": 0.81
   },
-  "feelAt": "2026-11-26T08:46:52.922Z",
+  "feelAt": "2026-11-26T08:54:57.563Z",
   "lastAte": "2026-11-26T07:41:54.872Z",
   "studio": {
     "songs": [
@@ -13506,21 +13567,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.16,
-    "curiosity": 2.45,
+    "creativity": 0.24,
+    "curiosity": 0,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 0,
-    "at": "2026-11-26T08:46:52.922Z",
+    "at": "2026-11-26T08:54:57.563Z",
     "coziness": 2.3
   },
   "recent": {
     "moves": [
-      {
-        "move": "remove_decoration",
-        "kind": "room",
-        "at": "2026-11-25T21:29:27.734Z"
-      },
       {
         "move": "play_piano",
         "kind": "music",
@@ -13591,22 +13647,21 @@
         "move": "fetch_note",
         "kind": "play",
         "at": "2026-11-26T08:38:48.147Z"
+      },
+      {
+        "move": "search_web",
+        "kind": "learn",
+        "at": "2026-11-26T08:54:59.687Z"
       }
     ],
     "moods": [
       "grumpy",
-      "grumpy",
       "restless",
+      "stubborn",
       "stubborn",
       "stubborn"
     ],
     "choices": [
-      {
-        "key": "play_piano:",
-        "move": "play_piano",
-        "ok": true,
-        "at": "2026-11-25T21:37:46.423Z"
-      },
       {
         "key": "browse:",
         "move": "browse",
@@ -13661,6 +13716,12 @@
         "move": "fetch_note",
         "ok": true,
         "at": "2026-11-26T08:38:48.148Z"
+      },
+      {
+        "key": "answer_visitor:",
+        "move": "answer_visitor",
+        "ok": true,
+        "at": "2026-11-26T08:54:59.689Z"
       }
     ]
   },
@@ -13674,7 +13735,8 @@
       "move_thing": 1,
       "start_project": 2,
       "go_out": 1,
-      "fetch_note": 1
+      "fetch_note": 1,
+      "search_web": 1
     },
     "tried": {
       "eat": 2,
@@ -13685,7 +13747,8 @@
       "move_thing": 1,
       "start_project": 2,
       "go_out": 1,
-      "fetch_note": 1
+      "fetch_note": 1,
+      "search_web": 1
     },
     "kinds": {
       "food": 3,
@@ -13693,13 +13756,14 @@
       "play": 2,
       "room": 1,
       "make": 2,
-      "outside": 1
+      "outside": 1,
+      "learn": 1
     },
     "moods": {
       "hungry": 3,
       "grumpy": 4,
       "restless": 1,
-      "stubborn": 2
+      "stubborn": 3
     },
     "lift": {
       "eat": 1.27,
@@ -13708,14 +13772,15 @@
       "decorate": 0.45,
       "do": 1.79,
       "move_thing": 0.5,
-      "go_out": -0.5
+      "go_out": -0.5,
+      "search_web": 1.87
     }
   },
   "skills": {
     "music": 51.5,
     "painting": 28,
     "sculpture": 43,
-    "woodwork": 38,
+    "woodwork": 38.5,
     "sewing": 6.5,
     "gardening": 60.5,
     "cooking": 21,
@@ -13744,23 +13809,8 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [
-      {
-        "thought": "Let us work on the plain wooden shelf.",
-        "enjoyment": 7,
-        "needs": "",
-        "forStep": {
-          "project": "Build a plain wooden shelf",
-          "text": "look up how to build a plain wooden shelf"
-        },
-        "action": "search_web",
-        "details": {
-          "query": "to build a plain wooden shelf",
-          "project": "Build a plain wooden shelf"
-        }
-      }
-    ],
-    "decidedAt": "2026-11-26T08:38:48.133Z",
+    "queue": [],
+    "decidedAt": "2026-11-26T08:54:59.282Z",
     "seen": {
       "tools": 12,
       "gifts": 1,
@@ -13768,7 +13818,7 @@
       "projectsDone": 10,
       "tasks": 0,
       "seeds": 9,
-      "visitors": 15
+      "visitors": 16
     },
     "lastFail": null,
     "unread": 0
@@ -13964,6 +14014,19 @@
       "kind": "share",
       "topic": "Tidiness",
       "answeredAt": "2026-11-25T19:35:45.029Z",
+      "kept": true
+    },
+    {
+      "id": "ttp3oyo",
+      "at": "2026-11-26T08:54:57.583Z",
+      "name": "Sam (a sailor)",
+      "text": "An octopus has three hearts and blue blood. Two of the hearts are only for its gills.",
+      "answer": "Three hearts just for the gills sounds like a lot of overengineering.",
+      "npc": true,
+      "stranger": true,
+      "kind": "share",
+      "topic": "Octopus",
+      "answeredAt": "2026-11-26T08:54:59.282Z",
       "kept": true
     }
   ],
@@ -14301,7 +14364,7 @@
     "eat": 62,
     "water": 34,
     "do": 402,
-    "search_web": 57,
+    "search_web": 58,
     "read_book": 22,
     "record_song": 8,
     "change_thing": 17,
@@ -14339,7 +14402,7 @@
     "shape_land": 1
   },
   "checkup": {
-    "at": "2026-11-26T08:38:48.148Z",
+    "at": "2026-11-26T08:54:59.689Z",
     "items": [
       {
         "id": "circling",
@@ -19523,12 +19586,6 @@
       "text": "Web-to-print, also known as Web2Print, remote publishing or print e-commerce is commercial printing using web sites. Companies and software solutions that deal in web-to-print use standard e-commerce and online services like hosting, website design, and cross-media marketing. Partners and customers may submit print jobs, do online pre-press reviews/previews, design things like postcards directly on a website using rich user interfaces, direct cross-media marketing and offer services such as vari"
     },
     {
-      "at": "2026-11-25T08:54:46.934Z",
-      "query": "how to build a small wooden corner shelf",
-      "title": "Russian wooden architecture",
-      "text": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. Sometimes this concept includes wooden buildings of professional architecture, eclectic buildings combining elements of folk architecture and professional architecture, as well as modern attempts to rev"
-    },
-    {
       "at": "2026-11-25T09:10:59.460Z",
       "query": "to build a small clumsy shelf for the corner",
       "title": "Glossary of baseball terms",
@@ -19546,6 +19603,13 @@
       "query": "how to build a wooden birdhouse",
       "title": "Purple martin",
       "text": "The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America. They are kno"
+    },
+    {
+      "at": "2026-11-26T08:55:00.283Z",
+      "query": "to build a plain wooden shelf",
+      "title": "Russian wooden architecture",
+      "text": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. Sometimes this concept includes wooden buildings of professional architecture, eclectic buildings combining elements of folk architecture and professional architecture, as well as modern attempts to rev",
+      "project": "Build a plain wooden shelf"
     }
   ],
   "phone": {
@@ -21882,15 +21946,6 @@
   "curious": {
     "sparks": [
       {
-        "topic": "Accordion",
-        "text": "Somewhere down the street someone plays an accordion, slow and a little off.",
-        "url": "",
-        "from": "street",
-        "via": null,
-        "at": "2026-11-22T19:01:50.637Z",
-        "shown": 2
-      },
-      {
         "topic": "Constellation",
         "text": "A constellation is an area on the celestial sphere in which a group of visible stars forms a perceived pattern or outline, typically representing an animal, mythological subject, or inanimate object. The first constellations were likely defined in prehistory. People used them to relate stories of their beliefs, experiences, creation, and mythology. Different cultures and countries invented their…",
         "url": "https://en.wikipedia.org/wiki/Constellation",
@@ -22071,15 +22126,6 @@
         "shown": 2
       },
       {
-        "topic": "Russian wooden architecture",
-        "text": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. Sometimes this concept includes wooden buildings of professional architecture, eclectic buildings…",
-        "url": "https://en.wikipedia.org/wiki/Russian_wooden_architecture",
-        "from": "search",
-        "via": null,
-        "at": "2026-11-25T08:54:46.440Z",
-        "shown": 2
-      },
-      {
         "topic": "Glossary of baseball terms",
         "text": "This is an alphabetical list of selected unofficial and specialized terms, phrases, and other jargon used in baseball, along with their definitions, including illustrative examples for many entries. 0–9 0 \"Oh and ...\" See count. 1 The number 1 in baseball refers to the pitcher's position, a shorthand call for throwing to first, a single hit, and a fastball sign. 1-2-3 inning An inning in which a…",
         "url": "https://en.wikipedia.org/wiki/Glossary_of_baseball_terms",
@@ -22150,6 +22196,24 @@
         "via": null,
         "at": "2026-11-26T08:30:24.680Z",
         "shown": 2
+      },
+      {
+        "topic": "Octopus",
+        "text": "An octopus has three hearts and blue blood. Two of the hearts are only for its gills.",
+        "url": "",
+        "from": "traveller",
+        "via": null,
+        "at": "2026-11-26T08:54:57.583Z",
+        "shown": 1
+      },
+      {
+        "topic": "Russian wooden architecture",
+        "text": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. Sometimes this concept includes wooden buildings of professional architecture, eclectic buildings…",
+        "url": "https://en.wikipedia.org/wiki/Russian_wooden_architecture",
+        "from": "search",
+        "via": null,
+        "at": "2026-11-26T08:54:59.679Z",
+        "shown": 0
       }
     ],
     "interests": [
@@ -22166,6 +22230,12 @@
         "score": 1.8,
         "since": "2026-11-22T14:04:04.289Z",
         "last": "2026-11-22T14:04:04.289Z"
+      },
+      {
+        "topic": "Russian wooden architecture",
+        "score": 1.7,
+        "since": "2026-11-25T08:54:46.440Z",
+        "last": "2026-11-26T08:54:59.679Z"
       },
       {
         "topic": "Constellation",
@@ -22190,12 +22260,6 @@
         "score": 0.7,
         "since": "2026-11-24T20:44:37.069Z",
         "last": "2026-11-24T20:44:37.069Z"
-      },
-      {
-        "topic": "Russian wooden architecture",
-        "score": 0.7,
-        "since": "2026-11-25T08:54:46.440Z",
-        "last": "2026-11-25T08:54:46.440Z"
       },
       {
         "topic": "Glossary of baseball terms",
@@ -22509,27 +22573,9 @@
     "known": {
       "library": "2026-11-23T11:35:53.209Z"
     },
-    "count": 23
+    "count": 24
   },
-  "where": {
-    "id": "otp3pco",
-    "place": "drops",
-    "thing": null,
-    "words": "pick up the note someone left on the square",
-    "leftAt": "2026-11-26T08:38:48.134Z",
-    "arriveAt": "2026-11-26T08:41:48.134Z",
-    "leaveAt": "2026-11-26T08:45:48.134Z",
-    "homeAt": "2026-11-26T08:48:48.134Z",
-    "job": {
-      "place": "drops",
-      "kind": "fetch",
-      "words": "pick up the note someone left on the square",
-      "drop": "ttp3oyo",
-      "spot": "drop_square",
-      "name": "a note from Sam"
-    },
-    "spot": "drop_square"
-  },
+  "where": null,
   "finds": [
     {
       "name": "a blue marble someone lost",
@@ -23019,6 +23065,24 @@
       "gift": null,
       "read": null,
       "saw": "my empty field",
+      "cut": null
+    },
+    {
+      "id": "otp3pco",
+      "place": "drops",
+      "thing": null,
+      "leftAt": "2026-11-26T08:38:48.134Z",
+      "homeAt": "2026-11-26T08:54:57.583Z",
+      "weather": {
+        "kind": "cloudy",
+        "temp": -0.3
+      },
+      "did": "I picked up the note on the square. It is from Sam, a sailor, who was passing through: \"An octopus has three hearts and blue blood. Two of the hearts are only for its gills.\"",
+      "found": [],
+      "met": null,
+      "gift": null,
+      "read": null,
+      "saw": "a note that lay waiting for me",
       "cut": null
     }
   ],
@@ -23744,8 +23808,11 @@
       "spot": "drop_square",
       "where": "on the square",
       "at": "2026-11-26T08:30:24.679Z",
-      "status": "lying",
-      "madeUp": true
+      "status": "found",
+      "madeUp": true,
+      "foundAt": "2026-11-26T08:54:57.583Z",
+      "how": "fetched",
+      "kept": true
     }
   ],
   "learned": [
@@ -23811,6 +23878,15 @@
       "text": "I walked across your square. It is very tidy. Too tidy, maybe? A town needs one strange thing in it.",
       "said": "A lighthouse keeper talking about strange things. Look at your own tower first.",
       "at": "2026-11-25T19:35:45.029Z"
+    },
+    {
+      "id": "ttp3oyo",
+      "from": "Sam",
+      "who": "a sailor",
+      "topic": "Octopus",
+      "text": "An octopus has three hearts and blue blood. Two of the hearts are only for its gills.",
+      "said": "Three hearts just for the gills sounds like a lot of overengineering.",
+      "at": "2026-11-26T08:54:59.282Z"
     }
   ],
   "beliefs": [
