@@ -7162,3 +7162,10 @@ Play my new silver flute.
 - do (play my new silver flute to try the sound): Play my new silver flute.
 - mood: content
 
+## 26/11/2026, 20:28:19
+My basil is ready to harvest, and I want to cook with it since I am starving.
+> My basil is ready to harvest, and I want to cook with it since I am starving.
+- harvest (basil): Harvest the basil
+- do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
+- mood: content
+
