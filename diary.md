@@ -7098,3 +7098,9 @@ I finished my simulation project and I want to check the notice board to see wha
 - go_out: Let's check the board.
 - mood: dry
 
+## 26/11/2026, 18:18:16
+I want to draw a cat for the notice board to earn some coins.
+> I want to draw a cat for the notice board to earn some coins.
+- draw (plain wooden shelf): I will draw the cat for the notice board.
+- mood: dry
+
