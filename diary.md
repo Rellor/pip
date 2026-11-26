@@ -6832,3 +6832,9 @@ My shelves are full and my last decorate attempt failed because I have too many.
 - do (Move the ceramic desk lamp base to my desk.): Move the ceramic desk lamp base to the desk
 - mood: grumpy
 
+## 26/11/2026, 10:07:09
+My ceramic desk lamp base is better near the desk so I can read, and my room feels a bit full.
+> My ceramic desk lamp base is better near the desk so I can read, and my room feels a bit full.
+- move_thing (ceramic desk lamp base): Move the lamp to the desk.
+- mood: grumpy
+
