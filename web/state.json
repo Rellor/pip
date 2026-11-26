@@ -1,6 +1,6 @@
 {
   "mood": "restless",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -12366,49 +12366,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-26T07:58:06.522Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2343,
-      "output": 191,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "My legs want out and my room feels small after being inside for 11 hours. I need some fresh air.",
-    "inner": "My legs want out and my room feels small after being inside for 11 hours. I need some fresh air.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "my field",
-          "what": "walk around my field and pick a spot to build on",
-          "name": "walk around my field and pick a spot to build on"
-        },
-        "detail": "my field",
-        "thought": "Go outside for a walk to stretch my legs.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-26T08:06:11.129Z",
+    "via": "outside",
+    "thought": "I am at my field: I walk around my field and pick a spot to build on.",
     "action": "go_out",
     "details": {
-      "place": "my field",
-      "what": "walk around my field and pick a spot to build on",
-      "name": "walk around my field and pick a spot to build on"
+      "place": "field"
     },
-    "detail": "my field",
-    "enjoyment": 6,
+    "detail": "I am at my field: I walk around my field and pick a spot to build on.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "field",
+      "phase": "there",
+      "back": "2026-11-26T08:30:06.522Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -12500,14 +12473,8 @@
     "2026-11-23 the paint walls stand between the buildings"
   ],
   "quota": {
-    "day": "2026-11-25",
-    "calls": {
-      "gemini-3.5-flash-lite": 164,
-      "gemini-3.1-flash-lite": 31,
-      "gemini-3.8-flash": 16,
-      "gemini-3.6-flash": 12,
-      "gemini-3.5-flash": 3
-    },
+    "day": "2026-11-26",
+    "calls": {},
     "out": {},
     "history": [
       {
@@ -12606,12 +12573,18 @@
           "gemini-3.6-flash": 16,
           "gemini-3.5-flash": 10
         }
+      },
+      {
+        "day": "2026-11-25",
+        "calls": {
+          "gemini-3.5-flash-lite": 164,
+          "gemini-3.1-flash-lite": 31,
+          "gemini-3.8-flash": 16,
+          "gemini-3.6-flash": 12,
+          "gemini-3.5-flash": 3
+        }
       }
-    ],
-    "slow": {
-      "gemini-3.1-flash-lite": 1795617513865,
-      "gemini-3.8-flash": 1795632679225
-    }
+    ]
   },
   "weather": {
     "at": "2026-11-26T07:50:00.059Z",
@@ -12793,21 +12766,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-26T07:58:06.528Z",
-  "fullness": 7.43,
+  "fullness": 7.27,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.23,
-  "joy": 4.22,
-  "calm": 5.65,
+  "wonder": 5.58,
+  "joy": 4.45,
+  "calm": 5.51,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.37
+    "excited": 0.22
   },
-  "feelAt": "2026-11-26T07:58:04.760Z",
+  "feelAt": "2026-11-26T08:06:11.109Z",
   "lastAte": "2026-11-26T07:41:54.872Z",
   "studio": {
     "songs": [
@@ -13522,12 +13495,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.08,
-    "curiosity": 2.03,
+    "creativity": 0.16,
+    "curiosity": 2.1,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 0,
-    "at": "2026-11-26T07:58:04.760Z",
+    "at": "2026-11-26T08:06:11.109Z",
     "coziness": 2.3
   },
   "recent": {
