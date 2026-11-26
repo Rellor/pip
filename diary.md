@@ -6998,3 +6998,9 @@ I want to look up how a birdhouse is made so I can build it and earn some coins.
 - search_web (how to build a wooden birdhouse): Let's check how to make a birdhouse.
 - mood: focused
 
+## 26/11/2026, 14:17:51
+My room feels too full, so I want to put away a lamp to clear some space.
+> My room feels too full, so I want to put away a lamp to clear some space.
+- remove_decoration (cozy night owl reading lamp): Put away the cozy night owl reading lamp.
+- mood: focused
+
