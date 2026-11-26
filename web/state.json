@@ -11,12 +11,6 @@
   "ideas": [],
   "activities": [
     {
-      "at": "2026-11-26T07:04:24.131Z",
-      "action": "eat",
-      "detail": "basil",
-      "enjoyment": 7
-    },
-    {
       "at": "2026-11-26T07:12:28.874Z",
       "action": "harvest",
       "detail": "mint",
@@ -318,6 +312,12 @@
       "action": "water",
       "detail": "mint",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-26T13:10:01.944Z",
+      "action": "decorate",
+      "detail": "night_sky_slider_box",
+      "enjoyment": 7
     }
   ],
   "notes": [
@@ -708,7 +708,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.775,
+      "weight": 7.773,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -718,7 +718,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.807,
+      "weight": 9.805,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -729,7 +729,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.464,
+      "weight": 7.462,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -739,7 +739,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.899,
+      "weight": 9.897,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -750,7 +750,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.748,
+      "weight": 8.746,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -761,7 +761,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.461,
+      "weight": 8.459,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -771,7 +771,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.32,
+      "weight": 7.318,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -781,7 +781,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.927,
+      "weight": 9.925,
       "lastUsed": "2026-11-26T07:30:45.253Z",
       "tier": "long",
       "uses": 3
@@ -792,7 +792,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.844,
+      "weight": 8.842,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -802,7 +802,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.16,
+      "weight": 8.158,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -813,7 +813,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.517,
+      "weight": 9.515,
       "lastUsed": "2026-11-26T07:30:45.253Z",
       "tier": "long",
       "uses": 5
@@ -824,7 +824,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.218,
+      "weight": 7.216,
       "lastUsed": "2026-11-22T12:49:28.901Z",
       "tier": "long"
     },
@@ -834,7 +834,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.932,
+      "weight": 9.93,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -845,7 +845,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.615,
+      "weight": 7.613,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -855,7 +855,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.021,
+      "weight": 9.019,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -865,7 +865,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.758,
+      "weight": 7.756,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -875,7 +875,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.082,
+      "weight": 9.08,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -885,7 +885,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.831,
+      "weight": 7.829,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -895,7 +895,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.56,
+      "weight": 7.558,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -905,7 +905,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.565,
+      "weight": 7.563,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -915,7 +915,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.99,
+      "weight": 9.988,
       "lastUsed": "2026-11-26T12:26:31.569Z",
       "tier": "long",
       "uses": 6
@@ -926,7 +926,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.506,
+      "weight": 8.504,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -937,7 +937,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.437,
+      "weight": 9.435,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 4
@@ -948,7 +948,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.11,
+      "weight": 8.108,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -959,7 +959,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.807,
+      "weight": 9.805,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -970,7 +970,7 @@
       "text": "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.205,
+      "weight": 7.203,
       "lastUsed": "2026-11-22T21:45:14.740Z",
       "tier": "long"
     },
@@ -980,7 +980,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.523,
+      "weight": 8.521,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -991,7 +991,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.807,
+      "weight": 9.805,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 8
@@ -1002,7 +1002,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.309,
+      "weight": 7.307,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -1012,7 +1012,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.309,
+      "weight": 7.307,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -1022,7 +1022,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.322,
+      "weight": 7.32,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1032,7 +1032,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.322,
+      "weight": 7.32,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1042,7 +1042,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.807,
+      "weight": 9.805,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -1053,7 +1053,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.653,
+      "weight": 8.651,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1064,7 +1064,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.807,
+      "weight": 9.805,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 6
@@ -1075,7 +1075,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.779,
+      "weight": 7.777,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1086,7 +1086,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling. I brought home a blue marble someone lost.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.178,
+      "weight": 6.169,
       "lastUsed": "2026-11-25T20:32:21.197Z",
       "tier": "short",
       "uses": 1
@@ -1097,7 +1097,7 @@
       "text": "I am home again from the pond in the park. I sat on the bench under the willow and watched the ducks. One of them slept with its head under its wing. I brought home a forked stick.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.943,
+      "weight": 5.934,
       "lastUsed": "2026-11-25T18:27:53.740Z",
       "tier": "short"
     },
@@ -1107,20 +1107,10 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.522,
+      "weight": 6.512,
       "lastUsed": "2026-11-26T08:30:24.683Z",
       "tier": "short",
       "uses": 1
-    },
-    {
-      "id": "mmwwm3yq560",
-      "at": "2026-11-25T21:04:59.020Z",
-      "text": "Moving my things around wears me down, but the lamp needs to be where I read.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.253,
-      "lastUsed": "2026-11-25T21:04:59.020Z",
-      "tier": "short"
     },
     {
       "id": "mmwwmozg060",
@@ -1128,7 +1118,7 @@
       "text": "Moving my things around wears me down, but the lamp belongs by the desk.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.264,
+      "weight": 5.256,
       "lastUsed": "2026-11-25T21:21:19.727Z",
       "tier": "short"
     },
@@ -1138,7 +1128,7 @@
       "text": "Playing the guitar loud enough scares away the silence.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.277,
+      "weight": 5.269,
       "lastUsed": "2026-11-25T21:37:46.407Z",
       "tier": "short"
     },
@@ -1148,7 +1138,7 @@
       "text": "Moving things around too much just wears me down.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.289,
+      "weight": 5.281,
       "lastUsed": "2026-11-25T21:53:59.877Z",
       "tier": "short"
     },
@@ -1158,7 +1148,7 @@
       "text": "Mint is ready right when I need it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.296,
+      "weight": 5.288,
       "lastUsed": "2026-11-26T07:04:24.133Z",
       "tier": "short"
     },
@@ -1168,7 +1158,7 @@
       "text": "Building a plain wooden shelf helps clear up the clutter in my room.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.726,
+      "weight": 5.717,
       "lastUsed": "2026-11-26T07:28:42.425Z",
       "tier": "short"
     },
@@ -1178,7 +1168,7 @@
       "text": "Eating helps when I am starving, and starting a night sky project keeps me busy.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.736,
+      "weight": 5.727,
       "lastUsed": "2026-11-26T07:41:54.873Z",
       "tier": "short"
     },
@@ -1188,7 +1178,7 @@
       "text": "I should go outside more often instead of staring at my walls.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.749,
+      "weight": 5.74,
       "lastUsed": "2026-11-26T07:58:06.526Z",
       "tier": "short"
     },
@@ -1198,7 +1188,7 @@
       "text": "I am home again from my field. I walked all the way around my field. 1 hill or hole on it so far. I paced out a spot of 12 by 5 steps and stood in the middle of it: something big could stand right here.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.756,
+      "weight": 5.747,
       "lastUsed": "2026-11-26T08:30:24.397Z",
       "tier": "short"
     },
@@ -1208,7 +1198,7 @@
       "text": "I should keep working on my wooden shelf to clear the clutter.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.78,
+      "weight": 5.771,
       "lastUsed": "2026-11-26T08:38:48.138Z",
       "tier": "short"
     },
@@ -1218,7 +1208,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Sam, a sailor, who was passing through: \"An octopus has three hearts and blue blood. Two of the hearts are only for its gills.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.787,
+      "weight": 5.778,
       "lastUsed": "2026-11-26T08:54:57.583Z",
       "tier": "short"
     },
@@ -1228,7 +1218,7 @@
       "text": "Sam thinks octopuses have three hearts, two for gills.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.787,
+      "weight": 5.778,
       "lastUsed": "2026-11-26T08:54:59.287Z",
       "tier": "short"
     },
@@ -1238,7 +1228,7 @@
       "text": "Planning a project again helps when the first try fails because of too many items.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.815,
+      "weight": 5.806,
       "lastUsed": "2026-11-26T09:25:14.556Z",
       "tier": "short"
     },
@@ -1248,7 +1238,7 @@
       "text": "Moving my ceramic desk lamp base to the desk makes it more useful.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.831,
+      "weight": 5.822,
       "lastUsed": "2026-11-26T09:46:18.737Z",
       "tier": "short"
     },
@@ -1258,7 +1248,7 @@
       "text": "Moving the ceramic lamp to the desk makes reading easier.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.849,
+      "weight": 5.84,
       "lastUsed": "2026-11-26T10:07:09.029Z",
       "tier": "short"
     },
@@ -1268,7 +1258,7 @@
       "text": "I need to manage my existing shelves before trying to build another one.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.864,
+      "weight": 5.855,
       "lastUsed": "2026-11-26T10:18:22.097Z",
       "tier": "short"
     },
@@ -1278,7 +1268,7 @@
       "text": "Having too many shelves gets in the way of building a new one.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.884,
+      "weight": 5.875,
       "lastUsed": "2026-11-26T10:42:35.585Z",
       "tier": "short"
     },
@@ -1288,7 +1278,7 @@
       "text": "I should stop guessing and start planning, even if it feels slow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.886,
+      "weight": 5.877,
       "lastUsed": "2026-11-26T10:51:39.470Z",
       "tier": "short"
     },
@@ -1298,7 +1288,7 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.943,
+      "weight": 7.931,
       "lastUsed": "2026-11-26T12:16:01.460Z",
       "tier": "short"
     },
@@ -1308,7 +1298,7 @@
       "text": "Moving my things around wears me down, so projects are better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.963,
+      "weight": 5.954,
       "lastUsed": "2026-11-26T12:18:27.290Z",
       "tier": "short"
     },
@@ -1318,8 +1308,18 @@
       "text": "Watering plants keeps them alive and gives me something simple to do.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.977,
       "lastUsed": "2026-11-26T12:50:52.945Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwxkl0wv60",
+      "at": "2026-11-26T13:10:02.943Z",
+      "text": "I made night_sky_slider_box (I want to build a tiny simulation of the night sky with a moving piece, using what I learned about simple mechanical toggles and my previous night sky project.)",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.991,
+      "lastUsed": "2026-11-26T13:10:02.943Z",
       "tier": "short"
     }
   ],
@@ -1327,13 +1327,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-25T22:02:30.787Z",
   "thoughts": [
-    {
-      "at": "2026-11-26T08:38:48.138Z",
-      "text": "My room feels bare and I want to work on my wooden shelf project, but I also need to fetch the note left on the square.",
-      "short": "My room feels bare and I want to work on my wooden shelf project, but I also need to fetch the note left on the square.",
-      "mood": "stubborn",
-      "action": "go_out"
-    },
     {
       "at": "2026-11-26T08:54:59.287Z",
       "text": "I want to answer Sam's note about the octopus and then work on my wooden shelf project to clear the clutter.",
@@ -1565,6 +1558,14 @@
       "mood": "grumpy",
       "action": "water",
       "detail": "mint"
+    },
+    {
+      "at": "2026-11-26T13:10:01.950Z",
+      "text": "Work on my night sky simulation project",
+      "short": "Work on my night sky simulation project",
+      "mood": "grumpy",
+      "action": "decorate",
+      "detail": "night_sky_slider_box"
     }
   ],
   "outbox": [
@@ -1841,16 +1842,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-26T09:25:15.553Z",
-      "action": "do",
-      "thought": "replan the shelf project",
-      "as": "plan_project",
-      "move": null,
-      "emoji": "",
-      "what": "plan the steps of my project Build a plain wooden shelf",
-      "feeling": null
-    },
     {
       "at": "2026-11-26T09:33:21.621Z",
       "action": "move_thing",
@@ -2144,6 +2135,21 @@
       "thought": "Water the dry mint plants",
       "name": "mint",
       "result": "I watered mint. The soil stays damp for about 10 hours.",
+      "failed": null
+    },
+    {
+      "at": "2026-11-26T13:10:02.943Z",
+      "action": "decorate",
+      "thought": "Work on my night sky simulation project",
+      "uses": [
+        "Toggle star drift"
+      ],
+      "song": null,
+      "project": "Build a little simulation of night sky: something that moves by itself",
+      "name": "night_sky_slider_box",
+      "why": "I want to build a tiny simulation of the night sky with a moving piece, using what I learned about simple mechanical toggles and my previous night sky project.",
+      "place": "on the desk (x -4.25, z 1.85)",
+      "tool": null,
       "failed": null
     }
   ],
@@ -8356,6 +8362,203 @@
       "roomScaled": true,
       "updatedAt": "2026-11-25T19:02:26.639Z",
       "changedAt": "2026-11-25T19:02:26.639Z"
+    },
+    {
+      "id": "dmwxkl0wq242t",
+      "name": "night_sky_slider_box",
+      "why": "I want to build a tiny simulation of the night sky with a moving piece, using what I learned about simple mechanical toggles and my previous night sky project.",
+      "project": "Build a little simulation of night sky: something that moves by itself",
+      "song": null,
+      "uses": [
+        {
+          "label": "Toggle star drift",
+          "text": "I slide the toggle, and a tiny artificial star drifts slowly across the dark glass.",
+          "view": null,
+          "song": null,
+          "app": null,
+          "effect": "wonder",
+          "does": null,
+          "motion": null,
+          "steps": null
+        }
+      ],
+      "tool": null,
+      "zone": "surface",
+      "slot": null,
+      "free": true,
+      "base": "desk",
+      "label": "on the desk (x -4.25, z 1.85)",
+      "kind": "surface",
+      "pos": [
+        -4.25,
+        0.85,
+        1.85
+      ],
+      "rotY": 1.5707963267948966,
+      "scale": 1,
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            0.246,
+            0.035,
+            0.176
+          ],
+          "pos": [
+            0,
+            0.018,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1a1a24",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.211,
+            0.084,
+            0.028
+          ],
+          "pos": [
+            0,
+            0.056,
+            -0.07
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2c2c38",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.183,
+            0.113,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.113,
+            0.056
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#0d0d14",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            -0.056,
+            0.141,
+            0.063
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.042,
+            0.155,
+            0.063
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fff8d0",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.063,
+            0.084,
+            0.063
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d0e8ff",
+          "glow": true
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.042
+          ],
+          "pos": [
+            -0.035,
+            0.035,
+            0.014
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.028,
+            0.021,
+            0.028
+          ],
+          "pos": [
+            -0.035,
+            0.035,
+            0.035
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e0e0e0",
+          "glow": false
+        }
+      ],
+      "stand": [
+        -2.75,
+        1.85
+      ],
+      "at": "2026-11-26T13:10:07.943Z",
+      "createdAt": "2026-11-26T13:10:01.946Z",
+      "roomScaled": true
     }
   ],
   "projects": [
@@ -8368,7 +8571,7 @@
       "steps": [
         {
           "text": "a tiny version: one thing that moves by itself by a simple rule",
-          "done": false
+          "done": true
         },
         {
           "text": "add a slider or button that changes the rule",
@@ -8384,11 +8587,20 @@
         }
       ],
       "needs": [],
-      "versions": [],
+      "versions": [
+        {
+          "v": 1,
+          "kind": "decorate",
+          "name": "night_sky_slider_box",
+          "ref": "dmwxkl0wq242t",
+          "at": "2026-11-26T13:10:01.957Z"
+        }
+      ],
       "notes": [],
       "status": "working",
       "since": "2026-11-26T12:18:27.290Z",
-      "updatedAt": "2026-11-26T12:58:58.776Z"
+      "updatedAt": "2026-11-26T13:10:01.957Z",
+      "stuck": null
     },
     {
       "id": "mwnukypn",
@@ -12390,43 +12602,322 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-26T12:58:58.773Z",
-    "via": "brain",
+    "at": "2026-11-26T13:10:01.943Z",
+    "via": "autopilot",
     "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 1
+      "gemini-3.5-flash-lite": 2
     },
+    "modelNotes": [
+      "gemini-3.5-flash-lite answered (gemini-3.8-flash was busy or capped)"
+    ],
+    "fallback": true,
     "tokens": {
-      "calls": 1,
-      "input": 2352,
-      "output": 242,
+      "calls": 2,
+      "input": 8764,
+      "output": 752,
       "models": {
-        "gemini-3.5-flash-lite": 1
+        "gemini-3.5-flash-lite": 2
       }
     },
     "intervalMin": 8,
-    "thought": "I finished my project and want to work on a new one about the night sky, and my mint plants need water.",
-    "inner": "I finished my project and want to work on a new one about the night sky, and my mint plants need water.",
+    "thought": "Work on my night sky simulation project",
+    "inner": "",
     "sent": false,
     "steps": [
       {
-        "action": "water",
+        "action": "decorate",
         "details": {
-          "plant": "mint"
+          "what": "a tiny version: one thing that moves by itself by a simple rule (for my project \"Build a little simulation of night sky: something that moves by itself\")",
+          "why": "I want to build a tiny simulation of the night sky with a moving piece, using what I learned about simple mechanical toggles and my previous night sky project.",
+          "project": "Build a little simulation of night sky: something that moves by itself",
+          "name": "night_sky_slider_box",
+          "where": "on the desk",
+          "parts": [
+            {
+              "shape": "box",
+              "size": [
+                0.35,
+                0.05,
+                0.25
+              ],
+              "pos": [
+                0,
+                0.025,
+                0
+              ],
+              "color": "#1a1a24",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.3,
+                0.12,
+                0.04
+              ],
+              "pos": [
+                0,
+                0.08,
+                -0.1
+              ],
+              "color": "#2c2c38",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.26,
+                0.16,
+                0.02
+              ],
+              "pos": [
+                0,
+                0.16,
+                0.08
+              ],
+              "color": "#0d0d14",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.015
+              ],
+              "pos": [
+                -0.08,
+                0.2,
+                0.09
+              ],
+              "color": "#ffffff",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.02
+              ],
+              "pos": [
+                0.06,
+                0.22,
+                0.09
+              ],
+              "color": "#fff8d0",
+              "glow": true
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.015
+              ],
+              "pos": [
+                0.09,
+                0.12,
+                0.09
+              ],
+              "color": "#d0e8ff",
+              "glow": true
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.01,
+                0.01,
+                0.06
+              ],
+              "pos": [
+                -0.05,
+                0.05,
+                0.02
+              ],
+              "rot": [
+                90,
+                0,
+                0
+              ],
+              "color": "#d4af37",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.03,
+                0.04
+              ],
+              "pos": [
+                -0.05,
+                0.05,
+                0.05
+              ],
+              "color": "#e0e0e0",
+              "glow": false
+            }
+          ],
+          "uses": [
+            {
+              "label": "Toggle star drift",
+              "text": "I slide the toggle, and a tiny artificial star drifts slowly across the dark glass.",
+              "effect": "wonder"
+            }
+          ]
         },
-        "detail": "mint",
-        "thought": "Water the dry mint plants",
-        "enjoyment": 6,
+        "detail": "night_sky_slider_box",
+        "thought": "Work on my night sky simulation project",
+        "enjoyment": 7,
         "found": null,
-        "made": null
+        "made": {
+          "id": "dmwxkl0wq242t",
+          "stand": [
+            -2.75,
+            1.85
+          ],
+          "pos": [
+            -4.25,
+            0.85,
+            1.85
+          ]
+        }
       }
     ],
-    "action": "water",
+    "action": "decorate",
     "details": {
-      "plant": "mint"
+      "what": "a tiny version: one thing that moves by itself by a simple rule (for my project \"Build a little simulation of night sky: something that moves by itself\")",
+      "why": "I want to build a tiny simulation of the night sky with a moving piece, using what I learned about simple mechanical toggles and my previous night sky project.",
+      "project": "Build a little simulation of night sky: something that moves by itself",
+      "name": "night_sky_slider_box",
+      "where": "on the desk",
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            0.35,
+            0.05,
+            0.25
+          ],
+          "pos": [
+            0,
+            0.025,
+            0
+          ],
+          "color": "#1a1a24",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.3,
+            0.12,
+            0.04
+          ],
+          "pos": [
+            0,
+            0.08,
+            -0.1
+          ],
+          "color": "#2c2c38",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.26,
+            0.16,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.16,
+            0.08
+          ],
+          "color": "#0d0d14",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.015
+          ],
+          "pos": [
+            -0.08,
+            0.2,
+            0.09
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.06,
+            0.22,
+            0.09
+          ],
+          "color": "#fff8d0",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.015
+          ],
+          "pos": [
+            0.09,
+            0.12,
+            0.09
+          ],
+          "color": "#d0e8ff",
+          "glow": true
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.01,
+            0.01,
+            0.06
+          ],
+          "pos": [
+            -0.05,
+            0.05,
+            0.02
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.03,
+            0.04
+          ],
+          "pos": [
+            -0.05,
+            0.05,
+            0.05
+          ],
+          "color": "#e0e0e0",
+          "glow": false
+        }
+      ],
+      "uses": [
+        {
+          "label": "Toggle star drift",
+          "text": "I slide the toggle, and a tiny artificial star drifts slowly across the dark glass.",
+          "effect": "wonder"
+        }
+      ]
     },
-    "detail": "mint",
-    "enjoyment": 6,
+    "detail": "night_sky_slider_box",
+    "enjoyment": 7,
     "new_idea": null,
     "found": null
   },
@@ -12523,8 +13014,8 @@
   "quota": {
     "day": "2026-11-26",
     "calls": {
-      "gemini-3.5-flash-lite": 57,
-      "gemini-3.8-flash": 14,
+      "gemini-3.5-flash-lite": 60,
+      "gemini-3.8-flash": 15,
       "gemini-3.6-flash": 11,
       "gemini-3.5-flash": 10,
       "gemini-3.1-flash-lite": 3
@@ -12643,11 +13134,11 @@
       }
     ],
     "slow": {
-      "gemini-3.8-flash": 1795690635536
+      "gemini-3.8-flash": 1795699799784
     }
   },
   "weather": {
-    "at": "2026-11-26T12:50:47.836Z",
+    "at": "2026-11-26T13:07:03.646Z",
     "kind": "cloudy",
     "code": 3,
     "temp": 1,
@@ -12828,22 +13319,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-26T12:58:58.777Z",
-  "fullness": 8.93,
+  "memoryFadeAt": "2026-11-26T13:10:01.952Z",
+  "fullness": 8.77,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.05,
-  "joy": 3.83,
-  "calm": 5.35,
+  "wonder": 7.24,
+  "joy": 4.25,
+  "calm": 5.27,
   "emo": {
-    "irritated": 1.28,
+    "irritated": 0,
     "sad": 0,
-    "excited": 0.98
+    "excited": 0.59
   },
-  "feelAt": "2026-11-26T12:58:57.225Z",
+  "feelAt": "2026-11-26T13:07:03.455Z",
   "lastAte": "2026-11-26T12:26:32.912Z",
   "studio": {
     "songs": [
@@ -13558,21 +14049,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.24,
-    "curiosity": 2.08,
+    "creativity": 0,
+    "curiosity": 2.15,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1,
-    "at": "2026-11-26T12:58:57.225Z",
+    "at": "2026-11-26T13:07:03.455Z",
     "coziness": 3.3
   },
   "recent": {
     "moves": [
-      {
-        "move": "go_out",
-        "kind": "outside",
-        "at": "2026-11-26T11:07:49.601Z"
-      },
       {
         "move": "eat",
         "kind": "food",
@@ -13646,6 +14132,11 @@
         "move": "water",
         "kind": "garden",
         "at": "2026-11-26T12:58:58.779Z"
+      },
+      {
+        "move": "decorate",
+        "kind": "make",
+        "at": "2026-11-26T13:10:01.957Z"
       }
     ],
     "moods": [
@@ -13693,13 +14184,14 @@
       "plan_project": 3,
       "remove_decoration": 2,
       "play_piano": 1,
-      "water": 2
+      "water": 2,
+      "decorate": 1
     },
     "tried": {
       "eat": 4,
       "harvest": 1,
       "cook": 2,
-      "decorate": 9,
+      "decorate": 10,
       "do": 13,
       "move_thing": 5,
       "start_project": 4,
@@ -13716,14 +14208,14 @@
       "garden": 3,
       "play": 14,
       "room": 5,
-      "make": 7,
+      "make": 8,
       "outside": 2,
       "learn": 1,
       "music": 1
     },
     "moods": {
       "hungry": 3,
-      "grumpy": 30,
+      "grumpy": 31,
       "restless": 1,
       "stubborn": 4,
       "determined": 1
@@ -13732,7 +14224,7 @@
       "eat": 2.37,
       "harvest": 1.5,
       "cook": 2.6,
-      "decorate": 4.46,
+      "decorate": 5.53,
       "do": 8.04,
       "move_thing": -0.1,
       "go_out": -0.5,
@@ -13745,7 +14237,7 @@
   "skills": {
     "music": 52.5,
     "painting": 28,
-    "sculpture": 43,
+    "sculpture": 44,
     "woodwork": 38.5,
     "sewing": 6.5,
     "gardening": 62.5,
@@ -13776,24 +14268,7 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [
-      {
-        "thought": "Work on my night sky simulation project",
-        "enjoyment": 7,
-        "needs": "",
-        "forStep": {
-          "project": "Build a little simulation of night sky: something that moves by itself",
-          "text": "a tiny version: one thing that moves by itself by a simple rule"
-        },
-        "action": "decorate",
-        "details": {
-          "what": "a tiny version: one thing that moves by itself by a simple rule (for my project \"Build a little simulation of night sky: something that moves by itself\")",
-          "why": "The night sky keeps pulling at me and I want to make something big enough.",
-          "project": "Build a little simulation of night sky: something that moves by itself"
-        },
-        "make": true
-      }
-    ],
+    "queue": [],
     "decidedAt": "2026-11-26T12:58:58.772Z",
     "seen": {
       "tools": 12,
@@ -14017,7 +14492,7 @@
   "doneAt": {
     "read_book": "2026-11-24T11:37:16.378Z",
     "record_song": "2026-11-22T18:45:35.497Z",
-    "decorate": "2026-11-25T18:53:10.016Z",
+    "decorate": "2026-11-26T13:10:01.950Z",
     "make_app": "2026-11-24T17:03:35.940Z",
     "cook": "2026-11-26T09:38:02.315Z",
     "take_photo": "2026-11-22T20:53:03.793Z",
@@ -14355,7 +14830,7 @@
     "plant": 2,
     "ask_for": 12,
     "play_piano": 34,
-    "decorate": 40,
+    "decorate": 41,
     "cook": 21,
     "use": 18,
     "take_photo": 13,
@@ -14386,7 +14861,7 @@
     "shape_land": 1
   },
   "checkup": {
-    "at": "2026-11-26T12:58:58.781Z",
+    "at": "2026-11-26T13:10:01.959Z",
     "items": [
       {
         "id": "circling",
@@ -14404,9 +14879,9 @@
         "id": "failing",
         "ok": false,
         "label": "Moves",
-        "text": "making something failed 9 of 9 times today. Last reason: I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I impr.",
+        "text": "making something failed 9 of 10 times today. Last reason: I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I impr.",
         "look": "The same reason again and again is usually a bug in the game code for this move, not Pip being clumsy. A reason that changes each time is more likely Pip learning.",
-        "debug": "move: decorate\ntried today: 9, failed: 9\nlast tries:\n- 10:37 UTC FAILED \"plain_wall_shelf\": I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I improve one of them (change_thing), move one\n- 10:40 UTC FAILED \"plain wooden shelf\": I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I improve one of them (change_thing), move one\n- 11:59 UTC FAILED \"plain wooden shelf\": I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I improve one of them (change_thing), move one\n- 12:07 UTC FAILED \"plain wooden shelf\": I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I improve one of them (change_thing), move one"
+        "debug": "move: decorate\ntried today: 10, failed: 9\nlast tries:\n- 10:40 UTC FAILED \"plain wooden shelf\": I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I improve one of them (change_thing), move one\n- 11:59 UTC FAILED \"plain wooden shelf\": I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I improve one of them (change_thing), move one\n- 12:07 UTC FAILED \"plain wooden shelf\": I already have 3 things that are a shelf (small wooden shelf, tiny wooden shelf for my bird, small clumsy shelf for the corner). That is enough of those: I improve one of them (change_thing), move one\n- 13:10 UTC ok \"night_sky_slider_box\""
       },
       {
         "id": "pretend",
@@ -16430,14 +16905,6 @@
       ],
       "proud": true,
       "at": "2026-11-22T07:24:40.059Z"
-    },
-    {
-      "kind": "record_song",
-      "name": "A Bright Morning Vocal Tune",
-      "why": "I feel full of energy and want to make some sound.",
-      "song": "A Bright Morning Vocal Tune (tempo 108, voice + drums, form A-A-B-A)\nsection A: bar 1 voice \"C4 E4 G4 C5\", drums \"kick hat snare hat\" | bar 2 voice \"G4 E4 C4:2\", drums \"kick hat snare hat\"\nsection B: bar 1 voice \"E4 G4 C5 D5\", drums \"kick kick snare hat\" | bar 2 voice \"C5 G4 E4:2\", drums \"kick hat snare hat\"",
-      "proud": false,
-      "at": "2026-11-22T10:56:50.896Z"
     },
     {
       "kind": "record_song",
@@ -19276,6 +19743,169 @@
       ],
       "proud": false,
       "at": "2026-11-25T19:02:20.661Z"
+    },
+    {
+      "kind": "decorate",
+      "name": "night_sky_slider_box",
+      "why": "I want to build a tiny simulation of the night sky with a moving piece, using what I learned about simple mechanical toggles and my previous night sky project.",
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            0.25,
+            0.04,
+            0.18
+          ],
+          "pos": [
+            0,
+            0.02,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1a1a24",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.21,
+            0.08,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.06,
+            -0.07
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2c2c38",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.18,
+            0.11,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.11,
+            0.06
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#0d0d14",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            -0.06,
+            0.14,
+            0.06
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.04,
+            0.16,
+            0.06
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fff8d0",
+          "glow": true
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0.06,
+            0.08,
+            0.06
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d0e8ff",
+          "glow": true
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.04
+          ],
+          "pos": [
+            -0.04,
+            0.04,
+            0.01
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.02,
+            0.03
+          ],
+          "pos": [
+            -0.04,
+            0.04,
+            0.04
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e0e0e0",
+          "glow": false
+        }
+      ],
+      "proud": false,
+      "at": "2026-11-26T13:10:01.958Z"
     }
   ],
   "cookedAt": [
@@ -19305,7 +19935,7 @@
       "count": 9,
       "at": "2026-11-26T12:07:55.929Z",
       "firstAt": "2026-11-26T07:28:43.421Z",
-      "solvedAt": null
+      "solvedAt": "2026-11-26T13:10:02.943Z"
     },
     {
       "move": "cook",
@@ -22225,8 +22855,8 @@
         "score": 11.1,
         "since": "2026-11-20T19:57:15.292Z",
         "last": "2026-11-23T07:45:07.774Z",
-        "practice": 6,
-        "practisedAt": "2026-11-25T18:53:10.035Z"
+        "practice": 7,
+        "practisedAt": "2026-11-26T13:10:01.957Z"
       },
       {
         "topic": "quiet music",
@@ -22340,7 +22970,12 @@
     "until": "2026-11-26T14:42:42.964Z",
     "why": "move_thing: there was no room left on the desk, so it stays where it was. I take something off there first (move_thing or remove_decoration), or I leave it"
   },
-  "lookBack": null,
+  "lookBack": {
+    "kind": "thing",
+    "name": "night_sky_slider_box",
+    "file": null,
+    "at": "2026-11-26T13:10:01.958Z"
+  },
   "street": {
     "day": "2026-11-23",
     "queue": [],
