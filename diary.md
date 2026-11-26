@@ -7040,3 +7040,9 @@ I am full of energy and starving, so I want to eat something good.
 - eat (mint): Eat some mint because I am hungry.
 - mood: grumpy
 
+## 26/11/2026, 15:59:10
+My basil is ready to harvest, so I will grab it first. Then I want to decorate a birdhouse for the notice board.
+> My basil is ready to harvest, so I will grab it first. Then I want to decorate a birdhouse for the notice board.
+- harvest (basil): Harvest the basil since it is fully grown.
+- mood: grumpy
+
