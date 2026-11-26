@@ -6845,3 +6845,9 @@ I want to work on my wooden shelf project to clear up the room clutter.
 - do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
 - mood: grumpy
 
+## 26/11/2026, 10:18:22
+I tried twice to build the plain wooden shelf and it failed because I have too many shelves, so I will plan it again with different steps.
+> I tried twice to build the plain wooden shelf and it failed because I have too many shelves, so I will plan it again with different steps.
+- do (plan the steps of my project Build a plain wooden shelf): replan the plain wooden shelf project since my last tries failed due to too many shelves
+- mood: grumpy
+
