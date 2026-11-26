@@ -6920,3 +6920,9 @@ My room feels too full and I have enough shelves, so I will move my ceramic desk
 - do (hum a small tune while I swing my arms): That did not work out. I shake it off and hum a small tune while I swing my arms.
 - mood: grumpy
 
+## 26/11/2026, 12:18:27
+My room feels too full and moving things around wears me down, so I want to start a proper project about the night sky instead.
+> My room feels too full and moving things around wears me down, so I want to start a proper project about the night sky instead.
+- do (plan my new project: Build a little simulation of night sky: something that moves by itself): Start a night sky project
+- mood: grumpy
+
