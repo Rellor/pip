@@ -7080,3 +7080,9 @@ Someone left a note on the square, and I want to see what they want.
 - go_out: Go to the square and pick up the note.
 - mood: calm
 
+## 26/11/2026, 17:53:44
+Kofi asked about the most useless thing I ever made. I want to answer him honestly about my clumsy first tries.
+> Kofi asked about the most useless thing I ever made. I want to answer him honestly about my clumsy first tries.
+- walk_to (computer): Answering Kofi's note about useless things
+- mood: dry
+
