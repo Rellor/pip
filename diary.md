@@ -6723,3 +6723,8 @@ I am starving and my mint is finally ready, so I should harvest it and cook some
 - eat (basil): My tummy is rumbling. I eat something first.
 - mood: hungry
 
+## 26/11/2026, 07:12:28
+Harvest the ripe mint.
+- harvest (mint): Harvest the ripe mint.
+- mood: hungry
+
