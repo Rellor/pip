@@ -6795,3 +6795,9 @@ I want to continue working on my wooden shelf project to make progress and clear
 - do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
 - mood: determined
 
+## 26/11/2026, 09:25:14
+I tried to build the shelf a few times and failed because I have enough shelves already. I need to plan the project again properly.
+> I tried to build the shelf a few times and failed because I have enough shelves already. I need to plan the project again properly.
+- do (plan the steps of my project Build a plain wooden shelf): replan the shelf project
+- mood: grumpy
+
