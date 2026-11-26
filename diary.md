@@ -6877,3 +6877,9 @@ My shelf decoration failed because I have too many shelves, so I will put one aw
 - remove_decoration (small side table): Put away the extra small side table to clear some room
 - mood: grumpy
 
+## 26/11/2026, 10:51:39
+My attempts at the wooden shelf were clumsy and frustrating, so I need to plan it out properly before trying again. I also want to clear my room of unnecessary clutter to stop feeling so grumpy.
+> My attempts at the wooden shelf were clumsy and frustrating, so I need to plan it out properly before trying again. I also want to clear my room of unnecessary clutter to stop feeling so grumpy.
+- do (plan the steps of my project Build a plain wooden shelf): I need to break down the shelving project into steps that don't involve just guessing.
+- mood: grumpy
+
