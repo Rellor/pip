@@ -105,7 +105,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
   if (!p && !d.errand) p = options[0] ? placeOf(options[0].key) : null;
   if (!p) return { failed: `I cannot go out right now${options.length ? '' : ` (${canGo(s, 'pond', now).why ?? 'nowhere is open'})`}` };
   const may = canGo(s, p.key, now);
-  if (!may.ok) return { failed: `${may.why}${may.gear ? `. ${may.gear[0].toUpperCase()}${may.gear.slice(1)} would help: I can ask for it (ask_for)` : ''}${options.length ? `. I could go to ${options.map((o) => o.name).join(' or ')} instead` : ''}`, hinted: true };
+  if (!may.ok) return { failed: `${may.why}${may.gear ? `. ${may.gear[0].toUpperCase()}${may.gear.slice(1)} would help: I can put it on my wants list (want)` : ''}${options.length ? `. I could go to ${options.map((o) => o.name).join(' or ')} instead` : ''}`, hinted: true };
   const things = thingsNow(s, p, now);
   const said = String(d.what ?? '').toLowerCase();
   const before = (s.outings ?? []).filter((o) => o.place === p.key).map((o) => o.thing);

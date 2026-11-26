@@ -31,6 +31,9 @@ import { headRests as resting } from './models.js';
 export const MIN_MOVES = 6;
 export const MAX_MOVES = 10;
 export const ASKS_PER_DAY = 2;
+export const WANTS_MAX = 5; // wants on his list at one time
+const openWants = (s) => (s.asks ?? []).filter((a) => a.status === 'open');
+const outsideThings = (s) => (s.decor ?? []).filter((d) => d.kind === 'outside').length;
 const DAY = 86_400_000;
 
 const left = (s, action, now) => {
@@ -151,10 +154,16 @@ export const MOVES = [
   { name: 'check_board', line: (s, n) => `walk to the notice board on the square and read what people ask for${boardNotes(s, n).some((w) => !w.seen) ? ' (there is something new on it)' : ''}: I earn coins by making it: {}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'board', n).ok) && boardCalls(s, n), score: (s, n) => (boardNotes(s, n).some((w) => !w.seen) ? 1.6 : 0.7) },
   { name: 'fetch_note', line: (s) => `walk to where someone left a note for me (${lying(s)[0]?.where ?? 'in my world'}) and pick it up: {}`, when: (s, n) => !process.env.PIP_NO_OUT && lying(s).length > 0 && Boolean(canGo(s, 'drops', n).ok), score: () => 1.7 },
   { name: 'shape_land', line: (s) => `take the land tool from the land workshop and shape the ground of my world${(s.land ?? []).length ? '' : ' (it is all flat now)'}: {kind: "hill", "hole", or "flat" to undo one, where: "on my land" or a place like "by the pond", size: "small", "medium" or "big", name}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'land', n).ok) && landToday(s, n) < LAND_PER_DAY && (s.energy ?? 10) > 3, score: (s) => 0.55 + s.body.creativity / 5 + ((s.land ?? []).length ? 0 : 0.5) },
-  { name: 'paint_wall', line: () => 'paint something big on a wall outside in my world, for everyone to see (no paper or supplies needed): {what, why, wall: "any wall", or one I pick like "the wall by the flats" or "the back wall of the library"}', when: (s, n) => !process.env.PIP_NO_OUT && left(s, 'draw', n) > 0 && Boolean(canGo(s, 'walls', n).ok), score: (s) => 0.9 + s.body.creativity / 4 },
+  { name: 'paint_wall', line: () => 'paint something big on a wall outside in my world, for everyone to see (no paper or supplies needed): {what, why, wall: "any wall", or one I pick like "the wall by the flats" or "the back wall of the library"}', when: (s, n) => !process.env.PIP_NO_OUT && left(s, 'draw', n) > 0 && Boolean(canGo(s, 'walls', n).ok), score: (s) => 0.9 + s.body.creativity / 4 + ((s.gallery ?? s.art ?? []).some((a) => a.wall) ? 0 : 0.7) },
   { name: 'print_thing', line: () => 'design a small 3D model and print it at the print workshop (it stays there on my shelf of prints): {what, why}', when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'workshop', n).ok) && (s.prints ?? []).filter((x) => isToday(x.at, n)).length < 3, score: (s) => 0.7 + s.body.creativity / 4 },
   { name: 'go_out', line: (s, n) => `go outside for a while (I come home by myself): ${goLine(s, n)}: {place, what}`, when: (s, n) => goOptions(s, n).length > 0, score: (s, n) => wantsOut(s, n) },
-  { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
+  // His list of wants (it used to be a list of asks to Bas): anything he would like to have, or to exist in his world.
+  // He has to say why: a want with no reason is not written down. Bas reads the list; he can also get a thing himself.
+  { name: 'want', line: (s, n) => `I want something${askReason(s, n) ? ` (${askReason(s, n).slice(0, 70)})` : ''}: I put it on my wants list and say why in one honest sentence (no reason, no want). Bas reads the list: {what, why}`, when: (s, n) => openWants(s).length < WANTS_MAX && ((s.today?.done?.ask_for ?? 0) < ASKS_PER_DAY || Boolean(askReason(s, n))), score: (s, n) => (askReason(s, n) ? 2 : 0.6) },
+  { name: 'drop_want', line: (s) => `cross something off my wants list because I do not want it any more (${names(openWants(s).map((a) => a.item.slice(0, 24)), 5)}): {what, why}`, when: (s) => openWants(s).length >= 3, score: () => 0.3 },
+  // Building out in his world is its own move, so it is one of the things he sees he can do (he never once built outside
+  // while it was only a way to use "decorate").
+  { name: 'build_outside', maker: true, line: (s) => `build something big out in my world, for everyone to see${outsideThings(s) ? '' : ' (nothing of mine stands there yet)'}. It can be bigger than a house: {what, why, where: "on my field" or a place like "by the pond", metres: its longest side}`, when: (s, n) => !process.env.PIP_NO_OUT && left(s, 'build_outside', n) > 0 && !headRests(s, n) && (s.energy ?? 10) > 3, score: (s) => 1 + s.body.creativity / 4 + (outsideThings(s) ? 0 : 0.9) },
   // --- projects ---
   { name: 'dream', line: () => 'wish for something new in my world that is too big to make myself: a building that does something, a place, an animal (Bas might build it for real): {what, where, why}', when: (s, n) => daysSince(s.bigDreamAt, n) >= 3 && s.body.creativity >= 6, score: () => 0.8 },
   { name: 'work_on_project', line: (s) => `work on my project: the game does its next step the right way (${workable(s).slice(0, 2).map((p) => `"${p.title.slice(0, 40)}", next: ${p.steps.find((x) => !x.done).text.slice(0, workable(s).length > 1 ? 26 : 40)}`).join('; ')}): {title}`, when: (s) => workable(s).length > 0, score: () => 2.2 },
@@ -188,7 +197,7 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
   }
   scored.sort((a, b) => b.score - a.score);
   const pick = scored.slice(0, MAX_MOVES);
-  const MUST = ['do', 'tell', 'ask_for']; // always a free move; and when someone wrote or something is missing, a way to say so
+  const MUST = ['do', 'tell', 'want']; // always a free move; and when someone wrote or something is missing, a way to say so
   for (const must of MUST) {
     const hit = scored.find((x) => x.m.name === must);
     if (!hit || pick.includes(hit)) continue;

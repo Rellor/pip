@@ -115,6 +115,19 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       steps.push({ action: 'walk_to', details: { object: 'computer' }, thought: thought || 'I write back to a visitor.', enjoyment: 6 });
       continue;
     }
+    if (name === 'want' || name === 'ask_for') { // on his list of wants (the step is still called ask_for inside: his log, his day and the page know it by that name)
+      steps.push({ action: 'ask_for', details: { item: clip(d.what ?? d.item ?? d.name, 140), reason: clip(d.why ?? d.reason, 200) }, thought, enjoyment: 6, needs: '' });
+      continue;
+    }
+    if (name === 'drop_want') {
+      steps.push({ action: 'do', as: 'drop_want', details: { what: `cross "${clip(d.what ?? d.item, 60)}" off my list of wants`, want: clip(d.what ?? d.item, 140), why: clip(d.why, 160) }, thought, enjoyment: 5 });
+      continue;
+    }
+    if (name === 'build_outside') { // a thing made out in his world: the same making as decorate, at a place outside
+      const where = clip(d.where ?? d.place ?? '', 60).replace(/^\s*outside\s*/i, '') || 'on my field';
+      steps.push({ action: 'decorate', as: 'build_outside', details: { what: clip(d.what ?? d.name, 140), why: clip(d.why, 200), ...(d.project ? { project: d.project } : {}), where: `outside ${where}`, ...(Number(d.metres) > 0 ? { metres: Number(d.metres) } : { metres: 4 }) }, thought, enjoyment: 7, needs: '', make: true });
+      continue;
+    }
     if (name === 'dream') {
       if (clip(d.what, 140)) answer.asks_add.push({ item: `Dream: ${clip(d.what, 130)}${clip(d.where, 60) ? ` (${clip(d.where, 60)})` : ''}`.slice(0, 160), why: clip(d.why, 200), big: true });
       steps.push({ action: 'do', as: 'dream', details: { what: `dream about ${clip(d.what, 100)}` }, thought, enjoyment: 7 });
@@ -192,7 +205,7 @@ export function fakeReply(moves, random = Math.random) {
   const pool = moves.filter((m) => m.name !== 'tell');
   const forced = process.env.PIP_FAKE_MOVE && moves.find((m) => m.name === process.env.PIP_FAKE_MOVE); // tests: always this move when it is offered
   if (forced) return { moves: [{ move: forced.name, details: { title: process.env.PIP_FAKE_TITLE ?? '', ...(process.env.PIP_FAKE_WHAT ? { what: process.env.PIP_FAKE_WHAT } : {}), name: /"([^"]+)"/.exec(forced.line ?? '')?.[1]?.replace(/ v\d+$/, '') }, thought: '(fake) I want to.' }], reason: '(fake) test', mood: 'calm', remember: null };
-  if (process.env.PIP_FAKE_STYLE === 'greedy') pool.splice(0, pool.length, ...pool.filter((m) => m.name !== 'ask_for').slice(0, random() < 0.75 ? 1 : 2).slice(-1)); // like the real model: (almost) always the top move
+  if (process.env.PIP_FAKE_STYLE === 'greedy') pool.splice(0, pool.length, ...pool.filter((m) => m.name !== 'ask_for' && m.name !== 'want').slice(0, random() < 0.75 ? 1 : 2).slice(-1)); // like the real model: (almost) always the top move
   const n = 1 + Math.floor(random() * MAX_PICK);
   const picked = [];
   for (let i = 0; i < n && pool.length; i++) picked.push(pool.splice(Math.floor(random() * pool.length), 1)[0]);

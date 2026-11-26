@@ -6,7 +6,7 @@ import { MAX_ART_PER_DAY } from './art.js';
 import { MAX_APPS_PER_DAY } from './apps.js';
 import { MAX_CLOTHES_PER_DAY } from './clothes.js';
 import { MAX_MOVES_PER_DAY as MAX_NEW_MOVES_PER_DAY } from './dances.js';
-import { MAX_PER_DAY, MAX_UPDATES_PER_DAY, MAX_MOVES_PER_DAY, capOf } from './decor.js';
+import { MAX_PER_DAY, MAX_OUTSIDE_PER_DAY, MAX_UPDATES_PER_DAY, MAX_MOVES_PER_DAY, capOf, isOutside } from './decor.js';
 import { furnitureKey } from './decor.js';
 import { isToday } from './days.js';
 
@@ -30,7 +30,8 @@ export function dayLimits(s, now = Date.now()) {
     draw: { max: MAX_ART_PER_DAY, used: s.art.filter((a) => within(a.createdAt, now)).length, what: 'draw' },
     make_app: { max: MAX_APPS_PER_DAY, used: s.apps.filter((a) => within(a.createdAt, now)).length, what: 'write apps' },
     update_app: { max: MAX_APP_UPDATES_PER_DAY, used: s.apps.filter((a) => a.updatedAt && within(a.updatedAt, now)).length, what: 'change apps' },
-    decorate: { max: MAX_PER_DAY, used: s.decor.filter((x) => !x.image && within(x.createdAt, now)).length, what: 'make things for my room' },
+    decorate: { max: MAX_PER_DAY, used: s.decor.filter((x) => !x.image && x.kind !== 'outside' && within(x.createdAt, now)).length, what: 'make things for my room' },
+    build_outside: { max: MAX_OUTSIDE_PER_DAY, used: s.decor.filter((x) => !x.image && x.kind === 'outside' && within(x.createdAt, now)).length, what: 'build something outside' }, // its own count (a decorate step with a place outside)
     make_clothes: { max: MAX_CLOTHES_PER_DAY, used: s.wardrobe.filter((x) => within(x.madeAt || x.createdAt, now)).length, what: 'make clothes' },
     make_move: { max: MAX_NEW_MOVES_PER_DAY, used: s.moves.filter((m) => within(m.createdAt, now)).length, what: 'design new moves' },
     change_thing: { max: MAX_UPDATES_PER_DAY, used: updates, what: 'change things' },
@@ -57,9 +58,10 @@ export function preflight(s, steps, now = Date.now()) {
   let ate = false;
   for (const st of steps) {
     const a = st.action;
-    const key = SHARED[a] ?? a;
+    const outside = a === 'decorate' && !st.details?.print && isOutside(st.details?.where); // a thing built out in his world has its own count
+    const key = outside ? 'build_outside' : SHARED[a] ?? a;
     let why = null;
-    const L = lim[a];
+    const L = outside ? lim.build_outside : lim[a];
     if (L) {
       const u = lim[key].used + (used[key] ?? 0);
       if (u >= L.max) why = `I already used up my ${L.max} a day: I cannot ${L.what} again today`;

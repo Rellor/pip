@@ -485,7 +485,7 @@
   .tab { display:flex; align-items:center; justify-content:center; gap:5px; border:1px solid transparent; border-bottom:1px solid transparent; border-radius:999px; padding:7px 4px; font-size:14.5px; font-weight:600; color:var(--ink); background:var(--chip); }
   .tab[aria-selected="true"] { background:var(--ink); color:var(--panel); border-color:var(--ink); }
   .tab .tabi { font-size:16px; line-height:1; }
-  .tab .count { margin-left:0; }
+  .tab .count { position:absolute; top:-4px; right:-2px; margin-left:0; }
   .dot { top:2px; right:2px; }
   @media (max-width:600px) {
     #tabs { display:grid; grid-template-columns:repeat(5, minmax(0, 1fr)); gap:5px; padding:4px 8px 10px; }
@@ -580,6 +580,20 @@
   .pipsays p { font-size:15.5px; }
   .talkwait { margin-top:8px; font-size:14px; }
   .writecard { border-radius:16px; background:var(--card); }
+  /* his list of wants: one card each, with his reason */
+  .wantsnote { margin:-4px 0 12px; font-size:14.5px; }
+  .asklist { gap:10px; }
+  .asklist li.wantcard { display:block; list-style:none; margin:0; padding:12px 14px; border:1px solid var(--line); border-radius:16px; background:var(--card); }
+  .asklist li.muted { list-style:none; margin-left:0; padding-left:0; }
+  .wanthead { display:flex; align-items:flex-start; gap:8px; font-size:17px; line-height:1.3; }
+  .wanthead .wi { font-size:18px; }
+  .wantwhy { margin:8px 0 6px; padding:9px 12px; border-radius:12px; background:var(--chip); font-size:15.5px; }
+  .wantwhy span { display:block; font-size:13px; font-weight:700; margin-bottom:2px; }
+  .wantcard .meta { font-size:13px; color:var(--muted); }
+  .wantcard .buttons { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .donelist li { display:flex; flex-direction:column; gap:1px; text-decoration:none; color:var(--ink); font-size:15px; margin:0; padding:8px 0; border-top:1px solid var(--line); }
+  .donelist li:first-child { border-top:0; }
+  .donelist li span { color:var(--muted); font-size:13.5px; }
 </style>
 </head>
 <body>
@@ -644,7 +658,7 @@
       <button class="tab" role="tab" data-tab="day"><span class="tabi">📖</span><span>Today</span></button>
       <button class="tab" role="tab" data-tab="made"><span class="tabi">🧺</span><span>Made</span></button>
       <button class="tab" role="tab" data-tab="life"><span class="tabi">🐣</span><span>Pip</span></button>
-      <button class="tab" role="tab" data-tab="asks"><span class="tabi">🙏</span><span>Asks</span><span class="count" id="askcount"></span></button>
+      <button class="tab" role="tab" data-tab="asks"><span class="tabi">⭐</span><span>Wants</span><span class="count" id="askcount"></span></button>
       <button class="tab" role="tab" data-tab="messages"><span class="tabi">💬</span><span>Talk</span><span class="dot" id="msgdot"></span></button>
     </nav>
 
@@ -668,12 +682,13 @@
     </section>
 
     <section class="pane" data-pane="asks" hidden>
-      <h2>Pip would like from you</h2>
+      <h2>What Pip wants</h2>
+      <p class="muted wantsnote">His own list. For each thing he has to say why he wants it. You can give it to him, or he gets it himself.</p>
       <ul class="asklist" id="asks"></ul>
       <h2>Things Pip would like to be able to do</h2>
       <p class="muted">Pip looks up how something works and plans it. Parts he cannot make work yet are listed here, so they can be given to him.</p>
       <ul id="requests"></ul>
-      <details class="fold"><summary>Things you already gave him</summary><ul class="donelist" id="asksdone"></ul></details>
+      <details class="fold"><summary>Wants that came true, or that he let go</summary><ul class="donelist" id="asksdone"></ul></details>
       <div class="merged">
       <h2>Ask Pip to do something</h2>
       <form id="taskform" class="taskform">

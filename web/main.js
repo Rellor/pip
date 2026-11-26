@@ -4001,7 +4001,7 @@ function headlineBase(st) {
     case 'cook': return ['🍳', `Cooking ${d.dish || st.dish || 'something'}`];
     case 'take_photo': return ['📷', `Taking a photo of ${d.target || st.target || 'something'}`];
     case 'find_picture': return ['🔎', `Looking for a picture of “${d.query || st.query || '…'}”`];
-    case 'ask_for': return ['🙏', `Asking for ${d.item || st.item || 'something'}`];
+    case 'ask_for': return ['⭐', `Adding ${d.item || st.item || 'something'} to his wants list`];
     case 'place_tool': return ['🧰', `Putting ${d.name || st.name || 'a tool'} in the room`];
     case 'request_ability': return ['🙋', `Asking for a new ability: ${d.name || st.name || ''}`];
     case 'measure': return ['📏', `Measuring ${d.name || st.name || 'something'}`];
@@ -4103,7 +4103,7 @@ function dayCard(e) {
   const kind = KINDS[e.action] || 'other'; // anything without its own card still gets one, built from what the entry holds
   const [icon] = headline(e);
   const card = el('article', null, `card ${kind}`);
-  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the grocery store', out: e.action === 'came_home' ? 'Came home' : e.failed ? 'Wanted to go out' : 'Went out', event: 'Something happened', rest: 'Rested', ask: 'Asked for something', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
+  const labels = { search: 'Searched the web', read: e.action === 'browse' ? 'Browsed the web' : 'Read', piano: e.action === 'record_song' ? (e.failed ? 'Tried to record a song' : 'Recorded a song') : String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, diary: 'Wrote in his diary', shop: 'Went to the grocery store', out: e.action === 'came_home' ? 'Came home' : e.failed ? 'Wanted to go out' : 'Went out', event: 'Something happened', rest: 'Rested', ask: 'Added a want', walk: 'Walked', make: 'Worked on his room', eat: 'Ate something', do: 'Did something', cook: 'Cooked', photo: 'Took a photo', find: 'Found a picture', print: 'Printed a photo' };
   const header = el('header');
   header.append(el('span', icon), el('span', labels[kind] || String(e.action || 'something').replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()), 'kind'), el('time', hm(Date.parse(e.at))));
   card.append(header);
@@ -4357,7 +4357,7 @@ function lineOf(e) {
     case 'walk_to': return ['Walked', `to the ${e.object || 'room'}`];
     case 'take_photo': return ['Took a photo', e.target ? `of ${e.target}` : ''];
     case 'find_picture': return ['Looked for a picture', e.query || ''];
-    case 'ask_for': return ['Asked for', e.item || ''];
+    case 'ask_for': return ['Put on his wants list', e.item || ''];
     case 'blueprint': return ['Planned', name];
     case 'make_move': return ['Designed a move', name];
     case 'happened': return ['', e.what || 'Something happened'];
@@ -4927,36 +4927,41 @@ function render(s) {
   askOpen = open.length;
   $('askcount').textContent = askOpen + taskOpen || '';
   fill($('asks'), shownAsks.length
-    ? shownAsks.map((a) => {
-      const li = el('li');
-      li.append(el('div', a.item, 'what'));
-      if (a.why) li.append(el('div', a.why, 'why'));
+    ? shownAsks.map((a) => { // one card for each want: what, why (in his words), since when, and what you can do
+      const li = el('li', null, 'wantcard');
+      const item = String(a.item ?? '').replace(/^Dream:\s*/i, '');
+      const head = el('div', null, 'wanthead');
+      head.append(el('span', a.big ? '🌠' : '⭐', 'wi'), el('b', item.replace(/^./, (c) => c.toUpperCase())));
+      li.append(head);
+      const why = el('p', null, 'wantwhy');
+      why.append(el('span', 'Why he wants it'), a.why ? `“${a.why}”` : 'He did not say why.');
+      li.append(why);
       const was = answeredAsks[a.id ?? a.item];
       if (was) { // you answered: it stays here with a confirmation until Pip has saved it
-        li.append(el('div', was === 'done' ? '✅ Sent: you did this. Pip sees it when he next wakes up.' : '✅ Sent: you cannot do this one. Pip sees it when he next wakes up.', 'meta'));
+        li.append(el('div', was === 'done' ? '✅ Sent: you gave him this. Pip sees it when he next wakes up.' : '✅ Sent: not this one. Pip sees it when he next wakes up.', 'meta'));
         return li;
       }
-      li.append(el('div', `asked ${when(a.since)}`, 'meta'));
+      li.append(el('div', `${a.big ? 'a big wish for his world · ' : ''}on his list since ${when(a.since)}`, 'meta'));
       const row = el('div', null, 'buttons');
-      const done = el('button', '✓ I did this', 'small primary');
+      const done = el('button', '🎁 I gave him this', 'small primary');
       const answer = async (text, kind) => {
         row.querySelectorAll('button').forEach((b) => { b.disabled = true; });
-        done.textContent = kind === 'done' ? 'Sending…' : '✓ I did this';
+        done.textContent = kind === 'done' ? 'Sending…' : '🎁 I gave him this';
         if (await sendReply(text)) {
           toast('Sent! Pip sees it when he next wakes up.');
           answeredAsks[a.id ?? a.item] = kind;
           store('pip-asks-answered', JSON.stringify(answeredAsks));
           if (lastState) render(lastState);
-        } else row.querySelectorAll('button').forEach((b) => { b.disabled = false; done.textContent = '✓ I did this'; });
+        } else row.querySelectorAll('button').forEach((b) => { b.disabled = false; done.textContent = '🎁 I gave him this'; });
       };
       done.addEventListener('click', () => answer(`I did this for you: "${a.item}"`, 'done'));
-      const cant = el('button', "I can't do this", 'small');
+      const cant = el('button', 'Not this one', 'small');
       cant.addEventListener('click', () => answer(`I can't do this one: "${a.item}"`, 'cant'));
       row.append(done, cant);
       li.append(row);
       return li;
     })
-    : [el('li', 'Nothing right now. Pip will add things here when he wants something from you.', 'muted')]);
+    : [el('li', 'His list is empty right now. When Pip wants something, he writes it here, with his reason.', 'muted')]);
   const tasks = s.tasks || [];
   const knownTasks = new Set(tasks.map((t) => t.id));
   if (pendingTasks.some((p) => knownTasks.has(p.id))) {
@@ -5007,7 +5012,12 @@ function render(s) {
   }).filter(Boolean);
   fill($('tasklist'), sections.length ? sections : [el('p', 'Nothing yet. Ask Pip to do something, for example to build a kitchen.', 'muted')]);
   const closed = asks.filter((a) => a.status !== 'open' || answeredAsks[a.id ?? a.item]).reverse();
-  fill($('asksdone'), closed.length ? closed.map((a) => el('li', a.item)) : [el('li', 'nothing yet', 'muted')]);
+  fill($('asksdone'), closed.length ? closed.map((a) => { // what became of each want
+    const li = el('li');
+    const how = a.status === 'gone' ? `✂️ he let it go${a.goneWhy ? `: “${a.goneWhy}”` : ''}` : a.status === 'done' ? (a.self ? `⭐ he ${String((a.given ?? [])[0] ?? 'got it himself').replace(/\bmyself\b/, 'himself')}` : '🎁 you gave it to him') : answeredAsks[a.id ?? a.item] === 'done' ? '🎁 you gave it (on its way)' : 'not this one';
+    li.append(el('b', String(a.item ?? '').replace(/^Dream:\s*/i, '')), el('span', how));
+    return li;
+  }) : [el('li', 'Nothing yet.', 'muted')]);
 
   const outbox = s.outbox || [];
   latestMsg = outbox.at(-1)?.id ?? null;
