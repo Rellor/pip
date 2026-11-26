@@ -21,7 +21,7 @@ import { ensureProjects, projectLines, addVersion, judgeProject, findProject, wo
 import { checkup, markSent, PUSH_GAP_H, words, dayReport } from './checkup.js';
 import { roomScale, placeKind, sizeWords } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
-import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo } from './loops.js';
+import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo, noteFailures, offToday, offLines } from './loops.js';
 import { planRetry, startRetry, retryLines } from './retry.js';
 import { challengeLines, challengeSteps } from './curriculum.js';
 import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLetter } from './letters.js';
@@ -42,7 +42,7 @@ import { bestHits } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
-import { ensureIntentions, markIntentions } from './intent.js';
+import { ensureIntentions, markIntentions, letGoGoals } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf, kindOf } from './body.js';
 import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep, beliefs, beliefLines } from './night.js';
 import { availableMoves, instruments, workable } from './moves.js';
@@ -55,7 +55,7 @@ const THINK_ROOM = 3000; // these models think before they answer, and the think
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, capabilityGuide, blueprintGaps, requestAbility } from './blueprints.js';
-import { settleRoom, isOutside, purposeProblem, purposeHint, setFronts, rehangPictures, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { settleRoom, isOutside, purposeProblem, purposeHint, setFronts, rehangPictures, enoughOf, fullKinds, kindsWord, wantsOneMore, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, sketchStyle, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, applyEdits, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { lessonsFrom, themeFatigue } from './mirror.js';
@@ -568,6 +568,8 @@ function projectSteps(s, steps) {
   });
 }
 const findProjectAny = (s, title) => (s.projects ?? []).find((p) => p.title === title) ?? null;
+// For his prompt: the kinds of things he has enough of (decor.js), so he does not plan one more.
+const enoughLines = (s) => { const full = fullKinds(s.decor); return full.length ? [`I have enough of these in my room, so I make no more of them: ${full.map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', ')}. I change one (change_thing), put one in my chest, or make something else.`] : []; };
 function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWork = null }) {
   const when = new Date().toLocaleString('en-GB', { timeZone: TZ, weekday: 'long', hour: '2-digit', minute: '2-digit' });
   const sky = [isNight() ? 'night' : null, weatherText(s.weather)].filter(Boolean).join(', ');
@@ -591,7 +593,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...offLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -625,7 +627,7 @@ const PHOTO_SCHEMA = { type: 'OBJECT', properties: { shows_it: { type: 'BOOLEAN'
 async function morningGoals(s, soul, system) {
   const day = dayOf();
   try {
-    const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [] });
+    const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [], enough: fullKinds(s.decor).map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', ') });
     const reply = process.env.PIP_FAKE ? fakeGoals() : await askGemini(system, prompt, 1, [], { schema: goalSchema, maxTokens: THINK_ROOM + 400, group: 'big' });
     if (setGoals(s, reply, day)) { console.log(`🌅 goals for today: ${s.intent.items.map((i) => i.text).join(' | ')}`); return; }
   } catch (e) {
@@ -1127,6 +1129,7 @@ function applyInnerLife(s, r, detail, replying = false) {
   for (const p of (Array.isArray(r.projects_add) ? r.projects_add : []).slice(0, 1)) {
     const title = text(p?.title, 80);
     if (!title || s.projects.filter((x) => x.status === 'working').length >= 5 || s.projects.some((x) => x.status === 'working' && sameItem(x.title, title))) continue;
+    { const full = wantsOneMore(s.decor, title); if (full) { ensurePlan(s); s.plan.lastFail = { at, why: `start_project: I already have ${full.n} ${kindsWord(full.kind)}, and that is enough of those. I plan something else` }; console.log(`   ⛔ no project "${title}": he has ${full.n} ${kindsWord(full.kind)} already`); continue; } } // it could never be finished
     felt(s, 'projectStart');
     const ladder = challengeSteps(s, title); // a challenge from his ladder (curriculum.js): its steps are known
     if (ladder && (!(p?.steps ?? []).length || String(p.steps[0]).startsWith('look up how to'))) p.steps = ladder;
@@ -1426,6 +1429,20 @@ async function wakeUp() {
     answer.steps = decided(state, answer.steps);
     console.log(`🧠 ${via}: ${reasons.join('; ')}`);
   }
+  // Before any model is asked to design something: what failed three times today is off until tomorrow (loops.js), and
+  // one more of a kind he has enough of cannot work (decor.js). Both are settled here, at no cost.
+  { const off = answer.steps.map((st) => offToday(state, st));
+    if (off.some(Boolean)) {
+      const first = off.find(Boolean);
+      state.plan.lastFail = { at: new Date().toISOString(), why: `${first.move}: it did not work 3 times today (${first.why.slice(0, 100)}). I leave it until tomorrow` };
+      console.log(`⛔ off for today: ${off.filter(Boolean).map((o) => o.key).join(', ')}`);
+      const keep = answer.steps.filter((_, i) => !off[i]);
+      answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
+    } }
+  for (const [i, st] of answer.steps.entries()) {
+    const full = st.make && st.action === 'decorate' && !st.details?.print ? enoughOf(state.decor, st.details?.what) ?? enoughOf(state.decor, st.details?.name) : null; // (what he said he wants to make, or the name he gave it)
+    if (full) { answer.steps[i] = { ...st, make: false, planFail: full.why, planned: { ok: false } }; console.log(`   ⛔ not designed: he has ${full.n} ${kindsWord(full.kind)} already`); }
+  }
   // Things he designs: the maker makes them now (one model call each).
   for (const [i, st] of answer.steps.entries()) if (st.make) answer.steps[i] = await makeIt(state, soul, system, st);
   // A step that cannot work is dropped, and the brain hears why next time.
@@ -1627,7 +1644,12 @@ async function wakeUp() {
     }
     if (st.action === 'change_thing') st.made = updateDecor(state.decor, st.details, stepStart);
     if (st.action === 'move_thing') {
+      const spots = new Map(state.decor.map((d) => [d.id, JSON.stringify([d.pos, d.base ?? null, d.zone ?? null, d.rotY ?? 0])]));
       st.made = moveThing(state.decor, state.chest, isOutside(st.details.where) && !st.details.on ? { ...st.details, worldOpen: [...new Set([...unlockedKeys(state), ...knownKeys(state)])] } : st.details, stepStart);
+      const it = st.made.failed ? null : state.decor.find((d) => d.name === st.made.name);
+      if (it && /no room left on/.test(String(st.made.warn ?? '')) && spots.get(it.id) === JSON.stringify([it.pos, it.base ?? null, it.zone ?? null, it.rotY ?? 0])) { // it did not move: it could not go there, and it stands where it stood
+        st.made = { failed: `${String(st.made.warn).split(', so ')[0]}, so it stays where it was. I take something off there first (move_thing or remove_decoration), or I leave it`, hinted: true, name: st.made.name };
+      }
       if (st.made.chest) {
         state.chest = st.made.chest;
         setChest(state.chest);
@@ -2236,6 +2258,15 @@ async function wakeUp() {
       : Boolean(st.made) && !st.made.failed;
     const p = findProject(state, st.forStep.project);
     if (!worked) { // the same step failing again and again: after 2 tries it waits, and he plans it again
+      if (p && /That is enough of those/.test(String(st.made?.failed ?? ''))) { // it can never work: the project and the goal for it are let go
+        const kind = /things that are an? (\w+)|have \d+ (lamp)s/.exec(st.made.failed);
+        const word = kind?.[1] ?? kind?.[2] ?? 'thing';
+        Object.assign(p, { status: 'dropped', droppedWhy: `I have enough ${kindsWord(word)} already`, updatedAt: new Date().toISOString() });
+        letGoGoals(state, (t) => new RegExp(`\\b(${word}|${kindsWord(word)})\\b`, 'i').test(t), `I have enough ${kindsWord(word)}`);
+        addMemory(state, `I wanted to make one more ${word} ("${p.title}"). I have enough ${kindsWord(word)}. I let that plan go.`, 5, 'memory', new Date().toISOString());
+        console.log(`   🗑️  project let go: ${p.title} (enough ${kindsWord(word)})`);
+        continue;
+      }
       if (p) p.stuck = p.stuck?.text === st.forStep.text ? { text: st.forStep.text, n: p.stuck.n + 1, at: new Date().toISOString() } : { text: st.forStep.text, n: 1, at: new Date().toISOString() };
       continue;
     }
@@ -2297,6 +2328,7 @@ async function wakeUp() {
     const mine = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000);
     const rested = noteChoice(state, choice, gotSomewhere(mine), state.plan.lastFail?.why, Date.now(), mine.some((x) => x.failed && !x.fallback));
     if (rested) console.log(`🛑 loop: ${rested.key} chose 3 times with nothing to show; it rests until ${rested.until}`);
+    for (const off of noteFailures(state, mine)) console.log(`🛑 off for today: ${off.key} failed 3 times (${off.why.slice(0, 80)})`);
   }
   state.last = {
     at: new Date(startedAt).toISOString(),

@@ -4712,7 +4712,7 @@ function renderMind(s) {
     ? projects.map((p) => {
       const li = el('li', null, 'item' + (p.status === 'working' ? ' project' : ' projectdone'));
       const m = el('div', null, 'meta');
-      m.append(el('span', p.status === 'working' ? `since ${when(p.since)}` : p.status === 'done' ? '✓ done' : 'dropped'));
+      m.append(el('span', p.status === 'working' ? `since ${when(p.since)}` : p.status === 'done' ? '✓ done' : p.droppedWhy ? `let go: ${String(p.droppedWhy).replace(/^I have/, 'he has')}` : 'dropped'));
       const body = el('p');
       body.append(el('strong', p.title));
       if (p.why) body.append(`\n${p.why}`);
@@ -4786,7 +4786,7 @@ function renderMind(s) {
   } else np.append(el('span', 'No project right now.', 'muted'));
   const goals = s.intent?.items || [];
   const goalText = (g) => g.text.replace(/\s*\([a-z_]+\)/g, '').replace(/:\s*/, ': ');
-  fill($('goals'), goals.map((g) => el('li', `${g.done ? '✓' : '○'} ${goalText(g)}`, g.done ? 'done' : '')));
+  fill($('goals'), goals.map((g) => el('li', g.gone ? `✕ ${goalText(g)} (he let this go: ${String(g.gone).replace(/^I have/, 'he has')})` : `${g.done ? '✓' : '○'} ${goalText(g)}`, g.done || g.gone ? 'done' : '')));
   const skills = Object.entries(s.skills || {}).filter(([, xp]) => xp > 0);
   if ($('skills')) fill($('skills'), skills.length ? skills.map(([k, xp]) => el('span', `${k} ${Math.min(10, 1 + Math.floor(Math.sqrt(xp / 2)))}`, 'chip')) : [el('span', 'just starting', 'muted')]);
   const interests = s.interests || [];

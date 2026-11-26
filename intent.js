@@ -37,7 +37,7 @@ export function ensureIntentions(s, now = Date.now()) {
   const d = dayOf(now);
   if (s.intent.day === d) return false;
   const prev = s.intent;
-  const kept = prev.items.length > 0 && prev.items.every((i) => i.done);
+  const kept = prev.items.length > 0 && prev.items.every((i) => i.done || i.gone);
   const c = candidates(s, now);
   const h = hash(d);
   const second = ['music', 'tend', 'revisit'][h % 3];
@@ -51,7 +51,7 @@ export function markIntentions(s, entries) {
   const out = [];
   for (const e of entries) {
     if (e.failed || e.fallback) continue;
-    for (const i of s.intent?.items ?? []) if (!i.done && MATCH[i.cat]?.(e, s, i)) { i.done = true; out.push(i); }
+    for (const i of s.intent?.items ?? []) if (!i.done && !i.gone && MATCH[i.cat]?.(e, s, i)) { i.done = true; out.push(i); }
   }
   return out;
 }
@@ -59,5 +59,12 @@ export function markIntentions(s, entries) {
 export function intentionsText(s) {
   const it = s.intent?.items ?? [];
   if (!it.length) return '';
-  return `TODAY I WANT TO (my own plan for today. I can change it, ignore it or do it in any order)\n${it.map((i) => `- [${i.done ? 'x' : ' '}] ${i.text}`).join('\n')}${s.intent.streak ? `\nI kept all my plans ${s.intent.streak} day${s.intent.streak === 1 ? '' : 's'} in a row.` : ''}`;
+  return `TODAY I WANT TO (my own plan for today. I can change it, ignore it or do it in any order)\n${it.map((i) => (i.gone ? `- [-] ${i.text} (I let this one go: ${i.gone})` : `- [${i.done ? 'x' : ' '}] ${i.text}`)).join('\n')}${s.intent.streak ? `\nI kept all my plans ${s.intent.streak} day${s.intent.streak === 1 ? '' : 's'} in a row.` : ''}`;
+}
+
+// A goal that can never work today (one more of a kind he has enough of) is let go: it stops pulling at him.
+export function letGoGoals(s, test, why) {
+  const out = [];
+  for (const i of s.intent?.items ?? []) if (!i.done && !i.gone && test(i.text)) { i.gone = String(why).slice(0, 80); out.push(i); }
+  return out;
 }

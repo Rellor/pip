@@ -3,7 +3,7 @@
 // so the site shows them and code ticks them off when a move really does one).
 export const KINDS = ['make', 'learn', 'tend', 'music', 'revisit', 'explore', 'outside'];
 
-export function goalPrompt({ soul, feelings, projects, skills, interests }) {
+export function goalPrompt({ soul, feelings, projects, skills, interests, enough = '' }) {
   return `${soul}
 
 GOOD MORNING
@@ -11,7 +11,7 @@ I just woke up. How I feel: ${feelings.join('; ') || 'fine'}.
 My projects: ${projects.length ? projects.join(' | ') : 'none right now'}
 My skills: ${skills}
 Things I like to think about: ${interests.slice(-6).join(', ') || 'nothing yet'}
-
+${enough ? `I have enough of these in my room, so no goal to make one more of them: ${enough}.\n` : ''}
 Outside my door is my own world: the pond, the library, the green stone far out in the grass, bare walls I may paint on, and my own field that I can build on and shape.
 
 I set 2 or 3 small goals for today. Each is one thing I really want to do today, in my own plain words.
@@ -27,7 +27,7 @@ export function setGoals(s, reply, day) {
   const items = (Array.isArray(reply?.goals) ? reply.goals : []).slice(0, 3).map((g) => ({ cat: KINDS.includes(g?.kind) ? g.kind : 'make', text: String(g?.text ?? '').trim().slice(0, 160), done: false })).filter((g) => g.text);
   if (!items.length) return false;
   const prev = s.intent ?? {};
-  const kept = prev.items?.length > 0 && prev.items.every((i) => i.done);
+  const kept = prev.items?.length > 0 && prev.items.every((i) => i.done || i.gone);
   s.intent = { day, streak: kept ? (prev.streak || 0) + 1 : 0, items, by: 'pip' };
   return true;
 }

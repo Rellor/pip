@@ -10,8 +10,10 @@ import { roomFactors, scaleParts, nameMax, ROOM_SCALE } from './scale.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
 import { addIngredient } from './food.js';
+import { wantsOneMore, kindsWord } from './decor.js';
+import { letGoGoals } from './intent.js';
 
-const CHANGES = [
+export const CHANGES = [
   {
     id: '2026-11-15 greenhouse by the window, instruments by asking',
     run(s, at) {
@@ -461,6 +463,21 @@ const CHANGES = [
     id: '2026-11-23 the paint walls stand between the buildings',
     run() { // the walls moved into the gaps between the buildings (web/town.js); what he painted stays on its wall
       return 'Bas moved the bare walls I paint on. They stand in the gaps between the buildings now, each turned its own way: beside my house, by the internet café, by the flats, by the art workshop and by the build workshop. They are bare. Nobody has painted on them yet, so the first one is mine.';
+    },
+  },
+  {
+    id: '2026-11-26 no fourth shelf',
+    run(s, at) { // a project (and a goal) to make one more of a kind he has enough of can never be finished: it is let go
+      const gone = [];
+      for (const p of (s.projects ?? []).filter((x) => x.status === 'working')) {
+        const full = wantsOneMore(s.decor ?? [], p.title);
+        if (!full) continue;
+        Object.assign(p, { status: 'dropped', droppedWhy: `I have enough ${kindsWord(full.kind)} already`, updatedAt: at });
+        letGoGoals(s, (t) => new RegExp(`\\b(${full.kind}|${kindsWord(full.kind)})\\b`, 'i').test(t), `I have enough ${kindsWord(full.kind)}`);
+        gone.push(`"${p.title}" (I have ${full.n} ${kindsWord(full.kind)})`);
+      }
+      if (s.resting && /enough of th/.test(String(s.resting.why ?? ''))) s.resting = null;
+      return gone.length ? `I kept trying to make one more of something I have enough of: ${gone.join(', ')}. That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I have.` : null;
     },
   },
   {

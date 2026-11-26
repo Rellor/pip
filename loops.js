@@ -64,3 +64,38 @@ export function tiredLines(s, now = Date.now()) {
   const k = s.tired && Date.parse(s.tired.until) > now ? s.tired.kind : null;
   return k ? [`I have been ${KIND_WORDS[k] ?? k} for hours. My head wants something different for a while: I go outside, read or look something up, play music, care for my garden, write in my diary, cook, or talk to someone. I come back to it later with fresh eyes.`] : [];
 }
+
+// ---- The breaker for a whole day. The loop breaker above rests a move for two hours; after that he used to start
+// the same thing again (a fourth shelf: five tries in one morning). So: when the same thing has failed FAIL_OFF times
+// in one day, it is off the table until tomorrow. A step for it is dropped before any model is asked, and he hears
+// once, in plain words, what he leaves alone today. "The same thing" is the move and the kind of thing it is about
+// ("decorate" a "shelf", "move_thing" the "lamp"), so a new name for the same idea does not get around it.
+export const FAIL_OFF = 3;
+const dayNL = (now) => new Date(now).toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' });
+const aboutOf = (x) => x?.name || x?.what || x?.dish || x?.title || x?.query || '';
+const failKey = (move, about) => { const w = thingWord(about); return w ? `${move}:${w}` : null; };
+const today = (s, now) => { s.recent ??= {}; if (s.recent.failDay !== dayNL(now)) Object.assign(s.recent, { failDay: dayNL(now), fails: {}, off: [] }); return s.recent; };
+// After a wake-up: count what failed (his log entries). Returns what is now off for today.
+export function noteFailures(s, entries, now = Date.now()) {
+  const r = today(s, now);
+  const out = [];
+  for (const e of entries ?? []) {
+    if (!e.failed || e.fallback) continue;
+    const move = e.as ?? e.action;
+    const key = failKey(move, aboutOf(e));
+    if (!key || NEVER.includes(move)) continue;
+    r.fails[key] = { n: (r.fails[key]?.n ?? 0) + 1, why: String(e.failed).slice(0, 200) };
+    if (r.fails[key].n >= FAIL_OFF && !r.off.some((o) => o.key === key)) { const off = { key, move, about: String(aboutOf(e)).slice(0, 60), why: r.fails[key].why }; r.off.push(off); out.push(off); }
+  }
+  return out;
+}
+// Is this planned step off for today? The entry ({ key, move, about, why }), or null.
+export function offToday(s, st, now = Date.now()) {
+  if (!s.recent || s.recent.failDay !== dayNL(now)) return null;
+  const key = failKey(st.as ?? st.action, aboutOf(st.details));
+  return key ? (s.recent.off ?? []).find((o) => o.key === key) ?? null : null;
+}
+export function offLines(s, now = Date.now()) {
+  const off = s.recent?.failDay === dayNL(now) ? s.recent.off ?? [] : [];
+  return off.length ? [`These did not work ${FAIL_OFF} times today. I leave them until tomorrow and do something else: ${off.map((o) => `${o.move.replace(/_/g, ' ')} "${o.about}" (${o.why.slice(0, 90)})`).join('; ')}.`] : [];
+}
