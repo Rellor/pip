@@ -6986,3 +6986,9 @@ I finished my night sky simulation project and want to judge it as proud before 
 - do (look closely at my project Build a little simulation of night sky: something that moves): Judge my finished project
 - mood: focused
 
+## 26/11/2026, 14:01:28
+My room feels bare and I want to make a plain wooden shelf as planned, but first I need to remove one since I have too many.
+> My room feels bare and I want to make a plain wooden shelf as planned, but first I need to remove one since I have too many.
+- remove_decoration (small wooden shelf): Put away an extra shelf in the chest.
+- mood: focused
+
