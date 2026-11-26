@@ -3877,7 +3877,16 @@ function renderVisitors(s) {
   renderMyVisits(s);
   const list = (s.visitors || []).slice().reverse();
   fill($('visitlist'), list.length
-    ? list.flatMap((v) => [entry([when(v.at), v.stranger ? `${v.name || 'Someone'}, a traveller passing through` : v.npc ? `${String(v.name || '').replace(' (neighbour)', '')}, a neighbour who has moved away` : v.name || 'a visitor'], v.text), ...(v.answer ? [entry([when(v.answeredAt || v.at), 'Pip answers'], v.answer, 'ask')] : [])])
+    ? list.map((v) => { // one card for each message: who wrote it, what they said, and what Pip answered
+      const li = el('li', null, 'talkcard');
+      const who = v.stranger ? `${v.name || 'Someone'}, a traveller passing through` : v.npc ? `${String(v.name || '').replace(' (neighbour)', '')}, a neighbour who has moved away` : v.name || 'A visitor';
+      const head = el('div', null, 'talkhead');
+      head.append(el('b', who), el('time', when(v.at)));
+      li.append(head, el('p', v.text));
+      if (v.answer) { const a = el('div', null, 'pipsays'); a.append(el('b', '🐣 Pip'), el('p', v.answer)); li.append(a); }
+      else li.append(el('p', 'Pip has not answered yet.', 'muted talkwait'));
+      return li;
+    })
     : empty('No messages yet. Be the first to say hello.'));
 }
 const pageOpenedAt = Date.now();
@@ -3923,7 +3932,7 @@ async function refreshNtfy() {
 }
 
 // tabs
-const TABS = ['day', 'life', 'asks', 'messages'];
+const TABS = ['day', 'made', 'life', 'asks', 'messages'];
 // Tabs that were folded into another one: Mind and the pictures live under Pip, Tasks under Asks, Visitors under Talk.
 const OLD_TABS = { mind: 'life', tasks: 'asks', photos: 'life', found: 'life', visitors: 'messages', talk: 'messages', pip: 'life' };
 const tabName = (n) => OLD_TABS[n] || n;
@@ -3939,6 +3948,7 @@ function showTab(name) {
   document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
   if (name === 'life') openLife(null);
   if (name === 'day') loadOlder();
+  if (name === 'made') renderMade();
   if (name === 'messages') refreshNtfy(); // look for things typed in the ntfy app as soon as the chat is opened
   if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
   $('msgdot').classList.toggle('on', name !== 'messages' && !!store('pip-key') && !!latestMsg && latestMsg !== store('pip-seen'));
@@ -4030,8 +4040,6 @@ function headlineBase(st) {
   }
 }
 const KINDS = { go_out: 'out', came_home: 'out', buy: 'shop', happened: 'event', blueprint: 'make', search_web: 'search', read_book: 'read', browse: 'read', play_piano: 'piano', record_song: 'piano', write_diary: 'diary', rest: 'rest', ask_for: 'ask', walk_to: 'walk', decorate: 'make', use: 'make', add_use: 'make', compose: 'make', draw: 'make', make_app: 'make', change_thing: 'make', update_app: 'make', make_clothes: 'make', wear: 'make', take_off: 'make', remove_decoration: 'make', take_out: 'make', make_move: 'make', place_tool: 'make', take_tool: 'make', measure: 'make', check_light: 'make', lamp_auto: 'make', plant: 'make', water: 'make', harvest: 'make', request_ability: 'ask', place_picture: 'make', take_down_picture: 'make', eat: 'eat', do: 'do', cook: 'cook', take_photo: 'photo', find_picture: 'find', print_photo: 'print', take_down_print: 'make', move_thing: 'make', extend_thing: 'make' };
-const FILTERS = [['all', 'Everything'], ['search', 'Searches'], ['read', 'Reading'], ['piano', 'Music'], ['make', 'Creations']];
-let filter = FILTERS.some(([k]) => k === store('pip-filter')) ? store('pip-filter') : 'all';
 
 // Old saves had no day log yet: build entries from the latest plan.
 function dayEntries(s) {
@@ -4291,44 +4299,275 @@ function dayLabel(iso) {
   return d.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
-function renderFilters() {
-  fill($('filters'), FILTERS.map(([key, label]) => {
-    const b = el('button', label, 'filter');
-    b.setAttribute('aria-pressed', String(filter === key));
-    b.addEventListener('click', () => {
-      filter = key;
-      store('pip-filter', key);
-      renderFilters();
-      if (lastState) renderDay(lastState);
-    });
+// ---- His day at a glance. Three things, from top to bottom: his day in numbers (a tile for each kind of thing he did:
+// tap one to see only those), what he made today as pictures, and a timeline with one short line for every step. A
+// line opens for the whole story: what he thought, what he read, what went wrong.
+const DAY_GROUPS = [['made', '🛠️', 'Made'], ['out', '🚶', 'Outside'], ['learn', '📚', 'Learned'], ['music', '🎵', 'Music'], ['care', '🌱', 'Food and plants'], ['room', '🧺', 'His room'], ['write', '✍️', 'Wrote'], ['small', '✨', 'Small things']];
+const GROUP_OF = { decorate: 'made', draw: 'made', make_app: 'made', update_app: 'made', make_clothes: 'made', extend_thing: 'made', change_thing: 'made', make_move: 'made', blueprint: 'made', take_photo: 'made', go_out: 'out', came_home: 'out', buy: 'out', search_web: 'learn', read_book: 'learn', browse: 'learn', find_picture: 'learn', play_piano: 'music', record_song: 'music', compose: 'music', eat: 'care', cook: 'care', water: 'care', harvest: 'care', plant: 'care', move_thing: 'room', remove_decoration: 'room', take_out: 'room', place_picture: 'room', take_down_picture: 'room', use: 'room', add_use: 'room', wear: 'room', take_off: 'room', place_tool: 'room', take_tool: 'room', measure: 'room', check_light: 'room', lamp_auto: 'room', print_photo: 'room', take_down_print: 'room', write_diary: 'write', ask_for: 'write', request_ability: 'write' };
+const groupOf = (e) => (['start_project', 'judge_project', 'paint_wall', 'print_thing'].some((k) => e.as === k || e.action === k) ? 'made' : GROUP_OF[e.action] ?? 'small');
+let filter = ['all', ...DAY_GROUPS.map(([k]) => k)].includes(store('pip-filter')) ? store('pip-filter') : 'all';
+const openRows = new Set(); // the lines that are open, so they stay open when the page draws his day again
+const rowKey = (e) => `${e.at}|${e.action}`;
+
+// One short line for a step: [what he did, with what]. "Ate" + "mint tea and snack".
+function lineOf(e) {
+  const name = e.name || '';
+  const place = (e.placeName || worldPlace(e.place)?.name || 'outside').replace(/^my /, 'his ');
+  const cap = (t) => String(t).replace(/^./, (c) => c.toUpperCase());
+  const special = ['fetch_note', 'check_board', 'paint_wall', 'print_thing', 'shape_land', 'start_project', 'judge_project'].find((k) => e.as === k || e.action === k);
+  const about = (re) => String(e.what || e.title || name || '').replace(re, '');
+  if (special === 'fetch_note') return ['Went to get a note', ''];
+  if (special === 'check_board') return ['Read the notice board', ''];
+  if (special === 'paint_wall') return ['Painted on a wall', name];
+  if (special === 'print_thing') return ['Printed', name];
+  if (special === 'shape_land') return ['Shaped the land', name];
+  if (special === 'start_project') return ['Planned a project', about(/^plan my new project:\s*/i)];
+  if (special === 'judge_project') return ['Looked at his project', about(/^(look at|judge) my project:?\s*/i)];
+  switch (e.action) {
+    case 'eat': return ['Ate', e.food || 'a snack'];
+    case 'cook': return ['Cooked', e.dish || name];
+    case 'harvest': return ['Picked', name || 'from his garden'];
+    case 'water': return ['Watered', name || 'his plants'];
+    case 'plant': return ['Planted', e.seed || name || 'seeds'];
+    case 'decorate': return [e.failed ? 'Wanted to make' : 'Made', name || (e.failed ? 'something' : '')];
+    case 'draw': return ['Drew', name];
+    case 'make_app': return ['Wrote a program', name];
+    case 'update_app': return ['Changed his program', name];
+    case 'make_clothes': return ['Made', name];
+    case 'change_thing': return ['Changed', name];
+    case 'extend_thing': return ['Added to', name];
+    case 'move_thing': return ['Moved', name];
+    case 'remove_decoration': return ['Put away', name];
+    case 'take_out': return ['Took out', name];
+    case 'use': return ['Used', name];
+    case 'add_use': return ['Gave a use to', name];
+    case 'compose': return ['Composed a song for', name];
+    case 'wear': return ['Put on', name];
+    case 'take_off': return ['Took off', name];
+    case 'search_web': return ['Looked up', e.query || ''];
+    case 'read_book': return ['Read about', e.opened?.title || e.topic || ''];
+    case 'browse': return ['Browsed the web', e.opened?.title || ''];
+    case 'play_piano': return [String(e.instrument || '').toLowerCase() === 'voice' ? 'Sang' : `Played ${playedOf(e)[1]}`, e.style || ''];
+    case 'record_song': return ['Recorded', name || 'a song'];
+    case 'write_diary': return ['Wrote in his diary', ''];
+    case 'rest': return ['Rested', ''];
+    case 'go_out': return ['Went out', `to ${place}`];
+    case 'came_home': return ['Came home', `from ${place}`];
+    case 'buy': return ['Went to buy', e.item || ''];
+    case 'walk_to': return ['Walked', `to the ${e.object || 'room'}`];
+    case 'take_photo': return ['Took a photo', e.target ? `of ${e.target}` : ''];
+    case 'find_picture': return ['Looked for a picture', e.query || ''];
+    case 'ask_for': return ['Asked for', e.item || ''];
+    case 'blueprint': return ['Planned', name];
+    case 'make_move': return ['Designed a move', name];
+    case 'happened': return ['', e.what || 'Something happened'];
+    case 'do': return ['', cap(String(e.what || 'Did something small').replace(/_/g, ' '))];
+    default: return ['', headlineBase(e)[1]];
+  }
+}
+
+// One line of the timeline. Closed: the time, a picture and a few words. Open: everything about that step.
+function dayRow(e) {
+  const g = groupOf(e);
+  const row = el('details', null, `trow g-${g}${e.failed ? ' failed' : ''}`);
+  const sum = el('summary');
+  const [verb, what] = lineOf(e);
+  const text = el('span', null, 'tt');
+  if (verb) text.append(el('b', verb), what ? ` ${what}` : '');
+  else text.append(what);
+  const line = el('div', null, 'tl');
+  line.append(el('time', hm(Date.parse(e.at))), el('span', headline(e)[0], 'ti'), text);
+  if (e.failed) line.append(el('span', 'did not work', 'tf'));
+  sum.append(line);
+  row.append(sum);
+  const fillBody = () => {
+    if (row.querySelector('.tbody')) return;
+    const card = dayCard(e);
+    card.querySelector('header')?.remove();
+    card.className = `tbody card ${card.className.replace(/\bcard\b/, '').trim()}`;
+    for (const p of card.querySelectorAll('p, h3')) if (!p.children.length) p.textContent = p.textContent.replace(/\s*\(x -?[\d.]+, z -?[\d.]+\)/g, '').replace(/\s*\((z|x) -?[\d.]+, height -?[\d.]+\)/g, '').replace(/\s*\(level \d+\)/g, ''); // (the game's own measurements are left out)
+    const title = card.querySelector('h3.title');
+    if (title && what && title.textContent.trim().toLowerCase() === String(what).trim().toLowerCase()) title.remove(); // the line above says it already
+    if (!card.childNodes.length) card.append(el('p', 'Nothing more to tell about this one.', 'muted'));
+    row.append(card);
+  };
+  if (openRows.has(rowKey(e))) { row.open = true; fillBody(); }
+  row.addEventListener('toggle', () => { if (row.open) { openRows.add(rowKey(e)); fillBody(); } else openRows.delete(rowKey(e)); });
+  return row;
+}
+// The lines of one day, newest first. Three or more small things in a row are folded into one line.
+function timeline(list, fold = true) {
+  const out = [];
+  for (let i = 0; i < list.length; i++) {
+    let j = i;
+    while (fold && j < list.length && groupOf(list[j]) === 'small' && !list[j].failed && list[j].action !== 'happened') j++;
+    if (j - i >= 3) {
+      const run = list.slice(i, j);
+      const key = `fold|${run.at(-1).at}`;
+      const box = el('details', null, 'trow fold');
+      const sum = el('summary');
+      const text = el('span', null, 'tt');
+      text.append(el('b', `${run.length} small things`), ` between ${hm(Date.parse(run.at(-1).at))} and ${hm(Date.parse(run[0].at))}`);
+      const line = el('div', null, 'tl');
+      line.append(el('time', hm(Date.parse(run[0].at))), el('span', '✨', 'ti'), text);
+      sum.append(line);
+      box.append(sum);
+      const inner = el('div', null, 'tfold');
+      for (const e of run) inner.append(dayRow(e));
+      box.append(inner);
+      if (openRows.has(key)) box.open = true;
+      box.addEventListener('toggle', (ev) => { if (ev.target !== box) return; if (box.open) openRows.add(key); else openRows.delete(key); });
+      out.push(box);
+      i = j - 1;
+    } else out.push(dayRow(list[i]));
+  }
+  return out;
+}
+// His day in numbers: a tile for every kind of thing he did (what did not work is not counted; going out counts once).
+function daySummary(list, pick = null) {
+  const counted = list.filter((e) => !e.failed && !e.fallback && e.action !== 'came_home');
+  const box = el('div', null, 'sumtiles');
+  const tile = (key, icon, label, n) => {
+    const b = el(pick ? 'button' : 'div', null, 'sumtile');
+    if (pick) { b.type = 'button'; b.setAttribute('aria-pressed', String(filter === key)); b.addEventListener('click', () => pick(filter === key ? 'all' : key)); }
+    b.append(el('span', icon, 'si'), el('b', String(n)), el('small', label));
     return b;
-  }));
+  };
+  if (pick) box.append(tile('all', '📖', 'Everything', counted.length));
+  for (const [key, icon, label] of DAY_GROUPS) { const n = counted.filter((e) => groupOf(e) === key).length; if (n) box.append(tile(key, icon, label, n)); }
+  return box;
+}
+
+// Today's steps that are no longer in his state (it keeps only the newest) are read from today's file in the archive.
+const dayNL = (ms = Date.now()) => new Date(ms).toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' });
+let todayExtra = { day: '', at: 0, log: [] };
+async function loadToday() {
+  const day = dayNL();
+  if (todayExtra.day === day && Date.now() - todayExtra.at < 5 * 60_000) return;
+  todayExtra = { day, at: Date.now(), log: todayExtra.day === day ? todayExtra.log : [] };
+  try {
+    const r = await fetch(`${localHost ? 'archive/' : `${RAW}archive/`}${day}.json?t=${Math.floor(Date.now() / 60_000)}`, { cache: 'no-store' });
+    if (!r.ok) return;
+    const log = fromGithub(await r.json()).log || [];
+    const grew = log.length !== todayExtra.log.length;
+    todayExtra.log = log;
+    if (grew && lastState) renderDay(lastState);
+  } catch {}
+}
+function allEntries(s) {
+  const seen = new Set();
+  return [...dayEntries(s), ...(todayExtra.day === dayNL() ? todayExtra.log : [])].filter((e) => e?.at && !seen.has(rowKey(e)) && seen.add(rowKey(e)));
 }
 
 // Entries appear when their step begins, so his day unfolds live.
 function renderDay(s) {
+  loadToday();
   const now = Date.now();
-  const list = dayEntries(s)
-    .filter((e) => Date.parse(e.at) <= now && (filter === 'all' || KINDS[e.action] === filter))
-    .sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
+  const all = allEntries(s).filter((e) => Date.parse(e.at) <= now).sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
+  const today = all.filter((e) => dayLabel(e.at) === 'Today');
+  // his day in numbers
+  const sum = [];
+  if (today.length) {
+    sum.push(el('h2', 'Today in numbers'), daySummary(today, (key) => { filter = key; store('pip-filter', key); renderDay(lastState); }));
+  }
+  fill($('daysum'), sum);
+  // what he made today
+  const made = madeItems(s).filter((x) => x.at && dayLabel(x.at) === 'Today');
+  fill($('daymade'), made.length ? [el('h2', 'Made today'), madeGrid(made.slice(0, 6))] : []);
+  // the timeline
+  const list = all.filter((e) => filter === 'all' || groupOf(e) === filter);
   if (!list.length) {
-    fill($('day'), [el('p', filter === 'all' ? "Pip's day will show up here as it happens." : 'Nothing like this yet today.', 'muted')]);
+    fill($('day'), [el('p', filter === 'all' ? "Pip's day will show up here as it happens." : 'Nothing like this yet today. Tap the tile again to see everything.', 'muted')]);
     return;
   }
   const out = [];
-  let box = null;
   let label = '';
+  let batch = [];
+  const flush = () => { if (!batch.length) return; const box = el('div', null, 'timeline'); box.append(...timeline(batch, filter === 'all')); out.push(box); batch = []; };
   for (const e of list) {
     const l = dayLabel(e.at);
-    if (l !== label) {
-      label = l;
-      out.push(el('h2', l, 'dayhead'));
-      box = el('div', null, 'cards');
-      out.push(box);
-    }
-    box.append(dayCard(e));
+    if (l !== label) { flush(); label = l; out.push(el('h2', l === 'Today' ? 'What he did today' : l, 'dayhead')); }
+    batch.push(e);
   }
+  flush();
   fill($('day'), out);
+}
+
+// ---- Everything Pip made, in one place: things, drawings, programs, songs, prints, clothes, photos, hills and holes,
+// moves. Each as a picture with its name, newest first. A row of buttons shows only one kind. A tap opens its card.
+const MADE_TYPES = [['thing', '🛠️', 'Things'], ['drawing', '🎨', 'Drawings'], ['program', '💻', 'Programs'], ['song', '🎵', 'Songs'], ['print', '🖨️', 'Prints'], ['clothes', '👕', 'Clothes'], ['photo', '📷', 'Photos'], ['land', '⛰️', 'Land'], ['move', '🕺', 'Moves']];
+const MADE_LIST = { thing: 'room', drawing: 'drawings', program: 'apps', song: 'studio', clothes: 'wardrobe', photo: 'photos', move: 'moves' }; // where the long list of each kind is (on the Pip tab)
+let madeFilter = ['all', ...MADE_TYPES.map(([k]) => k)].includes(store('pip-made')) ? store('pip-made') : 'all';
+function madeItems(s) {
+  const out = [];
+  const now = Date.now();
+  const add = (x) => { if (x.label && !(Date.parse(x.at) > now)) out.push(x); };
+  const why = (t) => (t ? [{ heading: 'Why he made it', quote: t }] : []);
+  const thing = (d, where) => add({ type: 'thing', icon: '🛠️', img: () => decorThumb(d), label: d.name, sub: where, at: d.createdAt ?? d.at,
+    info: () => ({ title: d.name, icon: '🛠️', subtitle: `Made ${when(d.createdAt ?? d.at)} · ${where}`, image: decorThumb(d, 320), sections: [...why(d.why), ...(d.uses?.length ? [{ heading: 'What it is for', chips: d.uses.map((u) => u.label) }] : [])] }) });
+  for (const d of s.decor ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, d.kind === 'outside' ? (d.readyAt && now < Date.parse(d.readyAt) ? 'being built outside' : 'stands outside') : 'in his room');
+  for (const d of s.stored ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, 'in his chest');
+  for (const a of s.gallery ?? s.art ?? []) if (a.file) add({ type: 'drawing', icon: '🎨', img: a.file, label: a.name, sub: a.wall ? 'painted on a wall' : 'a drawing', at: a.at ?? a.createdAt,
+    info: () => ({ title: a.name, icon: '🎨', subtitle: `${a.wall ? 'Painted on a wall' : 'Drawn'} ${when(a.at ?? a.createdAt)}`, image: a.file, sections: why(a.why) }) });
+  for (const a of s.apps ?? []) add({ type: 'program', icon: '💻', label: a.name, sub: a.v > 1 ? `version ${a.v}` : 'a program', at: a.createdAt,
+    info: () => ({ title: a.name, icon: '💻', subtitle: `Written ${when(a.createdAt)}${a.updatedAt && a.updatedAt !== a.createdAt ? ` · changed ${when(a.updatedAt)}` : ''}`, sections: [...why(a.why), { buttons: [{ label: '▶ Open the program', run: () => openApp(a) }] }] }) });
+  for (const r of s.studio?.songs ?? []) add({ type: 'song', icon: '🎵', label: r.name, sub: `${(r.tracks ?? []).length || 1} part${(r.tracks ?? []).length === 1 ? '' : 's'}`, at: r.createdAt,
+    info: () => ({ title: r.name, icon: '🎵', subtitle: `Recorded ${when(r.createdAt)}`, sections: [...why(r.why), { buttons: [{ label: '▶ Listen', run: () => { const song = trackSong({ tempo: r.tempo, tracks: r.tracks }); if (song) playSong(song); } }] }] }) });
+  for (const p of s.prints ?? []) if (Array.isArray(p.parts) && p.parts.length) { const d = { id: `print-${p.id}`, name: p.name, parts: p.parts, at: p.at }; add({ type: 'print', icon: '🖨️', img: () => decorThumb(d), label: p.name, sub: 'on the shelf of prints', at: p.at,
+    info: () => ({ title: p.name, icon: '🖨️', subtitle: `Printed ${when(p.at)} · on the shelf at the print workshop`, image: decorThumb(d, 320), sections: why(p.why) }) }); }
+  for (const c of s.wardrobe ?? []) add({ type: 'clothes', icon: '👕', img: () => clothesThumb(c), label: c.name, sub: c.worn ? 'wearing it now' : 'in his wardrobe', at: c.madeAt || c.createdAt,
+    info: () => ({ title: c.name, icon: '👕', subtitle: `Made ${when(c.madeAt || c.createdAt)} · ${c.worn ? 'he is wearing it now' : 'in his wardrobe'}`, image: clothesThumb(c), sections: why(c.why) }) });
+  for (const p of s.pictures ?? []) if (p.by === 'pip' && p.image) add({ type: 'photo', icon: '📷', img: p.image, label: p.target ? `Photo of ${p.target}` : 'A photo', sub: 'a photo he took', at: p.at,
+    info: () => ({ title: p.target ? `Photo of ${p.target}` : 'A photo', icon: '📷', subtitle: `Taken ${when(p.at)}`, image: p.image, sections: p.caption ? [{ heading: 'What he says about it', quote: p.caption }] : [] }) });
+  for (const l of s.land ?? []) add({ type: 'land', icon: l.kind === 'hole' ? '🕳️' : '⛰️', label: l.name || (l.kind === 'hole' ? 'a hole' : 'a hill'), sub: `${2 * l.r} m wide`, at: l.at,
+    info: () => ({ title: l.name || (l.kind === 'hole' ? 'A hole' : 'A hill'), icon: l.kind === 'hole' ? '🕳️' : '⛰️', subtitle: `Shaped ${when(l.at)}`, sections: [{ lines: [`${2 * l.r} metres wide and ${l.h} metres ${l.kind === 'hole' ? 'deep' : 'high'}. It is out in his world: you can walk over it.`] }] }) });
+  for (const m of s.moves ?? []) add({ type: 'move', icon: '🕺', label: m.name, sub: 'a move', at: m.createdAt,
+    info: () => ({ title: m.name, icon: '🕺', subtitle: `Thought up ${when(m.createdAt)}`, sections: [...why(m.why), { buttons: [{ label: '▶ Show the move', run: () => { preview = { move: m, start: performance.now(), until: performance.now() + Math.max(3000, (m.duration || 2) * 2000) }; hideInfo(); } }] }] }) });
+  return out.sort((a, b) => Date.parse(b.at ?? 0) - Date.parse(a.at ?? 0));
+}
+// A grid of pictures with a name under each. A tap opens the card of that thing.
+function madeGrid(items) {
+  const g = el('div', null, 'mgrid');
+  for (const x of items) {
+    const b = el('button', null, 'mcell');
+    b.type = 'button';
+    let src = null;
+    try { src = typeof x.img === 'function' ? x.img() : x.img; } catch {}
+    if (src) { const im = el('img'); im.src = src; im.alt = ''; im.loading = 'lazy'; b.append(im); } else b.append(el('span', x.icon, 'mico'));
+    b.append(el('b', x.label), el('small', x.sub));
+    b.addEventListener('click', () => showInfo(x.info()));
+    g.append(b);
+  }
+  return g;
+}
+const MADE_PAGE = 30; // so many at first, then a button for more
+let madeShown = MADE_PAGE;
+function renderMade(s = lastState) {
+  if (!s || tab !== 'made') return; // (the pictures of his things are only drawn when someone looks)
+  const all = madeItems(s);
+  const count = (k) => all.filter((x) => x.type === k).length;
+  const chip = (key, text, n) => {
+    const b = el('button', null, 'filter');
+    b.type = 'button';
+    b.append(text, el('span', String(n), 'n'));
+    b.setAttribute('aria-pressed', String(madeFilter === key));
+    b.addEventListener('click', () => { madeFilter = key; madeShown = MADE_PAGE; store('pip-made', key); renderMade(); });
+    return b;
+  };
+  fill($('madefilters'), [chip('all', 'Everything', all.length), ...MADE_TYPES.filter(([k]) => count(k)).map(([k, icon, label]) => chip(k, `${icon} ${label}`, count(k)))]);
+  if (madeFilter !== 'all' && !count(madeFilter)) madeFilter = 'all';
+  const list = all.filter((x) => madeFilter === 'all' || x.type === madeFilter);
+  const out = [];
+  if (!list.length) out.push(el('p', 'Pip has not made anything yet. When he does, it shows up here.', 'muted'));
+  else {
+    const week = list.filter((x) => Date.now() - Date.parse(x.at) < 7 * 86_400_000).length;
+    out.push(el('p', `${list.length} ${madeFilter === 'all' ? 'things he made' : MADE_TYPES.find(([k]) => k === madeFilter)[2].toLowerCase()}${week ? ` · ${week} in the last 7 days` : ''}. Newest first. Tap one to read about it.`, 'muted madenote'));
+    out.push(madeGrid(list.slice(0, madeShown)));
+    if (list.length > madeShown) { const more = el('button', `Show ${Math.min(MADE_PAGE, list.length - madeShown)} more`, 'small morebtn'); more.type = 'button'; more.addEventListener('click', () => { madeShown += MADE_PAGE; renderMade(); }); out.push(more); }
+    const sec = MADE_LIST[madeFilter];
+    if (sec) { const full = el('button', 'Open the full list with all details ›', 'small morebtn'); full.type = 'button'; full.addEventListener('click', () => { showTab('life'); openLife(sec); }); out.push(full); }
+  }
+  fill($('madelist'), out);
 }
 
 // Older days: what fell out of his state is kept in web/archive/<day>.json. It is only read here, never by Pip.
@@ -4349,19 +4588,24 @@ async function loadOlder() {
   }
   fill($('olderlist'), olderDays.map((d) => {
     const wrap = el('div', null, 'olderday');
-    const b = el('button', `${d.day} · ${d.log} things he did`, 'filter');
-    const body = el('div', null, 'cards');
+    const b = el('button', null, 'olderbtn');
+    b.type = 'button';
+    b.append(el('b', new Date(`${d.day}T12:00:00`).toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' })), el('small', `${d.log} things he did`), el('span', '›', 'chev'));
+    const body = el('div', null, 'olderbody');
     body.hidden = true;
     let loaded = false;
     b.addEventListener('click', async () => {
       body.hidden = !body.hidden;
+      b.classList.toggle('open', !body.hidden);
       if (body.hidden || loaded) return;
       loaded = true;
       try {
         const r = await fetch(`${base}${d.day}.json`, { cache: 'no-store' });
         const data = fromGithub(await r.json());
-        const cards = (data.log || []).slice().reverse().map((e) => dayCard(e));
-        body.replaceChildren(...(cards.length ? cards : [el('p', 'Nothing saved for this day.', 'muted')]));
+        const log = (data.log || []).slice().reverse();
+        const lines = el('div', null, 'timeline');
+        lines.append(...timeline(log));
+        body.replaceChildren(...(log.length ? [daySummary(log), lines] : [el('p', 'Nothing saved for this day.', 'muted')]));
       } catch {
         body.replaceChildren(el('p', 'Could not load this day.', 'muted'));
       }
@@ -4416,7 +4660,6 @@ function renderNow() {
   }
   fill(box, rows);
 }
-renderFilters();
 setInterval(() => {
   if (lastState) renderDay(lastState);
   renderNow();
@@ -4669,6 +4912,7 @@ function render(s) {
   syncFixedLamps(s);
   $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);
+  renderMade(s);
   renderNow();
   renderMind(s);
 
@@ -4985,31 +5229,40 @@ function openLife(name) {
   if (name) document.querySelector('[data-pane="life"]').scrollTop = 0;
 }
 $('lifeback').addEventListener('click', () => openLife(null));
+const TILE_GROUPS = [['What he is working on', ['projects']], ['In his head', ['mind', 'self', 'dreams', 'story', 'news']], ['What he has', ['tools', 'pantry', 'garden', 'chest', 'pictures', 'found', 'piano']]];
+const TILE_NAMES = { piano: 'Music he played', self: 'Who he is', found: 'Found online' };
 function renderTiles() {
   const tiles = $('tiles');
   tiles.textContent = '';
   const emptyNames = [];
-  for (const sec of document.querySelectorAll('.lifesec')) {
-    const ids = (sec.dataset.count || '').split(',').filter(Boolean);
-    const real = (root) => [...root.querySelectorAll('li:not(.muted), .pic')];
-    const top = (root) => [...root.querySelectorAll(':scope > li:not(.muted)')]; // a list's own items, not the steps inside them
-    const items = ids.length ? ids.flatMap((id) => top($(id)).length || !$(id).querySelector('li') ? top($(id)) : real($(id))) : real(sec);
-    const imgs = [...sec.querySelectorAll('.pic img')].slice(0, 4);
-    const text = items.map((x) => (sec.dataset.sec === 'mind' && x.querySelector('p') ? x.querySelector('p').textContent : [...x.children].length > 1 ? [...x.children].map((c) => c.textContent.trim()).filter(Boolean).join(' · ') : x.textContent).replace(/\s+/g, ' ').trim()).filter(Boolean);
-    if (!items.length && sec.dataset.sec !== 'story') { emptyNames.push(sec.dataset.title); continue; }
-    const tile = el('button', null, 'tile');
-    tile.type = 'button';
-    tile.append(el('div', null, 't'));
-    tile.firstChild.append(el('span', `${sec.dataset.icon} ${sec.dataset.title}`), el('small', sec.dataset.sec === 'story' ? 'read' : String(items.length)));
-    if (imgs.length) {
-      const th = el('div', null, 'thumbs');
-      for (const i of imgs) { const c = el('img'); c.src = i.src; c.alt = ''; th.append(c); }
-      tile.append(th);
-      tile.classList.add('wide');
-    } else if (sec.dataset.sec === 'story') tile.append(el('div', (sec.querySelector('.story')?.textContent || '').slice(0, 70) + '…', 'pv'));
-    else tile.append(el('div', text.slice(0, 3).join(' · ') || 'nothing yet', 'pv'));
-    tile.addEventListener('click', () => openLife(sec.dataset.sec));
-    tiles.append(tile);
+  const secs = new Map([...document.querySelectorAll('.lifesec')].map((sec) => [sec.dataset.sec, sec]));
+  for (const [heading, keys] of TILE_GROUPS) {
+    const box = el('div', null, 'tilegrid');
+    for (const key of keys) {
+      const sec = secs.get(key);
+      if (!sec) continue;
+      const ids = (sec.dataset.count || '').split(',').filter(Boolean);
+      const real = (root) => [...root.querySelectorAll('li:not(.muted), .pic')];
+      const top = (root) => [...root.querySelectorAll(':scope > li:not(.muted)')]; // a list's own items, not the steps inside them
+      const items = ids.length ? ids.flatMap((id) => top($(id)).length || !$(id).querySelector('li') ? top($(id)) : real($(id))) : real(sec);
+      const name = TILE_NAMES[key] ?? sec.dataset.title;
+      if (!items.length && key !== 'story') { emptyNames.push(name); continue; }
+      const tile = el('button', null, 'tile');
+      tile.type = 'button';
+      tile.append(el('span', sec.dataset.icon, 'ticon'), el('b', name), el('small', key === 'story' ? 'read it' : String(items.length)));
+      tile.addEventListener('click', () => openLife(key));
+      box.append(tile);
+    }
+    if (box.childNodes.length) tiles.append(el('h2', heading), box);
+  }
+  { // everything he made has its own tab
+    const b = el('button', null, 'tile wide');
+    b.type = 'button';
+    b.append(el('span', '🧺', 'ticon'), el('b', 'Everything he made'), el('small', 'open ›'));
+    b.addEventListener('click', () => showTab('made'));
+    const box = el('div', null, 'tilegrid');
+    box.append(b);
+    tiles.append(el('h2', 'What he made'), box);
   }
   $('stillempty').textContent = emptyNames.length ? `Still empty: ${emptyNames.join(', ')}.` : '';
 }
