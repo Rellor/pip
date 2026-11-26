@@ -99,3 +99,36 @@ export function offLines(s, now = Date.now()) {
   const off = s.recent?.failDay === dayNL(now) ? s.recent.off ?? [] : [];
   return off.length ? [`These did not work ${FAIL_OFF} times today. I leave them until tomorrow and do something else: ${off.map((o) => `${o.move.replace(/_/g, ' ')} "${o.about}" (${o.why.slice(0, 90)})`).join('; ')}.`] : [];
 }
+
+// ---- A free "do" that is really one of his real moves is done for real. "Play a quiet song on my flute" as a "do" is
+// only pretending: nothing sounds, nothing is ticked off, and he tries again and again (six times in one evening).
+// So when the words name an instrument he has, he really plays it; when they say he goes out, he really goes.
+// (Only moves he can do right now, and never a "do" that already stands for something else.)
+const INSTRUMENTS = ['flute', 'guitar', 'violin', 'clarinet', 'kalimba', 'harp', 'piano'];
+const QUIET = /quiet|soft|gentle|slow|calm|night|lullaby|sleepy/;
+const SCALE = ['C4', 'D4', 'E4', 'G4', 'A4', 'C5', 'D5', 'E5'];
+// A short tune that is always the same for the same words: it wanders up and down a scale without sharp jumps.
+export function tuneFor(words) {
+  let h = 2166136261;
+  for (const ch of String(words)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+  const quiet = QUIET.test(String(words).toLowerCase());
+  let i = h % 5;
+  const out = [];
+  for (let n = 0; n < 8; n++) {
+    h = Math.imul(h ^ (h >>> 13), 0x5bd1e995) >>> 0;
+    i = Math.max(0, Math.min(SCALE.length - 1, i + [-2, -1, -1, 1, 1, 2][h % 6]));
+    out.push(`${quiet ? SCALE[i].replace(/\d$/, (d) => String(Number(d) - 1)) : SCALE[i]}${n === 7 || (quiet && n % 4 === 3) ? ':2' : ''}`); // a quiet tune sits an octave lower and breathes more
+  }
+  return out.join(' ');
+}
+export function realDo(steps, { has = [], canPlay = true, canGo = true } = {}) {
+  return steps.map((st) => {
+    if (st.action !== 'do' || st.as || st.fallback) return st;
+    const t = String(st.details?.what ?? '').toLowerCase();
+    const named = INSTRUMENTS.find((k) => new RegExp(`\\b${k}\\b`).test(t));
+    if (canPlay && named && has.includes(named) && /\b(play|strum|pluck|blow|practi[cs]e|try|tune|song|melody|music)\b/.test(t)) return { ...st, action: 'play_piano', details: { notes: tuneFor(t), instrument: named, ...(QUIET.test(t) ? { style: 'quiet' } : {}) } };
+    if (canPlay && !named && /^(i )?(sing|hum)\b/.test(t) && has.includes('voice')) return { ...st, action: 'play_piano', details: { notes: tuneFor(t), instrument: 'voice', ...(QUIET.test(t) ? { style: 'quiet' } : {}) } };
+    if (canGo && /^(i )?(go|walk|step|head|wander|stroll)\b.*\b(outside|out of the house|pond|library|field|green stone|doorstep|square)\b/.test(t)) return { ...st, action: 'go_out', details: { place: st.details.what, what: st.details.what } };
+    return st;
+  });
+}

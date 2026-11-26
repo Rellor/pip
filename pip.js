@@ -21,7 +21,7 @@ import { ensureProjects, projectLines, addVersion, judgeProject, findProject, wo
 import { checkup, markSent, PUSH_GAP_H, words, dayReport } from './checkup.js';
 import { roomScale, placeKind, sizeWords } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
-import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo, noteFailures, offToday, offLines } from './loops.js';
+import { choiceOf, gotSomewhere, noteChoice, restingLines, tiredLines, dropRestingDo, noteFailures, offToday, offLines, realDo } from './loops.js';
 import { planRetry, startRetry, retryLines } from './retry.js';
 import { challengeLines, challengeSteps } from './curriculum.js';
 import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLetter } from './letters.js';
@@ -1448,6 +1448,7 @@ async function wakeUp() {
       const reply = process.env.PIP_FAKE ? fakeReply(offered) : await askGemini(system, prompt, 2, images, { schema: brainSchema(offered.map((m) => m.name)), maxTokens: THINK_ROOM + 800, think: 'low', ...(unread.length ? { group: 'big', reply: true } : {}) }); // answering Bas: the big model
       answer = toAnswer(reply, offered.map((m) => m.name));
       answer.steps = projectSteps(state, realProjectWork(state, answer.steps)); // pretending to do a project step ("do: sculpt the body") becomes the real step
+      answer.steps = realDo(answer.steps, { has: instruments(state), canPlay: offered.some((m) => m.name === 'play_piano'), canGo: offered.some((m) => m.name === 'go_out') }); // and a "do" that is really playing his flute or going out is done for real (loops.js)
       answer.steps = hungerFirst(state, dropRestingDo(state, answer.steps), offered);
       choice = choiceOf(reply); // for the loop breaker
       via = 'brain';
