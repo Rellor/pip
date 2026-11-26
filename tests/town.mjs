@@ -1,6 +1,7 @@
 // His street in 3D (web/town.js): the places Pip is seen at are free to stand on and can be walked to, and every place
 // of his world has a spot in the street. (The drawing itself is checked by eye, in a real browser.)
 // Run: node tests/town.mjs
+import './_many.mjs';
 import assert from 'node:assert/strict';
 import { TOWN_X, TOWN_RANGE, TOWN_Z, TOWN_SPOTS, TOWN_FOR, ROUTES, POND, SQUARE, BOARD, WORLD_RANGE, groundAt, setLand, inTown, townBlocked, atTownDoor, buildProblem, buildPlace, WORLD, BUILDINGS, WALLS, wallBox, PATHS, rectOf, artSpot, PAINT_WALLS, paintTarget, PRINT_SLOTS } from '../web/town.js';
 import { PLACES } from '../web/world.js';
@@ -109,7 +110,7 @@ const many = [];
 for (let i = 0; i < MAX_OUTSIDE; i++) { const r = makeDecor(many, { name: `zorb${String.fromCharCode(97 + (i % 26))}${String.fromCharCode(97 + Math.floor(i / 26))}`, where: 'outside', parts: cube(1, 2, 1) }, t, t + i); assert.ok(r.entry, `${i}: ${r.failed}`); many.push({ ...r.entry, createdAt: new Date(t - 5 * 86_400_000).toISOString() }); }
 assert.ok(many.every(onPlot));
 for (const a of many) for (const b of many) if (a !== b) assert.ok(Math.abs(a.pos[0] - b.pos[0]) >= 1.5 || Math.abs(a.pos[2] - b.pos[2]) >= 1.5, 'no two things overlap');
-assert.match(makeDecor(many, { name: 'one too many', where: 'outside', parts: cube(1, 1, 1) }, t, t + 99).failed, /40 things of mine outside/);
+assert.match(makeDecor(many, { name: 'one too many', where: 'outside', parts: cube(1, 1, 1) }, t, t + 99).failed, new RegExp(`${MAX_OUTSIDE} things of mine outside`));
 ok(`the plot holds ${MAX_OUTSIDE} things, none on top of another`);
 
 {

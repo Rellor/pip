@@ -1,5 +1,6 @@
 // Where new things go when he does not say (or only says "on the floor"): near where they are used, by a wall,
 // never just in the middle of the room. Something he puts in the middle himself, he notices.
+import './_many.mjs';
 import assert from 'node:assert/strict';
 import { designate, misplaced } from '../placement.js';
 import { makeDecor } from '../decor.js';

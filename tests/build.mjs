@@ -1,4 +1,5 @@
 // The builder (build.js): what Pip builds holds together, and things on a shelf move along when he changes it.
+import './_many.mjs';
 import assert from 'node:assert/strict';
 import { settle, partsNow } from '../build.js';
 import { makeDecor, updateDecor, extendThing, reseat, levelCountOf } from '../decor.js';

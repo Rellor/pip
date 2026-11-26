@@ -41,7 +41,7 @@ export function ensureIntentions(s, now = Date.now()) {
   const c = candidates(s, now);
   const h = hash(d);
   const second = ['music', 'tend', 'revisit'][h % 3];
-  const cats = ['make', 'learn', second, 'outside']; // every day one thing takes him out of his room
+  const cats = [h % 3 === 0 ? 'make' : 'revisit', 'learn', second === 'revisit' && h % 3 !== 0 ? 'music' : second, 'outside']; // every day one thing takes him out of his room; a new thing to make only every third day
   s.intent = { day: d, streak: prev.day && kept ? (prev.streak || 0) + 1 : 0, items: cats.map((cat) => ({ cat, text: c[cat], done: false, ...(cat === 'make' && !(s.projects ?? []).some((p) => p.status === 'working' && p.next) ? { big: true } : {}) })) };
   return true;
 }

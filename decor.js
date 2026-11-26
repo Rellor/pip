@@ -52,8 +52,22 @@ export function wantsOneMore(decor, text) {
   if (!/\b(build|make|craft|carve|construct|put together)\b/.test(t)) return null;
   return fullKinds(decor).find(({ kind }) => new RegExp(`\\b(${kind}|${kindsWord(kind)})\\b`).test(t)) ?? null;
 }
-export const MAX_PER_DAY = 3; // new things a day for his room (changing what he has is not counted here): a room fills up fast
-export const MAX_OUTSIDE_PER_DAY = 1; // and one more out in his world: it has its own count, so three small things for his room never leave him unable to build outside
+export const MAX_PER_DAY = Number(process.env.PIP_MAKES_PER_DAY) || 1; // one new thing a day for his room, at most (tests that are about placing many things set PIP_MAKES_PER_DAY) (it was three, and he made three every day: 22 small things nobody used)
+export const MAX_OUTSIDE_PER_DAY = 1; // out in his world: its own count
+export const OUTSIDE_EVERY_DAYS = 2; // and a big thing outside only every other day, so his world does not fill up either
+export const ROOM_ENOUGH = Number(process.env.PIP_ROOM_ENOUGH) || 18; // with this many things his room has enough: from here on a new thing only comes in when one goes out
+// The things in his room (not the pictures on his walls, not what stands outside).
+export const roomThings = (decor) => (decor ?? []).filter((d) => !d.image && !d.art && d.kind !== 'outside');
+// May a new thing for his room be made now? null, or why not (in his words). His room has enough at ROOM_ENOUGH things:
+// then one comes in only on a day when he put one away first (his chest). No more filling the room with small things.
+export function roomIsEnough(s, now = Date.now()) {
+  const n = roomThings(s.decor).length;
+  if (n < ROOM_ENOUGH) return null;
+  const out = (s.stored ?? []).filter((x) => x.storedAt && isToday(x.storedAt, now)).length;
+  const made = roomThings(s.decor).filter((x) => isToday(x.createdAt, now)).length;
+  if (out > made) return null;
+  return `my room has ${n} things and that is enough. I do not make another new thing for it. I use what I have, make one of my things better (change_thing), build something big outside, or do something else I like. Only when I put a thing I do not use in my chest first (remove_decoration) is there room for a new one`;
+}
 const MAX_PARTS = 40;
 const MAX_DECOR = 30;
 const STORAGE_WORDS = /shelf|shelves|closet|cabinet|wardrobe|drawer|dresser|rack|crate|storage|cupboard|bookcase|locker/i;
@@ -63,7 +77,7 @@ export function capOf(decor) {
 }
 // ---- Outside (web/town.js): his plot across the street, and every other place of his world that is free. He picks the
 // place himself ("outside by the pond"); the game only checks that it fits there.
-export const MAX_OUTSIDE = 40;
+export const MAX_OUTSIDE = Number(process.env.PIP_MAX_OUTSIDE) || 12; // big things out in his world, at most (it was 40)
 // A big thing outside is not there at once: he builds it, and that takes time (the page shows the site growing, and him
 // at work there). Minutes for a thing whose longest side is `metres`: 3 m takes over an hour, 20 m most of a day.
 export const BUILD_FROM_M = 3;
@@ -198,6 +212,8 @@ function placeParts(decor, spec, atMs, now) {
   return dest;
 }
 
+// Did he build something out in his world in the last OUTSIDE_EVERY_DAYS days?
+export const builtOutsideLately = (decor, now = Date.now()) => (decor ?? []).some((x) => !x.image && x.kind === 'outside' && now - Date.parse(x.createdAt) < OUTSIDE_EVERY_DAYS * 86_400_000 && Date.parse(x.createdAt) <= now && !isToday(x.createdAt, now));
 // Pip's new object, made in one go, or the reason it did not work out. Does not change `decor`.
 export function makeDecor(decor, details, atMs, now = Date.now()) {
   const d = details && typeof details === 'object' ? details : {};
@@ -205,6 +221,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (!name) return { failed: 'he did not give it a name' };
   const madeToday = decor.filter((x) => !x.image && isToday(x.createdAt, now));
   if (isOutside(d.where) ? madeToday.filter((x) => x.kind === 'outside').length >= MAX_OUTSIDE_PER_DAY : madeToday.filter((x) => x.kind !== 'outside').length >= MAX_PER_DAY) return { failed: isOutside(d.where) ? 'he has already built something outside today (enough for today)' : 'he has already made enough for today' };
+  if (isOutside(d.where) && builtOutsideLately(decor, now)) return { failed: `I built something outside only a little while ago. One big thing every ${OUTSIDE_EVERY_DAYS} days is enough for my world: I come back to it then`, hinted: true };
   if (!isOutside(d.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside (where: "outside", or a place like "outside by the pond")` };
   const enough = enoughOf(decor, name);
   if (enough) return { failed: enough.why, hinted: true };

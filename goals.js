@@ -15,6 +15,7 @@ ${enough ? `I have enough of these in my room, so no goal to make one more of th
 Outside my door is my own world: the pond, the library, the green stone far out in the grass, bare walls I may paint on, and my own field that I can build on and shape.
 
 I set 2 or 3 small goals for today. Each is one thing I really want to do today, in my own plain words.
+Not every day needs a new thing. Doing something I like, using or improving what I already have, counts as much as making. I only plan to make a new thing when I really need it or really want it.
 One of them takes me outside (kind "outside"): a walk to a place, a painting on a wall, a hill or a hole, or something big built on my field. A day spent only in my room is a small day.
 For each I say what kind it is: make, learn, tend (plants, food), music, revisit (go back to something I made), explore or outside.
 
