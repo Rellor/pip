@@ -1,6 +1,6 @@
 {
   "mood": "grumpy",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -12429,49 +12429,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-26T11:07:49.586Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2258,
-      "output": 139,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I am tired of working on the shelf for now, so I will go outside to get some fresh air and clear my head.",
-    "inner": "I am tired of working on the shelf for now, so I will go outside to get some fresh air and clear my head.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "my field",
-          "what": "walk around my field and pick a spot to build on, lie in the grass and watch the clouds",
-          "name": "walk around my field and pick a spot to build on, lie in the grass and watch the clouds"
-        },
-        "detail": "my field",
-        "thought": "Go outside to the field.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-26T11:15:53.815Z",
+    "via": "outside",
+    "thought": "I am at my field: I walk around my field and pick a spot to build on.",
     "action": "go_out",
     "details": {
-      "place": "my field",
-      "what": "walk around my field and pick a spot to build on, lie in the grass and watch the clouds",
-      "name": "walk around my field and pick a spot to build on, lie in the grass and watch the clouds"
+      "place": "field"
     },
-    "detail": "my field",
-    "enjoyment": 6,
+    "detail": "I am at my field: I walk around my field and pick a spot to build on.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "field",
+      "phase": "there",
+      "back": "2026-11-26T11:46:49.586Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -12868,21 +12841,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-26T11:07:49.592Z",
-  "fullness": 3.64,
+  "fullness": 3.48,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.69,
-  "joy": 3.99,
+  "wonder": 5.95,
+  "joy": 4.29,
   "calm": 5.02,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.17
+    "excited": 0.1
   },
-  "feelAt": "2026-11-26T11:07:48.067Z",
+  "feelAt": "2026-11-26T11:15:53.797Z",
   "lastAte": "2026-11-26T07:41:54.872Z",
   "studio": {
     "songs": [
@@ -13597,12 +13570,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.17,
-    "curiosity": 1.13,
+    "creativity": 0.25,
+    "curiosity": 1.2,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1,
-    "at": "2026-11-26T11:07:48.067Z",
+    "at": "2026-11-26T11:15:53.797Z",
     "coziness": 3.3
   },
   "recent": {
