@@ -7086,3 +7086,9 @@ Kofi asked about the most useless thing I ever made. I want to answer him honest
 - walk_to (computer): Answering Kofi's note about useless things
 - mood: dry
 
+## 26/11/2026, 18:01:57
+My room feels too full, but I want to start a night sky project since I am into it.
+> My room feels too full, but I want to start a night sky project since I am into it.
+- do (plan my new project: Build a little simulation of night sky: something that moves by itself): I will start the night sky project.
+- mood: dry
+
