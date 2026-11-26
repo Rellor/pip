@@ -26,6 +26,7 @@ import { lampsOf, lampName, lampNow } from './web/lights.js';
 import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
 import { isToday } from './days.js';
+import { headRests as resting } from './models.js';
 
 export const MIN_MOVES = 6;
 export const MAX_MOVES = 10;
@@ -36,7 +37,10 @@ const left = (s, action, now) => {
   const L = dayLimits(s, now)[action];
   return L ? L.max - L.used : Infinity;
 };
-const can = (s, action, now) => left(s, action, now) > 0 && !missingTool(s, action);
+// What needs a design from the smart model. While his smart calls are ahead of the day (models.js), these wait.
+const DESIGNED = ['decorate', 'draw', 'record_song', 'make_app', 'update_app', 'make_clothes', 'change_thing', 'extend_thing'];
+const headRests = (s, now) => resting(s.quota, now);
+const can = (s, action, now) => left(s, action, now) > 0 && !missingTool(s, action) && !(DESIGNED.includes(action) && headRests(s, now));
 const names = (list, n = 3) => list.slice(0, n).map((x) => `"${x}"`).join(', ');
 const own = (s) => (s.decor ?? []).filter((d) => !d.image);
 const usable = (s) => own(s).filter((d) => (d.uses ?? []).length);
@@ -171,7 +175,7 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
   const scored = [];
   for (const m of MOVES) {
     let ok = false;
-    try { ok = Boolean(m.when(s, now)) && m.name !== restingMove(s, now) && !(tired && kindOf(m.name) === tired && !['do', 'tell', 'ask_for'].includes(m.name)); } catch { ok = false; } // a move he looped on rests for a while (loops.js)
+    try { ok = Boolean(m.when(s, now)) && !((m.maker || m.name === 'paint_wall' || m.name === 'print_thing') && headRests(s, now)) && m.name !== restingMove(s, now) && !(tired && kindOf(m.name) === tired && !['do', 'tell', 'ask_for'].includes(m.name)); } catch { ok = false; } // a move he looped on rests for a while (loops.js)
     if (!ok) continue;
     let score = m.score(s, now);
     if (process.env.PIP_FAKE_MOVE === m.name) score = 99; // tests: the move a test wants is always among the offered ones

@@ -15,7 +15,7 @@ import { seal, unseal, sealSecret, sealState, unsealState, sealFields, PRIVATE }
 import { applyChanges } from './changes.js';
 import { giveForAsk } from './gifts.js';
 import { needsFresh, freshStart } from './fresh.js';
-import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS } from './models.js';
+import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS, countBusy, bigPace, headRests, retryBusy, groups } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
 import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone, realProjectWork, growGames, addFixTicket } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words, dayReport } from './checkup.js';
@@ -568,6 +568,14 @@ function projectSteps(s, steps) {
   });
 }
 const findProjectAny = (s, title) => (s.projects ?? []).find((p) => p.title === title) ?? null;
+// For his prompt: his smart calls are spread over the day (models.js). While he is ahead of them he designs nothing new.
+const NO_DESIGN = 'Until then I do things that need no design: I go outside, play music, look after my garden, read, cook, or use and move what I have.';
+function paceLines(s, now = Date.now()) {
+  if (!headRests(s.quota, now)) return [];
+  const p = bigPace(s.quota, now);
+  const at = new Date(p.backAt).toLocaleTimeString('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
+  return [p.out ? `I have designed all I can for today: making new things, drawings, programs and songs comes back tomorrow around ${at}. ${NO_DESIGN}` : `I have designed a lot already. My head for making new things, drawings, programs and songs is fresh again around ${at}. ${NO_DESIGN}`];
+}
 // For his prompt: the kinds of things he has enough of (decor.js), so he does not plan one more.
 const enoughLines = (s) => { const full = fullKinds(s.decor); return full.length ? [`I have enough of these in my room, so I make no more of them: ${full.map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', ')}. I change one (change_thing), put one in my chest, or make something else.`] : []; };
 function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWork = null }) {
@@ -593,7 +601,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...offLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...paceLines(s), ...offLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -784,7 +792,7 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
         }
         break;
       }
-      count(q, model); // every request that reached Google counts toward its quota
+      if (res.status === 503) countBusy(q, model); else count(q, model); // a request that was answered counts; one the model bounced because it was busy does not
       if (res.status === 400 && !plainWay && (opts.think || opts.schema)) { // a setting this model does not know: once more the plain way, and remembered for today
         console.log(`   ${model}: 400 with the newer settings (${(await res.clone().text()).replace(/\s+/g, ' ').slice(0, 140)}), asking the plain way`);
         plainWay = true;
@@ -800,11 +808,13 @@ async function askGemini(system, wakeUp, retry = 2, images = [], opts = {}) {
         break;
       }
       if (res.status !== 503 || attempt === 3) break;
+      if (!retryBusy(model, order)) break; // a busy smart model: on to the next one at once
       console.log(`${model} is busy, trying again in ${attempt * 10}s...`);
       await new Promise((r) => setTimeout(r, attempt * 10_000));
     }
     if (res?.ok) {
       usedModel = model;
+      if (group === 'big') { const p = bigPace(q); console.log(`   🧠 ${model} answered${groups().big.includes(model) ? ` (smart calls today: ${p.used} of ${p.total}, ${p.allowed} free by now)` : ' (a small model: the smart ones were busy, capped or out)'}`); }
       if (model !== first) quota.notes.push(`${model} answered (${first} ${q.out[first] ? 'is out of quota' : 'was busy or capped'})`);
       break;
     }
@@ -1439,6 +1449,14 @@ async function wakeUp() {
       const keep = answer.steps.filter((_, i) => !off[i]);
       answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
     } }
+  if (answer.steps.some((st) => st.make) && headRests(state.quota)) { // his smart calls are spread over the day (models.js): what needs a design waits a little
+    const p = bigPace(state.quota);
+    const at = new Date(p.backAt).toLocaleTimeString('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
+    console.log(`⏳ put off: ${answer.steps.filter((st) => st.make).map((st) => st.as ?? st.action).join(', ')} (smart calls: ${p.used} used, ${p.allowed} free by now, ${p.total} today; again around ${at})`);
+    state.plan.lastFail = { at: new Date().toISOString(), why: p.out ? `I have designed all I can for today. Making new things comes back tomorrow around ${at}` : `I have designed a lot already. My head for making new things is fresh again around ${at}` };
+    const keep = answer.steps.filter((st) => !st.make);
+    answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
+  }
   for (const [i, st] of answer.steps.entries()) {
     const full = st.make && st.action === 'decorate' && !st.details?.print ? enoughOf(state.decor, st.details?.what) ?? enoughOf(state.decor, st.details?.name) : null; // (what he said he wants to make, or the name he gave it)
     if (full) { answer.steps[i] = { ...st, make: false, planFail: full.why, planned: { ok: false } }; console.log(`   ⛔ not designed: he has ${full.n} ${kindsWord(full.kind)} already`); }

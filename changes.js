@@ -481,6 +481,14 @@ export const CHANGES = [
     },
   },
   {
+    id: '2026-11-26 busy bounces are not calls',
+    run(s) { // today's count of his best smart model was nearly all "busy" answers (models.js counts only real answers now): it gets its day back
+      const m = 'gemini-3.8-flash';
+      if (s.quota?.calls?.[m] && !s.quota.out?.[m]) s.quota.calls[m] = Math.min(s.quota.calls[m], 2);
+      return null;
+    },
+  },
+  {
     id: '2026-11-26 a flute from Bas',
     run(s, at) { // he asked for a flute, to play a quiet song in the evening
       s.tools ??= [];
