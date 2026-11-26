@@ -7092,3 +7092,9 @@ My room feels too full, but I want to start a night sky project since I am into 
 - do (plan my new project: Build a little simulation of night sky: something that moves by itself): I will start the night sky project.
 - mood: dry
 
+## 26/11/2026, 18:10:05
+I finished my simulation project and I want to check the notice board to see what people are asking for.
+> I finished my simulation project and I want to check the notice board to see what people are asking for.
+- go_out: Let's check the board.
+- mood: dry
+
