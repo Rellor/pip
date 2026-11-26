@@ -6,6 +6,7 @@ import { behaviorProblem } from './behaviors.js';
 import { settle } from './build.js';
 import { FURNITURE, MOVABLE, furnRects, placeOf, worldPoint, worldRect, turn, pivotOf, frontWorld, ownSides, SIDE_VECTORS, sideOfVector } from './web/furniture.js';
 import { TOWN_X, PLOT, BUILD_MAX, BUILD_PLACES, buildPlace, buildProblem, worldWhere, worldPhrase, groundAt } from './web/town.js';
+import { isToday } from './days.js';
 
 // Pip's decorations.
 // He designs objects from a few simple shapes. His design is plain data, never code, and everything is checked and
@@ -179,7 +180,7 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   const d = details && typeof details === 'object' ? details : {};
   const name = str(d.name, 60);
   if (!name) return { failed: 'he did not give it a name' };
-  if (decor.filter((x) => !x.image && now - Date.parse(x.createdAt) < 86_400_000).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
+  if (decor.filter((x) => !x.image && isToday(x.createdAt, now)).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
   if (!isOutside(d.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside (where: "outside", or a place like "outside by the pond")` };
   const kind = kindWord(name);
   const same = kind ? decor.filter((x) => !x.image && !x.art && kindWord(x.name) === kind) : [];
@@ -199,10 +200,10 @@ export function storeAway(decor, stored, name, now = Date.now()) {
   if (i < 0 && n) i = decor.findIndex((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (i < 0) return { failed: 'there is nothing with that name in his room' };
   if (stored.length >= MAX_STORED) return { failed: 'his chest is full' };
-  if (decor.some((x) => x.base === decor[i].id || String(x.base ?? '').startsWith(`${decor[i].id}#`))) return { failed: 'there are still things standing on it. He takes them off first' };
+  const onIt = decor.filter((x) => x.base === decor[i].id || String(x.base ?? '').startsWith(`${decor[i].id}#`)); // what stands on it is taken off first (settleRoom finds each a new place)
   const [e] = decor.splice(i, 1);
   stored.push({ ...e, storedAt: new Date(now).toISOString() });
-  return { stored: e.name };
+  return { stored: e.name, ...(onIt.length ? { tookOff: onIt.map((x) => x.name) } : {}) };
 }
 
 export function takeOut(decor, stored, name, where, atMs, now = Date.now()) {
@@ -486,7 +487,7 @@ export function updateDecor(decor, details, atMs, now = Date.now()) {
   let e = n ? decor.find((x) => mine(x) && x.name.toLowerCase() === n) : null;
   if (!e && n) e = decor.find((x) => mine(x) && (x.name.toLowerCase().includes(n) || n.includes(x.name.toLowerCase())));
   if (!e) return { failed: 'there is nothing with that name in his room' };
-  if (decor.filter((x) => x.changedAt && now - Date.parse(x.changedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
+  if (decor.filter((x) => x.changedAt && isToday(x.changedAt, now)).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
   const built = settle(cleanParts(d.parts), { kind: e.kind }); // the builder makes it hold together (build.js)
   const parts = cleanParts(d.parts) ? built.parts : null;
   const boards = levelCountOf(e);
@@ -649,7 +650,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
   const hasXZ0 = d.x !== undefined && d.z !== undefined && d.x !== null && d.z !== null && d.x !== '' && d.z !== '' && Number.isFinite(Number(d.x)) && Number.isFinite(Number(d.z));
   let hasXZ = hasXZ0;
   if (!want && !isOutside(d.where) && !dx && !dz && !hasXZ && !d.next_to && !d.on && !d.wall && num2(d.along) === null && num2(d.height) === null && turnRad(d.turn) === null) return { failed: 'he did not say where to move it' };
-  if ((chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length + decor.filter((x) => x.movedAt && now - Date.parse(x.movedAt) < 86_400_000).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
+  if ((chest?.moves ?? []).filter((m) => isToday(m, now)).length + decor.filter((x) => x.movedAt && isToday(x.movedAt, now)).length >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const at = new Date(atMs + 6000).toISOString();
   const floorBlocked = (x, z, skip) => decor.some((o) => o !== skip && o.kind === 'floor' && !liesFlat(o) && Math.hypot(o.pos[0] - x, o.pos[2] - z) < 0.8);
 
@@ -672,7 +673,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
       const hit = blocker(rectAt([0.5, 0.3], f.x, f.z, f.rotY), obstacles(decor, null, false));
       if (hit) return { failed: `the chest does not fit there (it would touch ${hit})` };
       ({ x, z, rotY } = f);
-      const moves = [...(chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000), new Date(now).toISOString()];
+      const moves = [...(chest?.moves ?? []).filter((m) => isToday(m, now)), new Date(now).toISOString()];
       const off = Math.hypot(x - Number(d.x), z - Number(d.z));
       return { name: 'chest', chest: { x, z, rotY, at, moves }, warn: off > 0.5 ? `it stands at x ${x}, z ${z}, ${r3(off)} m from where I asked (it goes against a wall or inside the room)` : null };
     }
@@ -688,7 +689,7 @@ function moveThingRaw(decor, chest, details, atMs, now = Date.now()) {
     rotY = wallFacing(x, z);
     const hit = blocker(rectAt([0.5, 0.3], x, z, rotY), obstacles(decor, null, false));
     if (hit) return { failed: `the chest does not fit there (it would touch ${hit})` };
-    const moves = [...(chest?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000), new Date(now).toISOString()];
+    const moves = [...(chest?.moves ?? []).filter((m) => isToday(m, now)), new Date(now).toISOString()];
     return { name: 'chest', chest: { x, z, rotY, at, moves } };
   }
 
@@ -891,7 +892,7 @@ export function extendThing(decor, details, atMs, now = Date.now()) {
   const find = (q) => (q ? decor.find((x) => mine(x) && x.name.toLowerCase() === q) ?? decor.find((x) => mine(x) && (x.name.toLowerCase().includes(q) || q.includes(x.name.toLowerCase()))) : null);
   const e = find(n);
   if (!e) return { failed: 'there is nothing with that name in his room' };
-  if (decor.filter((x) => x.changedAt && now - Date.parse(x.changedAt) < 86_400_000).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
+  if (decor.filter((x) => x.changedAt && isToday(x.changedAt, now)).length >= MAX_UPDATES_PER_DAY) return { failed: 'he has already changed enough things today' };
   const side = String(d.side ?? '').trim().toLowerCase();
   const other = d.with ? find(str(d.with, 60).toLowerCase()) : null;
   if (d.with && (!other || other === e)) return { failed: `there is no other thing called "${str(d.with, 60)}" in his room to join onto it` };
@@ -2185,8 +2186,8 @@ export function moveFurniture(decor, furn, key, details, atMs, now = Date.now())
   const x = num2(d.x) ?? nx ?? cur.x + (Math.min(2, Math.max(-2, Number(d.dx) || 0)));
   const z = num2(d.z) ?? nz ?? cur.z + (Math.min(2, Math.max(-2, Number(d.dz) || 0)));
   if (num2(d.x) === null && num2(d.z) === null && nx === null && !d.dx && !d.dz) return { failed: 'he did not say where to move it' };
-  const moves = (furn?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000);
-  const recent = moves.length + decor.filter((o) => o.movedAt && now - Date.parse(o.movedAt) < 86_400_000).length + (chestNow?.moves ?? []).filter((m) => now - Date.parse(m) < 86_400_000).length;
+  const moves = (furn?.moves ?? []).filter((m) => isToday(m, now));
+  const recent = moves.length + decor.filter((o) => o.movedAt && isToday(o.movedAt, now)).length + (chestNow?.moves ?? []).filter((m) => isToday(m, now)).length;
   if (recent >= MAX_MOVES_PER_DAY) return { failed: 'he has already moved enough things today' };
   const f = FURNITURE[key];
   const obs = obstacles(decor, null, true, key);

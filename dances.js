@@ -13,6 +13,7 @@
 //   eyes      -1 to 1    wide open (-1), normal (0), closed (1)
 //   sound     one of SOUNDS, played once when the move reaches this pose
 //   sign      one symbol (like ♪ or ✨) that floats up from his head at this pose
+import { isToday } from './days.js';
 export const MAX_MOVES = 12;
 export const MAX_MOVES_PER_DAY = 3;
 
@@ -50,7 +51,7 @@ export function makeMove(s, d, now = Date.now()) {
   const frames = cleanFrames(d.frames);
   if (!frames) return { failed: 'the move needs at least 2 poses (frames)' };
   const old = findMove(s, name);
-  const today = s.moves.filter((m) => now - Date.parse(m.createdAt) < 86_400_000).length;
+  const today = s.moves.filter((m) => isToday(m.createdAt, now)).length;
   if (!old && today >= MAX_MOVES_PER_DAY) return { failed: 'he has already made enough new moves today' };
   if (!old && s.moves.length >= MAX_MOVES) return { failed: 'he knows as many moves as he can remember. He can redesign one with the same name' };
   const move = { id: old?.id ?? `m${now.toString(36)}${s.moves.length}`, name, why: clip(d.why, 200), duration: num(d.duration, 1, 6) || 2, frames, createdAt: old?.createdAt ?? new Date(now).toISOString() };

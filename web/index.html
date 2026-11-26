@@ -120,6 +120,10 @@
   /* what you look at and can open: a small prompt under the middle of the picture (F, or tap it) */
   #interact { position:absolute; left:50%; top:60%; transform:translateX(-50%); z-index:3; display:flex; align-items:center; gap:8px; max-width:min(80%, 340px); padding:7px 14px 7px 8px; border-radius:999px; border:0; background:rgba(45,37,33,.82); color:#fff; font-size:15px; font-weight:600; box-shadow:0 2px 10px rgba(0,0,0,.3); cursor:pointer; }
   #interact[hidden] { display:none; }
+  /* in sight but out of reach: greyed out, no key, cannot be pressed */
+  #interact.far { background:rgba(45,37,33,.7); color:#fff; font-size:13.5px; font-weight:500; padding:5px 12px; box-shadow:none; cursor:default; opacity:1; }
+  #interact.far kbd { display:none; }
+  #interact.far span::before { content:none !important; }
   #interact kbd { flex:none; min-width:26px; height:26px; display:grid; place-items:center; border-radius:8px; background:#fffaf3; color:#3b2f2a; font:700 14px system-ui, sans-serif; box-shadow:0 2px 0 rgba(0,0,0,.35); }
   #interact span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   @media (hover:none), (pointer:coarse) { #interact kbd { display:none; } #interact { padding-left:14px; } #interact span::before { content:'👆 '; } }

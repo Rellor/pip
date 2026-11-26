@@ -8,6 +8,7 @@ const MATCH = {
   tend: (e) => ['water', 'plant', 'harvest', 'cook'].includes(e.action),
   music: (e) => ['play_piano', 'record_song', 'compose'].includes(e.action),
   revisit: (e) => ['use', 'add_use', 'change_thing', 'place_picture', 'take_out', 'move_thing', 'extend_thing'].includes(e.action),
+  outside: (e) => (e.action === 'go_out' && !['fetch_note', 'check_board'].includes(e.as) && e.place !== 'shop') || ['paint_wall', 'shape_land', 'print_thing'].includes(e.as), // really out: not a quick errand
   explore: (e) => (e.action === 'walk_to' && /hall|door|window/i.test(String(e.object ?? ''))) || e.action === 'take_photo' || e.action === 'check_light',
 };
 const dayOf = (now) => new Date(now).toISOString().slice(0, 10);
@@ -27,6 +28,7 @@ function candidates(s, now) {
   const pick = old.length ? old[hash(dayOf(now)) % old.length] : null;
   c.revisit = pick ? `go back to my "${pick.name}": use it, change it, give it a new use or a better place` : 'go back to something I made earlier';
   c.explore = 'go somewhere in my house I have not been today, or look at something through a window';
+  c.outside = 'go outside: a walk to the pond, my field or the green stone, a painting on a wall, or a hill or a hole on my land';
   return c;
 }
 
@@ -38,9 +40,8 @@ export function ensureIntentions(s, now = Date.now()) {
   const kept = prev.items.length > 0 && prev.items.every((i) => i.done);
   const c = candidates(s, now);
   const h = hash(d);
-  const second = ['music', 'tend'][h % 2];
-  const third = ['revisit', 'explore'][(h >> 1) % 2];
-  const cats = ['make', 'learn', second, third];
+  const second = ['music', 'tend', 'revisit'][h % 3];
+  const cats = ['make', 'learn', second, 'outside']; // every day one thing takes him out of his room
   s.intent = { day: d, streak: prev.day && kept ? (prev.streak || 0) + 1 : 0, items: cats.map((cat) => ({ cat, text: c[cat], done: false, ...(cat === 'make' && !(s.projects ?? []).some((p) => p.status === 'working' && p.next) ? { big: true } : {}) })) };
   return true;
 }

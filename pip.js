@@ -31,7 +31,7 @@ import { storyTick } from './story.js';
 import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
-import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo } from './world.js';
+import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo, outLines } from './world.js';
 import { postOrders, boardLines } from './board.js';
 import { paintTarget, setLand } from './web/town.js';
 import { planLand, landLine } from './land.js';
@@ -79,6 +79,7 @@ import { refreshNews } from './news.js';
 import { tooSimilar } from './repeat.js';
 import { ensureFeelings, stepFeelings, felt, nudge, eatNow, emotionWord, failStep } from './feelings.js';
 import { cleanUses, findUse, addUse, stepsProblem } from './uses.js';
+import { isToday } from './days.js';
 
 const STATE_FILE = 'web/state.json';
 const DIARY_FILE = 'diary.md';
@@ -488,7 +489,7 @@ ${movesGuide()}
 CAMERA AND PICTURES\nI have a camera. With take_photo {target, caption} I take a picture of what I want: \"window\" (the view outside; it follows the real time of day), \"room\", \"myself\" (a selfie), a place like piano, bookshelf, computer, plant, bed, frame or chest, or the name of something I made. It is a picture of my little world. I take at most 4 a day, and anyone can see my photos on the Photos page. I can put one on a wall with place_picture {id, wall, along, height}: wall is left or back, along is where on that wall (x on the back wall, z on the left wall) and height is the middle of the picture, from the floor. It is my wall, so I decide where each picture hangs, and move_thing {name, wall, along, height} moves one later. If I leave the spot out, one is chosen for me in a row at eye height. It is nice to look up how to hang pictures well (a height around 1.5 m to the middle, a spacing, a group of them). Things I stand on shelves, the desk or the piano need room above them: a picture that hangs right above a shelf hides what I put on it, so I keep about half a metre free above them. I am told when I hang one too close. With find_picture {query, caption} I look for a free picture online (from Wikimedia Commons) and keep it in my collection, at most 6 a day. A good query is a few keywords, like \"aurora borealis\". I use them when I really want a picture, not out of habit.\n\nPHOTO PRINTER
 I have a photo printer on my desk. With print_photo {id} I print a small paper copy of one of my pictures: a photo I took (like pic2), a picture someone gave me, a picture I found online (its id starts with f) or a drawing of mine. The print is pinned on my little photo wall above the desk. The wall has room for ${MAX_WALL_PRINTS} prints, and I can print at most ${MAX_PRINTS_PER_DAY} a day. If I name another small spot with "where" (like the piano), it goes there instead. When the wall is full I take one down with take_down_print {id}.
 COOKING
-I have a pantry. Plain ingredients come back every day, so I never go hungry. With cook I make a dish from 1 to 4 ingredients in my pantry, but only once I have a kitchen in my room. I build my kitchen myself with decorate (a stove, a counter, an oven, whatever I like: I design it, choose where it goes and say in its uses that I can cook with it). A dish fills me up more than a plain snack. I can cook at most 4 times a day. cook {dish, ingredients}. If I want an ingredient that is not in my pantry, I ask for it with asks_add. When it has been given to me, I mark the ask as done and write its name in pantry_add.
+I have a pantry. No food appears by itself: what is in it I grew (plant, water, harvest), bought at the grocery store, cooked or was given. With cook I make a dish from 1 to 4 ingredients that are in my pantry RIGHT NOW (never one I do not have), but only once I have a kitchen in my room. I build my kitchen myself with decorate (a stove, a counter, an oven, whatever I like: I design it, choose where it goes and say in its uses that I can cook with it). A dish fills me up more than a plain snack. I can cook at most 4 times a day. cook {dish, ingredients}. If I want an ingredient that is not in my pantry, I ask for it with asks_add. When it has been given to me, I mark the ask as done and write its name in pantry_add.
 
 BIGGER AND OTHER THINGS I CAN MAKE
 - What my things are for: when I make something I also think about what it is for, because things in my room can be used. A use is a button anyone can press, and I can use it myself with use(name, label). In decorate I add "uses": [{"label": "Look through it", "text": "I see the rings of Saturn, tiny and sharp.", "view": "<svg viewBox=\"0 0 400 300\">...</svg>", "effect": "wonder"}]. A use has a label (up to 30 characters) and what happens (1 to 3 sentences). It can also have a small picture of what I see (view, an SVG under 6000 characters), a song, one of my apps (app: its name), and the feeling it gives me when I use it (effect: wonder, joy, calm or fullness). Up to 3 uses per thing. If I made something without a use, add_use(name, use) gives it one. Using my own things is part of my day.
@@ -555,7 +556,8 @@ function projectSteps(s, steps) {
     done = true;
     const lastTune = [...(s.studio?.songs ?? [])].reverse().find((x) => x.tracks?.[0]?.notes)?.tracks[0].notes;
     const can = workable(s); // a project whose next step can happen now (not used up today, no tool missing)
-    const title = can.some((p) => p.title === findProject(s, st.details?.title)?.title) ? st.details?.title : can[0]?.title ?? st.details?.title;
+    if (!can.length) return []; // none of his projects can go on right now (used up for today): no step that would only be dropped
+    const title = can.some((p) => p.title === findProject(s, st.details?.title)?.title) ? st.details?.title : can[0].title;
     const real = workStep(s, title, { cookDetails, seeds: (s.garden?.seeds ?? []).filter((x) => x.qty > 0).map((x) => x.name), tune: lastTune });
     if (real && missingTool(s, real.action)) { // the next step needs a tool he lacks: he can ask for it, not try and fail
       const p = findProject(s, real.forStep.project);
@@ -589,7 +591,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -1397,6 +1399,7 @@ async function wakeUp() {
   if (queued) answer = { thought: queued.find((x) => x.thought)?.thought ?? '', inner: '', steps: queued, mood_after: state.mood, new_idea: null };
   else {
     try {
+      if (process.env.PIP_FAKE_DOWN) throw new Error('the model is busy (pretend, for testing)'); // for tests: a day on which the model never answers
       const ctx = brainContext(state, { soul, offered, reasons, unread, looking, grew, ownWork });
       const prompt = brainPrompt(ctx);
       if (state.street) state.street.happened = []; // told once
@@ -1502,7 +1505,7 @@ async function wakeUp() {
         if (!pname) st.made = { failed: 'he did not give it a name' };
         else if (!parts.length) st.made = { failed: 'the shapes did not work out' };
         else if (!may.ok) st.made = { failed: `${may.why}, so I cannot go to the print workshop now`, hinted: true };
-        else if ((state.prints ?? []).filter((x) => Date.now() - Date.parse(x.at) < dayMs).length >= 3) st.made = { failed: 'I have printed three things today already: the printer has to cool down', hinted: true };
+        else if ((state.prints ?? []).filter((x) => isToday(x.at)).length >= 3) st.made = { failed: 'I have printed three things today already: the printer has to cool down', hinted: true };
         else {
           const went = startOuting(state, { job: { place: 'workshop', kind: 'print', name: pname.replace(/^(a|an|the|my)\s+/i, ''), why: text(st.details.why, 200), parts, words: `print my ${pname.replace(/^(a|an|the|my)\s+/i, '')}` } }, stepStart);
           st.made = went.failed ? { failed: went.failed, hinted: true } : { printed: pname, outing: went, hint: `I am on my way to the print workshop with my design. I am back ${went.backWords}.` };
@@ -1769,7 +1772,7 @@ async function wakeUp() {
       const found = state.found.find((f) => f.id === id);
       const own = state.art.find((a) => a.id === id);
       const src = state.pictures.find((p) => p.id === id) ?? (found && { id: found.id, image: found.image, caption: found.title, aspect: 1.33 }) ?? (own && { id: own.id, image: own.file, caption: own.name, aspect: own.aspect });
-      const today = state.log.filter((e) => e.action === 'print_photo' && !e.failed && Date.now() - Date.parse(e.at) < 86_400_000).length + printedNow;
+      const today = state.log.filter((e) => e.action === 'print_photo' && !e.failed && isToday(e.at)).length + printedNow;
       if (today >= MAX_PRINTS_PER_DAY) st.made = { failed: 'I have printed enough for today' };
       else {
         st.made = printPhoto(state.decor, src, st.details.where, startedAt + offsets[i]);
@@ -1802,7 +1805,7 @@ async function wakeUp() {
     if (st.action === 'record_song') {
       const song = cleanTracks({ tempo: d.tempo, tracks: d.tracks });
       const name = text(d.name, 60);
-      const todaySongs = state.studio.songs.filter((x) => Date.now() - Date.parse(x.createdAt) < dayMs).length;
+      const todaySongs = state.studio.songs.filter((x) => isToday(x.createdAt)).length;
       if (!name) st.made = { failed: 'a recording needs a name' };
       else if (!song) st.made = { failed: 'the song had no part with at least 2 sounding notes (for example voice "C4 E4 G4:2" and drums "kick hat snare hat")' };
       else if (todaySongs >= MAX_SONGS_PER_DAY) st.made = { failed: `I already recorded ${MAX_SONGS_PER_DAY} songs today` };
@@ -1817,7 +1820,7 @@ async function wakeUp() {
     else if (st.action === 'draw') {
       const clean = cleanSvg(d.svg);
       const art = clean ? { ...clean, svg: sketchStyle(clean.svg, Date.now() % 97) } : null; // drawn in his sketchbook style (art.js)
-      const today = state.art.filter((a) => Date.now() - Date.parse(a.createdAt) < dayMs).length;
+      const today = state.art.filter((a) => isToday(a.createdAt)).length;
       if (drew) st.made = { failed: 'one drawing per wake-up is enough' };
       else if (!name) st.made = { failed: 'he did not give it a name' };
       else if (today >= MAX_ART_PER_DAY) st.made = { failed: 'he has already drawn enough for today' };
@@ -1852,7 +1855,7 @@ async function wakeUp() {
       const edited = Array.isArray(d.edits) && d.edits.length && before ? applyEdits(before, d.edits) : null; // small edits, like a coder (apps.js)
       const html = edited ? (edited.html ? cleanApp(edited.html) : null) : cleanApp(d.html);
       if (edited?.failed) { st.made = { failed: `my edit did not fit: ${edited.failed}` }; }
-      const today = state.apps.filter((a) => a.updatedAt && Date.now() - Date.parse(a.updatedAt) < dayMs).length;
+      const today = state.apps.filter((a) => a.updatedAt && isToday(a.updatedAt)).length;
       if (st.made?.failed) {} // the edit did not fit
       else if (!app) st.made = { failed: 'there is no app with that name on his computer' };
       else if (updatedApp) st.made = { failed: 'one app change per wake-up is enough' };
@@ -1878,7 +1881,7 @@ async function wakeUp() {
     }
     if (st.action === 'make_app') {
       const html = cleanApp(d.html);
-      const today = state.apps.filter((a) => Date.now() - Date.parse(a.createdAt) < dayMs).length;
+      const today = state.apps.filter((a) => isToday(a.createdAt)).length;
       if (wroteApp) st.made = { failed: 'one app per wake-up is enough' };
       else if (!name) st.made = { failed: 'he did not give it a name' };
       else if (state.apps.length >= MAX_APPS) st.made = { failed: 'his computer is full of apps' };
@@ -1902,8 +1905,8 @@ async function wakeUp() {
   // Camera and pictures from the internet. A photo is drawn by the website itself in a hidden browser (photo.js), so it needs the room as it is now.
   const MAX_PHOTOS = 4;
   const MAX_FOUND = 6;
-  let shotsToday = state.pictures.filter((p) => p.by === 'pip' && Date.now() - Date.parse(p.at) < 86_400_000).length;
-  let foundToday = state.found.filter((f) => Date.now() - Date.parse(f.at) < 86_400_000).length;
+  let shotsToday = state.pictures.filter((p) => p.by === 'pip' && isToday(p.at)).length;
+  let foundToday = state.found.filter((f) => isToday(f.at)).length;
   for (const [i, st] of steps.entries()) {
     const d = st.details;
     const when = new Date(startedAt + offsets[i]).toISOString();

@@ -26,6 +26,16 @@ export const PLACES = [
     locked: 'He needs a library card. He can ask for one.',
     things: [{ key: 'read', words: 'read about something I wonder about', match: /read|book|learn|look up|find out/ }],
   },
+  {
+    key: 'field', name: 'my field', title: 'His field', emoji: '🌱', walk: 5, stay: [20, 35], hours: 'light', at: [540, 210],
+    blurb: 'His own land beside the square. It is his to fill.',
+    things: [{ key: 'plan', words: 'walk around my field and pick a spot to build on', match: /plan|walk|build|spot|pace|measure|look/ }, { key: 'clouds', words: 'lie in the grass and watch the clouds', match: /cloud|lie|grass|sky|nothing|rest/ }],
+  },
+  {
+    key: 'stone', name: 'the green stone', title: 'The green stone', emoji: '💎', walk: 12, stay: [20, 30], hours: 'light', at: [70, 70],
+    blurb: 'It stands far out in the grass and glows a little at night. Nobody knows who put it there.',
+    things: [{ key: 'sit', words: 'sit by the green stone', match: /sit|rest|look|watch|view/ }, { key: 'listen', words: 'listen if it hums', match: /listen|hum|ear|hear|sound/ }],
+  },
   // Places he only goes to with something to do there (job): he designs it first, then walks there and it is made.
   { key: 'board', name: 'the notice board', title: 'The notice board', emoji: '📌', walk: 1, stay: [3, 5], hours: [0, 24], at: [270, 292], job: true, blurb: 'People of the town pin notes on it: things they would like made. He reads it, makes one, and earns coins.' },
   { key: 'workshop', name: 'the print workshop', title: 'The print workshop', emoji: '🖨️', walk: 9, stay: [20, 30], hours: [9, 18], at: [560, 300], job: true, blurb: 'A 3D printer hums behind the shutter. What he designs is printed small and kept on the shelf by the door.' },

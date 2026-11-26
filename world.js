@@ -42,7 +42,7 @@ export const unlockedKeys = () => PLACES.map((p) => p.key); // every place is op
 export const knownKeys = () => PLACES.map((p) => p.key);
 export const checkUnlocks = () => []; // (places used to open up one by one; now they are all his from the start)
 
-const lastReal = (s) => (s.outings ?? []).filter((o) => !o.errand).at(-1) ?? null;
+const lastReal = (s) => (s.outings ?? []).filter((o) => !o.errand && !['drops', 'board'].includes(o.place)).at(-1) ?? null; // (a quick trip for a note or to the notice board is not "having been out")
 const realToday = (s, now) => (s.outings ?? []).filter((o) => !o.errand && dayNL(Date.parse(o.leftAt)) === dayNL(now)).length + (s.where && !s.where.errand ? 1 : 0);
 // May he go there now? { ok: true } or { why, gear } (gear: what would make it possible).
 export function canGo(s, key) {
@@ -68,13 +68,27 @@ export function goLine(s, now = Date.now()) {
   const all = goOptions(s, now).slice(0, 3);
   return say(all).length <= 170 ? say(all) : say(all.slice(0, 2)).slice(0, 170);
 }
-// How much he feels like going out (for how inviting the move is).
+// How long he has been inside: the hours since he last came home from a real outing (not an errand). Never out: two days.
+export function hoursInside(s, now = Date.now()) {
+  if (s.where) return 0;
+  const last = lastReal(s);
+  return last ? Math.max(0, (now - Date.parse(last.homeAt ?? last.leftAt)) / HOUR) : 48;
+}
+// How much he feels like going out (for how inviting the move is). It grows with every hour he sits inside: after a
+// morning at home, going out is the most inviting thing he can do.
 export function wantsOut(s, now = Date.now()) {
   if (!goOptions(s, now).length) return 0;
-  const last = lastReal(s);
-  const since = last ? (now - Date.parse(last.homeAt ?? last.leftAt)) / HOUR : 48;
+  const inside = hoursInside(s, now);
   const nice = !isWet(s.weather) && (s.weather?.temp ?? 10) > 3 && (s.weather?.cloud ?? 0) < 0.7;
-  return 0.5 + (s.body?.boredom ?? 0) / 5 + Math.min(1.6, since / 14) + (nice ? 0.5 : 0) + (last ? 0 : 0.8);
+  return 0.5 + (s.body?.boredom ?? 0) / 5 + Math.min(2.4, inside / 3) + (nice ? 0.5 : 0) + (lastReal(s) ? 0 : 0.8);
+}
+// For his prompt: after a few hours inside (by day) his legs want out, and he hears what there is to do out there.
+export const INSIDE_LONG_H = 3;
+export function outLines(s, now = Date.now()) {
+  const inside = hoursInside(s, now), hour = hourNL(now);
+  if (s.where || inside < INSIDE_LONG_H || hour < 8 || hour >= CURFEW - 1.5 || !goOptions(s, now).length) return [];
+  const built = (s.decor ?? []).some((d) => d.kind === 'outside');
+  return [`I have been inside for ${inside >= 20 ? 'a whole day' : `${Math.round(inside)} hours`}. My legs want out and my room feels small. Out there I can go for a walk (go_out), paint a wall, shape my land${built ? ', or build more on it' : ', or build the first big thing on my field: it is still empty'}.`];
 }
 // When the weather or a missing thing keeps him in, and he has not been out for a while: what he could ask for.
 export const gearWish = () => null; // (he used to need an umbrella, a scarf or a library card to go out: not any more)
@@ -170,12 +184,26 @@ export function finishOuting(s, now = Date.now()) {
       o.saw = 'the ducks on the pond';
       find(false);
     }
-    up(s, 'calm', 1.2); up(s, 'joy', 0.7); up(s, 'wonder', 0.5); up(s, 'energy', -0.8);
+    up(s, 'calm', 1.2); up(s, 'joy', 0.7); up(s, 'wonder', 0.5); up(s, 'boredom', -2); up(s, 'energy', -0.8);
   } else if (p.key === 'doorstep') {
     o.did = wet ? 'I sat in my doorway and listened to the rain on the roofs. The gutter sang.' : pick(rnd, ['I sat on my doorstep and watched the square. A sparrow took a bath in a puddle, very seriously.', 'I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling.', 'I sat on my doorstep and counted the people crossing the square. Eleven, and one with a dog.', 'I sat on my doorstep until a grey cat came and sat next to me, as if we had agreed to meet.', 'I sat on my doorstep. A traveller crossed the square with a rattling suitcase, looked at my house for a moment, and went on.', 'I sat on my doorstep and watched the door of the grocery store. Nobody went in and nobody came out. I found that restful.']);
     find(false);
     o.saw = 'the square from my doorstep';
-    up(s, 'calm', 0.8); up(s, 'joy', 0.5); up(s, 'loneliness', -1.5); up(s, 'energy', -0.2);
+    up(s, 'calm', 0.8); up(s, 'joy', 0.5); up(s, 'loneliness', -1.5); up(s, 'boredom', -1); up(s, 'energy', -0.2);
+  } else if (p.key === 'field') { // his own land beside the square
+    const mine = (s.decor ?? []).filter((d) => d.kind === 'outside').length, shapes = (s.land ?? []).length;
+    const have = mine || shapes ? `${[mine ? `${mine} thing${mine === 1 ? '' : 's'} of mine` : '', shapes ? `${shapes} hill${shapes === 1 ? '' : 's'} or hole${shapes === 1 ? '' : 's'}` : ''].filter(Boolean).join(' and ')} on it so far.` : 'It is empty. That is nobody’s fault but mine.';
+    if (w.thing === 'clouds') { o.did = wet ? 'I lay in the wet grass of my field and let the rain fall on my face. It was a bad idea and I liked it.' : pick(rnd, ['I lay on my back in the grass of my field and watched the clouds. One looked like a shoe. Most looked like clouds.', 'I lay in the grass of my field and did nothing at all. A beetle walked over my hand as if I was not there.', 'I lay in my field and looked up. The sky was very big and did not care. That was restful.']); o.saw = 'the sky over my field'; up(s, 'calm', 1.3); }
+    else { const a = 4 + Math.floor(rnd() * 9), b = 3 + Math.floor(rnd() * 7); o.did = `I walked all the way around my field. ${have} I paced out a spot of ${a} by ${b} steps and stood in the middle of it: something big could stand right here.`; o.saw = mine ? 'my field with what I built on it' : 'my empty field'; up(s, 'wonder', 0.6); }
+    find(false);
+    up(s, 'calm', 0.6); up(s, 'joy', 0.6); up(s, 'boredom', -2); up(s, 'energy', -0.6);
+  } else if (p.key === 'stone') { // the green stone, far out in the grass
+    o.did = w.thing === 'listen'
+      ? pick(rnd, ['I walked out to the green stone and put my ear against it. It hums, very low. Or my ear does. One of us.', 'I pressed my ear to the green stone. Nothing. Then something, like a fridge far away. I do not trust it.', 'I listened at the green stone for a long time. It said nothing useful, which is still more than most stones.'])
+      : pick(rnd, ['I sat with my back against the green stone. It was warmer than a stone should be. Nobody knows who put it there, and it is not telling.', 'I sat by the green stone and looked back at the village. From here my house is the size of my thumb.', 'I walked all the way out to the green stone and sat down. It is a long walk for a stone. I would do it again.']);
+    o.saw = 'the green stone';
+    find(false);
+    up(s, 'wonder', 1.4); up(s, 'calm', 0.7); up(s, 'boredom', -2); up(s, 'energy', -1);
   } else if (p.key === 'library') {
     const topic = (s.curious?.interests ?? [])[0]?.topic ?? (s.curious?.sparks ?? []).at(-1)?.topic ?? pick(rnd, ['Constellation', 'Origami', 'Lighthouse', 'Hedgehog', 'Kite', 'Clockwork']);
     o.read = topic;

@@ -25,6 +25,7 @@ import { lying } from './strangers.js';
 import { lampsOf, lampName, lampNow } from './web/lights.js';
 import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
+import { isToday } from './days.js';
 
 export const MIN_MOVES = 6;
 export const MAX_MOVES = 10;
@@ -123,7 +124,7 @@ export const MOVES = [
   { name: 'harvest', line: (s, n) => `harvest what is ripe (${names([...new Set(ripe(s, n).map((p) => p.plant))])}): {plant}`, when: (s, n) => ripe(s, n).length > 0, score: (s) => 2 + (10 - s.fullness) / 3 },
   { name: 'plant', line: (s) => `plant seeds (${names(seeds(s).map((x) => x.name))}): {seed}`, when: (s) => seeds(s).length > 0 && greenhouse(s) && plots(s).length < SLOTS_PER_GREENHOUSE && !missingTool(s, 'plant'), score: () => 1.5 },
   { name: 'eat', line: (s) => `eat something (${names(food(s).map((p) => p.name), 4)}): {food}`, when: (s, n) => food(s).length > 0 && !notHungryReason(s, n), score: (s) => 1 + (10 - s.fullness) / 2 },
-  { name: 'cook', line: () => 'cook a dish from my pantry: {dish, ingredients: [1 to 4]}', when: (s, n) => food(s).length > 0 && kitchenIn(s.decor) && can(s, 'cook', n) && s.fullness < 7, score: (s) => 1 + (10 - s.fullness) / 3 },
+  { name: 'cook', line: (s) => `cook a dish with only what is in my pantry now (${food(s).filter((p) => p.kind === 'ingredient').slice(0, 6).map((p) => p.name).join(', ')}): {dish, ingredients: [1 to 4 of these]}`, when: (s, n) => food(s).length > 0 && kitchenIn(s.decor) && can(s, 'cook', n) && s.fullness < 7, score: (s) => 1 + (10 - s.fullness) / 3 },
   // --- body ---
   { name: 'rest', line: () => 'rest for a while: {}', when: () => true, score: (s) => 0.2 + (10 - s.energy) / 2 },
   // A free move in his own words. It leaves nothing behind, so it is offered, but less than the moves that really make or grow something.
@@ -147,7 +148,7 @@ export const MOVES = [
   { name: 'fetch_note', line: (s) => `walk to where someone left a note for me (${lying(s)[0]?.where ?? 'in my world'}) and pick it up: {}`, when: (s, n) => !process.env.PIP_NO_OUT && lying(s).length > 0 && Boolean(canGo(s, 'drops', n).ok), score: () => 1.7 },
   { name: 'shape_land', line: (s) => `take the land tool from the land workshop and shape the ground of my world${(s.land ?? []).length ? '' : ' (it is all flat now)'}: {kind: "hill", "hole", or "flat" to undo one, where: "on my land" or a place like "by the pond", size: "small", "medium" or "big", name}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'land', n).ok) && landToday(s, n) < LAND_PER_DAY && (s.energy ?? 10) > 3, score: (s) => 0.55 + s.body.creativity / 5 + ((s.land ?? []).length ? 0 : 0.5) },
   { name: 'paint_wall', line: () => 'paint something big on a wall outside in my world, for everyone to see (no paper or supplies needed): {what, why, wall: "any wall", or one I pick like "the wall by the flats" or "the back wall of the library"}', when: (s, n) => !process.env.PIP_NO_OUT && left(s, 'draw', n) > 0 && Boolean(canGo(s, 'walls', n).ok), score: (s) => 0.9 + s.body.creativity / 4 },
-  { name: 'print_thing', line: () => 'design a small 3D model and print it at the print workshop (it stays there on my shelf of prints): {what, why}', when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'workshop', n).ok) && (s.prints ?? []).filter((x) => n - Date.parse(x.at) < 86_400_000).length < 3, score: (s) => 0.7 + s.body.creativity / 4 },
+  { name: 'print_thing', line: () => 'design a small 3D model and print it at the print workshop (it stays there on my shelf of prints): {what, why}', when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'workshop', n).ok) && (s.prints ?? []).filter((x) => isToday(x.at, n)).length < 3, score: (s) => 0.7 + s.body.creativity / 4 },
   { name: 'go_out', line: (s, n) => `go outside for a while (I come home by myself): ${goLine(s, n)}: {place, what}`, when: (s, n) => goOptions(s, n).length > 0, score: (s, n) => wantsOut(s, n) },
   { name: 'ask_for', line: (s, n) => `ask Bas for something (because ${askReason(s, n)}): {item, why}`, when: (s, n) => Boolean(askReason(s, n)), score: () => 2 },
   // --- projects ---
