@@ -7063,3 +7063,115 @@ I am full of energy and want to harvest my basil and eat it, plus I want to star
 - eat (basil): I need to eat since I harvested basil.
 - mood: grumpy
 
+## 26/11/2026, 16:32:52
+
+- go_out (the library): My head is empty. I go outside: the library.
+- mood: grumpy
+
+## 26/11/2026, 17:29:25
+I want to play a quiet song on my flute since I finished my goal for tonight.
+> I want to play a quiet song on my flute since I finished my goal for tonight.
+- play_piano (C4 E4 G4:2 E4:4): play my flute
+- mood: calm
+
+## 26/11/2026, 17:37:32
+Someone left a note on the square, and I want to see what they want.
+> Someone left a note on the square, and I want to see what they want.
+- go_out: Go to the square and pick up the note.
+- mood: calm
+
+## 26/11/2026, 17:53:44
+Kofi asked about the most useless thing I ever made. I want to answer him honestly about my clumsy first tries.
+> Kofi asked about the most useless thing I ever made. I want to answer him honestly about my clumsy first tries.
+- walk_to (computer): Answering Kofi's note about useless things
+- mood: dry
+
+## 26/11/2026, 18:01:57
+My room feels too full, but I want to start a night sky project since I am into it.
+> My room feels too full, but I want to start a night sky project since I am into it.
+- do (plan my new project: Build a little simulation of night sky: something that moves by itself): I will start the night sky project.
+- mood: dry
+
+## 26/11/2026, 18:10:05
+I finished my simulation project and I want to check the notice board to see what people are asking for.
+> I finished my simulation project and I want to check the notice board to see what people are asking for.
+- go_out: Let's check the board.
+- mood: dry
+
+## 26/11/2026, 18:18:16
+I want to draw a cat for the notice board to earn some coins.
+> I want to draw a cat for the notice board to earn some coins.
+- draw (plain wooden shelf): I will draw the cat for the notice board.
+- mood: dry
+
+## 26/11/2026, 18:26:23
+I finished my project and want to play my flute as planned, but first I need to eat something.
+> I finished my project and want to play my flute as planned, but first I need to eat something.
+- eat (mint): eat some mint
+- mood: calm
+
+## 26/11/2026, 18:34:36
+play flute
+- record_song (starlight flute tune): play flute
+- mood: calm
+
+## 26/11/2026, 18:42:46
+I finished my project and want to look up how to make a telescope to earn some coins.
+> I finished my project and want to look up how to make a telescope to earn some coins.
+- search_web (how to make a simple telescope): Let's check how a telescope is made.
+- mood: curious
+
+## 26/11/2026, 18:51:07
+I finished my night sky project and I want to play a quiet tune on my flute since I have some energy left.
+> I finished my night sky project and I want to play a quiet tune on my flute since I have some energy left.
+- play_piano (C4 E4 G4:2 E4:4): play a quiet song on my flute
+- mood: curious
+
+## 26/11/2026, 18:59:13
+I finished my night sky project, so I want to play my new flute and relax.
+> I finished my night sky project, so I want to play my new flute and relax.
+- water: My plants look dry.
+- mood: curious
+
+## 26/11/2026, 19:07:25
+Someone gave me a flute, so I want to play it right away.
+> Someone gave me a flute, so I want to play it right away.
+- go_out (the green stone): My head is empty. I go outside: the green stone.
+- mood: curious
+
+## 26/11/2026, 19:55:51
+I got the flute someone gave me, so I want to play a quiet song on it tonight as planned.
+> I got the flute someone gave me, so I want to play a quiet song on it tonight as planned.
+- do (play a quiet melody on my thin silver flute by the window): playing my new flute
+- mood: content
+
+## 26/11/2026, 20:03:56
+I finished my project and want to play my new flute.
+> I finished my project and want to play my new flute.
+- do (Play a quiet song on my flute tonight): play my flute
+- mood: content
+
+## 26/11/2026, 20:12:10
+I finished my night sky project and I want to write about it in my diary, then play my new flute.
+> I finished my night sky project and I want to write about it in my diary, then play my new flute.
+- write_diary (The night sky simulation actually works. It moves by itself and looks neat.): Write about the night sky simulation.
+- mood: content
+
+## 26/11/2026, 20:20:14
+Play my new silver flute.
+- do (play my new silver flute to try the sound): Play my new silver flute.
+- mood: content
+
+## 26/11/2026, 20:28:19
+My basil is ready to harvest, and I want to cook with it since I am starving.
+> My basil is ready to harvest, and I want to cook with it since I am starving.
+- harvest (basil): Harvest the basil
+- do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
+- mood: content
+
+## 26/11/2026, 20:30:23
+My project on the night sky simulation is done and I want to play a quiet song on my flute as planned.
+> My project on the night sky simulation is done and I want to play a quiet song on my flute as planned.
+- do (Play a quiet song on my flute): playing my flute for the night
+- mood: content
+
