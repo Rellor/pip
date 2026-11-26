@@ -119,6 +119,10 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       steps.push({ action: 'ask_for', details: { item: clip(d.what ?? d.item ?? d.name, 140), reason: clip(d.why ?? d.reason, 200) }, thought, enjoyment: 6, needs: '' });
       continue;
     }
+    if (name === 'start_hobby') { // his own idea for a hobby (curiosity.js)
+      steps.push({ action: 'do', as: 'start_hobby', details: { what: `decide to try ${clip(d.what ?? d.name ?? d.hobby, 60)} as a hobby`, hobby: clip(d.what ?? d.name ?? d.hobby, 80), why: clip(d.why, 200) }, thought, enjoyment: 7 });
+      continue;
+    }
     if (name === 'drop_want') {
       steps.push({ action: 'do', as: 'drop_want', details: { what: `cross "${clip(d.what ?? d.item, 60)}" off my list of wants`, want: clip(d.what ?? d.item, 140), why: clip(d.why, 160) }, thought, enjoyment: 5 });
       continue;

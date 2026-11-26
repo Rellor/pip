@@ -25,7 +25,7 @@ export const KIND = {
   plant: 'garden', water: 'garden', harvest: 'garden',
   eat: 'food', cook: 'food', buy: 'shop', happened: 'world', go_out: 'outside', came_home: 'outside',
   rest: 'rest',
-  write_diary: 'write', tell: 'people', ask_for: 'people', want: 'people', drop_want: 'people', build_outside: 'make', make_site: 'make', update_site: 'make', plan_project: 'make', judge_project: 'make', start_project: 'make', work_on_project: 'make', phone: 'room',
+  write_diary: 'write', tell: 'people', ask_for: 'people', want: 'people', drop_want: 'people', start_hobby: 'learn', build_outside: 'make', make_site: 'make', update_site: 'make', plan_project: 'make', judge_project: 'make', start_project: 'make', work_on_project: 'make', phone: 'room',
   take_photo: 'look', print_photo: 'look', place_picture: 'room', take_down_picture: 'room', take_down_print: 'room',
   move_thing: 'room', remove_decoration: 'room', take_out: 'room', place_tool: 'room', take_tool: 'room', lamp_auto: 'room',
   use: 'play', do: 'play', wear: 'clothes', take_off: 'clothes', walk_to: 'walk',

@@ -70,7 +70,7 @@ export function fade(s, now = Date.now()) {
   const last = Date.parse(c.fadedAt ?? 0) || now;
   const days = (now - last) / DAY;
   if (days < 1) { c.fadedAt ??= new Date(now).toISOString(); return; }
-  for (const i of c.interests) i.score = Math.round(Math.max(0, i.score - FADE_PER_DAY * Math.floor(days)) * 10) / 10;
+  for (const i of c.interests) if (!(i.own && (i.practice ?? 0) < HOBBY_REAL_AFTER)) i.score = Math.round(Math.max(0, i.score - FADE_PER_DAY * Math.floor(days)) * 10) / 10; // (an idea of his own waits for him: it does not fade, it is tried or let go)
   c.interests = c.interests.filter((i) => i.score > 0.2);
   c.fadedAt = new Date(now).toISOString();
 }
@@ -146,4 +146,96 @@ export function curiosityLines(s, projects = [], now = Date.now()) {
   if (hobby) out.push(`${hobby.topic} keeps pulling at me. I could make it a hobby: a project to learn it, get what I need for it (I can ask Bas), and make something with it.`);
   if (!into.length && !fresh.length) out.push('I have no hobby of my own yet. Browsing the web (browse) is how people stumble on something they love.');
   return out;
+}
+
+// ---- A hobby of his own idea. Until now a hobby could only grow out of something he happened to read. Now he can also
+// simply think: "I want to start graffiti" (the start_hobby move). He has to say why. From then on it is a hobby he is
+// trying: he hears it when he thinks, with the move that would be a way to do it, and every time he really does
+// something for it, that counts (practice). Three times and it is a hobby for real; often enough and he has mastered it.
+// An idea he never tries is let go after a few days, like anyone's.
+export const HOBBY_IDEA_EVERY_DAYS = 3; // a new idea at most this often
+export const HOBBIES_TRYING_MAX = 2; // ideas he has not made real yet, at one time
+export const HOBBY_REAL_AFTER = 3; // tried this many times: it is a real hobby
+export const HOBBY_DROP_DAYS = 4; // never tried in this many days: he lets the idea go
+// Which of his moves are a way to do a hobby, by the words in it.
+const HOBBY_MOVES = [
+  [/graffiti|mural|street art|spray|tag(ging)?s?\b|wall paint/, ['paint_wall']],
+  [/garden|plant|grow(ing)?|herb|vegetable|tomato|flower|botan/, ['plant', 'water', 'harvest']],
+  [/music|song|sing|flute|guitar|piano|violin|melod|compos|drum|band/, ['play_piano', 'record_song', 'compose']],
+  [/draw|sketch|paint|watercolou?r|illustrat|comic|cartoon|portrait/, ['draw', 'paint_wall']],
+  [/cook|bak(e|ing)|recipe|soup|bread|kitchen|food/, ['cook']],
+  [/cod(e|ing)|program|game|app\b|software|website|web ?design|pixel/, ['make_app', 'update_app', 'make_site', 'update_site']],
+  [/build|carpent|wood|sculpt|potter|clay|ceramic|craft|furniture|architect|model|invent|machine|clock|whittl|carv/, ['decorate', 'build_outside', 'change_thing', 'extend_thing', 'print_thing']],
+  [/sew|knit|cloth|fashion|costume|hat\b|tailor|weav/, ['make_clothes']],
+  [/danc|ballet|gymnast|juggl|acrobat/, ['make_move']],
+  [/photo|camera|film/, ['take_photo']],
+  [/landscap|dig(ging)?|hill|earth|terrain|land art/, ['shape_land']],
+  [/print/, ['print_thing']],
+  [/walk|hik|bird|star ?gaz|astronom|night sky|explor|collect|stone|fossil|nature|cloud|weather|fish|duck|kite|map/, ['go_out']],
+  [/\bread(ing)?\b|\bbooks?\b|poe(m|try)|\bwrit|stor(y|ies)|diary|journal|histor|philosoph|language/, ['read_book', 'write_diary', 'search_web']],
+];
+export const hobbyMoves = (topic) => { const t = key(topic); const out = HOBBY_MOVES.filter(([re]) => re.test(t)).flatMap(([, m]) => m); return [...new Set(out.length ? out : ['search_web', 'read_book'])]; }; // nothing fits: he starts by finding out about it
+const MOVE_WORDS = { paint_wall: 'paint a wall', plant: 'plant something', water: 'water my plants', harvest: 'harvest', play_piano: 'play music', record_song: 'record a song', compose: 'compose', draw: 'draw', cook: 'cook', make_app: 'write a program', update_app: 'work on a program', make_site: 'make my website', update_site: 'work on my website', decorate: 'make a thing', build_outside: 'build outside', change_thing: 'change a thing', extend_thing: 'add to a thing', print_thing: 'print a model', make_clothes: 'make clothes', make_move: 'design a move', take_photo: 'take a photo', shape_land: 'shape the land', go_out: 'go outside', read_book: 'read about it', write_diary: 'write', search_web: 'look it up' };
+const ownHobbies = (s) => ensureCurious(s).interests.filter((i) => i.own);
+export const tryingHobbies = (s) => ownHobbies(s).filter((i) => (i.practice ?? 0) < HOBBY_REAL_AFTER);
+// May he think of a new hobby now? (not too often, and not while two ideas are still waiting to be tried)
+export const canStartHobby = (s, now = Date.now()) => tryingHobbies(s).length < HOBBIES_TRYING_MAX && (!s.curious?.hobbyIdeaAt || now - Date.parse(s.curious.hobbyIdeaAt) >= HOBBY_IDEA_EVERY_DAYS * DAY);
+// A few ideas that fit his world, different every day (he can also think of anything else).
+const HOBBY_IDEAS = ['graffiti on the bare walls', 'growing tomatoes', 'bird watching at the pond', 'stargazing by the green stone', 'building big things on my field', 'writing songs for my flute', 'baking bread', 'carving wood', 'making kites', 'collecting stones', 'drawing a map of my village', 'writing poems', 'land art with hills and holes', 'photography', 'making small games', 'pottery', 'making hats', 'inventing dances', 'building clocks', 'drawing comics'];
+export function hobbyIdeas(s, now = Date.now(), n = 3) {
+  const have = ensureCurious(s).interests.map((i) => key(i.topic));
+  const free = HOBBY_IDEAS.filter((h) => !have.some((k) => k && key(h).split(' ').some((w) => w.length > 4 && k.includes(w))));
+  const day = Math.floor(now / DAY);
+  return Array.from({ length: Math.min(n, free.length) }, (_, i) => free[(day * 7 + i * 5) % free.length]).filter((v, i, all) => all.indexOf(v) === i);
+}
+// He decides to try something as a hobby. Returns { hobby } or { failed } (he hears why).
+export function startHobby(s, what, why, now = Date.now()) {
+  const c = ensureCurious(s);
+  const topic = clip(String(what ?? '').replace(/^(to |i want to |i wanna |start(ing)? |try(ing)? |learn(ing)? (how to )?)+/i, '').replace(/\s+as a hobby$/i, ''), 60);
+  const reason = clip(why, 200);
+  if (key(topic).length < 3) return { failed: 'I did not say what the hobby is' };
+  if (reason.length < 12 || reason.split(' ').length < 3) return { failed: `a hobby needs a why: I say in one honest sentence why I want to try ${topic}` };
+  if (isHeavy(topic)) return { failed: 'that is nothing for a hobby' };
+  if (!canStartHobby(s, now)) return { failed: tryingHobbies(s).length >= HOBBIES_TRYING_MAX ? `I still have not tried ${tryingHobbies(s).map((i) => i.topic).join(' or ')}: first that, then a new idea` : 'I had a new idea for a hobby only a little while ago: first I try that one' };
+  const old = c.interests.find((i) => same(i.topic, topic));
+  if (old?.own) return { failed: `${old.topic} is a hobby of mine already` };
+  const hobby = old ?? { topic, score: 0, since: new Date(now).toISOString() };
+  Object.assign(hobby, { score: Math.max(hobby.score, HOBBY_AT), own: true, why: reason, ideaAt: new Date(now).toISOString(), last: new Date(now).toISOString(), moves: hobbyMoves(topic), practice: hobby.practice ?? 0 });
+  if (!old) c.interests.push(hobby);
+  c.interests = c.interests.filter((i) => i.score > 0.2).sort((a, b) => b.score - a.score).slice(0, 20);
+  c.hobbyIdeaAt = new Date(now).toISOString();
+  return { hobby };
+}
+// After a wake-up: what he really did for a hobby of his own idea counts (once per hobby per wake-up). Returns
+// [{ hobby, became }] where became is 'real' when it has just turned into a real hobby, or 'mastered'.
+export function practiseHobby(s, entries, now = Date.now()) {
+  const out = [];
+  for (const h of ownHobbies(s)) {
+    const words = key(h.topic).split(' ').filter((w) => w.length > 3);
+    const did = (entries ?? []).find((e) => !e.failed && !e.fallback && e.as !== 'start_hobby' && ((h.moves ?? []).includes(e.as ?? e.action) || (h.moves ?? []).includes(e.action) || words.some((w) => key(`${e.name ?? ''} ${e.what ?? ''} ${e.query ?? ''} ${e.topic ?? ''}`).includes(w))));
+    if (!did) continue;
+    const was = h.practice ?? 0;
+    h.practice = was + 1;
+    h.practisedAt = new Date(now).toISOString();
+    h.score = Math.round(Math.min(12, Math.max(h.score, HOBBY_AT) + 0.5) * 10) / 10; // doing it keeps it alive
+    h.last = h.practisedAt;
+    out.push({ hobby: h, became: was < HOBBY_REAL_AFTER && h.practice >= HOBBY_REAL_AFTER ? 'real' : was < MASTER_AFTER && h.practice >= MASTER_AFTER ? 'mastered' : null });
+  }
+  return out;
+}
+// An idea he never tried is let go. Returns the hobbies that went (for a memory).
+export function dropUntriedHobbies(s, now = Date.now()) {
+  const c = ensureCurious(s);
+  const gone = c.interests.filter((i) => i.own && !(i.practice > 0) && now - Date.parse(i.ideaAt ?? i.since) >= HOBBY_DROP_DAYS * DAY);
+  if (gone.length) c.interests = c.interests.filter((i) => !gone.includes(i));
+  return gone;
+}
+// For the brain: the hobbies of his own idea, and what would be a way to do them now.
+export function hobbyLines(s, offered = [], now = Date.now()) {
+  return ownHobbies(s).filter((h) => (h.practice ?? 0) < MASTER_AFTER).slice(0, 3).map((h) => {
+    const n = h.practice ?? 0;
+    const ways = (h.moves ?? []).filter((m) => !offered.length || offered.includes(m)).slice(0, 3).map((m) => `${MOVE_WORDS[m] ?? m.replace(/_/g, ' ')} (${m})`);
+    const days = Math.max(0, Math.floor((now - Date.parse(h.ideaAt ?? h.since)) / DAY));
+    return `${n >= HOBBY_REAL_AFTER ? `My hobby: ${h.topic} (I did it ${n} times)` : `My own idea: I want to try ${h.topic} as a hobby${h.why ? ` (${h.why})` : ''}. ${n ? `I tried it ${n} time${n === 1 ? '' : 's'}` : `I have not tried it yet${days ? `, and it has been ${days} day${days === 1 ? '' : 's'}` : ''}`}`}.${ways.length ? ` A way to do it now: ${ways.join(', ')}.` : ' I can find out how it is done first (search_web).'}`;
+  });
 }

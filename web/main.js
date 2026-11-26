@@ -4344,6 +4344,8 @@ function lineOf(e) {
   const cap = (t) => String(t).replace(/^./, (c) => c.toUpperCase());
   const special = ['fetch_note', 'check_board', 'paint_wall', 'print_thing', 'shape_land', 'start_project', 'judge_project'].find((k) => e.as === k || e.action === k);
   const about = (re) => String(e.what || e.title || name || '').replace(re, '');
+  if (e.as === 'start_hobby') return ['Wants to try a new hobby', String(e.what ?? '').replace(/^decide to try /, '').replace(/ as a hobby$/, '')];
+  if (e.as === 'drop_want') return ['Crossed a want off his list', ''];
   if (special === 'fetch_note') return ['Went to get a note', ''];
   if (special === 'check_board') return ['Read the notice board', ''];
   if (special === 'paint_wall') return ['Painted on a wall', name];
@@ -4727,7 +4729,23 @@ function renderMemory(s) {
   const face = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' };
   fill($('opinions'), (s.opinions || []).length ? s.opinions.slice(-6).reverse().map((o) => el('li', `${face[o.how] ?? '💭'} ${o.topic}: “${o.says}”`)) : [el('li', 'He has not said what he thinks of anything yet.', 'muted')]);
   const ints = (s.curious?.interests || []).filter((i) => i.score >= 3).sort((a, b) => b.score - a.score);
-  fill($('hobbies'), ints.length ? ints.slice(0, 8).map((i) => { const lvl = i.score >= 6 && (i.practice ?? 0) >= 12 ? '🏅 mastered' : i.score >= 6 ? '💛 hobby' : '✨ interest'; return el('li', `${lvl}: ${i.topic} (practised ${i.practice ?? 0} time${(i.practice ?? 0) === 1 ? '' : 's'})`); }) : [el('li', 'No interests yet. Browsing is how he finds them.', 'muted')]);
+  const times = (n) => `${n} time${n === 1 ? '' : 's'}`;
+  const hobbyLevel = (i) => (i.score >= 6 && (i.practice ?? 0) >= 12 ? ['🏅', 'mastered'] : i.own && (i.practice ?? 0) < 3 ? ['🌱', 'wants to try it'] : i.score >= 6 ? ['💛', 'hobby'] : ['✨', 'interest']);
+  fill($('hobbies'), ints.length ? ints.slice(0, 8).map((i) => { const [icon, lvl] = hobbyLevel(i); return el('li', `${icon} ${lvl}: ${i.topic} (${i.own ? 'his own idea, ' : ''}did it ${times(i.practice ?? 0)})${i.own && i.why ? ` — “${i.why}”` : ''}`); }) : [el('li', 'No interests yet. Browsing is how he finds them, or he thinks of one himself.', 'muted')]);
+  { // on the front of the Pip tab: his hobbies, the ones he wants to try first
+    const mine = ints.filter((i) => i.own || i.score >= 6).sort((x, y) => Number(Boolean(y.own && (y.practice ?? 0) < 3)) - Number(Boolean(x.own && (x.practice ?? 0) < 3)));
+    $('hobbyhead').hidden = $('hobbylist').hidden = !mine.length;
+    fill($('hobbylist'), mine.slice(0, 5).map((i) => {
+      const [icon, lvl] = hobbyLevel(i);
+      const li = el('li', null, 'hobby');
+      li.append(el('span', icon, 'hi'));
+      const body = el('div');
+      body.append(el('b', i.topic.replace(/^./, (c) => c.toUpperCase())), el('small', `${lvl}${i.own ? ' · his own idea' : ''} · did it ${times(i.practice ?? 0)}`));
+      if (i.own && i.why) body.append(el('p', `“${i.why}”`));
+      li.append(body);
+      return li;
+    }));
+  }
 }
 function renderMind(s) {
   renderMemory(s);
