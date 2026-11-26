@@ -7074,3 +7074,9 @@ I want to play a quiet song on my flute since I finished my goal for tonight.
 - play_piano (C4 E4 G4:2 E4:4): play my flute
 - mood: calm
 
+## 26/11/2026, 17:37:32
+Someone left a note on the square, and I want to see what they want.
+> Someone left a note on the square, and I want to see what they want.
+- go_out: Go to the square and pick up the note.
+- mood: calm
+
