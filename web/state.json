@@ -1,8 +1,8 @@
 {
   "mood": "grumpy",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 7.26,
+  "loneliness": 7.3,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -13376,47 +13376,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-26T16:32:51.905Z",
-    "via": "fallback",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 3
-    },
-    "tokens": {
-      "calls": 3,
-      "input": 7503,
-      "output": 11355,
-      "models": {
-        "gemini-3.5-flash-lite": 3
-      }
-    },
-    "intervalMin": 8,
-    "thought": "",
-    "inner": "",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "the library",
-          "what": "read about something I wonder about"
-        },
-        "detail": "the library",
-        "thought": "My head is empty. I go outside: the library.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-26T16:40:56.288Z",
+    "via": "outside",
+    "thought": "I am walking to the library.",
     "action": "go_out",
     "details": {
-      "place": "the library",
-      "what": "read about something I wonder about"
+      "place": "library"
     },
-    "detail": "the library",
-    "enjoyment": 6,
+    "detail": "I am walking to the library.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "library",
+      "phase": "going",
+      "back": "2026-11-26T17:22:51.905Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -13819,21 +13794,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-26T16:32:51.910Z",
-  "fullness": 9.67,
+  "fullness": 9.5,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.63,
-  "joy": 4.3,
-  "calm": 5.49,
+  "wonder": 5.1,
+  "joy": 4.51,
+  "calm": 5.38,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.4
+    "excited": 0.24
   },
-  "feelAt": "2026-11-26T16:32:29.668Z",
+  "feelAt": "2026-11-26T16:40:56.272Z",
   "lastAte": "2026-11-26T16:24:25.095Z",
   "studio": {
     "songs": [
@@ -14546,18 +14521,14 @@
       }
     ]
   },
-  "lastError": {
-    "at": "2026-11-26T16:32:51.903Z",
-    "kind": "brain",
-    "message": "Gemini gave an empty or broken answer. Try again."
-  },
+  "lastError": null,
   "body": {
-    "creativity": 0.25,
-    "curiosity": 0.14,
+    "creativity": 0.33,
+    "curiosity": 0.21,
     "boredom": 0,
-    "loneliness": 7.26,
+    "loneliness": 7.3,
     "tidiness": 0.4,
-    "at": "2026-11-26T16:32:29.668Z",
+    "at": "2026-11-26T16:40:56.272Z",
     "coziness": 3.4
   },
   "recent": {
