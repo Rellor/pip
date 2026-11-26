@@ -51,7 +51,7 @@ export function fits(item, needs) {
   return words(n).some((w) => have.has(w));
 }
 
-export const MAX_TOOLS = 12;
+export const MAX_TOOLS = 20; // (it was 12: with a toolbox, wood and a guitar it was full, and a gift from Bas could not be put in)
 
 // Every tool of his. Only the ones in his inventory can be used. One he put in his room or chest must be taken back first.
 export function toolList(s) {

@@ -481,6 +481,15 @@ export const CHANGES = [
     },
   },
   {
+    id: '2026-11-26 a flute from Bas',
+    run(s, at) { // he asked for a flute, to play a quiet song in the evening
+      s.tools ??= [];
+      const given = giveForAsk(s, 'flute');
+      for (const ask of (s.asks ?? []).filter((x) => x.status === 'open' && /flute/i.test(x.item ?? ''))) Object.assign(ask, { status: 'done', doneAt: at, given: ['a flute'] });
+      return `Bas gave me the flute I asked for${given.length ? '' : ' (I had one already)'}: a thin silver flute to blow across. It is in my inventory, so I can play it right away (play_piano with instrument "flute").`;
+    },
+  },
+  {
     id: '2026-11-22 watercolour paper from Bas',
     run(s, at) { // he asked for new watercolor paper, to paint a new view now that his autumn window is finished
       const ask = (s.asks ?? []).find((a) => a.status === 'open' && /watercolou?r|paper/i.test(a.item));
