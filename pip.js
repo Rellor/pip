@@ -187,7 +187,7 @@ function observeStep(s, e) {
     change_thing: [`I changed ${e.name}${e.grew ? ' and made it bigger' : ''}`, 4],
     move_thing: [`I moved ${e.name}`, 3],
     extend_thing: [e.joined ? `I joined ${e.joined} onto ${e.name}, now one thing with ${e.total} parts` : e.side ? `I built onto the ${e.side} side of ${e.name}: ${e.added} new parts, now ${e.total}` : `I added ${e.added} parts to ${e.name}, now ${e.total} parts`, 5],
-    ask_for: [`I asked for ${e.item}${e.reason ? ` (${e.reason})` : ''}`, 5],
+    ask_for: [`I put ${e.item} on my list of wants${e.reason ? ` (${e.reason})` : ''}`, 5],
     do: [`${e.what}`, 4],
     write_diary: [`I wrote in my diary: ${String(e.text ?? '').slice(0, 120)}`, 3],
     play_piano: [e.instrument === 'voice' ? 'I sang a little tune' : `I played ${e.instrument && e.instrument !== 'piano' ? `the ${e.instrument}` : 'the piano'}`, 3],
@@ -198,6 +198,21 @@ function observeStep(s, e) {
   if (note && note[0]) addMemory(s, note[0], note[1], 'memory', at);
 }
 const sameText = (a, b) => a.toLowerCase().includes(b.toLowerCase()) || b.toLowerCase().includes(a.toLowerCase());
+// His wants (the list in state.asks). A want needs a reason: at least a few words, and not just the thing again.
+const reasoned = (c) => { const w = String(c?.why ?? '').trim(); return w.length >= 12 && w.split(/\s+/).length >= 3 && w.toLowerCase() !== String(c?.item ?? '').trim().toLowerCase(); };
+// He got something on his wants list by himself (he bought it, or made it): that want has come true.
+function gotWant(s, name, how, at = new Date().toISOString()) {
+  const n = String(name ?? '').trim();
+  if (n.length < 3) return null;
+  const want = (s.asks ?? []).find((a) => a.status === 'open' && !a.big && sameText(a.item, n));
+  if (!want) return null;
+  Object.assign(want, { status: 'done', doneAt: at, given: [how], self: true });
+  addMemory(s, `I wanted ${want.item}, and I ${how}. One thing off my list of wants.`, 6, 'memory', at);
+  console.log(`   ⭐ a want came true: ${want.item} (${how})`);
+  return want;
+}
+// For his prompt: what is on his list of wants.
+const wantLines = (s, now = Date.now()) => { const open = (s.asks ?? []).filter((a) => a.status === 'open'); return open.length ? [`My list of wants (Bas reads it, and I can also get a thing myself by buying or making it): ${open.map((a) => `${a.item.slice(0, 50)}${a.why ? ` (because: ${a.why.slice(0, 70)})` : ''}, ${Math.max(0, Math.floor((now - Date.parse(a.since)) / 86_400_000))} days`).join('; ')}.`] : []; };
 const withWarn = (place, made) => (place && made?.warn ? `${place} (careful: ${made.warn})` : place && made?.hint ? `${place} (${made.hint})` : place ?? null);
 // Pip may write to Bas at most once every 3 hours, so he only says what really matters.
 const MIN_GAP_MINUTES = 180;
@@ -601,7 +616,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...paceLines(s), ...offLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...wantLines(s), ...paceLines(s), ...offLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -1121,7 +1136,20 @@ function applyInnerLife(s, r, detail, replying = false) {
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
   }
   const fresh = [];
+  if (r.action === 'do' && r.as === 'drop_want') { // he crosses a want off his list himself
+    const gone = s.asks.find((a) => a.status === 'open' && r.details?.want && sameItem(a.item, text(r.details.want, 140)));
+    if (gone) { Object.assign(gone, { status: 'gone', goneAt: at, goneWhy: text(r.details.why, 160) }); console.log(`   ✂️  off his wants list: ${gone.item}`); }
+  }
+  const handled = new Set();
   for (const c of wanted) {
+    if (handled.has(c.item.toLowerCase())) continue;
+    handled.add(c.item.toLowerCase());
+    if (c.item && !reasoned(c)) { // a want needs a why: without one it is not written down, and he hears that
+      ensurePlan(s);
+      s.plan.lastFail = { at, why: `want: "${c.item.slice(0, 50)}" is not on my wants list, because I gave no real reason. A want needs a why: one honest sentence` };
+      console.log(`   ✋ not on his wants list (no reason): ${c.item}`);
+      continue;
+    }
     const open = s.asks.filter((a) => a.status === 'open');
     const recentlyGiven = s.asks.some((a) => a.status === 'done' && Date.now() - Date.parse(a.doneAt || 0) < 3 * 86_400_000 && sameItem(a.item, c.item));
     if (!c.item || open.length >= 5 || open.some((a) => sameItem(a.item, c.item)) || recentlyGiven) continue;
@@ -1490,7 +1518,7 @@ async function wakeUp() {
     const needs = instrumentNeeds(st, { pianoGone: Boolean(state.furniture?.piano?.gone) }).filter(Boolean).find((n) => !bag.some((x) => fits(x, n))) || ''; // (only an instrument he does not have stops a step: he needs no tools any more, tools.js)
     if (needs) {
       const away = toolList(state).find((x) => !x.usable && fits({ name: x.name, kind: x.kind }, needs));
-      blocked.push({ st, why: away ? `my ${away.name} is ${away.where.replace('his ', 'my ')}. take_tool brings it into my inventory first, then I can play it` : `I need ${needs} in my inventory for that. If I really want it, I ask Bas for it (ask_for) and say what it is for, or I make it myself` });
+      blocked.push({ st, why: away ? `my ${away.name} is ${away.where.replace('his ', 'my ')}. take_tool brings it into my inventory first, then I can play it` : `I need ${needs} in my inventory for that. If I really want it, I put it on my wants list (want) and say why, or I make it myself` });
       return false;
     }
     if (st.action === 'decorate' && toolFor(st.details)) bag.push({ name: text(st.details.name, 40), kind: toolFor(st.details) });
@@ -1571,6 +1599,7 @@ async function wakeUp() {
       if (st.made.entry) {
         st.made.entry.roomScaled = true;
         state.decor.push(st.made.entry);
+        gotWant(state, st.made.entry.name, 'made it myself'); // something from his list of wants, made by himself
         const promised = st.details.blueprint ? markBuilt(state, st.details.blueprint, new Date(stepStart).toISOString(), st.made.entry) : [];
         const added = ensureBehaviors(st.made.entry);
         const noSpot = st.made.entry.kind === 'floor' && !Object.keys(placed).length && !st.details.on && !st.details.wall && !st.details.where && !(Number.isFinite(Number(st.details.x)) && Number.isFinite(Number(st.details.z)));
@@ -1697,6 +1726,7 @@ async function wakeUp() {
     if (st.action === 'make_move') st.made = makeMove(state, st.details, stepStart);
     if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
     if (st.action === 'buy') st.made = buy(state, st.details.item ?? st.details.name ?? st.details.what);
+    if (st.action === 'buy' && st.made?.bought) gotWant(state, st.made.bought, 'bought it myself');
     if (st.action === 'buy' && st.made?.bought && i === steps.length - 1) startOuting(state, { errand: st.made.bought }, stepStart); // a quick walk to the corner shop and back (when nothing else is planned after it)
     if (st.action === 'go_out' && st.as === 'fetch_note') { const job = fetchJob(state); if (job) st.details = { ...st.details, job }; else st.made = { failed: 'no note lies there for me right now' }; } // he goes to get what someone left for him
     if (st.action === 'go_out' && st.as === 'shape_land') { const plan = planLand(state, st.details.land, stepStart); if (plan.failed) st.made = plan; else st.details = { ...st.details, job: plan.job }; } // he shapes the land: first see if it fits there

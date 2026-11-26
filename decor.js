@@ -52,7 +52,8 @@ export function wantsOneMore(decor, text) {
   if (!/\b(build|make|craft|carve|construct|put together)\b/.test(t)) return null;
   return fullKinds(decor).find(({ kind }) => new RegExp(`\\b(${kind}|${kindsWord(kind)})\\b`).test(t)) ?? null;
 }
-export const MAX_PER_DAY = 3; // new things a day (changing what he has is not counted here): a room fills up fast
+export const MAX_PER_DAY = 3; // new things a day for his room (changing what he has is not counted here): a room fills up fast
+export const MAX_OUTSIDE_PER_DAY = 1; // and one more out in his world: it has its own count, so three small things for his room never leave him unable to build outside
 const MAX_PARTS = 40;
 const MAX_DECOR = 30;
 const STORAGE_WORDS = /shelf|shelves|closet|cabinet|wardrobe|drawer|dresser|rack|crate|storage|cupboard|bookcase|locker/i;
@@ -202,7 +203,8 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   const d = details && typeof details === 'object' ? details : {};
   const name = str(d.name, 60);
   if (!name) return { failed: 'he did not give it a name' };
-  if (decor.filter((x) => !x.image && isToday(x.createdAt, now)).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
+  const madeToday = decor.filter((x) => !x.image && isToday(x.createdAt, now));
+  if (isOutside(d.where) ? madeToday.filter((x) => x.kind === 'outside').length >= MAX_OUTSIDE_PER_DAY : madeToday.filter((x) => x.kind !== 'outside').length >= MAX_PER_DAY) return { failed: isOutside(d.where) ? 'he has already built something outside today (enough for today)' : 'he has already made enough for today' };
   if (!isOutside(d.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside (where: "outside", or a place like "outside by the pond")` };
   const enough = enoughOf(decor, name);
   if (enough) return { failed: enough.why, hinted: true };
