@@ -9,6 +9,7 @@ import { MAX_MOVES_PER_DAY as MAX_NEW_MOVES_PER_DAY } from './dances.js';
 import { MAX_PER_DAY, MAX_OUTSIDE_PER_DAY, MAX_UPDATES_PER_DAY, MAX_MOVES_PER_DAY, capOf, isOutside } from './decor.js';
 import { furnitureKey } from './decor.js';
 import { isToday } from './days.js';
+import { SITE_CHANGES_PER_DAY } from './site.js';
 
 export const MAX_PHOTOS = 4;
 export const MAX_SONGS_PER_DAY = 4;
@@ -29,6 +30,7 @@ export function dayLimits(s, now = Date.now()) {
     find_picture: { max: MAX_FOUND, used: s.found.filter((f) => within(f.at, now)).length, what: 'find pictures' },
     draw: { max: MAX_ART_PER_DAY, used: s.art.filter((a) => within(a.createdAt, now)).length, what: 'draw' },
     make_app: { max: MAX_APPS_PER_DAY, used: s.apps.filter((a) => within(a.createdAt, now)).length, what: 'write apps' },
+    update_site: { max: SITE_CHANGES_PER_DAY, used: (s.site?.changes ?? []).filter((c) => c.v > 1 && within(c.at, now)).length, what: 'work on my website' },
     update_app: { max: MAX_APP_UPDATES_PER_DAY, used: s.apps.filter((a) => a.updatedAt && within(a.updatedAt, now)).length, what: 'change apps' },
     decorate: { max: MAX_PER_DAY, used: s.decor.filter((x) => !x.image && x.kind !== 'outside' && within(x.createdAt, now)).length, what: 'make things for my room' },
     build_outside: { max: MAX_OUTSIDE_PER_DAY, used: s.decor.filter((x) => !x.image && x.kind === 'outside' && within(x.createdAt, now)).length, what: 'build something outside' }, // its own count (a decorate step with a place outside)
@@ -45,7 +47,7 @@ export function dayLimits(s, now = Date.now()) {
 
 // Actions that share one daily count, and actions that may only happen once in one plan.
 const SHARED = { extend_thing: 'change_thing' };
-const ONCE_PER_PLAN = ['decorate', 'draw', 'make_app', 'update_app'];
+const ONCE_PER_PLAN = ['decorate', 'draw', 'make_app', 'update_app', 'make_site', 'update_site'];
 const NEEDS_NAME = ['use', 'add_use', 'compose', 'change_thing', 'extend_thing', 'remove_decoration', 'move_thing'];
 
 // What in the plan cannot work, with the reason. Steps are checked in order, and what an earlier step makes counts for later ones.
