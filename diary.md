@@ -6871,3 +6871,9 @@ I want to work on my plain wooden shelf project to clear the clutter, since my l
 - do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
 - mood: grumpy
 
+## 26/11/2026, 10:42:35
+My shelf decoration failed because I have too many shelves, so I will put one away in my chest first before trying again.
+> My shelf decoration failed because I have too many shelves, so I will put one away in my chest first before trying again.
+- remove_decoration (small side table): Put away the extra small side table to clear some room
+- mood: grumpy
+
