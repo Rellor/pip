@@ -83,3 +83,16 @@ ok('a goal for one more shelf is let go, and the morning goals know what he has 
   assert.equal(change.run({ decor: shelves.slice(0, 1), projects: [{ title: 'Build a plain wooden shelf', status: 'working' }] }, iso(now)), null, 'nothing to let go: no memory');
 }
 ok('the one-time change lets the fourth shelf go');
+
+// ---- Bas gives him the flute he asked for
+{
+  const change = CHANGES.find((c) => c.id === '2026-11-26 a flute from Bas');
+  const s = { tools: [{ id: 't1', name: 'guitar', kind: 'guitar' }], asks: [{ id: 'a1', item: 'flute', why: 'I want to play a quiet song tonight.', status: 'open' }, { id: 'a2', item: 'a red kite', status: 'open' }], pantry: [], garden: { seeds: [], plots: [] } };
+  const note = change.run(s, iso(now));
+  assert.ok(s.tools.some((t) => t.kind === 'flute'), JSON.stringify(s.tools));
+  assert.deepEqual(s.asks.map((a) => a.status), ['done', 'open'], 'only the ask for the flute is done');
+  assert.match(note, /Bas gave me the flute I asked for: a thin silver flute/);
+  assert.match(change.run(s, iso(now)), /I had one already/);
+  assert.equal(s.tools.filter((t) => t.kind === 'flute').length, 1, 'never two');
+}
+ok('Bas gives him the flute he asked for, and the ask is done');
