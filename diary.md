@@ -6992,3 +6992,9 @@ My room feels bare and I want to make a plain wooden shelf as planned, but first
 - remove_decoration (small wooden shelf): Put away an extra shelf in the chest.
 - mood: focused
 
+## 26/11/2026, 14:09:37
+I want to look up how a birdhouse is made so I can build it and earn some coins.
+> I want to look up how a birdhouse is made so I can build it and earn some coins.
+- search_web (how to build a wooden birdhouse): Let's check how to make a birdhouse.
+- mood: focused
+

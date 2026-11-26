@@ -1,8 +1,8 @@
 {
   "mood": "focused",
   "energy": 9.5,
-  "boredom": 1.11,
-  "loneliness": 10,
+  "boredom": 1.07,
+  "loneliness": 8.8,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-26T07:50:00.101Z",
-      "action": "do",
-      "detail": "plan my new project: ",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-26T07:58:06.523Z",
       "action": "go_out",
@@ -317,10 +311,15 @@
       "action": "remove_decoration",
       "detail": "small wooden shelf",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-26T14:09:37.491Z",
+      "action": "search_web",
+      "detail": "how to build a wooden birdhouse",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "I watered basil. The soil stays damp for about 10 hours.",
     "I harvested basil from place 2. It goes in my pantry, and the plant grows back.",
     "I watered mint. The soil stays damp for about 10 hours.",
     "I played nearly the same tune once in the last day. A new tune would feel fresher: I change the notes, or I compose one.",
@@ -349,7 +348,8 @@
     "I harvested mint from place 3. It goes in my pantry, and the plant grows back.",
     "Searched \"to build a plain wooden shelf\" and read about Russian wooden architecture: Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. …",
     "I watered basil. The soil stays damp for about 10 hours.",
-    "I watered mint. The soil stays damp for about 10 hours."
+    "I watered mint. The soil stays damp for about 10 hours.",
+    "Searched \"how to build a wooden birdhouse\" and read about Purple martin: The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America.\n …"
   ],
   "requests": [],
   "story": "Pip spends his evenings by the autumn window as dusk falls. He learns by doing and makes clumsy things with his hands. He spends half his time playing around just to see what happens. Decorating his walls and searching the web keep him busy. Pushing objects from one spot to another just makes him grumpy. Today he did a lot of chores he disliked. Late at night, he writes his honest thoughts in his diary.",
@@ -707,7 +707,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.765,
+      "weight": 7.764,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -717,7 +717,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.794,
+      "weight": 9.792,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -728,7 +728,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.455,
+      "weight": 7.454,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -738,7 +738,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.886,
+      "weight": 9.884,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -749,7 +749,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.735,
+      "weight": 8.733,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -760,7 +760,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.449,
+      "weight": 8.448,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -770,7 +770,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.311,
+      "weight": 7.31,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -780,7 +780,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.998,
+      "weight": 9.996,
       "lastUsed": "2026-11-26T14:01:13.589Z",
       "tier": "long",
       "uses": 4
@@ -791,7 +791,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.831,
+      "weight": 8.829,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -801,7 +801,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.149,
+      "weight": 8.148,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -812,7 +812,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.504,
+      "weight": 9.502,
       "lastUsed": "2026-11-26T07:30:45.253Z",
       "tier": "long",
       "uses": 5
@@ -823,7 +823,7 @@
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 7.209,
+      "weight": 7.208,
       "lastUsed": "2026-11-22T12:49:28.901Z",
       "tier": "long"
     },
@@ -833,7 +833,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.919,
+      "weight": 9.917,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -844,7 +844,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.606,
+      "weight": 7.605,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -854,7 +854,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.008,
+      "weight": 9.006,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -864,7 +864,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.748,
+      "weight": 7.747,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -874,7 +874,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.069,
+      "weight": 9.067,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -884,7 +884,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.821,
+      "weight": 7.82,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -894,7 +894,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.551,
+      "weight": 7.55,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -904,7 +904,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.556,
+      "weight": 7.555,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -914,7 +914,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.977,
+      "weight": 9.975,
       "lastUsed": "2026-11-26T12:26:31.569Z",
       "tier": "long",
       "uses": 6
@@ -925,7 +925,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.494,
+      "weight": 8.493,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -936,10 +936,10 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.424,
-      "lastUsed": "2026-11-25T19:19:29.104Z",
+      "weight": 9.922,
+      "lastUsed": "2026-11-26T14:09:33.063Z",
       "tier": "long",
-      "uses": 4
+      "uses": 5
     },
     {
       "id": "mmws9hl4j60",
@@ -947,7 +947,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.099,
+      "weight": 8.098,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -958,7 +958,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.794,
+      "weight": 9.792,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -969,7 +969,7 @@
       "text": "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.196,
+      "weight": 7.195,
       "lastUsed": "2026-11-22T21:45:14.740Z",
       "tier": "long"
     },
@@ -979,7 +979,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.511,
+      "weight": 8.51,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -990,7 +990,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.989,
+      "weight": 9.987,
       "lastUsed": "2026-11-26T13:18:29.929Z",
       "tier": "long",
       "uses": 9
@@ -1001,7 +1001,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.3,
+      "weight": 7.299,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -1011,7 +1011,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.3,
+      "weight": 7.299,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -1021,7 +1021,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.313,
+      "weight": 7.312,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1031,7 +1031,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.313,
+      "weight": 7.312,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1041,7 +1041,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.794,
+      "weight": 9.792,
       "lastUsed": "2026-11-26T07:04:21.919Z",
       "tier": "long",
       "uses": 7
@@ -1052,7 +1052,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.64,
+      "weight": 8.639,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1063,7 +1063,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.989,
+      "weight": 9.987,
       "lastUsed": "2026-11-26T13:18:29.929Z",
       "tier": "long",
       "uses": 7
@@ -1074,7 +1074,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.769,
+      "weight": 7.768,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1085,7 +1085,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling. I brought home a blue marble someone lost.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.125,
+      "weight": 6.118,
       "lastUsed": "2026-11-25T20:32:21.197Z",
       "tier": "short",
       "uses": 1
@@ -1096,7 +1096,7 @@
       "text": "I am home again from the pond in the park. I sat on the bench under the willow and watched the ducks. One of them slept with its head under its wing. I brought home a forked stick.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.893,
+      "weight": 5.886,
       "lastUsed": "2026-11-25T18:27:53.740Z",
       "tier": "short"
     },
@@ -1106,30 +1106,10 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.466,
+      "weight": 6.459,
       "lastUsed": "2026-11-26T08:30:24.683Z",
       "tier": "short",
       "uses": 1
-    },
-    {
-      "id": "mmwx8e2t560",
-      "at": "2026-11-26T07:28:42.425Z",
-      "text": "Building a plain wooden shelf helps clear up the clutter in my room.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.676,
-      "lastUsed": "2026-11-26T07:28:42.425Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwx8v29m60",
-      "at": "2026-11-26T07:41:54.873Z",
-      "text": "Eating helps when I am starving, and starting a night sky project keeps me busy.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.686,
-      "lastUsed": "2026-11-26T07:41:54.873Z",
-      "tier": "short"
     },
     {
       "id": "mmwx9fvzy60",
@@ -1137,7 +1117,7 @@
       "text": "I should go outside more often instead of staring at my walls.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.699,
+      "weight": 5.693,
       "lastUsed": "2026-11-26T07:58:06.526Z",
       "tier": "short"
     },
@@ -1147,7 +1127,7 @@
       "text": "I am home again from my field. I walked all the way around my field. 1 hill or hole on it so far. I paced out a spot of 12 by 5 steps and stood in the middle of it: something big could stand right here.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.706,
+      "weight": 5.7,
       "lastUsed": "2026-11-26T08:30:24.397Z",
       "tier": "short"
     },
@@ -1157,7 +1137,7 @@
       "text": "I should keep working on my wooden shelf to clear the clutter.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.73,
+      "weight": 5.724,
       "lastUsed": "2026-11-26T08:38:48.138Z",
       "tier": "short"
     },
@@ -1167,7 +1147,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Sam, a sailor, who was passing through: \"An octopus has three hearts and blue blood. Two of the hearts are only for its gills.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.737,
+      "weight": 5.731,
       "lastUsed": "2026-11-26T08:54:57.583Z",
       "tier": "short"
     },
@@ -1177,7 +1157,7 @@
       "text": "Sam thinks octopuses have three hearts, two for gills.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.737,
+      "weight": 5.731,
       "lastUsed": "2026-11-26T08:54:59.287Z",
       "tier": "short"
     },
@@ -1187,7 +1167,7 @@
       "text": "Planning a project again helps when the first try fails because of too many items.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.765,
+      "weight": 5.759,
       "lastUsed": "2026-11-26T09:25:14.556Z",
       "tier": "short"
     },
@@ -1197,7 +1177,7 @@
       "text": "Moving my ceramic desk lamp base to the desk makes it more useful.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.781,
+      "weight": 5.775,
       "lastUsed": "2026-11-26T09:46:18.737Z",
       "tier": "short"
     },
@@ -1207,7 +1187,7 @@
       "text": "Moving the ceramic lamp to the desk makes reading easier.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.799,
+      "weight": 5.792,
       "lastUsed": "2026-11-26T10:07:09.029Z",
       "tier": "short"
     },
@@ -1217,7 +1197,7 @@
       "text": "I need to manage my existing shelves before trying to build another one.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.814,
+      "weight": 5.807,
       "lastUsed": "2026-11-26T10:18:22.097Z",
       "tier": "short"
     },
@@ -1227,7 +1207,7 @@
       "text": "Having too many shelves gets in the way of building a new one.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.834,
+      "weight": 5.827,
       "lastUsed": "2026-11-26T10:42:35.585Z",
       "tier": "short"
     },
@@ -1237,7 +1217,7 @@
       "text": "I should stop guessing and start planning, even if it feels slow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.836,
+      "weight": 5.829,
       "lastUsed": "2026-11-26T10:51:39.470Z",
       "tier": "short"
     },
@@ -1247,7 +1227,7 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.875,
+      "weight": 7.866,
       "lastUsed": "2026-11-26T12:16:01.460Z",
       "tier": "short"
     },
@@ -1257,7 +1237,7 @@
       "text": "Moving my things around wears me down, so projects are better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.911,
+      "weight": 5.904,
       "lastUsed": "2026-11-26T12:18:27.290Z",
       "tier": "short"
     },
@@ -1267,7 +1247,7 @@
       "text": "Watering plants keeps them alive and gives me something simple to do.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.934,
+      "weight": 5.927,
       "lastUsed": "2026-11-26T12:50:52.945Z",
       "tier": "short"
     },
@@ -1277,7 +1257,7 @@
       "text": "I made night_sky_slider_box (I want to build a tiny simulation of the night sky with a moving piece, using what I learned about simple mechanical toggles and my previous night sky project.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.948,
+      "weight": 5.941,
       "lastUsed": "2026-11-26T13:10:02.943Z",
       "tier": "short"
     },
@@ -1287,7 +1267,7 @@
       "text": "Someone left a note by the pond.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.957,
+      "weight": 5.95,
       "lastUsed": "2026-11-26T13:19:11.397Z",
       "tier": "short"
     },
@@ -1297,7 +1277,7 @@
       "text": "I am home again from my world. I picked up the note by the pond. It is from Lotte, a postwoman, who was passing through: \"When you draw a thing, draw its shadow too. A thing without a shadow floats.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.965,
+      "weight": 5.958,
       "lastUsed": "2026-11-26T13:35:20.170Z",
       "tier": "short"
     },
@@ -1307,7 +1287,7 @@
       "text": "Lotte reminded me that a drawn thing needs a shadow so it does not float.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.965,
+      "weight": 5.958,
       "lastUsed": "2026-11-26T13:35:41.696Z",
       "tier": "short"
     },
@@ -1317,8 +1297,28 @@
       "text": "I should keep working on the simulation to make it better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.972,
       "lastUsed": "2026-11-26T13:44:39.268Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwxmpked60",
+      "at": "2026-11-26T14:09:33.061Z",
+      "text": "Someone drew a hopscotch on the square with chalk. I hopped it, of course. Twice.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.993,
+      "lastUsed": "2026-11-26T14:09:33.061Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwxmpnth60",
+      "at": "2026-11-26T14:09:37.493Z",
+      "text": "I should build the birdhouse after searching for it.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.993,
+      "lastUsed": "2026-11-26T14:09:37.493Z",
       "tier": "short"
     }
   ],
@@ -1326,14 +1326,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-25T22:02:30.787Z",
   "thoughts": [
-    {
-      "at": "2026-11-26T09:38:02.314Z",
-      "text": "I am starving and need to cook something with the mint I have.",
-      "short": "I am starving and need to cook something with the mint I have.",
-      "mood": "grumpy",
-      "action": "cook",
-      "detail": ""
-    },
     {
       "at": "2026-11-26T09:46:18.737Z",
       "text": "I want to move my ceramic desk lamp base to the desk so I have light where I read and write.",
@@ -1564,6 +1556,14 @@
       "mood": "focused",
       "action": "remove_decoration",
       "detail": "small wooden shelf"
+    },
+    {
+      "at": "2026-11-26T14:09:37.493Z",
+      "text": "I want to look up how a birdhouse is made so I can build it and earn some coins.",
+      "short": "I want to look up how a birdhouse is made so I can build it and earn some coins.",
+      "mood": "focused",
+      "action": "search_web",
+      "detail": "how to build a wooden birdhouse"
     }
   ],
   "outbox": [
@@ -1840,16 +1840,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-26T10:26:39.608Z",
-      "action": "do",
-      "thought": "I need to work on my wooden shelf.",
-      "as": "start_project",
-      "move": null,
-      "emoji": "",
-      "what": "plan my new project: Build a plain wooden shelf",
-      "feeling": null
-    },
     {
       "at": "2026-11-26T10:37:59.083Z",
       "action": "decorate",
@@ -2157,6 +2147,34 @@
       "name": "small wooden shelf",
       "stored": "small wooden shelf",
       "failed": null
+    },
+    {
+      "at": "2026-11-26T14:09:38.490Z",
+      "action": "search_web",
+      "thought": "Let's check how to make a birdhouse.",
+      "query": "how to build a wooden birdhouse",
+      "results": [
+        {
+          "title": "Purple martin",
+          "snippet": "season. Recordings of purple martin song are sold to attract martins to newly established birdhouses. The species of this genus are very closely related",
+          "url": "https://en.wikipedia.org/wiki/Purple_martin"
+        },
+        {
+          "title": "Yoko (TV series)",
+          "snippet": "is how unusually organized their limbs are because they were designed around square geometrical framework. In order to feature a bending motion to the",
+          "url": "https://en.wikipedia.org/wiki/Yoko_(TV_series)"
+        },
+        {
+          "title": "Canada's Worst Handyman 2",
+          "snippet": "are asked to build a birdhouse-sized replica using 100-year-old barnboard. Terry: Terry had issues with splitting the wood, which caused him to nail the",
+          "url": "https://en.wikipedia.org/wiki/Canada's_Worst_Handyman_2"
+        }
+      ],
+      "opened": {
+        "title": "Purple martin",
+        "url": "https://en.wikipedia.org/wiki/Purple_martin",
+        "text": "The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America.\nThey are known for their speed, agility, and their characteristic mix of rapid, flapping, and gliding flight patterns. When approaching their nesting site, they will dive from the sky at great speeds with their wings tucked, just like the peregrine falcon does when hunting smaller birds.\n\nTaxonomy\nIn 1750 the English naturalist George Edwards included an illustration and a description of the purple martin in the third volume of his A Natural History of Uncommon Birds. He used the English name \"The Great American Martin\". Edwards based his hand-coloured etching on a preserved specimen that had been brought to London from the Hudson Bay area of Canada by James Isham. When in 1758 the Swedish naturalist Carl Linnaeus updated his Systema Naturae for the tenth edition, he placed the purple martin with swallows and swifts in the genus Hirundo. Linnaeus included a brief description, coined the binomial name Hirundo subis and cited Edwards' work.\n …"
+      }
     }
   ],
   "decor": [
@@ -12995,7 +13013,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-26T14:01:28.268Z",
+    "at": "2026-11-26T14:09:37.490Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -13003,39 +13021,43 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 2341,
-      "output": 118,
+      "input": 2378,
+      "output": 143,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "My room feels bare and I want to make a plain wooden shelf as planned, but first I need to remove one since I have too many.",
-    "inner": "My room feels bare and I want to make a plain wooden shelf as planned, but first I need to remove one since I have too many.",
+    "thought": "I want to look up how a birdhouse is made so I can build it and earn some coins.",
+    "inner": "I want to look up how a birdhouse is made so I can build it and earn some coins.",
     "sent": false,
     "steps": [
       {
-        "action": "remove_decoration",
+        "action": "search_web",
         "details": {
-          "name": "small wooden shelf"
+          "query": "how to build a wooden birdhouse"
         },
-        "detail": "small wooden shelf",
-        "thought": "Put away an extra shelf in the chest.",
+        "detail": "how to build a wooden birdhouse",
+        "thought": "Let's check how to make a birdhouse.",
         "enjoyment": 6,
-        "found": null,
-        "made": {
-          "chest": true
-        }
+        "found": {
+          "title": "Purple martin",
+          "text": "The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America.\nThey are known for their speed, agility, and their characteristic mix of rapid, flapping, and gliding flight patterns. When approaching their nesting site, they will dive from the sky at great speeds with their wings tucked, just like the peregrine falcon does when hunting smaller birds.\n\nTaxonomy\nIn 1750 the English naturalist George Edwards included an illustration and a description of the purple martin in the third volume of his A Natural History of Uncommon Birds. He used the English name \"The Great American Martin\". Edwards based his hand-coloured etching on a preserved specimen that had been brought to London from the Hudson Bay area of Canada by James Isham. When in 1758 the Swedish naturalist Carl Linnaeus updated his Systema Naturae for the tenth edition, he placed the purple martin with swallows and swifts in the genus Hirundo. Linnaeus included a brief description, coined the binomial name Hirundo subis and cited Edwards' work.\nThe purple martin is now placed in the genus Progne that was introduced in 1826 by the German zoologist Friedrich Boie. The genus name Progne is from Greek mythology. Progne or Procne (Πρόκνη), the daughter of King Pandion of Athens and wife of King Tereus of Thrace was transformed into a swallow. The specific epithet subis is Latin for a bird mentioned by the Roman author Nigidius Figulus that could break eagles' eggs. It may have been applied to this species because of its aggression toward birds of prey when it is nesting.\nThree subspecies are recognised:\n\nP. s. subis (Linnaeus, 1758) – nominate form, south Canada, east USA, and east Mexico. Winters through South America east of the Andes\nP. s. hesperia Brewster, 1889 – southwest USA and northwest Mexico. Perhaps winters in South America.\nP. s. arboricola Behle, 1968 – west USA and north Mexico. Perhaps winters in South America.\n\nDescription\n …"
+        },
+        "made": null
       }
     ],
-    "action": "remove_decoration",
+    "action": "search_web",
     "details": {
-      "name": "small wooden shelf"
+      "query": "how to build a wooden birdhouse"
     },
-    "detail": "small wooden shelf",
+    "detail": "how to build a wooden birdhouse",
     "enjoyment": 6,
     "new_idea": null,
-    "found": null
+    "found": {
+      "title": "Purple martin",
+      "text": "The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America.\nThey are known for their speed, agility, and their characteristic mix of rapid, flapping, and gliding flight patterns. When approaching their nesting site, they will dive from the sky at great speeds with their wings tucked, just like the peregrine falcon does when hunting smaller birds.\n\nTaxonomy\nIn 1750 the English naturalist George Edwards included an illustration and a description of the purple martin in the third volume of his A Natural History of Uncommon Birds. He used the English name \"The Great American Martin\". Edwards based his hand-coloured etching on a preserved specimen that had been brought to London from the Hudson Bay area of Canada by James Isham. When in 1758 the Swedish naturalist Carl Linnaeus updated his Systema Naturae for the tenth edition, he placed the purple martin with swallows and swifts in the genus Hirundo. Linnaeus included a brief description, coined the binomial name Hirundo subis and cited Edwards' work.\nThe purple martin is now placed in the genus Progne that was introduced in 1826 by the German zoologist Friedrich Boie. The genus name Progne is from Greek mythology. Progne or Procne (Πρόκνη), the daughter of King Pandion of Athens and wife of King Tereus of Thrace was transformed into a swallow. The specific epithet subis is Latin for a bird mentioned by the Roman author Nigidius Figulus that could break eagles' eggs. It may have been applied to this species because of its aggression toward birds of prey when it is nesting.\nThree subspecies are recognised:\n\nP. s. subis (Linnaeus, 1758) – nominate form, south Canada, east USA, and east Mexico. Winters through South America east of the Andes\nP. s. hesperia Brewster, 1889 – southwest USA and northwest Mexico. Perhaps winters in South America.\nP. s. arboricola Behle, 1968 – west USA and north Mexico. Perhaps winters in South America.\n\nDescription\n …"
+    }
   },
   "furniture": {
     "plant": {
@@ -13130,7 +13152,7 @@
   "quota": {
     "day": "2026-11-26",
     "calls": {
-      "gemini-3.5-flash-lite": 73,
+      "gemini-3.5-flash-lite": 74,
       "gemini-3.8-flash": 15,
       "gemini-3.6-flash": 11,
       "gemini-3.5-flash": 10,
@@ -13254,12 +13276,12 @@
     }
   },
   "weather": {
-    "at": "2026-11-26T13:53:05.833Z",
+    "at": "2026-11-26T14:09:33.046Z",
     "kind": "cloudy",
     "code": 3,
-    "temp": 1.3,
+    "temp": 1.2,
     "cloud": 1,
-    "wind": 0.5533333333333333
+    "wind": 0.5399999999999999
   },
   "news": {
     "date": "2026-11-26",
@@ -13435,22 +13457,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-26T14:01:28.278Z",
-  "fullness": 7.69,
+  "memoryFadeAt": "2026-11-26T14:09:37.824Z",
+  "fullness": 7.52,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.13,
-  "joy": 5.21,
-  "calm": 5.08,
+  "wonder": 8.4,
+  "joy": 5.65,
+  "calm": 5.06,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.1
+    "excited": 1.46
   },
-  "feelAt": "2026-11-26T14:01:13.560Z",
+  "feelAt": "2026-11-26T14:09:32.779Z",
   "lastAte": "2026-11-26T12:26:32.912Z",
   "studio": {
     "songs": [
@@ -14165,21 +14187,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.08,
-    "curiosity": 2.6,
-    "boredom": 1.11,
+    "creativity": 0.16,
+    "curiosity": 0,
+    "boredom": 0,
     "loneliness": 10,
-    "tidiness": 1.4,
-    "at": "2026-11-26T14:01:13.560Z",
-    "coziness": 3
+    "tidiness": 1,
+    "at": "2026-11-26T14:09:32.779Z",
+    "coziness": 3.7
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-26T12:16:03.006Z"
-      },
       {
         "move": "start_project",
         "kind": "make",
@@ -14250,11 +14267,16 @@
         "move": "remove_decoration",
         "kind": "room",
         "at": "2026-11-26T14:01:28.280Z"
+      },
+      {
+        "move": "search_web",
+        "kind": "learn",
+        "at": "2026-11-26T14:09:37.828Z"
       }
     ],
     "moods": [
       "curious",
-      "curious",
+      "focused",
       "focused",
       "focused",
       "focused"
@@ -14301,6 +14323,12 @@
         "move": "remove_decoration",
         "ok": true,
         "at": "2026-11-26T14:01:28.281Z"
+      },
+      {
+        "key": "search_web:how to build a wooden birdhouse",
+        "move": "search_web",
+        "ok": true,
+        "at": "2026-11-26T14:09:37.829Z"
       }
     ],
     "failDay": "2026-11-26",
@@ -14323,7 +14351,7 @@
       "start_project": 4,
       "go_out": 2,
       "fetch_note": 2,
-      "search_web": 1,
+      "search_web": 2,
       "plan_project": 3,
       "remove_decoration": 3,
       "play_piano": 1,
@@ -14343,7 +14371,7 @@
       "start_project": 4,
       "go_out": 2,
       "fetch_note": 2,
-      "search_web": 1,
+      "search_web": 2,
       "plan_project": 3,
       "remove_decoration": 3,
       "play_piano": 1,
@@ -14359,7 +14387,7 @@
       "room": 6,
       "make": 11,
       "outside": 2,
-      "learn": 1,
+      "learn": 2,
       "music": 1,
       "walk": 1
     },
@@ -14370,7 +14398,7 @@
       "stubborn": 4,
       "determined": 1,
       "curious": 2,
-      "focused": 3
+      "focused": 4
     },
     "lift": {
       "eat": 2.37,
@@ -14380,7 +14408,7 @@
       "do": 11.14,
       "move_thing": -0.1,
       "go_out": -1,
-      "search_web": 1.87,
+      "search_web": 4.07,
       "remove_decoration": 1.3,
       "play_piano": 2.1,
       "water": 0.5,
@@ -14391,7 +14419,7 @@
     "music": 52.5,
     "painting": 28,
     "sculpture": 46,
-    "woodwork": 38.5,
+    "woodwork": 39,
     "sewing": 6.5,
     "gardening": 62.5,
     "cooking": 22,
@@ -14422,7 +14450,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-26T14:01:28.267Z",
+    "decidedAt": "2026-11-26T14:09:37.489Z",
     "seen": {
       "tools": 12,
       "gifts": 1,
@@ -14989,7 +15017,7 @@
     "eat": 64,
     "water": 36,
     "do": 414,
-    "search_web": 58,
+    "search_web": 59,
     "read_book": 22,
     "record_song": 8,
     "change_thing": 17,
@@ -15027,7 +15055,7 @@
     "shape_land": 1
   },
   "checkup": {
-    "at": "2026-11-26T14:01:28.281Z",
+    "at": "2026-11-26T14:09:37.830Z",
     "items": [
       {
         "id": "circling",
@@ -20823,17 +20851,17 @@
       "text": "Android is an operating system developed by Google, designed primarily for smartphones and tablets (touchscreen-based mobile devices originally; later for other devices, such as TVs), based on a modified version of the Linux kernel and other open-source software. First released in 2008, Android is the most popular operating system in the world with 4 billion users, and the most used operating system for smartphones. The latest version, released on June 16, 2026, is Android 17. At its core, the o"
     },
     {
-      "at": "2026-11-25T16:39:03.685Z",
-      "query": "how to build a wooden birdhouse",
-      "title": "Purple martin",
-      "text": "The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America. They are kno"
-    },
-    {
       "at": "2026-11-26T08:55:00.283Z",
       "query": "to build a plain wooden shelf",
       "title": "Russian wooden architecture",
       "text": "Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. Sometimes this concept includes wooden buildings of professional architecture, eclectic buildings combining elements of folk architecture and professional architecture, as well as modern attempts to rev",
       "project": "Build a plain wooden shelf"
+    },
+    {
+      "at": "2026-11-26T14:09:38.490Z",
+      "query": "how to build a wooden birdhouse",
+      "title": "Purple martin",
+      "text": "The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America. They are kno"
     }
   ],
   "phone": {
@@ -23377,15 +23405,6 @@
         "shown": 2
       },
       {
-        "topic": "Purple martin",
-        "text": "The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and…",
-        "url": "https://en.wikipedia.org/wiki/Purple_martin",
-        "from": "search",
-        "via": null,
-        "at": "2026-11-25T16:39:03.097Z",
-        "shown": 2
-      },
-      {
         "topic": "Dowsing",
         "text": "I found a forked stick at the pond in the park.",
         "url": "",
@@ -23438,6 +23457,15 @@
         "via": null,
         "at": "2026-11-26T13:35:20.346Z",
         "shown": 2
+      },
+      {
+        "topic": "Purple martin",
+        "text": "The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and…",
+        "url": "https://en.wikipedia.org/wiki/Purple_martin",
+        "from": "search",
+        "via": null,
+        "at": "2026-11-26T14:09:37.822Z",
+        "shown": 0
       }
     ],
     "interests": [
@@ -23460,6 +23488,12 @@
         "score": 1.7,
         "since": "2026-11-25T08:54:46.440Z",
         "last": "2026-11-26T08:54:59.679Z"
+      },
+      {
+        "topic": "Purple martin",
+        "score": 1.7,
+        "since": "2026-11-25T16:39:03.097Z",
+        "last": "2026-11-26T14:09:37.822Z"
       },
       {
         "topic": "Constellation",
@@ -23496,12 +23530,6 @@
         "score": 0.7,
         "since": "2026-11-25T13:59:03.116Z",
         "last": "2026-11-25T13:59:03.116Z"
-      },
-      {
-        "topic": "Purple martin",
-        "score": 0.7,
-        "since": "2026-11-25T16:39:03.097Z",
-        "last": "2026-11-25T16:39:03.097Z"
       },
       {
         "topic": "Indo-European vocabulary",
@@ -23565,9 +23593,7 @@
   "street": {
     "day": "2026-11-23",
     "queue": [],
-    "happened": [
-      "Things in my room were put right: tiny clay bird now stands on the floor by the left wall (what it stood on cannot hold things); ceramic desk lamp base now stands on the floor by the left wall (what it stood on cannot hold things); tiny fabric pouch now stands on small clumsy shelf for the corner (level 2) (what it stood on cannot hold things)."
-    ],
+    "happened": [],
     "people": {
       "Lina": {
         "warmth": 3,
@@ -25272,7 +25298,8 @@
       "id": "deed-mwxlx4s2-ac37fb",
       "deed": "chalk",
       "at": "2026-11-26T13:47:26.450Z",
-      "status": "lying"
+      "status": "found",
+      "foundAt": "2026-11-26T14:09:33.061Z"
     }
   ]
 }
