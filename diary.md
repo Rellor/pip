@@ -7046,3 +7046,8 @@ My basil is ready to harvest, so I will grab it first. Then I want to decorate a
 - harvest (basil): Harvest the basil since it is fully grown.
 - mood: grumpy
 
+## 26/11/2026, 16:07:20
+Make a birdhouse for the notice board to earn some coins.
+- decorate (workshop_stool): Make a birdhouse for the notice board to earn some coins.
+- mood: grumpy
+
