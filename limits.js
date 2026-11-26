@@ -6,7 +6,7 @@ import { MAX_ART_PER_DAY } from './art.js';
 import { MAX_APPS_PER_DAY } from './apps.js';
 import { MAX_CLOTHES_PER_DAY } from './clothes.js';
 import { MAX_MOVES_PER_DAY as MAX_NEW_MOVES_PER_DAY } from './dances.js';
-import { MAX_PER_DAY, MAX_OUTSIDE_PER_DAY, MAX_UPDATES_PER_DAY, MAX_MOVES_PER_DAY, capOf, isOutside, roomIsEnough, builtOutsideLately } from './decor.js';
+import { MAX_PER_DAY, MAX_OUTSIDE_PER_DAY, MAX_UPDATES_PER_DAY, MAX_MOVES_PER_DAY, capOf, isOutside } from './decor.js';
 import { furnitureKey } from './decor.js';
 import { isToday } from './days.js';
 import { SITE_CHANGES_PER_DAY } from './site.js';
@@ -33,7 +33,7 @@ export function dayLimits(s, now = Date.now()) {
     update_site: { max: SITE_CHANGES_PER_DAY, used: (s.site?.changes ?? []).filter((c) => c.v > 1 && within(c.at, now)).length, what: 'work on my website' },
     update_app: { max: MAX_APP_UPDATES_PER_DAY, used: s.apps.filter((a) => a.updatedAt && within(a.updatedAt, now)).length, what: 'change apps' },
     decorate: { max: MAX_PER_DAY, used: s.decor.filter((x) => !x.image && x.kind !== 'outside' && within(x.createdAt, now)).length, what: 'make things for my room' },
-    build_outside: { max: MAX_OUTSIDE_PER_DAY, used: s.decor.filter((x) => !x.image && x.kind === 'outside' && within(x.createdAt, now)).length + (builtOutsideLately(s.decor, now) ? MAX_OUTSIDE_PER_DAY : 0), what: 'build something outside' }, // its own count (a decorate step with a place outside)
+    build_outside: { max: MAX_OUTSIDE_PER_DAY, used: s.decor.filter((x) => !x.image && x.kind === 'outside' && within(x.createdAt, now)).length, what: 'build something outside' }, // its own count (a decorate step with a place outside)
     make_clothes: { max: MAX_CLOTHES_PER_DAY, used: s.wardrobe.filter((x) => within(x.madeAt || x.createdAt, now)).length, what: 'make clothes' },
     make_move: { max: MAX_NEW_MOVES_PER_DAY, used: s.moves.filter((m) => within(m.createdAt, now)).length, what: 'design new moves' },
     change_thing: { max: MAX_UPDATES_PER_DAY, used: updates, what: 'change things' },
@@ -71,7 +71,6 @@ export function preflight(s, steps, now = Date.now()) {
     if (!why && a === 'eat') why = ate ? 'I already eat once in this plan' : notHungry(s, now);
     if (!why && a === 'eat') ate = true;
     if (!why && ONCE_PER_PLAN.includes(a) && once.has(a)) why = 'I only do one of these per wake-up';
-    if (!why && a === 'decorate' && !outside && !st.details?.print) why = roomIsEnough(s, now); // his room has enough things
     if (!why && a === 'decorate' && s.decor.length + made.length >= capOf(s.decor)) why = 'my room is full (chest, or storage, makes room)';
     const name = String(st.details?.name ?? '').trim().toLowerCase();
     if (!why && NEEDS_NAME.includes(a) && name) {

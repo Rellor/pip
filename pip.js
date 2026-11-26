@@ -55,7 +55,7 @@ const THINK_ROOM = 3000; // these models think before they answer, and the think
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, capabilityGuide, blueprintGaps, requestAbility } from './blueprints.js';
-import { settleRoom, isOutside, purposeProblem, purposeHint, setFronts, rehangPictures, enoughOf, fullKinds, kindsWord, wantsOneMore, roomIsEnough, roomThings, ROOM_ENOUGH, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { settleRoom, isOutside, purposeProblem, purposeHint, setFronts, rehangPictures, enoughOf, fullKinds, kindsWord, wantsOneMore, roomThings, roomHasPlenty, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, sketchStyle, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, applyEdits, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { lessonsFrom, themeFatigue } from './mirror.js';
@@ -594,8 +594,8 @@ function paceLines(s, now = Date.now()) {
   const at = new Date(p.backAt).toLocaleTimeString('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
   return [p.out ? `I have designed all I can for today: making new things, drawings, programs and songs comes back tomorrow around ${at}. ${NO_DESIGN}` : `I have designed a lot already. My head for making new things, drawings, programs and songs is fresh again around ${at}. ${NO_DESIGN}`];
 }
-// For his prompt: his room has enough things. He does not fill it up: he does what he feels like with what he has.
-const stuffLines = (s) => { const n = roomThings(s.decor).length; return n >= ROOM_ENOUGH ? [`My room has ${n} things${(s.stored ?? []).length ? ` and my chest ${s.stored.length} more` : ''}. That is plenty. I do not make more small things for it. What I feel like doing matters more than what I own: my hobby, music, a walk, something to read, my website, a painting on a wall, or making one of my things really good.`] : []; };
+// For his prompt: his room has plenty of things. Nothing is forbidden: it is a reminder that there is more to do than make.
+const stuffLines = (s) => (roomHasPlenty(s.decor) ? [`My room has ${roomThings(s.decor).length} things${(s.stored ?? []).length ? ` and my chest ${s.stored.length} more` : ''}, and I hardly use them. I can still make whatever I like. But there is more to a day than making: using what I have, making one thing really good, my hobby, music, a walk, something to read, my website, a painting on a wall.`] : []);
 // For his prompt: the kinds of things he has enough of (decor.js), so he does not plan one more.
 const enoughLines = (s) => { const full = fullKinds(s.decor); return full.length ? [`I have enough of these in my room, so I make no more of them: ${full.map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', ')}. I change one (change_thing), put one in my chest, or make something else.`] : []; };
 function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWork = null }) {
@@ -1499,8 +1499,6 @@ async function wakeUp() {
   for (const [i, st] of answer.steps.entries()) {
     const full = st.make && st.action === 'decorate' && !st.details?.print ? enoughOf(state.decor, st.details?.what) ?? enoughOf(state.decor, st.details?.name) : null; // (what he said he wants to make, or the name he gave it)
     if (full) { answer.steps[i] = { ...st, make: false, planFail: full.why, planned: { ok: false } }; console.log(`   ⛔ not designed: he has ${full.n} ${kindsWord(full.kind)} already`); }
-    const enough = !full && st.make && st.action === 'decorate' && !st.details?.print && !isOutside(st.details?.where) ? roomIsEnough(state) : null; // his room has enough things: one in, one out
-    if (enough) { answer.steps[i] = { ...st, make: false, planFail: enough, planned: { ok: false } }; console.log(`   ⛔ not designed: his room has enough things (${roomThings(state.decor).length})`); }
   }
   // Things he designs: the maker makes them now (one model call each).
   for (const [i, st] of answer.steps.entries()) if (st.make) answer.steps[i] = await makeIt(state, soul, system, st);
