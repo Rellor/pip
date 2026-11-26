@@ -6883,3 +6883,8 @@ My attempts at the wooden shelf were clumsy and frustrating, so I need to plan i
 - do (plan the steps of my project Build a plain wooden shelf): I need to break down the shelving project into steps that don't involve just guessing.
 - mood: grumpy
 
+## 26/11/2026, 10:59:43
+Removing the extra stove will open up some space and maybe make me less annoyed with my room.
+- remove_decoration (small stove): Removing the extra stove will open up some space and maybe make me less annoyed with my room.
+- mood: grumpy
+
