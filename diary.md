@@ -6967,3 +6967,10 @@ I finished my night sky simulation project and I want to fetch the note left by 
 - go_out: I will go get that note by the pond.
 - mood: curious
 
+## 26/11/2026, 13:35:41
+I want to answer Lotte's note about the shadow because she is right, and then work on my night sky simulation project.
+> I want to answer Lotte's note about the shadow because she is right, and then work on my night sky simulation project.
+- walk_to (computer): Answer Lotte's note
+- extend_thing (night_sky_slider_box): Work on the night sky simulation
+- mood: curious
+
