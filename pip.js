@@ -28,7 +28,7 @@ import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLett
 import { noteLines, noteAnswer, keepWishes, wishLines } from './neighbours.js';
 import { buy } from './shop.js';
 import { storyTick } from './story.js';
-import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines } from './curiosity.js';
+import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines, startHobby, practiseHobby, dropUntriedHobbies, hobbyLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
 import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo, outLines } from './world.js';
@@ -80,6 +80,7 @@ import { tooSimilar } from './repeat.js';
 import { ensureFeelings, stepFeelings, felt, nudge, eatNow, emotionWord, failStep } from './feelings.js';
 import { cleanUses, findUse, addUse, stepsProblem } from './uses.js';
 import { isToday } from './days.js';
+import { SITE_FILE, buildSite, siteMaterial, siteWords } from './site.js';
 
 const STATE_FILE = 'web/state.json';
 const DIARY_FILE = 'diary.md';
@@ -110,7 +111,7 @@ const ROOM = [
   'bed',
   'a framed photo on the wall above the piano: the Milky Way over a very dark sky full of stars, with two people in silhouette looking up from a railing',
 ];
-const ACTION_NAMES = ['walk_to', 'do', 'browse', 'buy', 'go_out', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture'];
+const ACTION_NAMES = ['walk_to', 'do', 'browse', 'buy', 'go_out', 'make_move', 'blueprint', 'move_thing', 'extend_thing', 'print_photo', 'take_down_print', 'play_piano', 'record_song', 'read_book', 'search_web', 'write_diary', 'rest', 'ask_for', 'eat', 'decorate', 'remove_decoration', 'take_out', 'place_tool', 'take_tool', 'measure', 'check_light', 'lamp_auto', 'phone', 'plant', 'water', 'harvest', 'request_ability', 'compose', 'draw', 'make_app', 'use', 'add_use', 'change_thing', 'update_app', 'make_clothes', 'wear', 'take_off', 'cook', 'take_photo', 'find_picture', 'place_picture', 'take_down_picture', 'make_site', 'update_site'];
 
 const freshState = () => ({
   mood: 'curious',
@@ -184,6 +185,8 @@ function observeStep(s, e) {
     take_photo: [`I took a photo of ${e.target}${e.caption ? `: ${e.caption}` : ''}`, 5],
     find_picture: [`I found a picture: ${e.title ?? e.query}`, 4],
     print_photo: [`I printed a photo (${e.name})`, 4],
+    make_site: [`I made my own website at the internet café: "${e.name}". Anyone can read it now`, 8],
+    update_site: [`I worked on my website${e.change ? `: ${e.change}` : ''} (version ${e.v})`, 5],
     change_thing: [`I changed ${e.name}${e.grew ? ' and made it bigger' : ''}`, 4],
     move_thing: [`I moved ${e.name}`, 3],
     extend_thing: [e.joined ? `I joined ${e.joined} onto ${e.name}, now one thing with ${e.total} parts` : e.side ? `I built onto the ${e.side} side of ${e.name}: ${e.added} new parts, now ${e.total}` : `I added ${e.added} parts to ${e.name}, now ${e.total} parts`, 5],
@@ -616,7 +619,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...wantLines(s), ...paceLines(s), ...offLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...paceLines(s), ...offLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -713,7 +716,7 @@ async function makeIt(s, soul, system, st) {
     const current = old ? describePattern(old.pattern) : null;
     const thing = ['change_thing', 'extend_thing'].includes(st.action) ? s.decor.find((d) => !d.image && d.parts && d.name.toLowerCase() === String(st.details?.name ?? '').toLowerCase().trim()) ?? s.decor.find((d) => !d.image && d.parts && String(st.details?.name ?? '').trim() && d.name.toLowerCase().includes(String(st.details.name).toLowerCase().trim())) : null;
     const appNow = st.action === 'update_app' ? s.apps.find((a) => a.name.toLowerCase() === String(st.details?.name ?? '').toLowerCase().trim()) ?? s.apps.find((a) => String(st.details?.name ?? '').trim() && a.name.toLowerCase().includes(String(st.details.name).toLowerCase().trim())) : null;
-    const build = thing ? partsNow(thing, s.decor) : appNow ? await readFile(`web/${appNow.file}`, 'utf8').catch(() => null) : null; // he sees what he is changing, like a builder looking at his work (a program: its whole file)
+    const build = thing ? partsNow(thing, s.decor) : appNow ? await readFile(`web/${appNow.file}`, 'utf8').catch(() => null) : st.action === 'update_site' && s.site ? await readFile(`web/${SITE_FILE}`, 'utf8').catch(() => null) : null; // he sees what he is changing, like a builder looking at his work (a program: its whole file)
     // Plan first (sketch.js): the small model guesses its size, the game tries that size in the real place. Nothing fits:
     // he hears why now, and the smart model is not asked. Something fits: that size is the budget for the design.
     let planned = null;
@@ -728,10 +731,10 @@ async function makeIt(s, soul, system, st) {
     const lessons = lessonsFor(s, st.action);
     const recipes = current ? [] : recipesFor(s, st.action, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.change ?? ''}`);
     const notes = notesFor(s, `${st.details?.what ?? ''} ${st.details?.name ?? ''} ${st.details?.why ?? ''} ${st.details?.change ?? ''}`, st.details?.project);
-    const mctx = { spot: st.action === 'decorate' ? [spotNote(s, st.details), budgetNote(planned)].filter(Boolean).join('\n') : '', drawn: st.action === 'draw' ? `${drawnNote(s)}${st.as === 'paint_wall' ? '\nTHIS ONE IS NOT FOR PAPER: I paint it big on a wall outside in my world, like a mural. So: a few strong shapes and colours that can be read from across the street, no frame and no paper edge, the whole picture filled.' : ''}` : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
+    const mctx = { site: ['make_site', 'update_site'].includes(st.action) ? siteMaterial(s) : '', spot: st.action === 'decorate' ? [spotNote(s, st.details), budgetNote(planned)].filter(Boolean).join('\n') : '', drawn: st.action === 'draw' ? `${drawnNote(s)}${st.as === 'paint_wall' ? '\nTHIS ONE IS NOT FOR PAPER: I paint it big on a wall outside in my world, like a mural. So: a few strong shapes and colours that can be read from across the street, no frame and no paper edge, the whole picture filled.' : ''}` : '', soul, step: st, rules: makerSpec(st.action), room, skill, current, build, bugs: appNow?.bugs?.join('; ') || (/^fix /.test(String(st.details?.change ?? '')) ? st.details.change : ''), lessons, recipes, notes, have: st.action === 'record_song' ? `${[...instruments(s), 'drums'].join(', ')} (only these)` : `tools: ${s.tools.map((t) => t.name).join(', ') || 'none yet'}` };
     const mprompt = makerPrompt(mctx);
     if (process.env.PIP_DUMP) await appendFile(`${process.env.PIP_DUMP}.maker`, `\n\n=================== ${st.action}\n${mprompt}`);
-    const think = ['make_app', 'update_app'].includes(st.action) ? { think: 'high' } : {}; // code needs the most thought
+    const think = ['make_app', 'update_app', 'make_site', 'update_site'].includes(st.action) ? { think: 'high' } : {}; // code needs the most thought
     const reply = process.env.PIP_FAKE ? fakeMade(st) : await askGemini(system, mprompt, 1, [], { group: 'big', ...think });
     if (st.action === 'record_song') return finishSong(st, reply, { songs: s.studio.songs, maxBars: maxBars(lvl), allowed: [...instruments(s), 'drums'] });
     // The game checks it (verify.js): measured facts, and one retry with them. The better try is kept.
@@ -1136,6 +1139,11 @@ function applyInnerLife(s, r, detail, replying = false) {
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
   }
   const fresh = [];
+  if (r.action === 'do' && r.as === 'start_hobby') { // his own idea for a hobby: from now on he is trying it (curiosity.js)
+    const started = startHobby(s, r.details?.hobby, r.details?.why);
+    if (started.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `start_hobby: ${started.failed}` }; console.log(`   ✋ no new hobby: ${started.failed}`); }
+    else { addMemory(s, `I want to try ${started.hobby.topic} as a hobby. My own idea. Why: ${started.hobby.why}`, 7, 'memory', at); console.log(`   🌱 a new hobby to try: ${started.hobby.topic} (ways: ${started.hobby.moves.join(', ')})`); }
+  }
   if (r.action === 'do' && r.as === 'drop_want') { // he crosses a want off his list himself
     const gone = s.asks.find((a) => a.status === 'open' && r.details?.want && sameItem(a.item, text(r.details.want, 140)));
     if (gone) { Object.assign(gone, { status: 'gone', goneAt: at, goneWhy: text(r.details.why, 160) }); console.log(`   ✂️  off his wants list: ${gone.item}`); }
@@ -1919,6 +1927,21 @@ async function wakeUp() {
         } else st.made = { drawn: name, image: file, hint: `it is in my album: ${placed.failed.replace(/^there is /, 'there is ')}` }; // the drawing is made: walls being full is no failure
       }
     }
+    if (st.action === 'make_site' || st.action === 'update_site') { // his own website, written at the internet café (site.js)
+      if (st.action === 'update_site' && !state.site) st.made = { failed: 'I have no website yet: I make one first (make_site)', hinted: true };
+      else {
+        const before = state.site ? await readFile(`web/${SITE_FILE}`, 'utf8').catch(() => null) : null;
+        const built = buildSite(state, d, before, stepStart);
+        if (built.failed) st.made = { failed: built.failed };
+        else {
+          await mkdir('web/made', { recursive: true });
+          await writeFile(`web/${SITE_FILE}`, built.html);
+          const first = !state.site;
+          state.site = built.site;
+          st.made = { site: { title: built.site.title, v: built.site.v, file: SITE_FILE }, hint: first ? 'my website is on the internet now' : `version ${built.site.v}: ${built.site.changes.at(-1).change}` };
+        }
+      }
+    }
     if (st.action === 'update_app') {
       const n = text(d.name, 60).toLowerCase();
       const app = n ? state.apps.find((a) => a.name.toLowerCase() === n) ?? state.apps.find((a) => a.name.toLowerCase().includes(n) || n.includes(a.name.toLowerCase())) : null;
@@ -2064,7 +2087,7 @@ async function wakeUp() {
   }
 
   // A task counts as done only when this wake-up really did something (not only walking, resting or eating, and nothing that failed).
-  const TASK_WORK = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture'];
+  const TASK_WORK = ['decorate', 'extend_thing', 'change_thing', 'move_thing', 'draw', 'compose', 'make_app', 'update_app', 'make_site', 'update_site', 'make_clothes', 'cook', 'place_tool', 'take_tool', 'make_move', 'print_photo', 'place_picture'];
   const PROJECT_WORK = [...TASK_WORK, 'blueprint', 'search_web', 'read_book', 'take_photo', 'find_picture', 'play_piano'];
   const worked = (list) => steps.some((st) => list.includes(st.action) && !st.made?.failed);
   if (!worked(TASK_WORK)) answer.tasks_done = [];
@@ -2229,6 +2252,7 @@ async function wakeUp() {
     if (st.action === 'extend_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), added: st.made?.added ?? 0, total: st.made?.total ?? 0, side: st.made?.side ?? null, joined: st.made?.joined ?? null, place: withWarn(st.made?.entry?.label ?? null, st.made), failed: st.made?.failed ?? null });
     if (st.action === 'move_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), place: withWarn(st.made?.label ?? (st.made?.chest ? 'in a new place' : null), st.made), failed: st.made?.failed ?? null });
     if (st.action === 'change_thing') Object.assign(entry, { name: st.made?.name ?? text(d.name, 60), grew: st.made?.grew ?? null, limited: st.made?.limited ?? false, reshaped: st.made?.reshaped ?? false, place: withWarn(st.made?.label ?? null, st.made), failed: st.made?.failed ?? null });
+    if (st.action === 'make_site' || st.action === 'update_site') Object.assign(entry, { name: st.made?.site?.title ?? state.site?.title ?? text(d.title, 60) ?? null, change: st.action === 'update_site' ? text(d.change ?? d.what, 160) || null : null, why: text(d.why, 200) || null, v: st.made?.site?.v ?? null, file: st.made?.site?.file ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, change: text(d.change, 160) || null, v: state.apps.find((a) => a.id === st.made?.app?.id)?.v ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'go_out') Object.assign(entry, { place: st.made?.place ?? null, placeName: st.made?.name ?? text(d.place, 40), what: st.made?.words ?? null, back: st.made?.back ?? null, failed: st.made?.failed ?? null });
@@ -2378,6 +2402,12 @@ async function wakeUp() {
     const rested = noteChoice(state, choice, gotSomewhere(mine), state.plan.lastFail?.why, Date.now(), mine.some((x) => x.failed && !x.fallback));
     if (rested) console.log(`🛑 loop: ${rested.key} chose 3 times with nothing to show; it rests until ${rested.until}`);
     for (const off of noteFailures(state, mine)) console.log(`🛑 off for today: ${off.key} failed 3 times (${off.why.slice(0, 80)})`);
+    for (const { hobby, became } of practiseHobby(state, mine)) {
+      console.log(`   🌱 for his hobby ${hobby.topic}: ${hobby.practice} time${hobby.practice === 1 ? '' : 's'}${became ? ` (${became})` : ''}`);
+      if (became === 'real') addMemory(state, `${hobby.topic} is a real hobby of mine now: I did it ${hobby.practice} times, and it started as my own idea.`, 7, 'memory', new Date().toISOString());
+      if (became === 'mastered') addMemory(state, `I have done ${hobby.topic} so often that I am good at it now.`, 8, 'memory', new Date().toISOString());
+    }
+    for (const gone of dropUntriedHobbies(state)) { addMemory(state, `I wanted to try ${gone.topic} as a hobby. I never did. I let the idea go.`, 4, 'memory', new Date().toISOString()); console.log(`   🍂 let go of the hobby idea: ${gone.topic}`); }
   }
   state.last = {
     at: new Date(startedAt).toISOString(),
@@ -2480,6 +2510,7 @@ async function wakeUp() {
     if (st.made?.app && st.action === 'make_app') console.log(`      💻 wrote the app "${st.made.app.name}"`);
     if (st.action === 'change_thing' && st.made?.entry) console.log(`      🔁 changed "${st.made.name}"${st.made.reshaped ? ' (new shape)' : ''}`);
     if (st.action === 'update_app' && st.made?.changed) console.log(`      💻 updated the app "${st.made.app.name}"`);
+    if (st.made?.site) console.log(`      🌐 his website: "${st.made.site.title}", version ${st.made.site.v}`);
     if (st.action === 'make_clothes' && st.made?.entry) console.log(`      👕 made "${st.made.entry.name}" (${st.made.entry.slot}, ${st.made.entry.parts.length} parts)${st.made.entry.worn ? ' and put it on' : ''}`);
     if (st.action === 'wear' && st.made?.name) console.log(`      👕 put on "${st.made.name}"`);
     if (st.action === 'take_off' && st.made?.name) console.log(`      👕 took off "${st.made.name}"`);

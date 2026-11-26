@@ -27,6 +27,7 @@ import { missingForProject, workStep } from './projects.js';
 import { hasTool } from './tools.js';
 import { isToday } from './days.js';
 import { headRests as resting } from './models.js';
+import { canStartHobby, hobbyIdeas } from './curiosity.js';
 
 export const MIN_MOVES = 6;
 export const MAX_MOVES = 10;
@@ -161,6 +162,12 @@ export const MOVES = [
   // He has to say why: a want with no reason is not written down. Bas reads the list; he can also get a thing himself.
   { name: 'want', line: (s, n) => `I want something${askReason(s, n) ? ` (${askReason(s, n).slice(0, 70)})` : ''}: I put it on my wants list and say why in one honest sentence (no reason, no want). Bas reads the list: {what, why}`, when: (s, n) => openWants(s).length < WANTS_MAX && ((s.today?.done?.ask_for ?? 0) < ASKS_PER_DAY || Boolean(askReason(s, n))), score: (s, n) => (askReason(s, n) ? 2 : 0.6) },
   { name: 'drop_want', line: (s) => `cross something off my wants list because I do not want it any more (${names(openWants(s).map((a) => a.item.slice(0, 24)), 5)}): {what, why}`, when: (s) => openWants(s).length >= 3, score: () => 0.3 },
+  // A hobby he thinks up himself (curiosity.js): "I want to start graffiti". He says why, and then he really tries it.
+  { name: 'start_hobby', line: (s, n) => `think of something new I would like to try as a hobby, and say why (ideas: ${hobbyIdeas(s, n).join(', ')}, or anything else): {what, why}`, when: (s, n) => canStartHobby(s, n), score: (s) => 0.7 + (s.body?.boredom ?? 0) / 8 },
+  // His own website (site.js). He makes it at the internet café, and works on it there: a little at a time, with what he
+  // made and thought that day.
+  { name: 'make_site', maker: true, line: () => 'make my own website at the internet café: my home page on the internet, for anyone who visits (who I am, what I make, what I think): {title, what: what is on it, why}', when: (s) => !s.site, score: (s) => 1.5 + s.body.creativity / 5 },
+  { name: 'update_site', maker: true, line: (s) => `work on my website at the internet café ("${String(s.site?.title ?? '').slice(0, 40)}", version ${s.site?.v ?? 1}): add or change one thing, like something I made or thought today: {change, why}`, when: (s, n) => Boolean(s.site) && left(s, 'update_site', n) > 0, score: (s, n) => 0.6 + (daysSince(s.site?.updatedAt, n) >= 1 ? 0.7 : 0) },
   // Building out in his world is its own move, so it is one of the things he sees he can do (he never once built outside
   // while it was only a way to use "decorate").
   { name: 'build_outside', maker: true, line: (s) => `build something big out in my world, for everyone to see${outsideThings(s) ? '' : ' (nothing of mine stands there yet)'}. It can be bigger than a house: {what, why, where: "on my field" or a place like "by the pond", metres: its longest side}`, when: (s, n) => !process.env.PIP_NO_OUT && left(s, 'build_outside', n) > 0 && !headRests(s, n) && (s.energy ?? 10) > 3, score: (s) => 1 + s.body.creativity / 4 + (outsideThings(s) ? 0 : 0.9) },

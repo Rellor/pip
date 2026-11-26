@@ -12,7 +12,7 @@ export function skillOf(action, details = {}) {
   if (action === 'make_clothes') return 'sewing';
   if (['plant', 'water', 'harvest'].includes(action)) return 'gardening';
   if (action === 'cook') return 'cooking';
-  if (['make_app', 'update_app'].includes(action)) return 'coding';
+  if (['make_app', 'update_app', 'make_site', 'update_site'].includes(action)) return 'coding';
   return null;
 }
 // Which skill a search or a book is about, or null.
