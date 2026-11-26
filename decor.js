@@ -30,6 +30,28 @@ export function kindWord(name) {
 }
 export const MAX_SAME = 3; // of one kind of thing in his room (stands, shelves, boxes...)
 export const MAX_LAMPS = 5;
+// Does he already have enough of this kind of thing (three of a kind, a few more lamps)? null, or { kind, n, why }.
+// Asked before anything is designed, and when he sets a goal or starts a project: a fourth shelf can never work.
+export function enoughOf(decor, name) {
+  const kind = kindWord(name);
+  if (!kind) return null;
+  const same = (decor ?? []).filter((x) => !x.image && !x.art && kindWord(x.name) === kind);
+  if (same.length < (kind === 'lamp' ? MAX_LAMPS : MAX_SAME)) return null;
+  return { kind, n: same.length, why: `I already have ${same.length} ${kind === 'lamp' ? 'lamps' : `things that are a ${kind}`} (${same.slice(0, 4).map((x) => x.name).join(', ')}). That is enough of those: I improve one of them (change_thing), move one where it is needed, or put one in my chest first` };
+}
+export const kindsWord = (kind) => (/(s|x|ch|sh)$/.test(kind) ? `${kind}es` : /f$/.test(kind) ? `${kind.slice(0, -1)}ves` : /[^aeiou]y$/.test(kind) ? `${kind.slice(0, -1)}ies` : `${kind}s`); // shelf: shelves, box: boxes
+// Every kind of thing he has enough of: [{ kind, n }].
+export function fullKinds(decor) {
+  const count = new Map();
+  for (const d of decor ?? []) { if (d.image || d.art) continue; const k = kindWord(d.name); if (k) count.set(k, (count.get(k) ?? 0) + 1); }
+  return [...count].filter(([k, n]) => n >= (k === 'lamp' ? MAX_LAMPS : MAX_SAME)).map(([kind, n]) => ({ kind, n }));
+}
+// A sentence that is about making one more of a kind he has enough of ("Build a plain wooden shelf"): that kind, or null.
+export function wantsOneMore(decor, text) {
+  const t = String(text ?? '').toLowerCase();
+  if (!/\b(build|make|craft|carve|construct|put together)\b/.test(t)) return null;
+  return fullKinds(decor).find(({ kind }) => new RegExp(`\\b(${kind}|${kindsWord(kind)})\\b`).test(t)) ?? null;
+}
 export const MAX_PER_DAY = 3; // new things a day (changing what he has is not counted here): a room fills up fast
 const MAX_PARTS = 40;
 const MAX_DECOR = 30;
@@ -182,9 +204,8 @@ export function makeDecor(decor, details, atMs, now = Date.now()) {
   if (!name) return { failed: 'he did not give it a name' };
   if (decor.filter((x) => !x.image && isToday(x.createdAt, now)).length >= MAX_PER_DAY) return { failed: 'he has already made enough for today' };
   if (!isOutside(d.where) && roomCount(decor) >= capOf(decor)) return { failed: `${FULL}. Or it can stand outside (where: "outside", or a place like "outside by the pond")` };
-  const kind = kindWord(name);
-  const same = kind ? decor.filter((x) => !x.image && !x.art && kindWord(x.name) === kind) : [];
-  if (same.length >= (kind === 'lamp' ? MAX_LAMPS : MAX_SAME)) return { failed: `I already have ${same.length} ${kind === 'lamp' ? 'lamps' : `things that are a ${kind}`} (${same.slice(0, 4).map((x) => x.name).join(', ')}). That is enough of those: I improve one of them (change_thing), move one where it is needed, or put one in my chest first`, hinted: true };
+  const enough = enoughOf(decor, name);
+  if (enough) return { failed: enough.why, hinted: true };
   const parts = cleanParts(d.parts);
   if (!parts) return { failed: 'the shapes did not work out' };
   return placeParts(decor, { name, why: str(d.why, 200), project: str(d.project, 80), where: d.where, metres: d.metres, worldOpen: d.worldOpen, parts, song: cleanSong(d.song), uses: d.uses, tool: toolKind(d.tool), x: d.x, z: d.z, near_xz: d.near_xz, on: d.on, wall: d.wall, along: d.along, height: d.height, turn: d.turn, ceiling: d.ceiling, next_to: d.next_to, level: d.level, keep: d.keep === true }, atMs, now);
