@@ -1,8 +1,8 @@
 {
   "mood": "curious",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 7.84,
+  "loneliness": 7.87,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -13465,47 +13465,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-26T19:07:25.019Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2324,
-      "output": 1045,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "Someone gave me a flute, so I want to play it right away.",
-    "inner": "Someone gave me a flute, so I want to play it right away.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "the green stone",
-          "what": "sit by the green stone"
-        },
-        "detail": "the green stone",
-        "thought": "My head is empty. I go outside: the green stone.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-26T19:15:29.442Z",
+    "via": "outside",
+    "thought": "I am walking to the green stone.",
     "action": "go_out",
     "details": {
-      "place": "the green stone",
-      "what": "sit by the green stone"
+      "place": "stone"
     },
-    "detail": "the green stone",
-    "enjoyment": 6,
+    "detail": "I am walking to the green stone.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "stone",
+      "phase": "going",
+      "back": "2026-11-26T19:53:25.019Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -13915,21 +13890,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-26T19:07:25.023Z",
-  "fullness": 9.11,
+  "fullness": 8.95,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.06,
-  "joy": 4.06,
-  "calm": 5.34,
+  "wonder": 5.45,
+  "joy": 4.34,
+  "calm": 5.27,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.74
+    "excited": 0.44
   },
-  "feelAt": "2026-11-26T19:07:17.413Z",
+  "feelAt": "2026-11-26T19:15:29.427Z",
   "lastAte": "2026-11-26T18:26:23.978Z",
   "studio": {
     "songs": [
@@ -14724,12 +14699,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.16,
-    "curiosity": 0.21,
+    "creativity": 0.24,
+    "curiosity": 0.28,
     "boredom": 0,
-    "loneliness": 7.84,
+    "loneliness": 7.87,
     "tidiness": 0.4,
-    "at": "2026-11-26T19:07:17.413Z",
+    "at": "2026-11-26T19:15:29.427Z",
     "coziness": 4
   },
   "recent": {
