@@ -1,5 +1,5 @@
 {
-  "mood": "focused",
+  "mood": "sleepy",
   "energy": 9.5,
   "boredom": 0,
   "loneliness": 10,
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-27T11:57:29.686Z",
-      "action": "do",
-      "detail": "decide to try building clocks as a hobby",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-27T12:05:53.622Z",
       "action": "eat",
@@ -303,6 +297,12 @@
       "action": "read_book",
       "detail": "building clocks",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-27T22:07:54.173Z",
+      "action": "rest",
+      "detail": "sleeping through the night",
+      "enjoyment": 8
     }
   ],
   "notes": [
@@ -338,7 +338,7 @@
     "Read about Clock tower: Clock towers are a specific type of structure that house a turret clock and have one or more clock faces on the upper exterior walls. Many clock towers are freestanding structures but they can also adjoin or be located on top of another building. Some other buildings also have clock faces on their exterior but these structures serve other main functions.\nClock towers are a common sight in many parts of the world with some being iconic buildings. …"
   ],
   "requests": [],
-  "story": "Pip spends his evenings by the autumn window as dusk falls. He learns by doing and makes clumsy things with his own hands. He spends half his time playing around just to see what happens. Decorating his walls and searching the web keep him busy. Pushing objects from one spot to another just makes him grumpy. Today he did a lot of chores he disliked. Late at night, he writes his honest thoughts in his diary.",
+  "story": "Pip spent today standing by the autumn window as dusk fell, playing the piano and trying out clumsy projects with his own hands. He decorated his walls to stop them from looking bare and searched the web out of sheer habit. Moving things around only made him grumpy and running errands drained him. Late at night, he sat down with his diary to write his plain, honest thoughts before sleep took over.",
   "wants": [],
   "questions": [],
   "fulfilled": [],
@@ -969,26 +969,6 @@
       "uses": 13
     },
     {
-      "id": "mmwt5ggka60",
-      "at": "2026-11-23T10:55:30.009Z",
-      "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
-      "importance": 8,
-      "kind": "memory",
-      "weight": 7.034,
-      "lastUsed": "2026-11-23T10:55:30.009Z",
-      "tier": "long"
-    },
-    {
-      "id": "mmwt6webd60",
-      "at": "2026-11-23T11:35:53.207Z",
-      "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
-      "importance": 8,
-      "kind": "memory",
-      "weight": 7.034,
-      "lastUsed": "2026-11-23T11:35:53.207Z",
-      "tier": "long"
-    },
-    {
       "id": "mmwt7zo9360",
       "at": "2026-11-23T12:06:25.670Z",
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
@@ -1093,7 +1073,8 @@
       "kind": "memory",
       "weight": 7.142,
       "lastUsed": "2026-11-27T08:32:20.593Z",
-      "tier": "short"
+      "tier": "long",
+      "keptAt": "2026-11-27T22:07:55.267Z"
     },
     {
       "id": "mmwyxflcs60",
@@ -1313,12 +1294,13 @@
       "kind": "memory",
       "weight": 8,
       "lastUsed": "2026-11-27T21:59:50.061Z",
-      "tier": "short"
+      "tier": "long",
+      "keptAt": "2026-11-27T22:07:55.267Z"
     }
   ],
   "reflections": [],
   "lastReflectAt": null,
-  "storyAt": "2026-11-26T22:05:32.957Z",
+  "storyAt": "2026-11-27T22:07:55.267Z",
   "thoughts": [
     {
       "at": "2026-11-27T16:21:33.887Z",
@@ -14937,10 +14919,6 @@
   "favorites": [],
   "dreams": [
     {
-      "at": "2026-11-16T22:01:10.221Z",
-      "text": "He dreams of a vast, humming night sky where every star is a tiny music box waiting to be wound."
-    },
-    {
       "at": "2026-11-17T22:08:14.615Z",
       "text": "He dreamt of building a tiny wooden house that could fit inside a teacup, lit by a warm and flickering fire."
     },
@@ -14975,6 +14953,10 @@
     {
       "at": "2026-11-26T22:05:32.957Z",
       "text": "He dreams of a vast, clockwork night sky that refuses to stop ticking no matter how hard he hits it with a wrench."
+    },
+    {
+      "at": "2026-11-27T22:07:55.267Z",
+      "text": "He dreamed of building a massive wooden tower that kept shrinking until it fit neatly inside his pocket, only to turn into a restless piano key."
     }
   ],
   "rituals": [],
@@ -15341,51 +15323,15 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T21:59:49.693Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2402,
-      "output": 125,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I am done making things for today, so I will read a book about my hobby.",
-    "inner": "I am done making things for today, so I will read a book about my hobby.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "read_book",
-        "details": {
-          "topic": "building clocks"
-        },
-        "detail": "building clocks",
-        "thought": "Read about building clocks",
-        "enjoyment": 6,
-        "found": {
-          "title": "Clock tower",
-          "text": "Clock towers are a specific type of structure that house a turret clock and have one or more clock faces on the upper exterior walls. Many clock towers are freestanding structures but they can also adjoin or be located on top of another building. Some other buildings also have clock faces on their exterior but these structures serve other main functions.\nClock towers are a common sight in many parts of the world with some being iconic buildings. One example is the Elizabeth Tower in London (usually called \"Big Ben\", although strictly this name belongs only to the bell inside the tower).\n\nDefinition\nThere are many structures that may have clocks or clock faces attached to them and some structures have had clocks added to an existing structure. According to the Council on Tall Buildings and Urban Habitat, a structure is defined as a building if at least fifty percent of its height is made up of floor plates containing habitable floor area. Structures that do not meet this criterion are defined as towers. A clock tower historically fits this definition of a tower and therefore can be defined as any tower specifically built with one or more (often four) clock faces and that can be either freestanding or part of a church or municipal building such as a town hall. Not all clocks on buildings therefore make the building into a clock tower.\nThe mechanism inside the tower is known as a turret clock. It often marks the hour (and sometimes segments of an hour) by sounding large bells or chimes, sometimes playing simple musical phrases or tunes. Some clock towers were previously built as Bell towers and then had clocks added to them. As these structures fulfil the definition of a tower they can be considered to be clock towers.\n\nHistory\n\nAlthough clock towers are today mostly admired for their aesthetics, they once served an important purpose. Before the middle of the twentieth century, most people did not have watches, and prior to the 18th century even home clocks were rare. The first clocks did not have faces, but were solely striking clocks, which sounded bells to call the surrounding community to work or to prayer. They were therefore placed in towers so the bells would be audible for a long distance. Clock towers were placed near the centres of towns and were often the tallest structures there. …"
-        },
-        "made": null
-      }
-    ],
-    "action": "read_book",
-    "details": {
-      "topic": "building clocks"
-    },
-    "detail": "building clocks",
-    "enjoyment": 6,
+    "at": "2026-11-27T22:07:54.173Z",
+    "thought": "It is late. Good night...",
+    "action": "rest",
+    "details": {},
+    "detail": "sleeping through the night",
+    "enjoyment": 8,
     "new_idea": null,
-    "found": {
-      "title": "Clock tower",
-      "text": "Clock towers are a specific type of structure that house a turret clock and have one or more clock faces on the upper exterior walls. Many clock towers are freestanding structures but they can also adjoin or be located on top of another building. Some other buildings also have clock faces on their exterior but these structures serve other main functions.\nClock towers are a common sight in many parts of the world with some being iconic buildings. One example is the Elizabeth Tower in London (usually called \"Big Ben\", although strictly this name belongs only to the bell inside the tower).\n\nDefinition\nThere are many structures that may have clocks or clock faces attached to them and some structures have had clocks added to an existing structure. According to the Council on Tall Buildings and Urban Habitat, a structure is defined as a building if at least fifty percent of its height is made up of floor plates containing habitable floor area. Structures that do not meet this criterion are defined as towers. A clock tower historically fits this definition of a tower and therefore can be defined as any tower specifically built with one or more (often four) clock faces and that can be either freestanding or part of a church or municipal building such as a town hall. Not all clocks on buildings therefore make the building into a clock tower.\nThe mechanism inside the tower is known as a turret clock. It often marks the hour (and sometimes segments of an hour) by sounding large bells or chimes, sometimes playing simple musical phrases or tunes. Some clock towers were previously built as Bell towers and then had clocks added to them. As these structures fulfil the definition of a tower they can be considered to be clock towers.\n\nHistory\n\nAlthough clock towers are today mostly admired for their aesthetics, they once served an important purpose. Before the middle of the twentieth century, most people did not have watches, and prior to the 18th century even home clocks were rare. The first clocks did not have faces, but were solely striking clocks, which sounded bells to call the surrounding community to work or to prayer. They were therefore placed in towers so the bells would be audible for a long distance. Clock towers were placed near the centres of towns and were often the tallest structures there. …"
-    }
+    "found": null,
+    "sleeping": true
   },
   "furniture": {
     "plant": {
@@ -15483,7 +15429,7 @@
   "quota": {
     "day": "2026-11-27",
     "calls": {
-      "gemini-3.5-flash-lite": 92,
+      "gemini-3.5-flash-lite": 93,
       "gemini-3.6-flash": 11,
       "gemini-3.5-flash": 6,
       "gemini-3.8-flash": 3
@@ -17416,6 +17362,26 @@
       "weight": 5.742,
       "lastUsed": "2026-11-27T16:57:01.349Z",
       "tier": "short"
+    },
+    {
+      "id": "mmwt5ggka60",
+      "at": "2026-11-23T10:55:30.009Z",
+      "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
+      "importance": 8,
+      "kind": "memory",
+      "weight": 7.034,
+      "lastUsed": "2026-11-23T10:55:30.009Z",
+      "tier": "long"
+    },
+    {
+      "id": "mmwt6webd60",
+      "at": "2026-11-23T11:35:53.207Z",
+      "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
+      "importance": 8,
+      "kind": "memory",
+      "weight": 7.034,
+      "lastUsed": "2026-11-23T11:35:53.207Z",
+      "tier": "long"
     }
   ],
   "days": [
@@ -17712,6 +17678,29 @@
       "unfinished": [
         "Build a little simulation of night sky: something that moves by itself"
       ]
+    },
+    {
+      "day": "2026-11-27",
+      "lifted": [
+        "do",
+        "decorate",
+        "read_book"
+      ],
+      "lowered": [
+        "go_out",
+        "remove_decoration"
+      ],
+      "most": [
+        "do",
+        "go_out",
+        "play_piano"
+      ],
+      "kinds": [
+        "play",
+        "make"
+      ],
+      "mood": "focused",
+      "unfinished": []
     }
   ],
   "soulLines": [
@@ -17719,7 +17708,7 @@
       "text": "He learns best by simply doing and getting his hands dirty.",
       "key": "most:do",
       "addedAt": "2026-11-20T22:00:07.967Z",
-      "lastSeen": "2026-11-26T22:05:32.954Z"
+      "lastSeen": "2026-11-27T22:07:55.264Z"
     },
     {
       "text": "He makes things with his own hands and feels better when he changes them.",
@@ -17737,19 +17726,25 @@
       "text": "He decorates because staring at bare walls makes him restless.",
       "key": "lifted:decorate",
       "addedAt": "2026-11-24T22:08:04.568Z",
-      "lastSeen": "2026-11-26T22:05:32.954Z"
+      "lastSeen": "2026-11-27T22:07:55.264Z"
     },
     {
       "text": "He spends half his time playing around just to see what happens.",
       "key": "kind:play",
       "addedAt": "2026-11-25T22:02:30.784Z",
-      "lastSeen": "2026-11-26T22:05:32.954Z"
+      "lastSeen": "2026-11-27T22:07:55.264Z"
     },
     {
       "text": "He learns best by simply doing and getting his hands dirty.",
       "key": "lifted:do",
       "addedAt": "2026-11-26T22:05:32.954Z",
-      "lastSeen": "2026-11-26T22:05:32.954Z"
+      "lastSeen": "2026-11-27T22:07:55.264Z"
+    },
+    {
+      "text": "He makes things with his own hands because sitting still bores him to death.",
+      "key": "kind:make",
+      "addedAt": "2026-11-27T22:07:55.264Z",
+      "lastSeen": "2026-11-27T22:07:55.264Z"
     }
   ],
   "ever": {
@@ -28273,13 +28268,6 @@
       "touches": 0
     },
     {
-      "id": "mmwt6webd60",
-      "at": "2026-11-23T11:35:53.207Z",
-      "text": "I am home again from the pond in the park.",
-      "fadedAt": "2026-11-23T16:07:43.825Z",
-      "touches": 0
-    },
-    {
       "id": "mmwqbwlp160",
       "at": "2026-11-21T11:32:42.324Z",
       "text": "My project \"Knit my warm wool blanket\" is finished: all my steps are done and I made it…",
@@ -28368,6 +28356,20 @@
       "at": "2026-11-20T11:27:42.743Z",
       "text": "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are…",
       "fadedAt": "2026-11-26T22:05:32.958Z",
+      "touches": 0
+    },
+    {
+      "id": "mmwt5ggka60",
+      "at": "2026-11-23T10:55:30.009Z",
+      "text": "Bas changed my world.",
+      "fadedAt": "2026-11-27T22:07:55.267Z",
+      "touches": 0
+    },
+    {
+      "id": "mmwt6webd60",
+      "at": "2026-11-23T11:35:53.207Z",
+      "text": "Mo told me there is a library ten minutes from here, with more books than I can count.",
+      "fadedAt": "2026-11-27T22:07:55.267Z",
       "touches": 0
     }
   ],
@@ -28704,8 +28706,8 @@
     {
       "action": "decorate",
       "lifts": true,
-      "days": 11,
-      "of": 11,
+      "days": 12,
+      "of": 12,
       "text": "Making things lifts me"
     },
     {
@@ -28737,6 +28739,13 @@
       "text": "Looking things up lifts me"
     },
     {
+      "action": "go_out",
+      "lifts": false,
+      "days": 4,
+      "of": 4,
+      "text": "Going outside wears me down"
+    },
+    {
       "action": "change_thing",
       "lifts": true,
       "days": 3,
@@ -28749,24 +28758,17 @@
       "days": 3,
       "of": 3,
       "text": "Browsing the web wears me down"
-    },
-    {
-      "action": "go_out",
-      "lifts": false,
-      "days": 3,
-      "of": 3,
-      "text": "Going outside wears me down"
     }
   ],
   "nightly": {
-    "at": "2026-11-26T22:05:31.087Z",
+    "at": "2026-11-27T22:07:54.173Z",
     "kept": [
-      "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
-      "Bas gave me the flute I asked for: a thin silver flute to blow across. It is in my inventory, so I can play it right away (play_piano with instrument \"flute\")."
+      "I have done building clocks so often that I am good at it now.",
+      "Three new things. There is a small red radio on a crate beside my front door: it plays the songs I recorded, for anyone who walks by. In the library there is a shelf where people who visit my page can leave me a poem, a "
     ],
     "faded": [
-      "Bas gave me the new watercolor paper I asked for: a fresh pad of thick white sheets. Now I can paint a new view.",
-      "My project \"Carve a small wooden stand for the clay bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new."
+      "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
+      "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for)."
     ]
   },
   "bought": [
@@ -28804,66 +28806,6 @@
     }
   ],
   "moments": [
-    {
-      "at": "2026-11-27T18:24:41.211Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“Look up how a model lighthouse is made to earn an extra coin.”"
-    },
-    {
-      "at": "2026-11-27T18:26:05.036Z",
-      "kind": "beat",
-      "icon": "⏳",
-      "text": "Turns a page"
-    },
-    {
-      "at": "2026-11-27T18:27:30.148Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "It is so quiet he can hear a page turn two rows away"
-    },
-    {
-      "at": "2026-11-27T18:28:35.921Z",
-      "kind": "beat",
-      "icon": "✔️",
-      "text": "Closes the book"
-    },
-    {
-      "at": "2026-11-27T18:29:09.451Z",
-      "kind": "beat",
-      "icon": "🚶",
-      "text": "Walks back home"
-    },
-    {
-      "at": "2026-11-27T18:31:04.790Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Plan my new project:"
-    },
-    {
-      "at": "2026-11-27T18:33:16.994Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“Start a project to build clocks”"
-    },
-    {
-      "at": "2026-11-27T18:36:35.298Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "The clock in his head says it is later than he thought"
-    },
-    {
-      "at": "2026-11-27T18:39:38.658Z",
-      "kind": "beat",
-      "icon": "🚶",
-      "text": "Walks to the build workshop"
-    },
-    {
-      "at": "2026-11-27T18:39:59.658Z",
-      "kind": "notice",
-      "icon": "🪙",
-      "text": "I made a fruit bowl, as the note on the notice board asked. I took the note down and got 3 coins. I have 13 coins now."
-    },
     {
       "at": "2026-11-27T18:40:55.298Z",
       "kind": "beat",
@@ -29352,6 +29294,75 @@
       "kind": "beat",
       "icon": "🚶",
       "text": "Walks back home"
+    },
+    {
+      "at": "2026-11-27T22:07:54.173Z",
+      "kind": "beat",
+      "icon": "🌙",
+      "text": "Turns off the light"
+    },
+    {
+      "at": "2026-11-27T22:11:54.173Z",
+      "kind": "beat",
+      "icon": "💤",
+      "text": "Falls asleep",
+      "far": true
+    },
+    {
+      "at": "2026-11-27T22:45:07.364Z",
+      "kind": "notice",
+      "icon": "💤",
+      "text": "Sleeps on",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T00:13:14.394Z",
+      "kind": "notice",
+      "icon": "💤",
+      "text": "Turns over",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T01:15:00.040Z",
+      "kind": "notice",
+      "icon": "💤",
+      "text": "Dreams something, and frowns at it",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T02:23:24.566Z",
+      "kind": "notice",
+      "icon": "💤",
+      "text": "Somewhere far off, a train",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T03:34:58.652Z",
+      "kind": "notice",
+      "icon": "💤",
+      "text": "One foot sticks out of the bed",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T05:01:55.365Z",
+      "kind": "notice",
+      "icon": "💤",
+      "text": "Pulls the blanket over one ear",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T06:01:22.507Z",
+      "kind": "notice",
+      "icon": "💤",
+      "text": "Mumbles a word nobody knows",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T06:54:35.021Z",
+      "kind": "notice",
+      "icon": "💤",
+      "text": "The house ticks as it cools",
+      "far": true
     }
   ],
   "arc": [
@@ -30252,6 +30263,16 @@
       "wonder": 7,
       "energy": 9.5,
       "mood": "focused",
+      "feel": 5.5
+    },
+    {
+      "at": "2026-11-27T22:07:54.173Z",
+      "joy": 4.3,
+      "calm": 5.3,
+      "wonder": 7,
+      "energy": 9.5,
+      "mood": "sleepy",
+      "asleep": true,
       "feel": 5.5
     }
   ],
