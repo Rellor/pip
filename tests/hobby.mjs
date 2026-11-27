@@ -11,7 +11,7 @@ const iso = (ms) => new Date(ms).toISOString();
 const fresh = (more = {}) => ({ body: { boredom: 6, creativity: 5 }, curious: { sparks: [], interests: [] }, log: [], news: { items: [] }, ...more });
 
 // ---- which moves are a way to do a hobby
-for (const [topic, moves] of [['graffiti', ['paint_wall']], ['bird watching at the pond', ['go_out']], ['baking bread', ['cook']], ['land art with hills and holes', ['shape_land']], ['chess', ['search_web', 'read_book']], ['reading old books', ['read_book', 'write_diary', 'search_web']]]) assert.deepEqual(hobbyMoves(topic), moves, topic);
+for (const [topic, moves] of [['graffiti', ['paint_wall']], ['bird watching at the pond', ['go_out']], ['baking bread', ['cook']], ['land art with hills and holes', ['shape_land']], ['chess', ['play', 'make_plaything']], ['old coins', ['search_web', 'read_book']], ['reading old books', ['read_book', 'write_diary', 'search_web']]]) assert.deepEqual(hobbyMoves(topic), moves, topic);
 assert.ok(hobbyMoves('writing songs for my flute').slice(0, 2).includes('play_piano') && hobbyMoves('building big things on my field').includes('build_outside') && hobbyMoves('making small games').includes('make_app'));
 ok('every hobby has a way to do it: graffiti is painting a wall, bird watching is going out');
 

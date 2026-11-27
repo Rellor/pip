@@ -21,8 +21,8 @@ const fresh = (more = {}) => ({ energy: 8, fullness: 8, joy: 5, calm: 5, wonder:
 const iso = (ms) => new Date(ms).toISOString();
 
 // ---- the places
-assert.deepEqual(PLACES.map((p) => p.key), ['home', 'doorstep', 'shop', 'pond', 'library', 'field', 'stone', 'museum', 'board', 'workshop', 'walls', 'drops', 'land']);
-assert.ok(PLACES.length <= 13, 'a small world: a handful of places besides home');
+assert.deepEqual(PLACES.map((p) => p.key), ['home', 'doorstep', 'square', 'shop', 'pond', 'library', 'field', 'stone', 'museum', 'board', 'workshop', 'walls', 'drops', 'land']);
+assert.ok(PLACES.length <= 14, 'a small world: a handful of places besides home');
 for (const p of PLACES.filter((x) => x.key !== 'home' && !x.errand && !x.job)) assert.ok(p.things.length >= 1 && p.stay && p.blurb && p.walk > 0, p.key);
 for (const p of PLACES.filter((x) => x.job)) assert.ok(!p.things && p.stay && p.blurb && p.walk > 0 && !p.locked, `${p.key}: a place he only goes to with something to make there`);
 assert.equal(findPlace('the pond')?.key, 'pond');
@@ -38,7 +38,7 @@ ok('a small world of named places; he can say a place in his own words');
 // ---- where he may go: anywhere, any time (there are no opening hours, no locked places, no weather rules, no limits)
 const s = fresh();
 assert.deepEqual(unlockedKeys(s), PLACES.map((p) => p.key), 'every place is open to him');
-assert.deepEqual(goOptions(s, noon).map((o) => o.key).sort(), ['doorstep', 'field', 'library', 'museum', 'pond', 'stone']);
+assert.deepEqual(goOptions(s, noon).map((o) => o.key).sort(), ['doorstep', 'field', 'library', 'museum', 'pond', 'square', 'stone']);
 assert.ok(goLine(s, noon).length <= 170, goLine(s, noon));
 for (const [who, t] of [[fresh(), noon + 10 * 60 * MIN], [fresh({ energy: 2 }), noon], [fresh({ fullness: 2 }), noon], [fresh({ weather: { kind: 'storm', temp: -4 } }), noon + 7 * 60 * MIN], [fresh({ weather: { kind: 'rain', temp: 9 } }), noon]]) {
   for (const p of PLACES.filter((x) => x.key !== 'home')) assert.equal(canGo(who, p.key, t).ok, true, p.key);

@@ -159,6 +159,7 @@ export const HOBBY_REAL_AFTER = 3; // tried this many times: it is a real hobby
 export const HOBBY_DROP_DAYS = 4; // never tried in this many days: he lets the idea go
 // Which of his moves are a way to do a hobby, by the words in it.
 const HOBBY_MOVES = [
+  [/bik(e|ing)|cycl|kite|plane|glider|sail|boat|skat|scooter|sled|juggl|unicycle|swing|fishing|\bball\b|football|frisbee|disc\b|kart|stilts|hoop|yo-?yo|skipping|camp|tent|chess|marbles|card games|hammock|drumming outside/, ['play', 'make_plaything']],
   [/graffiti|mural|street art|spray|tag(ging)?s?\b|wall paint/, ['paint_wall']],
   [/garden|plant|grow(ing)?|herb|vegetable|tomato|flower|botan/, ['plant', 'water', 'harvest']],
   [/music|song|sing|flute|guitar|piano|violin|melod|compos|drum|band/, ['play_piano', 'record_song', 'compose']],
@@ -175,7 +176,7 @@ const HOBBY_MOVES = [
   [/\bread(ing)?\b|\bbooks?\b|poe(m|try)|\bwrit|stor(y|ies)|diary|journal|histor|philosoph|language/, ['read_book', 'write_diary', 'search_web']],
 ];
 export const hobbyMoves = (topic) => { const t = key(topic); const out = HOBBY_MOVES.filter(([re]) => re.test(t)).flatMap(([, m]) => m); return [...new Set(out.length ? out : ['search_web', 'read_book'])]; }; // nothing fits: he starts by finding out about it
-const MOVE_WORDS = { paint_wall: 'paint a wall', plant: 'plant something', water: 'water my plants', harvest: 'harvest', play_piano: 'play music', record_song: 'record a song', compose: 'compose', draw: 'draw', cook: 'cook', make_app: 'write a program', update_app: 'work on a program', make_site: 'make my website', update_site: 'work on my website', decorate: 'make a thing', build_outside: 'build outside', change_thing: 'make a piece of mine better', extend_thing: 'add to a piece of mine', print_thing: 'print a model', make_clothes: 'make clothes', make_move: 'design a move', take_photo: 'take a photo', shape_land: 'shape the land', go_out: 'go outside', read_book: 'read about it', write_diary: 'write', search_web: 'look it up' };
+const MOVE_WORDS = { paint_wall: 'paint a wall', plant: 'plant something', water: 'water my plants', harvest: 'harvest', play_piano: 'play music', record_song: 'record a song', compose: 'compose', draw: 'draw', cook: 'cook', make_app: 'write a program', update_app: 'work on a program', make_site: 'make my website', update_site: 'work on my website', decorate: 'make a thing', play: 'go out and do it', make_plaything: 'build what I need for it', build_outside: 'build outside', change_thing: 'make a piece of mine better', extend_thing: 'add to a piece of mine', print_thing: 'print a model', make_clothes: 'make clothes', make_move: 'design a move', take_photo: 'take a photo', shape_land: 'shape the land', go_out: 'go outside', read_book: 'read about it', write_diary: 'write', search_web: 'look it up' };
 const ownHobbies = (s) => ensureCurious(s).interests.filter((i) => i.own);
 export const tryingHobbies = (s) => ownHobbies(s).filter((i) => (i.practice ?? 0) < HOBBY_REAL_AFTER);
 // May he think of a new hobby now? (not too often, and not while two ideas are still waiting to be tried)

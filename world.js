@@ -11,6 +11,7 @@ import { seasonInfo } from './web/season.js';
 import { noteSpark } from './curiosity.js';
 import { giveForAsk } from './gifts.js';
 import { readBoard } from './board.js';
+import { playDone } from './play.js';
 import { landDone } from './land.js';
 import { dropFound } from './strangers.js';
 
@@ -100,7 +101,8 @@ export function startOuting(s, details = {}, now = Date.now()) {
   const d = details && typeof details === 'object' ? details : {};
   const options = goOptions(s, now);
   const job = d.job && typeof d.job === 'object' && placeOf(d.job.place)?.job ? d.job : null; // something he designed, to be made there: a print, a painting on a wall
-  let p = job ? placeOf(job.place) : d.errand ? placeOf('shop') : findPlace(d.place) ?? findPlace(d.where) ?? findPlace(d.what) ?? findPlace(d.name);
+  const play = !job && d.play && typeof d.play === 'object' && placeOf(d.play.place) ? d.play : null; // out with something of his: his bike, his kite (play.js)
+  let p = job ? placeOf(job.place) : play ? placeOf(play.place) : d.errand ? placeOf('shop') : findPlace(d.place) ?? findPlace(d.where) ?? findPlace(d.what) ?? findPlace(d.name);
   if (p?.job && !job) p = null; // nothing to do there without a design
   if (!p && !d.errand) p = options[0] ? placeOf(options[0].key) : null;
   if (!p) return { failed: `I cannot go out right now${options.length ? '' : ` (${canGo(s, 'pond', now).why ?? 'nowhere is open'})`}` };
@@ -109,7 +111,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
   const things = thingsNow(s, p, now);
   const said = String(d.what ?? '').toLowerCase();
   const before = (s.outings ?? []).filter((o) => o.place === p.key).map((o) => o.thing);
-  const thing = p.errand || job ? null : things.find((t) => said && t.match.test(said)) ?? [...things].sort((a, b) => before.filter((k) => k === a.key).length - before.filter((k) => k === b.key).length)[0] ?? null;
+  const thing = p.errand || job || play ? null : things.find((t) => said && t.match.test(said)) ?? [...things].sort((a, b) => before.filter((k) => k === a.key).length - before.filter((k) => k === b.key).length)[0] ?? null;
   const rnd = dice(`${p.key}${Math.floor(now / MIN)}`);
   const [a, b] = p.stay ?? [5, 5];
   let stay = Math.round(a + rnd() * (b - a));
@@ -117,7 +119,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
   const room = (latest - hourNL(now)) * 60 - 2 * p.walk;
   stay = Math.max(4, Math.min(stay, Math.floor(room), MAX_AWAY_MIN - 2 * p.walk));
   const id = `o${Math.floor(now / 1000).toString(36)}`;
-  s.where = { id, place: p.key, thing: thing?.key ?? null, words: job?.words ?? thing?.words ?? (d.errand ? `buy ${d.errand}` : 'look around'), leftAt: new Date(now).toISOString(), arriveAt: new Date(now + p.walk * MIN).toISOString(), leaveAt: new Date(now + (p.walk + stay) * MIN).toISOString(), homeAt: new Date(now + (2 * p.walk + stay) * MIN).toISOString(), ...(d.errand ? { errand: String(d.errand).slice(0, 40) } : {}), ...(job ? { job, ...(job.spot ? { spot: job.spot } : {}) } : {}) };
+  s.where = { id, place: p.key, thing: thing?.key ?? null, words: job?.words ?? play?.words ?? thing?.words ?? (d.errand ? `buy ${d.errand}` : 'look around'), leftAt: new Date(now).toISOString(), arriveAt: new Date(now + p.walk * MIN).toISOString(), leaveAt: new Date(now + (p.walk + stay) * MIN).toISOString(), homeAt: new Date(now + (2 * p.walk + stay) * MIN).toISOString(), ...(d.errand ? { errand: String(d.errand).slice(0, 40) } : {}), ...(job ? { job, ...(job.spot ? { spot: job.spot } : {}) } : {}), ...(play ? { play } : {}) };
   return { ok: true, place: p.key, name: p.name, words: s.where.words, back: s.where.homeAt, backWords: `around ${hm(now + (2 * p.walk + stay) * MIN)}` };
 }
 
@@ -173,7 +175,17 @@ export function finishOuting(s, now = Date.now()) {
   };
   if (w.errand) o.did = `I walked to the grocery store and came home with ${w.errand}.`;
   else if (!reached) o.did = `I was on my way to ${p.name}, but ${w.cut}, so I turned around.`;
-  else if (p.key === 'pond') {
+  else if (w.play) { // he was out with something of his (play.js tells how it went: it depends on how often he has done it)
+    const r = playDone(s, w.play, rnd, { wet, frozen });
+    o.did = r.did; o.saw = r.saw; o.played = { name: w.play.name, verb: w.play.verb, goes: r.goes, first: r.first };
+    up(s, 'joy', r.first ? 1.6 : 1.2); up(s, 'calm', 0.4); up(s, 'wonder', r.first ? 1 : 0.3); up(s, 'boredom', -3); up(s, 'energy', -1.2); up(s, 'creativity', -1.5); // (it lets something out, like making does, and nothing is left standing)
+    if (p.key === 'square') up(s, 'loneliness', -1);
+  } else if (p.key === 'square') { // the middle of the village: people cross it all day
+    o.did = wet ? 'I stood on the square in the rain. Everybody hurried. I did not.' : pick(rnd, ['I walked once round the square and nodded at everybody. Two nodded back. One was a dog.', 'I stood in the middle of the square for a while and let the village go round me.', 'I crossed the square the long way, corner to corner, counting my steps. One hundred and twelve.']);
+    o.saw = 'the square, from the middle';
+    find(false);
+    up(s, 'calm', 0.5); up(s, 'joy', 0.5); up(s, 'loneliness', -1.5); up(s, 'boredom', -1.5); up(s, 'energy', -0.4);
+  } else if (p.key === 'pond') {
     if (w.thing === 'ice') { o.did = 'The pond was frozen all the way across. I slid over the ice on my feet, there and back, and fell once.'; up(s, 'joy', 1.4); o.saw = 'the frozen pond'; }
     else if (w.thing === 'find') { find(true); o.did = o.found.length ? `I walked slowly around the pond with my eyes on the ground, and found ${o.found[0].name}.` : 'I walked slowly around the pond with my eyes on the ground. Nothing new today.'; }
     else if (w.thing === 'sketch') { o.saw = pick(rnd, frozen ? ['the ducks standing on the ice', 'the bare willow over the frozen pond'] : ['a duck asleep with its head under its wing', 'the willow hanging over the water', 'the bench by the pond with a coot walking past', 'reeds and their shadows on the water']); o.did = `I sat by the water and looked for a long time at ${o.saw}, to draw it when I am home.`; }

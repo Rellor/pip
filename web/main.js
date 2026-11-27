@@ -12,7 +12,7 @@ import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sid
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
 import { makeGrain } from './grain.js';
-import { buildTown, TOWN_X, TOWN_RANGE, WORLD, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS, MUSEUM_SLOTS, PLINTH } from './town.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS, MUSEUM_SLOTS, PLINTH, POND, PLOT, SQUARE } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -2694,6 +2694,103 @@ function syncPrints(s) {
     printModels.add(g);
   });
 }
+// His playthings (play.js): what he built or was given to do things with outside. Each waits at the place where he
+// uses it (his bike leans against his house, his boat lies by the pond, his kite on the edge of his field). When he is
+// out with one, you see him do it: he rides round the square, his plane circles over the field, his boat crosses the pond.
+let playKey = '';
+const playModels = new THREE.Group();
+town.group.add(playModels);
+const playGroups = new Map(); // id -> { g, home: [x, y, z], k }
+const PARK = { square: (i) => [2.5 + i * 1.3, 0.9], doorstep: (i) => [-3.3 - i * 1.0, 0.9], pond: (i) => [-14.6, 21.8 + i * 1.5], field: (i) => [30.8, 12.5 + i * 2.0], stone: (i) => [-50.5, -12.5 + i * 1.5] };
+const PLAY_LEVEL = (p) => ((p.goes ?? 0) === 0 ? 'never tried yet' : p.goes < 3 ? 'a beginner' : p.goes < 8 ? 'getting the hang of it' : p.goes < 20 ? 'good at it' : 'a master');
+const PLAY_AT = { square: 'on the square', pond: 'on the pond', field: 'on his field', stone: 'out by the green stone', doorstep: 'in front of his door' };
+function playInfo(p) {
+  return { title: p.name.replace(/^./, (c) => c.toUpperCase()), icon: '🪁', subtitle: `${p.made === 'given' ? 'He asked for it, and it was given to him' : 'He built it himself'} · ${when(p.createdAt)}`, image: decorThumb(p, 320), sections: [
+    { heading: 'What he does with it', quote: p.how },
+    { heading: 'So far', lines: [p.goes ? `He went out with it ${p.goes} time${p.goes === 1 ? '' : 's'}${p.lastAt ? `, last ${when(p.lastAt)}` : ''}.` : 'It still waits for its first go.', `By now he is ${PLAY_LEVEL(p)}.`], chips: [`${p.verb} it ${PLAY_AT[p.where] ?? 'outside'}`] },
+    ...(p.why ? [{ heading: 'Why he wanted it', quote: p.why }] : []),
+  ] };
+}
+function syncPlay(s) {
+  const list = (s?.playthings ?? []).filter((p) => p?.id && Array.isArray(p.parts) && p.parts.length);
+  const key = list.map((p) => `${p.id}:${p.where}`).join(',');
+  if (key === playKey) return;
+  playKey = key;
+  playModels.clear();
+  playGroups.clear();
+  const n = {};
+  for (const p of list) {
+    const g = buildDecor({ id: `play-${p.id}`, name: p.name, parts: p.parts, scale: 1, pos: [0, 0, 0], rotY: 0, kind: 'floor', at: p.createdAt });
+    g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.scale.setScalar(1);
+    g.updateMatrixWorld(true);
+    const b = new THREE.Box3().setFromObject(g);
+    const size = b.getSize(new V3()), mid = b.getCenter(new V3());
+    const k = Math.min(1, 2.6 / Math.max(size.x, size.z, 0.01), 2.4 / Math.max(size.y, 0.01)); // life-size, but never bigger than a small cart
+    const i = (n[p.where] = (n[p.where] ?? -1) + 1);
+    const [x, z] = (PARK[p.where] ?? PARK.square)(i);
+    const inner = new THREE.Group(); // (so its middle stands on the spot, whatever way he built it)
+    g.scale.setScalar(k); g.position.set(-mid.x * k, -b.min.y * k, -mid.z * k);
+    inner.add(g);
+    inner.position.set(x, townGround(TOWN_X + x, z), z);
+    inner.userData.info = () => playInfo((lastState?.playthings ?? []).find((q) => q.id === p.id) ?? p);
+    g.userData.info = inner.userData.info;
+    playModels.add(inner);
+    playGroups.set(p.id, { g: inner, home: [x, townGround(TOWN_X + x, z), z], tall: size.y * k });
+  }
+}
+// Where a round goes at each place: [centre x, centre z, how wide, how deep] (metres in the village).
+const ROUNDS = { square: [(SQUARE.x0 + SQUARE.x1) / 2, (SQUARE.z0 + SQUARE.z1) / 2, 14, 9], pond: [POND.x, POND.z, POND.rx + 6.5, POND.rz + 6.5], field: [(PLOT.x0 + PLOT.x1) / 2, (PLOT.z0 + PLOT.z1) / 2, 14, 13], stone: [-54, -16, 7, 7], doorstep: [0, 3.2, 5, 1.2] };
+let playingId = null;
+function updatePlay(now) {
+  const w = lastState?.where;
+  const job = w?.play && !portalOn ? w.play : null;
+  const t0 = job ? Date.parse(w.arriveAt) : 0;
+  const on = job && Date.now() >= t0 + 20_000 && Date.now() < Date.parse(w.leaveAt) && !w.cut && playGroups.has(job.id) && farFrom(TOWN_FOR[w.place]?.[0] ?? 'square') < 40;
+  if (!on) {
+    if (playingId) { const pg = playGroups.get(playingId); if (pg) { pg.g.position.set(...pg.home); pg.g.rotation.set(0, 0, 0); } playingId = null; }
+    return;
+  }
+  playingId = job.id;
+  const pg = playGroups.get(job.id);
+  const t = (Date.now() - t0) / 1000;
+  const [cx, cz, rx, rz] = ROUNDS[job.place] ?? ROUNDS.square;
+  const spot = TOWN_SPOTS[TOWN_FOR[w.place]?.[0] ?? 'square'];
+  const me = pip.group;
+  const ground = (x, z) => townGround(TOWN_X + x, z);
+  const put = (o, x, y, z, face) => { o.position.set(x, y, z); o.rotation.y = face; };
+  if (job.motion === 'ride') { // round and round, with him on it
+    const a = (t * 3.0) / ((rx + rz) / 2);
+    const x = cx + Math.cos(a) * rx, z = cz + Math.sin(a) * rz;
+    const face = Math.atan2(-Math.sin(a) * rx, Math.cos(a) * rz);
+    put(pg.g, x, ground(x, z), z, face + Math.PI / 2);
+    me.position.set(TOWN_X + x, ground(x, z) + Math.min(0.5, pg.tall * 0.45), z); me.rotation.y = face;
+  } else if (job.motion === 'fly') { // it circles in the air; he stands and looks up at it
+    const a = t * 0.45;
+    const x = spot.x + 5 + Math.cos(a) * 8, z = spot.z + 6 + Math.sin(a) * 6, y = 7 + Math.sin(t * 0.7) * 1.4;
+    put(pg.g, x, ground(x, z) + y, z, -a);
+    pg.g.rotation.z = Math.sin(t * 1.3) * 0.2;
+    me.position.set(TOWN_X + spot.x, ground(spot.x, spot.z), spot.z); me.rotation.y = Math.atan2(x - spot.x, z - spot.z);
+  } else if (job.motion === 'float') { // it drifts over the pond; he watches from the bank
+    const a = t * 0.12;
+    const x = POND.x + Math.cos(a) * POND.rx * 0.6, z = POND.z + Math.sin(a * 1.3) * POND.rz * 0.55;
+    put(pg.g, x, 0.1 + Math.sin(t * 1.1) * 0.03, z, -a + Math.PI / 2);
+    me.position.set(TOWN_X + spot.x, ground(spot.x, spot.z), spot.z); me.rotation.y = Math.atan2(x - spot.x, z - spot.z);
+  } else if (job.motion === 'roll') { // it goes over the ground, and he goes after it
+    const a = t * 0.55, far = 7 * (0.5 - 0.5 * Math.cos(a * 2));
+    const dx = Math.cos(a * 0.37), dz = Math.sin(a * 0.37);
+    const x = spot.x + 3 + dx * far, z = spot.z + 5 + dz * far;
+    put(pg.g, x, ground(x, z), z, t * 2);
+    const mx = spot.x + 3 + dx * far * 0.75, mz = spot.z + 5 + dz * far * 0.75;
+    me.position.set(TOWN_X + mx, ground(mx, mz) + Math.abs(Math.sin(t * 6)) * 0.06, mz); me.rotation.y = Math.atan2(x - mx, z - mz);
+  } else if (job.motion === 'stay') { // it stands where it is, and he is at it
+    pg.g.position.set(...pg.home);
+    me.position.set(TOWN_X + pg.home[0] + 0.7, pg.home[1], pg.home[2] + 0.4); me.rotation.y = Math.atan2(-0.7, -0.4);
+  } else { // he holds it and does it on the spot
+    const bob = Math.abs(Math.sin(t * 3.2)) * 0.35;
+    me.position.set(TOWN_X + spot.x, ground(spot.x, spot.z), spot.z);
+    put(pg.g, spot.x + Math.sin(me.rotation.y) * 0.5, ground(spot.x, spot.z) + 0.75 + bob, spot.z + Math.cos(me.rotation.y) * 0.5, t * 1.5);
+  }
+}
 // His museum (town.js builds the hall and the plinths; museum.js keeps what stands on them): each thing he shows, on
 // its own plinth, at its real size (a thing too big for a plinth is made smaller until it fits). A tap opens its card.
 let museumKey = '';
@@ -3668,6 +3765,7 @@ function loop(now) {
   popDecor(now);
   growSites();
   updateBehaviors(now, dt);
+  updatePlay(now);
   const printing = plan && stepNow >= 0 && plan.steps[stepNow]?.action === 'print_photo';
   printLight.material.color.set(printing && Math.floor(now / 250) % 2 ? 0x6dff8a : 0x2f6b3a);
   updateWalk(dt);
@@ -3815,8 +3913,9 @@ const awayWords = () => {
   const now = Date.now();
   const name = p.name.replace(/^my /, 'his ');
   const back = new Date(Date.parse(w.homeAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' }); // his clock (Dutch time), like the World tab
+  if (w.play && now < Date.parse(w.arriveAt) && !w.cut) return ['🚶', `Walking to ${name} with his ${w.play.name}`, back];
   if (w.site && now >= Date.parse(w.arriveAt)) return ['🔨', `Building ${name}: ${Math.round(sitePart(w.site, now) * 100)}%`, back];
-  return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? (w.step ? [headline(w.step)[0], `${headline(w.step)[1]}, at ${name}`, back] : [p.emoji, w.job?.words ? `At ${name}: ${w.job.words}` : `At ${name}`, back]) : ['🏠', `Walking home from ${name}`, back];
+  return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? (w.step ? [headline(w.step)[0], `${headline(w.step)[1]}, at ${name}`, back] : [w.play ? '🪁' : p.emoji, w.play ? `At ${name}: ${w.play.words.replace(/\bmy\b/, 'his')}` : w.job?.words ? `At ${name}: ${w.job.words}` : `At ${name}`, back]) : ['🏠', `Walking home from ${name}`, back];
 };
 let isStatic = false;
 let fastUntil = 0;
@@ -4740,6 +4839,7 @@ function madeItems(s) {
     info: () => ({ title: d.name, icon: '🛠️', subtitle: `Made ${when(d.createdAt ?? d.at)} · ${where}`, image: decorThumb(d, 320), sections: [...why(d.why), ...(d.uses?.length ? [{ heading: 'What it is for', chips: d.uses.map((u) => u.label) }] : [])] }) });
   for (const d of s.decor ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, d.kind === 'outside' ? (d.readyAt && now < Date.parse(d.readyAt) ? 'being built outside' : 'stands outside') : 'in his room');
   for (const d of s.stored ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, 'in his chest');
+  for (const d of s.playthings ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, `to ${d.verb} outside`);
   for (const d of s.museum ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'in his museum');
   for (const d of s.depot ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'in the depot of his museum');
   for (const a of s.gallery ?? s.art ?? []) if (a.file) add({ type: 'drawing', icon: '🎨', img: a.file, label: a.name, sub: a.wall ? 'painted on a wall' : 'a drawing', at: a.at ?? a.createdAt,
@@ -5040,7 +5140,7 @@ function renderMemory(s) {
   fill($('hobbies'), ints.length ? ints.slice(0, 8).map((i) => { const [icon, lvl] = hobbyLevel(i); return el('li', `${icon} ${lvl}: ${i.topic} (${i.own ? 'his own idea, ' : ''}did it ${times(i.practice ?? 0)})${i.own && i.why ? ` — “${i.why}”` : ''}`); }) : [el('li', 'No interests yet. Browsing is how he finds them, or he thinks of one himself.', 'muted')]);
   { // what he practises: how often he did each kind of thing in his whole life (his body counts every move), and what he never tried
     const ever = s.ever || {};
-    const KINDS = [['🎶', 'playing music', ['play_piano']], ['🎛️', 'recording songs', ['record_song', 'compose']], ['🎨', 'drawing', ['draw']], ['🖌️', 'painting walls', ['paint_wall']], ['🔨', 'building things', ['decorate']], ['🛠️', 'making his things better', ['change_thing', 'extend_thing']], ['🏗️', 'building big outside', ['build_outside']], ['🖨️', '3D printing', ['print_thing']], ['🧩', 'writing programs', ['make_app', 'update_app']], ['🌐', 'his website', ['make_site', 'update_site']], ['🍳', 'cooking', ['cook']], ['🌱', 'gardening', ['plant', 'water', 'harvest']], ['🚶', 'going outside', ['go_out']], ['📖', 'reading', ['read_book']], ['💻', 'looking things up', ['search_web', 'browse']], ['✍️', 'his diary', ['write_diary']], ['📷', 'taking photos', ['take_photo']], ['🧵', 'sewing', ['make_clothes']], ['⛰️', 'shaping the land', ['shape_land']], ['🕺', 'inventing dances', ['make_move']], ['🏛️', 'his museum', ['show_in_museum']], ['❓', 'asking his visitors', ['ask_visitors']]];
+    const KINDS = [['🎶', 'playing music', ['play_piano']], ['🎛️', 'recording songs', ['record_song', 'compose']], ['🎨', 'drawing', ['draw']], ['🖌️', 'painting walls', ['paint_wall']], ['🔨', 'building things', ['decorate']], ['🛠️', 'making his things better', ['change_thing', 'extend_thing']], ['🏗️', 'building big outside', ['build_outside']], ['🖨️', '3D printing', ['print_thing']], ['🧩', 'writing programs', ['make_app', 'update_app']], ['🌐', 'his website', ['make_site', 'update_site']], ['🍳', 'cooking', ['cook']], ['🌱', 'gardening', ['plant', 'water', 'harvest']], ['🚶', 'going outside', ['go_out']], ['📖', 'reading', ['read_book']], ['💻', 'looking things up', ['search_web', 'browse']], ['✍️', 'his diary', ['write_diary']], ['📷', 'taking photos', ['take_photo']], ['🧵', 'sewing', ['make_clothes']], ['⛰️', 'shaping the land', ['shape_land']], ['🕺', 'inventing dances', ['make_move']], ['🪁', 'out with his things', ['play']], ['🎮', 'playing his games', ['play_game']], ['🏛️', 'his museum', ['show_in_museum']], ['❓', 'asking his visitors', ['ask_visitors']]];
     const rows = KINDS.map(([icon, name, moves]) => ({ icon, name, n: moves.reduce((a, m) => a + (ever[m] || 0), 0) }));
     const done = rows.filter((r) => r.n > 0).sort((a, b) => b.n - a.n), never = rows.filter((r) => !r.n);
     const top = Math.max(1, ...done.map((r) => r.n));
@@ -5278,6 +5378,7 @@ function render(s) {
   renderPhone(s);
   syncPrints(s);
   syncMuseum(s);
+  syncPlay(s);
   syncFixedLamps(s);
   $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);
@@ -6190,6 +6291,7 @@ window.pipView = view; // for testing: where the walking viewer stands
 window.pipSound = () => (snd.ready ? { wind: +snd.wind.gain.value.toFixed(3), rain: +snd.rain.gain.value.toFixed(3), pip: +snd.pip.gain.value.toFixed(2), radio: +snd.radio.gain.value.toFixed(2), playing: radio.name } : null); // for testing: how loud the world is where you stand
 window.pipRadio = () => showInfo(radioSet.userData.info());
 window.pipCard = (kind, key) => showInfo(worldCard(kind, key)); // for testing: the card of a place in his world
+window.pipPlaying = () => (playingId ? { id: playingId, at: playGroups.get(playingId).g.position.toArray().map((n) => Math.round(n * 10) / 10), pip: pip.group.position.toArray().map((n) => Math.round(n * 10) / 10) } : null); // for testing: where his plaything is right now
 window.pipLook = () => { const f = lookingAt(); return f ? { kind: f.kind, label: f.label, far: f.hit ? Math.round(howFar(f.hit) * 10) / 10 : null } : null; }; // for testing: what the F prompt would say right now
 window.pipEye = () => camera.position.toArray(); // for testing: where the eye is (the bobbing of the view)
 window.pipAt = () => ({ x: Math.round((pip.group.position.x - (inTown(pip.group.position.x) ? TOWN_X : 0)) * 10) / 10, z: Math.round(pip.group.position.z * 10) / 10, out: inTown(pip.group.position.x), shown: pip.group.visible }); // for testing: where Pip is

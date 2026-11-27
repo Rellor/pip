@@ -83,7 +83,8 @@ import { isToday } from './days.js';
 import { SITE_FILE, buildSite, siteMaterial, siteWords } from './site.js';
 import { addMoments, sleepMoments, wakeMoments } from './moments.js';
 import { noteArc } from './arc.js';
-import { showInMuseum, markForMuseum, carryToMuseum, museumLines } from './museum.js';
+import { showInMuseum, markForMuseum, carryToMuseum, museumLines, toMuseum } from './museum.js';
+import { makePlaything, findPlaything, playJob, playLines, playGame, noteArrival, nextArrival, arrived, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { askVisitors, closeQuestion, takeAnswer, takeShelf, readShelf, noteReply, visitorLine, guestLines, pieceWords, SHELF_KINDS } from './guests.js';
 
 const STATE_FILE = 'web/state.json';
@@ -634,7 +635,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...museumLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...museumLines(s), ...playLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -739,7 +740,7 @@ async function makeIt(s, soul, system, st) {
     // Plan first (sketch.js): the small model guesses its size, the game tries that size in the real place. Nothing fits:
     // he hears why now, and the smart model is not asked. Something fits: that size is the budget for the design.
     let planned = null;
-    if (st.action === 'decorate' && !st.details?.print && !toolFor(st.details)) {
+    if (st.action === 'decorate' && !st.details?.print && !st.details?.play && !toolFor(st.details)) {
       try {
         const sketch = process.env.PIP_FAKE ? fakeSketch(st.details) : await askGemini('I am Pip. I answer only in JSON.', sketchPrompt(st.details), 1, [], { schema: sketchSchema, maxTokens: THINK_ROOM + 200 });
         planned = dryRun(s, st.details, sketch);
@@ -1158,6 +1159,11 @@ function applyInnerLife(s, r, detail, replying = false) {
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
   }
   const fresh = [];
+  if (r.action === 'do' && r.as === 'play_game') { // he plays one of the games he wrote (play.js): plain code, no model
+    const g = playGame(s, r.details?.name);
+    if (g.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `play_game: ${g.failed}` }; }
+    else { nudge(s, 'joy', g.record ? 1 : 0.5); happened(s, g.said); if (g.record || g.plays === 1) addMemory(s, g.said, 5, 'memory', at); console.log(`   🎮 ${g.said}`); }
+  }
   if (r.action === 'do' && r.as === 'show_in_museum') { // he carries a thing to his museum (museum.js)
     const shown = showInMuseum(s, r.details?.name, r.details?.why);
     if (shown.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `show_in_museum: ${shown.failed}` }; console.log(`   ✋ not to the museum: ${shown.failed}`); }
@@ -1432,6 +1438,7 @@ async function wakeUp() {
       Object.assign(ask, { status: 'done', doneAt: new Date().toISOString() });
       const given = giveForAsk(state, ask.item); // the real thing, in code (gifts.js)
       if (given.length) { ask.given = given; addMemory(state, `Bas gave me what I asked for: ${given.join(', ')}.`, 8, 'memory', new Date().toISOString()); console.log(`🎁 given: ${given.join(', ')}`); }
+      else if (!/\b(card|friend|pet|cat|dog|answer|letter|visit|help|window|door|room|house|time)\b/i.test(ask.item)) { const what = noteArrival(state, ask.item); if (what) { ask.given = [what]; addMemory(state, `Bas gave me the ${what} I asked for. It stands by my door, still in its box: I set it up as soon as I can.`, 8, 'memory', new Date().toISOString()); console.log(`🎁 arrived: ${what}`); } } // anything else he asked for: he sets it up himself, and says how it is used (play.js)
     }
   }
   const unread = state.inbox.filter((m) => !m.read);
@@ -1514,6 +1521,10 @@ async function wakeUp() {
     answer.steps = decided(state, answer.steps);
     console.log(`🧠 ${via}: ${reasons.join('; ')}`);
   }
+  { // something he asked for was given and stands by his door in its box: he sets it up first (one design; play.js)
+    const a = nextArrival(state);
+    if (a && !headRests(state.quota)) { answer.steps = [{ action: 'decorate', as: 'make_plaything', details: { what: a.what, why: 'I asked for it, and it was given to me.', play: true, given: true }, thought: `My ${a.what} is here. I set it up.`, enjoyment: 9, needs: '', make: true }, ...answer.steps.filter((x) => !x.make && x.action !== 'go_out')].slice(0, 2); console.log(`📦 unpacking: ${a.what}`); }
+  }
   // Before any model is asked to design something: what failed three times today is off until tomorrow (loops.js), and
   // one more of a kind he has enough of cannot work (decor.js). Both are settled here, at no cost.
   { const off = answer.steps.map((st) => offToday(state, st));
@@ -1533,11 +1544,11 @@ async function wakeUp() {
     answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
   }
   for (const [i, st] of answer.steps.entries()) {
-    const full = st.make && st.action === 'decorate' && !st.details?.print ? enoughOf(state.decor, st.details?.what) ?? enoughOf(state.decor, st.details?.name) : null; // (what he said he wants to make, or the name he gave it)
+    const full = st.make && st.action === 'decorate' && !st.details?.print && !st.details?.play ? enoughOf(state.decor, st.details?.what) ?? enoughOf(state.decor, st.details?.name) : null; // (what he said he wants to make, or the name he gave it)
     if (full) { answer.steps[i] = { ...st, make: false, planFail: full.why, planned: { ok: false } }; console.log(`   ⛔ not designed: he has ${full.n} ${kindsWord(full.kind)} already`); }
   }
   for (const [i, st] of answer.steps.entries()) { // a project makes one thing: every next build step adds to it
-    if (!st.make || st.action !== 'decorate' || st.details?.print || st.as === 'print_thing') continue;
+    if (!st.make || st.action !== 'decorate' || st.details?.print || st.details?.play || st.as === 'print_thing') continue;
     const d = st.details ?? {};
     if (st.as === 'build_outside' || isOutside(d.where)) continue; // big, outside: always welcome
     const proj = d.project ? findProject(state, d.project) : null;
@@ -1615,6 +1626,17 @@ async function wakeUp() {
       if (kind) {
         const parts = cleanParts(st.details.parts);
         st.made = craftTool(state, st.details, kind, parts);
+        return;
+      }
+      if (st.as === 'make_plaything') { // something to do things with outside (play.js): it does not go in his room
+        const parts = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: 'floor' }).parts.slice(0, 30);
+        const r = !st.details.given && madeToday(state, isToday, stepStart) >= PLAYTHINGS_PER_DAY ? { failed: 'I built two things to play with today already' } : makePlaything(state, { ...st.details, parts }, stepStart, st.details.given ? 'given' : 'built');
+        if (st.details.given) { const a = nextArrival(state); if (a && (!r.failed || (a.tries = (a.tries ?? 0) + 1) >= 3)) arrived(state, a.what); } // (three failed tries: it stays in its box for good)
+        if (r.failed) { st.made = { failed: r.failed }; return; }
+        if (r.gone) { toMuseum(state, r.gone, stepStart, 'I do not use it any more, and it is too good to throw away.'); addMemory(state, `My ${r.gone.name} made room for my new ${r.thing.name}: it stands in my museum now.`, 5, 'memory', new Date(stepStart).toISOString()); }
+        st.made = { plaything: { id: r.thing.id, name: r.thing.name, verb: r.thing.verb, where: r.thing.where }, name: r.thing.name, hint: `${st.details.given ? 'It arrived, and I set it up' : 'I built it'}: my ${r.thing.name}. ${r.thing.how} I can go out with it whenever I like (play).` };
+        addMemory(state, `${st.details.given ? `My ${r.thing.name} arrived: I asked for it and it was given to me.` : `I built a ${r.thing.name}, to ${r.thing.verb}.`} ${r.thing.how}`, 7, 'memory', new Date(stepStart).toISOString());
+        console.log(`   🚲 a new thing to go out with: ${r.thing.name} (${r.thing.verb}, ${r.thing.motion}, ${r.thing.where})`);
         return;
       }
       if (st.as === 'print_thing') { // a small model for the print workshop: he walks there with his design, and it stays on the shelf there
@@ -1784,6 +1806,7 @@ async function wakeUp() {
     if (st.action === 'buy') st.made = buy(state, st.details.item ?? st.details.name ?? st.details.what);
     if (st.action === 'buy' && st.made?.bought) gotWant(state, st.made.bought, 'bought it myself');
     if (st.action === 'buy' && st.made?.bought && i === steps.length - 1) startOuting(state, { errand: st.made.bought }, stepStart); // a quick walk to the corner shop and back (when nothing else is planned after it)
+    if (st.action === 'go_out' && st.as === 'play') { const p = findPlaything(state, st.details?.plaything) ?? (state.playthings ?? []).at(-1); if (p) st.details = { play: playJob(p) }; else st.made = { failed: 'I have nothing to go out with yet: I can build something (make_plaything) or put it on my wants list' }; } // out with something of his (play.js)
     if (st.action === 'go_out' && st.as === 'fetch_note') { const job = fetchJob(state); if (job) st.details = { ...st.details, job }; else st.made = { failed: 'no note lies there for me right now' }; } // he goes to get what someone left for him
     if (st.action === 'go_out' && st.as === 'shape_land') { const plan = planLand(state, st.details.land, stepStart); if (plan.failed) st.made = plan; else st.details = { ...st.details, job: plan.job }; } // he shapes the land: first see if it fits there
     if (st.action === 'go_out' && !st.made?.failed) st.made = startOuting(state, st.details, stepStart);

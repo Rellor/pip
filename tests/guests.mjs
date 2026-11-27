@@ -74,7 +74,7 @@ ok('a poem, story or book tip waits on the library shelf until he reads it there
   delete process.env.PIP_NO_OUT;
   const all = availableMoves(s, { now, random: () => 0.5 }).map((m) => m.name);
   assert.ok(all.includes('read_shelf'), all.join(' '));
-  const none = availableMoves({ ...s, shelf: [] }, { now, random: () => 0.5 }).map((m) => m.name);
+  const none = availableMoves({ ...s, shelf: [], body: { ...s.body, loneliness: 9 } }, { now, random: () => 0.5 }).map((m) => m.name); // (lonely: a question for his visitors pulls)
   assert.ok(none.includes('ask_visitors') && !none.includes('read_shelf'), none.join(' '));
   assert.ok(!availableMoves({ ...s, shelf: [], openQuestion: { id: 'q1', text: 'x?', at: iso(now - HOUR), answers: [] } }, { now, random: () => 0.5 }).some((m) => m.name === 'ask_visitors'), 'not a second question while one is open');
   const a = toAnswer({ moves: [{ move: 'ask_visitors', details: { question: 'What do you hear right now?', why: 'It is very quiet here.' }, thought: 't' }], reason: 'r', mood: 'calm' });

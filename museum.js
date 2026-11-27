@@ -25,6 +25,8 @@ function hang(s, p) {
 }
 // How many things he carried there himself today (three a day is plenty: it is a walk each time).
 export const carriedToday = (s, isToday, now) => (s.museum ?? []).filter((p) => p.from !== 'new' && !p.opening && isToday(p.shownAt, now)).length;
+// Anything else of his that makes room somewhere (a plaything he no longer uses) can go on a plinth too.
+export const toMuseum = (s, d, now = Date.now(), why = '') => hang(s, piece(d, now, 'room', why));
 // What he could carry there now: the things in his room and in his chest (not pictures, not what stands outside).
 export const showable = (s) => [...roomThings(s.decor).filter(canShow), ...(s.stored ?? []).filter(canShow)];
 // He carries a thing to his museum. `name` is the thing; `why` is why this one (shown on its card). Returns { piece } or { failed }.

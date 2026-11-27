@@ -19,6 +19,7 @@ import { restingMove, tiredOf } from './loops.js';
 import { canBrowse, interests, HOBBY_AT } from './curiosity.js';
 import { canAskVisitors, unreadShelf, pieceWords } from './guests.js';
 import { showable, carriedToday } from './museum.js';
+import { playthings, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { shopLine, shopOpen, wantsToBuy } from './shop.js';
 import { goOptions, goLine, wantsOut, gearWish, canGo } from './world.js';
 import { boardNotes, boardCalls } from './board.js';
@@ -169,6 +170,11 @@ export const MOVES = [
   // His visitors (guests.js): one question he puts to everyone who comes by, and what they left for him on the library shelf.
   { name: 'ask_visitors', line: () => 'ask the people who visit my page one question I really want an answer to (they answer on my page, and I read it later). I say why I want to know: {question, why}', when: (s, n) => canAskVisitors(s, n), score: (s) => 0.5 + (s.body?.loneliness ?? 0) / 6 + (s.pastQuestions?.length || s.openQuestion ? 0 : 0.5) },
   { name: 'read_shelf', line: (s) => `walk to the library and read the ${pieceWords(unreadShelf(s)[0])} that was left for me on the shelf there: {}`, when: (s, n) => !process.env.PIP_NO_OUT && unreadShelf(s).length > 0 && Boolean(canGo(s, 'library', n).ok), score: () => 2.6 },
+  // Things to do that leave nothing behind (play.js): he builds anything he can use outside and says how it is used,
+  // takes it out whenever he likes, and plays the games he wrote.
+  { name: 'make_plaything', maker: true, line: () => 'build something I can really USE outside, life-size, and say how I use it: a bike, a kite, a model plane, a boat for the pond, a ball, a swing, a go-kart, anything I can think of. It does not go in my room: {what, why}', when: (s, n) => !process.env.PIP_NO_OUT && madeToday(s, isToday, n) < PLAYTHINGS_PER_DAY, score: (s) => itch(s, 0.3, 4) + (playthings(s).length ? 0 : 1.3) + (s.body?.boredom ?? 0) / 8 },
+  { name: 'play', line: (s) => `go out with something of mine and really do it (${playthings(s).slice(-4).map((p) => `"${p.name}": ${p.verb} it, ${p.goes ? `${p.goes} time${p.goes === 1 ? '' : 's'} so far` : 'never tried yet'}`).join('; ')}): {name}`, when: (s, n) => !process.env.PIP_NO_OUT && playthings(s).some((p) => Boolean(canGo(s, p.where, n).ok)), score: (s, n) => 1.2 + wantsOut(s, n) * 0.5 + (s.body?.boredom ?? 0) / 5 + ((s.joy ?? 5) < 4.5 ? 0.6 : 0) + (playthings(s).some((p) => !p.goes) ? 0.9 : 0) },
+  { name: 'play_game', line: (s) => `play one of the games I wrote myself, just for fun (${names((s.apps ?? []).slice(-3).map((a) => a.title ?? a.name))}): {name}`, when: (s) => (s.apps ?? []).length > 0 && (s.today?.done?.play_game ?? 0) < 3, score: (s) => 0.7 + (s.body?.boredom ?? 0) / 6 + ((s.joy ?? 5) < 4.5 ? 0.4 : 0) },
   // His museum (museum.js): he carries a thing there from his room or his chest, so everyone can see it.
   { name: 'show_in_museum', line: (s) => `carry one of my things to my museum, where everyone can see it (${names(showable(s).map((d) => d.name.slice(0, 30)), 3)}${showable(s).length > 3 ? ', or another' : ''}): {name, why}`, when: (s, n) => !process.env.PIP_NO_OUT && showable(s).length > 0 && carriedToday(s, isToday, n) < 3, score: (s) => 0.4 + (roomIsFull(s.decor) ? 1.9 : roomHasPlenty(s.decor) ? 0.5 : 0) + ((s.stored ?? []).length >= 3 ? 0.4 : 0) + ((s.museum ?? []).length ? 0 : 0.6) },
   // A hobby he thinks up himself (curiosity.js): "I want to start graffiti". He says why, and then he really tries it.

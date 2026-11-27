@@ -14,6 +14,11 @@ export const PLACES = [
     blurb: 'Sitting in front of his door, watching the square.',
     things: [{ key: 'watch', words: 'sit and watch the square', match: /watch|sit|street|square|look/ }],
   },
+  {
+    key: 'square', name: 'the square', title: 'The square', emoji: '⛲', walk: 2, stay: [10, 18], hours: [7, 22], at: [300, 300],
+    blurb: 'The middle of the village. Everyone crosses it, and there is room to ride, kick and roll.',
+    things: [{ key: 'walk', words: 'walk round the square', match: /walk|round|cross|stroll|look|people/ }],
+  },
   { key: 'shop', name: 'the grocery store', title: 'The grocery store', emoji: '🛒', walk: 3, stay: [4, 6], hours: [9, 18], at: [452, 262], errand: true, blurb: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.' },
   {
     key: 'pond', name: 'the pond in the park', title: 'The pond', emoji: '🦆', walk: 8, stay: [30, 50], hours: 'light', at: [150, 118],

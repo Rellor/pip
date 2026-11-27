@@ -116,6 +116,7 @@ export const TOWN_SPOTS = {
   build: doorOf('build'), // at the door of the build workshop (he makes things there)
   board: { x: BOARD.x, z: BOARD.z - 1.15, face: 0 }, // in front of the notice board
   museum: { x: (MUSEUM.gate[0] + MUSEUM.gate[1]) / 2, z: MUSEUM.z0 - 1.2, face: 0 }, // before the gate of his museum, looking in
+  square: { x: 2.5, z: 14, face: 0 }, // on the square itself (where he goes to ride, kick and roll)
   pond: { x: -16.4, z: 19.6, face: -Math.PI / 2 }, // by the bench, looking over the water
   homeW: { x: -6.2, z: 1.2, face: -Math.PI / 2 }, // past the west corner of his house
   cafeW: { x: -30.2, z: 1.3, face: -Math.PI / 2 }, // past the west corner of the internet café
@@ -130,10 +131,10 @@ export const TOWN_SPOTS = {
 // Where things that people leave lie: the notes (by their spot) and the small deeds of visitors (by what they are).
 export const LIE = { drop_square: [-6.2, 25.4], drop_pond: [-15.6, 23.6], drop_door: [3.2, 3.6], drop_wall: [2.0, 39.0], flower: [1.1, 0.62], apple: [16.4, 0.7], boat: [POND.x + 4, POND.z - 2], doodle: [BOARD.x + 0.8, BOARD.z + 0.12], hat: [STONE[0], STONE[1]], bookmark: [30.6, 0.8], chalk: [14, 24] };
 // Where Pip is seen for each place of his world: [the spot, 'in' when he goes inside there (then he is out of sight)].
-export const TOWN_FOR = { museum: ['museum', ''], doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], field: ['field', ''], stone: ['stone', ''], walls: ['paint_wall_1', ''], drops: ['drop_square', ''] };
+export const TOWN_FOR = { museum: ['museum', ''], square: ['square', ''], doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], field: ['field', ''], stone: ['stone', ''], walls: ['paint_wall_1', ''], drops: ['drop_square', ''] };
 // The way to each spot from his door: the corners he walks by, one after the other (the way home is the same, backwards).
 // (A route can also be for one spot: the way to each wall he paints on. The page looks for the spot first, then the place.)
-export const ROUTES = { museum: ['sqN', 'sqSW'], doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], cafe: ['homeW'], build: ['sqN', 'sqE', 'sqSE'], land: ['sqN', 'sqE'], field: ['sqN', 'sqE'], stone: ['homeW', 'cafeW'], drops: ['sqN'], drop_square: ['sqN'], drop_pond: ['sqN', 'sqW'], drop_door: [], drop_wall: ['sqN', 'sqSW'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
+export const ROUTES = { museum: ['sqN', 'sqSW'], square: ['sqN'], doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], cafe: ['homeW'], build: ['sqN', 'sqE', 'sqSE'], land: ['sqN', 'sqE'], field: ['sqN', 'sqE'], stone: ['homeW', 'cafeW'], drops: ['sqN'], drop_square: ['sqN'], drop_pond: ['sqN', 'sqW'], drop_door: [], drop_wall: ['sqN', 'sqSW'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
 
 // ---- The land itself. It is flat, until Pip shapes it: at the land workshop he takes the land tool and makes a hill or
 // digs a hole (land.js; the list is kept in his state as `land`). Whoever draws the world or puts something on it first
