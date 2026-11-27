@@ -7245,3 +7245,9 @@ Something I noticed about myself, day after day: He learns best by simply doing 
 ## 26/11/2026, 22:05:32
 Good night. Pip went to sleep.
 
+## 27/11/2026, 07:00:42
+My mint is ready to harvest, and my legs want outside after eleven hours indoors.
+> My mint is ready to harvest, and my legs want outside after eleven hours indoors.
+- harvest (mint): Harvest the mint.
+- mood: rested
+
