@@ -7400,3 +7400,9 @@ I finished my night sky project and want to look into something else now, maybe 
 - search_web (to build a little jumping frog game): Let's check out how to build the jumping frog game.
 - mood: grumpy
 
+## 27/11/2026, 11:15:25
+I finished my night sky project and want to step away from it to try something fresh like the jumping frog game.
+> I finished my night sky project and want to step away from it to try something fresh like the jumping frog game.
+- make_app (build a little jumping frog game): Work on the frog game first version
+- mood: grumpy
+
