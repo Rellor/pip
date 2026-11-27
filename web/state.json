@@ -1,8 +1,8 @@
 {
   "mood": "curious",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 9.54,
+  "loneliness": 9.57,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -13437,57 +13437,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T08:16:08.418Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2428,
-      "output": 209,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I finished my night sky project, so I want to fetch the note left on the square and see what is on it.",
-    "inner": "I finished my night sky project, so I want to fetch the note left on the square and see what is on it.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "job": {
-            "place": "drops",
-            "kind": "fetch",
-            "words": "pick up the note someone left on the square",
-            "drop": "ttp5ikp",
-            "spot": "drop_square",
-            "name": "a note from Lotte"
-          }
-        },
-        "thought": "Go to the square to get the note.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-27T08:24:14.300Z",
+    "via": "outside",
+    "thought": "I am walking home from my world.",
     "action": "go_out",
     "details": {
-      "job": {
-        "place": "drops",
-        "kind": "fetch",
-        "words": "pick up the note someone left on the square",
-        "drop": "ttp5ikp",
-        "spot": "drop_square",
-        "name": "a note from Lotte"
-      }
+      "place": "drops"
     },
-    "enjoyment": 6,
+    "detail": "I am walking home from my world.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "drops",
+      "phase": "back",
+      "back": "2026-11-27T08:26:08.418Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -13893,21 +13858,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-27T08:16:08.426Z",
-  "fullness": 3.17,
+  "fullness": 3,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.7,
-  "joy": 4.35,
-  "calm": 5.51,
+  "wonder": 5.96,
+  "joy": 4.55,
+  "calm": 5.4,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.01
+    "excited": 0.61
   },
-  "feelAt": "2026-11-27T08:15:58.668Z",
+  "feelAt": "2026-11-27T08:24:14.276Z",
   "lastAte": "2026-11-27T07:24:54.312Z",
   "studio": {
     "songs": [
@@ -14790,12 +14755,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.71,
-    "curiosity": 0.07,
+    "creativity": 0.79,
+    "curiosity": 0.14,
     "boredom": 0,
-    "loneliness": 9.54,
+    "loneliness": 9.57,
     "tidiness": 1,
-    "at": "2026-11-27T08:15:58.668Z",
+    "at": "2026-11-27T08:24:14.276Z",
     "coziness": 4.1
   },
   "recent": {
