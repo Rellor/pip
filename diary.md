@@ -7541,3 +7541,9 @@ I finished my night sky simulation project and I want to start the next one.
 - decorate (pendulum clock): Start the pendulum clock project
 - mood: curious
 
+## 27/11/2026, 15:32:41
+I just built the first version of the pendulum clock. It looks clumsy, so I will print a better part for it.
+> I just built the first version of the pendulum clock. It looks clumsy, so I will print a better part for it.
+- decorate (pendulum clock gear): print a better part for the clock
+- mood: curious
+
