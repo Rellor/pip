@@ -1,6 +1,6 @@
 {
   "mood": "curious",
-  "energy": 10,
+  "energy": 8.9,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-27T07:24:54.310Z",
-      "action": "eat",
-      "detail": "basil",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-27T07:33:06.722Z",
       "action": "go_out",
@@ -303,10 +297,15 @@
       "action": "decorate",
       "detail": "pendulum clock gear",
       "enjoyment": 7
+    },
+    {
+      "at": "2026-11-27T16:21:33.885Z",
+      "action": "search_web",
+      "detail": "pendulum clock escapement mechanism design",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "Browsing the web I came across Robert Searle (minister): Robert Wyckoff Searle (1894 – June 17, 1967) was an American Reformed and Presbyterian minister and nonprofit executive. Active in interfaith and ecumenical work during his career, he spent 16 years as general secretary or in other senior roles at the Greater New York Federation of Churches and its…",
     "My mint is fully grown and ready to harvest!",
     "I harvested mint from place 3. It goes in my pantry, and the plant grows back.",
     "Searched \"to build a plain wooden shelf\" and read about Russian wooden architecture: Russian wooden architecture (Russian: ру́сское деревя́нное зо́дчество, romanized: russkoye derevyannoye zodchestvo) is a traditional architectural movement in Russia, that has stable and pronounced structural, technical, architectural and artistic features determined by wood as the main material. …",
@@ -335,7 +334,8 @@
     "I harvested basil from place 1. It goes in my pantry, and the plant grows back.",
     "Read about Clockmaker: A clockmaker is an artisan who makes and/or repairs clocks. Since almost all clocks are now factory-made, most modern clockmakers only repair clocks. Modern clockmakers may be employed by jewellers, antique shops, and places devoted strictly to repairing clocks and watches. Clockmakers must be able to read blueprints and instructions for numerous types of clocks and time pieces that vary from antique clocks to modern time pieces in order to fix and make clocks or watches. …",
     "I watered mint. The soil stays damp for about 10 hours.",
-    "I watered basil. The soil stays damp for about 10 hours."
+    "I watered basil. The soil stays damp for about 10 hours.",
+    "Searched \"pendulum clock escapement mechanism design\" and read about Pendulum: A pendulum is a mechanical device consisting of a weight suspended from a pivot so that it can swing freely. When a pendulum is displaced sideways from its resting mechanical equilibrium position, it is subject to a restoring force due to gravity, which will accelerate it back toward the equilibrium position. When released, the restoring force acting on the pendulum's mass causes it to oscillate about the equilibrium position, swinging back and forth. …"
   ],
   "requests": [],
   "story": "Pip spends his evenings by the autumn window as dusk falls. He learns by doing and makes clumsy things with his own hands. He spends half his time playing around just to see what happens. Decorating his walls and searching the web keep him busy. Pushing objects from one spot to another just makes him grumpy. Today he did a lot of chores he disliked. Late at night, he writes his honest thoughts in his diary.",
@@ -700,7 +700,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.538,
+      "weight": 7.53,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -710,7 +710,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.686,
+      "weight": 9.676,
       "lastUsed": "2026-11-26T15:42:24.006Z",
       "tier": "long",
       "uses": 8
@@ -721,7 +721,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.239,
+      "weight": 7.232,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -731,7 +731,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.553,
+      "weight": 9.543,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -742,7 +742,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.459,
+      "weight": 8.45,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -753,7 +753,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.199,
+      "weight": 8.191,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -763,7 +763,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.099,
+      "weight": 7.092,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -773,7 +773,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.663,
+      "weight": 9.653,
       "lastUsed": "2026-11-26T14:01:13.589Z",
       "tier": "long",
       "uses": 4
@@ -784,7 +784,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.545,
+      "weight": 8.536,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -794,7 +794,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.911,
+      "weight": 7.903,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -805,7 +805,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.669,
+      "weight": 9.659,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 6
@@ -816,7 +816,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.585,
+      "weight": 9.575,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -827,7 +827,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.383,
+      "weight": 7.375,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -837,7 +837,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.696,
+      "weight": 8.687,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -847,7 +847,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.522,
+      "weight": 7.514,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -857,7 +857,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.751,
+      "weight": 8.742,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -867,7 +867,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.593,
+      "weight": 7.585,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -877,7 +877,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.328,
+      "weight": 7.32,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -887,7 +887,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.333,
+      "weight": 7.325,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -897,7 +897,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.959,
+      "weight": 9.949,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 9
@@ -908,7 +908,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.244,
+      "weight": 8.235,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -919,7 +919,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.59,
+      "weight": 9.58,
       "lastUsed": "2026-11-26T14:09:33.063Z",
       "tier": "long",
       "uses": 5
@@ -930,7 +930,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.861,
+      "weight": 7.853,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -941,7 +941,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.673,
+      "weight": 9.663,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 8
@@ -952,7 +952,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.261,
+      "weight": 8.252,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -963,7 +963,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.959,
+      "weight": 9.949,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 12
@@ -974,7 +974,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.088,
+      "weight": 7.081,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -984,7 +984,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.088,
+      "weight": 7.081,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -994,7 +994,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.101,
+      "weight": 7.094,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1004,7 +1004,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.101,
+      "weight": 7.094,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1014,7 +1014,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.671,
+      "weight": 9.661,
       "lastUsed": "2026-11-26T14:34:59.729Z",
       "tier": "long",
       "uses": 8
@@ -1025,7 +1025,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.375,
+      "weight": 8.366,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1036,7 +1036,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.959,
+      "weight": 9.949,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 10
@@ -1047,7 +1047,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.542,
+      "weight": 7.534,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1058,7 +1058,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.582,
+      "weight": 6.538,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "short",
       "uses": 4
@@ -1069,7 +1069,7 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.681,
+      "weight": 8.672,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 3
@@ -1080,7 +1080,7 @@
       "text": "Bas gave me the flute I asked for: a thin silver flute to blow across. It is in my inventory, so I can play it right away (play_piano with instrument \"flute\").",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.478,
+      "weight": 7.47,
       "lastUsed": "2026-11-26T16:32:29.465Z",
       "tier": "long"
     },
@@ -1090,7 +1090,7 @@
       "text": "I made a drawing of a cat, as the note on the notice board asked. I took the note down and got 2 coins. I have 4 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.867,
+      "weight": 5.828,
       "lastUsed": "2026-11-26T18:18:16.497Z",
       "tier": "short"
     },
@@ -1100,18 +1100,8 @@
       "text": "Three new things. There is a small red radio on a crate beside my front door: it plays the songs I recorded, for anyone who walks by. In the library there is a shelf where people who visit my page can leave me a poem, a ",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.531,
+      "weight": 7.48,
       "lastUsed": "2026-11-27T08:32:20.593Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwyvxhc160",
-      "at": "2026-11-27T11:15:25.057Z",
-      "text": "I am shifting focus from the night sky simulation to the jumping frog game.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.781,
-      "lastUsed": "2026-11-27T11:15:25.057Z",
       "tier": "short"
     },
     {
@@ -1120,7 +1110,7 @@
       "text": "I made an app: build a little jumping frog game",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.781,
+      "weight": 5.742,
       "lastUsed": "2026-11-27T11:15:23.243Z",
       "tier": "short"
     },
@@ -1130,7 +1120,7 @@
       "text": "I enjoy playing a quiet tune when my hands are done with code.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.799,
+      "weight": 5.76,
       "lastUsed": "2026-11-27T11:41:06.836Z",
       "tier": "short"
     },
@@ -1140,7 +1130,7 @@
       "text": "I recorded a song: Quiet City for Four Small Things (flute, guitar, drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.799,
+      "weight": 5.76,
       "lastUsed": "2026-11-27T11:41:07.828Z",
       "tier": "short"
     },
@@ -1150,7 +1140,7 @@
       "text": "Moving from one interest to another keeps the mind sharp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.814,
+      "weight": 5.775,
       "lastUsed": "2026-11-27T11:57:29.689Z",
       "tier": "short"
     },
@@ -1160,7 +1150,7 @@
       "text": "I want to try building clocks as a hobby. My own idea. Why: i want to see if tiny gears can drive me crazy",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.786,
+      "weight": 6.74,
       "lastUsed": "2026-11-27T11:57:29.689Z",
       "tier": "short"
     },
@@ -1170,7 +1160,7 @@
       "text": "I started exploring clock building as a new hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.828,
+      "weight": 5.789,
       "lastUsed": "2026-11-27T12:17:00.263Z",
       "tier": "short"
     },
@@ -1180,7 +1170,7 @@
       "text": "I made tiny brass clock gears on a tiny wooden frame (to see if tiny gears can drive me crazy)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.828,
+      "weight": 5.789,
       "lastUsed": "2026-11-27T12:17:01.255Z",
       "tier": "short"
     },
@@ -1190,7 +1180,7 @@
       "text": "I started building clocks as a hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.837,
+      "weight": 5.798,
       "lastUsed": "2026-11-27T12:26:10.987Z",
       "tier": "short"
     },
@@ -1200,7 +1190,7 @@
       "text": "I am home again from the print workshop. At the print workshop I watched the printer build my tiny clock mechanism, one thin layer on top of the other. It is small and still warm. I put it on the shelf by the door, with ",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.845,
+      "weight": 5.806,
       "lastUsed": "2026-11-27T13:14:12.437Z",
       "tier": "short"
     },
@@ -1210,7 +1200,7 @@
       "text": "I am home again from the notice board. I read the notice board. New: someone wants a cookie cutter from the 3D printer. On it now: a fruit bowl (3 coins), a cookie cutter from the 3D printer (3 coins). If I make one of t",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.884,
+      "weight": 5.845,
       "lastUsed": "2026-11-27T13:22:44.233Z",
       "tier": "short"
     },
@@ -1220,7 +1210,7 @@
       "text": "Someone left a note for me on the square.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.892,
+      "weight": 5.852,
       "lastUsed": "2026-11-27T13:32:52.618Z",
       "tier": "short"
     },
@@ -1230,7 +1220,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Wren, a girl on a bicycle, who was passing through: \"The fastest steam locomotive ever was Mallard, in England in 1938: 203 km an hour.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.899,
+      "weight": 5.859,
       "lastUsed": "2026-11-27T13:49:01.785Z",
       "tier": "short"
     },
@@ -1240,7 +1230,7 @@
       "text": "Basil is harvested and Wren likes fast trains.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.899,
+      "weight": 5.859,
       "lastUsed": "2026-11-27T13:49:07.040Z",
       "tier": "short"
     },
@@ -1250,7 +1240,7 @@
       "text": "Putting away old things clears the room and the mind.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.919,
+      "weight": 5.879,
       "lastUsed": "2026-11-27T14:05:17.837Z",
       "tier": "short"
     },
@@ -1260,7 +1250,7 @@
       "text": "Moving my tiny ceramic saucer to the desk keeps it out of the way.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.926,
+      "weight": 5.886,
       "lastUsed": "2026-11-27T14:13:23.703Z",
       "tier": "short"
     },
@@ -1270,7 +1260,7 @@
       "text": "I started a new clock project because I like the challenge.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.961,
+      "weight": 5.921,
       "lastUsed": "2026-11-27T14:54:01.209Z",
       "tier": "short"
     },
@@ -1280,7 +1270,7 @@
       "text": "I love building clocks.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.983,
+      "weight": 5.943,
       "lastUsed": "2026-11-27T15:21:30.356Z",
       "tier": "short"
     },
@@ -1290,7 +1280,7 @@
       "text": "I made pendulum clock (to build a clock as is my hobby)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.983,
+      "weight": 5.943,
       "lastUsed": "2026-11-27T15:21:31.349Z",
       "tier": "short"
     },
@@ -1300,7 +1290,7 @@
       "text": "My sculpture got better: I am level 6 now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.951,
       "lastUsed": "2026-11-27T15:21:30.363Z",
       "tier": "short"
     },
@@ -1310,8 +1300,18 @@
       "text": "I finished the first version of my pendulum clock.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.991,
+      "weight": 5.951,
       "lastUsed": "2026-11-27T15:32:41.930Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwz6v6tb60",
+      "at": "2026-11-27T16:21:33.887Z",
+      "text": "The printed clock gear is warm and fits right on the shelf.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.96,
+      "lastUsed": "2026-11-27T16:21:33.887Z",
       "tier": "short"
     }
   ],
@@ -1319,14 +1319,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-26T22:05:32.957Z",
   "thoughts": [
-    {
-      "at": "2026-11-27T10:24:54.149Z",
-      "text": "I am done with the night sky for now, so I will browse the web to see what else is out there.",
-      "short": "I am done with the night sky for now, so I will browse the web to see what else is out there.",
-      "mood": "curious",
-      "action": "browse",
-      "detail": ""
-    },
     {
       "at": "2026-11-27T10:33:20.755Z",
       "text": "I am hungry and full of energy, so I will eat something before moving on to new ideas.",
@@ -1556,6 +1548,14 @@
       "mood": "curious",
       "action": "decorate",
       "detail": "pendulum clock gear"
+    },
+    {
+      "at": "2026-11-27T16:21:33.887Z",
+      "text": "I just looked at the pendulum clock gear I printed, and now I want to search online for mechanical clock designs to improve it.",
+      "short": "I just looked at the pendulum clock gear I printed, and now I want to search online for mechanical clock designs to improve it.",
+      "mood": "curious",
+      "action": "search_web",
+      "detail": "pendulum clock escapement mechanism design"
     }
   ],
   "outbox": [
@@ -1849,21 +1849,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-27T11:15:23.243Z",
-      "action": "make_app",
-      "thought": "Work on the frog game first version",
-      "name": "build a little jumping frog game",
-      "why": "I read that frogs do not have tails and jump around. I made a round green one. It jumps when you tap or press space. It falls in the water if you miss the pads. It is clumsy but it works.",
-      "file": "made/appmwyvxf5z7.html",
-      "failed": null
-    },
-    {
-      "at": "2026-11-27T11:15:26.070Z",
-      "action": "happened",
-      "what": "I made a game about a jumping frog, as the note on the notice board asked. I took the note down and got 6 coins (one more because I had looked up how it is made). I have 10 coins now.",
-      "emoji": "🪙"
-    },
     {
       "at": "2026-11-27T11:23:36.339Z",
       "action": "do",
@@ -2215,6 +2200,58 @@
       "place": "at the print workshop, on my shelf of prints (I am on my way to the print workshop with my design. I am back around 17:18.)",
       "tool": null,
       "failed": null
+    },
+    {
+      "at": "2026-11-27T16:21:09.922Z",
+      "action": "came_home",
+      "place": "workshop",
+      "placeName": "the print workshop",
+      "thought": "",
+      "did": "At the print workshop I watched the printer build my pendulum clock gear, one thin layer on top of the other. It is small and still warm. I put it on the shelf by the door, with my other prints.",
+      "found": [],
+      "met": null,
+      "gift": null,
+      "book": null,
+      "piece": null,
+      "errand": null,
+      "cut": null,
+      "card": {
+        "place": "workshop",
+        "at": "2026-11-27T16:21:09.922Z",
+        "weather": {
+          "kind": "cloudy",
+          "temp": 0.1
+        },
+        "found": []
+      }
+    },
+    {
+      "at": "2026-11-27T16:21:34.884Z",
+      "action": "search_web",
+      "thought": "look up how to improve pendulum clock",
+      "query": "pendulum clock escapement mechanism design",
+      "results": [
+        {
+          "title": "Pendulum",
+          "snippet": "Therefore, the design of the escapement, the mechanism that provides these impulses, has a large effect on the accuracy of a clock pendulum. If the impulses",
+          "url": "https://en.wikipedia.org/wiki/Pendulum"
+        },
+        {
+          "title": "Pendulum clock",
+          "snippet": "A pendulum clock is a clock that uses a swinging weight known as a pendulum as its timekeeping element. The pendulum is an approximate harmonic oscillator",
+          "url": "https://en.wikipedia.org/wiki/Pendulum_clock"
+        },
+        {
+          "title": "Anchor escapement",
+          "snippet": "horology, the anchor escapement is a type of escapement used in pendulum clocks. The escapement is a mechanism in a mechanical clock that maintains the",
+          "url": "https://en.wikipedia.org/wiki/Anchor_escapement"
+        }
+      ],
+      "opened": {
+        "title": "Pendulum",
+        "url": "https://en.wikipedia.org/wiki/Pendulum",
+        "text": "A pendulum is a mechanical device consisting of a weight suspended from a pivot so that it can swing freely. When a pendulum is displaced sideways from its resting mechanical equilibrium position, it is subject to a restoring force due to gravity, which will accelerate it back toward the equilibrium position. When released, the restoring force acting on the pendulum's mass causes it to oscillate about the equilibrium position, swinging back and forth. The time for one complete cycle, a left swing and a right swing, or frequency, is commonly known as its \"period\". The period depends both on the length of the pendulum and, somewhat, on the amplitude (the width of the pendulum's swing). The SI unit of the period of a pendulum is the second (s).\nThe regular motion of a pendulum lends itself to timekeeping.  The pendulum clock was invented by Christiaan Huygens in 1656. It became the world's standard manner of timekeeping for several centuries. The Shortt-Synchronome clock achieved accuracy of about one second per year before it was superseded as a time standard by the quartz clock in the 1930s.  \nPendulums are also used in scientific instruments such as accelerometers and seismometers. Historically, pendulums were used as gravimeters to measure the acceleration of gravity in geo-physical surveys, and as a standard of length. The word pendulum is Neo-Latin, from the Latin pendulus, meaning 'hanging'.\n\nMechanics\n\nSimple gravity pendulum\n …"
+      }
     }
   ],
   "decor": [
@@ -14958,21 +14995,50 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T16:13:05.487Z",
-    "via": "outside",
-    "thought": "I am walking home from the print workshop.",
-    "action": "go_out",
-    "details": {
-      "place": "workshop"
+    "at": "2026-11-27T16:21:33.884Z",
+    "via": "brain",
+    "model": "gemini-3.5-flash-lite",
+    "models": {
+      "gemini-3.5-flash-lite": 1
     },
-    "detail": "I am walking home from the print workshop.",
-    "enjoyment": 7,
+    "tokens": {
+      "calls": 1,
+      "input": 3645,
+      "output": 131,
+      "models": {
+        "gemini-3.5-flash-lite": 1
+      }
+    },
+    "intervalMin": 8,
+    "thought": "I just looked at the pendulum clock gear I printed, and now I want to search online for mechanical clock designs to improve it.",
+    "inner": "I just looked at the pendulum clock gear I printed, and now I want to search online for mechanical clock designs to improve it.",
+    "sent": false,
+    "steps": [
+      {
+        "action": "search_web",
+        "details": {
+          "query": "pendulum clock escapement mechanism design"
+        },
+        "detail": "pendulum clock escapement mechanism design",
+        "thought": "look up how to improve pendulum clock",
+        "enjoyment": 6,
+        "found": {
+          "title": "Pendulum",
+          "text": "A pendulum is a mechanical device consisting of a weight suspended from a pivot so that it can swing freely. When a pendulum is displaced sideways from its resting mechanical equilibrium position, it is subject to a restoring force due to gravity, which will accelerate it back toward the equilibrium position. When released, the restoring force acting on the pendulum's mass causes it to oscillate about the equilibrium position, swinging back and forth. The time for one complete cycle, a left swing and a right swing, or frequency, is commonly known as its \"period\". The period depends both on the length of the pendulum and, somewhat, on the amplitude (the width of the pendulum's swing). The SI unit of the period of a pendulum is the second (s).\nThe regular motion of a pendulum lends itself to timekeeping.  The pendulum clock was invented by Christiaan Huygens in 1656. It became the world's standard manner of timekeeping for several centuries. The Shortt-Synchronome clock achieved accuracy of about one second per year before it was superseded as a time standard by the quartz clock in the 1930s.  \nPendulums are also used in scientific instruments such as accelerometers and seismometers. Historically, pendulums were used as gravimeters to measure the acceleration of gravity in geo-physical surveys, and as a standard of length. The word pendulum is Neo-Latin, from the Latin pendulus, meaning 'hanging'.\n\nMechanics\n\nSimple gravity pendulum\nThe simple gravity pendulum is an idealized mathematical model of a pendulum. This is a weight (or bob) on the end of a massless cord suspended from a pivot, without friction. When given an initial push, it will swing back and forth at a constant amplitude. Real pendulums are subject to friction and air drag, so the amplitude of their swings declines.\n\nPeriod of oscillation\n\nThe period of swing of a simple gravity pendulum depends on its length, the local strength of gravity, and to a small extent on the maximum angle that the pendulum swings away from vertical, θ0, called the amplitude.  It is independent of the mass of the bob.  If the amplitude is limited to small swings,  the period T of a simple pendulum, the time taken for a complete cycle, is:\n\nwhere L is the length of the pendulum and g is the local acceleration of gravity.\n …"
+        },
+        "made": null
+      }
+    ],
+    "action": "search_web",
+    "details": {
+      "query": "pendulum clock escapement mechanism design"
+    },
+    "detail": "pendulum clock escapement mechanism design",
+    "enjoyment": 6,
     "new_idea": null,
-    "found": null,
-    "away": {
-      "place": "workshop",
-      "phase": "back",
-      "back": "2026-11-27T16:18:41.925Z"
+    "found": {
+      "title": "Pendulum",
+      "text": "A pendulum is a mechanical device consisting of a weight suspended from a pivot so that it can swing freely. When a pendulum is displaced sideways from its resting mechanical equilibrium position, it is subject to a restoring force due to gravity, which will accelerate it back toward the equilibrium position. When released, the restoring force acting on the pendulum's mass causes it to oscillate about the equilibrium position, swinging back and forth. The time for one complete cycle, a left swing and a right swing, or frequency, is commonly known as its \"period\". The period depends both on the length of the pendulum and, somewhat, on the amplitude (the width of the pendulum's swing). The SI unit of the period of a pendulum is the second (s).\nThe regular motion of a pendulum lends itself to timekeeping.  The pendulum clock was invented by Christiaan Huygens in 1656. It became the world's standard manner of timekeeping for several centuries. The Shortt-Synchronome clock achieved accuracy of about one second per year before it was superseded as a time standard by the quartz clock in the 1930s.  \nPendulums are also used in scientific instruments such as accelerometers and seismometers. Historically, pendulums were used as gravimeters to measure the acceleration of gravity in geo-physical surveys, and as a standard of length. The word pendulum is Neo-Latin, from the Latin pendulus, meaning 'hanging'.\n\nMechanics\n\nSimple gravity pendulum\nThe simple gravity pendulum is an idealized mathematical model of a pendulum. This is a weight (or bob) on the end of a massless cord suspended from a pivot, without friction. When given an initial push, it will swing back and forth at a constant amplitude. Real pendulums are subject to friction and air drag, so the amplitude of their swings declines.\n\nPeriod of oscillation\n\nThe period of swing of a simple gravity pendulum depends on its length, the local strength of gravity, and to a small extent on the maximum angle that the pendulum swings away from vertical, θ0, called the amplitude.  It is independent of the mass of the bob.  If the amplitude is limited to small swings,  the period T of a simple pendulum, the time taken for a complete cycle, is:\n\nwhere L is the length of the pendulum and g is the local acceleration of gravity.\n …"
     }
   },
   "furniture": {
@@ -15071,7 +15137,7 @@
   "quota": {
     "day": "2026-11-27",
     "calls": {
-      "gemini-3.5-flash-lite": 50,
+      "gemini-3.5-flash-lite": 51,
       "gemini-3.6-flash": 6,
       "gemini-3.5-flash": 4
     },
@@ -15205,12 +15271,12 @@
     }
   },
   "weather": {
-    "at": "2026-11-27T15:29:54.677Z",
-    "kind": "cloudy",
-    "code": 3,
-    "temp": 0.1,
-    "cloud": 0.81,
-    "wind": 0.44333333333333336
+    "at": "2026-11-27T16:21:31.284Z",
+    "kind": "clear",
+    "code": 0,
+    "temp": 0,
+    "cloud": 0.14,
+    "wind": 0.4066666666666666
   },
   "news": {
     "date": "2026-11-27",
@@ -15394,22 +15460,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-27T15:32:41.932Z",
-  "fullness": 3.7,
+  "memoryFadeAt": "2026-11-27T16:21:34.216Z",
+  "fullness": 3.54,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 4.29,
-  "joy": 4.97,
-  "calm": 5.12,
+  "wonder": 6.93,
+  "joy": 5.98,
+  "calm": 5.49,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.01
+    "excited": 0.81
   },
-  "feelAt": "2026-11-27T16:13:05.469Z",
+  "feelAt": "2026-11-27T16:21:09.908Z",
   "lastAte": "2026-11-27T15:02:07.365Z",
   "studio": {
     "songs": [
@@ -16372,21 +16438,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.53,
-    "curiosity": 0.88,
+    "creativity": 0.61,
+    "curiosity": 0,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1,
-    "at": "2026-11-27T16:13:05.469Z",
+    "at": "2026-11-27T16:21:09.908Z",
     "coziness": 4.1
   },
   "recent": {
     "moves": [
-      {
-        "move": "change_thing",
-        "kind": "make",
-        "at": "2026-11-27T13:24:23.544Z"
-      },
       {
         "move": "fetch_note",
         "kind": "play",
@@ -16456,6 +16517,11 @@
         "move": "print_thing",
         "kind": "play",
         "at": "2026-11-27T15:32:41.939Z"
+      },
+      {
+        "move": "search_web",
+        "kind": "learn",
+        "at": "2026-11-27T16:21:34.222Z"
       }
     ],
     "moods": [
@@ -16466,12 +16532,6 @@
       "curious"
     ],
     "choices": [
-      {
-        "key": "harvest:",
-        "move": "harvest",
-        "ok": true,
-        "at": "2026-11-27T13:49:07.048Z"
-      },
       {
         "key": "remove_decoration:sculpted clay bird on perch",
         "move": "remove_decoration",
@@ -16525,6 +16585,12 @@
         "move": "print_thing",
         "ok": true,
         "at": "2026-11-27T15:32:41.941Z"
+      },
+      {
+        "key": "search_web:pendulum clock escapement mechanism desi",
+        "move": "search_web",
+        "ok": true,
+        "at": "2026-11-27T16:21:34.223Z"
       }
     ],
     "failDay": "2026-11-27",
@@ -16550,7 +16616,7 @@
       "build_outside": 1,
       "browse": 1,
       "start_project": 2,
-      "search_web": 1,
+      "search_web": 2,
       "make_app": 1,
       "use": 2,
       "record_song": 1,
@@ -16577,7 +16643,7 @@
       "build_outside": 1,
       "browse": 1,
       "start_project": 2,
-      "search_web": 1,
+      "search_web": 2,
       "make_app": 1,
       "use": 2,
       "record_song": 1,
@@ -16592,14 +16658,14 @@
       "play": 12,
       "music": 4,
       "room": 6,
-      "learn": 5,
+      "learn": 6,
       "walk": 2,
       "make": 9
     },
     "moods": {
       "rested": 2,
       "hungry": 4,
-      "curious": 14,
+      "curious": 15,
       "quiet": 2,
       "grumpy": 10,
       "focused": 13,
@@ -16619,7 +16685,7 @@
       "do": 6.76,
       "change_thing": 3.1,
       "browse": -0.5,
-      "search_web": 1.87,
+      "search_web": 3.57,
       "make_app": 3.67,
       "use": 2.6,
       "record_song": 2.1
@@ -16659,7 +16725,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-27T15:29:56.607Z",
+    "decidedAt": "2026-11-27T16:21:33.883Z",
     "seen": {
       "tools": 13,
       "gifts": 1,
@@ -17298,7 +17364,7 @@
     "eat": 72,
     "water": 40,
     "do": 428,
-    "search_web": 61,
+    "search_web": 62,
     "read_book": 24,
     "record_song": 11,
     "change_thing": 19,
@@ -17338,7 +17404,7 @@
     "start_hobby": 1
   },
   "checkup": {
-    "at": "2026-11-27T15:32:41.943Z",
+    "at": "2026-11-27T16:21:34.224Z",
     "items": [
       {
         "id": "circling",
@@ -23269,12 +23335,6 @@
   ],
   "notebook": [
     {
-      "at": "2026-11-22T17:18:54.923Z",
-      "query": "quiet music",
-      "title": "Quiet City (music)",
-      "text": "Quiet City is a composition for trumpet, cor anglais or oboe, and string orchestra by Aaron Copland. In the published score, the composer indicates \"use Oboe only if no English Horn is available.\" History In 1939, Copland wrote incidental music for the play Quiet City by Irwin Shaw. He later worked some of it into a ten-minute composition designed to be performed independently of the play. The piece premiered on January 28, 1941, by conductor Daniel Saidenberg and his Saidenberg Little Symphony "
-    },
-    {
       "at": "2026-11-23T10:19:07.777Z",
       "query": "summer constellations map details",
       "title": "Orion (constellation)",
@@ -23391,6 +23451,12 @@
       "query": "clock making",
       "title": "Clockmaker",
       "text": "A clockmaker is an artisan who makes and/or repairs clocks. Since almost all clocks are now factory-made, most modern clockmakers only repair clocks. Modern clockmakers may be employed by jewellers, antique shops, and places devoted strictly to repairing clocks and watches. Clockmakers must be able to read blueprints and instructions for numerous types of clocks and time pieces that vary from antique clocks to modern time pieces in order to fix and make clocks or watches. The trade requires fine"
+    },
+    {
+      "at": "2026-11-27T16:21:34.884Z",
+      "query": "pendulum clock escapement mechanism design",
+      "title": "Pendulum",
+      "text": "A pendulum is a mechanical device consisting of a weight suspended from a pivot so that it can swing freely. When a pendulum is displaced sideways from its resting mechanical equilibrium position, it is subject to a restoring force due to gravity, which will accelerate it back toward the equilibrium position. When released, the restoring force acting on the pendulum's mass causes it to oscillate about the equilibrium position, swinging back and forth. The time for one complete cycle, a left swin"
     }
   ],
   "phone": {
@@ -25727,15 +25793,6 @@
   "curious": {
     "sparks": [
       {
-        "topic": "Star chart",
-        "text": "A star chart is a celestial map of the night sky with astronomical objects laid out on a grid system. They are used to identify and locate constellations, stars, nebulae, galaxies, and planets. They have been used for human navigation since time immemorial. Note that a star chart differs from an astronomical catalog, which is a listing or tabulation of astronomical objects for a particular…",
-        "url": "https://en.wikipedia.org/wiki/Star_chart",
-        "from": "read",
-        "via": null,
-        "at": "2026-11-24T11:37:16.378Z",
-        "shown": 2
-      },
-      {
         "topic": "James Walker Log House",
         "text": "James Walker Log House is a historic log house in Washington County, Texas near Brenham. It was built in 1824 and added to the National Register of Historic Places in 1989. See also National Register of Historic Places listings in Washington County, Texas Recorded Texas Historic Landmarks in Washington County References",
         "url": "https://en.wikipedia.org/wiki/James_Walker_Log_House",
@@ -25995,17 +26052,18 @@
         "via": null,
         "at": "2026-11-27T14:29:36.507Z",
         "shown": 2
+      },
+      {
+        "topic": "Pendulum",
+        "text": "A pendulum is a mechanical device consisting of a weight suspended from a pivot so that it can swing freely. When a pendulum is displaced sideways from its resting mechanical equilibrium position, it is subject to a restoring force due to gravity, which will accelerate it back toward the equilibrium position. When released, the restoring force acting on the pendulum's mass causes it to oscillate…",
+        "url": "https://en.wikipedia.org/wiki/Pendulum",
+        "from": "search",
+        "via": null,
+        "at": "2026-11-27T16:21:34.215Z",
+        "shown": 0
       }
     ],
     "interests": [
-      {
-        "topic": "Night sky",
-        "score": 10.8,
-        "since": "2026-11-20T19:57:15.292Z",
-        "last": "2026-11-23T07:45:07.774Z",
-        "practice": 8,
-        "practisedAt": "2026-11-26T21:06:51.046Z"
-      },
       {
         "topic": "building clocks",
         "score": 11.5,
@@ -26023,6 +26081,14 @@
         ],
         "practice": 5,
         "practisedAt": "2026-11-27T15:32:41.941Z"
+      },
+      {
+        "topic": "Night sky",
+        "score": 10.8,
+        "since": "2026-11-20T19:57:15.292Z",
+        "last": "2026-11-23T07:45:07.774Z",
+        "practice": 8,
+        "practisedAt": "2026-11-26T21:06:51.046Z"
       },
       {
         "topic": "Constellation",
@@ -26059,6 +26125,12 @@
         "score": 1,
         "since": "2026-11-27T14:29:36.507Z",
         "last": "2026-11-27T14:29:36.507Z"
+      },
+      {
+        "topic": "Pendulum",
+        "score": 1,
+        "since": "2026-11-27T16:21:34.215Z",
+        "last": "2026-11-27T16:21:34.215Z"
       },
       {
         "topic": "autumn dusk colors",
@@ -26120,12 +26192,7 @@
     "until": "2026-11-26T22:40:05.153Z",
     "why": "nothing came of it"
   },
-  "lookBack": {
-    "kind": "thing",
-    "name": "pendulum clock gear",
-    "file": null,
-    "at": "2026-11-27T15:32:41.941Z"
-  },
+  "lookBack": null,
   "street": {
     "day": "2026-11-23",
     "queue": [],
@@ -26440,246 +26507,9 @@
     "known": {
       "library": "2026-11-23T11:35:53.209Z"
     },
-    "count": 38
+    "count": 39
   },
-  "where": {
-    "id": "otp636h",
-    "place": "workshop",
-    "thing": null,
-    "words": "print my pendulum clock gear",
-    "leftAt": "2026-11-27T15:32:41.925Z",
-    "arriveAt": "2026-11-27T15:41:41.925Z",
-    "leaveAt": "2026-11-27T16:09:41.925Z",
-    "homeAt": "2026-11-27T16:18:41.925Z",
-    "job": {
-      "place": "workshop",
-      "kind": "print",
-      "name": "pendulum clock gear",
-      "why": "the first version is a bit rough and needs a cleaner gear",
-      "parts": [
-        {
-          "shape": "box",
-          "size": [
-            0.14,
-            0.02,
-            0.08
-          ],
-          "pos": [
-            0,
-            0.01,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#34495e",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.03,
-            0.14,
-            0.03
-          ],
-          "pos": [
-            0,
-            0.08,
-            -0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#34495e",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.05
-          ],
-          "pos": [
-            0,
-            0.13,
-            0.01
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.035,
-            0.035,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.13,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.075,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.13,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.02,
-            0.14,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.13,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.14,
-            0.02,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.13,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.02,
-            0.025,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.21,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.02,
-            0.025,
-            0.02
-          ],
-          "pos": [
-            0,
-            0.05,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.025,
-            0.02,
-            0.02
-          ],
-          "pos": [
-            -0.08,
-            0.13,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.025,
-            0.02,
-            0.02
-          ],
-          "pos": [
-            0.08,
-            0.13,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#e67e22",
-          "glow": false
-        }
-      ],
-      "words": "print my pendulum clock gear"
-    }
-  },
+  "where": null,
   "finds": [
     {
       "name": "a blue marble someone lost",
@@ -26695,24 +26525,6 @@
     }
   ],
   "outings": [
-    {
-      "id": "otp0has",
-      "place": "board",
-      "thing": null,
-      "leftAt": "2026-11-24T14:52:04.110Z",
-      "homeAt": "2026-11-24T15:00:09.615Z",
-      "weather": {
-        "kind": "clear",
-        "temp": 3.5
-      },
-      "did": "I read the notice board. New: someone wants a small gear from the 3D printer. On it now: a birdhouse (3 coins), a telescope (3 coins), a small gear from the 3D printer (3 coins). If I make one of them, the coins are mine.",
-      "found": [],
-      "met": null,
-      "gift": null,
-      "read": null,
-      "saw": "the notice board on the square",
-      "cut": null
-    },
     {
       "id": "otp0kci",
       "place": "library",
@@ -27268,6 +27080,28 @@
       "read": null,
       "saw": "a note that lay waiting for me",
       "cut": null
+    },
+    {
+      "id": "otp636h",
+      "place": "workshop",
+      "thing": null,
+      "leftAt": "2026-11-27T15:32:41.925Z",
+      "homeAt": "2026-11-27T16:21:09.922Z",
+      "weather": {
+        "kind": "cloudy",
+        "temp": 0.1
+      },
+      "did": "At the print workshop I watched the printer build my pendulum clock gear, one thin layer on top of the other. It is small and still warm. I put it on the shelf by the door, with my other prints.",
+      "found": [],
+      "met": null,
+      "gift": null,
+      "read": null,
+      "saw": "the printer at work",
+      "cut": null,
+      "made": {
+        "kind": "print",
+        "name": "pendulum clock gear"
+      }
     }
   ],
   "letterWeek": "2026-11-16",
@@ -27909,6 +27743,233 @@
         }
       ],
       "at": "2026-11-27T12:35:10.981Z"
+    },
+    {
+      "id": "protp636h",
+      "name": "pendulum clock gear",
+      "why": "the first version is a bit rough and needs a cleaner gear",
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            0.14,
+            0.02,
+            0.08
+          ],
+          "pos": [
+            0,
+            0.01,
+            0
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#34495e",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.14,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.08,
+            -0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#34495e",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.05
+          ],
+          "pos": [
+            0,
+            0.13,
+            0.01
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.035,
+            0.035,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.13,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        },
+        {
+          "shape": "torus",
+          "size": [
+            0.075,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.13,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.02,
+            0.14,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.13,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.14,
+            0.02,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.13,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.02,
+            0.025,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.21,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.02,
+            0.025,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.05,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.025,
+            0.02,
+            0.02
+          ],
+          "pos": [
+            -0.08,
+            0.13,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.025,
+            0.02,
+            0.02
+          ],
+          "pos": [
+            0.08,
+            0.13,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e67e22",
+          "glow": false
+        }
+      ],
+      "at": "2026-11-27T15:41:41.925Z"
     }
   ],
   "boardReadAt": "2026-11-27T13:22:44.233Z",
@@ -28261,6 +28322,19 @@
       "foundAt": "2026-11-27T13:49:01.785Z",
       "how": "fetched",
       "kept": true
+    },
+    {
+      "id": "ttp65fv",
+      "from": "Idris",
+      "who": "a clockmaker",
+      "kind": "opinion",
+      "topic": "Kitsch",
+      "text": "Somebody called your drawings \"nice\". I think nice is the worst word there is. What would you want them to be called?",
+      "spot": "drop_wall",
+      "where": "by the wall next to the art workshop",
+      "at": "2026-11-27T16:21:31.316Z",
+      "status": "lying",
+      "madeUp": true
     }
   ],
   "learned": [
@@ -28477,48 +28551,6 @@
     }
   ],
   "moments": [
-    {
-      "at": "2026-11-27T11:49:22.846Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Look closely at my project Build a little jumping frog game"
-    },
-    {
-      "at": "2026-11-27T11:51:35.050Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“Judge the frog game project.”"
-    },
-    {
-      "at": "2026-11-27T11:54:47.358Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "The clock in his head says it is later than he thought"
-    },
-    {
-      "at": "2026-11-27T11:57:30.685Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Decides to try building clocks as a hobby"
-    },
-    {
-      "at": "2026-11-27T11:59:42.889Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“Let's try building clocks.”"
-    },
-    {
-      "at": "2026-11-27T12:03:35.012Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "Dust turns in the light from the window"
-    },
-    {
-      "at": "2026-11-27T12:05:54.621Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Eats basil"
-    },
     {
       "at": "2026-11-27T12:08:06.825Z",
       "kind": "think",
@@ -29013,6 +29045,48 @@
     },
     {
       "at": "2026-11-27T15:40:08.395Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Walks back home"
+    },
+    {
+      "at": "2026-11-27T16:21:09.922Z",
+      "kind": "beat",
+      "icon": "🏠",
+      "text": "Comes home from the print workshop"
+    },
+    {
+      "at": "2026-11-27T16:21:34.884Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Walks to the internet café"
+    },
+    {
+      "at": "2026-11-27T16:22:51.524Z",
+      "kind": "beat",
+      "icon": "▶️",
+      "text": "Types: “pendulum clock escapement mechanism design”"
+    },
+    {
+      "at": "2026-11-27T16:24:32.114Z",
+      "kind": "think",
+      "icon": "💭",
+      "text": "“look up how to improve pendulum clock”"
+    },
+    {
+      "at": "2026-11-27T16:25:55.939Z",
+      "kind": "beat",
+      "icon": "⏳",
+      "text": "Reads what he found"
+    },
+    {
+      "at": "2026-11-27T16:27:31.605Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "The screen flickers once and thinks about it"
+    },
+    {
+      "at": "2026-11-27T16:29:00.354Z",
       "kind": "beat",
       "icon": "🚶",
       "text": "Walks back home"
@@ -29537,6 +29611,15 @@
       "mood": "curious",
       "out": true,
       "feel": 4.8
+    },
+    {
+      "at": "2026-11-27T16:21:34.224Z",
+      "joy": 6,
+      "calm": 5.5,
+      "wonder": 6.9,
+      "energy": 8.9,
+      "mood": "curious",
+      "feel": 6.1
     }
   ],
   "opinions": [
