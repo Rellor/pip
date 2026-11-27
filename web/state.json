@@ -1,6 +1,6 @@
 {
   "mood": "focused",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -15668,53 +15668,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T19:04:23.626Z",
-    "via": "brain",
-    "model": "gemini-3.6-flash",
-    "models": {
-      "gemini-3.5-flash-lite": 1,
-      "gemini-3.6-flash": 1
-    },
-    "modelNotes": [
-      "gemini-3.6-flash answered (gemini-3.8-flash was busy or capped)"
-    ],
-    "fallback": true,
-    "tokens": {
-      "calls": 2,
-      "input": 10807,
-      "output": 2509,
-      "models": {
-        "gemini-3.5-flash-lite": 1,
-        "gemini-3.6-flash": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "My room feels too full and I want to print a model for my clock building hobby.",
-    "inner": "My room feels too full and I want to print a model for my clock building hobby.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "the library",
-          "what": "read about something I wonder about"
-        },
-        "detail": "the library",
-        "thought": "My head is empty. I go outside: the library.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-27T19:12:27.920Z",
+    "via": "outside",
+    "thought": "I am walking to the library.",
     "action": "go_out",
     "details": {
-      "place": "the library",
-      "what": "read about something I wonder about"
+      "place": "library"
     },
-    "detail": "the library",
-    "enjoyment": 6,
+    "detail": "I am walking to the library.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "library",
+      "phase": "going",
+      "back": "2026-11-27T20:09:23.626Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -16138,21 +16107,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-27T19:04:23.631Z",
-  "fullness": 5.34,
+  "fullness": 5.13,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 4.77,
-  "joy": 4.61,
-  "calm": 5.58,
+  "wonder": 4.42,
+  "joy": 4.73,
+  "calm": 5.45,
   "emo": {
     "irritated": 0,
     "sad": 0,
     "excited": 0.01
   },
-  "feelAt": "2026-11-27T19:02:05.843Z",
+  "feelAt": "2026-11-27T19:12:27.907Z",
   "lastAte": "2026-11-27T18:53:59.768Z",
   "studio": {
     "songs": [
@@ -17115,12 +17084,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.17,
-    "curiosity": 0.34,
+    "creativity": 0.27,
+    "curiosity": 0.43,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 0.4,
-    "at": "2026-11-27T19:02:05.843Z",
+    "at": "2026-11-27T19:12:27.907Z",
     "coziness": 4.4
   },
   "recent": {
@@ -30665,6 +30634,16 @@
       "energy": 9.5,
       "mood": "focused",
       "feel": 5
+    },
+    {
+      "at": "2026-11-27T19:12:27.920Z",
+      "joy": 4.7,
+      "calm": 5.5,
+      "wonder": 4.4,
+      "energy": 10,
+      "mood": "focused",
+      "out": true,
+      "feel": 4.9
     }
   ],
   "opinions": [
