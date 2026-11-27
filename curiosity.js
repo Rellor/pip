@@ -159,7 +159,7 @@ export const HOBBY_REAL_AFTER = 3; // tried this many times: it is a real hobby
 export const HOBBY_DROP_DAYS = 4; // never tried in this many days: he lets the idea go
 // Which of his moves are a way to do a hobby, by the words in it.
 const HOBBY_MOVES = [
-  [/bik(e|ing)|cycl|kite|plane|glider|sail|boat|skat|scooter|sled|juggl|unicycle|swing|fishing|\bball\b|football|frisbee|disc\b|kart|stilts|hoop|yo-?yo|skipping|camp|tent|chess|marbles|card games|hammock|drumming outside/, ['play', 'make_plaything']],
+  [/bik(e|ing)|cycl|kite|plane|aircraft|glider|balloon|sail|boat|skat|scooter|sled|juggl|unicycle|swing|fishing|\bball\b|football|frisbee|disc\b|kart|stilts|hoop|yo-?yo|skipping|camp|tent|chess|marbles|card games|hammock|drumming outside/, ['play', 'make_plaything']],
   [/graffiti|mural|street art|spray|tag(ging)?s?\b|wall paint/, ['paint_wall']],
   [/garden|plant|grow(ing)?|herb|vegetable|tomato|flower|botan/, ['plant', 'water', 'harvest']],
   [/music|song|sing|flute|guitar|piano|violin|melod|compos|drum|band/, ['play_piano', 'record_song', 'compose']],

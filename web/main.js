@@ -307,7 +307,8 @@ function buildDecor(d) {
       photo.material.needsUpdate = true;
     });
   }
-  for (const p of d.parts || []) {
+  const shownParts = d.stages > 1 && (d.stage ?? d.stages) < d.stages ? [...(d.parts || [])].sort((x, y) => (x.pos?.[1] ?? 0) - (y.pos?.[1] ?? 0)).slice(0, Math.max(1, Math.ceil(((d.parts || []).length * d.stage) / d.stages))) : d.parts || []; // a thing he is still building: from the ground up, as far as he got (sittings.js)
+  for (const p of shownParts) {
     const geo = SHAPE_GEO[p.shape];
     if (!geo) continue;
     const mesh = new THREE.Mesh(
@@ -2989,6 +2990,7 @@ function decorInfo(d) {
     const ready = new Date(Date.parse(d.readyAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' });
     return { title: d.name, icon: '🔨', subtitle: `Pip is building this · ${d.label}`, sections: [{ lines: [`It is ${Math.round(sitePart(d) * 100)}% built. It grows while he works on it, and stands around ${ready}.`] }, ...(d.why ? [{ heading: 'Why he builds it', quote: `“${d.why}”` }] : [])], refresh: () => decorInfo(d) };
   }
+  if (d.stages > 1 && (d.stage ?? d.stages) < d.stages) return { title: d.name, icon: '🔨', subtitle: `Pip is still building this · ${d.label}`, sections: [{ lines: [`Sitting ${d.stage} of ${d.stages} is done: ${d.stage === 1 ? 'only the frame stands' : 'it is getting there'}. He goes on with it when he feels like it.`] }, ...(d.why ? [{ heading: 'Why he builds it', quote: `“${d.why}”` }] : [])] };
   if (d.art) return { title: d.name, icon: '🎨', subtitle: `A drawing by Pip · ${d.label}`, image: d.image, sections: d.why ? [{ heading: 'Why he drew it', quote: `“${d.why}”` }] : [] };
   if (d.print) return { title: d.name, icon: '🖨️', subtitle: `A print from Pip's photo printer · ${d.label}`, image: d.image };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
@@ -3845,7 +3847,7 @@ const STEP_PLACE = { ...Object.fromEntries(['decorate', 'extend_thing', 'make_cl
 function stepOuting() {
   if (!plan || stepNow < 0 || lastState?.last?.sleeping) return null;
   const st = plan.steps[stepNow];
-  const hit = st && !st.as && !st.failed && !st.made?.failed ? (st.action === 'do' && /^carry .+ to my museum$/.test(st.details?.what ?? '') ? { place: 'museum', spot: 'museum', name: 'his museum', emoji: '🏛️' } : STEP_PLACE[st.action]) : null;
+  const hit = st && !st.as && !st.failed && !st.made?.failed ? (st.action === 'do' && /^carry .+ to my museum$/.test(st.details?.what ?? '') ? { place: 'museum', spot: 'museum', name: 'his museum', emoji: '🏛️' } : st.action === 'do' && /^go on building /.test(st.details?.what ?? '') ? STEP_PLACE.decorate : STEP_PLACE[st.action]) : null;
   if (!hit) return null;
   const t0 = plan.at + plan.starts[stepNow], len = plan.lengths[stepNow];
   if (Date.now() < t0 || Date.now() > t0 + len) return null;

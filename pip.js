@@ -86,6 +86,7 @@ import { SITE_FILE, buildSite, siteMaterial, siteWords } from './site.js';
 import { addMoments, sleepMoments, wakeMoments } from './moments.js';
 import { noteArc } from './arc.js';
 import { showInMuseum, markForMuseum, carryToMuseum, museumLines, toMuseum } from './museum.js';
+import { startSittings, buildOn, sittingLines } from './sittings.js';
 import { makePlaything, findPlaything, playJob, playLines, playGame, noteArrival, nextArrival, arrived, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { askVisitors, closeQuestion, takeAnswer, takeShelf, readShelf, noteReply, visitorLine, guestLines, pieceWords, SHELF_KINDS } from './guests.js';
 
@@ -637,7 +638,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...museumLines(s), ...playLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...sittingLines(s), ...museumLines(s), ...playLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -1161,6 +1162,11 @@ function applyInnerLife(s, r, detail, replying = false) {
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
   }
   const fresh = [];
+  if (r.action === 'do' && r.as === 'build_on') { // the next sitting of a thing he started (sittings.js): plain code, no model
+    const b = buildOn(s, r.details?.name);
+    if (b.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `build_on: ${b.failed}` }; }
+    else { nudge(s, 'joy', b.done ? 0.9 : 0.3); if (b.done) { addMemory(s, `My ${b.thing.name} is finished. It took me ${b.stages} sittings.`, 6, 'memory', at); happened(s, `My ${b.thing.name} is finished.`); } console.log(`   🔨 ${b.thing.name}: sitting ${b.stage} of ${b.stages}${b.done ? ', finished' : ''}`); }
+  }
   if (r.action === 'do' && r.as === 'play_game') { // he plays one of the games he wrote (play.js): plain code, no model
     const g = playGame(s, r.details?.name);
     if (g.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `play_game: ${g.failed}` }; }
@@ -1666,6 +1672,7 @@ async function wakeUp() {
       const built = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js); a "tiny" thing is tiny
       const sized = keepWithin(out && Number(st.details.metres) > 0 ? built.parts : roomScale(built.parts, st.details), st.planned?.fit); // (never bigger than what the dry run showed to fit)
       st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: sized, uses: st.uses }, stepStart); // built at the size of his room (outside: as big as he said)
+      if (st.made?.entry && !out && !st.made.entry.readyAt && !st.made.entry.image) { const n = startSittings(st.made.entry); if (n > 1) st.made.hint = `${st.made.hint ? `${st.made.hint} ` : ''}It is not finished: this was sitting 1 of ${n}, only the frame stands. I go on with it later (build_on).`; } // a thing takes a few sittings (sittings.js)
       if (st.made?.entry?.readyAt) { const hours = Math.round((Date.parse(st.made.entry.readyAt) - Date.parse(st.made.entry.at)) / 360_000) / 10; addMemory(state, `I started building my ${st.made.entry.name} ${st.made.entry.label}. It is big: it will take me about ${hours} hours of work before it stands.`, 6, 'memory', new Date(stepStart).toISOString()); }
       const oldCloth = /^(.+) already lies over /.exec(st.made.failed ?? '')?.[1];
       if (oldCloth && state.stored.length < MAX_STORED && storeAway(state.decor, state.stored, oldCloth).stored) { // a new blanket: the old one is folded into his chest, like anyone would

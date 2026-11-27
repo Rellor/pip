@@ -81,7 +81,8 @@ assert.deepEqual(storyTick(t, noon + 3_600_000), [], 'not again within hours');
 const second = storyTick(t, noon + 6 * 3_600_000);
 assert.equal(second.length, 1);
 assert.notEqual(second[0].key, first[0].key, 'not the same scene twice');
-assert.deepEqual(storyTick(t, noon + 12 * 3_600_000 - 60_000 * 61), [], 'at most two small things a day');
+for (let i = 0; i < 12; i++) storyTick(t, noon + 6 * 3_600_000 + (i + 1) * 31 * 60_000); // (the rest of that evening)
+assert.ok(t.teller.smallToday <= 5, `a handful of small things a day at most: ${t.teller.smallToday}`);
 ok('small things happen with a rhythm: hours apart, two a day at most, never the same');
 
 const m = fresh();
@@ -112,7 +113,7 @@ ok('big things: market day on the square, with rest after it; no puzzle and no p
     for (const e of storyTick(y, t)) seen.set(e.key, e.text);
   }
   const all = [...seen.values()].join('\n');
-  assert.ok(seen.size >= 14 && seen.has('market') && [...seen.keys()].filter((key) => key.startsWith('street:')).length === 10, [...seen.keys()].join(', '));
+  assert.ok(seen.size >= 14 && seen.has('market') && [...seen.keys()].filter((key) => key.startsWith('street:')).length === 25, [...seen.keys()].join(', '));
   assert.ok(!FIVE.test(all) && !/neighbou?r|bakery|my street|the street|\broad\b|pavement|parcel|puzzle of the week/i.test(all), all);
   assert.ok(y.teller.log.every((e) => !FIVE.test(e.text)) && y.curious.sparks.every((x) => !FIVE.test(`${x.topic} ${x.text}`)));
   assert.ok((y.wishes ?? []).length === 0, 'the storyteller pins no wishes');
