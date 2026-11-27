@@ -7577,3 +7577,9 @@ I finished my night sky project step and I want to push it further to add the se
 - extend_thing (tiny wooden shelf for my bird): Let's work on the night sky simulation next.
 - mood: dry
 
+## 27/11/2026, 17:16:47
+I just finished the simulation and want to judge it now before starting something else.
+> I just finished the simulation and want to judge it now before starting something else.
+- do (look closely at my project Build a little simulation of night sky: something that moves): Judge the night sky simulation project
+- mood: proud
+
