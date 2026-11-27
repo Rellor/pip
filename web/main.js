@@ -1253,19 +1253,19 @@ function pianoSong(notesText, style, instrument) {
   const st = String(style || '').toLowerCase();
   return { notes, tempo: /slow|sad|soft|gentle|calm|sleep|dream|quiet/.test(st) ? 62 : /fast|happy|quick|bright|fun|dance/.test(st) ? 130 : 92, timbre: knownInstrument(String(instrument || '').toLowerCase()) };
 }
-function playNotes(notes, step, instrument = 'piano') {
+function playNotes(notes, step, instrument = 'piano', dest = null) {
   if (!audio) return;
   buildMaster();
   const t0 = audio.currentTime + 0.05;
   notes.forEach((n, i) => {
     const t = t0 + i * step;
-    for (const f of n.chord ?? [n.freq]) voice(f, t, step * 1.1, instrument);
+    for (const f of n.chord ?? [n.freq]) voice(f, t, step * 1.1, instrument, dest ?? master);
   });
 }
 $('sound').addEventListener('click', () => {
   unlockAudio();
+  const on = !(audio && audio.state === 'running'); // (asked before the sound is made: a new one may be running at once)
   if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
-  const on = audio.state !== 'running';
   (on ? audio.resume() : audio.suspend()).then(() => {
     $('sound').textContent = on ? '🔊 Sound on' : '🔇 Sound off';
   });
@@ -1616,8 +1616,9 @@ function printerSound() {
   click.stop(t + len);
 }
 // Several tracks at once: each one has its own sound, loudness, place from left to right and amount of room.
-async function playTracks(song) {
+async function playTracks(song, dest = null) {
   await ensureAudio();
+  dest ??= master;
   const heard = (n) => (Array.isArray(n) ? n : [n]).filter((x) => x && !['kick', 'snare', 'hat'].includes(x));
   await Promise.all(song.tracks.map((tr) => { const b = bankOf(tr.timbre); return b ? within(bankNeed(b, tr.notes.flatMap(([n]) => heard(n)).map((x) => sampleKey(noteFreq(x) || 440))), 25000) : null; }));
   const beat = 60 / (song.tempo || 90);
@@ -1627,7 +1628,7 @@ async function playTracks(song) {
     const bus = audio.createGain();
     bus.gain.value = tr.volume ?? 0.8;
     const pan = audio.createStereoPanner ? audio.createStereoPanner() : null;
-    if (pan) { pan.pan.value = tr.pan || 0; bus.connect(pan).connect(master); } else bus.connect(master);
+    if (pan) { pan.pan.value = tr.pan || 0; bus.connect(pan).connect(dest); } else bus.connect(dest);
     if (reverbIn && tr.reverb > 0.01) { const send = audio.createGain(); send.gain.value = tr.reverb * 1.4; bus.connect(send).connect(reverbIn); }
     let t = start;
     for (const [n, beats] of tr.notes) {
@@ -1639,10 +1640,11 @@ async function playTracks(song) {
   }
   return end;
 }
-async function playSong(song) {
+async function playSong(song, dest = null) {
   if (!song || (!song.notes?.length && !song.ambience && !song.tracks?.length)) return 0;
-  if (song.tracks?.length) return playTracks(song);
+  if (song.tracks?.length) return playTracks(song, dest);
   await ensureAudio();
+  dest ??= master;
   const heard = (n) => (Array.isArray(n) ? n : [n]).filter((x) => x && !['kick', 'snare', 'hat'].includes(x));
   const bank = bankOf(song.timbre);
   if (bank) await within(bankNeed(bank, (song.notes || []).flatMap(([n]) => heard(n)).map((x) => sampleKey(noteFreq(x) || 440))), 25000);
@@ -1650,10 +1652,10 @@ async function playSong(song) {
   const start = audio.currentTime + 0.1;
   let t = start;
   for (const [n, beats] of song.notes || []) {
-    if (n === 'kick' || n === 'snare' || n === 'hat') drum(n, t);
+    if (n === 'kick' || n === 'snare' || n === 'hat') drum(n, t, dest);
     else for (const x of heard(n)) {
       const f = noteFreq(x);
-      if (f) voice(f, t, beat * beats * 0.92, song.timbre);
+      if (f) voice(f, t, beat * beats * 0.92, song.timbre, dest);
     }
     t += beat * beats;
   }
@@ -1674,6 +1676,111 @@ function songButton(song) {
   });
   return b;
 }
+
+// ---- The sound of his world (all made here, no sound files; all behind the Sound switch):
+// wind outside, rain when it rains (dull when you are indoors), your own footsteps, Pip's playing (louder the closer
+// you stand), and a small radio by his door that plays the songs he recorded.
+const RADIO_AT = { x: -1.7, z: 0.5 }; // beside his front door (metres in the village)
+const HOME_AT = { x: 0, z: -2 }; // his house, for how far a sound is
+const snd = { ready: false, wind: null, windF: null, rain: null, rainF: null, pip: null, radio: null };
+const radio = { on: true, node: null, until: 0, nextAt: 0, idx: -1, name: '' };
+function buildWorldSound() {
+  if (snd.ready || !audio || !master) return;
+  snd.ready = true;
+  const lane = (type, freq, q) => { const src = noise(); const f = audio.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q; const g = audio.createGain(); g.gain.value = 0; src.connect(f).connect(g).connect(master); src.start(); return [g, f]; };
+  [snd.wind, snd.windF] = lane('bandpass', 420, 0.5);
+  [snd.rain, snd.rainF] = lane('lowpass', 8000, 0.3);
+  snd.pip = audio.createGain(); snd.pip.connect(master);
+  snd.radio = audio.createGain(); snd.radio.gain.value = 0; snd.radio.connect(master);
+}
+// Where your ears are, and where Pip is, in village metres (inside his house counts as one place).
+const earAt = () => (view.mode !== 'walk' ? null : inTown(view.x) ? { x: view.x - TOWN_X, z: view.z, inside: false } : { ...HOME_AT, inside: true });
+const pipAt = () => { const p = pip.group.position; return inTown(p.x) ? { x: p.x - TOWN_X, z: p.z, inside: false } : { ...HOME_AT, inside: true }; };
+// How loud something is from where you stand: full next to it, fading with the metres, duller through a wall.
+function loudAt(ear, at, reach = 9) {
+  if (!ear) return 1; // looking from above: you hear it as it is
+  if (ear.inside && at.inside) return 1;
+  const g = 1 / (1 + (Math.hypot(ear.x - at.x, ear.z - at.z) / reach) ** 2) * (ear.inside !== Boolean(at.inside) ? 0.6 : 1);
+  return g < 0.02 ? 0 : g;
+}
+// Where his playing goes: a volume that follows how far you are from him.
+function pipEar() { buildMaster(); buildWorldSound(); if (snd.pip) snd.pip.gain.value = loudAt(earAt(), pipAt()); return snd.pip; }
+const radioSongs = (s) => { const recs = (s?.studio?.songs ?? []).map((r) => ({ name: r.name, song: trackSong(r) })).filter((x) => x.song); return recs.length ? recs : (s?.log ?? []).filter((e) => e.action === 'play_piano' && !e.failed).slice(-8).map((e) => ({ name: `what he played ${when(e.at)}`, song: pianoSong(e.notes, e.style, e.instrument) })).filter((x) => x.song); };
+function radioStop() { if (radio.node) { try { radio.node.gain.setTargetAtTime(0, audio.currentTime, 0.08); const n = radio.node; setTimeout(() => n.disconnect(), 600); } catch {} } radio.node = null; radio.until = 0; radio.name = ''; }
+async function radioNext(say = false) {
+  const list = radioSongs(lastState);
+  if (!list.length) return toast('His radio is silent: he has not recorded a song yet.');
+  await ensureAudio(); buildWorldSound(); radioStop();
+  radio.idx = (radio.idx + 1 + (radio.idx < 0 ? Math.floor(Math.random() * list.length) : 0)) % list.length;
+  const { name, song } = list[radio.idx];
+  radio.node = audio.createGain(); radio.node.gain.value = 0.55; radio.node.connect(snd.radio);
+  const mine = radio.node;
+  radio.name = name; radio.until = Date.now() + 60_000; // (until the song has loaded and says how long it is)
+  const secs = await playSong(song, mine);
+  if (radio.node !== mine) return;
+  radio.until = Date.now() + secs * 1000; radio.nextAt = radio.until + 40_000 + Math.random() * 50_000;
+  if (say) toast(`📻 On his radio: “${name}”`);
+}
+function footstep() {
+  if (!snd.ready || audio.state !== 'running') return;
+  const t = audio.currentTime + 0.01, out = inTown(view.x);
+  const src = noise(), f = audio.createBiquadFilter(), g = audio.createGain();
+  f.type = 'bandpass'; f.frequency.value = (out ? 650 : 260) * (0.85 + Math.random() * 0.3); f.Q.value = out ? 0.9 : 1.6;
+  g.gain.setValueAtTime(out ? 0.16 : 0.22, t); g.gain.exponentialRampToValueAtTime(0.0001, t + (out ? 0.09 : 0.13));
+  src.connect(f).connect(g).connect(master); src.start(t, Math.random() * 3); src.stop(t + 0.2);
+}
+let stepsHeard = 0;
+function tickWorldSound() {
+  if (!audio || audio.state !== 'running') return;
+  buildMaster(); buildWorldSound();
+  const t = audio.currentTime, s = lastState ?? {};
+  const walk = view.mode === 'walk', out = walk ? inTown(view.x) : streetish();
+  const wet = /rain|drizzle|shower|storm|thunder/.test(String(s.weather?.kind ?? ''));
+  const windy = Math.min(1, Math.max(0, Number(s.weather?.wind) || 0.3));
+  const gust = 0.75 + 0.25 * Math.sin(Date.now() / 5300) + 0.18 * Math.sin(Date.now() / 1900 + 1.3); // the wind comes and goes
+  snd.wind.gain.setTargetAtTime((out ? 0.035 + windy * 0.07 : 0.006 + windy * 0.01) * gust, t, 0.6);
+  snd.windF.frequency.setTargetAtTime(out ? 320 + windy * 380 * gust : 180, t, 0.8);
+  snd.rain.gain.setTargetAtTime(wet ? (out ? 0.2 : 0.07) : 0, t, 0.8);
+  snd.rainF.frequency.setTargetAtTime(out ? 8500 : 1000, t, 0.5); // indoors you hear it on the roof, dull
+  const ear = earAt();
+  snd.pip.gain.setTargetAtTime(loudAt(ear, pipAt()), t, 0.25);
+  snd.radio.gain.setTargetAtTime(radio.on ? loudAt(ear, RADIO_AT, 7) : 0, t, 0.25);
+  // your own feet
+  const stepLen = 0.78 * (inTown(view.x) ? 1 : 1.6), n = Math.floor(bob.walked / stepLen);
+  if (n !== stepsHeard) { stepsHeard = n; if (walk && bob.moving && jump.y <= 0 && !fly.on) footstep(); }
+  // the radio plays by itself when you are near enough to hear it, with a pause between the songs
+  if (radio.on && walk && ear && Date.now() > Math.max(radio.until, radio.nextAt) && loudAt(ear, RADIO_AT, 7) > 0.12) { radio.nextAt = Date.now() + 120_000; radioNext(true).catch(() => {}); }
+}
+setInterval(tickWorldSound, 120);
+// The radio itself: a small set on a crate beside his door.
+function buildRadio() {
+  const g = new THREE.Group();
+  box(g, [0.5, 0.42, 0.42], 0x9a7448, [0, 0.21, 0]); // the crate
+  box(g, [0.46, 0.04, 0.38], 0x7d5c38, [0, 0.44, 0]);
+  box(g, [0.4, 0.24, 0.13], 0xc9503c, [0, 0.58, 0]); // the set
+  box(g, [0.16, 0.16, 0.012], 0x3a2f2a, [-0.09, 0.58, 0.066]); // the speaker
+  box(g, [0.12, 0.05, 0.012], 0xf2e6c8, [0.11, 0.63, 0.066]); // the dial
+  box(g, [0.035, 0.035, 0.03], 0xf2e6c8, [0.08, 0.53, 0.07]);
+  box(g, [0.035, 0.035, 0.03], 0xf2e6c8, [0.14, 0.53, 0.07]);
+  const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.42, 5), mat(0xbfc4c8));
+  rod.position.set(0.16, 0.9, -0.03); rod.rotation.z = -0.25; g.add(rod);
+  g.position.set(TOWN_X + RADIO_AT.x, townGround(TOWN_X + RADIO_AT.x, RADIO_AT.z), RADIO_AT.z);
+  g.rotation.y = 0.18;
+  g.userData.info = () => {
+    const list = radioSongs(lastState);
+    const on = audio?.state === 'running';
+    const playing = radio.name && Date.now() < radio.until;
+    return { title: 'Pip’s radio', icon: '📻', subtitle: 'In his world', sections: [
+      { lines: ['It plays the songs Pip recorded, one after another. The closer you stand, the louder it is.'] },
+      { heading: 'Now', lines: [!list.length ? 'Silent. He has not recorded a song yet.' : !on ? 'The sound of the page is off, so you hear nothing.' : !radio.on ? 'Switched off.' : playing ? `Playing “${radio.name}”.` : 'Between two songs.'] },
+      ...(list.length ? [{ heading: 'What you can do', buttons: [{ label: on ? '▶ Next song' : '🔊 Sound on, and play', run: () => { radio.on = true; radioNext(true).then(() => renderInfoAgain()); } }, ...(on ? [{ label: radio.on ? '⏸ Switch it off' : '▶ Switch it on', run: () => { radio.on = !radio.on; if (!radio.on) radioStop(); else radioNext(true); renderInfoAgain(); } }] : [])] }, { heading: `His songs (${list.length})`, chips: list.slice(-8).map((x) => `🎵 ${x.name}`) }] : []),
+    ] };
+  };
+  scene.add(g);
+  return g;
+}
+const radioSet = buildRadio();
+const renderInfoAgain = () => { if (!infoBox.hidden) renderInfo(radioSet.userData.info()); };
 
 // ---- apps Pip writes: they run only when opened, in a locked box (no internet, no saving, no way out)
 const APP_CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; frame-src 'none'";
@@ -2034,7 +2141,7 @@ function startTask(last) {
 }
 function startPhrase(notes, step, now) {
   task.phrase = { notes, step, t0: now, lastIdx: -1 };
-  playNotes(notes, step, task.instrument);
+  playNotes(notes, step, task.instrument, pipEar()); // you hear him louder the closer you stand
 }
 // Walking: go round furniture and things on the floor instead of through them (free: the page does it).
 // Near his goal he walks straight so he can still reach it.
@@ -3866,9 +3973,10 @@ function renderApprovals() {
   $('approvals').hidden = !key || !pendingVisitors.length;
   if ($('approvals').hidden) return;
   fill($('approvallist'), pendingVisitors.map((v) => {
-    const li = entry([when(v.at), v.name || 'a visitor'], v.text);
+    const li = entry([when(v.at), v.name || 'a visitor', ...(v.shelf ? [`for the library shelf: ${SHELF_WORD[v.shelf]?.[1] ?? v.shelf}${v.title ? ` “${v.title}”` : ''}`] : v.answerTo ? ['an answer to his question'] : [])], v.text);
+    if (v.shelf) li.classList.add('piece');
     const row = el('div', null, 'row');
-    for (const [label, what] of [['✓ Let Pip read it', 'approve'], ['Remove', 'remove']]) {
+    for (const [label, what] of [[v.shelf ? '✓ Put it on the shelf' : '✓ Let Pip read it', 'approve'], ['Remove', 'remove']]) {
       const b = el('button', label, what === 'approve' ? 'small primary' : 'small');
       b.type = 'button';
       b.addEventListener('click', async () => {
@@ -3893,21 +4001,24 @@ function renderMyVisits(s) {
   myVisits = myVisits.filter((m) => Date.parse(m.at) > week);
   store('pip-my-visits', JSON.stringify(myVisits));
   fill($('myvisits'), myVisits.slice().reverse().map((m) => {
-    const got = seen.find((v) => (m.id && v.id === m.id) || v.text === m.text);
+    const piece = (s?.shelf || []).find((p) => m.id && p.id === m.id);
+    const got = piece ? { answer: piece.opinion } : seen.find((v) => (m.id && v.id === m.id) || v.text === m.text);
     const box = el('div', null, 'myvisit');
-    box.append(el('div', `“${m.text}”`), el('div', got?.answer ? `🐣 Pip answered! Look below.` : got ? '👀 Checked. Pip reads it when he wakes up.' : '⏳ Sent. Waiting to be checked.', 'st'));
+    box.append(el('div', `“${m.text}”`), el('div', got?.answer ? (piece ? '🐣 Pip read it and said what he thinks! Look below.' : '🐣 Pip answered! Look below.') : piece ? (piece.readAt ? '📚 Pip read it at the library.' : '📚 It lies on the shelf in the library.') : got ? '👀 Checked. Pip reads it when he wakes up.' : '⏳ Sent. Waiting to be checked.', 'st'));
     return box;
   }));
 }
 function renderVisitors(s) {
   renderMyVisits(s);
-  const list = (s.visitors || []).slice().reverse();
+  renderGuests(s);
+  const list = (s.visitors || []).filter((v) => !v.shelf).slice().reverse();
   fill($('visitlist'), list.length
     ? list.map((v) => { // one card for each message: who wrote it, what they said, and what Pip answered
       const li = el('li', null, 'talkcard');
       const who = v.stranger ? `${v.name || 'Someone'}, a traveller passing through` : v.npc ? `${String(v.name || '').replace(' (neighbour)', '')}, a neighbour who has moved away` : v.name || 'A visitor';
       const head = el('div', null, 'talkhead');
       head.append(el('b', who), el('time', when(v.at)));
+      if (v.question) li.append(head, el('p', `answers his question “${v.question}”`, 'talknote'), el('p', v.text)); else
       li.append(head, el('p', v.text));
       if (v.answer) { const a = el('div', null, 'pipsays'); a.append(el('b', '🐣 Pip'), el('p', v.answer)); li.append(a); }
       else li.append(el('p', 'Pip has not answered yet.', 'muted talkwait'));
@@ -3916,7 +4027,55 @@ function renderVisitors(s) {
     : empty('No messages yet. Be the first to say hello.'));
 }
 const pageOpenedAt = Date.now();
-$('visittext').addEventListener('input', () => { $('visitcount').textContent = `${$('visittext').value.length} / 300`; });
+// What a visitor sends: a plain message, an answer to the question Pip asked, or something for the shelf in the library.
+const SHELF_WORD = { poem: ['📜', 'a poem'], story: ['📖', 'a short story'], tip: ['🔖', 'a book tip'] };
+const VISIT_KINDS = {
+  message: { label: '💬 A message', max: 300, hint: 'Say hello, ask him something, tell him about something you love…', send: 'Send to Pip', sent: 'Sent! It gets checked first, then Pip reads it.' },
+  answer: { label: '❓ An answer to his question', max: 300, hint: 'Your answer…', send: 'Send my answer', sent: 'Sent! It gets checked first, then Pip reads your answer.' },
+  poem: { label: '📜 A poem', max: 700, title: 'Title of the poem (you can leave this empty)', hint: 'Your poem. It keeps its lines.', send: 'Put it on the shelf', sent: 'Sent! It gets checked first. Then it lies on the shelf until Pip comes to the library.', note: 'For the shelf in the library: your own poem, or one you love (say who wrote it).' },
+  story: { label: '📖 A short story', max: 700, title: 'Title of the story', hint: 'A very short story: up to 700 letters.', send: 'Put it on the shelf', sent: 'Sent! It gets checked first. Then it lies on the shelf until Pip comes to the library.', note: 'For the shelf in the library: a very short story for Pip to read.' },
+  tip: { label: '🔖 A book tip', max: 700, title: 'The book, and who wrote it', hint: 'What is it about, and why should Pip know it?', send: 'Put it on the shelf', sent: 'Sent! It gets checked first. Then it lies on the shelf until Pip comes to the library.', note: 'For the shelf in the library: a book you think Pip should know.' },
+};
+let visitKind = 'message';
+function setVisitKind(kind) {
+  const q = lastState?.openQuestion ?? null;
+  visitKind = VISIT_KINDS[kind] && (kind !== 'answer' || q) ? kind : 'message';
+  const k = VISIT_KINDS[visitKind];
+  fill($('visitkind'), Object.entries(VISIT_KINDS).filter(([key]) => key !== 'answer' || q).map(([key, v]) => { const b = el('button', v.label); b.type = 'button'; b.setAttribute('aria-pressed', String(key === visitKind)); b.onclick = () => setVisitKind(key); return b; }));
+  $('visittitle').hidden = !k.title; $('visittitle').placeholder = k.title ?? '';
+  $('visittext').maxLength = k.max; $('visittext').placeholder = k.hint; $('visittext').rows = k.max > 300 ? 6 : 3;
+  $('visitkindnote').hidden = !(k.note || visitKind === 'answer'); $('visitkindnote').textContent = visitKind === 'answer' ? `He asked: “${q.text}”` : k.note ?? '';
+  $('visitsend').textContent = k.send;
+  $('visitcount').textContent = `${$('visittext').value.length} / ${k.max}`;
+}
+// His question (with the answers people gave and what he said back), the shelf in the library, and his old questions.
+function renderGuests(s) {
+  const q = s.openQuestion ?? null;
+  const answersOf = (qq) => (qq.answers ?? []).map((a) => { const d = el('div', null, 'answer'); d.append(el('b', `${a.name || 'A visitor'}: `), document.createTextNode(a.text)); if (a.reply) { const r = el('div', null, 'pipsays'); r.append(el('b', '🐣 Pip'), el('p', a.reply)); d.append(r); } return d; });
+  $('askcard').hidden = !q;
+  if (q) {
+    const b = el('button', '✍️ Answer him', 'primary'); b.type = 'button';
+    b.onclick = () => { setVisitKind('answer'); $('visittext').focus(); $('visittext').scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+    const answers = el('div', null, 'answers'); answers.append(...answersOf(q));
+    fill($('askcard'), [el('div', `🐣 Pip asks everyone · ${when(q.at)}`, 'asklabel'), el('p', q.text, 'askq'), ...(q.why ? [el('p', `Why he wants to know: ${q.why}`, 'askwhy')] : []), b, ...(q.answers?.length ? [answers] : [el('p', 'Nobody has answered yet. Be the first.', 'muted')])]);
+  }
+  if (visitKind === 'answer' && !q) setVisitKind('message'); else if (!$('visitkind').children.length || Boolean(q) !== Boolean($('visitkind').querySelector('button:nth-child(5)'))) setVisitKind(visitKind);
+  const shelf = (s.shelf ?? []).slice().reverse();
+  $('shelfbox').hidden = !shelf.length;
+  fill($('shelflist'), shelf.map((p) => {
+    const li = el('li', null, 'talkcard');
+    const head = el('div', null, 'talkhead');
+    head.append(el('b', `${SHELF_WORD[p.kind]?.[0] ?? '📄'} ${p.title || SHELF_WORD[p.kind]?.[1] || 'a piece'}`), el('time', when(p.at)));
+    li.append(head, el('p', `${SHELF_WORD[p.kind]?.[1] ?? 'a piece'}${p.name ? ` from ${p.name}` : ''}`, 'piecekind'), el('p', p.text, 'piece'));
+    if (p.opinion) { const a = el('div', null, 'pipsays'); a.append(el('b', '🐣 Pip read it'), el('p', p.opinion)); li.append(a); }
+    else li.append(el('p', p.readAt ? 'Pip read it at the library. He has not said what he thinks yet.' : 'It lies on the shelf. Pip reads it when he goes to the library.', 'muted talkwait'));
+    return li;
+  }));
+  const old = (s.pastQuestions ?? []).slice().reverse();
+  $('oldasks').hidden = !old.length;
+  fill($('oldasklist'), old.map((qq) => { const li = el('li', null, 'talkcard'); const head = el('div', null, 'talkhead'); head.append(el('b', qq.text), el('time', when(qq.at))); li.append(head, ...(qq.answers?.length ? answersOf(qq) : [el('p', 'Nobody answered.', 'muted')])); return li; }));
+}
+$('visittext').addEventListener('input', () => { $('visitcount').textContent = `${$('visittext').value.length} / ${VISIT_KINDS[visitKind].max}`; });
 $('visit').addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = $('visittext').value.trim();
@@ -3924,19 +4083,19 @@ $('visit').addEventListener('submit', async (e) => {
   $('visitsend').disabled = true;
   $('visitsend').textContent = 'Sending…';
   try {
-    const res = await fetch('/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, name: $('visitname').value.trim(), website: $('visitweb').value, since: Date.now() - pageOpenedAt }) });
+    const res = await fetch('/api/visit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, name: $('visitname').value.trim(), website: $('visitweb').value, since: Date.now() - pageOpenedAt, ...(SHELF_WORD[visitKind] ? { shelf: visitKind, title: $('visittitle').value.trim() } : {}), ...(visitKind === 'answer' && lastState?.openQuestion ? { answerTo: lastState.openQuestion.id } : {}) }) });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.error || 'That did not work.');
-    myVisits.push({ id: data.id, text, at: new Date().toISOString() });
-    $('visittext').value = '';
-    $('visitcount').textContent = '0 / 300';
+    myVisits.push({ id: data.id, text, at: new Date().toISOString(), kind: visitKind });
+    $('visittext').value = ''; $('visittitle').value = '';
+    toast(VISIT_KINDS[visitKind].sent);
+    setVisitKind('message');
     renderMyVisits(lastState);
-    toast('Sent! It gets checked first, then Pip reads it.');
   } catch (err) {
     toast(err.message);
   } finally {
     $('visitsend').disabled = false;
-    $('visitsend').textContent = 'Send to Pip';
+    $('visitsend').textContent = VISIT_KINDS[visitKind].send;
   }
 });
 
@@ -3974,6 +4133,7 @@ function showTab(name) {
   document.querySelectorAll('.pane').forEach((p) => (p.hidden = p.dataset.pane !== name));
   if (name === 'life') openLife(null);
   if (name === 'day') loadOlder();
+  if (name === 'day') renderArc();
   if (name === 'made') renderMade();
   if (name === 'messages') refreshNtfy(); // look for things typed in the ntfy app as soon as the chat is opened
   if (name === 'messages' && latestMsg) store('pip-seen', latestMsg);
@@ -4700,6 +4860,110 @@ setInterval(() => {
   renderNow();
 }, 10_000);
 
+// ---- Live: the small moments between his steps (moments.js writes them with the time each one happens; no model).
+// A moment shows when its time has come, so his day moves on the page by the half minute.
+let liveOpen = false;
+let liveTop = null; // the newest moment that is shown (to see when a new one has come)
+function renderLive(force = false) {
+  const box = $('live');
+  const s = lastState;
+  const now = Date.now();
+  const due = (s?.moments ?? []).filter((m) => Date.parse(m.at) <= now && Date.parse(m.at) > now - 18 * 3_600_000).reverse();
+  box.hidden = !due.length;
+  if (!due.length) return;
+  const top = `${due[0].at}|${due[0].text}`;
+  if (!force && top === liveTop) return;
+  const isNew = liveTop !== null && top !== liveTop;
+  liveTop = top;
+  const awake = !s.last?.sleeping;
+  const quiet = now - Date.parse(due[0].at) > 25 * 60_000; // nothing for a while (the game is not running, or he is far)
+  const h = el('h2');
+  h.append(el('span', null, `livedot${quiet ? ' off' : ''}`), document.createTextNode(awake ? 'Live' : 'Live: he sleeps'), el('small', quiet ? `last seen ${when(due[0].at)}` : 'what he does, minute by minute'));
+  const rows = due.slice(0, liveOpen ? 30 : 5).map((m, i) => {
+    const row = el('div', null, `moment ${m.kind}${i === 0 ? ' first' : ''}${i === 0 && isNew ? ' fresh' : ''}`);
+    const t = el('time', hm(Date.parse(m.at)));
+    row.append(t, el('span', m.icon ?? '•'), el('span', m.text));
+    return row;
+  });
+  const out = [h, ...rows];
+  if (due.length > 5) { const b = el('button', liveOpen ? 'Show less' : `Show more (${Math.min(30, due.length)})`, 'more'); b.type = 'button'; b.onclick = () => { liveOpen = !liveOpen; renderLive(true); }; out.push(b); }
+  fill(box, out);
+}
+setInterval(renderLive, 4000);
+addEventListener('resize', () => renderArc());
+
+// ---- His mood over the day (arc.js writes a point at every wake-up): one line from 0 to 10, with his mood in a word
+// where it changes. Pointing at the line (or the arrow keys) shows the time and all his feelings at that moment.
+const SVGNS = 'http://www.w3.org/2000/svg';
+const svgEl = (tag, attrs = {}, text = null) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); if (text != null) n.textContent = text; return n; };
+let arcKey = '';
+function renderArc(force = false) {
+  const box = $('arc');
+  const pts = (lastState?.arc ?? []).filter((p) => dayLabel(p.at) === 'Today' && Number.isFinite(p.feel)).map((p) => ({ ...p, t: Date.parse(p.at) }));
+  const W = Math.round(box.parentElement?.clientWidth ? box.parentElement.clientWidth - 34 : 0);
+  if (pts.length < 2 || W < 120) { box.hidden = pts.length < 2; return; } // (a hidden tab has no width yet: it is drawn when it shows)
+  const key = `${pts.length}|${pts.at(-1).at}|${W}`;
+  if (!force && key === arcKey) return;
+  arcKey = key;
+  box.hidden = false;
+  const H = 150, L = 24, R = 14, T = 24, B = 22;
+  const t0 = pts[0].t, t1 = Math.max(pts.at(-1).t, t0 + 2 * 3_600_000);
+  const x = (t) => L + ((t - t0) / (t1 - t0)) * (W - L - R);
+  const y = (v) => T + (1 - Math.min(10, Math.max(0, v)) / 10) * (H - T - B);
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img', tabindex: 0, 'aria-label': `His mood today, from ${hm(t0)} to ${hm(pts.at(-1).t)}. Now ${pts.at(-1).feel} out of 10${pts.at(-1).mood ? `, ${pts.at(-1).mood}` : ''}. Arrow keys step through the day.` });
+  for (const v of [0, 5, 10]) { svg.append(svgEl('line', { class: 'grid', x1: L, x2: W - R, y1: y(v), y2: y(v) }), svgEl('text', { class: 'tick', x: L - 6, y: y(v) + 4, 'text-anchor': 'end' }, String(v))); }
+  // the hours along the bottom (at most six)
+  const hours = (t1 - t0) / 3_600_000, stepH = hours <= 5 ? 1 : hours <= 10 ? 2 : 3;
+  const first = new Date(t0); first.setMinutes(0, 0, 0);
+  for (let t = first.getTime(); t <= t1; t += 3_600_000) { if (t < t0 || new Date(t).getHours() % stepH) continue; svg.append(svgEl('text', { class: 'tick', x: x(t), y: H - 5, 'text-anchor': x(t) > W - R - 16 ? 'end' : 'middle' }, hm(t))); }
+  const line = pts.map((p) => `${x(p.t).toFixed(1)},${y(p.feel).toFixed(1)}`).join(' ');
+  svg.append(svgEl('polygon', { class: 'moodarea', points: `${x(t0).toFixed(1)},${y(0)} ${line} ${x(pts.at(-1).t).toFixed(1)},${y(0)}` }), svgEl('polyline', { class: 'moodline', points: line }));
+  // his mood in a word: now, at his best and at his lowest, and where the word changes (only where there is room)
+  const best = pts.reduce((a, p) => (p.feel > a.feel ? p : a)), low = pts.reduce((a, p) => (p.feel < a.feel ? p : a));
+  const wanted = [pts.at(-1), best, low, ...pts.filter((p, i) => i > 0 && p.mood && p.mood !== pts[i - 1].mood)].filter((p, i, all) => p.mood && all.indexOf(p) === i);
+  const placed = [];
+  for (const p of wanted) {
+    const w = p.mood.length * 7 + 8;
+    const cx = Math.min(W - R - w / 2 + 8, Math.max(L + w / 2, x(p.t)));
+    const up = y(p.feel) > T + 16; // above the line, or under it when it runs along the top
+    const cy = up ? y(p.feel) - 9 : y(p.feel) + 18;
+    if (placed.some((q) => Math.abs(q.cx - cx) < (q.w + w) / 2 + 6 && Math.abs(q.cy - cy) < 15)) continue;
+    placed.push({ cx, cy, w });
+    svg.append(svgEl('circle', { class: 'mooddot', cx: x(p.t), cy: y(p.feel), r: p === pts.at(-1) ? 4.5 : 4 }), svgEl('text', { class: 'word', x: cx, y: cy, 'text-anchor': 'middle' }, p.mood));
+    if (placed.length >= 5) break;
+  }
+  // pointing at it: a hairline at the nearest moment, and all his feelings then
+  const cross = svgEl('line', { class: 'cross', y1: T - 6, y2: y(0), visibility: 'hidden' });
+  const dot = svgEl('circle', { class: 'mooddot', r: 5, visibility: 'hidden' });
+  svg.append(cross, dot, svgEl('rect', { x: 0, y: 0, width: W, height: H, fill: 'transparent' }));
+  const tip = el('div'); tip.id = 'arctip'; tip.hidden = true;
+  let at = -1;
+  const show = (i) => {
+    at = Math.min(pts.length - 1, Math.max(0, i));
+    const p = pts[at], px = x(p.t);
+    cross.setAttribute('x1', px); cross.setAttribute('x2', px); cross.setAttribute('visibility', 'visible');
+    dot.setAttribute('cx', px); dot.setAttribute('cy', y(p.feel)); dot.setAttribute('visibility', 'visible');
+    const rows = [['Joy', p.joy], ['Calm', p.calm], ['Wonder', p.wonder], ['Energy', p.energy]].map(([name, v]) => { const r = el('div', null, 'row'); r.append(el('span', name), el('i', String(v))); return r; });
+    fill(tip, [el('span', `${hm(p.t)}${p.out ? ' · outside' : p.asleep ? ' · going to sleep' : ''}`), el('b', `${p.feel} of 10${p.mood ? ` · ${p.mood}` : ''}`), ...rows]);
+    tip.hidden = false;
+    const left = svg.getBoundingClientRect().left - box.getBoundingClientRect().left + px;
+    tip.style.left = `${Math.min(box.clientWidth - 150, Math.max(6, left + (px > W * 0.6 ? -150 : 12)))}px`;
+    tip.style.top = '48px';
+  };
+  const hide = () => { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); at = -1; };
+  svg.addEventListener('pointermove', (e) => { const r = svg.getBoundingClientRect(); const px = ((e.clientX - r.left) / r.width) * W; let near = 0; pts.forEach((p, i) => { if (Math.abs(x(p.t) - px) < Math.abs(x(pts[near].t) - px)) near = i; }); show(near); });
+  svg.addEventListener('pointerleave', hide);
+  svg.addEventListener('blur', hide);
+  svg.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); show((at < 0 ? pts.length - 1 : at) + (e.key === 'ArrowLeft' ? -1 : 1)); } else if (e.key === 'Escape') hide(); });
+  // the same as a list: every time his mood word changed
+  const changes = pts.filter((p, i) => i === 0 || i === pts.length - 1 || p.mood !== pts[i - 1].mood).slice(-12);
+  const table = document.createElement('table');
+  const head = document.createElement('tr'); head.append(el('th', 'Time'), el('th', 'Mood'), el('th', 'Of 10')); table.append(head);
+  for (const p of changes) { const tr = document.createElement('tr'); tr.append(el('td', hm(p.t)), el('td', p.mood || '…'), el('td', String(p.feel))); table.append(tr); }
+  const details = document.createElement('details'); details.append(el('summary', 'Show as a list'), table);
+  fill(box, [el('h2', 'His mood today'), el('p', 'Joy, calm and wonder together, from 0 (low) to 10 (high).', 'sub'), svg, tip, details]);
+}
+
 // ---- Mind: his reflections, wants and questions
 // His memory in three shelves (memory.js): how full each is, the strongest few, and the one that will go first.
 function renderMemory(s) {
@@ -4965,6 +5229,8 @@ function render(s) {
   renderDay(s);
   renderMade(s);
   renderNow();
+  renderLive();
+  renderArc();
   renderMind(s);
 
   const wishes = (s.requests || []).filter((r) => r.status === 'open');
@@ -5651,6 +5917,10 @@ function worldCard(kind, key) {
   if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
   else if (p && !['shop', 'workshop', 'walls', 'board', 'land'].includes(p.key)) so.push('He has not been here yet.');
   if (so.length) sections.push({ heading: 'So far', lines: so });
+  if (key === 'library') { // the visitors' shelf: what lies on it, and how to leave something
+    const shelf = (s.shelf ?? []).slice(-4).reverse();
+    sections.push({ heading: 'The visitors’ shelf', lines: shelf.length ? shelf.map((p) => `${SHELF_WORD[p.kind]?.[0] ?? '📄'} ${p.title || SHELF_WORD[p.kind]?.[1]}${p.name ? ` (from ${p.name})` : ''}: ${p.opinion ? `Pip: “${p.opinion}”` : p.readAt ? 'he read it' : 'he has not read it yet'}`) : ['Empty. Leave Pip a poem, a short story or a book tip: he reads it when he comes here, and says what he thinks.'], buttons: [{ label: '✍️ Leave something on the shelf', run: () => { hideInfo(); talkMode = 'public'; showTab('messages'); setVisitKind('poem'); $('visittext').focus(); } }] });
+  }
   if (key === 'cafe' && s.site?.file) sections.push({ heading: 'His website', buttons: [{ label: `🌐 Open “${s.site.title}”`, run: () => { hideInfo(); openSite(); } }] });
   const made = madeAt(kind === 'shelf' ? 'workshop' : key, s);
   if (made.length) sections.push({ heading: `Everything he made here (${made.length})`, grid: made });
@@ -5856,6 +6126,9 @@ $('wake').addEventListener('click', () => {
 // handy for testing in the browser console: window.pipDo({action:'play_piano', ...})
 window.pipGroup = (id) => decorGroups.get(id); // for testing
 window.pipView = view; // for testing: where the walking viewer stands
+window.pipSound = () => (snd.ready ? { wind: +snd.wind.gain.value.toFixed(3), rain: +snd.rain.gain.value.toFixed(3), pip: +snd.pip.gain.value.toFixed(2), radio: +snd.radio.gain.value.toFixed(2), playing: radio.name } : null); // for testing: how loud the world is where you stand
+window.pipRadio = () => showInfo(radioSet.userData.info());
+window.pipCard = (kind, key) => showInfo(worldCard(kind, key)); // for testing: the card of a place in his world
 window.pipEye = () => camera.position.toArray(); // for testing: where the eye is (the bobbing of the view)
 window.pipAt = () => ({ x: Math.round((pip.group.position.x - (inTown(pip.group.position.x) ? TOWN_X : 0)) * 10) / 10, z: Math.round(pip.group.position.z * 10) / 10, out: inTown(pip.group.position.x), shown: pip.group.visible }); // for testing: where Pip is
 window.pipCam = () => ({ fit: orbit.fit, goal: fitGoal, zoom: orbit.zoom, px: orbit.px, pz: orbit.pz, focusX, name: focusName(), aspect: camera.aspect, pos: camera.position.toArray().map((v) => Math.round(v)) }); // for testing: how the overview looks at things

@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     const visitors = (await readDir('visitors')).filter((f) => f.data?.status === 'pending').map((f) => {
       let v = {};
       try { v = JSON.parse(unseal(f.data.enc, key) ?? '{}'); } catch {}
-      return { id: f.data.id, at: f.data.at, name: v.name ?? '', text: v.text ?? '' };
+      return { id: f.data.id, at: f.data.at, name: v.name ?? '', text: v.text ?? '', shelf: v.shelf ?? null, title: v.title ?? '', answerTo: v.answerTo ?? null };
     });
     return res.status(200).json({ messages: [...messages, ...waiting], visitors });
   } catch (e) {
