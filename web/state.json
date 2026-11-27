@@ -1,8 +1,8 @@
 {
   "mood": "rested",
-  "energy": 8.33,
+  "energy": 8.65,
   "boredom": 0,
-  "loneliness": 9.27,
+  "loneliness": 9.3,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -13453,45 +13453,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T07:08:46.271Z",
-    "via": "autopilot",
-    "model": null,
-    "models": {},
-    "tokens": {
-      "calls": 0,
-      "input": 0,
-      "output": 0,
-      "models": {}
-    },
-    "intervalMin": 8,
-    "thought": "Go outside to the pond to check the plants.",
-    "inner": "",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "pond",
-          "what": "check the plants",
-          "name": "check the plants"
-        },
-        "detail": "the pond in the park",
-        "thought": "Go outside to the pond to check the plants.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-27T07:16:49.745Z",
+    "via": "outside",
+    "thought": "I am walking home from the pond in the park (I got very hungry).",
     "action": "go_out",
     "details": {
-      "place": "pond",
-      "what": "check the plants",
-      "name": "check the plants"
+      "place": "pond"
     },
-    "detail": "the pond in the park",
-    "enjoyment": 6,
+    "detail": "I am walking home from the pond in the park (I got very hungry).",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "pond",
+      "phase": "back",
+      "back": "2026-11-27T07:24:49.745Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -13902,21 +13879,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-27T07:08:46.276Z",
-  "fullness": 2,
+  "fullness": 1.84,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.6,
-  "joy": 4.470000000000001,
-  "calm": 6.56,
+  "wonder": 5.88,
+  "joy": 4.58,
+  "calm": 6.22,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.1800000000000002
+    "excited": 0.71
   },
-  "feelAt": "2026-11-27T07:08:46.201Z",
+  "feelAt": "2026-11-27T07:16:49.726Z",
   "lastAte": "2026-11-26T18:26:23.978Z",
   "studio": {
     "songs": [
@@ -14799,12 +14776,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 2.05,
-    "curiosity": 1.78,
+    "creativity": 2.13,
+    "curiosity": 1.85,
     "boredom": 0,
-    "loneliness": 9.27,
+    "loneliness": 9.3,
     "tidiness": 0.4,
-    "at": "2026-11-27T07:08:46.201Z",
+    "at": "2026-11-27T07:16:49.726Z",
     "coziness": 3.4
   },
   "recent": {
@@ -24351,8 +24328,10 @@
     "words": "slide on the ice",
     "leftAt": "2026-11-27T07:08:46.271Z",
     "arriveAt": "2026-11-27T07:16:46.271Z",
-    "leaveAt": "2026-11-27T07:54:46.271Z",
-    "homeAt": "2026-11-27T08:02:46.271Z"
+    "leaveAt": "2026-11-27T07:16:49.745Z",
+    "homeAt": "2026-11-27T07:24:49.745Z",
+    "cut": "I got very hungry",
+    "reached": true
   },
   "finds": [
     {
