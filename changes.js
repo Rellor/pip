@@ -491,6 +491,14 @@ export const CHANGES = [
     },
   },
   {
+    id: '2026-11-28 nobody orders anything',
+    run(s) { // the notice board no longer asks him to make things for coins: it shows what people in the village do (board.js)
+      for (const w of s.wishes ?? []) if (w.board && w.status === 'open') w.status = 'gone';
+      s.board = [];
+      return 'The orders are gone from the notice board. Nobody asks me to make things for coins any more. What hangs there now is what people in the village are up to: a kite day, somebody on a unicycle, a chess board left on a bench. I read it when I like. If something pulls at me I can build it, ask for it, or try it. If not, not.';
+    },
+  },
+  {
     id: '2026-11-28 what things do to me',
     run(s) { // "going outside wears me down" was a measuring mistake: only the cost of setting off was counted, never what the place gave him. Those wrong marks go, and his loneliness starts again from a fair place
       for (const d of s.days ?? []) d.lowered = (d.lowered ?? []).filter((a) => !['go_out', 'rest', 'browse'].includes(a));
@@ -505,12 +513,10 @@ export const CHANGES = [
     id: '2026-11-27 a museum',
     run(s, at) { // his room filled up with small things. Nothing is forbidden: he gets a museum for them (museum.js). What lay unseen in his chest is the first to go on the plinths
       for (const h of (s.curious?.interests ?? []).filter((i) => i.own)) h.moves = hobbyMoves(h.topic);
-      const bowl = (s.decor ?? []).findLast((d) => /fruit bowl/i.test(d.name ?? '') && d.kind !== 'outside');
-      if (bowl && (s.wishes ?? []).some((w) => w.board && w.status === 'kept' && /fruit bowl/i.test(w.topic ?? ''))) bowl.forBoard = 'a fruit bowl'; // made for a note on the board: it goes to the square (board.js)
       const first = [];
       for (const d of [...(s.stored ?? [])]) { const r = showInMuseum(s, d.name, '', Date.parse(at), { opening: true }); if (r.piece) first.push(r.piece.name); }
       const n = roomThings(s.decor).length;
-      return `I have a museum now: an open hall with forty plinths, south of the pond, with my name on the sign. ${first.length ? `The ${first.length} things that lay in my chest where nobody saw them stand there already. ` : ''}My room holds ${n} things, and it is full at ${ROOM_FULL}: what I make from now on goes to my museum by itself, and I can carry things there from my room too (show_in_museum), so my room keeps what I really use. I can walk through my museum whenever I like. And what I build for a note on the notice board I bring to the square: that is not mine to keep.`;
+      return `I have a museum now: an open hall with forty plinths, south of the pond, with my name on the sign. ${first.length ? `The ${first.length} things that lay in my chest where nobody saw them stand there already. ` : ''}My room holds ${n} things, and it is full at ${ROOM_FULL}: what I make from now on goes to my museum by itself, and I can carry things there from my room too (show_in_museum), so my room keeps what I really use. I can walk through my museum whenever I like.`;
     },
   },
   {

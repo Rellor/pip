@@ -221,7 +221,7 @@ export function finishOuting(s, now = Date.now()) {
   } else if (p.key === 'board') { // he reads what people pinned on the notice board
     o.did = readBoard(s, now);
     o.saw = 'the notice board on the square';
-    up(s, 'boredom', -0.5);
+    up(s, 'boredom', -0.8); up(s, 'wonder', 0.4); up(s, 'loneliness', -0.8); // (other people's doings: he is part of a village)
   } else if (p.key === 'workshop') { // his design is printed and stays on the shelf there
     const j = w.job ?? {};
     (s.prints ??= []).push({ id: `pr${w.id}`, name: String(j.name ?? 'a small thing').slice(0, 60), why: String(j.why ?? '').slice(0, 200), parts: Array.isArray(j.parts) ? j.parts : [], at: w.arriveAt });

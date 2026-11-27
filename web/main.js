@@ -4740,7 +4740,6 @@ function madeItems(s) {
     info: () => ({ title: d.name, icon: '🛠️', subtitle: `Made ${when(d.createdAt ?? d.at)} · ${where}`, image: decorThumb(d, 320), sections: [...why(d.why), ...(d.uses?.length ? [{ heading: 'What it is for', chips: d.uses.map((u) => u.label) }] : [])] }) });
   for (const d of s.decor ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, d.kind === 'outside' ? (d.readyAt && now < Date.parse(d.readyAt) ? 'being built outside' : 'stands outside') : 'in his room');
   for (const d of s.stored ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, 'in his chest');
-  for (const d of s.given ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'made for the notice board'); // (it left his room: he brought it to the square)
   for (const d of s.museum ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'in his museum');
   for (const d of s.depot ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'in the depot of his museum');
   for (const a of s.gallery ?? s.art ?? []) if (a.file) add({ type: 'drawing', icon: '🎨', img: a.file, label: a.name, sub: a.wall ? 'painted on a wall' : 'a drawing', at: a.at ?? a.createdAt,
@@ -5913,7 +5912,7 @@ const WORLD_CARDS = {
   workshop: { title: 'The print workshop', icon: '🖨️', place: 'workshop', can: ['design a small 3D model and have it printed'] },
   shelf: { title: 'His shelf of prints', icon: '🖨️', what: 'Everything he printed stands here.', place: 'workshop', can: ['design a small 3D model and have it printed'] },
   studio: { title: 'The art workshop', icon: '🎨', what: 'Every drawing he ever made hangs on its outside walls, so nothing is lost when a wall is painted over.', can: [], none: 'It keeps his art. He does not have to do anything for that.' },
-  board: { title: 'The notice board', icon: '📌', place: 'board', can: ['read what people ask for', 'make one of those things and earn the coins'] },
+  board: { title: 'The notice board', icon: '📌', what: 'People pin up what goes on in the village: a kite day, somebody on a unicycle, a chess board left on a bench. Nobody asks Pip for anything here. He reads it, and sometimes it gives him an idea.', place: 'board', can: ['read what people in the village are up to', 'get an idea from it, or not'] },
   pond: { title: 'The pond', icon: '🦆', place: 'pond' },
   square: { title: 'The square', icon: '⛲', what: 'The middle of the village. The notice board stands here, and everyone crosses it.', can: ['walk across it to everything', 'read the notice board'] },
   plot: { title: 'Pip’s land', icon: '🌱', what: 'A big free field of his own, beside the square. It is his to fill.', can: ['build things here, also big ones', 'make hills and holes', 'ask for a new building'] },
@@ -5943,7 +5942,7 @@ function madeAt(key, s) {
   if (key === 'cafe') return newest((s.log ?? []).filter((e) => ['search_web', 'browse'].includes(e.action) && !e.failed && (e.query || e.opened?.title)), (e) => e.at).map((e) => ({ icon: e.opinion ? OPINION_FACES[e.opinion.how] ?? '🔎' : '🔎', label: e.query || e.opened.title, sub: e.opinion?.says ?? day(e.at) }));
   if (key === 'library') return newest([...(s.log ?? []).filter((e) => e.action === 'read_book' && !e.failed && (e.opened?.title || e.topic)).map((e) => ({ at: e.at, label: e.opened?.title || e.topic, sub: e.opinion?.says })), ...(s.outings ?? []).filter((o) => o.place === 'library' && o.read).map((o) => ({ at: o.homeAt, label: o.read }))], (x) => x.at).map((x) => ({ icon: '📖', label: x.label, sub: x.sub ?? day(x.at) }));
   if (key === 'shop') return newest(s.bought ?? [], (b) => b.at).map((b) => ({ icon: '🛒', label: b.item, sub: day(b.at) }));
-  if (key === 'board') return newest((s.wishes ?? []).filter((w) => w.board && w.status === 'kept'), (w) => w.keptAt ?? w.at).map((w) => ({ icon: '📌', label: w.topic, sub: `${w.reward} coins` }));
+  if (key === 'board') return [];
   return [];
 }
 function worldCard(kind, key) {
@@ -5964,7 +5963,7 @@ function worldCard(kind, key) {
   if (key === 'studio') { const n = (s.gallery ?? s.art ?? []).length; so.push(`${n} drawing${n === 1 ? '' : 's'} so far.`); }
   if (wall) { const on = (s.gallery ?? []).filter((a) => a.wall === wall.key); so.push(on.length ? `On it: ${on.slice(-4).map((a) => `“${a.name}”`).join(', ')}.` : 'Nothing is painted on it yet.'); }
   if (key === 'back' || BUILDINGS.some((b) => b.key === key)) { const on = (s.gallery ?? []).filter((a) => a.wall === `back_${key}`); if (on.length) so.push(`Painted on its back wall: ${on.slice(-3).map((a) => `“${a.name}”`).join(', ')}.`); }
-  if (key === 'board') { const notes = (s.wishes ?? []).filter((w) => w.board && w.status === 'open' && Date.now() - Date.parse(w.at) < 3 * 86_400_000); so.push(notes.length ? `On it now: ${notes.map((w) => `${w.topic} (${w.reward} coins)`).join(', ')}.` : 'Nothing is pinned on it right now.'); const kept = (s.wishes ?? []).filter((w) => w.board && w.status === 'kept').length; if (kept) so.push(`He made ${kept} of the things people asked for.`); so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); }
+  if (key === 'board') { const notes = (s.board ?? []).filter((n) => Date.now() - Date.parse(n.at) < 3 * 86_400_000).slice(-3).reverse(); if (notes.length) sections.push({ heading: 'Pinned on it now', lines: notes.map((n) => `📌 ${n.text}${n.seen ? '' : ' (Pip has not read this one yet)'}`) }); else so.push('Nothing is pinned on it right now.'); }
   if (key === 'cafe') so.push(s.site ? `🌐 His own website, “${s.site.title}”, is at version ${s.site.v}. Last worked on ${ago(s.site.updatedAt)}.` : 'He has no website of his own yet. He can make one here.');
   if (key === 'cafe') { const face = { love: '😍', like: '🙂', meh: '😐', dislike: '😒', doubt: '🤨' }; const reads = [...(s.log ?? [])].reverse().filter((e) => ['search_web', 'read_book', 'browse'].includes(e.action) && !e.failed && (e.query || e.opened?.title || e.topic)).slice(0, 4); if (reads.length) so.push(...reads.map((e) => `${e.action === 'search_web' ? '🔎' : '📖'} ${e.query || e.opened?.title || e.topic}${e.opinion ? ` ${face[e.opinion.how] ?? ''} “${e.opinion.says}”` : ''}`)); else so.push('He has not looked anything up yet.'); }
   if (key === 'land') { const l = s.land ?? []; so.push(l.length ? `He made ${l.filter((x) => x.kind !== 'hole').length} hill${l.filter((x) => x.kind !== 'hole').length === 1 ? '' : 's'} and ${l.filter((x) => x.kind === 'hole').length} hole${l.filter((x) => x.kind === 'hole').length === 1 ? '' : 's'}: ${l.slice(-4).map((x) => x.name).join(', ')}.` : 'He has not shaped the land yet. It is all flat.'); }

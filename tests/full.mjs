@@ -1,13 +1,10 @@
 // No room full of small things, and nothing forbidden: he has a museum. A full room sends what he makes to a plinth
-// there, he can carry things over himself, a project and a making hobby like to grow one piece, and what he builds for
-// the notice board leaves his room.
+// there, he can carry things over himself, and a project and a making hobby like to grow one piece.
 import assert from 'node:assert/strict';
 delete process.env.PIP_ROOM_ENOUGH; delete process.env.PIP_MAKES_PER_DAY; delete process.env.PIP_NO_OUT;
 const { MAX_PER_DAY, ROOM_PLENTY, ROOM_FULL, roomIsFull, roomHasPlenty, roomThings } = await import('../decor.js');
 const { byName, availableMoves } = await import('../moves.js');
 const { dayLimits } = await import('../limits.js');
-const { ORDERS, boardThing, forBoard, handOver, boardLines } = await import('../board.js');
-const { keepWishes } = await import('../neighbours.js');
 const { hobbyMoves, hobbyLines } = await import('../curiosity.js');
 const { workStep, projectThing } = await import('../projects.js');
 const { CHANGES } = await import('../changes.js');
@@ -91,30 +88,6 @@ ok('a full room refuses nothing: what he makes there goes to a plinth in his mus
 }
 ok('he carries things to his museum himself (three a day), a full museum moves the oldest to the depot, and he can walk through it');
 
-// ---- the notice board: few things to build, and what he builds for a note leaves his room
-{
-  const builds = ORDERS.filter(([what, how]) => how.includes('decorate') && !/3D printer/.test(what)).length;
-  assert.ok(builds <= ORDERS.length / 4, `${builds} of ${ORDERS.length} notes ask for a thing to build`);
-  assert.ok(ORDERS.some(([, how]) => how.includes('record_song')));
-  const s = fresh(ROOM_FULL + 2, { wishes: [note('a fruit bowl')], coins: 0 });
-  assert.equal(boardThing(s, now), 'a fruit bowl');
-  assert.match(byName('decorate').line(s, now), /or I make a fruit bowl for the note on the notice board/);
-  assert.ok(forBoard(s, 'a wooden fruit bowl', now) && !forBoard(s, 'a small stool', now) && !forBoard(s, 'a bowl', now));
-  assert.match(boardLines(s, now)[0], /decorate: I bring it to the square/);
-  s.decor.push(thing(99, { name: 'fruit bowl', createdAt: iso(now) }));
-  const lines = keepWishes(s, [{ at: iso(now), action: 'decorate', name: 'fruit bowl' }], now);
-  assert.match(lines[0], /got 3 coins.*I bring it to the square/);
-  assert.equal(s.decor.at(-1).forBoard, 'a fruit bowl');
-  assert.deepEqual(handOver(s, now + MIN), [], 'it stands in his room for a moment first');
-  assert.deepEqual(handOver(s, now + 9 * MIN), ['fruit bowl']);
-  assert.ok(!s.decor.some((d) => d.name === 'fruit bowl') && s.given.length === 1 && s.given[0].for === 'a fruit bowl' && s.given[0].parts.length);
-  // a drawing or a print for a note is not carried anywhere
-  const t = fresh(3, { wishes: [note('a drawing of an owl', { medium: ['draw'] })], decor: [thing(1, { name: 'owl' })] });
-  keepWishes(t, [{ at: iso(now), action: 'draw', name: 'an owl' }], now);
-  assert.ok(!t.decor.some((d) => d.forBoard));
-}
-ok('what he builds for a note on the board is brought to the square: it does not stay in his room');
-
 // ---- a making hobby and a project grow one piece
 {
   const ways = hobbyMoves('building clocks');
@@ -134,16 +107,13 @@ ok('what he builds for a note on the board is brought to the square: it does not
 }
 ok('a making hobby and a project grow one piece, instead of a new thing every time');
 
-// ---- the one-time change: the museum opens with what lay in his chest, and the fruit bowl goes to the square
+// ---- the one-time change: the museum opens with what lay in his chest
 {
-  const s = fresh(20, { wishes: [note('a fruit bowl', { status: 'kept' })], stored: [thing(80, { name: 'clay bird' }), thing(81, { name: 'tiny lamp' }), { id: 'x', name: 'an old photo', image: 'photos/x.jpg' }], curious: { sparks: [], interests: [{ topic: 'building clocks', own: true, moves: ['decorate', 'build_outside', 'change_thing', 'extend_thing', 'print_thing'] }, { topic: 'Night sky' }] } });
-  s.decor.push(thing(99, { name: 'fruit bowl' }));
+  const s = fresh(20, { stored: [thing(80, { name: 'clay bird' }), thing(81, { name: 'tiny lamp' }), { id: 'x', name: 'an old photo', image: 'photos/x.jpg' }], curious: { sparks: [], interests: [{ topic: 'building clocks', own: true, moves: ['decorate', 'build_outside', 'change_thing', 'extend_thing', 'print_thing'] }, { topic: 'Night sky' }] } });
   const said = CHANGES.find((c) => c.id === '2026-11-27 a museum').run(s, iso(now));
   assert.equal(s.curious.interests[0].moves[0], 'extend_thing');
-  assert.equal(s.decor.at(-1).forBoard, 'a fruit bowl');
   assert.deepEqual([s.museum.map((p) => p.name), s.stored.map((d) => d.name)], [['clay bird', 'tiny lamp'], ['an old photo']]);
-  assert.match(said, /I have a museum now.*The 2 things that lay in my chest.*My room holds 21 things, and it is full at 18.*show_in_museum/);
+  assert.match(said, /I have a museum now.*The 2 things that lay in my chest.*My room holds 20 things, and it is full at 18.*show_in_museum/);
   assert.equal(Boolean(byName('show_in_museum').when(s, now)), true, 'the opening does not count as his three walks of today');
-  assert.deepEqual(handOver(s, now), ['fruit bowl']);
 }
-ok('the museum opens with what lay unseen in his chest; the fruit bowl made for the board goes to the square');
+ok('the museum opens with what lay unseen in his chest');

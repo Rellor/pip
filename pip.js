@@ -32,7 +32,7 @@ import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInt
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
 import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo, outLines } from './world.js';
-import { postOrders, boardLines, handOver, forBoard } from './board.js';
+import { postNote, boardLines } from './board.js';
 import { paintTarget, setLand } from './web/town.js';
 import { planLand, landLine } from './land.js';
 import { sketchPrompt, sketchSchema, fakeSketch, dryRun, budgetNote, keepWithin } from './sketch.js';
@@ -1391,7 +1391,6 @@ async function wakeUp() {
   const wokeNow = Boolean(state.last?.sleeping);
   if (wokeNow) wakeMoments(state);
   for (const name of carryToMuseum(state)) { const said = `I carried ${name} to my museum and put it on a plinth. Everyone can see it there.`; console.log(`🏛️  ${said}`); happened(state, said); }
-  for (const name of handOver(state)) { const said = `I brought ${name} to the square for whoever asked for it on the notice board. It is out of my room.`; console.log(`📦 ${said}`); happened(state, said); }
   { const q = closeQuestion(state); if (q) { const said = q.answers.length ? `My question "${q.text}" is closed now. ${q.answers.length} ${q.answers.length === 1 ? 'person' : 'people'} answered.` : `Nobody answered my question "${q.text}". I let it go.`; addMemory(state, said, 5, 'memory', new Date().toISOString()); console.log(`❓ ${said}`); } }
   tickBody(state); // needs and feelings, no model call (it also passes time for the bars)
   // No free food any more: what he eats he grows, cooks, or asks for (the pantry he has is what is left).
@@ -1470,7 +1469,7 @@ async function wakeUp() {
   { const drop = postDrop(state); if (drop) console.log(`💌 ${drop.from} (${drop.who}) left a note ${drop.where}: ${drop.text.slice(0, 70)}`); } // travellers leave notes in his world (strangers.js)
   for (const line of sweepDrops(state)) { console.log(`💌 ${line.slice(0, 90)}`); addMemory(state, line, 5, 'memory', new Date().toISOString()); }
   { const found = state.last?.sleeping ? null : findDeed(state); if (found) { console.log(`🌼 ${found}`); addMemory(state, found, 6, 'memory', new Date().toISOString()); happened(state, found); } } // a small thing a visitor did in his world
-  { const note = postOrders(state); if (note) console.log(`📌 a new note on the notice board: ${note.topic} (${note.reward} coins)`); } // people pin what they would like made (board.js)
+  { const note = postNote(state); if (note) console.log(`📌 a new note on the notice board: ${note.text}`); } // people pin what they would like made (board.js)
   // The storyteller (story.js): now and then something happens on his square or in his sky. He hears it once, and it is in his day.
   if (!process.env.PIP_NO_STORY) for (const ev of storyTick(state)) {
     console.log(`${ev.emoji} ${ev.big ? 'something happened' : 'he notices'}: ${ev.text}`);

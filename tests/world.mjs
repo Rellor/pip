@@ -51,7 +51,7 @@ ok('nobody is angry: a wish he does not take just fades');
 
 // ---- the shop
 assert.ok(shopOpen(noon) && shopOpen(noon + 9 * 3_600_000), 'the grocery store is always open');
-assert.match(buy(s, 'toolbox', noon).failed, /costs 8 coins and I have 3\. I earn coins when I make what a note on the notice board asks for \(check_board\), and on market day/);
+assert.match(buy(s, 'toolbox', noon).failed, /costs 8 coins and I have 3\. I earn coins on market day/);
 const b = buy(s, 'clay', noon);
 assert.deepEqual([b.bought, b.price, b.left], ['clay', 3, 0]);
 assert.ok(s.tools.some((t) => /clay/.test(t.name)));
