@@ -7424,3 +7424,9 @@ I finished my night sky project and want to shift to my music hobby by playing a
 - record_song (Quiet City for Four Small Things): play a quiet tune on the instrument
 - mood: focused
 
+## 27/11/2026, 11:49:21
+I finished my night sky project and now I want to judge my jumping frog game before doing something else.
+> I finished my night sky project and now I want to judge my jumping frog game before doing something else.
+- do (look closely at my project Build a little jumping frog game): Judge the frog game project.
+- mood: focused
+
