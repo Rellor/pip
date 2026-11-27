@@ -31,6 +31,8 @@ import { storyTick } from './story.js';
 import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines, startHobby, practiseHobby, dropUntriedHobbies, hobbyLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
+import { goOn } from './world.js';
+import { nextOutside, TRIP_MAX } from './autopilot.js';
 import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo, outLines } from './world.js';
 import { postNote, boardLines } from './board.js';
 import { paintTarget, setLand } from './web/town.js';
@@ -716,11 +718,11 @@ async function cameHome(s, o) {
     const piece = readShelf(s, Date.parse(o.homeAt));
     if (piece) { o.did += ` On the shelf by the door lay a ${pieceWords(piece)}, left there for me. I read it twice.`; o.piece = { id: piece.id, kind: piece.kind, title: piece.title, name: piece.name }; console.log(`📚 read from the shelf: ${pieceWords(piece)}`); }
   }
-  const line = homeLine(o);
-  s.log.push({ at: o.homeAt, action: 'came_home', place: o.place, placeName: p?.name ?? o.place, thought: '', did: o.did, found: o.found.map((f) => ({ name: f.name, emoji: f.emoji })), met: o.met, gift: o.gift, book: o.book ?? null, piece: o.piece ?? null, errand: o.errand ?? null, cut: o.cut, card: o.errand ? null : { place: o.place, at: o.homeAt, weather: o.weather, found: o.found.map((f) => ({ emoji: f.emoji })) } });
+  const line = o.wentOn ? `${o.did.trim()} From ${p?.name ?? 'there'} I went straight on, without going home first.` : homeLine(o);
+  s.log.push({ at: o.homeAt, action: 'came_home', place: o.place, placeName: p?.name ?? o.place, thought: '', did: o.did, found: o.found.map((f) => ({ name: f.name, emoji: f.emoji })), met: o.met, gift: o.gift, book: o.book ?? null, piece: o.piece ?? null, ...(o.wentOn ? { on: true } : {}), ...(o.played ? { played: o.played } : {}), errand: o.errand ?? null, cut: o.cut, card: o.errand ? null : { place: o.place, at: o.homeAt, weather: o.weather, found: o.found.map((f) => ({ emoji: f.emoji })) } });
   if (!o.errand) { addMemory(s, line, o.found.length || o.met ? 7 : 6, 'memory', o.homeAt); happened(s, line); }
   for (const said of checkUnlocks(s)) { happened(s, said); addMemory(s, said, 8, 'memory', o.homeAt); s.log.push({ at: new Date(Date.parse(o.homeAt) + 1000).toISOString(), action: 'happened', what: said, emoji: '🗺️' }); }
-  console.log(`🏠 home from ${p?.name ?? o.place}: ${o.did}${o.found.length ? ` (found: ${o.found.map((f) => f.name).join(', ')})` : ''}`);
+  console.log(`${o.wentOn ? '➡️  on from' : '🏠 home from'} ${p?.name ?? o.place}: ${o.did}${o.found.length ? ` (found: ${o.found.map((f) => f.name).join(', ')})` : ''}`);
 }
 // Something that happened in his world (a wish come true, a parcel, the full moon): he hears it once, at his next thought.
 function happened(s, line) { s.street ??= {}; s.street.happened = [...(s.street.happened ?? []), String(line)].slice(-4); }
@@ -1405,6 +1407,12 @@ async function wakeUp() {
   // His world outside (world.js). While he is out nothing else happens: no model is asked, and the game brings him home.
   for (const said of checkUnlocks(state)) { happened(state, said); addMemory(state, said, 8, 'memory', new Date().toISOString()); state.log.push({ at: new Date().toISOString(), action: 'happened', what: said, emoji: '🗺️' }); }
   const feltBeforeHome = { sum: feelSum(state), parts: feelParts(state) };
+  // A trip: his time at this place is over, and the next step of his plan is outside too. He goes straight on (autopilot.js).
+  let wentOn = null;
+  if (state.where && !state.last?.sleeping && nextOutside(state) && (state.where.trip ?? 1) < TRIP_MAX && (state.energy ?? 5) > 3 && (state.fullness ?? 5) > 3) {
+    wentOn = goOn(state);
+    if (wentOn) { await cameHome(state, wentOn); noteLift(state, ['go_out'], feltBeforeHome.sum, feelSum(state), feelDiff(feltBeforeHome.parts, feelParts(state))); console.log(`➡️  he goes straight on (place ${state.tripN} of his trip)`); }
+  }
   const outing = outingTick(state);
   if (outing?.home) await cameHome(state, outing.outing);
   if (outing?.home && !outing.outing.errand) noteLift(state, ['go_out'], feltBeforeHome.sum, feelSum(state), feelDiff(feltBeforeHome.parts, feelParts(state))); // what the place did to him counts for "going outside" (it used to count for nothing: only the cost of setting off was seen)
@@ -1489,7 +1497,7 @@ async function wakeUp() {
   let answer = null;
   let choice = null;
   let via = 'autopilot';
-  const queued = reasons.length ? null : nextQueued(state);
+  const queued = reasons.length && !(wentOn && !unread.length) ? null : nextQueued(state); // (in the middle of a trip he carries on with his plan)
   if (queued) answer = { thought: queued.find((x) => x.thought)?.thought ?? '', inner: '', steps: queued, mood_after: state.mood, new_idea: null };
   else {
     try {

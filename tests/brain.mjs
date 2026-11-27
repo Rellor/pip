@@ -60,7 +60,8 @@ ok('the brain wakes only for a reason; otherwise autopilot takes the next queued
   assert.deepEqual(first.map((x) => x.action), ['walk_to', 'play_piano']);
   assert.deepEqual(wakeReasons(s, { now: now + 8 * 60_000 }), []);
   assert.deepEqual(nextQueued(s).map((x) => x.action), ['search_web']);
-  assert.ok(wakeReasons(s, { now: now + 31 * 60_000 }).some((r) => /30 minutes/.test(r)));
+  assert.deepEqual(wakeReasons(s, { now: now + 31 * 60_000 }), [], 'one step still waits: he carries on with his plan');
+  assert.ok(wakeReasons(s, { now: now + 151 * 60_000 }).some((r) => /150 minutes/.test(r)));
   assert.ok(wakeReasons(s, { unread: 1, now: now + 9 * 60_000 }).includes('Bas wrote to me'));
   s.tools.push({ name: 'saw', kind: 'saw' });
   assert.ok(wakeReasons(s, { now: now + 9 * 60_000 }).includes('I got a new tool'));
@@ -70,7 +71,7 @@ ok('the brain wakes only for a reason; otherwise autopilot takes the next queued
 
 ok('the reply becomes steps; moves that were not offered are dropped', () => {
   const a = toAnswer({ moves: [{ move: 'search_web', details: { query: 'how do bees fly' } }, { move: 'fly_to_moon', details: {} }, { move: 'tell', details: { text: 'Hello!' } }, { move: 'decorate', details: { what: 'a bee', why: 'bees' } }], reason: 'I want to know.', mood: 'curious' }, ['search_web', 'tell', 'decorate']);
-  assert.deepEqual(a.steps.map((x) => x.action), ['search_web', 'walk_to']);
+  assert.deepEqual(a.steps.map((x) => x.action), ['search_web', 'walk_to', 'decorate']);
   assert.equal(a.tell, 'Hello!');
   const b = toAnswer({ moves: [{ move: 'decorate', details: { what: 'a bee' } }, { move: 'remove_decoration', details: { what: 'old lamp' } }] }, ['decorate', 'remove_decoration']);
   assert.equal(b.steps[0].make, true);

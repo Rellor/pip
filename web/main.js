@@ -4316,7 +4316,7 @@ function headlineBase(st) {
     case 'browse': return ['🧭', 'Browsing the web, to see what he comes across'];
     case 'buy': return ['🛍️', `At the grocery store for ${d.item || st.item || 'something'}`];
     case 'go_out': return [worldPlace(d.place ?? st.place)?.emoji ?? '🚶', st.away || awayNow() ? `Out: ${((w) => `${w[0].toLowerCase()}${w.slice(1)}`)(awayWords()?.[1] ?? `at ${worldPlace(d.place ?? st.place)?.name ?? 'somewhere'}`)}` : `Going out, to ${(st.placeName || worldPlace(d.place ?? st.place)?.name || 'somewhere').replace(/^my /, 'his ')}`];
-    case 'came_home': return ['🏠', `Home again from ${(st.placeName || 'outside').replace(/^my /, 'his ')}`];
+    case 'came_home': return st.on ? ['➡️', `On from ${(st.placeName || 'there').replace(/^my /, 'his ')}`] : ['🏠', `Home again from ${(st.placeName || 'outside').replace(/^my /, 'his ')}`];
     case 'happened': return [st.emoji || '🌤️', 'Something happened'];
     case 'read_book': return ['📖', `Reading about “${d.topic || st.topic || '…'}”`];
     case 'record_song': return ['🎛️', `Recording “${d.name || st.name || 'a song'}”`];
@@ -4683,7 +4683,7 @@ function lineOf(e) {
     case 'write_diary': return ['Wrote in his diary', ''];
     case 'rest': return ['Rested', ''];
     case 'go_out': return ['Went out', `to ${place}`];
-    case 'came_home': return ['Came home', `from ${place}`];
+    case 'came_home': return e.played ? [`${e.played.verb.replace(/^./, (c) => c.toUpperCase())} his ${e.played.name}`, `at ${place}${e.on ? ', then went on' : ''}`] : e.on ? ['Went on', `from ${place}`] : ['Came home', `from ${place}`];
     case 'buy': return ['Went to buy', e.item || ''];
     case 'walk_to': return ['Walked', `to the ${e.object || 'room'}`];
     case 'take_photo': return ['Took a photo', e.target ? `of ${e.target}` : ''];

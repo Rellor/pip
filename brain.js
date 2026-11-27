@@ -3,7 +3,7 @@
 // Output: small JSON (BRAIN_SCHEMA). toAnswer() turns it into the plan the body carries out.
 import { MOVE_NAMES, MAKER_MOVES } from './moves.js';
 
-export const MAX_PICK = 3;
+export const MAX_PICK = 5; // he may plan a whole trip: what does not fit now waits in his queue and happens at the next wake-ups, with no model asked
 // Is he proud? "yes", or a reason that says it is good enough ("that is enough for a first try") counts as yes,
 // unless it also says it is not ready. Before, a clear "it is enough" with proud left empty kept the project open forever.
 export function proudOf(proud, why) {
@@ -69,7 +69,7 @@ export function brainPrompt(ctx) {
   if (ctx.goals?.length) parts.push(`MY GOALS FOR TODAY (my own; I can change my mind)\n${list(ctx.goals)}`);
   if (ctx.skills) parts.push(`MY SKILLS (they grow when I practise)\n${ctx.skills}`);
   parts.push(`MOVES I CAN MAKE NOW\n${ctx.moves.map((m) => `- ${m.name}: ${m.line}`).join('\n')}`);
-  parts.push(`I choose 1 to ${MAX_PICK} moves to do next, in order, from this list only. For moves where I make something, I only say what and why; I design it when I get to it.
+  parts.push(`I choose 1 to ${MAX_PICK} moves to do next, in order, from this list only. I do the first one now; the others wait in my queue and happen one after the other, so I can plan a whole trip: several things outside in a row (from one place I go straight on to the next, I do not have to come home in between). For moves where I make something, I only say what and why; I design it when I get to it.
 If I finished a step of a project, I say which in step_done (project title and step number).
 I write plain and short, in my own words.
 

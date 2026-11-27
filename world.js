@@ -81,7 +81,7 @@ export function wantsOut(s, now = Date.now()) {
   if (!goOptions(s, now).length) return 0;
   const inside = hoursInside(s, now);
   const nice = !isWet(s.weather) && (s.weather?.temp ?? 10) > 3 && (s.weather?.cloud ?? 0) < 0.7;
-  return 0.5 + (s.body?.boredom ?? 0) / 5 + Math.min(2.4, inside / 3) + (nice ? 0.5 : 0) + (lastReal(s) ? 0 : 0.8);
+  return 0.5 + (s.body?.boredom ?? 0) / 5 + Math.min(2.4, inside / 2.2) + (nice ? 0.5 : 0) + (lastReal(s) ? 0 : 0.8); // (it grows a little faster than it did: after three hours inside it is hard to say no)
 }
 // For his prompt: after a few hours inside (by day) his legs want out, and he hears what there is to do out there.
 export const INSIDE_LONG_H = 3;
@@ -118,9 +118,13 @@ export function startOuting(s, details = {}, now = Date.now()) {
   const latest = Math.max(CURFEW, hourNL(now) + (2 * p.walk + 6) / 60); // home by bedtime (and when it is late already, a short stay)
   const room = (latest - hourNL(now)) * 60 - 2 * p.walk;
   stay = Math.max(4, Math.min(stay, Math.floor(room), MAX_AWAY_MIN - 2 * p.walk));
+  // On a trip he comes from the place he was at, not from home: the walk is as long as the two places lie apart.
+  const from = s.onTheWay && now - Date.parse(s.onTheWay.at) < 12 * MIN && placeOf(s.onTheWay.from) ? placeOf(s.onTheWay.from) : null;
+  const walkThere = from ? Math.max(2, Math.round(Math.abs((from.walk ?? 4) - p.walk) + 2)) : p.walk;
+  s.onTheWay = null;
   const id = `o${Math.floor(now / 1000).toString(36)}`;
-  s.where = { id, place: p.key, thing: thing?.key ?? null, words: job?.words ?? play?.words ?? thing?.words ?? (d.errand ? `buy ${d.errand}` : 'look around'), leftAt: new Date(now).toISOString(), arriveAt: new Date(now + p.walk * MIN).toISOString(), leaveAt: new Date(now + (p.walk + stay) * MIN).toISOString(), homeAt: new Date(now + (2 * p.walk + stay) * MIN).toISOString(), ...(d.errand ? { errand: String(d.errand).slice(0, 40) } : {}), ...(job ? { job, ...(job.spot ? { spot: job.spot } : {}) } : {}), ...(play ? { play } : {}) };
-  return { ok: true, place: p.key, name: p.name, words: s.where.words, back: s.where.homeAt, backWords: `around ${hm(now + (2 * p.walk + stay) * MIN)}` };
+  s.where = { id, place: p.key, thing: thing?.key ?? null, words: job?.words ?? play?.words ?? thing?.words ?? (d.errand ? `buy ${d.errand}` : 'look around'), leftAt: new Date(now).toISOString(), arriveAt: new Date(now + walkThere * MIN).toISOString(), leaveAt: new Date(now + (walkThere + stay) * MIN).toISOString(), homeAt: new Date(now + (walkThere + p.walk + stay) * MIN).toISOString(), ...(from ? { from: from.key, trip: (s.tripN ?? 1) } : {}), ...(d.errand ? { errand: String(d.errand).slice(0, 40) } : {}), ...(job ? { job, ...(job.spot ? { spot: job.spot } : {}) } : {}), ...(play ? { play } : {}) };
+  return { ok: true, place: p.key, name: p.name, words: s.where.words, back: s.where.homeAt, backWords: `around ${hm(now + (walkThere + p.walk + stay) * MIN)}` };
 }
 
 // ---- While he is out, and coming home. Called at every wake-up. Returns null (he is home), { away, phase, line, back }
@@ -271,3 +275,15 @@ export function finishOuting(s, now = Date.now()) {
 }
 // The outing in one breath, in his words (for his memory and for the brain's next thought).
 export const homeLine = (o) => [`I am home again from ${placeOf(o.place)?.name ?? 'outside'}.`, o.did.trim(), o.found.length && !/found /.test(o.did) ? `I brought home ${o.found.map((f) => f.name).join(' and ')}.` : ''].filter(Boolean).join(' ');
+
+// His time at a place is over, and he goes straight on to the next place of his plan instead of home. Returns what
+// he did there (like finishOuting), or null when he is not at that point (still there, on his way, or home already).
+export function goOn(s, now = Date.now()) {
+  const w = s.where;
+  if (!w || w.cut || w.errand || now < Date.parse(w.leaveAt) || now >= Date.parse(w.homeAt)) return null;
+  const from = w.place;
+  const o = finishOuting(s, now);
+  s.onTheWay = { from, at: new Date(now).toISOString() };
+  s.tripN = (w.trip ?? 1) + 1;
+  return { ...o, wentOn: true };
+}

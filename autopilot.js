@@ -2,6 +2,7 @@
 // The brain is woken only when: his queued plan is done, Bas wrote, something new happened
 // (a gift, a finished project, a new task, a failed move), he just woke up, or 30 minutes passed without a decision.
 export const DECIDE_EVERY_MIN = 30;
+export const PLAN_LASTS_MIN = 150; // a plan with steps left is kept this long
 import { goOptions, hoursInside, CURFEW } from './world.js';
 import { lying } from './strangers.js';
 import { hourNL } from './web/street.js';
@@ -41,7 +42,8 @@ export function wakeReasons(s, { unread = 0, woke = false, now = Date.now() } = 
   const is = snapshot(s);
   if (was) for (const k of Object.keys(GOT)) if ((is[k] ?? 0) > (was[k] ?? 0)) why.push(GOT[k]);
   if (s.plan.lastFail && Date.parse(s.plan.lastFail.at) >= Date.parse(s.plan.decidedAt ?? 0)) why.push(`something did not work: ${s.plan.lastFail.why}`);
-  if (!s.plan.decidedAt || now - Date.parse(s.plan.decidedAt) >= DECIDE_EVERY_MIN * 60_000) why.push(`${DECIDE_EVERY_MIN} minutes passed`);
+  const limit = s.plan.queue.length ? PLAN_LASTS_MIN : DECIDE_EVERY_MIN; // while steps of his plan still wait, he carries it out (a trip outside takes a while)
+  if (!s.plan.decidedAt || now - Date.parse(s.plan.decidedAt) >= limit * 60_000) why.push(`${limit} minutes passed`);
   return [...new Set(why)];
 }
 
@@ -99,3 +101,10 @@ export function fallbackSteps(s, moves, now = Date.now()) {
   const can = quiet.filter((q) => (q.action !== 'play_piano' || has('play_piano')) && q.details.what !== last);
   return [{ ...can[Math.floor(Math.random() * can.length)], enjoyment: 5 }];
 }
+
+// ---- A trip: from one place straight on to the next. When his time at a place is over and the next step of his plan
+// is outside too, he does not walk home first. At most this many places in a row; then he goes home.
+export const TRIP_MAX = 3;
+const OUTSIDE_STEP = (st) => st && (st.action === 'go_out' || ['paint_wall', 'print_thing', 'shape_land'].includes(st.as));
+// The next step of his plan when it is one he does outside (a walk before it does not count), or null.
+export const nextOutside = (s) => { ensurePlan(s); const st = s.plan.queue.find((x) => x.action !== 'walk_to'); return OUTSIDE_STEP(st) ? st : null; };

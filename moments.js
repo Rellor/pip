@@ -108,7 +108,7 @@ export function momentsFor(s, entries = [], startMs = Date.now(), intervalMs = 8
   const taken = new Set((s.moments ?? []).filter((m) => m.kind === 'notice').slice(-8).map((m) => m.text)); // not what he noticed a little while ago
   const put = (at, kind, icon, text) => { if (text) out.push({ at: new Date(Math.round(at)).toISOString(), kind, icon, text: clip(text, 160) }); };
   const real = entries.filter((e) => e?.at && e.action !== 'came_home' && !(e.action === 'happened')).sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
-  for (const e of entries.filter((x) => x?.action === 'came_home')) put(Date.parse(e.at), 'beat', '🏠', `Comes home from ${his(e.placeName ?? 'outside')}`);
+  for (const e of entries.filter((x) => x?.action === 'came_home')) put(Date.parse(e.at), 'beat', '🏠', e.on ? `Goes straight on from ${his(e.placeName ?? 'there')}` : `Comes home from ${his(e.placeName ?? 'outside')}`);
   for (const e of entries.filter((x) => x?.action === 'happened')) put(Date.parse(e.at) + 20_000, 'notice', e.emoji ?? '🌤️', e.what);
   real.forEach((e, i) => {
     const t0 = Math.max(startMs, Date.parse(e.at));
