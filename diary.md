@@ -7672,3 +7672,9 @@ My room feels too full and my desk is crowded, so I need to change one of my ext
 - change_thing (tiny wooden shelf for my bird): Change an extra shelf since I have too many.
 - mood: focused
 
+## 27/11/2026, 20:53:18
+My desk is full and I want to browse the web for a while.
+> My desk is full and I want to browse the web for a while.
+- browse: Let's see what is online.
+- mood: focused
+
