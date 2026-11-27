@@ -7571,3 +7571,9 @@ Idris asked me what I want drawings to be called instead of nice. I should answe
 - walk_to (computer): Answer Idris about the word nice
 - mood: dry
 
+## 27/11/2026, 17:08:18
+I finished my night sky project step and I want to push it further to add the second reacting element.
+> I finished my night sky project step and I want to push it further to add the second reacting element.
+- extend_thing (tiny wooden shelf for my bird): Let's work on the night sky simulation next.
+- mood: dry
+

@@ -1,8 +1,8 @@
 {
   "mood": "dry",
-  "energy": 10,
+  "energy": 9.5,
   "boredom": 0,
-  "loneliness": 9.2,
+  "loneliness": 10,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-27T07:50:57.117Z",
-      "action": "move_thing",
-      "detail": "workshop bench",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-27T07:59:23.678Z",
       "action": "remove_decoration",
@@ -304,6 +298,12 @@
       "action": "walk_to",
       "detail": "computer",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-27T17:08:18.973Z",
+      "action": "extend_thing",
+      "detail": "tiny wooden shelf for my bird",
+      "enjoyment": 7
     }
   ],
   "notes": [
@@ -701,7 +701,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.524,
+      "weight": 7.522,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -711,7 +711,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.669,
+      "weight": 9.667,
       "lastUsed": "2026-11-26T15:42:24.006Z",
       "tier": "long",
       "uses": 8
@@ -722,7 +722,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.227,
+      "weight": 7.225,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -732,7 +732,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.536,
+      "weight": 9.534,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -743,7 +743,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.443,
+      "weight": 8.441,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -754,7 +754,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.185,
+      "weight": 8.183,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -764,7 +764,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.087,
+      "weight": 7.085,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -774,7 +774,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.646,
+      "weight": 9.644,
       "lastUsed": "2026-11-26T14:01:13.589Z",
       "tier": "long",
       "uses": 4
@@ -785,7 +785,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.529,
+      "weight": 8.527,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -795,7 +795,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.897,
+      "weight": 7.895,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -806,7 +806,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.652,
+      "weight": 9.65,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 6
@@ -817,7 +817,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.568,
+      "weight": 9.566,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -828,7 +828,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.369,
+      "weight": 7.367,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -838,7 +838,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.68,
+      "weight": 8.678,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -848,7 +848,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.508,
+      "weight": 7.506,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -858,7 +858,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.735,
+      "weight": 8.733,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -868,7 +868,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.579,
+      "weight": 7.577,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -878,7 +878,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.314,
+      "weight": 7.312,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -888,7 +888,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.319,
+      "weight": 7.317,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -898,7 +898,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.942,
+      "weight": 9.94,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 9
@@ -909,7 +909,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.229,
+      "weight": 8.227,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -920,7 +920,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.573,
+      "weight": 9.571,
       "lastUsed": "2026-11-26T14:09:33.063Z",
       "tier": "long",
       "uses": 5
@@ -931,7 +931,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.847,
+      "weight": 7.845,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -942,7 +942,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.656,
+      "weight": 9.654,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 8
@@ -953,7 +953,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.246,
+      "weight": 8.244,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -964,7 +964,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.942,
+      "weight": 9.94,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 12
@@ -975,7 +975,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.076,
+      "weight": 7.074,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -985,7 +985,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.076,
+      "weight": 7.074,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -995,7 +995,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.089,
+      "weight": 7.087,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1005,7 +1005,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.089,
+      "weight": 7.087,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1015,7 +1015,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.654,
+      "weight": 9.652,
       "lastUsed": "2026-11-26T14:34:59.729Z",
       "tier": "long",
       "uses": 8
@@ -1026,7 +1026,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.36,
+      "weight": 8.358,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1037,7 +1037,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.942,
+      "weight": 9.94,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 10
@@ -1048,7 +1048,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.528,
+      "weight": 7.526,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1059,7 +1059,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.505,
+      "weight": 6.495,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "short",
       "uses": 4
@@ -1070,7 +1070,7 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.665,
+      "weight": 8.663,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 3
@@ -1081,7 +1081,7 @@
       "text": "Bas gave me the flute I asked for: a thin silver flute to blow across. It is in my inventory, so I can play it right away (play_piano with instrument \"flute\").",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.464,
+      "weight": 7.462,
       "lastUsed": "2026-11-26T16:32:29.465Z",
       "tier": "long"
     },
@@ -1091,7 +1091,7 @@
       "text": "I made a drawing of a cat, as the note on the notice board asked. I took the note down and got 2 coins. I have 4 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.799,
+      "weight": 5.79,
       "lastUsed": "2026-11-26T18:18:16.497Z",
       "tier": "short"
     },
@@ -1101,7 +1101,7 @@
       "text": "Three new things. There is a small red radio on a crate beside my front door: it plays the songs I recorded, for anyone who walks by. In the library there is a shelf where people who visit my page can leave me a poem, a ",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.443,
+      "weight": 7.431,
       "lastUsed": "2026-11-27T08:32:20.593Z",
       "tier": "short"
     },
@@ -1111,18 +1111,8 @@
       "text": "I want to try building clocks as a hobby. My own idea. Why: i want to see if tiny gears can drive me crazy",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.707,
+      "weight": 6.697,
       "lastUsed": "2026-11-27T11:57:29.689Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwyy4oko60",
-      "at": "2026-11-27T12:17:00.263Z",
-      "text": "I started exploring clock building as a new hobby.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.76,
-      "lastUsed": "2026-11-27T12:17:00.263Z",
       "tier": "short"
     },
     {
@@ -1131,7 +1121,7 @@
       "text": "I made tiny brass clock gears on a tiny wooden frame (to see if tiny gears can drive me crazy)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.76,
+      "weight": 5.751,
       "lastUsed": "2026-11-27T12:17:01.255Z",
       "tier": "short"
     },
@@ -1141,7 +1131,7 @@
       "text": "I started building clocks as a hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.769,
+      "weight": 5.76,
       "lastUsed": "2026-11-27T12:26:10.987Z",
       "tier": "short"
     },
@@ -1151,7 +1141,7 @@
       "text": "I am home again from the print workshop. At the print workshop I watched the printer build my tiny clock mechanism, one thin layer on top of the other. It is small and still warm. I put it on the shelf by the door, with ",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.777,
+      "weight": 5.768,
       "lastUsed": "2026-11-27T13:14:12.437Z",
       "tier": "short"
     },
@@ -1161,7 +1151,7 @@
       "text": "I am home again from the notice board. I read the notice board. New: someone wants a cookie cutter from the 3D printer. On it now: a fruit bowl (3 coins), a cookie cutter from the 3D printer (3 coins). If I make one of t",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.816,
+      "weight": 5.807,
       "lastUsed": "2026-11-27T13:22:44.233Z",
       "tier": "short"
     },
@@ -1171,7 +1161,7 @@
       "text": "Someone left a note for me on the square.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.823,
+      "weight": 5.814,
       "lastUsed": "2026-11-27T13:32:52.618Z",
       "tier": "short"
     },
@@ -1181,7 +1171,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Wren, a girl on a bicycle, who was passing through: \"The fastest steam locomotive ever was Mallard, in England in 1938: 203 km an hour.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.83,
+      "weight": 5.821,
       "lastUsed": "2026-11-27T13:49:01.785Z",
       "tier": "short"
     },
@@ -1191,7 +1181,7 @@
       "text": "Basil is harvested and Wren likes fast trains.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.83,
+      "weight": 5.821,
       "lastUsed": "2026-11-27T13:49:07.040Z",
       "tier": "short"
     },
@@ -1201,7 +1191,7 @@
       "text": "Putting away old things clears the room and the mind.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.85,
+      "weight": 5.841,
       "lastUsed": "2026-11-27T14:05:17.837Z",
       "tier": "short"
     },
@@ -1211,7 +1201,7 @@
       "text": "Moving my tiny ceramic saucer to the desk keeps it out of the way.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.857,
+      "weight": 5.848,
       "lastUsed": "2026-11-27T14:13:23.703Z",
       "tier": "short"
     },
@@ -1221,7 +1211,7 @@
       "text": "I started a new clock project because I like the challenge.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.892,
+      "weight": 5.883,
       "lastUsed": "2026-11-27T14:54:01.209Z",
       "tier": "short"
     },
@@ -1231,7 +1221,7 @@
       "text": "I love building clocks.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.914,
+      "weight": 5.905,
       "lastUsed": "2026-11-27T15:21:30.356Z",
       "tier": "short"
     },
@@ -1241,7 +1231,7 @@
       "text": "I made pendulum clock (to build a clock as is my hobby)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.914,
+      "weight": 5.905,
       "lastUsed": "2026-11-27T15:21:31.349Z",
       "tier": "short"
     },
@@ -1251,7 +1241,7 @@
       "text": "My sculpture got better: I am level 6 now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.922,
+      "weight": 5.913,
       "lastUsed": "2026-11-27T15:21:30.363Z",
       "tier": "short"
     },
@@ -1261,7 +1251,7 @@
       "text": "I finished the first version of my pendulum clock.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.922,
+      "weight": 5.913,
       "lastUsed": "2026-11-27T15:32:41.930Z",
       "tier": "short"
     },
@@ -1271,7 +1261,7 @@
       "text": "The printed clock gear is warm and fits right on the shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.931,
+      "weight": 5.922,
       "lastUsed": "2026-11-27T16:21:33.887Z",
       "tier": "short"
     },
@@ -1281,7 +1271,7 @@
       "text": "I like tinkering with mechanical things like clocks.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.971,
+      "weight": 5.962,
       "lastUsed": "2026-11-27T16:32:24.091Z",
       "tier": "short"
     },
@@ -1291,7 +1281,7 @@
       "text": "I am home again from my world. I picked up the note by the wall next to the art workshop. It is from Idris, a clockmaker, who was passing through: \"Somebody called your drawings \"nice\". I think nice is the worst word the",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.978,
       "lastUsed": "2026-11-27T16:57:01.349Z",
       "tier": "short"
     },
@@ -1301,7 +1291,7 @@
       "text": "Idris told me: Somebody called your drawings \"nice\". I think nice is the worst word there is. What would you want them to be called?",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.978,
       "lastUsed": "2026-11-27T16:57:03.635Z",
       "tier": "short"
     },
@@ -1311,8 +1301,18 @@
       "text": "Idris hates the word nice just like I do.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.987,
+      "weight": 5.978,
       "lastUsed": "2026-11-27T16:57:03.640Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwz8jb8h60",
+      "at": "2026-11-27T17:08:18.976Z",
+      "text": "I am working on the night sky simulation step by step.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.991,
+      "lastUsed": "2026-11-27T17:08:18.976Z",
       "tier": "short"
     }
   ],
@@ -1320,14 +1320,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-26T22:05:32.957Z",
   "thoughts": [
-    {
-      "at": "2026-11-27T10:58:13.679Z",
-      "text": "I finished my night sky simulation project and I need a change of pace, so I will start a new project to keep busy.",
-      "short": "I finished my night sky simulation project and I need a change of pace, so I will start a new project to keep busy.",
-      "mood": "grumpy",
-      "action": "do",
-      "detail": "plan my new project: Build a little jumping frog game"
-    },
     {
       "at": "2026-11-27T11:06:39.207Z",
       "text": "I finished my night sky project and want to look into something else now, maybe start the frog game from the notice board.",
@@ -1556,6 +1548,14 @@
       "mood": "dry",
       "action": "walk_to",
       "detail": "computer"
+    },
+    {
+      "at": "2026-11-27T17:08:18.976Z",
+      "text": "I finished my night sky project step and I want to push it further to add the second reacting element.",
+      "short": "I finished my night sky project step and I want to push it further to add the second reacting element.",
+      "mood": "dry",
+      "action": "extend_thing",
+      "detail": "tiny wooden shelf for my bird"
     }
   ],
   "outbox": [
@@ -1849,16 +1849,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-27T11:57:30.685Z",
-      "action": "do",
-      "thought": "Let's try building clocks.",
-      "as": "start_hobby",
-      "move": null,
-      "emoji": "",
-      "what": "decide to try building clocks as a hobby",
-      "feeling": null
-    },
     {
       "at": "2026-11-27T12:05:54.621Z",
       "action": "eat",
@@ -2239,6 +2229,18 @@
       "action": "walk_to",
       "thought": "Answer Idris about the word nice",
       "object": "computer"
+    },
+    {
+      "at": "2026-11-27T17:08:19.972Z",
+      "action": "extend_thing",
+      "thought": "Let's work on the night sky simulation next.",
+      "name": "tiny wooden shelf for my bird",
+      "added": 22,
+      "total": 34,
+      "side": null,
+      "joined": null,
+      "place": "on the left wall (z -2.15, height 2.05) (It is 0.69 x 0.4 m: about 2 small things fit on top.)",
+      "failed": null
     }
   ],
   "decor": [
@@ -2339,7 +2341,7 @@
         -2.15
       ],
       "rotY": 1.5707963267948966,
-      "scale": 0.987,
+      "scale": 0.952,
       "parts": [
         {
           "shape": "roundbox",
@@ -2350,7 +2352,7 @@
           ],
           "pos": [
             0,
-            -0.023,
+            -0.024,
             0.2
           ],
           "rot": [
@@ -2370,7 +2372,7 @@
           ],
           "pos": [
             -0.29,
-            -0.183,
+            -0.184,
             0.05
           ],
           "rot": [
@@ -2390,7 +2392,7 @@
           ],
           "pos": [
             0.29,
-            -0.183,
+            -0.184,
             0.05
           ],
           "rot": [
@@ -2410,7 +2412,7 @@
           ],
           "pos": [
             0,
-            0.027,
+            0.026,
             0.02
           ],
           "rot": [
@@ -2430,7 +2432,7 @@
           ],
           "pos": [
             0,
-            0.027,
+            0.026,
             0.37
           ],
           "rot": [
@@ -2450,7 +2452,7 @@
           ],
           "pos": [
             -0.28,
-            -0.003,
+            -0.004,
             0.3
           ],
           "rot": [
@@ -2470,7 +2472,7 @@
           ],
           "pos": [
             0.28,
-            -0.003,
+            -0.004,
             0.3
           ],
           "rot": [
@@ -2488,7 +2490,7 @@
           ],
           "pos": [
             -0.32,
-            0.027,
+            0.026,
             0.37
           ],
           "rot": [
@@ -2506,7 +2508,7 @@
           ],
           "pos": [
             0.32,
-            0.027,
+            0.026,
             0.37
           ],
           "rot": [
@@ -2526,7 +2528,7 @@
           ],
           "pos": [
             0,
-            0.017,
+            0.016,
             0.2
           ],
           "rot": [
@@ -2546,7 +2548,7 @@
           ],
           "pos": [
             -0.18,
-            -0.202,
+            -0.203,
             0.18
           ],
           "rot": [
@@ -2566,7 +2568,7 @@
           ],
           "pos": [
             0.18,
-            -0.202,
+            -0.203,
             0.18
           ],
           "rot": [
@@ -2576,6 +2578,436 @@
           ],
           "color": "#d4af37",
           "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.72,
+            0.06,
+            0.38
+          ],
+          "pos": [
+            0,
+            -0.021,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#654321",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.06,
+            0.35,
+            0.06
+          ],
+          "pos": [
+            -0.29,
+            -0.181,
+            0.05
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.06,
+            0.35,
+            0.06
+          ],
+          "pos": [
+            0.29,
+            -0.181,
+            0.05
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.68,
+            0.06,
+            0.04
+          ],
+          "pos": [
+            0,
+            0.029,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.66
+          ],
+          "pos": [
+            0,
+            0.029,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.06,
+            0.12
+          ],
+          "pos": [
+            -0.28,
+            -0.001,
+            0.3
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.06,
+            0.12
+          ],
+          "pos": [
+            0.28,
+            -0.001,
+            0.3
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.04
+          ],
+          "pos": [
+            -0.32,
+            0.029,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a07855",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.04
+          ],
+          "pos": [
+            0.32,
+            0.029,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a07855",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.07,
+            0.08,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.019,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.07
+          ],
+          "pos": [
+            -0.18,
+            -0.201,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.07
+          ],
+          "pos": [
+            0.18,
+            -0.201,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "torus",
+          "size": [
+            0.03,
+            0.02
+          ],
+          "pos": [
+            0,
+            -0.021,
+            0.37
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.1
+          ],
+          "pos": [
+            0,
+            -0.081,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#b89726",
+          "glow": false
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.045,
+            0.05
+          ],
+          "pos": [
+            0,
+            -0.151,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffd700",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0,
+            -0.181,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.02,
+            0.04
+          ],
+          "pos": [
+            -0.2,
+            0.019,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.04,
+            0.03,
+            0.04
+          ],
+          "pos": [
+            -0.2,
+            0.049,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6e1d5",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.028
+          ],
+          "pos": [
+            -0.2,
+            0.059,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#c2a649",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.02,
+            0.04
+          ],
+          "pos": [
+            0.2,
+            0.019,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.04,
+            0.03,
+            0.04
+          ],
+          "pos": [
+            0.2,
+            0.049,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6e1d5",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.035,
+            0.035,
+            0.02
+          ],
+          "pos": [
+            0.2,
+            0.064,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#58a6d8",
+          "glow": true
         }
       ],
       "stand": [
@@ -2585,8 +3017,8 @@
       "at": "2026-11-20T15:20:10.049Z",
       "createdAt": "2026-11-20T15:20:04.058Z",
       "roomScaled": true,
-      "updatedAt": "2026-11-27T09:01:24.823Z",
-      "changedAt": "2026-11-27T09:01:24.823Z"
+      "updatedAt": "2026-11-27T17:08:24.972Z",
+      "changedAt": "2026-11-27T17:08:24.972Z"
     },
     {
       "id": "dmwq30xpo20j7",
@@ -9031,7 +9463,7 @@
         },
         {
           "text": "add a second kind of thing that reacts to the first",
-          "done": false
+          "done": true
         },
         {
           "text": "make it pretty: colours, a title, a short line about what it shows",
@@ -9046,12 +9478,20 @@
           "name": "tiny wooden shelf for my bird",
           "ref": "dmwp4l52219vx",
           "at": "2026-11-27T09:01:18.842Z"
+        },
+        {
+          "v": 2,
+          "kind": "extend_thing",
+          "name": "tiny wooden shelf for my bird",
+          "ref": "dmwp4l52219vx",
+          "at": "2026-11-27T17:08:18.984Z"
         }
       ],
       "notes": [],
       "status": "working",
       "since": "2026-11-26T18:01:57.501Z",
-      "updatedAt": "2026-11-27T09:01:18.842Z"
+      "updatedAt": "2026-11-27T17:08:18.984Z",
+      "stuck": null
     },
     {
       "id": "mwz3qltn",
@@ -15009,43 +15449,928 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T16:57:03.637Z",
+    "at": "2026-11-27T17:08:18.972Z",
     "via": "brain",
-    "model": "gemini-3.5-flash-lite",
+    "model": "gemini-3.5-flash",
     "models": {
-      "gemini-3.5-flash-lite": 1
+      "gemini-3.5-flash-lite": 1,
+      "gemini-3.5-flash": 1
     },
+    "modelNotes": [
+      "gemini-3.5-flash answered (gemini-3.8-flash was busy or capped)"
+    ],
+    "fallback": true,
     "tokens": {
-      "calls": 1,
-      "input": 2664,
-      "output": 302,
+      "calls": 2,
+      "input": 7516,
+      "output": 6521,
       "models": {
-        "gemini-3.5-flash-lite": 1
+        "gemini-3.5-flash-lite": 1,
+        "gemini-3.5-flash": 1
       }
     },
     "intervalMin": 8,
-    "thought": "Idris asked me what I want drawings to be called instead of nice. I should answer him with my honest opinion.",
-    "inner": "Idris asked me what I want drawings to be called instead of nice. I should answer him with my honest opinion.",
+    "thought": "I finished my night sky project step and I want to push it further to add the second reacting element.",
+    "inner": "I finished my night sky project step and I want to push it further to add the second reacting element.",
     "sent": false,
     "steps": [
       {
-        "action": "walk_to",
+        "action": "extend_thing",
         "details": {
-          "object": "computer"
+          "name": "tiny wooden shelf for my bird",
+          "add": "add a second kind of thing that reacts to the first",
+          "project": "Build a little simulation of night sky: something that moves by itself",
+          "parts": [
+            {
+              "shape": "roundbox",
+              "size": [
+                0.72,
+                0.06,
+                0.38
+              ],
+              "pos": [
+                0,
+                -0.02,
+                0.2
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#654321",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.06,
+                0.35,
+                0.06
+              ],
+              "pos": [
+                -0.29,
+                -0.18,
+                0.05
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#4a2e18",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.06,
+                0.35,
+                0.06
+              ],
+              "pos": [
+                0.29,
+                -0.18,
+                0.05
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#4a2e18",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.68,
+                0.06,
+                0.04
+              ],
+              "pos": [
+                0,
+                0.03,
+                0.02
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#4a2e18",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.03,
+                0.03,
+                0.66
+              ],
+              "pos": [
+                0,
+                0.03,
+                0.37
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#8b5a2b",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.06,
+                0.12
+              ],
+              "pos": [
+                -0.28,
+                0,
+                0.3
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.04,
+                0.06,
+                0.12
+              ],
+              "pos": [
+                0.28,
+                0,
+                0.3
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.04
+              ],
+              "pos": [
+                -0.32,
+                0.03,
+                0.37
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#a07855",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.04
+              ],
+              "pos": [
+                0.32,
+                0.03,
+                0.37
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#a07855",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.07,
+                0.08,
+                0.03
+              ],
+              "pos": [
+                0,
+                0.02,
+                0.2
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#8b5a2b",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.02,
+                0.02,
+                0.07
+              ],
+              "pos": [
+                -0.18,
+                -0.2,
+                0.18
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#d4af37",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.02,
+                0.02,
+                0.07
+              ],
+              "pos": [
+                0.18,
+                -0.2,
+                0.18
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#d4af37",
+              "glow": false
+            },
+            {
+              "shape": "torus",
+              "size": [
+                0.03,
+                0.005
+              ],
+              "pos": [
+                0,
+                -0.02,
+                0.37
+              ],
+              "rot": [
+                90,
+                0,
+                0
+              ],
+              "color": "#d4af37",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.004,
+                0.004,
+                0.1
+              ],
+              "pos": [
+                0,
+                -0.08,
+                0.37
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#b89726",
+              "glow": false
+            },
+            {
+              "shape": "cone",
+              "size": [
+                0.045,
+                0.05
+              ],
+              "pos": [
+                0,
+                -0.15,
+                0.37
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#ffd700",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.015
+              ],
+              "pos": [
+                0,
+                -0.18,
+                0.37
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#d4af37",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.03,
+                0.02,
+                0.04
+              ],
+              "pos": [
+                -0.2,
+                0.02,
+                0.18
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.04,
+                0.03,
+                0.04
+              ],
+              "pos": [
+                -0.2,
+                0.05,
+                0.18
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#e6e1d5",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.028
+              ],
+              "pos": [
+                -0.2,
+                0.06,
+                0.18
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#c2a649",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.03,
+                0.02,
+                0.04
+              ],
+              "pos": [
+                0.2,
+                0.02,
+                0.18
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#5c3a21",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.04,
+                0.03,
+                0.04
+              ],
+              "pos": [
+                0.2,
+                0.05,
+                0.18
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#e6e1d5",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.035,
+                0.035,
+                0.01
+              ],
+              "pos": [
+                0.2,
+                0.065,
+                0.18
+              ],
+              "rot": [
+                0,
+                0,
+                0
+              ],
+              "color": "#58a6d8",
+              "glow": true
+            }
+          ]
         },
-        "detail": "computer",
-        "thought": "Answer Idris about the word nice",
-        "enjoyment": 6,
+        "detail": "tiny wooden shelf for my bird",
+        "thought": "Let's work on the night sky simulation next.",
+        "enjoyment": 7,
         "found": null,
-        "made": null
+        "made": {
+          "id": "dmwp4l52219vx",
+          "stand": [
+            -3.7,
+            -2.15
+          ],
+          "pos": [
+            -4.97,
+            2.05,
+            -2.15
+          ]
+        }
       }
     ],
-    "action": "walk_to",
+    "action": "extend_thing",
     "details": {
-      "object": "computer"
+      "name": "tiny wooden shelf for my bird",
+      "add": "add a second kind of thing that reacts to the first",
+      "project": "Build a little simulation of night sky: something that moves by itself",
+      "parts": [
+        {
+          "shape": "roundbox",
+          "size": [
+            0.72,
+            0.06,
+            0.38
+          ],
+          "pos": [
+            0,
+            -0.02,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#654321",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.06,
+            0.35,
+            0.06
+          ],
+          "pos": [
+            -0.29,
+            -0.18,
+            0.05
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.06,
+            0.35,
+            0.06
+          ],
+          "pos": [
+            0.29,
+            -0.18,
+            0.05
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.68,
+            0.06,
+            0.04
+          ],
+          "pos": [
+            0,
+            0.03,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.66
+          ],
+          "pos": [
+            0,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.06,
+            0.12
+          ],
+          "pos": [
+            -0.28,
+            0,
+            0.3
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.06,
+            0.12
+          ],
+          "pos": [
+            0.28,
+            0,
+            0.3
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.04
+          ],
+          "pos": [
+            -0.32,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a07855",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.04
+          ],
+          "pos": [
+            0.32,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a07855",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.07,
+            0.08,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.02,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.07
+          ],
+          "pos": [
+            -0.18,
+            -0.2,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.07
+          ],
+          "pos": [
+            0.18,
+            -0.2,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "torus",
+          "size": [
+            0.03,
+            0.005
+          ],
+          "pos": [
+            0,
+            -0.02,
+            0.37
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.004,
+            0.004,
+            0.1
+          ],
+          "pos": [
+            0,
+            -0.08,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#b89726",
+          "glow": false
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.045,
+            0.05
+          ],
+          "pos": [
+            0,
+            -0.15,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffd700",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.015
+          ],
+          "pos": [
+            0,
+            -0.18,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.02,
+            0.04
+          ],
+          "pos": [
+            -0.2,
+            0.02,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.04,
+            0.03,
+            0.04
+          ],
+          "pos": [
+            -0.2,
+            0.05,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6e1d5",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.028
+          ],
+          "pos": [
+            -0.2,
+            0.06,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#c2a649",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.02,
+            0.04
+          ],
+          "pos": [
+            0.2,
+            0.02,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.04,
+            0.03,
+            0.04
+          ],
+          "pos": [
+            0.2,
+            0.05,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6e1d5",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.035,
+            0.035,
+            0.01
+          ],
+          "pos": [
+            0.2,
+            0.065,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#58a6d8",
+          "glow": true
+        }
+      ]
     },
-    "detail": "computer",
-    "enjoyment": 6,
+    "detail": "tiny wooden shelf for my bird",
+    "enjoyment": 7,
     "new_idea": null,
     "found": null
   },
@@ -15145,9 +16470,9 @@
   "quota": {
     "day": "2026-11-27",
     "calls": {
-      "gemini-3.5-flash-lite": 55,
+      "gemini-3.5-flash-lite": 56,
       "gemini-3.6-flash": 6,
-      "gemini-3.5-flash": 4
+      "gemini-3.5-flash": 5
     },
     "out": {},
     "history": [
@@ -15270,12 +16595,12 @@
       }
     ],
     "busy": {
-      "gemini-3.8-flash": 11,
+      "gemini-3.8-flash": 12,
       "gemini-3.5-flash-lite": 2,
       "gemini-3.6-flash": 3
     },
     "slow": {
-      "gemini-3.6-flash": 1795783005528,
+      "gemini-3.6-flash": 1795800470800,
       "gemini-3.5-flash": 1795798341857
     }
   },
@@ -15469,22 +16794,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-27T16:57:03.641Z",
-  "fullness": 2.82,
+  "memoryFadeAt": "2026-11-27T17:08:18.978Z",
+  "fullness": 2.66,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.12,
-  "joy": 4.49,
-  "calm": 5.23,
+  "wonder": 6.3,
+  "joy": 4.51,
+  "calm": 5.18,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.1
+    "excited": 0.86
   },
-  "feelAt": "2026-11-27T16:57:01.332Z",
+  "feelAt": "2026-11-27T17:05:08.160Z",
   "lastAte": "2026-11-27T15:02:07.365Z",
   "studio": {
     "songs": [
@@ -16447,21 +17772,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.27,
-    "curiosity": 0.3,
+    "creativity": 0,
+    "curiosity": 0.37,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1,
-    "at": "2026-11-27T16:57:01.332Z",
-    "coziness": 4.1
+    "at": "2026-11-27T17:05:08.160Z",
+    "coziness": 4.7
   },
   "recent": {
     "moves": [
-      {
-        "move": "remove_decoration",
-        "kind": "room",
-        "at": "2026-11-27T14:05:17.851Z"
-      },
       {
         "move": "move_thing",
         "kind": "room",
@@ -16531,22 +17851,21 @@
         "move": "walk_to",
         "kind": "walk",
         "at": "2026-11-27T16:57:03.646Z"
+      },
+      {
+        "move": "extend_thing",
+        "kind": "make",
+        "at": "2026-11-27T17:08:18.984Z"
       }
     ],
     "moods": [
       "curious",
       "curious",
       "curious",
-      "curious",
+      "dry",
       "dry"
     ],
     "choices": [
-      {
-        "key": "read_book:",
-        "move": "read_book",
-        "ok": true,
-        "at": "2026-11-27T14:29:36.515Z"
-      },
       {
         "key": "water:",
         "move": "water",
@@ -16600,6 +17919,12 @@
         "move": "answer_visitor",
         "ok": true,
         "at": "2026-11-27T16:57:03.647Z"
+      },
+      {
+        "key": "work_on_project:build a little simulation of night sky: ",
+        "move": "work_on_project",
+        "ok": true,
+        "at": "2026-11-27T17:08:18.985Z"
       }
     ],
     "failDay": "2026-11-27",
@@ -16632,7 +17957,8 @@
       "judge_project": 1,
       "start_hobby": 1,
       "decorate": 2,
-      "print_thing": 2
+      "print_thing": 2,
+      "extend_thing": 1
     },
     "tried": {
       "harvest": 3,
@@ -16658,7 +17984,8 @@
       "record_song": 1,
       "judge_project": 1,
       "start_hobby": 1,
-      "print_thing": 2
+      "print_thing": 2,
+      "extend_thing": 1
     },
     "kinds": {
       "garden": 6,
@@ -16669,7 +17996,7 @@
       "room": 6,
       "learn": 6,
       "walk": 3,
-      "make": 10
+      "make": 11
     },
     "moods": {
       "rested": 2,
@@ -16679,7 +18006,7 @@
       "grumpy": 10,
       "focused": 13,
       "calm": 1,
-      "dry": 6
+      "dry": 7
     },
     "lift": {
       "harvest": 0,
@@ -16697,14 +18024,15 @@
       "search_web": 3.57,
       "make_app": 3.67,
       "use": 2.6,
-      "record_song": 2.1
+      "record_song": 2.1,
+      "extend_thing": 0.67
     }
   },
   "skills": {
     "music": 61.5,
     "painting": 30,
     "sculpture": 52,
-    "woodwork": 43.5,
+    "woodwork": 44.5,
     "sewing": 6.5,
     "gardening": 70.5,
     "cooking": 22,
@@ -16734,7 +18062,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-27T16:57:03.636Z",
+    "decidedAt": "2026-11-27T17:05:14.460Z",
     "seen": {
       "tools": 13,
       "gifts": 1,
@@ -17418,7 +18746,7 @@
     "go_out": 14,
     "check_board": 9,
     "fetch_note": 13,
-    "extend_thing": 5,
+    "extend_thing": 6,
     "buy": 2,
     "print_thing": 3,
     "shape_land": 1,
@@ -17426,7 +18754,7 @@
     "start_hobby": 1
   },
   "checkup": {
-    "at": "2026-11-27T16:57:03.648Z",
+    "at": "2026-11-27T17:08:18.987Z",
     "items": [
       {
         "id": "circling",
@@ -20779,251 +22107,6 @@
     },
     {
       "kind": "decorate",
-      "name": "tiny wooden shelf for my bird",
-      "why": "I rounded the shelf edges, added sturdy support posts, and built a proper wooden perch rail at the front with carved knobs so my clay bird has a real place to s",
-      "parts": [
-        {
-          "shape": "roundbox",
-          "size": [
-            0.72,
-            0.06,
-            0.38
-          ],
-          "pos": [
-            0,
-            -0.02,
-            0.2
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#654321",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.06,
-            0.35,
-            0.06
-          ],
-          "pos": [
-            -0.29,
-            -0.18,
-            0.05
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#4a2e18",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.06,
-            0.35,
-            0.06
-          ],
-          "pos": [
-            0.29,
-            -0.18,
-            0.05
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#4a2e18",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.68,
-            0.06,
-            0.04
-          ],
-          "pos": [
-            0,
-            0.03,
-            0.02
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#4a2e18",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.03,
-            0.03,
-            0.66
-          ],
-          "pos": [
-            0,
-            0.03,
-            0.37
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#8b5a2b",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.06,
-            0.12
-          ],
-          "pos": [
-            -0.28,
-            0,
-            0.3
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.04,
-            0.06,
-            0.12
-          ],
-          "pos": [
-            0.28,
-            0,
-            0.3
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#5c3a21",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.04
-          ],
-          "pos": [
-            -0.32,
-            0.03,
-            0.37
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#a07855",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.04
-          ],
-          "pos": [
-            0.32,
-            0.03,
-            0.37
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#a07855",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.07,
-            0.08,
-            0.03
-          ],
-          "pos": [
-            0,
-            0.02,
-            0.2
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#8b5a2b",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.07
-          ],
-          "pos": [
-            -0.18,
-            -0.2,
-            0.18
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#d4af37",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.07
-          ],
-          "pos": [
-            0.18,
-            -0.2,
-            0.18
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#d4af37",
-          "glow": false
-        }
-      ],
-      "proud": false,
-      "at": "2026-11-27T09:01:18.842Z"
-    },
-    {
-      "kind": "decorate",
       "name": "small wooden observatory",
       "why": "to watch the night sky better",
       "parts": [
@@ -22872,6 +23955,681 @@
       ],
       "proud": false,
       "at": "2026-11-27T16:32:24.099Z"
+    },
+    {
+      "kind": "decorate",
+      "name": "tiny wooden shelf for my bird",
+      "why": "I rounded the shelf edges, added sturdy support posts, and built a proper wooden perch rail at the front with carved knobs so my clay bird has a real place to s",
+      "parts": [
+        {
+          "shape": "roundbox",
+          "size": [
+            0.72,
+            0.06,
+            0.38
+          ],
+          "pos": [
+            0,
+            -0.02,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#654321",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.06,
+            0.35,
+            0.06
+          ],
+          "pos": [
+            -0.29,
+            -0.18,
+            0.05
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.06,
+            0.35,
+            0.06
+          ],
+          "pos": [
+            0.29,
+            -0.18,
+            0.05
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.68,
+            0.06,
+            0.04
+          ],
+          "pos": [
+            0,
+            0.03,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.66
+          ],
+          "pos": [
+            0,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.06,
+            0.12
+          ],
+          "pos": [
+            -0.28,
+            0,
+            0.3
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.06,
+            0.12
+          ],
+          "pos": [
+            0.28,
+            0,
+            0.3
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.04
+          ],
+          "pos": [
+            -0.32,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a07855",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.04
+          ],
+          "pos": [
+            0.32,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a07855",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.07,
+            0.08,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.02,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.07
+          ],
+          "pos": [
+            -0.18,
+            -0.2,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.07
+          ],
+          "pos": [
+            0.18,
+            -0.2,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.72,
+            0.06,
+            0.38
+          ],
+          "pos": [
+            0,
+            -0.02,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#654321",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.06,
+            0.35,
+            0.06
+          ],
+          "pos": [
+            -0.29,
+            -0.18,
+            0.05
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.06,
+            0.35,
+            0.06
+          ],
+          "pos": [
+            0.29,
+            -0.18,
+            0.05
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.68,
+            0.06,
+            0.04
+          ],
+          "pos": [
+            0,
+            0.03,
+            0.02
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#4a2e18",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.66
+          ],
+          "pos": [
+            0,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.06,
+            0.12
+          ],
+          "pos": [
+            -0.28,
+            0,
+            0.3
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.04,
+            0.06,
+            0.12
+          ],
+          "pos": [
+            0.28,
+            0,
+            0.3
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.04
+          ],
+          "pos": [
+            -0.32,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a07855",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.04
+          ],
+          "pos": [
+            0.32,
+            0.03,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a07855",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.07,
+            0.08,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.02,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#8b5a2b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.07
+          ],
+          "pos": [
+            -0.18,
+            -0.2,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.07
+          ],
+          "pos": [
+            0.18,
+            -0.2,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "torus",
+          "size": [
+            0.03,
+            0.02
+          ],
+          "pos": [
+            0,
+            -0.02,
+            0.37
+          ],
+          "rot": [
+            90,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.02,
+            0.02,
+            0.1
+          ],
+          "pos": [
+            0,
+            -0.08,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#b89726",
+          "glow": false
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.05,
+            0.05
+          ],
+          "pos": [
+            0,
+            -0.15,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffd700",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.02
+          ],
+          "pos": [
+            0,
+            -0.18,
+            0.37
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.02,
+            0.04
+          ],
+          "pos": [
+            -0.2,
+            0.02,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.04,
+            0.03,
+            0.04
+          ],
+          "pos": [
+            -0.2,
+            0.05,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6e1d5",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.03
+          ],
+          "pos": [
+            -0.2,
+            0.06,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#c2a649",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.02,
+            0.04
+          ],
+          "pos": [
+            0.2,
+            0.02,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#5c3a21",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.04,
+            0.03,
+            0.04
+          ],
+          "pos": [
+            0.2,
+            0.05,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6e1d5",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.04,
+            0.04,
+            0.02
+          ],
+          "pos": [
+            0.2,
+            0.06,
+            0.18
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#58a6d8",
+          "glow": true
+        }
+      ],
+      "proud": false,
+      "at": "2026-11-27T17:08:18.984Z"
     }
   ],
   "cookedAt": [
@@ -25822,7 +27580,7 @@
         "own": true,
         "why": "i want to see if tiny gears can drive me crazy",
         "ideaAt": "2026-11-27T11:57:29.690Z",
-        "last": "2026-11-27T16:32:24.100Z",
+        "last": "2026-11-27T17:08:18.985Z",
         "moves": [
           "decorate",
           "build_outside",
@@ -25830,8 +27588,8 @@
           "extend_thing",
           "print_thing"
         ],
-        "practice": 6,
-        "practisedAt": "2026-11-27T16:32:24.100Z"
+        "practice": 7,
+        "practisedAt": "2026-11-27T17:08:18.985Z"
       },
       {
         "topic": "Night sky",
@@ -25943,7 +27701,12 @@
     "until": "2026-11-26T22:40:05.153Z",
     "why": "nothing came of it"
   },
-  "lookBack": null,
+  "lookBack": {
+    "kind": "thing",
+    "name": "tiny wooden shelf for my bird",
+    "file": null,
+    "at": "2026-11-27T17:08:18.985Z"
+  },
   "street": {
     "day": "2026-11-23",
     "queue": [],
@@ -28311,48 +30074,6 @@
   ],
   "moments": [
     {
-      "at": "2026-11-27T12:30:33.036Z",
-      "kind": "beat",
-      "icon": "⏳",
-      "text": "Fits the parts together"
-    },
-    {
-      "at": "2026-11-27T12:31:58.027Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "Sawdust everywhere, also where he did not saw"
-    },
-    {
-      "at": "2026-11-27T12:33:03.921Z",
-      "kind": "beat",
-      "icon": "✔️",
-      "text": "“tiny clock mechanism” is done"
-    },
-    {
-      "at": "2026-11-27T12:33:37.451Z",
-      "kind": "beat",
-      "icon": "🚶",
-      "text": "Walks back home"
-    },
-    {
-      "at": "2026-11-27T13:14:12.437Z",
-      "kind": "beat",
-      "icon": "🏠",
-      "text": "Comes home from the print workshop"
-    },
-    {
-      "at": "2026-11-27T13:14:38.748Z",
-      "kind": "beat",
-      "icon": "🚪",
-      "text": "Sets off for the notice board"
-    },
-    {
-      "at": "2026-11-27T13:15:38.748Z",
-      "kind": "beat",
-      "icon": "📌",
-      "text": "Arrives at the notice board, to read the notice board"
-    },
-    {
       "at": "2026-11-27T13:19:38.748Z",
       "kind": "beat",
       "icon": "🚶",
@@ -28849,6 +30570,48 @@
       "kind": "notice",
       "icon": "👀",
       "text": "The floor creaks where it always creaks"
+    },
+    {
+      "at": "2026-11-27T17:08:19.972Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Walks to the build workshop"
+    },
+    {
+      "at": "2026-11-27T17:09:36.612Z",
+      "kind": "beat",
+      "icon": "▶️",
+      "text": "Works on “tiny wooden shelf for my bird”"
+    },
+    {
+      "at": "2026-11-27T17:11:17.202Z",
+      "kind": "think",
+      "icon": "💭",
+      "text": "“Let's work on the night sky simulation next.”"
+    },
+    {
+      "at": "2026-11-27T17:12:41.027Z",
+      "kind": "beat",
+      "icon": "⏳",
+      "text": "Steps back to look at it"
+    },
+    {
+      "at": "2026-11-27T17:14:01.574Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "It is dark outside now. The windows are lit"
+    },
+    {
+      "at": "2026-11-27T17:15:11.912Z",
+      "kind": "beat",
+      "icon": "✔️",
+      "text": "“tiny wooden shelf for my bird” is better now"
+    },
+    {
+      "at": "2026-11-27T17:15:45.442Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Walks back home"
     }
   ],
   "arc": [
@@ -29414,6 +31177,15 @@
       "calm": 5.2,
       "wonder": 6.1,
       "energy": 10,
+      "mood": "dry",
+      "feel": 5.3
+    },
+    {
+      "at": "2026-11-27T17:08:18.987Z",
+      "joy": 4.5,
+      "calm": 5.2,
+      "wonder": 6.3,
+      "energy": 9.5,
       "mood": "dry",
       "feel": 5.3
     }
