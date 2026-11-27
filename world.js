@@ -149,7 +149,7 @@ export function hurryHome(s, now = Date.now()) {
   return finishOuting(s, now);
 }
 
-const up = (s, key, by) => { if (Number.isFinite(s[key])) s[key] = Math.round(clamp(s[key] + by) * 100) / 100; };
+const up = (s, key, by) => { if (Number.isFinite(s[key])) s[key] = Math.round(clamp(s[key] + by) * 100) / 100; if (Number.isFinite(s.body?.[key])) s.body[key] = Math.round(clamp(s.body[key] + by) * 100) / 100; }; // (boredom and loneliness live in his body, body.js: an outing changes them there too)
 
 // What happened on the outing: decided here, once, when he comes home. Changes his state (how he feels, what he has)
 // and returns the outing: { id, place, thing, leftAt, homeAt, did, found, met, gift, read, saw, cut, errand, weather }.
@@ -217,7 +217,7 @@ export function finishOuting(s, now = Date.now()) {
     o.read = topic;
     o.did = `At the library I found a book about ${topic.toLowerCase()} and read it at the big table by the window. It was so quiet I could hear the pages.`;
     o.saw = 'the reading table at the library';
-    up(s, 'wonder', 1.5); up(s, 'calm', 0.8); up(s, 'energy', -0.6); up(s, 'boredom', -2);
+    up(s, 'wonder', 1.5); up(s, 'calm', 0.8); up(s, 'energy', -0.6); up(s, 'boredom', -2); up(s, 'loneliness', -1.5); // (people read at the other tables: he is not alone there)
   } else if (p.key === 'board') { // he reads what people pinned on the notice board
     o.did = readBoard(s, now);
     o.saw = 'the notice board on the square';
@@ -239,7 +239,7 @@ export function finishOuting(s, now = Date.now()) {
   } else if (p.key === 'drops') { // a note someone left for him: he has it now, and reads it
     o.did = dropFound(s, w.job?.drop, now);
     o.saw = 'a note that lay waiting for me';
-    up(s, 'wonder', 0.6); up(s, 'loneliness', -0.8);
+    up(s, 'wonder', 0.6); up(s, 'loneliness', -2.5); // somebody thought of him
   } else if (p.key === 'land') { // he shaped the ground with the land tool: a hill, a hole, or flat again
     const j = w.job ?? {};
     o.made = { kind: 'land', name: j.name };

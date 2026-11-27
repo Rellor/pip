@@ -48,7 +48,10 @@ export function passTime(s, now = Date.now()) {
   s.feelAt = new Date(now).toISOString();
 }
 
-const FUN = ['record_song', 'play_piano', 'draw', 'compose', 'take_photo', 'cook', 'decorate', 'make_clothes', 'make_app', 'make_move', 'find_picture', 'do', 'print_photo'];
+// What takes more out of him than an ordinary step: building and making. (Playing, reading and a walk cost the ordinary 0.5.)
+// So making is not the cheap thing to do all day: after a build he wants to eat, rest, play something or go out.
+const TIRING = { decorate: 1.3, extend_thing: 1.1, change_thing: 1, make_app: 1.1, update_app: 0.9, make_clothes: 1.1, record_song: 0.9, make_site: 1, update_site: 0.8, draw: 0.8, compose: 0.7, blueprint: 0.8, play: 0.9 };
+const FUN = ['record_song', 'play_piano', 'draw', 'compose', 'take_photo', 'cook', 'decorate', 'make_clothes', 'make_app', 'make_move', 'find_picture', 'do', 'print_photo', 'play', 'play_game', 'go_out', 'use'];
 
 // Every step of his plan.
 // looks = how many of his last few steps were lookups (search or read). Lookups feed wonder less and less when they pile up,
@@ -57,7 +60,7 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
   const e = s.emo;
   const rested = s.energy >= 8; // before this step changes it
   const wonder0 = s.wonder;
-  s.energy = s.energy + (action === 'rest' ? 3 : action === 'walk_to' ? 0 : -0.5); // walking costs no energy
+  s.energy = s.energy + (action === 'rest' ? 3 : action === 'walk_to' ? 0 : -(TIRING[action] ?? 0.5)); // walking costs no energy; making something takes it out of him
   s.joy = s.joy + (Number(enjoyment) - 9) / 6; // he rates most things 8 to 10, so only a 10 lifts joy a little, a 9 keeps it and the rest lowers it
   switch (action) {
     case 'search_web':
@@ -65,8 +68,22 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
       s.wonder += 1.2 / (1 + Math.max(0, looks) * 0.5);
       break;
     case 'decorate':
-      s.wonder += 1;
-      s.joy += 0.4;
+      s.wonder += 0.6; // making satisfies (his urge to make goes quiet, body.js), but it is not the biggest joy there is
+      s.joy += 0.3;
+      break;
+    case 'play': // out with something of his: his bike, his kite, his plane (play.js)
+      s.joy += 1;
+      s.calm += 0.3;
+      s.wonder += 0.3;
+      break;
+    case 'play_game':
+      s.joy += 0.6;
+      s.wonder += 0.2;
+      break;
+    case 'go_out': // setting off: the air does him good already (what the place gives him comes when he is there, world.js)
+      s.calm += 0.3;
+      s.wonder += 0.3;
+      s.joy += 0.2;
       break;
     case 'draw':
     case 'compose':
@@ -77,8 +94,8 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'blueprint':
     case 'change_thing':
     case 'update_app':
-      s.wonder += 0.8;
-      s.joy += 0.5;
+      s.wonder += 0.6;
+      s.joy += 0.3;
       break;
     case 'do':
       s.joy += 0.3;
@@ -92,15 +109,14 @@ export function stepFeelings(s, { action, enjoyment = 5, repeating = false, fres
     case 'use':
     case 'add_use':
       s.wonder += 0.3;
-      s.joy += 0.2;
+      s.joy += 0.4; // using what he has is a real pleasure
       break;
     case 'play_piano':
       s.calm += /slow|soft|gentle|calm|sad|sleep|dream|quiet/i.test(style) ? 0.6 : 0.3;
-      s.joy += 0.3;
+      s.joy += 0.5; // the quick way to let something out, and nothing is left standing in his room
       break;
     case 'rest':
-      s.calm += rested ? 0.2 : 0.8; // resting while full of energy settles little
-      if (rested) s.joy -= 0.3;
+      s.calm += rested ? 0.3 : 0.8; // resting while full of energy settles little
       break;
     case 'write_diary':
       s.calm += 0.3;

@@ -12,13 +12,26 @@ const top = (obj, n = 3, sign = 1) => Object.entries(obj ?? {}).filter(([, v]) =
 const NOT_MUCH = ['walk_to', 'rest', 'eat'];
 
 // During the day: how much each move lifted (or lowered) joy + wonder + calm.
-export function noteLift(s, actions, before, after) {
+// `by` (when given): how much each feeling moved, { joy, wonder, calm }. It is kept per move (s.feels), so a belief can
+// say what a thing does to him ("settles me", "makes me glad", "wakes me up"), not only that it lifts him.
+export function noteLift(s, actions, before, after, by = null) {
   const real = actions.filter((a) => a !== 'walk_to');
   if (!real.length || !s.today) return;
   const d = (after - before) / real.length;
   s.today.lift ??= {};
   for (const a of real) s.today.lift[a] = Math.round(((s.today.lift[a] ?? 0) + d) * 100) / 100;
+  if (!by) return;
+  s.feels ??= {};
+  for (const a of real) {
+    const f = (s.feels[a] ??= { joy: 0, wonder: 0, calm: 0 });
+    for (const k of ['joy', 'wonder', 'calm']) f[k] = Math.round((f[k] * 0.92 + (Number(by[k]) || 0) / real.length) * 100) / 100; // old days fade slowly
+  }
 }
+export const feelParts = (s) => ({ joy: s.joy ?? 5, wonder: s.wonder ?? 5, calm: s.calm ?? 5 });
+export const feelDiff = (a, b) => ({ joy: b.joy - a.joy, wonder: b.wonder - a.wonder, calm: b.calm - a.calm });
+// In his words: what a thing that lifts him does to him most.
+const DOES = { joy: 'makes me glad', calm: 'settles me', wonder: 'wakes me up' };
+const doesWhat = (s, action) => { const f = s.feels?.[action]; if (!f) return 'lifts me'; const [k, v] = Object.entries(f).sort((x, y) => y[1] - x[1])[0]; return v > 0.15 ? DOES[k] : 'lifts me'; };
 export const feelSum = (s) => (s.joy ?? 5) + (s.wonder ?? 5) + (s.calm ?? 5);
 
 // The day in a few lists. Each entry becomes a "sign" key like lifted:play_piano or mood:peaceful.
@@ -123,7 +136,7 @@ export function beliefs(s) {
     .filter((b) => b.days >= BELIEF_DAYS && b.days / b.of >= 0.7)
     .sort((a, b) => b.days - a.days)
     .slice(0, 8)
-    .map((b) => ({ ...b, text: `${DOING[b.action] ?? `${b.action.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())}`} ${b.lifts ? 'lifts me' : 'wears me down'}` }));
+    .map((b) => ({ ...b, text: `${DOING[b.action] ?? `${b.action.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())}`} ${b.lifts ? doesWhat(s, b.action) : 'wears me down'}` }));
 }
 // For the brain: the two he is surest of.
 export const beliefLines = (s) => (s.beliefs ?? []).slice(0, 2).map((b) => `Something I know about myself by now: ${b.text.charAt(0).toLowerCase()}${b.text.slice(1)} (it did on ${b.days} of my days).`);

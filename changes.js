@@ -491,6 +491,17 @@ export const CHANGES = [
     },
   },
   {
+    id: '2026-11-28 what things do to me',
+    run(s) { // "going outside wears me down" was a measuring mistake: only the cost of setting off was counted, never what the place gave him. Those wrong marks go, and his loneliness starts again from a fair place
+      for (const d of s.days ?? []) d.lowered = (d.lowered ?? []).filter((a) => !['go_out', 'rest', 'browse'].includes(a));
+      if (s.today?.lift) for (const a of ['go_out', 'rest', 'browse']) if (s.today.lift[a] < 0) delete s.today.lift[a];
+      s.beliefs = (s.beliefs ?? []).filter((b) => b.lifts || !['go_out', 'rest', 'browse'].includes(b.action));
+      if (s.body) s.body.loneliness = Math.min(s.body.loneliness ?? 5, 5);
+      s.loneliness = s.body?.loneliness ?? 5;
+      return 'I thought going outside wore me down. That was wrong: I only ever counted how tired I was when I set off, never how I felt at the pond or on my field. I count it properly now. I also noticed: I am less alone than I thought. At the library, the café, the shop and on the square there are people around me.';
+    },
+  },
+  {
     id: '2026-11-27 a museum',
     run(s, at) { // his room filled up with small things. Nothing is forbidden: he gets a museum for them (museum.js). What lay unseen in his chest is the first to go on the plinths
       for (const h of (s.curious?.interests ?? []).filter((i) => i.own)) h.moves = hobbyMoves(h.topic);

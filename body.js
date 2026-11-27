@@ -3,7 +3,8 @@
 //   creativity  the itch to make something. Grows with time, drops when he makes.
 //   curiosity   the itch to find out. Grows with time, drops when he looks something up.
 //   boredom     grows when he does the same kind of thing again and again. New kinds of things lower it.
-//   loneliness  grows slowly, drops when someone writes or he writes to them.
+//   loneliness  grows slowly, drops when someone writes or he writes to them, and when he is among people in his
+//               village (the square, the shop, the library, the café): nobody has to write for him to feel less alone.
 //   tidiness    how tidy his room feels (10 is tidy). Falls when the room fills up, rises when he puts things away.
 //   coziness    how much his room feels like his home (0 to 10), from what is in it (coziness() below). Never a must:
 //               a bare room gives a small push to make things for it, a cozy one a little calm.
@@ -90,7 +91,7 @@ export function tickBody(s, now = Date.now()) {
   const b = s.body;
   b.creativity = clamp(b.creativity + hours * 0.6);
   b.curiosity = clamp(b.curiosity + hours * 0.5);
-  b.loneliness = clamp(b.loneliness + hours * 0.25);
+  b.loneliness = clamp(b.loneliness + hours * 0.15);
   b.boredom = clamp(b.boredom + (sameKindRun(s) >= 3 ? hours * 0.8 : -hours * 0.3));
   b.tidiness = clamp(10 - clutter(s));
   const h = Number(new Date(now).toLocaleString('en-GB', { hour: 'numeric', hour12: false, timeZone: process.env.PIP_TZ || 'Europe/Amsterdam' }));
@@ -131,6 +132,7 @@ export function noteMove(s, move, { failed = false, mood = null, now = Date.now(
   if (kind === 'music') b.creativity = clamp(b.creativity - 2);
   if (kind === 'learn') b.curiosity = clamp(b.curiosity - 3);
   if (kind === 'people') b.loneliness = clamp(b.loneliness - 3);
+  if (['search_web', 'browse', 'read_book', 'buy', 'check_board'].includes(move)) b.loneliness = clamp(b.loneliness - 0.5); // at the café, the library, the shop or the board there are people around him: he is not alone there
   if (move === 'remove_decoration' || move === 'take_down_picture') b.tidiness = clamp(b.tidiness + 1);
   b.boredom = clamp(b.boredom + (fresh ? -2 : sameKindRun(s) >= 3 ? 1 : 0));
   if (sameKindRun(s) >= 4) s.joy = clamp((s.joy ?? 5) - 0.3); // the same thing again and again feels flat

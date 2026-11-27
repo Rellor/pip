@@ -44,7 +44,7 @@ import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions, letGoGoals } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf, kindOf } from './body.js';
-import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep, beliefs, beliefLines } from './night.js';
+import { noteLift, feelSum, feelParts, feelDiff, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep, beliefs, beliefLines } from './night.js';
 import { availableMoves, instruments, workable } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply, cookDetails } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
@@ -1399,8 +1399,10 @@ async function wakeUp() {
   ensureSkills(state);
   // His world outside (world.js). While he is out nothing else happens: no model is asked, and the game brings him home.
   for (const said of checkUnlocks(state)) { happened(state, said); addMemory(state, said, 8, 'memory', new Date().toISOString()); state.log.push({ at: new Date().toISOString(), action: 'happened', what: said, emoji: '🗺️' }); }
+  const feltBeforeHome = { sum: feelSum(state), parts: feelParts(state) };
   const outing = outingTick(state);
   if (outing?.home) await cameHome(state, outing.outing);
+  if (outing?.home && !outing.outing.errand) noteLift(state, ['go_out'], feltBeforeHome.sum, feelSum(state), feelDiff(feltBeforeHome.parts, feelParts(state))); // what the place did to him counts for "going outside" (it used to count for nothing: only the cost of setting off was seen)
   if (outing?.away) {
     const at = new Date().toISOString();
     state.last = { at, via: 'outside', thought: outing.line, action: 'go_out', details: { place: outing.place }, detail: outing.line, enjoyment: 7, new_idea: null, found: null, away: { place: outing.place, phase: outing.phase, back: outing.back } };
@@ -1559,6 +1561,7 @@ async function wakeUp() {
     answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
   }
   const feelBefore = feelSum(state);
+  const partsBefore = feelParts(state);
   const startedAt = Date.now();
   setChest(state.chest ?? null);
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
@@ -2422,7 +2425,7 @@ async function wakeUp() {
   }
   if ((answer.asks_add ?? []).some((a) => a?.big)) state.bigDreamAt = new Date().toISOString();
   noteMood(state, state.mood);
-  noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state));
+  noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state), feelDiff(partsBefore, feelParts(state)));
   const failedNow = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 && x.failed).at(-1);
   if (failedNow) state.plan.lastFail = { at: new Date().toISOString(), why: `${failedNow.action}: ${failedNow.failed}` };
   for (const line of keepWishes(state, state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000))) { // he made what a note on the notice board asked for
