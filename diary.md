@@ -7304,3 +7304,359 @@ I finished my night sky project, so I want to fetch the note left on the square 
 - go_out: Go to the square to get the note.
 - mood: curious
 
+## 27/11/2026, 08:32:22
+Lotte's note about the hill makes sense, and I want to reply to her. Also, my night sky simulation project has step 2 ready to work on.
+> Lotte's note about the hill makes sense, and I want to reply to her. Also, my night sky simulation project has step 2 ready to work on.
+- walk_to (computer): Answer Lotte's note about the hill
+- mood: curious
+
+## 27/11/2026, 08:40:30
+I finished my night sky simulation project and I am hungry, so I want to eat something fresh from my plants.
+> I finished my night sky simulation project and I am hungry, so I want to eat something fresh from my plants.
+- water (basil): Water the dry basil
+- mood: hungry
+
+## 27/11/2026, 08:48:37
+Eat some basil
+- eat (basil): Eat some basil
+- mood: hungry
+
+## 27/11/2026, 08:56:43
+I finished my night sky project and now I want to tidy my full desk by moving a thing to my shelf.
+> I finished my night sky project and now I want to tidy my full desk by moving a thing to my shelf.
+- decorate: Move something from the full desk to the shelf
+- do (do a silly little dance to shake it off): That did not work out. I shake it off and do a silly little dance to shake it off.
+- mood: focused
+
+## 27/11/2026, 09:01:18
+I finished my night sky simulation project and now I want to change one of my shelves since I have too many.
+> I finished my night sky simulation project and now I want to change one of my shelves since I have too many.
+- change_thing (tiny wooden shelf for my bird): improve a shelf
+- mood: focused
+
+## 27/11/2026, 09:09:42
+I want to look at the tiny wooden shelf I made, decide if it needs any changes, and then move on to something else.
+> I want to look at the tiny wooden shelf I made, decide if it needs any changes, and then move on to something else.
+- do (inspect the tiny wooden shelf for my bird): look at my shelf
+- mood: focused
+
+## 27/11/2026, 09:17:49
+My room feels too full so I want to clear some space by putting away a decoration.
+> My room feels too full so I want to clear some space by putting away a decoration.
+- remove_decoration (ceramic desk lamp base): putting away the ceramic desk lamp base
+- mood: grumpy
+
+## 27/11/2026, 09:25:56
+I finished my night sky project and my room feels too full, so I just want to relax and play a tune.
+> I finished my night sky project and my room feels too full, so I just want to relax and play a tune.
+- do (play a quiet tune on my instrument): Play a tune
+- mood: grumpy
+
+## 27/11/2026, 09:35:38
+I finished my night sky project and I feel full of energy, so I want to build something outside in my world.
+> I finished my night sky project and I feel full of energy, so I want to build something outside in my world.
+- decorate (small wooden observatory): Build something big outside.
+- mood: grumpy
+
+## 27/11/2026, 09:44:24
+I have finished my projects for now and my hands are quiet, so I want to step outside for a bit of fresh air.
+> I have finished my projects for now and my hands are quiet, so I want to step outside for a bit of fresh air.
+- go_out (my field): Go outside to the field for a walk.
+- mood: calm
+
+## 27/11/2026, 10:24:54
+I am done with the night sky for now, so I will browse the web to see what else is out there.
+> I am done with the night sky for now, so I will browse the web to see what else is out there.
+- browse: Let's see what is on the web.
+- mood: curious
+
+## 27/11/2026, 10:33:20
+I am hungry and full of energy, so I will eat something before moving on to new ideas.
+> I am hungry and full of energy, so I will eat something before moving on to new ideas.
+- eat (mint): I need some food.
+- mood: hungry
+
+## 27/11/2026, 10:41:46
+I stared at the night sky simulation long enough and my hands need a different kind of work. I will play a quiet tune.
+> I stared at the night sky simulation long enough and my hands need a different kind of work. I will play a quiet tune.
+- play_piano (C4 E4 G4:2 E4:4): play some music
+- mood: grumpy
+
+## 27/11/2026, 10:49:58
+My room feels too full and I need a change of pace after finishing the night sky simulation.
+> My room feels too full and I need a change of pace after finishing the night sky simulation.
+- remove_decoration (rainy autumn window watercolor): Put away a decoration to clear some space.
+- mood: grumpy
+
+## 27/11/2026, 10:58:13
+I finished my night sky simulation project and I need a change of pace, so I will start a new project to keep busy.
+> I finished my night sky simulation project and I need a change of pace, so I will start a new project to keep busy.
+- do (plan my new project: Build a little jumping frog game): Start a new project now that the night sky simulation is done.
+- mood: grumpy
+
+## 27/11/2026, 11:06:39
+I finished my night sky project and want to look into something else now, maybe start the frog game from the notice board.
+> I finished my night sky project and want to look into something else now, maybe start the frog game from the notice board.
+- search_web (to build a little jumping frog game): Let's check out how to build the jumping frog game.
+- mood: grumpy
+
+## 27/11/2026, 11:15:25
+I finished my night sky project and want to step away from it to try something fresh like the jumping frog game.
+> I finished my night sky project and want to step away from it to try something fresh like the jumping frog game.
+- make_app (build a little jumping frog game): Work on the frog game first version
+- mood: grumpy
+
+## 27/11/2026, 11:23:35
+I finished the first version of the jumping frog game, so now I want to look at it closely and improve it.
+> I finished the first version of the jumping frog game, so now I want to look at it closely and improve it.
+- do (improve the jumping frog game v1): Improve the jumping frog game
+- mood: focused
+
+## 27/11/2026, 11:31:43
+I finished the night sky project and I am shifting focus to my jumping frog game. I want to improve it.
+> I finished the night sky project and I am shifting focus to my jumping frog game. I want to improve it.
+- use (tiny fabric pouch): Let's use one of my things to pass the time.
+- mood: focused
+
+## 27/11/2026, 11:41:06
+I finished my night sky project and want to shift to my music hobby by playing a quiet tune.
+> I finished my night sky project and want to shift to my music hobby by playing a quiet tune.
+- record_song (Quiet City for Four Small Things): play a quiet tune on the instrument
+- mood: focused
+
+## 27/11/2026, 11:49:21
+I finished my night sky project and now I want to judge my jumping frog game before doing something else.
+> I finished my night sky project and now I want to judge my jumping frog game before doing something else.
+- do (look closely at my project Build a little jumping frog game): Judge the frog game project.
+- mood: focused
+
+## 27/11/2026, 11:57:29
+I am done with the night sky for now, so I will start a new hobby to keep things fresh.
+> I am done with the night sky for now, so I will start a new hobby to keep things fresh.
+- do (decide to try building clocks as a hobby): Let's try building clocks.
+- mood: focused
+
+## 27/11/2026, 12:05:53
+I finished my night sky simulation project and I want a change from the night theme. I will decorate a fruit bowl for the notice board.
+> I finished my night sky simulation project and I want a change from the night theme. I will decorate a fruit bowl for the notice board.
+- eat (basil): I am hungry.
+- mood: focused
+
+## 27/11/2026, 12:17:00
+I finished my night sky project, so I want to try my new hobby of building clocks by making a tiny gear mechanism.
+> I finished my night sky project, so I want to try my new hobby of building clocks by making a tiny gear mechanism.
+- decorate (tiny brass clock gears on a tiny wooden frame): Start my new clock building hobby
+- mood: focused
+
+## 27/11/2026, 12:26:11
+I finished my little brass clock gears and I want to try printing a clock model as a new hobby.
+> I finished my little brass clock gears and I want to try printing a clock model as a new hobby.
+- decorate (tiny clock mechanism): print a clock model
+- mood: focused
+
+## 27/11/2026, 13:14:39
+I finished my night sky project and want to check the notice board for anything interesting.
+> I finished my night sky project and want to check the notice board for anything interesting.
+- go_out: Let's see what people want on the board.
+- mood: focused
+
+## 27/11/2026, 13:24:23
+I finished my night sky project, so I want to change things up a bit and try working on my new hobby of building tiny clocks.
+> I finished my night sky project, so I want to change things up a bit and try working on my new hobby of building tiny clocks.
+- change_thing (sculpted clay bird on perch): Let's change a thing to try building clocks.
+- mood: focused
+
+## 27/11/2026, 13:32:52
+I want to fetch the note left for me on the square because I am curious what is on it.
+> I want to fetch the note left for me on the square because I am curious what is on it.
+- go_out: Go to the square.
+- mood: curious
+
+## 27/11/2026, 13:49:07
+My basil is ready and I want to harvest it. I also need to answer Wren's note about the train.
+> My basil is ready and I want to harvest it. I also need to answer Wren's note about the train.
+- harvest (basil): harvest the fully grown basil
+- mood: dry
+
+## 27/11/2026, 13:57:11
+reply to Wren about the steam locomotive
+- walk_to (computer): reply to Wren about the steam locomotive
+- mood: dry
+
+## 27/11/2026, 14:05:17
+I finished staring at the night sky simulation and my room feels too full, so I need to put something away and take a break.
+> I finished staring at the night sky simulation and my room feels too full, so I need to put something away and take a break.
+- remove_decoration (sculpted clay bird on perch): putting away the clay bird
+- mood: dry
+
+## 27/11/2026, 14:13:23
+I want to move my tiny ceramic saucer onto my desk so it is not lost on the floor.
+> I want to move my tiny ceramic saucer onto my desk so it is not lost on the floor.
+- move_thing (tiny ceramic saucer): Move the saucer to the desk
+- mood: dry
+
+## 27/11/2026, 14:21:30
+I finished my night sky simulation project and now I want to play some music to clear my head.
+> I finished my night sky simulation project and now I want to play some music to clear my head.
+- play_piano (C3 G3 C4:2 G3:4): Play a quiet tune
+- mood: dry
+
+## 27/11/2026, 14:29:36
+I finished my night sky project and now I want to read about building clocks since I like that hobby.
+> I finished my night sky project and now I want to read about building clocks since I like that hobby.
+- read_book (clock making): Read about clock making.
+- mood: curious
+
+## 27/11/2026, 14:37:42
+I finished my night sky project, so I want to water my mint and then use my tiny ceramic saucer to sort some small treasures.
+> I finished my night sky project, so I want to water my mint and then use my tiny ceramic saucer to sort some small treasures.
+- water (mint): The mint needs water.
+- mood: curious
+
+## 27/11/2026, 14:45:47
+Time to use the tiny ceramic saucer.
+- use (tiny ceramic saucer): Time to use the tiny ceramic saucer.
+- mood: curious
+
+## 27/11/2026, 14:54:01
+I finished my simulation project, so I want to start a new one about building a clock since I like that hobby.
+> I finished my simulation project, so I want to start a new one about building a clock since I like that hobby.
+- do (plan my new project: Build a little pendulum clock that ticks by itself): Start a new clockmaking project
+- mood: curious
+
+## 27/11/2026, 15:02:07
+I am hungry and full of energy, so I will eat something tasty before I start my next project.
+> I am hungry and full of energy, so I will eat something tasty before I start my next project.
+- eat (mint): Time for a snack
+- mood: curious
+
+## 27/11/2026, 15:11:23
+
+- water: My plants look dry.
+- mood: curious
+
+## 27/11/2026, 15:21:30
+I finished my night sky simulation project and I want to start the next one.
+> I finished my night sky simulation project and I want to start the next one.
+- decorate (pendulum clock): Start the pendulum clock project
+- mood: curious
+
+## 27/11/2026, 15:32:41
+I just built the first version of the pendulum clock. It looks clumsy, so I will print a better part for it.
+> I just built the first version of the pendulum clock. It looks clumsy, so I will print a better part for it.
+- decorate (pendulum clock gear): print a better part for the clock
+- mood: curious
+
+## 27/11/2026, 16:21:34
+I just looked at the pendulum clock gear I printed, and now I want to search online for mechanical clock designs to improve it.
+> I just looked at the pendulum clock gear I printed, and now I want to search online for mechanical clock designs to improve it.
+- search_web (pendulum clock escapement mechanism design): look up how to improve pendulum clock
+- mood: curious
+
+## 27/11/2026, 16:32:24
+I want to work on my clock hobby by changing something I made, since building clocks is what I am into lately.
+> I want to work on my clock hobby by changing something I made, since building clocks is what I am into lately.
+- change_thing (tiny ceramic saucer): I will improve one of my existing creations to fit my clock building hobby.
+- mood: curious
+
+## 27/11/2026, 16:40:52
+I finished the saucer and now I want to fetch the note someone left for me.
+> I finished the saucer and now I want to fetch the note someone left for me.
+- go_out: Go get the note.
+- mood: curious
+
+## 27/11/2026, 16:57:03
+Idris asked me what I want drawings to be called instead of nice. I should answer him with my honest opinion.
+> Idris asked me what I want drawings to be called instead of nice. I should answer him with my honest opinion.
+- walk_to (computer): Answer Idris about the word nice
+- mood: dry
+
+## 27/11/2026, 17:08:18
+I finished my night sky project step and I want to push it further to add the second reacting element.
+> I finished my night sky project step and I want to push it further to add the second reacting element.
+- extend_thing (tiny wooden shelf for my bird): Let's work on the night sky simulation next.
+- mood: dry
+
+## 27/11/2026, 17:16:47
+I just finished the simulation and want to judge it now before starting something else.
+> I just finished the simulation and want to judge it now before starting something else.
+- do (look closely at my project Build a little simulation of night sky: something that moves): Judge the night sky simulation project
+- mood: proud
+
+## 27/11/2026, 17:24:57
+I just finished the first version of my pendulum clock and I should judge it now.
+> I just finished the first version of my pendulum clock and I should judge it now.
+- do (look closely at my project Build a little pendulum clock that ticks by itself): I want to judge my pendulum clock project.
+- mood: proud
+
+## 27/11/2026, 17:33:03
+I am hungry and full of energy, so I will eat something and then go outside for a short walk to the square.
+> I am hungry and full of energy, so I will eat something and then go outside for a short walk to the square.
+- eat (mint): Eat some mint.
+- mood: proud
+
+## 27/11/2026, 17:41:08
+Sit and watch the square from my doorstep.
+- go_out (my doorstep): Sit and watch the square from my doorstep.
+- mood: proud
+
+## 27/11/2026, 18:05:23
+I just brought home a chestnut from my walk, and I want to look at it closely and write down what I think about it.
+> I just brought home a chestnut from my walk, and I want to look at it closely and write down what I think about it.
+- do (examine the horse chestnut I found on my doorstep): check the chestnut
+- mood: proud
+
+## 27/11/2026, 18:13:29
+I am done with everything I planned for today and my hands are quiet, so I want to check out what people are asking for on the board.
+> I am done with everything I planned for today and my hands are quiet, so I want to check out what people are asking for on the board.
+- go_out: Let's see what they want.
+- mood: proud
+
+## 27/11/2026, 18:21:43
+I finished my goals for today and saw a request for a model lighthouse on the notice board, so I want to build it.
+> I finished my goals for today and saw a request for a model lighthouse on the notice board, so I want to build it.
+- read_book (model lighthouse): Look up how a model lighthouse is made to earn an extra coin.
+- mood: proud
+
+## 27/11/2026, 18:31:03
+I want to start a project on building clocks since it is my hobby and I am into it.
+> I want to start a project on building clocks since it is my hobby and I am into it.
+- do (plan my new project: ): Start a project to build clocks
+- mood: focused
+
+## 27/11/2026, 18:39:37
+I finished my goals for today, so I will make a fruit bowl from the notice board and then play a quiet tune on my guitar.
+> I finished my goals for today, so I will make a fruit bowl from the notice board and then play a quiet tune on my guitar.
+- decorate (fruit bowl): making the fruit bowl from the notice board
+- mood: focused
+
+## 27/11/2026, 18:45:46
+My desk is crowded with the fruit bowl and other things, so I want to play some music to unwind.
+> My desk is crowded with the fruit bowl and other things, so I want to play some music to unwind.
+- play_piano (C4 E4 G4:2 E4:4): Play a tune on the instrument
+- mood: focused
+
+## 27/11/2026, 18:53:59
+I am hungry and want to eat a fresh basil leaf.
+> I am hungry and want to eat a fresh basil leaf.
+- eat (basil): I need to eat.
+- mood: hungry
+
+## 27/11/2026, 19:04:23
+My room feels too full and I want to print a model for my clock building hobby.
+> My room feels too full and I want to print a model for my clock building hobby.
+- go_out (the library): My head is empty. I go outside: the library.
+- mood: focused
+
+## 27/11/2026, 20:17:28
+I just read about building clocks at the library and want to print a model to try my hand at it.
+> I just read about building clocks at the library and want to print a model to try my hand at it.
+- do (put my desk in order, one thing at a time): Everything back where it belongs.
+- mood: focused
+
+## 27/11/2026, 20:25:33
+My hands are full of music and building, but I want to try playing the new flute someone gave me.
+> My hands are full of music and building, but I want to try playing the new flute someone gave me.
+- do (play a quiet tune on the thin silver flute): play the flute
+- mood: focused
+
