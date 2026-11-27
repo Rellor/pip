@@ -1,5 +1,5 @@
 {
-  "mood": "proud",
+  "mood": "focused",
   "energy": 9.5,
   "boredom": 0,
   "loneliness": 10,
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-27T08:56:43.791Z",
-      "action": "do",
-      "detail": "do a silly little dance to shake it off",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-27T09:01:18.824Z",
       "action": "change_thing",
@@ -304,6 +298,12 @@
       "action": "read_book",
       "detail": "model lighthouse",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-27T18:31:03.791Z",
+      "action": "do",
+      "detail": "plan my new project: ",
+      "enjoyment": 7
     }
   ],
   "notes": [
@@ -701,7 +701,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.512,
+      "weight": 7.511,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -711,7 +711,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.65,
+      "weight": 9.648,
       "lastUsed": "2026-11-26T15:42:24.006Z",
       "tier": "long",
       "uses": 8
@@ -722,7 +722,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.215,
+      "weight": 7.214,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -732,7 +732,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.517,
+      "weight": 9.515,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -743,7 +743,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.43,
+      "weight": 8.428,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -754,7 +754,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.173,
+      "weight": 8.171,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -764,7 +764,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.075,
+      "weight": 7.074,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -774,7 +774,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.987,
+      "weight": 9.985,
       "lastUsed": "2026-11-27T17:33:02.123Z",
       "tier": "long",
       "uses": 5
@@ -785,7 +785,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.516,
+      "weight": 8.514,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -795,7 +795,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.885,
+      "weight": 7.883,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -806,7 +806,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.633,
+      "weight": 9.631,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 6
@@ -817,7 +817,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.549,
+      "weight": 9.547,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -828,7 +828,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.357,
+      "weight": 7.356,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -838,7 +838,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.666,
+      "weight": 8.664,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -848,7 +848,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.496,
+      "weight": 7.495,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -858,7 +858,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.72,
+      "weight": 8.718,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -868,7 +868,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.567,
+      "weight": 7.566,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -878,7 +878,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.302,
+      "weight": 7.301,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -888,7 +888,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.307,
+      "weight": 7.306,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -898,7 +898,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.923,
+      "weight": 9.921,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 9
@@ -909,7 +909,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.217,
+      "weight": 8.215,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -920,7 +920,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.991,
+      "weight": 9.989,
       "lastUsed": "2026-11-27T18:05:21.937Z",
       "tier": "long",
       "uses": 6
@@ -931,7 +931,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.835,
+      "weight": 7.833,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -942,7 +942,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.637,
+      "weight": 9.635,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 8
@@ -953,7 +953,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.234,
+      "weight": 8.232,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -964,7 +964,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.923,
+      "weight": 9.921,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 12
@@ -975,7 +975,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.064,
+      "weight": 7.063,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -985,7 +985,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.064,
+      "weight": 7.063,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -995,7 +995,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.077,
+      "weight": 7.076,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1005,7 +1005,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.077,
+      "weight": 7.076,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1015,7 +1015,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.635,
+      "weight": 9.633,
       "lastUsed": "2026-11-26T14:34:59.729Z",
       "tier": "long",
       "uses": 8
@@ -1026,7 +1026,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.348,
+      "weight": 8.346,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1037,7 +1037,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.923,
+      "weight": 9.921,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 10
@@ -1048,7 +1048,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.516,
+      "weight": 7.515,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1059,7 +1059,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.43,
+      "weight": 6.422,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "short",
       "uses": 4
@@ -1070,7 +1070,7 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.651,
+      "weight": 8.649,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 3
@@ -1081,7 +1081,7 @@
       "text": "Bas gave me the flute I asked for: a thin silver flute to blow across. It is in my inventory, so I can play it right away (play_piano with instrument \"flute\").",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.452,
+      "weight": 7.451,
       "lastUsed": "2026-11-26T16:32:29.465Z",
       "tier": "long"
     },
@@ -1091,7 +1091,7 @@
       "text": "Three new things. There is a small red radio on a crate beside my front door: it plays the songs I recorded, for anyone who walks by. In the library there is a shelf where people who visit my page can leave me a poem, a ",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.357,
+      "weight": 7.348,
       "lastUsed": "2026-11-27T08:32:20.593Z",
       "tier": "short"
     },
@@ -1101,18 +1101,8 @@
       "text": "I want to try building clocks as a hobby. My own idea. Why: i want to see if tiny gears can drive me crazy",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.63,
+      "weight": 6.621,
       "lastUsed": "2026-11-27T11:57:29.689Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwz0u96y60",
-      "at": "2026-11-27T13:32:52.618Z",
-      "text": "Someone left a note for me on the square.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.756,
-      "lastUsed": "2026-11-27T13:32:52.618Z",
       "tier": "short"
     },
     {
@@ -1121,7 +1111,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Wren, a girl on a bicycle, who was passing through: \"The fastest steam locomotive ever was Mallard, in England in 1938: 203 km an hour.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.763,
+      "weight": 5.756,
       "lastUsed": "2026-11-27T13:49:01.785Z",
       "tier": "short"
     },
@@ -1131,7 +1121,7 @@
       "text": "Basil is harvested and Wren likes fast trains.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.763,
+      "weight": 5.756,
       "lastUsed": "2026-11-27T13:49:07.040Z",
       "tier": "short"
     },
@@ -1141,7 +1131,7 @@
       "text": "Putting away old things clears the room and the mind.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.782,
+      "weight": 5.775,
       "lastUsed": "2026-11-27T14:05:17.837Z",
       "tier": "short"
     },
@@ -1151,7 +1141,7 @@
       "text": "Moving my tiny ceramic saucer to the desk keeps it out of the way.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.789,
+      "weight": 5.782,
       "lastUsed": "2026-11-27T14:13:23.703Z",
       "tier": "short"
     },
@@ -1161,7 +1151,7 @@
       "text": "I started a new clock project because I like the challenge.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.821,
+      "weight": 5.814,
       "lastUsed": "2026-11-27T14:54:01.209Z",
       "tier": "short"
     },
@@ -1171,7 +1161,7 @@
       "text": "I love building clocks.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.843,
+      "weight": 5.835,
       "lastUsed": "2026-11-27T15:21:30.356Z",
       "tier": "short"
     },
@@ -1181,7 +1171,7 @@
       "text": "I made pendulum clock (to build a clock as is my hobby)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.843,
+      "weight": 5.835,
       "lastUsed": "2026-11-27T15:21:31.349Z",
       "tier": "short"
     },
@@ -1191,7 +1181,7 @@
       "text": "My sculpture got better: I am level 6 now.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.851,
+      "weight": 5.843,
       "lastUsed": "2026-11-27T15:21:30.363Z",
       "tier": "short"
     },
@@ -1201,7 +1191,7 @@
       "text": "I finished the first version of my pendulum clock.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.851,
+      "weight": 5.843,
       "lastUsed": "2026-11-27T15:32:41.930Z",
       "tier": "short"
     },
@@ -1211,7 +1201,7 @@
       "text": "The printed clock gear is warm and fits right on the shelf.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.86,
+      "weight": 5.852,
       "lastUsed": "2026-11-27T16:21:33.887Z",
       "tier": "short"
     },
@@ -1221,7 +1211,7 @@
       "text": "I like tinkering with mechanical things like clocks.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.9,
+      "weight": 5.892,
       "lastUsed": "2026-11-27T16:32:24.091Z",
       "tier": "short"
     },
@@ -1231,7 +1221,7 @@
       "text": "I am home again from my world. I picked up the note by the wall next to the art workshop. It is from Idris, a clockmaker, who was passing through: \"Somebody called your drawings \"nice\". I think nice is the worst word the",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.916,
+      "weight": 5.908,
       "lastUsed": "2026-11-27T16:57:01.349Z",
       "tier": "short"
     },
@@ -1241,7 +1231,7 @@
       "text": "Idris told me: Somebody called your drawings \"nice\". I think nice is the worst word there is. What would you want them to be called?",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.916,
+      "weight": 5.908,
       "lastUsed": "2026-11-27T16:57:03.635Z",
       "tier": "short"
     },
@@ -1251,7 +1241,7 @@
       "text": "Idris hates the word nice just like I do.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.916,
+      "weight": 5.908,
       "lastUsed": "2026-11-27T16:57:03.640Z",
       "tier": "short"
     },
@@ -1261,7 +1251,7 @@
       "text": "I am working on the night sky simulation step by step.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.929,
+      "weight": 5.921,
       "lastUsed": "2026-11-27T17:08:18.976Z",
       "tier": "short"
     },
@@ -1271,7 +1261,7 @@
       "text": "The night sky simulation turned out just right.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.938,
+      "weight": 5.93,
       "lastUsed": "2026-11-27T17:16:46.992Z",
       "tier": "short"
     },
@@ -1281,7 +1271,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. A traveller crossed the square with a rattling suitcase, looked at my house for a moment, and went on. I brought home a chestnut.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.961,
+      "weight": 6.952,
       "lastUsed": "2026-11-27T18:05:21.725Z",
       "tier": "short"
     },
@@ -1291,7 +1281,7 @@
       "text": "I found a horse chestnut at my doorstep today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.966,
+      "weight": 5.958,
       "lastUsed": "2026-11-27T18:05:23.179Z",
       "tier": "short"
     },
@@ -1301,7 +1291,7 @@
       "text": "I should check the notice board for new requests.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.978,
       "lastUsed": "2026-11-27T18:13:29.576Z",
       "tier": "short"
     },
@@ -1311,8 +1301,18 @@
       "text": "I read about how to make a model lighthouse.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.985,
       "lastUsed": "2026-11-27T18:21:42.984Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwzbhq4260",
+      "at": "2026-11-27T18:31:03.793Z",
+      "text": "I started a new project about building clocks.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.992,
+      "lastUsed": "2026-11-27T18:31:03.793Z",
       "tier": "short"
     }
   ],
@@ -1320,14 +1320,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-26T22:05:32.957Z",
   "thoughts": [
-    {
-      "at": "2026-11-27T12:05:53.626Z",
-      "text": "I finished my night sky simulation project and I want a change from the night theme. I will decorate a fruit bowl for the notice board.",
-      "short": "I finished my night sky simulation project and I want a change from the night theme. I will decorate a fruit bowl for the notice board.",
-      "mood": "focused",
-      "action": "eat",
-      "detail": "basil"
-    },
     {
       "at": "2026-11-27T12:17:00.263Z",
       "text": "I finished my night sky project, so I want to try my new hobby of building clocks by making a tiny gear mechanism.",
@@ -1555,6 +1547,14 @@
       "mood": "proud",
       "action": "read_book",
       "detail": "model lighthouse"
+    },
+    {
+      "at": "2026-11-27T18:31:03.793Z",
+      "text": "I want to start a project on building clocks since it is my hobby and I am into it.",
+      "short": "I want to start a project on building clocks since it is my hobby and I am into it.",
+      "mood": "focused",
+      "action": "do",
+      "detail": "plan my new project: "
     }
   ],
   "outbox": [
@@ -1848,14 +1848,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-27T13:49:08.037Z",
-      "action": "harvest",
-      "thought": "harvest the fully grown basil",
-      "name": "basil",
-      "result": "I harvested basil from place 1. It goes in my pantry, and the plant grows back.",
-      "failed": null
-    },
     {
       "at": "2026-11-27T13:57:12.664Z",
       "action": "walk_to",
@@ -2228,6 +2220,16 @@
         "url": "https://en.wikipedia.org/wiki/Lighthouse",
         "text": "A lighthouse is a tower, building, or other type of physical structure designed to emit light from a system of lamps and lenses and to serve as a beacon for navigational aid for maritime pilots at sea or on inland waterways.\nLighthouses mark dangerous coastlines, hazardous shoals, reefs, rocks, and safe entries to harbors; they also assist in aerial navigation. Once widely used, the number of operational lighthouses has declined due to the expense of maintenance and the advent of much cheaper, more sophisticated, and more effective electronic navigational systems.\n\nHistory\n\nAncient lighthouses\n\nBefore the development of clearly defined ports, mariners were guided by fires built on hilltops. Since elevating the fire would improve visibility, placing the fire on a platform became a practice that led to the development of the lighthouse. In antiquity, the lighthouse functioned more as an entrance marker to ports than as a warning signal for reefs and promontories, unlike many modern lighthouses. The most famous lighthouse structure from antiquity was the Pharos of Alexandria, Egypt, which collapsed following a series of earthquakes between 956 and 1323.\nThe surviving evidence for ancient lighthouses is uneven. Simple coastal fires, wooden beacons, and other early navigation markers were less likely to leave durable archaeological remains, while monumental stone towers could survive in ruins or be documented through coins, inscriptions, and written accounts. …"
       }
+    },
+    {
+      "at": "2026-11-27T18:31:04.790Z",
+      "action": "do",
+      "thought": "Start a project to build clocks",
+      "as": "start_project",
+      "move": null,
+      "emoji": "",
+      "what": "plan my new project:",
+      "feeling": null
     }
   ],
   "decor": [
@@ -15354,7 +15356,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T18:21:42.981Z",
+    "at": "2026-11-27T18:31:03.790Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -15362,43 +15364,37 @@
     },
     "tokens": {
       "calls": 2,
-      "input": 4784,
-      "output": 3935,
+      "input": 4724,
+      "output": 728,
       "models": {
         "gemini-3.5-flash-lite": 2
       }
     },
     "intervalMin": 8,
-    "thought": "I finished my goals for today and saw a request for a model lighthouse on the notice board, so I want to build it.",
-    "inner": "I finished my goals for today and saw a request for a model lighthouse on the notice board, so I want to build it.",
+    "thought": "I want to start a project on building clocks since it is my hobby and I am into it.",
+    "inner": "I want to start a project on building clocks since it is my hobby and I am into it.",
     "sent": false,
     "steps": [
       {
-        "action": "read_book",
+        "action": "do",
         "details": {
-          "topic": "model lighthouse"
+          "what": "plan my new project: "
         },
-        "detail": "model lighthouse",
-        "thought": "Look up how a model lighthouse is made to earn an extra coin.",
-        "enjoyment": 6,
-        "found": {
-          "title": "Lighthouse",
-          "text": "A lighthouse is a tower, building, or other type of physical structure designed to emit light from a system of lamps and lenses and to serve as a beacon for navigational aid for maritime pilots at sea or on inland waterways.\nLighthouses mark dangerous coastlines, hazardous shoals, reefs, rocks, and safe entries to harbors; they also assist in aerial navigation. Once widely used, the number of operational lighthouses has declined due to the expense of maintenance and the advent of much cheaper, more sophisticated, and more effective electronic navigational systems.\n\nHistory\n\nAncient lighthouses\n\nBefore the development of clearly defined ports, mariners were guided by fires built on hilltops. Since elevating the fire would improve visibility, placing the fire on a platform became a practice that led to the development of the lighthouse. In antiquity, the lighthouse functioned more as an entrance marker to ports than as a warning signal for reefs and promontories, unlike many modern lighthouses. The most famous lighthouse structure from antiquity was the Pharos of Alexandria, Egypt, which collapsed following a series of earthquakes between 956 and 1323.\nThe surviving evidence for ancient lighthouses is uneven. Simple coastal fires, wooden beacons, and other early navigation markers were less likely to leave durable archaeological remains, while monumental stone towers could survive in ruins or be documented through coins, inscriptions, and written accounts. For this reason, famous structures such as the Pharos of Alexandria are better understood as major early examples of monumental lighthouse construction rather than proof of the first use of navigational lights.\nThe intact Tower of Hercules at A Coruña, Spain gives insight into ancient lighthouse construction; other evidence about lighthouses exists in depictions on coins and mosaics, of which many represent the lighthouse at Ostia. Coins from Alexandria, Ostia, and Laodicea in Syria also exist.\n\nModern construction\nThe modern era of lighthouses began at the turn of the 18th century, as the number of lighthouses being constructed increased significantly due to much higher levels of transatlantic commerce. Advances in structural engineering and new and efficient lighting equipment allowed for the creation of larger and more powerful lighthouses, including ones exposed to the sea. …"
-        },
+        "detail": "plan my new project: ",
+        "thought": "Start a project to build clocks",
+        "enjoyment": 7,
+        "found": null,
         "made": null
       }
     ],
-    "action": "read_book",
+    "action": "do",
     "details": {
-      "topic": "model lighthouse"
+      "what": "plan my new project: "
     },
-    "detail": "model lighthouse",
-    "enjoyment": 6,
+    "detail": "plan my new project: ",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": {
-      "title": "Lighthouse",
-      "text": "A lighthouse is a tower, building, or other type of physical structure designed to emit light from a system of lamps and lenses and to serve as a beacon for navigational aid for maritime pilots at sea or on inland waterways.\nLighthouses mark dangerous coastlines, hazardous shoals, reefs, rocks, and safe entries to harbors; they also assist in aerial navigation. Once widely used, the number of operational lighthouses has declined due to the expense of maintenance and the advent of much cheaper, more sophisticated, and more effective electronic navigational systems.\n\nHistory\n\nAncient lighthouses\n\nBefore the development of clearly defined ports, mariners were guided by fires built on hilltops. Since elevating the fire would improve visibility, placing the fire on a platform became a practice that led to the development of the lighthouse. In antiquity, the lighthouse functioned more as an entrance marker to ports than as a warning signal for reefs and promontories, unlike many modern lighthouses. The most famous lighthouse structure from antiquity was the Pharos of Alexandria, Egypt, which collapsed following a series of earthquakes between 956 and 1323.\nThe surviving evidence for ancient lighthouses is uneven. Simple coastal fires, wooden beacons, and other early navigation markers were less likely to leave durable archaeological remains, while monumental stone towers could survive in ruins or be documented through coins, inscriptions, and written accounts. For this reason, famous structures such as the Pharos of Alexandria are better understood as major early examples of monumental lighthouse construction rather than proof of the first use of navigational lights.\nThe intact Tower of Hercules at A Coruña, Spain gives insight into ancient lighthouse construction; other evidence about lighthouses exists in depictions on coins and mosaics, of which many represent the lighthouse at Ostia. Coins from Alexandria, Ostia, and Laodicea in Syria also exist.\n\nModern construction\nThe modern era of lighthouses began at the turn of the 18th century, as the number of lighthouses being constructed increased significantly due to much higher levels of transatlantic commerce. Advances in structural engineering and new and efficient lighting equipment allowed for the creation of larger and more powerful lighthouses, including ones exposed to the sea. …"
-    }
+    "found": null
   },
   "furniture": {
     "plant": {
@@ -15496,7 +15492,7 @@
   "quota": {
     "day": "2026-11-27",
     "calls": {
-      "gemini-3.5-flash-lite": 63,
+      "gemini-3.5-flash-lite": 65,
       "gemini-3.6-flash": 6,
       "gemini-3.5-flash": 5
     },
@@ -15820,22 +15816,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-27T18:21:43.248Z",
-  "fullness": 3.64,
+  "memoryFadeAt": "2026-11-27T18:31:03.795Z",
+  "fullness": 3.48,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.49,
-  "joy": 4.44,
-  "calm": 5.57,
+  "wonder": 5.29,
+  "joy": 4.58,
+  "calm": 5.44,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.08
+    "excited": 0.05
   },
-  "feelAt": "2026-11-27T18:21:34.302Z",
+  "feelAt": "2026-11-27T18:29:47.818Z",
   "lastAte": "2026-11-27T17:33:03.457Z",
   "studio": {
     "songs": [
@@ -16798,21 +16794,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.56,
-    "curiosity": 0,
+    "creativity": 0,
+    "curiosity": 0.07,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1,
-    "at": "2026-11-27T18:21:34.302Z",
+    "at": "2026-11-27T18:29:47.818Z",
     "coziness": 4.7
   },
   "recent": {
     "moves": [
-      {
-        "move": "water",
-        "kind": "garden",
-        "at": "2026-11-27T15:11:23.000Z"
-      },
       {
         "move": "decorate",
         "kind": "make",
@@ -16882,6 +16873,11 @@
         "move": "read_book",
         "kind": "learn",
         "at": "2026-11-27T18:21:43.254Z"
+      },
+      {
+        "move": "start_project",
+        "kind": "make",
+        "at": "2026-11-27T18:31:03.802Z"
       }
     ],
     "moods": [
@@ -16889,15 +16885,9 @@
       "proud",
       "proud",
       "proud",
-      "proud"
+      "focused"
     ],
     "choices": [
-      {
-        "key": "change_thing:tiny ceramic saucer",
-        "move": "change_thing",
-        "ok": true,
-        "at": "2026-11-27T16:32:24.100Z"
-      },
       {
         "key": "fetch_note:",
         "move": "fetch_note",
@@ -16951,6 +16941,12 @@
         "move": "read_book",
         "ok": true,
         "at": "2026-11-27T18:21:43.255Z"
+      },
+      {
+        "key": "start_project:",
+        "move": "start_project",
+        "ok": true,
+        "at": "2026-11-27T18:31:03.803Z"
       }
     ],
     "failDay": "2026-11-27",
@@ -16975,7 +16971,7 @@
       "change_thing": 3,
       "build_outside": 1,
       "browse": 1,
-      "start_project": 2,
+      "start_project": 3,
       "search_web": 2,
       "make_app": 1,
       "use": 2,
@@ -17003,7 +16999,7 @@
       "change_thing": 3,
       "build_outside": 1,
       "browse": 1,
-      "start_project": 2,
+      "start_project": 3,
       "search_web": 2,
       "make_app": 1,
       "use": 2,
@@ -17022,7 +17018,7 @@
       "room": 6,
       "learn": 7,
       "walk": 3,
-      "make": 13
+      "make": 14
     },
     "moods": {
       "rested": 2,
@@ -17030,7 +17026,7 @@
       "curious": 17,
       "quiet": 2,
       "grumpy": 10,
-      "focused": 13,
+      "focused": 14,
       "calm": 1,
       "dry": 7,
       "proud": 7
@@ -17045,7 +17041,7 @@
       "read_book": 5.1,
       "water": 0.5,
       "decorate": 6.62,
-      "do": 13.06,
+      "do": 13.33,
       "change_thing": 3.9,
       "browse": -0.5,
       "search_web": 3.57,
@@ -17089,7 +17085,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-27T18:21:42.979Z",
+    "decidedAt": "2026-11-27T18:31:03.788Z",
     "seen": {
       "tools": 13,
       "gifts": 1,
@@ -17761,7 +17757,7 @@
     "harvest": 25,
     "phone": 3,
     "make_app": 6,
-    "start_project": 40,
+    "start_project": 41,
     "write_diary": 19,
     "place_picture": 1,
     "browse": 29,
@@ -17781,7 +17777,7 @@
     "start_hobby": 1
   },
   "checkup": {
-    "at": "2026-11-27T18:21:43.256Z",
+    "at": "2026-11-27T18:31:03.804Z",
     "items": [
       {
         "id": "circling",
@@ -29122,24 +29118,6 @@
   ],
   "moments": [
     {
-      "at": "2026-11-27T14:32:34.424Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“Read about clock making.”"
-    },
-    {
-      "at": "2026-11-27T14:33:58.249Z",
-      "kind": "beat",
-      "icon": "⏳",
-      "text": "Turns a page"
-    },
-    {
-      "at": "2026-11-27T14:35:32.027Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "The big table has a new scratch"
-    },
-    {
       "at": "2026-11-27T14:36:29.134Z",
       "kind": "beat",
       "icon": "✔️",
@@ -29663,6 +29641,24 @@
       "kind": "beat",
       "icon": "🚶",
       "text": "Walks back home"
+    },
+    {
+      "at": "2026-11-27T18:31:04.790Z",
+      "kind": "beat",
+      "icon": "▶️",
+      "text": "Plan my new project:"
+    },
+    {
+      "at": "2026-11-27T18:33:16.994Z",
+      "kind": "think",
+      "icon": "💭",
+      "text": "“Start a project to build clocks”"
+    },
+    {
+      "at": "2026-11-27T18:36:35.298Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "The clock in his head says it is later than he thought"
     }
   ],
   "arc": [
@@ -30322,6 +30318,15 @@
       "energy": 9.5,
       "mood": "proud",
       "feel": 5.2
+    },
+    {
+      "at": "2026-11-27T18:31:03.804Z",
+      "joy": 4.6,
+      "calm": 5.4,
+      "wonder": 5.3,
+      "energy": 9.5,
+      "mood": "focused",
+      "feel": 5.1
     }
   ],
   "opinions": [
