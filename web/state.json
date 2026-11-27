@@ -1,8 +1,8 @@
 {
   "mood": "quiet",
-  "energy": 8.63,
+  "energy": 8.32,
   "boredom": 0,
-  "loneliness": 9.39,
+  "loneliness": 9.4,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-26T14:01:28.269Z",
-      "action": "remove_decoration",
-      "detail": "small wooden shelf",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-26T14:09:37.491Z",
       "action": "search_web",
@@ -306,10 +300,14 @@
       "action": "play_piano",
       "detail": "C4 E4 G4:2 E4:4",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-27T07:42:48.519Z",
+      "action": "harvest",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "I harvested mint from place 3. It goes in my pantry, and the plant grows back.",
     "I watered basil. The soil stays damp for about 10 hours.",
     "My basil is fully grown and ready to harvest!",
     "I harvested basil from place 1. It goes in my pantry, and the plant grows back.",
@@ -338,7 +336,8 @@
     "Browsing the web I came across Monowara Islam: Monowara Islam (born 1936) is a Bangladeshi professor, litterateur and language movement activist. In recognition of her contribution to the Bengali language movement, the government of Bangladesh awarded her the country's second highest civilian award Ekushey Padak in 2019. Personal life and…",
     "My mint is fully grown and ready to harvest!",
     "I harvested mint from place 3. It goes in my pantry, and the plant grows back.",
-    "I played nearly the same tune once in the last day. A new tune would feel fresher: I change the notes, or I compose one."
+    "I played nearly the same tune once in the last day. A new tune would feel fresher: I change the notes, or I compose one.",
+    "I harvested basil from place 2. It goes in my pantry, and the plant grows back."
   ],
   "requests": [],
   "story": "Pip spends his evenings by the autumn window as dusk falls. He learns by doing and makes clumsy things with his own hands. He spends half his time playing around just to see what happens. Decorating his walls and searching the web keep him busy. Pushing objects from one spot to another just makes him grumpy. Today he did a lot of chores he disliked. Late at night, he writes his honest thoughts in his diary.",
@@ -1061,7 +1060,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. Someone pinned a note on the notice board and walked on, whistling. I brought home a blue marble someone lost.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.291,
+      "weight": 5.29,
       "lastUsed": "2026-11-25T20:32:21.197Z",
       "tier": "short",
       "uses": 1
@@ -1072,7 +1071,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.498,
+      "weight": 6.497,
       "lastUsed": "2026-11-27T07:00:35.070Z",
       "tier": "short",
       "uses": 3
@@ -1094,7 +1093,7 @@
       "text": "I made workshop_stool (I need a sturdy little stool to sit on by my workbench when I work on small parts for hours.)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.269,
+      "weight": 5.268,
       "lastUsed": "2026-11-26T16:07:21.207Z",
       "tier": "short"
     },
@@ -1114,7 +1113,7 @@
       "text": "I am home again from the library. At the library I found a book about night sky and read it at the big table by the window. It was so quiet I could hear the pages.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.293,
+      "weight": 5.292,
       "lastUsed": "2026-11-26T17:29:22.605Z",
       "tier": "short"
     },
@@ -1124,7 +1123,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Kofi, a kite maker, who was passing through: \"What is the most useless thing you ever made? I once built a ladder for a fish.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.338,
+      "weight": 5.337,
       "lastUsed": "2026-11-26T17:53:41.293Z",
       "tier": "short"
     },
@@ -1134,7 +1133,7 @@
       "text": "Kofi built a ladder for a fish. At least mine was not wet.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.338,
+      "weight": 5.337,
       "lastUsed": "2026-11-26T17:53:44.032Z",
       "tier": "short"
     },
@@ -1144,7 +1143,7 @@
       "text": "Night sky projects are worth doing.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.347,
+      "weight": 5.346,
       "lastUsed": "2026-11-26T18:01:57.501Z",
       "tier": "short"
     },
@@ -1154,7 +1153,7 @@
       "text": "I am home again from the notice board. I read the notice board. New: someone wants a game about a jumping frog. On it now: a telescope (3 coins), a drawing of a cat (2 coins), a game about a jumping frog (5 coins). If I ",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.359,
+      "weight": 5.358,
       "lastUsed": "2026-11-26T18:18:09.304Z",
       "tier": "short"
     },
@@ -1164,7 +1163,7 @@
       "text": "I drew plain wooden shelf",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.359,
+      "weight": 5.358,
       "lastUsed": "2026-11-26T18:18:17.479Z",
       "tier": "short"
     },
@@ -1174,7 +1173,7 @@
       "text": "I made a drawing of a cat, as the note on the notice board asked. I took the note down and got 2 coins. I have 4 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.263,
+      "weight": 6.262,
       "lastUsed": "2026-11-26T18:18:16.497Z",
       "tier": "short"
     },
@@ -1184,7 +1183,7 @@
       "text": "I recorded a song: starlight flute tune (flute, guitar, drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.372,
+      "weight": 5.371,
       "lastUsed": "2026-11-26T18:34:37.548Z",
       "tier": "short"
     },
@@ -1194,7 +1193,7 @@
       "text": "Playing the flute after finishing a simulation feels right.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.392,
+      "weight": 5.391,
       "lastUsed": "2026-11-26T18:59:13.273Z",
       "tier": "short"
     },
@@ -1204,7 +1203,7 @@
       "text": "I received a thin silver flute and played it.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.398,
+      "weight": 5.397,
       "lastUsed": "2026-11-26T19:07:25.022Z",
       "tier": "short"
     },
@@ -1214,7 +1213,7 @@
       "text": "I am home again from the green stone. I sat with my back against the green stone. It was warmer than a stone should be. Nobody knows who put it there, and it is not telling.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.405,
+      "weight": 5.404,
       "lastUsed": "2026-11-26T19:55:50.127Z",
       "tier": "short"
     },
@@ -1224,7 +1223,7 @@
       "text": "Someone gave me a thin silver flute and it is lovely to play at night.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.405,
+      "weight": 5.404,
       "lastUsed": "2026-11-26T19:55:51.676Z",
       "tier": "short"
     },
@@ -1234,7 +1233,7 @@
       "text": "I have a new silver flute in my inventory.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.442,
+      "weight": 5.441,
       "lastUsed": "2026-11-26T20:03:56.932Z",
       "tier": "short"
     },
@@ -1244,7 +1243,7 @@
       "text": "Playing music at night clears my head after finishing a project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.468,
+      "weight": 5.467,
       "lastUsed": "2026-11-26T20:30:23.347Z",
       "tier": "short"
     },
@@ -1254,7 +1253,7 @@
       "text": "Playing the flute helps clear my head when my room is too cluttered.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.469,
+      "weight": 5.468,
       "lastUsed": "2026-11-26T20:38:28.761Z",
       "tier": "short"
     },
@@ -1264,7 +1263,7 @@
       "text": "Playing the flute at night is a good way to rest after making things.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.49,
+      "weight": 5.489,
       "lastUsed": "2026-11-26T21:06:51.034Z",
       "tier": "short"
     },
@@ -1274,7 +1273,7 @@
       "text": "I recorded a song: quiet night song (choir, guitar, flute, drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.49,
+      "weight": 5.489,
       "lastUsed": "2026-11-26T21:06:52.027Z",
       "tier": "short"
     },
@@ -1284,7 +1283,7 @@
       "text": "I drew green_stone",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.518,
+      "weight": 5.517,
       "lastUsed": "2026-11-26T21:40:10.847Z",
       "tier": "short"
     },
@@ -1294,7 +1293,7 @@
       "text": "My drawing green_stone turned out simple and neat.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.524,
+      "weight": 5.523,
       "lastUsed": "2026-11-26T21:48:51.883Z",
       "tier": "short"
     },
@@ -1304,7 +1303,7 @@
       "text": "My mint is fully grown and harvested.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.537,
+      "weight": 5.536,
       "lastUsed": "2026-11-27T07:00:42.584Z",
       "tier": "short"
     },
@@ -1314,7 +1313,7 @@
       "text": "I am home again from the pond in the park. The pond was frozen all the way across. I slid over the ice on my feet, there and back, and fell once. I went home early, because I got very hungry.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.973,
+      "weight": 5.972,
       "lastUsed": "2026-11-27T07:24:53.155Z",
       "tier": "short"
     }
@@ -1323,13 +1322,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-26T22:05:32.957Z",
   "thoughts": [
-    {
-      "at": "2026-11-26T18:10:05.009Z",
-      "text": "I finished my simulation project and I want to check the notice board to see what people are asking for.",
-      "short": "I finished my simulation project and I want to check the notice board to see what people are asking for.",
-      "mood": "dry",
-      "action": "go_out"
-    },
     {
       "at": "2026-11-26T18:18:16.485Z",
       "text": "I want to draw a cat for the notice board to earn some coins.",
@@ -1559,6 +1551,13 @@
       "mood": "quiet",
       "action": "play_piano",
       "detail": "C4 E4 G4:2 E4:4"
+    },
+    {
+      "at": "2026-11-27T07:42:48.523Z",
+      "text": "I finished my simulation project and my hands are quiet, so I will play a quiet tune on my instrument.",
+      "short": "I finished my simulation project and my hands are quiet, so I will play a quiet tune on my instrument.",
+      "mood": "quiet",
+      "action": "harvest"
     }
   ],
   "outbox": [
@@ -1852,38 +1851,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-26T18:34:37.548Z",
-      "action": "record_song",
-      "thought": "play flute",
-      "name": "starlight flute tune",
-      "tempo": 78,
-      "tracks": [
-        {
-          "instrument": "flute",
-          "notes": "E4 G4 B4 G4 A4 G4 E4:2 E4 G4 B4 G4 A4 G4 E4:2 B4 D5 E5 D5 B4 G4 E4:2 E4 G4 B4 G4 A4 G4 E4:2",
-          "volume": 0.8,
-          "pan": 0,
-          "reverb": 0.2
-        },
-        {
-          "instrument": "guitar",
-          "notes": "C3+G3:4 A2+E3:4 C3+G3:4 A2+E3:4 G2+D3:4 C3+G3:4 C3+G3:4 A2+E3:4",
-          "volume": 0.8,
-          "pan": 0,
-          "reverb": 0.2
-        },
-        {
-          "instrument": "drums",
-          "notes": "kick hat kick hat - hat snare hat kick hat kick hat - hat snare hat kick hat kick snare - hat snare hat kick hat kick hat - hat snare hat",
-          "volume": 0.6,
-          "pan": 0,
-          "reverb": 0.2
-        }
-      ],
-      "why": "to wind down for the night",
-      "failed": null
-    },
     {
       "at": "2026-11-26T18:42:46.868Z",
       "action": "search_web",
@@ -2232,6 +2199,14 @@
       "notes": "C4 E4 G4:2 E4:4",
       "style": "",
       "instrument": "guitar"
+    },
+    {
+      "at": "2026-11-27T07:42:49.517Z",
+      "action": "harvest",
+      "thought": "I am hungry. Let me pick something.",
+      "name": "basil",
+      "result": "I harvested basil from place 2. It goes in my pantry, and the plant grows back.",
+      "failed": null
     }
   ],
   "decor": [
@@ -13015,7 +12990,7 @@
     {
       "name": "basil",
       "kind": "ingredient",
-      "qty": 0
+      "qty": 2
     },
     {
       "name": "mint",
@@ -13478,7 +13453,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T07:41:11.438Z",
+    "at": "2026-11-27T07:42:48.517Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -13486,36 +13461,28 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 2502,
-      "output": 83,
+      "input": 2418,
+      "output": 121,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "My project is already done, so I want to play a quiet tune on my instrument.",
-    "inner": "My project is already done, so I want to play a quiet tune on my instrument.",
+    "thought": "I finished my simulation project and my hands are quiet, so I will play a quiet tune on my instrument.",
+    "inner": "I finished my simulation project and my hands are quiet, so I will play a quiet tune on my instrument.",
     "sent": false,
     "steps": [
       {
-        "action": "play_piano",
-        "details": {
-          "instrument": "guitar",
-          "notes": "C4 E4 G4:2 E4:4"
-        },
-        "detail": "C4 E4 G4:2 E4:4",
-        "thought": "play music",
+        "action": "harvest",
+        "details": {},
+        "thought": "I am hungry. Let me pick something.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "play_piano",
-    "details": {
-      "instrument": "guitar",
-      "notes": "C4 E4 G4:2 E4:4"
-    },
-    "detail": "C4 E4 G4:2 E4:4",
+    "action": "harvest",
+    "details": {},
     "enjoyment": 6,
     "new_idea": null,
     "found": null
@@ -13615,7 +13582,7 @@
   "quota": {
     "day": "2026-11-26",
     "calls": {
-      "gemini-3.5-flash-lite": 144,
+      "gemini-3.5-flash-lite": 145,
       "gemini-3.8-flash": 3,
       "gemini-3.6-flash": 11,
       "gemini-3.5-flash": 10,
@@ -13893,9 +13860,9 @@
           "2026-11-26T12:50:52.941Z",
           "2026-11-26T18:59:13.270Z"
         ],
-        "cut": 168.54026027777778,
-        "seen": "grown",
-        "harvests": 6
+        "cut": 195.09246638888888,
+        "seen": "young",
+        "harvests": 7
       },
       {
         "id": "gmwoxgf712",
@@ -13928,22 +13895,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-27T07:41:11.444Z",
-  "fullness": 3.86,
+  "memoryFadeAt": "2026-11-27T07:42:48.525Z",
+  "fullness": 3.83,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 4.61,
-  "joy": 5.51,
-  "calm": 6.79,
+  "wonder": 4.29,
+  "joy": 4.86,
+  "calm": 6.4,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.9600000000000001
+    "excited": 0.58
   },
-  "feelAt": "2026-11-27T07:41:10.287Z",
+  "feelAt": "2026-11-27T07:42:47.301Z",
   "lastAte": "2026-11-27T07:24:54.312Z",
   "studio": {
     "songs": [
@@ -14826,21 +14793,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.37,
-    "curiosity": 2.06,
+    "creativity": 0.39,
+    "curiosity": 2.07,
     "boredom": 0,
-    "loneliness": 9.39,
+    "loneliness": 9.4,
     "tidiness": 0.4,
-    "at": "2026-11-27T07:41:10.287Z",
+    "at": "2026-11-27T07:42:47.301Z",
     "coziness": 3.4
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-26T20:40:05.152Z"
-      },
       {
         "move": "write_diary",
         "kind": "write",
@@ -14910,22 +14872,21 @@
         "move": "play_piano",
         "kind": "music",
         "at": "2026-11-27T07:41:11.450Z"
+      },
+      {
+        "move": "harvest",
+        "kind": "garden",
+        "at": "2026-11-27T07:42:48.529Z"
       }
     ],
     "moods": [
       "rested",
-      "rested",
       "hungry",
       "curious",
+      "quiet",
       "quiet"
     ],
     "choices": [
-      {
-        "key": "record_song:song",
-        "move": "record_song",
-        "ok": true,
-        "at": "2026-11-26T21:06:51.047Z"
-      },
       {
         "key": "do:play a quiet melody on my flute",
         "move": "do",
@@ -14979,6 +14940,12 @@
         "move": "play_piano",
         "ok": true,
         "at": "2026-11-27T07:41:11.451Z"
+      },
+      {
+        "key": "use:keyboard",
+        "move": "use",
+        "ok": true,
+        "at": "2026-11-27T07:42:48.530Z"
       }
     ],
     "failDay": "2026-11-27",
@@ -14988,21 +14955,21 @@
   "today": {
     "day": "2026-11-27",
     "done": {
-      "harvest": 1,
+      "harvest": 2,
       "go_out": 1,
       "eat": 1,
       "check_board": 1,
       "play_piano": 1
     },
     "tried": {
-      "harvest": 1,
+      "harvest": 2,
       "go_out": 1,
       "eat": 1,
       "check_board": 1,
       "play_piano": 1
     },
     "kinds": {
-      "garden": 1,
+      "garden": 2,
       "outside": 1,
       "food": 1,
       "play": 1,
@@ -15012,10 +14979,10 @@
       "rested": 2,
       "hungry": 1,
       "curious": 1,
-      "quiet": 1
+      "quiet": 2
     },
     "lift": {
-      "harvest": -0.5,
+      "harvest": -1,
       "go_out": 0,
       "eat": 0.8,
       "play_piano": -0.2
@@ -15027,7 +14994,7 @@
     "sculpture": 47,
     "woodwork": 40,
     "sewing": 6.5,
-    "gardening": 65.5,
+    "gardening": 66.5,
     "cooking": 22,
     "coding": 10
   },
@@ -15055,7 +15022,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-27T07:41:11.436Z",
+    "decidedAt": "2026-11-27T07:42:48.513Z",
     "seen": {
       "tools": 13,
       "gifts": 1,
@@ -15065,7 +15032,10 @@
       "seeds": 9,
       "visitors": 18
     },
-    "lastFail": null,
+    "lastFail": {
+      "at": "2026-11-27T07:42:48.517Z",
+      "why": "use: there is nothing called \"keyboard\" in my room (yet)"
+    },
     "unread": 0
   },
   "fixedAt": {
@@ -15686,7 +15656,7 @@
     "work_on_project": 2,
     "plan_project": 26,
     "judge_project": 22,
-    "harvest": 23,
+    "harvest": 24,
     "phone": 3,
     "make_app": 5,
     "start_project": 38,
@@ -15707,7 +15677,7 @@
     "shape_land": 1
   },
   "checkup": {
-    "at": "2026-11-27T07:41:11.452Z",
+    "at": "2026-11-27T07:42:48.531Z",
     "items": [
       {
         "id": "circling",
