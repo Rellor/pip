@@ -3917,7 +3917,7 @@ const awayWords = () => {
   const back = new Date(Date.parse(w.homeAt)).toLocaleTimeString('en-GB', { timeZone: 'Europe/Amsterdam', hour: '2-digit', minute: '2-digit' }); // his clock (Dutch time), like the World tab
   if (w.play && now < Date.parse(w.arriveAt) && !w.cut) return ['🚶', `Walking to ${name} with his ${w.play.name}`, back];
   if (w.site && now >= Date.parse(w.arriveAt)) return ['🔨', `Building ${name}: ${Math.round(sitePart(w.site, now) * 100)}%`, back];
-  return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? (w.step ? [headline(w.step)[0], `${headline(w.step)[1]}, at ${name}`, back] : [w.play ? '🪁' : p.emoji, w.play ? `At ${name}: ${w.play.words.replace(/\bmy\b/, 'his')}` : w.job?.words ? `At ${name}: ${w.job.words}` : `At ${name}`, back]) : ['🏠', `Walking home from ${name}`, back];
+  return now < Date.parse(w.arriveAt) && !w.cut ? [`🚶`, `Walking to ${name}`, back] : now < Date.parse(w.leaveAt) ? (w.step ? [headline(w.step)[0], `${headline(w.step)[1]}, at ${name}`, back] : [w.play ? '🪁' : p.emoji, w.play ? `At ${name} with his ${w.play.name}` : w.job?.words ? `At ${name}: ${w.job.words}` : `At ${name}`, back]) : ['🏠', `Walking home from ${name}`, back];
 };
 let isStatic = false;
 let fastUntil = 0;
