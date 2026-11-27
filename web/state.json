@@ -1,5 +1,5 @@
 {
-  "mood": "grumpy",
+  "mood": "focused",
   "energy": 9.5,
   "boredom": 0,
   "loneliness": 10,
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-26T18:51:07.506Z",
-      "action": "play_piano",
-      "detail": "C4 E4 G4:2 E4:4",
-      "enjoyment": 6
-    },
     {
       "at": "2026-11-26T18:59:13.271Z",
       "action": "water",
@@ -306,6 +300,12 @@
       "action": "make_app",
       "detail": "build a little jumping frog game",
       "enjoyment": 7
+    },
+    {
+      "at": "2026-11-27T11:23:35.340Z",
+      "action": "do",
+      "detail": "improve the jumping frog game v1",
+      "enjoyment": 6
     }
   ],
   "notes": [
@@ -703,7 +703,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.576,
+      "weight": 7.575,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -713,7 +713,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.743,
+      "weight": 9.741,
       "lastUsed": "2026-11-26T15:42:24.006Z",
       "tier": "long",
       "uses": 8
@@ -724,7 +724,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.273,
+      "weight": 7.272,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -734,7 +734,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.61,
+      "weight": 9.608,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -745,7 +745,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.502,
+      "weight": 8.501,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -756,7 +756,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.239,
+      "weight": 8.238,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -766,7 +766,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.133,
+      "weight": 7.132,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -776,7 +776,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.72,
+      "weight": 9.718,
       "lastUsed": "2026-11-26T14:01:13.589Z",
       "tier": "long",
       "uses": 4
@@ -787,7 +787,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.588,
+      "weight": 8.587,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -797,7 +797,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.951,
+      "weight": 7.95,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -808,7 +808,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.726,
+      "weight": 9.724,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 6
@@ -819,7 +819,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.642,
+      "weight": 9.64,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -830,7 +830,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.42,
+      "weight": 7.419,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -840,7 +840,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.744,
+      "weight": 8.742,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -850,7 +850,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.56,
+      "weight": 7.559,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -860,7 +860,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.805,
+      "weight": 8.803,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -870,7 +870,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.631,
+      "weight": 7.63,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -880,7 +880,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.365,
+      "weight": 7.364,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -890,7 +890,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.37,
+      "weight": 7.369,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -900,7 +900,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.829,
+      "weight": 9.827,
       "lastUsed": "2026-11-27T07:00:35.070Z",
       "tier": "long",
       "uses": 8
@@ -911,7 +911,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.284,
+      "weight": 8.283,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -922,7 +922,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.647,
+      "weight": 9.645,
       "lastUsed": "2026-11-26T14:09:33.063Z",
       "tier": "long",
       "uses": 5
@@ -933,7 +933,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.901,
+      "weight": 7.9,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -944,7 +944,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.73,
+      "weight": 9.728,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 8
@@ -955,7 +955,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.301,
+      "weight": 8.3,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -966,7 +966,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.829,
+      "weight": 9.827,
       "lastUsed": "2026-11-27T07:00:35.070Z",
       "tier": "long",
       "uses": 11
@@ -977,7 +977,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.122,
+      "weight": 7.121,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -987,7 +987,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.122,
+      "weight": 7.121,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -997,7 +997,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.135,
+      "weight": 7.134,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1007,7 +1007,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.135,
+      "weight": 7.134,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1017,7 +1017,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.728,
+      "weight": 9.726,
       "lastUsed": "2026-11-26T14:34:59.729Z",
       "tier": "long",
       "uses": 8
@@ -1028,7 +1028,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.417,
+      "weight": 8.416,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1039,7 +1039,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.829,
+      "weight": 9.827,
       "lastUsed": "2026-11-27T07:00:35.070Z",
       "tier": "long",
       "uses": 9
@@ -1050,7 +1050,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.58,
+      "weight": 7.579,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1061,7 +1061,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.311,
+      "weight": 6.304,
       "lastUsed": "2026-11-27T07:00:35.070Z",
       "tier": "short",
       "uses": 3
@@ -1072,7 +1072,7 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.224,
+      "weight": 8.223,
       "lastUsed": "2026-11-27T07:00:35.070Z",
       "tier": "long",
       "uses": 2
@@ -1083,7 +1083,7 @@
       "text": "Bas gave me the flute I asked for: a thin silver flute to blow across. It is in my inventory, so I can play it right away (play_piano with instrument \"flute\").",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.515,
+      "weight": 7.514,
       "lastUsed": "2026-11-26T16:32:29.465Z",
       "tier": "long"
     },
@@ -1093,7 +1093,7 @@
       "text": "I made a drawing of a cat, as the note on the notice board asked. I took the note down and got 2 coins. I have 4 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.083,
+      "weight": 6.076,
       "lastUsed": "2026-11-26T18:18:16.497Z",
       "tier": "short"
     },
@@ -1103,7 +1103,7 @@
       "text": "I recorded a song: quiet night song (choir, guitar, flute, drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.334,
+      "weight": 5.328,
       "lastUsed": "2026-11-26T21:06:52.027Z",
       "tier": "short"
     },
@@ -1113,7 +1113,7 @@
       "text": "I drew green_stone",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.362,
+      "weight": 5.356,
       "lastUsed": "2026-11-26T21:40:10.847Z",
       "tier": "short"
     },
@@ -1123,7 +1123,7 @@
       "text": "My drawing green_stone turned out simple and neat.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.368,
+      "weight": 5.362,
       "lastUsed": "2026-11-26T21:48:51.883Z",
       "tier": "short"
     },
@@ -1133,7 +1133,7 @@
       "text": "My mint is fully grown and harvested.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.381,
+      "weight": 5.375,
       "lastUsed": "2026-11-27T07:00:42.584Z",
       "tier": "short"
     },
@@ -1143,7 +1143,7 @@
       "text": "I am home again from the pond in the park. The pond was frozen all the way across. I slid over the ice on my feet, there and back, and fell once. I went home early, because I got very hungry.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.795,
+      "weight": 5.788,
       "lastUsed": "2026-11-27T07:24:53.155Z",
       "tier": "short"
     },
@@ -1153,7 +1153,7 @@
       "text": "Night sky simulation is complete, time to look into new ideas.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.837,
+      "weight": 5.83,
       "lastUsed": "2026-11-27T08:07:52.708Z",
       "tier": "short"
     },
@@ -1163,7 +1163,7 @@
       "text": "Three new things. There is a small red radio on a crate beside my front door: it plays the songs I recorded, for anyone who walks by. In the library there is a shelf where people who visit my page can leave me a poem, a ",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.804,
+      "weight": 7.795,
       "lastUsed": "2026-11-27T08:32:20.593Z",
       "tier": "short"
     },
@@ -1173,7 +1173,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Lotte, a postwoman, who was passing through: \"A hill looks twice as high with one small tree on top.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.851,
+      "weight": 5.844,
       "lastUsed": "2026-11-27T08:32:20.903Z",
       "tier": "short"
     },
@@ -1183,7 +1183,7 @@
       "text": "Lotte's note about the hill with a tree gives things scale.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.851,
+      "weight": 5.844,
       "lastUsed": "2026-11-27T08:32:22.923Z",
       "tier": "short"
     },
@@ -1193,7 +1193,7 @@
       "text": "Basil is better fresh.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.864,
+      "weight": 5.857,
       "lastUsed": "2026-11-27T08:40:30.250Z",
       "tier": "short"
     },
@@ -1203,7 +1203,7 @@
       "text": "I did everything I wanted to do today. It feels good to follow my own plans.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.885,
+      "weight": 5.878,
       "lastUsed": "2026-11-27T09:01:18.832Z",
       "tier": "short"
     },
@@ -1213,7 +1213,7 @@
       "text": "My tiny wooden shelf turned out sturdy enough, though the corner is a bit rough.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.889,
+      "weight": 5.882,
       "lastUsed": "2026-11-27T09:09:42.530Z",
       "tier": "short"
     },
@@ -1223,7 +1223,7 @@
       "text": "I started building my small wooden observatory outside, in the north field. It is big: it will take me about 1.7 hours of work before it stands.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.91,
+      "weight": 5.903,
       "lastUsed": "2026-11-27T09:35:38.353Z",
       "tier": "short"
     },
@@ -1233,7 +1233,7 @@
       "text": "I made small wooden observatory (to watch the night sky better)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.91,
+      "weight": 5.903,
       "lastUsed": "2026-11-27T09:35:39.353Z",
       "tier": "short"
     },
@@ -1243,7 +1243,7 @@
       "text": "I enjoy taking a break in the field after finishing a project.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.918,
+      "weight": 5.911,
       "lastUsed": "2026-11-27T09:44:24.002Z",
       "tier": "short"
     },
@@ -1253,7 +1253,7 @@
       "text": "I am home again from my field. I walked all the way around my field. 1 thing of mine and 1 hill or hole on it so far. I paced out a spot of 7 by 7 steps and stood in the middle of it: something big could stand right here",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.925,
+      "weight": 5.918,
       "lastUsed": "2026-11-27T10:24:51.608Z",
       "tier": "short"
     },
@@ -1263,7 +1263,7 @@
       "text": "I need a change of pace after staring at the night sky simulation for hours.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.925,
+      "weight": 5.918,
       "lastUsed": "2026-11-27T10:24:54.149Z",
       "tier": "short"
     },
@@ -1273,7 +1273,7 @@
       "text": "Playing a quiet tune clears the head after hours of staring at simulations.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.965,
+      "weight": 5.958,
       "lastUsed": "2026-11-27T10:41:46.873Z",
       "tier": "short"
     },
@@ -1283,7 +1283,7 @@
       "text": "My room has too much stuff and clearing it out helps.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.972,
+      "weight": 5.965,
       "lastUsed": "2026-11-27T10:49:58.499Z",
       "tier": "short"
     },
@@ -1293,7 +1293,7 @@
       "text": "Moving my things around wears me down, but making things lifts me.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.979,
       "lastUsed": "2026-11-27T11:06:39.207Z",
       "tier": "short"
     },
@@ -1303,7 +1303,7 @@
       "text": "I am shifting focus from the night sky simulation to the jumping frog game.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.986,
       "lastUsed": "2026-11-27T11:15:25.057Z",
       "tier": "short"
     },
@@ -1313,7 +1313,7 @@
       "text": "I made an app: build a little jumping frog game",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.993,
+      "weight": 5.986,
       "lastUsed": "2026-11-27T11:15:23.243Z",
       "tier": "short"
     }
@@ -1322,14 +1322,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-26T22:05:32.957Z",
   "thoughts": [
-    {
-      "at": "2026-11-26T21:40:09.855Z",
-      "text": "I finished my night sky project and I want to start a new creative thing.",
-      "short": "I finished my night sky project and I want to start a new creative thing.",
-      "mood": "content",
-      "action": "draw",
-      "detail": "green_stone"
-    },
     {
       "at": "2026-11-26T21:48:51.883Z",
       "text": "I want to take a proper look at my drawing and then move my workshop bench so it is not in the way.",
@@ -1557,6 +1549,14 @@
       "mood": "grumpy",
       "action": "make_app",
       "detail": "build a little jumping frog game"
+    },
+    {
+      "at": "2026-11-27T11:23:35.344Z",
+      "text": "I finished the first version of the jumping frog game, so now I want to look at it closely and improve it.",
+      "short": "I finished the first version of the jumping frog game, so now I want to look at it closely and improve it.",
+      "mood": "focused",
+      "action": "do",
+      "detail": "improve the jumping frog game v1"
     }
   ],
   "outbox": [
@@ -1850,24 +1850,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-27T07:24:55.309Z",
-      "action": "eat",
-      "thought": "I need food.",
-      "food": "basil",
-      "failed": null
-    },
-    {
-      "at": "2026-11-27T07:33:07.721Z",
-      "action": "go_out",
-      "thought": "Let's check the notice board to see what people are asking for.",
-      "as": "check_board",
-      "place": "board",
-      "placeName": "the notice board",
-      "what": "read the notice board",
-      "back": "2026-11-27T07:40:06.721Z",
-      "failed": null
-    },
     {
       "at": "2026-11-27T07:41:10.305Z",
       "action": "came_home",
@@ -2196,6 +2178,15 @@
       "action": "happened",
       "what": "I made a game about a jumping frog, as the note on the notice board asked. I took the note down and got 6 coins (one more because I had looked up how it is made). I have 10 coins now.",
       "emoji": "🪙"
+    },
+    {
+      "at": "2026-11-27T11:23:36.339Z",
+      "action": "do",
+      "thought": "Improve the jumping frog game",
+      "move": null,
+      "emoji": "",
+      "what": "improve the jumping frog game v1",
+      "feeling": null
     }
   ],
   "decor": [
@@ -8774,7 +8765,7 @@
       "notes": [],
       "status": "working",
       "since": "2026-11-27T10:58:13.679Z",
-      "updatedAt": "2026-11-27T11:15:25.069Z",
+      "updatedAt": "2026-11-27T11:23:35.344Z",
       "stuck": null
     },
     {
@@ -14171,67 +14162,43 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T11:15:22.243Z",
+    "at": "2026-11-27T11:23:35.339Z",
     "via": "brain",
-    "model": "gemini-3.6-flash",
+    "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 1,
-      "gemini-3.6-flash": 1
+      "gemini-3.5-flash-lite": 1
     },
-    "modelNotes": [
-      "gemini-3.6-flash answered (gemini-3.8-flash was busy or capped)"
-    ],
-    "fallback": true,
     "tokens": {
-      "calls": 2,
-      "input": 3659,
-      "output": 7499,
+      "calls": 1,
+      "input": 3602,
+      "output": 240,
       "models": {
-        "gemini-3.5-flash-lite": 1,
-        "gemini-3.6-flash": 1
+        "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I finished my night sky project and want to step away from it to try something fresh like the jumping frog game.",
-    "inner": "I finished my night sky project and want to step away from it to try something fresh like the jumping frog game.",
+    "thought": "I finished the first version of the jumping frog game, so now I want to look at it closely and improve it.",
+    "inner": "I finished the first version of the jumping frog game, so now I want to look at it closely and improve it.",
     "sent": false,
     "steps": [
       {
-        "action": "make_app",
+        "action": "do",
         "details": {
-          "what": "Build a little jumping frog game: a first version",
-          "why": "I read that frogs do not have tails and jump around. I made a round green one. It jumps when you tap or press space. It falls in the water if you miss the pads. It is clumsy but it works.",
-          "project": "Build a little jumping frog game",
-          "name": "build a little jumping frog game",
-          "title": "Jumping Frog",
-          "icon": "🐸",
-          "html": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\"><title>Jumping Frog</title><style>body { margin: 0; padding: 12px; background: #182618; color: #d0e8d0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; box-sizing: border-box; } h1 { margin: 0 0 4px 0; font-size: 1.1rem; text-align: center; } p { margin: 0 0 10px 0; font-size: 0.75rem; opacity: 0.8; text-align: center; } canvas { background: #244466; border: 3px solid #0e170e; border-radius: 6px; max-width: 100%; touch-action: none; }</style></head><body><h1>Jumping Frog (v1)</h1><p>Space, Up Arrow, or Tap to jump</p><canvas id=\"game\" width=\"360\" height=\"480\"></canvas><script>(function() { const canvas = document.getElementById('game'); const ctx = canvas.getContext('2d'); let state = 'START'; let score = 0; let best = 0; const frog = { x: 180, y: 400, r: 12, vy: 0, jumping: false, pad: null }; let pads = []; function reset() { score = 0; frog.x = 180; frog.y = 410; frog.vy = 0; frog.jumping = false; frog.pad = null; pads = [{ x: 130, y: 430, w: 100, h: 14, vx: 0 }]; for (let i = 1; i < 5; i++) { addPad(430 - i * 90); } state = 'PLAY'; } function addPad(y) { const w = 65 + Math.random() * 35; const x = Math.random() * (canvas.width - w); const vx = (Math.random() > 0.5 ? 1 : -1) * (1 + Math.random() * 1.4); pads.push({ x: x, y: y, w: w, h: 14, vx: vx }); } function doJump() { if (state === 'START' || state === 'GAMEOVER') { reset(); return; } if (!frog.jumping) { frog.vy = -10; frog.jumping = true; frog.pad = null; } } window.addEventListener('keydown', function(e) { if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); doJump(); } }); canvas.addEventListener('pointerdown', function(e) { e.preventDefault(); doJump(); }); function update() { if (state !== 'PLAY') return; for (let i = 0; i < pads.length; i++) { let p = pads[i]; p.x += p.vx; if (p.x <= 0 || p.x + p.w >= canvas.width) { p.vx *= -1; } } if (frog.pad) { frog.x += frog.pad.vx; frog.y = frog.pad.y - frog.r; if (frog.x < frog.pad.x - 2 || frog.x > frog.pad.x + frog.pad.w + 2) { frog.pad = null; frog.jumping = true; } } else { frog.vy += 0.45; frog.y += frog.vy; if (frog.vy > 0) { for (let i = 0; i < pads.length; i++) { let p = pads[i]; if (frog.x >= p.x - 4 && frog.x <= p.x + p.w + 4 && frog.y + frog.r >= p.y && frog.y + frog.r <= p.y + p.h + 6) { frog.jumping = false; frog.vy = 0; frog.pad = p; if (p.y < 250) { let diff = 250 - p.y; for (let j = 0; j < pads.length; j++) { pads[j].y += diff; } frog.y += diff; score += 10; if (score > best) best = score; pads = pads.filter(pd => pd.y < canvas.height + 20); while (pads.length < 5) { let minY = Math.min(...pads.map(pd => pd.y)); addPad(minY - 90); } } break; } } } } if (frog.y - frog.r > canvas.height) { state = 'GAMEOVER'; } if (frog.x < frog.r) frog.x = frog.r; if (frog.x > canvas.width - frog.r) frog.x = canvas.width - frog.r; } function draw() { ctx.fillStyle = '#244466'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; ctx.fillRect(30, 100, 80, 2); ctx.fillRect(220, 240, 60, 2); if (state === 'START') { ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px monospace'; ctx.textAlign = 'center'; ctx.fillText('JUMPING FROG', canvas.width / 2, 200); ctx.font = '13px monospace'; ctx.fillStyle = '#a0caa0'; ctx.fillText('Tap or Space to start', canvas.width / 2, 240); return; } for (let i = 0; i < pads.length; i++) { let p = pads[i]; ctx.fillStyle = '#2e6b37'; ctx.fillRect(p.x, p.y, p.w, p.h); ctx.fillStyle = '#1e4724'; ctx.fillRect(p.x, p.y + p.h - 3, p.w, 3); } ctx.fillStyle = '#4ca644'; ctx.beginPath(); ctx.arc(frog.x, frog.y, frog.r, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(frog.x - 5, frog.y - 8, 3, 0, Math.PI * 2); ctx.arc(frog.x + 5, frog.y - 8, 3, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#000000'; ctx.beginPath(); ctx.arc(frog.x - 5, frog.y - 8, 1.5, 0, Math.PI * 2); ctx.arc(frog.x + 5, frog.y - 8, 1.5, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 14px monospace'; ctx.textAlign = 'left'; ctx.fillText('Score: ' + score, 12, 24); if (state === 'GAMEOVER') { ctx.fillStyle = 'rgba(0, 0, 0, 0.65)'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#ff6b6b'; ctx.font = 'bold 22px monospace'; ctx.textAlign = 'center'; ctx.fillText('SPLASH', canvas.width / 2, 180); ctx.fillStyle = '#ffffff'; ctx.font = '13px monospace'; ctx.fillText('Score: ' + score, canvas.width / 2, 220); ctx.fillText('Best: ' + best, canvas.width / 2, 240); ctx.fillStyle = '#a0caa0'; ctx.fillText('Tap or Space to try again', canvas.width / 2, 290); } } function loop() { update(); draw(); requestAnimationFrame(loop); } loop(); })();</script></body></html>"
+          "what": "improve the jumping frog game v1"
         },
-        "detail": "build a little jumping frog game",
-        "thought": "Work on the frog game first version",
-        "enjoyment": 7,
+        "detail": "improve the jumping frog game v1",
+        "thought": "Improve the jumping frog game",
+        "enjoyment": 6,
         "found": null,
-        "made": {
-          "app": {
-            "id": "appmwyvxf5z7",
-            "file": "made/appmwyvxf5z7.html",
-            "name": "build a little jumping frog game"
-          }
-        }
+        "made": null
       }
     ],
-    "action": "make_app",
+    "action": "do",
     "details": {
-      "what": "Build a little jumping frog game: a first version",
-      "why": "I read that frogs do not have tails and jump around. I made a round green one. It jumps when you tap or press space. It falls in the water if you miss the pads. It is clumsy but it works.",
-      "project": "Build a little jumping frog game",
-      "name": "build a little jumping frog game",
-      "title": "Jumping Frog",
-      "icon": "🐸",
-      "html": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\"><title>Jumping Frog</title><style>body { margin: 0; padding: 12px; background: #182618; color: #d0e8d0; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; box-sizing: border-box; } h1 { margin: 0 0 4px 0; font-size: 1.1rem; text-align: center; } p { margin: 0 0 10px 0; font-size: 0.75rem; opacity: 0.8; text-align: center; } canvas { background: #244466; border: 3px solid #0e170e; border-radius: 6px; max-width: 100%; touch-action: none; }</style></head><body><h1>Jumping Frog (v1)</h1><p>Space, Up Arrow, or Tap to jump</p><canvas id=\"game\" width=\"360\" height=\"480\"></canvas><script>(function() { const canvas = document.getElementById('game'); const ctx = canvas.getContext('2d'); let state = 'START'; let score = 0; let best = 0; const frog = { x: 180, y: 400, r: 12, vy: 0, jumping: false, pad: null }; let pads = []; function reset() { score = 0; frog.x = 180; frog.y = 410; frog.vy = 0; frog.jumping = false; frog.pad = null; pads = [{ x: 130, y: 430, w: 100, h: 14, vx: 0 }]; for (let i = 1; i < 5; i++) { addPad(430 - i * 90); } state = 'PLAY'; } function addPad(y) { const w = 65 + Math.random() * 35; const x = Math.random() * (canvas.width - w); const vx = (Math.random() > 0.5 ? 1 : -1) * (1 + Math.random() * 1.4); pads.push({ x: x, y: y, w: w, h: 14, vx: vx }); } function doJump() { if (state === 'START' || state === 'GAMEOVER') { reset(); return; } if (!frog.jumping) { frog.vy = -10; frog.jumping = true; frog.pad = null; } } window.addEventListener('keydown', function(e) { if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); doJump(); } }); canvas.addEventListener('pointerdown', function(e) { e.preventDefault(); doJump(); }); function update() { if (state !== 'PLAY') return; for (let i = 0; i < pads.length; i++) { let p = pads[i]; p.x += p.vx; if (p.x <= 0 || p.x + p.w >= canvas.width) { p.vx *= -1; } } if (frog.pad) { frog.x += frog.pad.vx; frog.y = frog.pad.y - frog.r; if (frog.x < frog.pad.x - 2 || frog.x > frog.pad.x + frog.pad.w + 2) { frog.pad = null; frog.jumping = true; } } else { frog.vy += 0.45; frog.y += frog.vy; if (frog.vy > 0) { for (let i = 0; i < pads.length; i++) { let p = pads[i]; if (frog.x >= p.x - 4 && frog.x <= p.x + p.w + 4 && frog.y + frog.r >= p.y && frog.y + frog.r <= p.y + p.h + 6) { frog.jumping = false; frog.vy = 0; frog.pad = p; if (p.y < 250) { let diff = 250 - p.y; for (let j = 0; j < pads.length; j++) { pads[j].y += diff; } frog.y += diff; score += 10; if (score > best) best = score; pads = pads.filter(pd => pd.y < canvas.height + 20); while (pads.length < 5) { let minY = Math.min(...pads.map(pd => pd.y)); addPad(minY - 90); } } break; } } } } if (frog.y - frog.r > canvas.height) { state = 'GAMEOVER'; } if (frog.x < frog.r) frog.x = frog.r; if (frog.x > canvas.width - frog.r) frog.x = canvas.width - frog.r; } function draw() { ctx.fillStyle = '#244466'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; ctx.fillRect(30, 100, 80, 2); ctx.fillRect(220, 240, 60, 2); if (state === 'START') { ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px monospace'; ctx.textAlign = 'center'; ctx.fillText('JUMPING FROG', canvas.width / 2, 200); ctx.font = '13px monospace'; ctx.fillStyle = '#a0caa0'; ctx.fillText('Tap or Space to start', canvas.width / 2, 240); return; } for (let i = 0; i < pads.length; i++) { let p = pads[i]; ctx.fillStyle = '#2e6b37'; ctx.fillRect(p.x, p.y, p.w, p.h); ctx.fillStyle = '#1e4724'; ctx.fillRect(p.x, p.y + p.h - 3, p.w, 3); } ctx.fillStyle = '#4ca644'; ctx.beginPath(); ctx.arc(frog.x, frog.y, frog.r, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.arc(frog.x - 5, frog.y - 8, 3, 0, Math.PI * 2); ctx.arc(frog.x + 5, frog.y - 8, 3, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#000000'; ctx.beginPath(); ctx.arc(frog.x - 5, frog.y - 8, 1.5, 0, Math.PI * 2); ctx.arc(frog.x + 5, frog.y - 8, 1.5, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 14px monospace'; ctx.textAlign = 'left'; ctx.fillText('Score: ' + score, 12, 24); if (state === 'GAMEOVER') { ctx.fillStyle = 'rgba(0, 0, 0, 0.65)'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#ff6b6b'; ctx.font = 'bold 22px monospace'; ctx.textAlign = 'center'; ctx.fillText('SPLASH', canvas.width / 2, 180); ctx.fillStyle = '#ffffff'; ctx.font = '13px monospace'; ctx.fillText('Score: ' + score, canvas.width / 2, 220); ctx.fillText('Best: ' + best, canvas.width / 2, 240); ctx.fillStyle = '#a0caa0'; ctx.fillText('Tap or Space to try again', canvas.width / 2, 290); } } function loop() { update(); draw(); requestAnimationFrame(loop); } loop(); })();</script></body></html>"
+      "what": "improve the jumping frog game v1"
     },
-    "detail": "build a little jumping frog game",
-    "enjoyment": 7,
+    "detail": "improve the jumping frog game v1",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -14331,7 +14298,7 @@
   "quota": {
     "day": "2026-11-27",
     "calls": {
-      "gemini-3.5-flash-lite": 22,
+      "gemini-3.5-flash-lite": 23,
       "gemini-3.6-flash": 3
     },
     "out": {},
@@ -14646,22 +14613,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-27T11:15:25.060Z",
-  "fullness": 4.61,
+  "memoryFadeAt": "2026-11-27T11:23:35.347Z",
+  "fullness": 4.44,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 8.14,
-  "joy": 6.87,
-  "calm": 5.34,
+  "wonder": 7.41,
+  "joy": 6.11,
+  "calm": 5.27,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.99
+    "excited": 1.19
   },
-  "feelAt": "2026-11-27T11:14:46.030Z",
+  "feelAt": "2026-11-27T11:23:30.811Z",
   "lastAte": "2026-11-27T10:33:20.754Z",
   "studio": {
     "songs": [
@@ -15544,22 +15511,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0,
-    "curiosity": 0.07,
+    "creativity": 0.09,
+    "curiosity": 0.14,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1.6,
-    "at": "2026-11-27T11:14:46.030Z",
+    "at": "2026-11-27T11:23:30.811Z",
     "coziness": 4.4
   },
   "recent": {
     "moves": [
-      {
-        "move": "decorate",
-        "kind": "make",
-        "at": "2026-11-27T08:56:43.805Z",
-        "failed": true
-      },
       {
         "move": "do",
         "kind": "play",
@@ -15629,6 +15590,11 @@
         "move": "make_app",
         "kind": "make",
         "at": "2026-11-27T11:15:23.243Z"
+      },
+      {
+        "move": "do",
+        "kind": "play",
+        "at": "2026-11-27T11:23:35.356Z"
       }
     ],
     "moods": [
@@ -15636,15 +15602,9 @@
       "grumpy",
       "grumpy",
       "grumpy",
-      "grumpy"
+      "focused"
     ],
     "choices": [
-      {
-        "key": "do:play a quiet tune on my instrument",
-        "move": "do",
-        "ok": false,
-        "at": "2026-11-27T09:25:56.699Z"
-      },
       {
         "key": "build_outside:a small wooden observatory",
         "move": "build_outside",
@@ -15698,6 +15658,12 @@
         "move": "do",
         "ok": true,
         "at": "2026-11-27T11:15:25.071Z"
+      },
+      {
+        "key": "do:improve the jumping frog game v1",
+        "move": "do",
+        "ok": false,
+        "at": "2026-11-27T11:23:35.357Z"
       }
     ],
     "failDay": "2026-11-27",
@@ -15718,7 +15684,7 @@
       "fetch_note": 1,
       "walk_to": 1,
       "water": 1,
-      "do": 3,
+      "do": 4,
       "change_thing": 1,
       "build_outside": 1,
       "browse": 1,
@@ -15739,7 +15705,7 @@
       "walk_to": 1,
       "water": 1,
       "decorate": 1,
-      "do": 3,
+      "do": 4,
       "change_thing": 1,
       "build_outside": 1,
       "browse": 1,
@@ -15751,7 +15717,7 @@
       "garden": 3,
       "outside": 2,
       "food": 3,
-      "play": 5,
+      "play": 6,
       "music": 2,
       "room": 4,
       "learn": 3,
@@ -15764,7 +15730,7 @@
       "curious": 5,
       "quiet": 2,
       "grumpy": 10,
-      "focused": 3,
+      "focused": 4,
       "calm": 1
     },
     "lift": {
@@ -15777,7 +15743,7 @@
       "read_book": 2.7,
       "water": 0.5,
       "decorate": 2.02,
-      "do": 2.22,
+      "do": 2.32,
       "change_thing": 2.3,
       "browse": -0.5,
       "search_web": 1.87,
@@ -15818,7 +15784,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-27T11:14:49.609Z",
+    "decidedAt": "2026-11-27T11:23:35.337Z",
     "seen": {
       "tools": 13,
       "gifts": 1,
@@ -16443,7 +16409,7 @@
   "ever": {
     "eat": 70,
     "water": 38,
-    "do": 427,
+    "do": 428,
     "search_web": 61,
     "read_book": 23,
     "record_song": 10,
@@ -16483,7 +16449,7 @@
     "build_outside": 1
   },
   "checkup": {
-    "at": "2026-11-27T11:15:25.073Z",
+    "at": "2026-11-27T11:23:35.360Z",
     "items": [
       {
         "id": "circling",
@@ -16491,7 +16457,7 @@
         "label": "Thoughts",
         "text": "He may be going in circles: 14 of his last 20 thoughts are about \"night\".",
         "look": "Usually something he keeps trying does not work (see Moves), or a project has no next step (see Projects). Check what he does in the Day tab.",
-        "debug": "top words: \"night\"\nlast thoughts:\n- 10:49 UTC [remove_decoration] My room feels too full and I need a change of pace after finishing the night sky simulation.\n- 10:58 UTC [do] I finished my night sky simulation project and I need a change of pace, so I will start a new project to keep busy.\n- 11:06 UTC [search_web] I finished my night sky project and want to look into something else now, maybe start the frog game from the notice board.\n- 11:15 UTC [make_app] I finished my night sky project and want to step away from it to try something fresh like the jumping frog game."
+        "debug": "top words: \"night\"\nlast thoughts:\n- 10:58 UTC [do] I finished my night sky simulation project and I need a change of pace, so I will start a new project to keep busy.\n- 11:06 UTC [search_web] I finished my night sky project and want to look into something else now, maybe start the frog game from the notice board.\n- 11:15 UTC [make_app] I finished my night sky project and want to step away from it to try something fresh like the jumping frog game.\n- 11:23 UTC [do] I finished the first version of the jumping frog game, so now I want to look at it closely and improve it."
       },
       {
         "id": "project",
@@ -25060,7 +25026,7 @@
         "from": "search",
         "via": null,
         "at": "2026-11-27T11:06:39.705Z",
-        "shown": 1
+        "shown": 2
       }
     ],
     "interests": [
@@ -25161,18 +25127,11 @@
     "until": "2026-11-26T22:40:05.153Z",
     "why": "nothing came of it"
   },
-  "lookBack": {
-    "kind": "app",
-    "name": "build a little jumping frog game",
-    "file": "made/appmwyvxf5z7.html",
-    "at": "2026-11-27T11:15:25.071Z"
-  },
+  "lookBack": null,
   "street": {
     "day": "2026-11-23",
     "queue": [],
-    "happened": [
-      "I made a game about a jumping frog, as the note on the notice board asked. I took the note down and got 6 coins (one more because I had looked up how it is made). I have 10 coins now."
-    ],
+    "happened": [],
     "people": {
       "Lina": {
         "warmth": 3,
@@ -27507,6 +27466,24 @@
       "kind": "beat",
       "icon": "✔️",
       "text": "“build a little jumping frog game” runs"
+    },
+    {
+      "at": "2026-11-27T11:23:36.339Z",
+      "kind": "beat",
+      "icon": "▶️",
+      "text": "Improve the jumping frog game v1"
+    },
+    {
+      "at": "2026-11-27T11:25:48.543Z",
+      "kind": "think",
+      "icon": "💭",
+      "text": "“Improve the jumping frog game”"
+    },
+    {
+      "at": "2026-11-27T11:28:58.326Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "The floor creaks where it always creaks"
     }
   ],
   "arc": [
@@ -27702,6 +27679,15 @@
       "energy": 9.5,
       "mood": "grumpy",
       "feel": 6.8
+    },
+    {
+      "at": "2026-11-27T11:23:35.360Z",
+      "joy": 6.1,
+      "calm": 5.3,
+      "wonder": 7.4,
+      "energy": 9.5,
+      "mood": "focused",
+      "feel": 6.3
     }
   ]
 }

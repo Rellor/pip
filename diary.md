@@ -7406,3 +7406,9 @@ I finished my night sky project and want to step away from it to try something f
 - make_app (build a little jumping frog game): Work on the frog game first version
 - mood: grumpy
 
+## 27/11/2026, 11:23:35
+I finished the first version of the jumping frog game, so now I want to look at it closely and improve it.
+> I finished the first version of the jumping frog game, so now I want to look at it closely and improve it.
+- do (improve the jumping frog game v1): Improve the jumping frog game
+- mood: focused
+
