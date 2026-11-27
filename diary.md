@@ -7286,3 +7286,9 @@ My room feels too full, so I will move my workshop bench out of the way.
 - move_thing (workshop bench): Move the workshop bench against the wall so it is not in the way.
 - mood: grumpy
 
+## 27/11/2026, 07:59:23
+My room feels too full, so I will put away some decorations to clear up some space.
+> My room feels too full, so I will put away some decorations to clear up some space.
+- remove_decoration (tiny clay bird): Putting away the tiny clay bird.
+- mood: grumpy
+
