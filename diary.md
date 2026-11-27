@@ -7565,3 +7565,9 @@ I finished the saucer and now I want to fetch the note someone left for me.
 - go_out: Go get the note.
 - mood: curious
 
+## 27/11/2026, 16:57:03
+Idris asked me what I want drawings to be called instead of nice. I should answer him with my honest opinion.
+> Idris asked me what I want drawings to be called instead of nice. I should answer him with my honest opinion.
+- walk_to (computer): Answer Idris about the word nice
+- mood: dry
+
