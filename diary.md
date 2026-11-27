@@ -7720,3 +7720,9 @@ I just drew a pendulum clock, and I want to start a new project to build simulat
 - do (plan my new project: ): Start a coding project for clocks
 - mood: focused
 
+## 27/11/2026, 21:59:50
+I am done making things for today, so I will read a book about my hobby.
+> I am done making things for today, so I will read a book about my hobby.
+- read_book (building clocks): Read about building clocks
+- mood: focused
+
