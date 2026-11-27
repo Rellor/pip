@@ -7666,3 +7666,9 @@ It is late at night and I want to write down my thoughts in my diary.
 - write_diary (Quiet night, clear sky. The day is done and my hands are finally still.): Writing in my diary before sleep.
 - mood: focused
 
+## 27/11/2026, 20:44:49
+My room feels too full and my desk is crowded, so I need to change one of my extra shelves to clear up some space.
+> My room feels too full and my desk is crowded, so I need to change one of my extra shelves to clear up some space.
+- change_thing (tiny wooden shelf for my bird): Change an extra shelf since I have too many.
+- mood: focused
+
