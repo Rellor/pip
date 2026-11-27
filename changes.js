@@ -489,6 +489,12 @@ export const CHANGES = [
     },
   },
   {
+    id: '2026-11-27 a radio, a shelf and a question',
+    run() { // new in his world: his radio by the door, the visitors' shelf in the library, and a question he may put to his visitors
+      return 'Three new things. There is a small red radio on a crate beside my front door: it plays the songs I recorded, for anyone who walks by. In the library there is a shelf where people who visit my page can leave me a poem, a short story or a book tip: I read it when I am there, and say what I honestly think. And I can put one question to everyone who visits (ask_visitors): they answer on my page.';
+    },
+  },
+  {
     id: '2026-11-26 a flute from Bas',
     run(s, at) { // he asked for a flute, to play a quiet song in the evening
       s.tools ??= [];

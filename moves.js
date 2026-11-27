@@ -17,6 +17,7 @@ import { kindOf } from './body.js';
 import { noveltyBoost, roomIsDark, needLampSpots, storageFull, darkLampOff } from './growth.js';
 import { restingMove, tiredOf } from './loops.js';
 import { canBrowse, interests, HOBBY_AT } from './curiosity.js';
+import { canAskVisitors, unreadShelf, pieceWords } from './guests.js';
 import { shopLine, shopOpen, wantsToBuy } from './shop.js';
 import { goOptions, goLine, wantsOut, gearWish, canGo } from './world.js';
 import { boardNotes, boardCalls } from './board.js';
@@ -164,6 +165,9 @@ export const MOVES = [
   // He has to say why: a want with no reason is not written down. Bas reads the list; he can also get a thing himself.
   { name: 'want', line: (s, n) => `I want something${askReason(s, n) ? ` (${askReason(s, n).slice(0, 70)})` : ''}: I put it on my wants list and say why in one honest sentence (no reason, no want). Bas reads the list: {what, why}`, when: (s, n) => openWants(s).length < WANTS_MAX && ((s.today?.done?.ask_for ?? 0) < ASKS_PER_DAY || Boolean(askReason(s, n))), score: (s, n) => (askReason(s, n) ? 2 : 0.6) },
   { name: 'drop_want', line: (s) => `cross something off my wants list because I do not want it any more (${names(openWants(s).map((a) => a.item.slice(0, 24)), 5)}): {what, why}`, when: (s) => openWants(s).length >= 3, score: () => 0.3 },
+  // His visitors (guests.js): one question he puts to everyone who comes by, and what they left for him on the library shelf.
+  { name: 'ask_visitors', line: () => 'ask the people who visit my page one question I really want an answer to (they answer on my page, and I read it later). I say why I want to know: {question, why}', when: (s, n) => canAskVisitors(s, n), score: (s) => 0.5 + (s.body?.loneliness ?? 0) / 6 + (s.pastQuestions?.length || s.openQuestion ? 0 : 0.5) },
+  { name: 'read_shelf', line: (s) => `walk to the library and read the ${pieceWords(unreadShelf(s)[0])} that was left for me on the shelf there: {}`, when: (s, n) => !process.env.PIP_NO_OUT && unreadShelf(s).length > 0 && Boolean(canGo(s, 'library', n).ok), score: () => 2.6 },
   // A hobby he thinks up himself (curiosity.js): "I want to start graffiti". He says why, and then he really tries it.
   { name: 'start_hobby', line: (s, n) => `think of something new I would like to try as a hobby, and say why (ideas: ${hobbyIdeas(s, n).join(', ')}, or anything else): {what, why}`, when: (s, n) => canStartHobby(s, n), score: (s) => 0.7 + (s.body?.boredom ?? 0) / 8 },
   // His own website (site.js). He makes it at the internet café, and works on it there: a little at a time, with what he

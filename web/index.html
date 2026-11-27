@@ -245,6 +245,48 @@
 
   /* Day: right now / next */
   .now { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:14px; }
+  /* his mood over the day: one line (the mark wears --mood, the words wear the text colours) */
+  :root { --mood:#a94a22; }
+  @media (prefers-color-scheme: dark) { :root { --mood:#dd7f55; } }
+  #arc { position:relative; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 16px 10px; margin:10px 0 4px; }
+  #arc h2 { margin:0; font-size:15px; }
+  #arc .sub { margin:1px 0 6px; color:var(--muted); font-size:13.5px; }
+  #arc svg { display:block; width:100%; height:auto; overflow:visible; touch-action:pan-y; outline:none; }
+  #arc svg:focus-visible { outline:2px solid var(--accent); outline-offset:4px; border-radius:6px; }
+  #arc .grid { stroke:var(--line); stroke-width:1; }
+  #arc .tick { fill:var(--muted); font-size:12px; font-variant-numeric:tabular-nums; }
+  #arc .word { fill:var(--ink); font-size:12.5px; font-weight:600; paint-order:stroke; stroke:var(--card); stroke-width:3px; stroke-linejoin:round; }
+  #arc .moodline { fill:none; stroke:var(--mood); stroke-width:2; stroke-linejoin:round; stroke-linecap:round; }
+  #arc .moodarea { fill:var(--mood); opacity:.1; }
+  #arc .mooddot { fill:var(--mood); stroke:var(--card); stroke-width:2; }
+  #arc .cross { stroke:var(--muted); stroke-width:1; }
+  #arctip { position:absolute; pointer-events:none; z-index:2; min-width:132px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:7px 10px; box-shadow:0 4px 14px rgba(0,0,0,.14); font-size:13.5px; line-height:1.45; }
+  #arctip b { display:block; font-size:16px; }
+  #arctip span { color:var(--muted); }
+  #arctip .row { display:flex; justify-content:space-between; gap:12px; }
+  #arctip .row i { font-style:normal; font-weight:600; font-variant-numeric:tabular-nums; }
+  #arc details { margin-top:4px; font-size:14.5px; }
+  #arc summary { color:var(--muted); cursor:pointer; padding:4px 0; }
+  #arc table { width:100%; border-collapse:collapse; margin-top:4px; font-variant-numeric:tabular-nums; }
+  #arc td, #arc th { text-align:left; padding:4px 8px 4px 0; border-top:1px solid var(--line); font-weight:400; }
+  #arc th { color:var(--muted); font-size:13px; border-top:0; }
+  /* the live feed: small moments, each shown when its time has come */
+  #live { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 16px 8px; margin:10px 0 4px; }
+  #live h2 { margin:0 0 6px; font-size:15px; display:flex; align-items:center; gap:8px; }
+  #live h2 small { font-weight:400; color:var(--muted); font-size:13.5px; }
+  .livedot { width:9px; height:9px; border-radius:50%; background:#e5484d; flex:none; animation:livepulse 1.8s ease-in-out infinite; }
+  .livedot.off { background:var(--muted); animation:none; }
+  @keyframes livepulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.35; transform:scale(.8); } }
+  .moment { display:grid; grid-template-columns:max-content 26px 1fr; gap:4px; align-items:baseline; padding:7px 0; border-top:1px solid var(--line); font-size:16px; line-height:1.4; }
+  .moment:first-of-type { border-top:0; }
+  .moment time { color:var(--muted); font-size:13.5px; font-variant-numeric:tabular-nums; white-space:nowrap; min-width:42px; }
+  .moment.think span:last-child { font-style:italic; }
+  .moment.notice span:last-child { color:var(--muted); }
+  .moment.first span:last-child { font-weight:600; color:var(--ink, inherit); }
+  .moment.fresh { animation:momentin .6s ease-out; }
+  @keyframes momentin { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
+  #live button.more { background:none; border:0; color:var(--muted); font:inherit; font-size:14.5px; padding:8px 0 6px; cursor:pointer; text-decoration:underline; }
+  @media (prefers-reduced-motion: reduce) { .livedot, .moment.fresh { animation:none; } }
   .now .row { display:flex; gap:10px; align-items:baseline; }
   .now .label { width:92px; flex:none; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
   .now .big { font-size:18px; font-weight:600; }
@@ -284,7 +326,7 @@
   /* feeds and lists */
   .taskform { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:6px; }
   .taskform textarea { width:100%; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); font:inherit; padding:10px 12px; resize:vertical; }
-  #visitname { width:100%; margin-bottom:8px; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); font:inherit; padding:10px 12px; box-sizing:border-box; }
+  #visitname, #visittitle { width:100%; margin-bottom:8px; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); font:inherit; padding:10px 12px; box-sizing:border-box; }
   #visit .muted { margin-top:8px; }
   .taskform .row { margin-top:10px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
   .psteps { list-style:none; margin:8px 0 0; padding:0; display:grid; gap:4px; font-size:15px; }
@@ -569,6 +611,23 @@
   /* the card of a thing: headings in plain letters */
   #infobody .isec h4 { margin:0 0 6px; font-size:15px; letter-spacing:0; text-transform:none; color:var(--ink); font-weight:700; }
   /* Talk: one card for each message, with Pip's answer inside */
+  /* his question for everyone who visits, and the shelf in the library */
+  .askcard { border:2px solid var(--accent); border-radius:16px; background:var(--card); padding:14px; margin-bottom:18px; }
+  .askcard .asklabel { font-size:13.5px; font-weight:700; color:var(--accent-ink); }
+  .askcard .askq { font-size:19px; font-weight:700; line-height:1.3; margin:4px 0 6px; }
+  .askcard .askwhy { color:var(--muted); font-size:15px; margin:0 0 10px; }
+  .askcard .answers { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .askcard .answer { border-top:1px solid var(--line); padding-top:8px; font-size:15.5px; }
+  .askcard .answer b { font-weight:700; }
+  .askcard .answer .pipsays { margin-top:6px; }
+  .kindrow { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .kindrow button { border:1px solid var(--line); background:var(--card); color:var(--ink); border-radius:999px; padding:6px 11px; font:inherit; font-size:14.5px; cursor:pointer; }
+  .kindrow button[aria-pressed="true"] { background:var(--ink); color:var(--card); border-color:var(--ink); font-weight:600; }
+  .piece { white-space:pre-line; font-size:15.5px; line-height:1.5; }
+  .piecekind { font-size:13px; color:var(--muted); }
+  .talknote { font-size:13.5px; color:var(--muted); margin:0 0 4px; }
+  #oldasks { margin-top:18px; }
+  #oldasks summary { cursor:pointer; color:var(--muted); padding:6px 0; }
   .talklist { display:flex; flex-direction:column; gap:10px; }
   .talkcard { border:1px solid var(--line); border-radius:16px; background:var(--card); padding:12px 14px; }
   .talkhead { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:4px; font-size:14px; }
@@ -673,6 +732,8 @@
     <section class="pane" data-pane="day">
       <div class="since" id="since" hidden></div>
       <div class="now" id="now"></div>
+      <div id="live" hidden></div>
+      <div id="arc" hidden></div>
       <div id="daysum"></div>
       <div id="daymade"></div>
       <div id="day"></div>
@@ -719,11 +780,15 @@
       </div>
       <div id="talkpublic">
       <div id="approvals" hidden><h2>Visitors waiting for your OK</h2><ul id="approvallist"></ul></div>
+        <div id="askcard" class="askcard" hidden></div>
         <div class="writecard">
           <h2 class="writehead">Write to Pip</h2>
           <ol class="steps"><li><b>✍️ You write</b>a short hello or a question</li><li><b>👀 It gets checked</b>so the room stays kind</li><li><b>🐣 Pip answers</b>right here, when he wakes up</li></ol>
           <form id="visit">
+            <div class="kindrow" id="visitkind" role="group" aria-label="What do you send?"></div>
+            <p class="muted small" id="visitkindnote" hidden></p>
             <input id="visitname" maxlength="30" placeholder="Your name (you can leave this empty)" autocomplete="off">
+            <input id="visittitle" maxlength="80" placeholder="Title" autocomplete="off" hidden>
             <textarea id="visittext" rows="3" maxlength="300" placeholder="Say hello, ask him something, tell him about something you love…"></textarea>
             <input id="visitweb" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
             <div class="row"><button type="submit" class="primary" id="visitsend">Send to Pip</button><span class="muted" id="visitcount">0 / 300</span></div>
@@ -731,8 +796,10 @@
           </form>
         </div>
         <div id="myvisits"></div>
+        <div id="shelfbox" hidden><h2>On the shelf in the library</h2><p class="muted">Poems, short stories and book tips from visitors. Pip reads one when he is at the library, and says what he thinks.</p><ul id="shelflist" class="talklist"></ul></div>
         <h2>Messages and Pip's answers</h2>
         <ul id="visitlist" class="talklist"></ul>
+        <details id="oldasks" hidden><summary>Questions Pip asked before</summary><ul id="oldasklist" class="talklist"></ul></details>
       </div>
       <div id="talkprivate" hidden>
       <form id="reply">

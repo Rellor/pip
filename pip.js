@@ -81,6 +81,9 @@ import { ensureFeelings, stepFeelings, felt, nudge, eatNow, emotionWord, failSte
 import { cleanUses, findUse, addUse, stepsProblem } from './uses.js';
 import { isToday } from './days.js';
 import { SITE_FILE, buildSite, siteMaterial, siteWords } from './site.js';
+import { addMoments, sleepMoments, wakeMoments } from './moments.js';
+import { noteArc } from './arc.js';
+import { askVisitors, closeQuestion, takeAnswer, takeShelf, readShelf, noteReply, visitorLine, guestLines, pieceWords, SHELF_KINDS } from './guests.js';
 
 const STATE_FILE = 'web/state.json';
 const DIARY_FILE = 'diary.md';
@@ -434,7 +437,16 @@ async function loadVisitors(state) {
       const v = JSON.parse(await readFile(`visitors/${name}`, 'utf8'));
       if (v.status === 'deed') { if (takeDeed(state, v)) console.log(`🌼 a visitor did a small deed: ${v.deed}`); names.push(name); continue; } // a small deed needs no approval: it has no words (api/deed.js)
       if (v.status !== 'approved') continue;
-      if (!state.visitors.some((x) => x.id === v.id)) state.visitors.push({ id: text(v.id, 40), at: v.at, name: text(v.name, 30), text: text(v.text, 300), answer: null });
+      if (v.shelf) { // a poem, a story or a book tip for the shelf in the library (guests.js): he reads it when he is there
+        const piece = takeShelf(state, v);
+        if (piece) { const said = `Someone left a ${pieceWords(piece)} for me on the shelf in the library. I can read it when I go there.`; happened(state, said); console.log(`📚 on the library shelf: ${pieceWords(piece)}`); }
+        names.push(name);
+        continue;
+      }
+      if (!state.visitors.some((x) => x.id === v.id)) {
+        const question = v.answerTo ? takeAnswer(state, v) : null; // an answer to the question he put to his visitors
+        state.visitors.push({ id: text(v.id, 40), at: v.at, name: text(v.name, 30), text: text(v.text, 300), answer: null, ...(question ? { answerTo: text(v.answerTo, 40), question } : {}) });
+      }
       names.push(name);
     } catch {}
   }
@@ -621,12 +633,12 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
-    visitors: (s.visitors ?? []).filter((v) => !v.answer && !v.npc).slice(-2).map((v) => `[${v.id}] ${v.name || 'someone'}: "${v.text}"`),
+    visitors: (s.visitors ?? []).filter((v) => !v.answer && !v.npc).slice(-2).map(visitorLine),
     notes: noteLines(s),
     gifts: unread.length > 0,
   };
@@ -698,8 +710,12 @@ async function cameHome(s, o) {
   if (o.read && !process.env.PIP_FAKE) {
     try { const page = await readAbout(o.read); if (page?.text) { noteResearch(s, { query: o.read, page: { title: page.title, url: page.url, text: clip(page.text, 1500) }, at: o.homeAt }); o.book = { title: page.title, url: page.url }; } } catch (e) { console.error('⚠️  library:', e.message); }
   }
+  if (o.place === 'library' && !o.errand) { // something a visitor left on the shelf for him: he reads it there (guests.js)
+    const piece = readShelf(s, Date.parse(o.homeAt));
+    if (piece) { o.did += ` On the shelf by the door lay a ${pieceWords(piece)}, left there for me. I read it twice.`; o.piece = { id: piece.id, kind: piece.kind, title: piece.title, name: piece.name }; console.log(`📚 read from the shelf: ${pieceWords(piece)}`); }
+  }
   const line = homeLine(o);
-  s.log.push({ at: o.homeAt, action: 'came_home', place: o.place, placeName: p?.name ?? o.place, thought: '', did: o.did, found: o.found.map((f) => ({ name: f.name, emoji: f.emoji })), met: o.met, gift: o.gift, book: o.book ?? null, errand: o.errand ?? null, cut: o.cut, card: o.errand ? null : { place: o.place, at: o.homeAt, weather: o.weather, found: o.found.map((f) => ({ emoji: f.emoji })) } });
+  s.log.push({ at: o.homeAt, action: 'came_home', place: o.place, placeName: p?.name ?? o.place, thought: '', did: o.did, found: o.found.map((f) => ({ name: f.name, emoji: f.emoji })), met: o.met, gift: o.gift, book: o.book ?? null, piece: o.piece ?? null, errand: o.errand ?? null, cut: o.cut, card: o.errand ? null : { place: o.place, at: o.homeAt, weather: o.weather, found: o.found.map((f) => ({ emoji: f.emoji })) } });
   if (!o.errand) { addMemory(s, line, o.found.length || o.met ? 7 : 6, 'memory', o.homeAt); happened(s, line); }
   for (const said of checkUnlocks(s)) { happened(s, said); addMemory(s, said, 8, 'memory', o.homeAt); s.log.push({ at: new Date(Date.parse(o.homeAt) + 1000).toISOString(), action: 'happened', what: said, emoji: '🗺️' }); }
   console.log(`🏠 home from ${p?.name ?? o.place}: ${o.did}${o.found.length ? ` (found: ${o.found.map((f) => f.name).join(', ')})` : ''}`);
@@ -1141,6 +1157,11 @@ function applyInnerLife(s, r, detail, replying = false) {
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
   }
   const fresh = [];
+  if (r.action === 'do' && r.as === 'ask_visitors') { // one question for everyone who visits his page (guests.js)
+    const asked = askVisitors(s, r.details?.question, r.details?.why);
+    if (asked.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `ask_visitors: ${asked.failed}` }; console.log(`   ✋ no question: ${asked.failed}`); }
+    else { addMemory(s, `I asked the people who visit my page: "${asked.question.text}" Because: ${asked.question.why}`, 6, 'memory', at); console.log(`   ❓ asks his visitors: ${asked.question.text} (${asked.question.why})`); }
+  }
   if (r.action === 'do' && r.as === 'start_hobby') { // his own idea for a hobby: from now on he is trying it (curiosity.js)
     const started = startHobby(s, r.details?.hobby, r.details?.why);
     if (started.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `start_hobby: ${started.failed}` }; console.log(`   ✋ no new hobby: ${started.failed}`); }
@@ -1262,6 +1283,8 @@ async function goToSleep(state) {
     found: null,
     sleeping: true,
   };
+  sleepMoments(state, Date.parse(at)); // the live feed: a few slow moments through the night (moments.js)
+  noteArc(state, Date.parse(at), { asleep: true });
   await saveState(state);
   await appendFile(DIARY_FILE, `## ${new Date().toLocaleString('en-GB')}\nGood night. Pip went to sleep.\n\n`);
   console.log('\n💤 Pip went to sleep.');
@@ -1319,6 +1342,7 @@ async function napForLimit() {
   state.activities.push({ at, action: 'rest', detail: 'taking a nap', enjoyment: 7 });
   state.activities = state.activities.slice(-50);
   state.last = { at, thought: 'I am so sleepy. I will take a little nap...', action: 'rest', details: {}, detail: 'taking a nap', enjoyment: 7, new_idea: null, found: null, sleeping: true };
+  sleepMoments(state, Date.parse(at), 2);
   await saveState(state);
   console.log('💤 Out of calls for now: Pip takes a nap.');
 }
@@ -1359,6 +1383,8 @@ async function wakeUp() {
   }
   state.lastError = null;
   const wokeNow = Boolean(state.last?.sleeping);
+  if (wokeNow) wakeMoments(state);
+  { const q = closeQuestion(state); if (q) { const said = q.answers.length ? `My question "${q.text}" is closed now. ${q.answers.length} ${q.answers.length === 1 ? 'person' : 'people'} answered.` : `Nobody answered my question "${q.text}". I let it go.`; addMemory(state, said, 5, 'memory', new Date().toISOString()); console.log(`❓ ${said}`); } }
   tickBody(state); // needs and feelings, no model call (it also passes time for the bars)
   // No free food any more: what he eats he grows, cooks, or asks for (the pantry he has is what is left).
   ensureProjects(state);
@@ -1371,6 +1397,7 @@ async function wakeUp() {
     const at = new Date().toISOString();
     state.last = { at, via: 'outside', thought: outing.line, action: 'go_out', details: { place: outing.place }, detail: outing.line, enjoyment: 7, new_idea: null, found: null, away: { place: outing.place, phase: outing.phase, back: outing.back } };
     state.emotion = emotionWord(state);
+    noteArc(state, Date.now(), { out: true });
     await saveState(state);
     await clearInbox(inbox.names);
     await clearTasks(taskFiles.names);
@@ -1472,7 +1499,7 @@ async function wakeUp() {
     }
     for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
       const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
-      if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); const learned = learnFrom(state, v, a.keep !== false); if (learned) addMemory(state, learned, 6, 'memory', new Date().toISOString()); } // yes to a wish is a promise (neighbours.js), and what he keeps of a traveller's note he has learned (strangers.js)
+      if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); noteReply(state, v); const learned = learnFrom(state, v, a.keep !== false); if (learned) addMemory(state, learned, 6, 'memory', new Date().toISOString()); } // yes to a wish is a promise (neighbours.js), and what he keeps of a traveller's note he has learned (strangers.js)
     }
     if (!answer.steps.length) answer.steps = fallbackSteps(state, offered);
     answer.steps = decided(state, answer.steps);
@@ -2149,7 +2176,7 @@ async function wakeUp() {
   const stepAsks = steps.filter((st) => st.action === 'ask_for').map((st) => ({ item: st.details.item, why: st.details.reason }));
   const sent = applyInnerLife(
     state,
-    { ...answer, action: steps[0].action, details: steps[0].details, asks_add: [...(Array.isArray(answer.asks_add) ? answer.asks_add : []), ...stepAsks] },
+    { ...answer, action: steps[0].action, as: steps[0].as, details: steps[0].details, asks_add: [...(Array.isArray(answer.asks_add) ? answer.asks_add : []), ...stepAsks] },
     results[0].detail,
     unread.length > 0
   );
@@ -2440,6 +2467,12 @@ async function wakeUp() {
     for (const st of state.last.steps ?? []) { sealFields(st, ['thought', 'detail']); if (st.details) sealFields(st.details, ['text', 'what', 'query', 'topic']); }
     state.last.private = true;
   }
+  { // the live feed: the small moments of the minutes ahead, each with its own time (moments.js; plain code)
+    const mine = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 || (x.action === 'came_home' && Date.parse(x.at) >= startedAt - 10 * 60_000));
+    const fresh = addMoments(state, mine, startedAt, INTERVAL_MIN * 60_000, { quiet: privateTick });
+    console.log(`🎞️  ${fresh.length} small moments for the live feed`);
+  }
+  noteArc(state); // his mood over the day, for the chart on the Today tab (arc.js)
   // Curiosity: what caught him (his "spark" answer) grows into interests and hobbies; old interests fade (curiosity.js).
   fadeInterests(state);
   if (answer.spark?.topic) {
