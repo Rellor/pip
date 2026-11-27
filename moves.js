@@ -9,7 +9,7 @@
 import { dayLimits } from './limits.js';
 import { missingTool, NEEDS } from './tools.js';
 import { kitchenIn } from './food.js';
-import { supportsInfo, onDeskGear, roomThings, roomHasPlenty } from './decor.js';
+import { supportsInfo, onDeskGear, roomThings, roomHasPlenty, roomIsFull } from './decor.js';
 import { allMisplaced } from './placement.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
@@ -20,7 +20,7 @@ import { canBrowse, interests, HOBBY_AT } from './curiosity.js';
 import { canAskVisitors, unreadShelf, pieceWords } from './guests.js';
 import { shopLine, shopOpen, wantsToBuy } from './shop.js';
 import { goOptions, goLine, wantsOut, gearWish, canGo } from './world.js';
-import { boardNotes, boardCalls } from './board.js';
+import { boardNotes, boardCalls, boardThing } from './board.js';
 import { landToday, LAND_PER_DAY } from './land.js';
 import { lying } from './strangers.js';
 import { lampsOf, lampName, lampNow } from './web/lights.js';
@@ -114,7 +114,7 @@ export function askReason(s, now = Date.now()) {
 
 export const MOVES = [
   // --- making (a maker fills in the design) ---
-  { name: 'decorate', maker: true, line: (s, n) => `make a sculpture, a piece of furniture or a thing for my room from simple shapes${needsKitchen(s) ? ' (I have no kitchen yet: a small stove or oven would let me cook)' : storageFull(s) ? ' (my desk is full: a shelf within reach, a small table or a stand would give my things a place)' : roomIsDark(s, n) ? ` (no lamp of mine reaches the ${needLampSpots(s, n)[0].name}: a lamp there would help)` : ' (a big thing, even bigger than a house, can stand outside at a place I pick: where "outside by the pond")'}: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s, n) => (itch(s, 0.2, 2.6) + (roomThings(s.decor).length < 8 ? 0.9 : 0) + (needsKitchen(s) ? 1.5 : 0) + (roomIsDark(s, n) ? 0.6 : 0) + (storageFull(s) ? 0.6 : 0)) * (roomHasPlenty(s.decor) ? 0.7 : 1) }, // his urge to make decides (body.js): right after making it is quiet, hours later it pulls. A full room pulls a little less
+  { name: 'decorate', maker: true, line: (s, n) => roomIsFull(s.decor) ? `make ${boardThing(s, n)} for the note on the notice board (I bring it there: it does not stay in my room): {what, why}` : `make a sculpture, a piece of furniture or a thing for my room from simple shapes${needsKitchen(s) ? ' (I have no kitchen yet: a small stove or oven would let me cook)' : storageFull(s) ? ' (my desk is full: a shelf within reach, a small table or a stand would give my things a place)' : roomIsDark(s, n) ? ` (no lamp of mine reaches the ${needLampSpots(s, n)[0].name}: a lamp there would help)` : ' (a big thing, even bigger than a house, can stand outside at a place I pick: where "outside by the pond")'}: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n) && (!roomIsFull(s.decor) || boardThing(s, n)), score: (s, n) => (itch(s, 0.2, 2.6) + (roomThings(s.decor).length < 8 ? 0.9 : 0) + (needsKitchen(s) ? 1.5 : 0) + (roomHasPlenty(s.decor) ? 0 : (roomIsDark(s, n) ? 0.6 : 0) + (storageFull(s) ? 0.6 : 0))) * (roomHasPlenty(s.decor) ? 0.5 : 1) }, // a full room: no new thing (only one the notice board asks for: that one leaves his room) // his urge to make decides (body.js): right after making it is quiet, hours later it pulls. A full room pulls a little less
   { name: 'draw', maker: true, line: (s) => `draw a picture: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'draw', n), score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'record_song', maker: true, line: (s) => `write and record a song (with ${instruments(s).join(', ')}${instruments(s).length ? ' and drums' : ''}): {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'record_song', n) && instruments(s).length > 0, score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'make_app', maker: true, line: (s) => `write a little program or game on my computer (start small: a game I can grow a bit every day as a project): {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'make_app', n), score: (s) => 0.4 + s.body.creativity / 6 },
@@ -206,7 +206,7 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
     score *= 0.8 ** recentKinds.filter((k) => k === kindOf(m.name)).length;
     score *= noveltyBoost(s, m.name); // something he has never (or hardly) done is more inviting
     if ((s.curious?.interests ?? []).some((i) => i.own && (i.moves ?? []).includes(m.name))) score *= 1.5; // a way to do a hobby of his own idea
-    if (['decorate', 'draw', 'place_picture', 'move_thing'].includes(m.name)) score += Math.max(0, 5 - (s.body?.coziness ?? 5)) * 0.15; // a bare room: a small push to make it his
+    if (['decorate', 'draw', 'place_picture', 'move_thing'].includes(m.name) && !(m.name === 'decorate' && roomThings(s.decor).length >= 8)) score += Math.max(0, 5 - (s.body?.coziness ?? 5)) * 0.15; // a bare room: a small push to make it his (a new thing only while it really is bare)
     scored.push({ m, score: score * (0.75 + random() * 0.5) });
   }
   scored.sort((a, b) => b.score - a.score);

@@ -111,7 +111,10 @@ const ROUTES = [
 export const MAKER_ROUTES = ['decorate', 'draw', 'record_song', 'make_app', 'make_clothes', 'change_thing', 'extend_thing'];
 // The program or game a project is about (its last version that was a program), or null.
 export const lastApp = (p) => [...(p.versions ?? [])].reverse().find((v) => ['make_app', 'update_app'].includes(v.kind))?.name ?? null;
-const lastMade = (p) => [...(p.versions ?? [])].reverse().find((v) => ['decorate', 'change_thing', 'extend_thing'].includes(v.kind))?.name ?? null;
+// The thing a project made that still stands in his room, or null: every next build step adds to it.
+export const projectThing = (s, p) => { const name = lastMade(p); return name && (s.decor ?? []).some((d) => d.name === name) ? name : null; };
+function lastMade(p) { return [...(p.versions ?? [])].reverse().find((v) => ['decorate', 'change_thing', 'extend_thing'].includes(v.kind))?.name ?? null; }
+
 
 // The next step of a project as a real move. ctx: { cookDetails(text), seeds: [names], tune: "notes" }. Null if nothing is left.
 export function workStep(s, title, ctx = {}) {
@@ -125,6 +128,7 @@ export function workStep(s, title, ctx = {}) {
   let route = (ROUTES.find(([, re]) => re.test(t)) ?? (vague ? ROUTES.find(([k, re]) => k !== 'wait' && re.test(p.title)) : null) ?? ['decorate'])[0];
   if (route === 'make_clothes' && /\b(blanket|quilt|pillow|cushion|rug|curtain|throw|bag|tapestry|banner|toy|doll|plush)\b/i.test(`${t} ${p.title}`)) route = 'decorate'; // sewn or knitted, but not to wear: a thing for his room
   if (['change_thing', 'extend_thing'].includes(route) && !lastMade(p)) route = 'decorate'; // nothing made yet to change
+  if (route === 'decorate' && projectThing(s, p)) route = 'extend_thing'; // one project, one thing: every next build step adds to the thing it already made
   const app = lastApp(p);
   if (app && route !== 'search_web' && route !== 'wait' && !/\b(record|draw|paint|cook|plant)\b/i.test(t)) route = 'update_app'; // a project about a program or game: every next step grows that same program
   const base = { thought: `I work on my project "${p.title}": ${t}`, enjoyment: 7, needs: '', forStep: { project: p.title, text: t } };

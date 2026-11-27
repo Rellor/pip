@@ -16,7 +16,7 @@ assert.ok(new Set(items.map((i) => i.id)).size === total, 'ids are unique');
 
 const prompt = tidyPrompt(soulText(fs.readFileSync(new URL('../soul.md', import.meta.url), 'utf8')), items);
 assert.ok(!prompt.includes('[locked]'));
-assert.ok(prompt.length < 24_000, `prompt is ${prompt.length} chars`);
+assert.ok(prompt.length < 30_000, `prompt is ${prompt.length} chars`); // (it lists every thing he owns: 25 in his room and 17 in his chest by now)
 
 // A greedy answer: keep everything. The limits must still hold.
 const greedy = settleChoices(items, { choices: items.map((i) => ({ id: i.id, choice: 'keep', reason: 'mine' })) });

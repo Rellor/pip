@@ -12,10 +12,13 @@ const NEW_NOTE_HOURS = 5; // about this long after the last one, a new note is p
 // What people ask for: [what, how he makes it, coins]. "how" is the move that counts (a print is made with print_thing,
 // which is a decorate done at the workshop).
 export const ORDERS = [
-  ...['a birdhouse', 'a wind chime', 'a small lantern', 'a toy train', 'a flower pot', 'a weather vane', 'a little boat', 'a kite', 'a garden gnome', 'a bird bath', 'a signpost', 'a rocking horse', 'a sundial', 'a letterbox', 'a snow globe', 'a windmill', 'a scarecrow', 'a telescope', 'a stool', 'a small table', 'a coat rack', 'a candle holder', 'a picture frame', 'a toy car', 'a wheelbarrow', 'a bee hotel', 'a garden bench', 'a wishing well', 'a street lamp', 'a toy robot', 'a drum', 'a treasure chest', 'a ladder', 'a watering can', 'a doll house', 'a spinning top', 'a hat stand', 'an umbrella stand', 'a fruit bowl', 'a model lighthouse'].map((what) => [what, ['decorate'], 3]),
+  // (few things to build: a room does not fill with small furniture for coins. What he does build for a note, he brings
+  // to the square: it does not stay in his room. See handOver below.)
+  ...['a birdhouse', 'a wind chime', 'a weather vane', 'a kite', 'a bee hotel', 'a toy train', 'a signpost', 'a scarecrow', 'a fruit bowl', 'a model lighthouse'].map((what) => [what, ['decorate'], 3]),
   ...['a cat', 'a lighthouse', 'the moon', 'a steam train', 'a sunflower', 'a hedgehog', 'a sailing boat', 'a rainy street', 'an owl', 'a bowl of fruit', 'a mountain', 'a fox in the snow', 'a kite in the sky', 'a teapot', 'a whale', 'a bicycle', 'an old tree', 'a snail', 'a market stall', 'a starry night'].map((what) => [`a drawing of ${what}`, ['draw'], 2]),
-  ...['a key ring', 'a chess piece', 'a tiny dinosaur', 'a whistle', 'a button', 'a small gear', 'a toy boat', 'a cookie cutter', 'a little owl', 'a door hook'].map((what) => [`${what} from the 3D printer`, ['decorate'], 3]),
-  ...['a game about catching stars', 'a little clock program', 'a game about a jumping frog', 'a program that draws rain'].map((what) => [what, ['make_app', 'update_app'], 5]),
+  ...['a lullaby', 'a marching tune', 'a rain song', 'a birthday song', 'a sea shanty', 'a morning song', 'a walking tune', 'a song for the first snow'].map((what) => [what, ['record_song'], 3]),
+  ...['a key ring', 'a chess piece', 'a tiny dinosaur', 'a whistle', 'a small gear', 'a cookie cutter'].map((what) => [`${what} from the 3D printer`, ['decorate'], 3]),
+  ...['a game about catching stars', 'a little clock program', 'a game about a jumping frog', 'a program that draws rain', 'a game about a hungry duck', 'a program that counts down to tea'].map((what) => [what, ['make_app', 'update_app'], 5]),
 ];
 // The same board always gets the same next note (a test, and a wake-up that runs twice, tell one story).
 function dice(seed) {
@@ -57,7 +60,7 @@ export const boardCalls = (s, now = Date.now()) => boardNotes(s, now).some((w) =
 // For the brain: the notes he has read, with how to go about it (look it up first, then make it).
 export function boardLines(s, now = Date.now()) {
   return boardNotes(s, now).filter((w) => w.seen).slice(0, 3).map((w) => {
-    const how = w.medium.includes('draw') ? 'draw' : w.medium.includes('make_app') ? 'make_app' : /3D printer/.test(w.topic) ? 'print_thing' : 'decorate';
+    const how = w.medium.includes('draw') ? 'draw' : w.medium.includes('make_app') ? 'make_app' : w.medium.includes('record_song') ? 'record_song: I name the song so' : /3D printer/.test(w.topic) ? 'print_thing' : 'decorate: I bring it to the square, it does not stay in my room';
     const looked = (s.log ?? []).some((e) => ['search_web', 'read_book'].includes(e.action) && !e.failed && now - Date.parse(e.at) < 3 * DAY && topicWords(w.topic).some((k) => `${e.query ?? ''} ${e.topic ?? ''}`.toLowerCase().includes(k)));
     return `On the notice board someone asks for ${w.topic}: ${w.reward} coins when I make it (${how}).${looked ? ' I have looked up how it is made.' : ` I can look up how it is made first (search_web), then make it: a thing made with knowledge earns 1 coin more.`}`;
   });
@@ -67,4 +70,23 @@ export const topicWords = (topic) => String(topic).toLowerCase().replace(/[^a-z\
 // He made what a note asked for: did he look it up first? (Then he gets one coin more.)
 export function researched(s, note, now = Date.now()) {
   return (s.log ?? []).some((e) => ['search_web', 'read_book'].includes(e.action) && !e.failed && Date.parse(e.at) >= Date.parse(note.at) - DAY && Date.parse(e.at) <= now && topicWords(note.topic).some((k) => `${e.query ?? ''} ${e.topic ?? ''}`.toLowerCase().includes(k)));
+}
+
+// ---- a thing built for a note does not stay in his room
+// The thing a note on the board asks him to build (a note he has read, not a print), or null.
+const isBuild = (w) => (w.medium ?? []).includes('decorate') && !/3D printer/.test(w.topic);
+export const boardThing = (s, now = Date.now()) => boardNotes(s, now).find((w) => w.seen && isBuild(w))?.topic ?? null;
+// Is this (what he wants to make, in words) the thing a note asks for? All of the note's own words have to be in it.
+export const forBoard = (s, text, now = Date.now()) => { const words = new Set(topicWords(text)); return boardNotes(s, now).find((w) => isBuild(w) && topicWords(w.topic).length > 0 && topicWords(w.topic).every((k) => words.has(k))) ?? null; };
+// Called at every wake-up: what he built for a note and has shown in his room for a moment is brought to the square.
+// It leaves his room for good (it is kept in s.given, so the page can still show that he made it). Returns their names.
+export const GIVEN_KEPT = 30;
+export function handOver(s, now = Date.now()) {
+  const going = (s.decor ?? []).filter((d) => d.forBoard && now - Date.parse(d.createdAt ?? d.at ?? 0) > 5 * 60_000);
+  if (!going.length) return [];
+  const ids = new Set(going.map((d) => d.id));
+  for (const d of s.decor) if (ids.has(String(d.base ?? '').split('#')[0])) delete d.base; // what stood on it stays, on the floor
+  s.decor = s.decor.filter((d) => !ids.has(d.id));
+  s.given = [...(s.given ?? []), ...going.map((d) => ({ id: d.id, name: d.name, why: d.why ?? '', parts: d.parts ?? [], uses: d.uses ?? [], createdAt: d.createdAt ?? d.at, givenAt: new Date(now).toISOString(), for: d.forBoard }))].slice(-GIVEN_KEPT);
+  return going.map((d) => d.name);
 }

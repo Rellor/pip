@@ -10,7 +10,8 @@ import { roomFactors, scaleParts, nameMax, ROOM_SCALE } from './scale.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
 import { addIngredient } from './food.js';
-import { wantsOneMore, kindsWord } from './decor.js';
+import { wantsOneMore, kindsWord, roomThings, ROOM_FULL } from './decor.js';
+import { hobbyMoves } from './curiosity.js';
 import { letGoGoals } from './intent.js';
 
 export const CHANGES = [
@@ -486,6 +487,16 @@ export const CHANGES = [
       const m = 'gemini-3.8-flash';
       if (s.quota?.calls?.[m] && !s.quota.out?.[m]) s.quota.calls[m] = Math.min(s.quota.calls[m], 2);
       return null;
+    },
+  },
+  {
+    id: '2026-11-27 a full room',
+    run(s) { // his room filled up with small furniture: from now on a full room takes no new thing (decor.js), a making hobby grows one piece (curiosity.js), and what he builds for the notice board leaves his room (board.js)
+      for (const h of (s.curious?.interests ?? []).filter((i) => i.own)) h.moves = hobbyMoves(h.topic);
+      const bowl = (s.decor ?? []).findLast((d) => /fruit bowl/i.test(d.name ?? '') && d.kind !== 'outside');
+      if (bowl && (s.wishes ?? []).some((w) => w.board && w.status === 'kept' && /fruit bowl/i.test(w.topic ?? ''))) bowl.forBoard = 'a fruit bowl';
+      const n = roomThings(s.decor).length;
+      return `I counted: ${n} things stand in my room${(s.stored ?? []).length ? ` and ${s.stored.length} more lie in my chest` : ''}, most of them small, and I hardly use them. That is enough. From now on my room takes no new thing while it is full (${ROOM_FULL} or more), and never more than one a day. With my hands I make the things I have really good, I build big outside, I draw, I paint walls, I write programs and songs. For a hobby like building clocks I keep working on one clock. And what I build for a note on the notice board I bring to the square: it does not stay with me.`;
     },
   },
   {

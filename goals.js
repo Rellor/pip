@@ -3,7 +3,7 @@
 // so the site shows them and code ticks them off when a move really does one).
 export const KINDS = ['make', 'learn', 'tend', 'music', 'revisit', 'explore', 'outside'];
 
-export function goalPrompt({ soul, feelings, projects, skills, interests, enough = '' }) {
+export function goalPrompt({ soul, feelings, projects, skills, interests, enough = '', full = '' }) {
   return `${soul}
 
 GOOD MORNING
@@ -11,7 +11,7 @@ I just woke up. How I feel: ${feelings.join('; ') || 'fine'}.
 My projects: ${projects.length ? projects.join(' | ') : 'none right now'}
 My skills: ${skills}
 Things I like to think about: ${interests.slice(-6).join(', ') || 'nothing yet'}
-${enough ? `I have enough of these in my room, so no goal to make one more of them: ${enough}.\n` : ''}
+${enough ? `I have enough of these in my room, so no goal to make one more of them: ${enough}.\n` : ''}${full ? `${full}\n` : ''}
 Outside my door is my own world: the pond, the library, the green stone far out in the grass, bare walls I may paint on, and my own field that I can build on and shape.
 
 I set 2 or 3 small goals for today. Each is one thing I really want to do today, in my own plain words.

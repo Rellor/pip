@@ -54,7 +54,9 @@ export function keepWishes(s, entries, now = Date.now()) {
       if (w.board) { // a note from the notice board: it comes down, and knowing how it is made pays a coin more
         const extra = researched(s, w, now) ? 1 : 0;
         s.coins += extra;
-        lines.push(`I made ${w.topic}, as the note on the notice board asked. I took the note down and got ${w.reward + extra} coins${extra ? ' (one more because I had looked up how it is made)' : ''}. I have ${s.coins} coins now.`);
+        const built = e.action === 'decorate' && e.as !== 'print_thing' ? (s.decor ?? []).findLast((d) => d.name === e.name && d.kind !== 'outside' && !d.image) : null; // a thing he built for a note goes to the square (board.js handOver): it does not stay in his room
+        if (built) built.forBoard = w.topic;
+        lines.push(`I made ${w.topic}, as the note on the notice board asked. I took the note down and got ${w.reward + extra} coins${extra ? ' (one more because I had looked up how it is made)' : ''}. I have ${s.coins} coins now.${built ? ' I bring it to the square: it is not mine to keep.' : ''}`);
         break;
       }
       lines.push(`I made what ${w.from || 'someone'} wished for (${w.topic}), and got ${w.reward} coins for it. I have ${s.coins} coins now.`);

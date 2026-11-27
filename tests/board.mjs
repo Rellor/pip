@@ -22,7 +22,7 @@ assert.equal(boardNotes(s, t0 + 40 * HOUR).length, MAX_BOARD, 'never more than t
 assert.equal(new Set(s.wishes.map((w) => w.topic)).size, s.wishes.length, 'no two notes ask for the same thing');
 for (const w of s.wishes) assert.ok(ORDERS.some(([what]) => what === w.topic));
 assert.deepEqual(boardNotes(s, t0 + (40 + NOTE_DAYS * 24 + 1) * HOUR), [], 'a note nobody takes comes down after a few days');
-assert.ok(ORDERS.length >= 60 && new Set(ORDERS.map(([what]) => what)).size === ORDERS.length);
+assert.ok(ORDERS.length >= 45 && new Set(ORDERS.map(([what]) => what)).size === ORDERS.length);
 ok('notes are pinned a few at a time, all different, and come down by themselves');
 
 // ---- he only knows what is on it when he has read it
@@ -43,7 +43,7 @@ assert.ok((Date.parse(home.outing.homeAt) - (t0 + HOUR)) / 60_000 <= 8, 'it is a
 assert.ok(b.wishes.every((w) => w.seen));
 const lines = boardLines(b, t0 + 2 * HOUR);
 assert.equal(lines.length, 2);
-assert.match(lines[0], /someone asks for a toy train: 3 coins when I make it \(decorate\)\..*look up how it is made first \(search_web\)/);
+assert.match(lines[0], /someone asks for a toy train: 3 coins when I make it \(decorate: I bring it to the square, it does not stay in my room\)\..*look up how it is made first \(search_web\)/);
 assert.match(lines[1], /a drawing of a cat: 2 coins when I make it \(draw\)/);
 assert.match(readBoard({ wishes: [] }, t0), /nothing on it today/);
 ok('he walks to the board to read it; then he knows what is asked and how to go about it');
