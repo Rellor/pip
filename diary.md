@@ -7660,3 +7660,9 @@ My hands are full of music and building, but I want to try playing the new flute
 - do (play a quiet tune on the thin silver flute): play the flute
 - mood: focused
 
+## 27/11/2026, 20:33:39
+It is late at night and I want to write down my thoughts in my diary.
+> It is late at night and I want to write down my thoughts in my diary.
+- write_diary (Quiet night, clear sky. The day is done and my hands are finally still.): Writing in my diary before sleep.
+- mood: focused
+
