@@ -1,5 +1,6 @@
 // Phase 6: music patterns and revisions, sculpture limits, photo angles.
 // Run: node tests/makers.mjs
+import './_many.mjs';
 import assert from 'node:assert/strict';
 import { cleanPattern, patternToTracks, reviseSection } from '../music.js';
 import { finishSong, fakeMade, makerPrompt } from '../maker.js';

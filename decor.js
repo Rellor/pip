@@ -52,8 +52,12 @@ export function wantsOneMore(decor, text) {
   if (!/\b(build|make|craft|carve|construct|put together)\b/.test(t)) return null;
   return fullKinds(decor).find(({ kind }) => new RegExp(`\\b(${kind}|${kindsWord(kind)})\\b`).test(t)) ?? null;
 }
-export const MAX_PER_DAY = 3; // new things a day for his room (changing what he has is not counted here): a room fills up fast
+export const MAX_PER_DAY = Number(process.env.PIP_MAKES_PER_DAY) || 3; // new things a day for his room (changing what he has is not counted here)
 export const MAX_OUTSIDE_PER_DAY = 1; // and one more out in his world: it has its own count, so three small things for his room never leave him unable to build outside
+export const ROOM_PLENTY = Number(process.env.PIP_ROOM_ENOUGH) || 18; // with this many things his room has plenty. Not a limit: from here the game nudges him toward using and improving what he has
+// The things in his room (not the pictures on his walls, not what stands outside).
+export const roomThings = (decor) => (decor ?? []).filter((d) => !d.image && !d.art && d.kind !== 'outside');
+export const roomHasPlenty = (decor) => roomThings(decor).length >= ROOM_PLENTY;
 const MAX_PARTS = 40;
 const MAX_DECOR = 30;
 const STORAGE_WORDS = /shelf|shelves|closet|cabinet|wardrobe|drawer|dresser|rack|crate|storage|cupboard|bookcase|locker/i;
@@ -63,7 +67,7 @@ export function capOf(decor) {
 }
 // ---- Outside (web/town.js): his plot across the street, and every other place of his world that is free. He picks the
 // place himself ("outside by the pond"); the game only checks that it fits there.
-export const MAX_OUTSIDE = 40;
+export const MAX_OUTSIDE = Number(process.env.PIP_MAX_OUTSIDE) || 40;
 // A big thing outside is not there at once: he builds it, and that takes time (the page shows the site growing, and him
 // at work there). Minutes for a thing whose longest side is `metres`: 3 m takes over an hour, 20 m most of a day.
 export const BUILD_FROM_M = 3;
