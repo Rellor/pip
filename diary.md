@@ -7483,3 +7483,9 @@ reply to Wren about the steam locomotive
 - walk_to (computer): reply to Wren about the steam locomotive
 - mood: dry
 
+## 27/11/2026, 14:05:17
+I finished staring at the night sky simulation and my room feels too full, so I need to put something away and take a break.
+> I finished staring at the night sky simulation and my room feels too full, so I need to put something away and take a break.
+- remove_decoration (sculpted clay bird on perch): putting away the clay bird
+- mood: dry
+
