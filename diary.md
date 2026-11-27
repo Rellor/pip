@@ -7472,3 +7472,9 @@ I want to fetch the note left for me on the square because I am curious what is 
 - go_out: Go to the square.
 - mood: curious
 
+## 27/11/2026, 13:49:07
+My basil is ready and I want to harvest it. I also need to answer Wren's note about the train.
+> My basil is ready and I want to harvest it. I also need to answer Wren's note about the train.
+- harvest (basil): harvest the fully grown basil
+- mood: dry
+
