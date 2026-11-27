@@ -27,12 +27,13 @@ ok('every hobby has a way to do it: graffiti is painting a wall, bird watching i
   assert.equal(levelOf(r.hobby), 'hobby');
   assert.equal(tryingHobbies(s).length, 1);
   assert.match(startHobby(s, 'graffiti', 'I still want it very much', now + 4 * DAY).failed, /is a hobby of mine already/);
-  assert.equal(canStartHobby(s, now + DAY), false, 'not a new idea every day');
-  assert.match(startHobby(s, 'pottery', 'I like the idea of mud that stays', now + DAY).failed, /only a little while ago/);
+  assert.equal(canStartHobby(s, now + 0.5 * DAY), false, 'not two new ideas in one day');
+  assert.match(startHobby(s, 'pottery', 'I like the idea of mud that stays', now + 0.5 * DAY).failed, /only a little while ago/);
   assert.equal(canStartHobby(s, now + HOBBY_IDEA_EVERY_DAYS * DAY), true);
   assert.ok(startHobby(s, 'pottery', 'I like the idea of mud that stays', now + HOBBY_IDEA_EVERY_DAYS * DAY).hobby);
+  assert.ok(startHobby(s, 'juggling', 'My hands want something silly to do.', now + 2 * HOBBY_IDEA_EVERY_DAYS * DAY).hobby);
   assert.equal(tryingHobbies(s).length, HOBBIES_TRYING_MAX);
-  assert.match(startHobby(s, 'kites', 'the sky is empty and I have string', now + 9 * DAY).failed, /still have not tried graffiti or pottery/);
+  assert.match(startHobby(s, 'kites', 'the sky is empty and I have string', now + 9 * DAY).failed, /still have not tried graffiti or pottery or juggling/);
   // an interest he already had becomes his own hobby
   const t = fresh({ curious: { sparks: [], interests: [{ topic: 'Night sky', score: 10.8, since: iso(now - 9 * DAY) }] } });
   const n = startHobby(t, 'the night sky', 'I look at it every evening anyway', now);
@@ -96,7 +97,7 @@ ok('his prompt names the hobby he is trying and a move that does it');
   assert.notDeepEqual(hobbyIdeas(s, now), hobbyIdeas(s, now + DAY), 'other ideas on another day');
   assert.ok(move.score(fresh({ body: { boredom: 9 } })) > move.score(fresh({ body: { boredom: 1 } })), 'boredom makes a new hobby more inviting');
   startHobby(s, 'graffiti', 'The walls are bare and somebody should say something.', now);
-  assert.equal(Boolean(move.when(s, now + DAY)), false);
+  assert.equal(Boolean(move.when(s, now + 0.5 * DAY)), false);
   assert.ok(!hobbyIdeas(s, now).some((i) => /graffiti/.test(i)), 'not what he does already');
   const st = toAnswer({ moves: [{ move: 'start_hobby', details: { what: 'graffiti', why: 'the walls are bare' }, thought: 'x' }], reason: 'r', mood: 'calm' }, ['start_hobby']).steps[0];
   assert.deepEqual([st.action, st.as, st.details.hobby, st.details.why, st.details.what], ['do', 'start_hobby', 'graffiti', 'the walls are bare', 'decide to try graffiti as a hobby']);

@@ -119,6 +119,11 @@ export function toAnswer(reply, offered = MOVE_NAMES) {
       steps.push({ action: 'ask_for', details: { item: clip(d.what ?? d.item ?? d.name, 140), reason: clip(d.why ?? d.reason, 200) }, thought, enjoyment: 6, needs: '' });
       continue;
     }
+    if (name === 'show_in_museum') { // he carries a thing to his museum (museum.js)
+      const thing = clip(d.name ?? d.what ?? d.thing, 80);
+      steps.push({ action: 'do', as: 'show_in_museum', details: { what: `carry ${thing} to my museum`, name: thing, why: clip(d.why ?? d.reason, 200) }, thought, enjoyment: 7 });
+      continue;
+    }
     if (name === 'ask_visitors') { // one question for the people who visit his page (guests.js)
       const q = clip(d.question ?? d.what ?? d.text, 180);
       steps.push({ action: 'do', as: 'ask_visitors', details: { what: `ask my visitors: ${q}`, question: q, why: clip(d.why ?? d.reason, 200) }, thought, enjoyment: 6 });

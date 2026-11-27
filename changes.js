@@ -12,6 +12,7 @@ import { noteResearch } from './growth.js';
 import { addIngredient } from './food.js';
 import { wantsOneMore, kindsWord, roomThings, ROOM_FULL } from './decor.js';
 import { hobbyMoves } from './curiosity.js';
+import { showInMuseum } from './museum.js';
 import { letGoGoals } from './intent.js';
 
 export const CHANGES = [
@@ -490,13 +491,15 @@ export const CHANGES = [
     },
   },
   {
-    id: '2026-11-27 a full room',
-    run(s) { // his room filled up with small furniture: from now on a full room takes no new thing (decor.js), a making hobby grows one piece (curiosity.js), and what he builds for the notice board leaves his room (board.js)
+    id: '2026-11-27 a museum',
+    run(s, at) { // his room filled up with small things. Nothing is forbidden: he gets a museum for them (museum.js). What lay unseen in his chest is the first to go on the plinths
       for (const h of (s.curious?.interests ?? []).filter((i) => i.own)) h.moves = hobbyMoves(h.topic);
       const bowl = (s.decor ?? []).findLast((d) => /fruit bowl/i.test(d.name ?? '') && d.kind !== 'outside');
-      if (bowl && (s.wishes ?? []).some((w) => w.board && w.status === 'kept' && /fruit bowl/i.test(w.topic ?? ''))) bowl.forBoard = 'a fruit bowl';
+      if (bowl && (s.wishes ?? []).some((w) => w.board && w.status === 'kept' && /fruit bowl/i.test(w.topic ?? ''))) bowl.forBoard = 'a fruit bowl'; // made for a note on the board: it goes to the square (board.js)
+      const first = [];
+      for (const d of [...(s.stored ?? [])]) { const r = showInMuseum(s, d.name, '', Date.parse(at), { opening: true }); if (r.piece) first.push(r.piece.name); }
       const n = roomThings(s.decor).length;
-      return `I counted: ${n} things stand in my room${(s.stored ?? []).length ? ` and ${s.stored.length} more lie in my chest` : ''}, most of them small, and I hardly use them. That is enough. From now on my room takes no new thing while it is full (${ROOM_FULL} or more), and never more than one a day. With my hands I make the things I have really good, I build big outside, I draw, I paint walls, I write programs and songs. For a hobby like building clocks I keep working on one clock. And what I build for a note on the notice board I bring to the square: it does not stay with me.`;
+      return `I have a museum now: an open hall with forty plinths, south of the pond, with my name on the sign. ${first.length ? `The ${first.length} things that lay in my chest where nobody saw them stand there already. ` : ''}My room holds ${n} things, and it is full at ${ROOM_FULL}: what I make from now on goes to my museum by itself, and I can carry things there from my room too (show_in_museum), so my room keeps what I really use. I can walk through my museum whenever I like. And what I build for a note on the notice board I bring to the square: that is not mine to keep.`;
     },
   },
   {

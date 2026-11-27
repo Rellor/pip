@@ -36,6 +36,11 @@ export const PLACES = [
     blurb: 'It stands far out in the grass and glows a little at night. Nobody knows who put it there.',
     things: [{ key: 'sit', words: 'sit by the green stone', match: /sit|rest|look|watch|view/ }, { key: 'listen', words: 'listen if it hums', match: /listen|hum|ear|hear|sound/ }],
   },
+  {
+    key: 'museum', name: 'my museum', title: 'His museum', emoji: '🏛️', walk: 7, stay: [15, 25], hours: 'light', at: [150, 200],
+    blurb: 'An open hall with plinths, south of the pond. The things he made stand here for everyone to see.',
+    things: [{ key: 'walk', words: 'walk past my things and look at them', match: /walk|look|see|visit|round|past/ }, { key: 'dust', words: 'dust the plinths and set things straight', match: /dust|clean|straight|tidy|polish|care/ }],
+  },
   // Places he only goes to with something to do there (job): he designs it first, then walks there and it is made.
   { key: 'board', name: 'the notice board', title: 'The notice board', emoji: '📌', walk: 1, stay: [3, 5], hours: [0, 24], at: [270, 292], job: true, blurb: 'People of the town pin notes on it: things they would like made. He reads it, makes one, and earns coins.' },
   { key: 'workshop', name: 'the print workshop', title: 'The print workshop', emoji: '🖨️', walk: 9, stay: [20, 30], hours: [9, 18], at: [560, 300], job: true, blurb: 'A 3D printer hums behind the shutter. What he designs is printed small and kept on the shelf by the door.' },

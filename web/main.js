@@ -12,7 +12,7 @@ import { FURNITURE, MOVABLE, pivotOf, placeOf, turn, worldPoint, frontWorld, sid
 import { placeOf as worldPlace, postcardSvg, hisWords } from './world.js';
 import { seasonInfo } from './season.js';
 import { makeGrain } from './grain.js';
-import { buildTown, TOWN_X, TOWN_RANGE, WORLD, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS } from './town.js';
+import { buildTown, TOWN_X, TOWN_RANGE, WORLD, WORLD_RANGE, TOWN_SPOTS, TOWN_FOR, ROUTES, inTown, townBlocked, townGround, BUILDINGS, rectOf, PRINT_SLOTS, PAINT_WALLS, MUSEUM_SLOTS, PLINTH } from './town.js';
 
 const $ = (id) => document.getElementById(id);
 const V3 = THREE.Vector3;
@@ -2694,6 +2694,46 @@ function syncPrints(s) {
     printModels.add(g);
   });
 }
+// His museum (town.js builds the hall and the plinths; museum.js keeps what stands on them): each thing he shows, on
+// its own plinth, at its real size (a thing too big for a plinth is made smaller until it fits). A tap opens its card.
+let museumKey = '';
+const museumModels = new THREE.Group();
+const museumTouch = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
+town.group.add(museumModels);
+function pieceInfo(p) {
+  return { title: p.name, icon: '🏛️', subtitle: `In his museum · made ${when(p.createdAt)}`, image: decorThumb(p, 320), sections: [
+    ...(p.why ? [{ heading: 'Why he made it', quote: p.why }] : []),
+    ...(p.shown ? [{ heading: 'Why it stands here', quote: p.shown }] : []),
+    ...(p.uses?.length ? [{ heading: 'What it is for', chips: p.uses.map((u) => u.label) }] : []),
+    { lines: [p.from === 'chest' ? `It lay in his chest. Since ${when(p.shownAt)} it stands here for everyone to see.` : p.from === 'room' ? `He carried it here from his room, ${when(p.shownAt)}.` : `His room was full, so it came straight here, ${when(p.shownAt)}.`] },
+  ] };
+}
+function syncMuseum(s) {
+  const list = (s?.museum ?? []).filter((p) => p?.id && Array.isArray(p.parts) && p.parts.length).slice(-MUSEUM_SLOTS.length);
+  const key = list.map((p) => p.id).join(',');
+  if (key === museumKey) return;
+  museumKey = key;
+  museumModels.clear();
+  list.forEach((p, i) => {
+    const g = buildDecor({ id: `museum-${p.id}`, name: p.name, parts: p.parts, scale: 1, pos: [0, 0, 0], rotY: 0, kind: 'floor', at: p.createdAt });
+    g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.scale.setScalar(1);
+    g.updateMatrixWorld(true);
+    const b = new THREE.Box3().setFromObject(g);
+    const size = b.getSize(new V3()), mid = b.getCenter(new V3());
+    const k = Math.min(p.roomScaled ? 1 / 1.6 : 1, 1.3 / Math.max(size.x, size.z, 0.01), 1.7 / Math.max(size.y, 0.01)); // life-size (his room is built 1.6 times bigger), and never wider than its place
+    const [x, z] = MUSEUM_SLOTS[i];
+    g.scale.setScalar(k);
+    g.position.set(x - mid.x * k, PLINTH.h - b.min.y * k, z - mid.z * k);
+    g.userData.info = () => pieceInfo(p);
+    g.userData.lit = false;
+    // (a small thing is hard to point at: the whole space above its plinth opens its card)
+    const tall = Math.max(0.5, size.y * k + 0.2);
+    const touch = new THREE.Mesh(new THREE.BoxGeometry(PLINTH.w + 0.1, tall, PLINTH.w + 0.1), museumTouch);
+    touch.position.set(x, PLINTH.h + tall / 2, z);
+    touch.userData.info = g.userData.info;
+    museumModels.add(g, touch);
+  });
+}
 let walkKey = '';
 function walkPlace() {
   const out = view.mode === 'walk' && inTown(view.x);
@@ -3707,7 +3747,7 @@ const STEP_PLACE = { ...Object.fromEntries(['decorate', 'extend_thing', 'make_cl
 function stepOuting() {
   if (!plan || stepNow < 0 || lastState?.last?.sleeping) return null;
   const st = plan.steps[stepNow];
-  const hit = st && !st.as && !st.failed && !st.made?.failed ? STEP_PLACE[st.action] : null;
+  const hit = st && !st.as && !st.failed && !st.made?.failed ? (st.action === 'do' && /^carry .+ to my museum$/.test(st.details?.what ?? '') ? { place: 'museum', spot: 'museum', name: 'his museum', emoji: '🏛️' } : STEP_PLACE[st.action]) : null;
   if (!hit) return null;
   const t0 = plan.at + plan.starts[stepNow], len = plan.lengths[stepNow];
   if (Date.now() < t0 || Date.now() > t0 + len) return null;
@@ -4701,6 +4741,8 @@ function madeItems(s) {
   for (const d of s.decor ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, d.kind === 'outside' ? (d.readyAt && now < Date.parse(d.readyAt) ? 'being built outside' : 'stands outside') : 'in his room');
   for (const d of s.stored ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, 'in his chest');
   for (const d of s.given ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'made for the notice board'); // (it left his room: he brought it to the square)
+  for (const d of s.museum ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'in his museum');
+  for (const d of s.depot ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'in the depot of his museum');
   for (const a of s.gallery ?? s.art ?? []) if (a.file) add({ type: 'drawing', icon: '🎨', img: a.file, label: a.name, sub: a.wall ? 'painted on a wall' : 'a drawing', at: a.at ?? a.createdAt,
     info: () => ({ title: a.name, icon: '🎨', subtitle: `${a.wall ? 'Painted on a wall' : 'Drawn'} ${when(a.at ?? a.createdAt)}`, image: a.file, sections: why(a.why) }) });
   if (s.site?.file) add({ type: 'website', icon: '🌐', label: s.site.title, sub: `his website · version ${s.site.v}`, at: s.site.updatedAt,
@@ -4997,6 +5039,17 @@ function renderMemory(s) {
   const times = (n) => `${n} time${n === 1 ? '' : 's'}`;
   const hobbyLevel = (i) => (i.score >= 6 && (i.practice ?? 0) >= 12 ? ['🏅', 'mastered'] : i.own && (i.practice ?? 0) < 3 ? ['🌱', 'wants to try it'] : i.score >= 6 ? ['💛', 'hobby'] : ['✨', 'interest']);
   fill($('hobbies'), ints.length ? ints.slice(0, 8).map((i) => { const [icon, lvl] = hobbyLevel(i); return el('li', `${icon} ${lvl}: ${i.topic} (${i.own ? 'his own idea, ' : ''}did it ${times(i.practice ?? 0)})${i.own && i.why ? ` — “${i.why}”` : ''}`); }) : [el('li', 'No interests yet. Browsing is how he finds them, or he thinks of one himself.', 'muted')]);
+  { // what he practises: how often he did each kind of thing in his whole life (his body counts every move), and what he never tried
+    const ever = s.ever || {};
+    const KINDS = [['🎶', 'playing music', ['play_piano']], ['🎛️', 'recording songs', ['record_song', 'compose']], ['🎨', 'drawing', ['draw']], ['🖌️', 'painting walls', ['paint_wall']], ['🔨', 'building things', ['decorate']], ['🛠️', 'making his things better', ['change_thing', 'extend_thing']], ['🏗️', 'building big outside', ['build_outside']], ['🖨️', '3D printing', ['print_thing']], ['🧩', 'writing programs', ['make_app', 'update_app']], ['🌐', 'his website', ['make_site', 'update_site']], ['🍳', 'cooking', ['cook']], ['🌱', 'gardening', ['plant', 'water', 'harvest']], ['🚶', 'going outside', ['go_out']], ['📖', 'reading', ['read_book']], ['💻', 'looking things up', ['search_web', 'browse']], ['✍️', 'his diary', ['write_diary']], ['📷', 'taking photos', ['take_photo']], ['🧵', 'sewing', ['make_clothes']], ['⛰️', 'shaping the land', ['shape_land']], ['🕺', 'inventing dances', ['make_move']], ['🏛️', 'his museum', ['show_in_museum']], ['❓', 'asking his visitors', ['ask_visitors']]];
+    const rows = KINDS.map(([icon, name, moves]) => ({ icon, name, n: moves.reduce((a, m) => a + (ever[m] || 0), 0) }));
+    const done = rows.filter((r) => r.n > 0).sort((a, b) => b.n - a.n), never = rows.filter((r) => !r.n);
+    const top = Math.max(1, ...done.map((r) => r.n));
+    $('practhead').hidden = $('practlist').hidden = !done.length;
+    fill($('practlist'), done.slice(0, 10).flatMap((r) => { const bar = el('div', null, 'bar'); const i = document.createElement('i'); i.style.width = `${Math.max(3, Math.round((r.n / top) * 100))}%`; bar.append(i); return [el('span', `${r.icon} ${r.name}`), bar, el('span', `${r.n} time${r.n === 1 ? '' : 's'}`, 'n')]; }));
+    $('practnever').hidden = !never.length || !done.length;
+    $('practnever').textContent = never.length ? `Never tried yet: ${never.map((r) => r.name).join(', ')}.` : '';
+  }
   { // on the front of the Pip tab: his hobbies, the ones he wants to try first
     const mine = ints.filter((i) => i.own || i.score >= 6).sort((x, y) => Number(Boolean(y.own && (y.practice ?? 0) < 3)) - Number(Boolean(x.own && (x.practice ?? 0) < 3)));
     $('hobbyhead').hidden = $('hobbylist').hidden = !mine.length;
@@ -5225,6 +5278,7 @@ function render(s) {
   renderSince(s);
   renderPhone(s);
   syncPrints(s);
+  syncMuseum(s);
   syncFixedLamps(s);
   $('mood').textContent = s.emotion || s.mood || '…';
   renderDay(s);
@@ -5848,6 +5902,7 @@ function drawMini() {
 // ---- Every building and place in the world can be opened (F or a tap): its card says what Pip can do there, and what
 // he did there so far. The words come from the places of his world (web/world.js) and from his state.
 const WORLD_CARDS = {
+  museum: { title: 'Pip’s museum', icon: '🏛️', what: 'An open hall with forty plinths. The things he made stand here, so everyone can walk up to them. Tap a thing to read what it is and why he made it.', place: 'museum', can: ['carry a thing here from his room or his chest', 'walk past his things and look at them', 'dust the plinths'] },
   home: { title: 'Pip’s home', icon: '🏠', what: 'He lives here. Walk in through the red door.', can: ['sleep', 'eat and cook', 'work at his computer', 'keep the things he makes'] },
   shop: { title: 'The grocery store', icon: '🛒', what: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.', place: 'shop', can: ['buy food to cook and bake with', 'buy seeds, things to make with, tools and instruments'] },
   flats: { title: 'The flats', icon: '🏢', what: 'People of the town live here. Downstairs a shop stands empty.', can: [], none: 'Nothing yet. Pip could wish for something to move in.' },
@@ -5918,6 +5973,12 @@ function worldCard(kind, key) {
   if (visits.length) so.push(`He was here ${visits.length} time${visits.length === 1 ? '' : 's'}. Last: ${ago(visits.at(-1).homeAt)}.`, `“${visits.at(-1).did}”`);
   else if (p && !['shop', 'workshop', 'walls', 'board', 'land'].includes(p.key)) so.push('He has not been here yet.');
   if (so.length) sections.push({ heading: 'So far', lines: so });
+  if (key === 'museum') { // what stands on the plinths
+    const shown = madeItems(s).filter((x) => x.sub === 'in his museum').sort((x, y) => Date.parse(y.at) - Date.parse(x.at));
+    so.push(shown.length ? `${shown.length} of the 40 plinths ${shown.length === 1 ? 'has' : 'have'} something on ${shown.length === 1 ? 'it' : 'them'}.` : 'Every plinth is still empty.');
+    if ((s.depot ?? []).length) so.push(`${s.depot.length} older thing${s.depot.length === 1 ? '' : 's'} moved to the depot to make room.`);
+    if (shown.length) sections.push({ heading: `On the plinths (${shown.length})`, grid: shown });
+  }
   if (key === 'library') { // the visitors' shelf: what lies on it, and how to leave something
     const shelf = (s.shelf ?? []).slice(-4).reverse();
     sections.push({ heading: 'The visitors’ shelf', lines: shelf.length ? shelf.map((p) => `${SHELF_WORD[p.kind]?.[0] ?? '📄'} ${p.title || SHELF_WORD[p.kind]?.[1]}${p.name ? ` (from ${p.name})` : ''}: ${p.opinion ? `Pip: “${p.opinion}”` : p.readAt ? 'he read it' : 'he has not read it yet'}`) : ['Empty. Leave Pip a poem, a short story or a book tip: he reads it when he comes here, and says what he thinks.'], buttons: [{ label: '✍️ Leave something on the shelf', run: () => { hideInfo(); talkMode = 'public'; showTab('messages'); setVisitKind('poem'); $('visittext').focus(); } }] });
@@ -6130,6 +6191,7 @@ window.pipView = view; // for testing: where the walking viewer stands
 window.pipSound = () => (snd.ready ? { wind: +snd.wind.gain.value.toFixed(3), rain: +snd.rain.gain.value.toFixed(3), pip: +snd.pip.gain.value.toFixed(2), radio: +snd.radio.gain.value.toFixed(2), playing: radio.name } : null); // for testing: how loud the world is where you stand
 window.pipRadio = () => showInfo(radioSet.userData.info());
 window.pipCard = (kind, key) => showInfo(worldCard(kind, key)); // for testing: the card of a place in his world
+window.pipLook = () => { const f = lookingAt(); return f ? { kind: f.kind, label: f.label, far: f.hit ? Math.round(howFar(f.hit) * 10) / 10 : null } : null; }; // for testing: what the F prompt would say right now
 window.pipEye = () => camera.position.toArray(); // for testing: where the eye is (the bobbing of the view)
 window.pipAt = () => ({ x: Math.round((pip.group.position.x - (inTown(pip.group.position.x) ? TOWN_X : 0)) * 10) / 10, z: Math.round(pip.group.position.z * 10) / 10, out: inTown(pip.group.position.x), shown: pip.group.visible }); // for testing: where Pip is
 window.pipCam = () => ({ fit: orbit.fit, goal: fitGoal, zoom: orbit.zoom, px: orbit.px, pz: orbit.pz, focusX, name: focusName(), aspect: camera.aspect, pos: camera.position.toArray().map((v) => Math.round(v)) }); // for testing: how the overview looks at things

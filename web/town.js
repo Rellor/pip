@@ -92,6 +92,11 @@ export const wallBox = (w) => { const c = Math.abs(Math.cos(rad(w.turn))), sn = 
 const inWall = (lx, z, pad) => WALLS.some((w) => { const r = rad(w.turn), dx = lx - w.at[0], dz = z - w.at[1]; return Math.abs(dx * Math.cos(r) - dz * Math.sin(r)) < w.len / 2 + pad && Math.abs(dx * Math.sin(r) + dz * Math.cos(r)) < 0.25 + pad; });
 
 export const POND = { x: -30, z: 20, rx: 12, rz: 8 };
+// His museum: an open hall south of the pond, with a plinth for each thing he shows (museum.js keeps the list).
+export const MUSEUM = { x0: -43, x1: -21, z0: 35, z1: 49, gate: [-34.2, -29.8] }; // (the gate is the gap in its north wall)
+export const MUSEUM_SLOTS = Array.from({ length: 40 }, (_, i) => [MUSEUM.x0 + 2.4 + (i % 8) * 2.46, MUSEUM.z0 + 2.9 + Math.floor(i / 8) * 2.4]); // where each plinth stands: [x, z], 8 in a row, 5 rows
+export const PLINTH = { w: 0.9, h: 0.8 };
+const MUSEUM_WALLS = [[MUSEUM.x0, MUSEUM.x0 + 0.3, MUSEUM.z0, MUSEUM.z1], [MUSEUM.x1 - 0.3, MUSEUM.x1, MUSEUM.z0, MUSEUM.z1], [MUSEUM.x0, MUSEUM.x1, MUSEUM.z1 - 0.3, MUSEUM.z1], [MUSEUM.x0, MUSEUM.gate[0], MUSEUM.z0, MUSEUM.z0 + 0.3], [MUSEUM.gate[1], MUSEUM.x1, MUSEUM.z0, MUSEUM.z0 + 0.3]]; // low walls on three sides, and beside the gate
 const WILLOW = [-19, 29];
 const STONE = [-54, -16]; // the green stone
 const BENCHES = [[-15.6, 17.4, -Math.PI / 2], [-30, 30.4, Math.PI]]; // [x, z, the way it looks]
@@ -110,6 +115,7 @@ export const TOWN_SPOTS = {
   cafe: doorOf('cafe'), // at the door of the internet café (he looks things up there)
   build: doorOf('build'), // at the door of the build workshop (he makes things there)
   board: { x: BOARD.x, z: BOARD.z - 1.15, face: 0 }, // in front of the notice board
+  museum: { x: (MUSEUM.gate[0] + MUSEUM.gate[1]) / 2, z: MUSEUM.z0 - 1.2, face: 0 }, // before the gate of his museum, looking in
   pond: { x: -16.4, z: 19.6, face: -Math.PI / 2 }, // by the bench, looking over the water
   homeW: { x: -6.2, z: 1.2, face: -Math.PI / 2 }, // past the west corner of his house
   cafeW: { x: -30.2, z: 1.3, face: -Math.PI / 2 }, // past the west corner of the internet café
@@ -124,10 +130,10 @@ export const TOWN_SPOTS = {
 // Where things that people leave lie: the notes (by their spot) and the small deeds of visitors (by what they are).
 export const LIE = { drop_square: [-6.2, 25.4], drop_pond: [-15.6, 23.6], drop_door: [3.2, 3.6], drop_wall: [2.0, 39.0], flower: [1.1, 0.62], apple: [16.4, 0.7], boat: [POND.x + 4, POND.z - 2], doodle: [BOARD.x + 0.8, BOARD.z + 0.12], hat: [STONE[0], STONE[1]], bookmark: [30.6, 0.8], chalk: [14, 24] };
 // Where Pip is seen for each place of his world: [the spot, 'in' when he goes inside there (then he is out of sight)].
-export const TOWN_FOR = { doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], field: ['field', ''], stone: ['stone', ''], walls: ['paint_wall_1', ''], drops: ['drop_square', ''] };
+export const TOWN_FOR = { museum: ['museum', ''], doorstep: ['step', ''], shop: ['shop', ''], pond: ['pond', ''], library: ['library', 'in'], board: ['board', ''], workshop: ['workshop', ''], land: ['land', ''], field: ['field', ''], stone: ['stone', ''], walls: ['paint_wall_1', ''], drops: ['drop_square', ''] };
 // The way to each spot from his door: the corners he walks by, one after the other (the way home is the same, backwards).
 // (A route can also be for one spot: the way to each wall he paints on. The page looks for the spot first, then the place.)
-export const ROUTES = { doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], cafe: ['homeW'], build: ['sqN', 'sqE', 'sqSE'], land: ['sqN', 'sqE'], field: ['sqN', 'sqE'], stone: ['homeW', 'cafeW'], drops: ['sqN'], drop_square: ['sqN'], drop_pond: ['sqN', 'sqW'], drop_door: [], drop_wall: ['sqN', 'sqSW'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
+export const ROUTES = { museum: ['sqN', 'sqSW'], doorstep: [], shop: [], pond: ['sqN', 'sqW'], library: [], board: ['sqN'], workshop: ['sqN', 'sqE'], studio: ['sqN', 'sqSW'], cafe: ['homeW'], build: ['sqN', 'sqE', 'sqSE'], land: ['sqN', 'sqE'], field: ['sqN', 'sqE'], stone: ['homeW', 'cafeW'], drops: ['sqN'], drop_square: ['sqN'], drop_pond: ['sqN', 'sqW'], drop_door: [], drop_wall: ['sqN', 'sqSW'], ...Object.fromEntries(PAINT_WALLS.map((w) => [`paint_${w.key}`, w.via])) };
 
 // ---- The land itself. It is flat, until Pip shapes it: at the land workshop he takes the land tool and makes a hill or
 // digs a hole (land.js; the list is kept in his state as `land`). Whoever draws the world or puts something on it first
@@ -148,7 +154,7 @@ export const townGround = (x, z) => groundAt(x - TOWN_X, z);
 export const PRINT_SHELF = (() => { const b = bOf('workshop'); const f = b.face === 180 ? -1 : 1; const edge = (v) => b.at[0] + (f < 0 ? b.size[0] / 2 - v : v - b.size[0] / 2); const [a, c] = [edge(b.look.shutter.x0 + 0.2), edge(b.look.shutter.x1 - 0.2)]; return { x0: Math.min(a, c), x1: Math.max(a, c), z: b.at[1] + f * 0.42, dir: f, rows: [0.62, 1.32, 2.02], per: 7 }; })();
 export const PRINT_SLOTS = PRINT_SHELF.rows.flatMap((y) => Array.from({ length: PRINT_SHELF.per }, (_, i) => [PRINT_SHELF.x0 + 0.45 + i * ((PRINT_SHELF.x1 - PRINT_SHELF.x0 - 0.9) / (PRINT_SHELF.per - 1)), y, PRINT_SHELF.z]));
 // What cannot be walked through: [x0, x1, z0, z1] (every building, the shelf of prints and the notice board), and the walls.
-const BLOCKS = [...BUILDINGS.map(rectOf), [PRINT_SHELF.x0 - 0.1, PRINT_SHELF.x1 + 0.1, PRINT_SHELF.z - 0.4, PRINT_SHELF.z + 0.4], [BOARD.x - BOARD.w / 2 - 0.1, BOARD.x + BOARD.w / 2 + 0.1, BOARD.z - 0.22, BOARD.z + 0.22]];
+const BLOCKS = [...MUSEUM_WALLS, ...MUSEUM_SLOTS.map(([x, z]) => [x - PLINTH.w / 2, x + PLINTH.w / 2, z - PLINTH.w / 2, z + PLINTH.w / 2]), ...BUILDINGS.map(rectOf), [PRINT_SHELF.x0 - 0.1, PRINT_SHELF.x1 + 0.1, PRINT_SHELF.z - 0.4, PRINT_SHELF.z + 0.4], [BOARD.x - BOARD.w / 2 - 0.1, BOARD.x + BOARD.w / 2 + 0.1, BOARD.z - 0.22, BOARD.z + 0.22]];
 export function townBlocked(x, z, pad = 0.3) {
   const lx = x - TOWN_X;
   if (lx < WORLD.x0 + 0.4 || lx > WORLD.x1 - 0.4 || z < WORLD.z0 + 0.4 || z > WORLD.z1 - 0.4) return true; // the rim of the world
@@ -172,6 +178,7 @@ const KEEP_RECTS = [
   ...WALLS.map((w) => { const [x0, x1, z0, z1] = wallBox(w); return ['my drawings hang on the wall there, and people must be able to see them', x0 - 1.6, x1 + 1.6, z0 - 1.6, z1 + 1.6]; }),
   ...PAINT_WALLS.filter((w) => w.back).map((w) => ['I paint on that back wall, and people must be able to see it', w.x - w.len / 2, w.x + w.len / 2, w.z - 2.6, w.z]),
   (() => { const [x0, x1, z0, z1] = rectOf(bOf('studio')); return ['my drawings hang on the walls of my art workshop, and people must be able to see them', x0 - 2.4, x1 + 2.4, z0, z1 + 2.4]; })(),
+  ['my museum stands there', MUSEUM.x0 - 1, MUSEUM.x1 + 1, MUSEUM.z0 - 2.5, MUSEUM.z1 + 1],
   ['the shelf with my prints stands there', PRINT_SHELF.x0 - 0.6, PRINT_SHELF.x1 + 0.6, PRINT_SHELF.z - 2, PRINT_SHELF.z + 2],
   ['the square must stay free: everyone walks there', SQUARE.x0 - 0.4, SQUARE.x1 + 0.4, SQUARE.z0 - 0.4, SQUARE.z1 + 0.4],
 ];
@@ -384,6 +391,20 @@ export function buildTown(THREE) {
   field.material.vertexColors = true;
   field.receiveShadow = true;
   things.push({ kind: 'place', key: 'plot', object: field });
+  { // his museum: a pale floor, low walls, a gate with his name on it, and forty plinths
+    const { x0, x1, z0, z1, gate } = MUSEUM;
+    const g = new THREE.Group();
+    group.add(g);
+    box([x1 - x0, 0.08, z1 - z0], M(0xe6dccb, {}, 'plain', 6, 4), [(x0 + x1) / 2, 0.04, (z0 + z1) / 2], g);
+    const wallM = M(0xd6c7ae), capM = M(0xf3ecdf), postM = M(0x8a6a4c);
+    for (const [a, b, c, d] of MUSEUM_WALLS) { box([b - a, 0.62, d - c], wallM, [(a + b) / 2, 0.31, (c + d) / 2], g); box([b - a + 0.08, 0.07, d - c + 0.08], capM, [(a + b) / 2, 0.655, (c + d) / 2], g); }
+    for (const [x, z] of MUSEUM_SLOTS) { box([PLINTH.w, PLINTH.h - 0.06, PLINTH.w], capM, [x, (PLINTH.h - 0.06) / 2, z], g); box([PLINTH.w + 0.08, 0.06, PLINTH.w + 0.08], wallM, [x, PLINTH.h - 0.03, z], g); }
+    for (const [x, z] of [[x0 + 0.15, z0 + 0.15], [x1 - 0.15, z0 + 0.15], [x0 + 0.15, z1 - 0.15], [x1 - 0.15, z1 - 0.15], [gate[0], z0 + 0.15], [gate[1], z0 + 0.15]]) box([0.26, 3.3, 0.26], postM, [x, 1.65, z], g);
+    box([x1 - x0, 0.2, 0.2], postM, [(x0 + x1) / 2, 3.3, z0 + 0.15], g); box([x1 - x0, 0.2, 0.2], postM, [(x0 + x1) / 2, 3.3, z1 - 0.15], g);
+    box([0.2, 0.2, z1 - z0], postM, [x0 + 0.15, 3.3, (z0 + z1) / 2], g); box([0.2, 0.2, z1 - z0], postM, [x1 - 0.15, 3.3, (z0 + z1) / 2], g);
+    for (const [dz, ry] of [[-0.02, Math.PI], [0.28, 0]]) { const sg = sign('Pip’s museum', gate[1] - gate[0] + 0.3, 0.9, '#fde3c4', '#8a4a2c', 60); sg.position.set((gate[0] + gate[1]) / 2, 2.75, z0 + dz); sg.rotation.y = ry; g.add(sg); }
+    things.push({ kind: 'place', key: 'museum', object: g }); // (the floor, the walls and the plinths: all of it opens the card of the museum)
+  }
   { const [sx, sz] = PLOT_SIGN; cyl(0.06, 0.06, 1.7, 0x7a5237, [sx, 0.85, sz]); for (const [dx, ry] of [[-0.03, -Math.PI / 2], [0.03, Math.PI / 2]]) { const sg = sign('Pip’s land', 2.4, 0.6, '#fde3c4', '#8a4a2c', 84); sg.position.set(sx + dx, 1.6, sz); sg.rotation.y = ry; group.add(sg); } }
 
   // ---- the buildings: a block, a picture on its front, a flat roof

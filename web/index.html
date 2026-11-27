@@ -655,6 +655,13 @@
   .donelist li span { color:var(--muted); font-size:13.5px; }
   /* his hobbies, on the front of the Pip tab */
   .hobbylist { display:flex; flex-direction:column; gap:8px; }
+  /* what he practises: how often he did each kind of thing (one row each, the bar is how often) */
+  .practlist { display:grid; grid-template-columns:max-content 1fr max-content; gap:7px 10px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 14px; font-size:15px; }
+  .practlist[hidden] { display:none; }
+  .practlist .bar { height:8px; border-radius:4px; background:var(--chip); overflow:hidden; }
+  .practlist .bar i { display:block; height:100%; border-radius:0 4px 4px 0; background:var(--mood); }
+  .practlist .n { color:var(--muted); font-size:13.5px; font-variant-numeric:tabular-nums; text-align:right; }
+  #practnever { margin-top:8px; font-size:14.5px; }
   .hobbylist[hidden] { display:none; }
   .hobby { display:flex; gap:10px; align-items:flex-start; padding:10px 14px; border:1px solid var(--line); border-radius:14px; background:var(--card); }
   .hobby .hi { font-size:22px; line-height:1.3; }
@@ -868,6 +875,9 @@
         <div class="tile pipnow"><div id="nowproject"></div><ul id="goals" class="goals"></ul><small id="coziness" class="muted"></small></div>
         <h2 id="hobbyhead" hidden>His hobbies</h2>
         <ul id="hobbylist" class="hobbylist" hidden></ul>
+        <h2 id="practhead" hidden>What he practises</h2>
+        <div id="practlist" class="practlist" hidden></div>
+        <p id="practnever" class="muted" hidden></p>
         <h2>What he is good at</h2>
         <div class="chips" id="skills"></div>
         <div class="tiles" id="tiles"></div>

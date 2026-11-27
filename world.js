@@ -197,6 +197,14 @@ export function finishOuting(s, now = Date.now()) {
     else { const a = 4 + Math.floor(rnd() * 9), b = 3 + Math.floor(rnd() * 7); o.did = `I walked all the way around my field. ${have} I paced out a spot of ${a} by ${b} steps and stood in the middle of it: something big could stand right here.`; o.saw = mine ? 'my field with what I built on it' : 'my empty field'; up(s, 'wonder', 0.6); }
     find(false);
     up(s, 'calm', 0.6); up(s, 'joy', 0.6); up(s, 'boredom', -2); up(s, 'energy', -0.6);
+  } else if (p.key === 'museum') { // his own museum: the things he made, on plinths (museum.js)
+    const pieces = s.museum ?? [];
+    const one = pieces.length ? pieces[Math.floor(rnd() * pieces.length)] : null;
+    if (!one) { o.did = 'I walked through my museum. Forty plinths and nothing on them. It echoes. It is waiting for me.'; o.saw = 'my empty museum'; up(s, 'wonder', 0.6); }
+    else if (w.thing === 'dust') { o.did = `I dusted the plinths in my museum and set ${one.name} straight. ${pieces.length} thing${pieces.length === 1 ? '' : 's'} of mine stand${pieces.length === 1 ? 's' : ''} there now. Somebody has to look after them, and it is me.`; o.saw = 'my museum, dusted'; up(s, 'calm', 0.8); }
+    else { o.did = pick(rnd, [`I walked past my things in my museum and stopped at ${one.name}. I remember making it. I would do one thing differently now, and I am not telling which.`, `I walked through my museum. ${pieces.length} thing${pieces.length === 1 ? '' : 's'} I made, each on its own plinth. I stood longest at ${one.name}.`, `In my museum I looked at ${one.name} as if somebody else had made it. Not bad. Whoever made it had patience.`]); o.saw = `${one.name} in my museum`; up(s, 'joy', 0.9); }
+    find(false);
+    up(s, 'calm', 0.6); up(s, 'joy', 0.5); up(s, 'boredom', -1.5); up(s, 'energy', -0.5);
   } else if (p.key === 'stone') { // the green stone, far out in the grass
     o.did = w.thing === 'listen'
       ? pick(rnd, ['I walked out to the green stone and put my ear against it. It hums, very low. Or my ear does. One of us.', 'I pressed my ear to the green stone. Nothing. Then something, like a fridge far away. I do not trust it.', 'I listened at the green stone for a long time. It said nothing useful, which is still more than most stones.'])

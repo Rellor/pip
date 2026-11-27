@@ -153,8 +153,8 @@ export function curiosityLines(s, projects = [], now = Date.now()) {
 // trying: he hears it when he thinks, with the move that would be a way to do it, and every time he really does
 // something for it, that counts (practice). Three times and it is a hobby for real; often enough and he has mastered it.
 // An idea he never tries is let go after a few days, like anyone's.
-export const HOBBY_IDEA_EVERY_DAYS = 3; // a new idea at most this often
-export const HOBBIES_TRYING_MAX = 2; // ideas he has not made real yet, at one time
+export const HOBBY_IDEA_EVERY_DAYS = 1; // a new idea at most this often
+export const HOBBIES_TRYING_MAX = 3; // ideas he has not made real yet, at one time
 export const HOBBY_REAL_AFTER = 3; // tried this many times: it is a real hobby
 export const HOBBY_DROP_DAYS = 4; // never tried in this many days: he lets the idea go
 // Which of his moves are a way to do a hobby, by the words in it.
@@ -165,7 +165,7 @@ const HOBBY_MOVES = [
   [/draw|sketch|paint|watercolou?r|illustrat|comic|cartoon|portrait/, ['draw', 'paint_wall']],
   [/cook|bak(e|ing)|recipe|soup|bread|kitchen|food/, ['cook']],
   [/cod(e|ing)|program|game|app\b|software|website|web ?design|pixel/, ['make_app', 'update_app', 'make_site', 'update_site']],
-  [/build|carpent|wood|sculpt|potter|clay|ceramic|craft|furniture|architect|model|invent|machine|clock|whittl|carv/, ['extend_thing', 'change_thing', 'build_outside', 'print_thing']], // (not a new thing for his room every time: he adds to a piece he has, or builds big outside)
+  [/build|carpent|wood|sculpt|potter|clay|ceramic|craft|furniture|architect|model|invent|machine|clock|whittl|carv/, ['extend_thing', 'change_thing', 'build_outside', 'print_thing', 'decorate']], // (adding to a piece he has comes first; a new piece is the last way, and it can go to his museum)
   [/sew|knit|cloth|fashion|costume|hat\b|tailor|weav/, ['make_clothes']],
   [/danc|ballet|gymnast|juggl|acrobat/, ['make_move']],
   [/photo|camera|film/, ['take_photo']],
@@ -181,7 +181,7 @@ export const tryingHobbies = (s) => ownHobbies(s).filter((i) => (i.practice ?? 0
 // May he think of a new hobby now? (not too often, and not while two ideas are still waiting to be tried)
 export const canStartHobby = (s, now = Date.now()) => tryingHobbies(s).length < HOBBIES_TRYING_MAX && (!s.curious?.hobbyIdeaAt || now - Date.parse(s.curious.hobbyIdeaAt) >= HOBBY_IDEA_EVERY_DAYS * DAY);
 // A few ideas that fit his world, different every day (he can also think of anything else).
-const HOBBY_IDEAS = ['graffiti on the bare walls', 'growing tomatoes', 'bird watching at the pond', 'stargazing by the green stone', 'building big things on my field', 'writing songs for my flute', 'baking bread', 'carving wood', 'making kites', 'collecting stones', 'drawing a map of my village', 'writing poems', 'land art with hills and holes', 'photography', 'making small games', 'pottery', 'making hats', 'inventing dances', 'building clocks', 'drawing comics'];
+const HOBBY_IDEAS = ['graffiti on the bare walls', 'growing tomatoes', 'bird watching at the pond', 'stargazing by the green stone', 'building big things on my field', 'writing songs for my flute', 'baking bread', 'carving wood', 'making kites', 'collecting stones', 'drawing a map of my village', 'writing poems', 'land art with hills and holes', 'photography', 'making small games', 'pottery', 'making hats', 'inventing dances', 'building clocks', 'drawing comics', 'writing a book, a page a day', 'keeping a weather diary', 'cooking soups', 'making masks', 'drawing flags for my village', 'star maps', 'making beats', 'building bridges', 'shadow puppets', 'collecting words I like', 'painting stones', 'whistling tunes', 'making model trains', 'a museum guide for my own museum', 'sewing a coat', 'growing herbs for tea'];
 export function hobbyIdeas(s, now = Date.now(), n = 3) {
   const have = ensureCurious(s).interests.map((i) => key(i.topic));
   const free = HOBBY_IDEAS.filter((h) => !have.some((k) => k && key(h).split(' ').some((w) => w.length > 4 && k.includes(w))));
@@ -236,7 +236,7 @@ export function hobbyLines(s, offered = [], now = Date.now()) {
     const n = h.practice ?? 0;
     const ways = (h.moves ?? []).filter((m) => !offered.length || offered.includes(m)).slice(0, 3).map((m) => `${MOVE_WORDS[m] ?? m.replace(/_/g, ' ')} (${m})`);
     const days = Math.max(0, Math.floor((now - Date.parse(h.ideaAt ?? h.since)) / DAY));
-    const onePiece = (h.moves ?? []).includes('extend_thing') ? ' For this hobby I keep working on one piece (I add to it, I make it better), or I build big outside: not a new small thing every time.' : '';
+    const onePiece = (h.moves ?? []).includes('extend_thing') ? ' For this hobby I like to keep working on one piece (I add to it, I make it better) or build big outside, more than a new small thing every time.' : '';
     return `${n >= HOBBY_REAL_AFTER ? `My hobby: ${h.topic} (I did it ${n} times)` : `My own idea: I want to try ${h.topic} as a hobby${h.why ? ` (${h.why})` : ''}. ${n ? `I tried it ${n} time${n === 1 ? '' : 's'}` : `I have not tried it yet${days ? `, and it has been ${days} day${days === 1 ? '' : 's'}` : ''}`}`}.${ways.length ? ` A way to do it now: ${ways.join(', ')}.` : ' I can find out how it is done first (search_web).'}${onePiece}`;
   });
 }

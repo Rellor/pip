@@ -55,7 +55,7 @@ const THINK_ROOM = 3000; // these models think before they answer, and the think
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, capabilityGuide, blueprintGaps, requestAbility } from './blueprints.js';
-import { settleRoom, isOutside, purposeProblem, purposeHint, setFronts, rehangPictures, enoughOf, fullKinds, kindsWord, wantsOneMore, roomThings, roomHasPlenty, roomIsFull, fullWhy, ROOM_FULL, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { settleRoom, isOutside, purposeProblem, purposeHint, setFronts, rehangPictures, enoughOf, fullKinds, kindsWord, wantsOneMore, roomThings, roomHasPlenty, roomIsFull, ROOM_FULL, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, sketchStyle, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, applyEdits, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { lessonsFrom, themeFatigue } from './mirror.js';
@@ -83,6 +83,7 @@ import { isToday } from './days.js';
 import { SITE_FILE, buildSite, siteMaterial, siteWords } from './site.js';
 import { addMoments, sleepMoments, wakeMoments } from './moments.js';
 import { noteArc } from './arc.js';
+import { showInMuseum, markForMuseum, carryToMuseum, museumLines } from './museum.js';
 import { askVisitors, closeQuestion, takeAnswer, takeShelf, readShelf, noteReply, visitorLine, guestLines, pieceWords, SHELF_KINDS } from './guests.js';
 
 const STATE_FILE = 'web/state.json';
@@ -606,8 +607,8 @@ function paceLines(s, now = Date.now()) {
   const at = new Date(p.backAt).toLocaleTimeString('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
   return [p.out ? `I have designed all I can for today: making new things, drawings, programs and songs comes back tomorrow around ${at}. ${NO_DESIGN}` : `I have designed a lot already. My head for making new things, drawings, programs and songs is fresh again around ${at}. ${NO_DESIGN}`];
 }
-// For his prompt: his room has plenty of things (a nudge), or it is full (then no new thing for his room is made: decor.js).
-const stuffLines = (s) => (roomIsFull(s.decor) ? [`My room is full: ${roomThings(s.decor).length} things${(s.stored ?? []).length ? `, and ${s.stored.length} more in my chest` : ''}. I make no new things for my room now (a new one fits only when I am under ${ROOM_FULL}). What I do with my hands instead: I make one thing I have really good (change_thing, extend_thing), I build something big outside, I draw, paint a wall, write a program, record a song. And there is more to a day than making: a walk, my hobby, something to read, my website.`] : roomHasPlenty(s.decor) ? [`My room has ${roomThings(s.decor).length} things already, and I hardly use them. One good thing I really use beats ten small ones standing around: I would rather make something I have better, or build big outside, than add one more small thing. And there is more to a day than making.`] : []);
+// For his prompt: his room has plenty of things (a nudge). When it is full, what he makes goes to his museum (museumLines).
+const stuffLines = (s) => (roomHasPlenty(s.decor) && !roomIsFull(s.decor) ? [`My room has ${roomThings(s.decor).length} things already, and I hardly use them. One good thing I really use beats ten small ones standing around. And there is more to a day than making.`] : []);
 // For his prompt: the kinds of things he has enough of (decor.js), so he does not plan one more.
 const enoughLines = (s) => { const full = fullKinds(s.decor); return full.length ? [`I have enough of these in my room, so I make no more of them: ${full.map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', ')}. I change one (change_thing), put one in my chest, or make something else.`] : []; };
 function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWork = null }) {
@@ -633,7 +634,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...museumLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -667,7 +668,7 @@ const PHOTO_SCHEMA = { type: 'OBJECT', properties: { shows_it: { type: 'BOOLEAN'
 async function morningGoals(s, soul, system) {
   const day = dayOf();
   try {
-    const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [], enough: fullKinds(s.decor).map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', '), full: roomIsFull(s.decor) ? `My room is full (${roomThings(s.decor).length} things): no goal to make a new thing for my room. A goal for my hands is: make one thing I have really good, build something big outside, draw, paint a wall, write a program or record a song.` : '' });
+    const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [], enough: fullKinds(s.decor).map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', '), full: roomIsFull(s.decor) ? `My room is full (${roomThings(s.decor).length} things). What I make now goes to my museum. A goal does not have to be a new thing: I can make one thing I have really good, build something big outside, try something I never did, or carry my best things to my museum.` : '' });
     const reply = process.env.PIP_FAKE ? fakeGoals() : await askGemini(system, prompt, 1, [], { schema: goalSchema, maxTokens: THINK_ROOM + 400, group: 'big' });
     if (setGoals(s, reply, day)) { console.log(`🌅 goals for today: ${s.intent.items.map((i) => i.text).join(' | ')}`); return; }
   } catch (e) {
@@ -1157,6 +1158,11 @@ function applyInnerLife(s, r, detail, replying = false) {
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
   }
   const fresh = [];
+  if (r.action === 'do' && r.as === 'show_in_museum') { // he carries a thing to his museum (museum.js)
+    const shown = showInMuseum(s, r.details?.name, r.details?.why);
+    if (shown.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `show_in_museum: ${shown.failed}` }; console.log(`   ✋ not to the museum: ${shown.failed}`); }
+    else { addMemory(s, `I carried ${shown.piece.name} from my ${shown.from} to my museum.${shown.piece.shown ? ` Why this one: ${shown.piece.shown}` : ''}`, 6, 'memory', at); nudge(s, 'joy', 0.6); console.log(`   🏛️  to the museum: ${shown.piece.name} (from his ${shown.from})`); }
+  }
   if (r.action === 'do' && r.as === 'ask_visitors') { // one question for everyone who visits his page (guests.js)
     const asked = askVisitors(s, r.details?.question, r.details?.why);
     if (asked.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `ask_visitors: ${asked.failed}` }; console.log(`   ✋ no question: ${asked.failed}`); }
@@ -1384,6 +1390,7 @@ async function wakeUp() {
   state.lastError = null;
   const wokeNow = Boolean(state.last?.sleeping);
   if (wokeNow) wakeMoments(state);
+  for (const name of carryToMuseum(state)) { const said = `I carried ${name} to my museum and put it on a plinth. Everyone can see it there.`; console.log(`🏛️  ${said}`); happened(state, said); }
   for (const name of handOver(state)) { const said = `I brought ${name} to the square for whoever asked for it on the notice board. It is out of my room.`; console.log(`📦 ${said}`); happened(state, said); }
   { const q = closeQuestion(state); if (q) { const said = q.answers.length ? `My question "${q.text}" is closed now. ${q.answers.length} ${q.answers.length === 1 ? 'person' : 'people'} answered.` : `Nobody answered my question "${q.text}". I let it go.`; addMemory(state, said, 5, 'memory', new Date().toISOString()); console.log(`❓ ${said}`); } }
   tickBody(state); // needs and feelings, no model call (it also passes time for the bars)
@@ -1528,14 +1535,13 @@ async function wakeUp() {
     const full = st.make && st.action === 'decorate' && !st.details?.print ? enoughOf(state.decor, st.details?.what) ?? enoughOf(state.decor, st.details?.name) : null; // (what he said he wants to make, or the name he gave it)
     if (full) { answer.steps[i] = { ...st, make: false, planFail: full.why, planned: { ok: false } }; console.log(`   ⛔ not designed: he has ${full.n} ${kindsWord(full.kind)} already`); }
   }
-  for (const [i, st] of answer.steps.entries()) { // a new thing for his room: one per project, and none when his room is full
+  for (const [i, st] of answer.steps.entries()) { // a project makes one thing: every next build step adds to it
     if (!st.make || st.action !== 'decorate' || st.details?.print || st.as === 'print_thing') continue;
     const d = st.details ?? {};
     if (st.as === 'build_outside' || isOutside(d.where)) continue; // big, outside: always welcome
     const proj = d.project ? findProject(state, d.project) : null;
     const piece = proj ? projectThing(state, proj) : null;
     if (piece) { answer.steps[i] = { ...st, action: 'extend_thing', details: { name: piece, add: text(d.what, 200), project: d.project } }; console.log(`   🧩 one project, one thing: he adds to "${piece}" instead of making another`); continue; }
-    if (roomIsFull(state.decor) && !forBoard(state, `${d.what ?? ''} ${d.name ?? ''}`)) { answer.steps[i] = { ...st, make: false, planFail: fullWhy(state.decor), planned: { ok: false } }; console.log(`   ⛔ not designed: his room is full (${roomThings(state.decor).length} things)`); }
   }
   // Things he designs: the maker makes them now (one model call each).
   for (const [i, st] of answer.steps.entries()) if (st.make) answer.steps[i] = await makeIt(state, soul, system, st);
@@ -2483,6 +2489,7 @@ async function wakeUp() {
     console.log(`🎞️  ${fresh.length} small moments for the live feed`);
   }
   noteArc(state); // his mood over the day, for the chart on the Today tab (arc.js)
+  for (const name of markForMuseum(state, startedAt - 1000)) console.log(`🏛️  his room is full: ${name} goes to his museum at the next wake-up`);
   // Curiosity: what caught him (his "spark" answer) grows into interests and hobbies; old interests fade (curiosity.js).
   fadeInterests(state);
   if (answer.spark?.topic) {
