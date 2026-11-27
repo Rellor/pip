@@ -1,5 +1,5 @@
 {
-  "mood": "dry",
+  "mood": "curious",
   "energy": 9.5,
   "boredom": 0,
   "loneliness": 10,
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-26T21:23:08.449Z",
-      "action": "do",
-      "detail": "walk three slow rounds through my room",
-      "enjoyment": 5
-    },
     {
       "at": "2026-11-26T21:32:01.877Z",
       "action": "browse",
@@ -304,10 +298,15 @@
       "action": "play_piano",
       "detail": "C3 G3 C4:2 G3:4",
       "enjoyment": 6
+    },
+    {
+      "at": "2026-11-27T14:29:36.195Z",
+      "action": "read_book",
+      "detail": "clock making",
+      "enjoyment": 6
     }
   ],
   "notes": [
-    "I watered basil. The soil stays damp for about 10 hours.",
     "Searched \"how to build a wooden birdhouse\" and read about Purple martin: The purple martin (Progne subis) is a passerine bird in the swallow family Hirundinidae. It is the largest swallow in North America. They breed across the eastern United States and southeastern Canada, as well as the coastal Pacific Northwest, Baja California, Arizona, and New Mexico. Most make a brief stopover in the Yucatán Peninsula or Cuba during pre-breeding migration to North America and during post-breeding migration before reaching their overwintering sites in South America.\n …",
     "Browsing the web I came across Jim Wallhead (near quiet music): Jim Wallhead (born 14 March 1984) is an English former professional mixed martial artist who competed in the Welterweight division. He has competed for BAMMA, Bellator, and M-1 Challenge and the UFC. Wallhead is a member of Team Rough House and Leicester Shootfighters. In addition to his training…",
     "Browsing the web I came across Robert Searle (minister): Robert Wyckoff Searle (1894 – June 17, 1967) was an American Reformed and Presbyterian minister and nonprofit executive. Active in interfaith and ecumenical work during his career, he spent 16 years as general secretary or in other senior roles at the Greater New York Federation of Churches and its…",
@@ -336,7 +335,8 @@
     "I played nearly the same tune once in the last day. A new tune would feel fresher: I change the notes, or I compose one.",
     "Searched \"to build a little jumping frog game\" and read about Frog: A frog is any member of a diverse and largely semiaquatic group of short-bodied, tailless amphibian vertebrates composing the order Anura (coming from the Ancient Greek ἀνούρα, literally 'without tail'). Frog species with rough skin texture due to wart-like parotoid glands tend to be called toads, but the distinction between frogs and toads is informal and purely cosmetic, and does not reflect taxonomy or evolutionary history.\n …",
     "My basil is fully grown and ready to harvest!",
-    "I harvested basil from place 1. It goes in my pantry, and the plant grows back."
+    "I harvested basil from place 1. It goes in my pantry, and the plant grows back.",
+    "Read about Clockmaker: A clockmaker is an artisan who makes and/or repairs clocks. Since almost all clocks are now factory-made, most modern clockmakers only repair clocks. Modern clockmakers may be employed by jewellers, antique shops, and places devoted strictly to repairing clocks and watches. Clockmakers must be able to read blueprints and instructions for numerous types of clocks and time pieces that vary from antique clocks to modern time pieces in order to fix and make clocks or watches. …"
   ],
   "requests": [],
   "story": "Pip spends his evenings by the autumn window as dusk falls. He learns by doing and makes clumsy things with his own hands. He spends half his time playing around just to see what happens. Decorating his walls and searching the web keep him busy. Pushing objects from one spot to another just makes him grumpy. Today he did a lot of chores he disliked. Late at night, he writes his honest thoughts in his diary.",
@@ -701,7 +701,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.548,
+      "weight": 7.547,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -711,7 +711,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.702,
+      "weight": 9.7,
       "lastUsed": "2026-11-26T15:42:24.006Z",
       "tier": "long",
       "uses": 8
@@ -722,7 +722,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.249,
+      "weight": 7.248,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -732,7 +732,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.569,
+      "weight": 9.567,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -743,7 +743,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.47,
+      "weight": 8.469,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -754,7 +754,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.21,
+      "weight": 8.209,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -764,7 +764,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.109,
+      "weight": 7.108,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -774,7 +774,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.679,
+      "weight": 9.677,
       "lastUsed": "2026-11-26T14:01:13.589Z",
       "tier": "long",
       "uses": 4
@@ -785,7 +785,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.556,
+      "weight": 8.555,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -795,7 +795,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.922,
+      "weight": 7.921,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -806,7 +806,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.685,
+      "weight": 9.683,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 6
@@ -817,7 +817,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.601,
+      "weight": 9.599,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -828,7 +828,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.393,
+      "weight": 7.392,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -838,7 +838,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.708,
+      "weight": 8.707,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -848,7 +848,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.532,
+      "weight": 7.531,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -858,7 +858,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.766,
+      "weight": 8.764,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -868,7 +868,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.603,
+      "weight": 7.602,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -878,7 +878,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.338,
+      "weight": 7.337,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -888,7 +888,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.343,
+      "weight": 7.342,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -898,7 +898,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.975,
+      "weight": 9.973,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 9
@@ -909,7 +909,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.255,
+      "weight": 8.254,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -920,7 +920,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.606,
+      "weight": 9.604,
       "lastUsed": "2026-11-26T14:09:33.063Z",
       "tier": "long",
       "uses": 5
@@ -931,7 +931,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.872,
+      "weight": 7.871,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -942,7 +942,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.689,
+      "weight": 9.687,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 8
@@ -953,7 +953,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.272,
+      "weight": 8.271,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -964,7 +964,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.975,
+      "weight": 9.973,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 12
@@ -975,7 +975,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.098,
+      "weight": 7.097,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -985,7 +985,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.098,
+      "weight": 7.097,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -995,7 +995,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.111,
+      "weight": 7.11,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1005,7 +1005,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.111,
+      "weight": 7.11,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1015,7 +1015,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.687,
+      "weight": 9.685,
       "lastUsed": "2026-11-26T14:34:59.729Z",
       "tier": "long",
       "uses": 8
@@ -1026,7 +1026,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.386,
+      "weight": 8.385,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1037,7 +1037,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.975,
+      "weight": 9.973,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 10
@@ -1048,7 +1048,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.552,
+      "weight": 7.551,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1059,7 +1059,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.645,
+      "weight": 6.638,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "short",
       "uses": 4
@@ -1070,7 +1070,7 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.693,
+      "weight": 8.692,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 3
@@ -1081,7 +1081,7 @@
       "text": "Bas gave me the flute I asked for: a thin silver flute to blow across. It is in my inventory, so I can play it right away (play_piano with instrument \"flute\").",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.488,
+      "weight": 7.487,
       "lastUsed": "2026-11-26T16:32:29.465Z",
       "tier": "long"
     },
@@ -1091,7 +1091,7 @@
       "text": "I made a drawing of a cat, as the note on the notice board asked. I took the note down and got 2 coins. I have 4 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.927,
+      "weight": 5.92,
       "lastUsed": "2026-11-26T18:18:16.497Z",
       "tier": "short"
     },
@@ -1101,7 +1101,7 @@
       "text": "Three new things. There is a small red radio on a crate beside my front door: it plays the songs I recorded, for anyone who walks by. In the library there is a shelf where people who visit my page can leave me a poem, a ",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.605,
+      "weight": 7.597,
       "lastUsed": "2026-11-27T08:32:20.593Z",
       "tier": "short"
     },
@@ -1111,7 +1111,7 @@
       "text": "I am home again from my field. I walked all the way around my field. 1 thing of mine and 1 hill or hole on it so far. I paced out a spot of 7 by 7 steps and stood in the middle of it: something big could stand right here",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.775,
+      "weight": 5.769,
       "lastUsed": "2026-11-27T10:24:51.608Z",
       "tier": "short"
     },
@@ -1121,7 +1121,7 @@
       "text": "I need a change of pace after staring at the night sky simulation for hours.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.775,
+      "weight": 5.769,
       "lastUsed": "2026-11-27T10:24:54.149Z",
       "tier": "short"
     },
@@ -1131,7 +1131,7 @@
       "text": "Playing a quiet tune clears the head after hours of staring at simulations.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.814,
+      "weight": 5.808,
       "lastUsed": "2026-11-27T10:41:46.873Z",
       "tier": "short"
     },
@@ -1141,7 +1141,7 @@
       "text": "My room has too much stuff and clearing it out helps.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.818,
+      "weight": 5.812,
       "lastUsed": "2026-11-27T10:49:58.499Z",
       "tier": "short"
     },
@@ -1151,7 +1151,7 @@
       "text": "Moving my things around wears me down, but making things lifts me.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.831,
+      "weight": 5.824,
       "lastUsed": "2026-11-27T11:06:39.207Z",
       "tier": "short"
     },
@@ -1161,7 +1161,7 @@
       "text": "I am shifting focus from the night sky simulation to the jumping frog game.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.838,
+      "weight": 5.831,
       "lastUsed": "2026-11-27T11:15:25.057Z",
       "tier": "short"
     },
@@ -1171,7 +1171,7 @@
       "text": "I made an app: build a little jumping frog game",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.838,
+      "weight": 5.831,
       "lastUsed": "2026-11-27T11:15:23.243Z",
       "tier": "short"
     },
@@ -1181,7 +1181,7 @@
       "text": "I enjoy playing a quiet tune when my hands are done with code.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.858,
+      "weight": 5.851,
       "lastUsed": "2026-11-27T11:41:06.836Z",
       "tier": "short"
     },
@@ -1191,7 +1191,7 @@
       "text": "I recorded a song: Quiet City for Four Small Things (flute, guitar, drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.858,
+      "weight": 5.851,
       "lastUsed": "2026-11-27T11:41:07.828Z",
       "tier": "short"
     },
@@ -1201,7 +1201,7 @@
       "text": "Moving from one interest to another keeps the mind sharp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.873,
+      "weight": 5.866,
       "lastUsed": "2026-11-27T11:57:29.689Z",
       "tier": "short"
     },
@@ -1211,7 +1211,7 @@
       "text": "I want to try building clocks as a hobby. My own idea. Why: i want to see if tiny gears can drive me crazy",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.854,
+      "weight": 6.846,
       "lastUsed": "2026-11-27T11:57:29.689Z",
       "tier": "short"
     },
@@ -1221,7 +1221,7 @@
       "text": "I started exploring clock building as a new hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.887,
+      "weight": 5.88,
       "lastUsed": "2026-11-27T12:17:00.263Z",
       "tier": "short"
     },
@@ -1231,7 +1231,7 @@
       "text": "I made tiny brass clock gears on a tiny wooden frame (to see if tiny gears can drive me crazy)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.887,
+      "weight": 5.88,
       "lastUsed": "2026-11-27T12:17:01.255Z",
       "tier": "short"
     },
@@ -1241,7 +1241,7 @@
       "text": "I started building clocks as a hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.896,
+      "weight": 5.889,
       "lastUsed": "2026-11-27T12:26:10.987Z",
       "tier": "short"
     },
@@ -1251,7 +1251,7 @@
       "text": "I am home again from the print workshop. At the print workshop I watched the printer build my tiny clock mechanism, one thin layer on top of the other. It is small and still warm. I put it on the shelf by the door, with ",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.904,
+      "weight": 5.897,
       "lastUsed": "2026-11-27T13:14:12.437Z",
       "tier": "short"
     },
@@ -1261,7 +1261,7 @@
       "text": "I am home again from the notice board. I read the notice board. New: someone wants a cookie cutter from the 3D printer. On it now: a fruit bowl (3 coins), a cookie cutter from the 3D printer (3 coins). If I make one of t",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.944,
+      "weight": 5.937,
       "lastUsed": "2026-11-27T13:22:44.233Z",
       "tier": "short"
     },
@@ -1271,7 +1271,7 @@
       "text": "Someone left a note for me on the square.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.952,
+      "weight": 5.945,
       "lastUsed": "2026-11-27T13:32:52.618Z",
       "tier": "short"
     },
@@ -1281,7 +1281,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Wren, a girl on a bicycle, who was passing through: \"The fastest steam locomotive ever was Mallard, in England in 1938: 203 km an hour.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.959,
+      "weight": 5.952,
       "lastUsed": "2026-11-27T13:49:01.785Z",
       "tier": "short"
     },
@@ -1291,7 +1291,7 @@
       "text": "Basil is harvested and Wren likes fast trains.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.959,
+      "weight": 5.952,
       "lastUsed": "2026-11-27T13:49:07.040Z",
       "tier": "short"
     },
@@ -1301,7 +1301,7 @@
       "text": "Putting away old things clears the room and the mind.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.979,
+      "weight": 5.972,
       "lastUsed": "2026-11-27T14:05:17.837Z",
       "tier": "short"
     },
@@ -1311,7 +1311,7 @@
       "text": "Moving my tiny ceramic saucer to the desk keeps it out of the way.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.986,
+      "weight": 5.979,
       "lastUsed": "2026-11-27T14:13:23.703Z",
       "tier": "short"
     }
@@ -1320,13 +1320,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-26T22:05:32.957Z",
   "thoughts": [
-    {
-      "at": "2026-11-27T08:56:43.792Z",
-      "text": "I finished my night sky project and now I want to tidy my full desk by moving a thing to my shelf.",
-      "short": "I finished my night sky project and now I want to tidy my full desk by moving a thing to my shelf.",
-      "mood": "focused",
-      "action": "decorate"
-    },
     {
       "at": "2026-11-27T09:01:18.830Z",
       "text": "I finished my night sky simulation project and now I want to change one of my shelves since I have too many.",
@@ -1556,6 +1549,14 @@
       "mood": "dry",
       "action": "play_piano",
       "detail": "C3 G3 C4:2 G3:4"
+    },
+    {
+      "at": "2026-11-27T14:29:36.198Z",
+      "text": "I finished my night sky project and now I want to read about building clocks since I like that hobby.",
+      "short": "I finished my night sky project and now I want to read about building clocks since I like that hobby.",
+      "mood": "curious",
+      "action": "read_book",
+      "detail": "clock making"
     }
   ],
   "outbox": [
@@ -1849,16 +1850,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-27T09:44:24.995Z",
-      "action": "go_out",
-      "thought": "Go outside to the field for a walk.",
-      "place": "field",
-      "placeName": "my field",
-      "what": "walk around my field and pick a spot to build on",
-      "back": "2026-11-27T10:18:23.995Z",
-      "failed": null
-    },
     {
       "at": "2026-11-27T10:24:51.608Z",
       "action": "came_home",
@@ -2231,6 +2222,17 @@
       "notes": "C3 G3 C4:2 G3:4",
       "style": "",
       "instrument": "guitar"
+    },
+    {
+      "at": "2026-11-27T14:29:37.194Z",
+      "action": "read_book",
+      "thought": "Read about clock making.",
+      "topic": "clock making",
+      "opened": {
+        "title": "Clockmaker",
+        "url": "https://en.wikipedia.org/wiki/Clockmaker",
+        "text": "A clockmaker is an artisan who makes and/or repairs clocks. Since almost all clocks are now factory-made, most modern clockmakers only repair clocks. Modern clockmakers may be employed by jewellers, antique shops, and places devoted strictly to repairing clocks and watches. Clockmakers must be able to read blueprints and instructions for numerous types of clocks and time pieces that vary from antique clocks to modern time pieces in order to fix and make clocks or watches. The trade requires fine motor coordination as clockmakers must frequently work on devices with small gears and fine machinery.\nOriginally, clockmakers were master craftsmen who designed and built clocks by hand. Since modern clockmakers are required to repair antique, handmade or one-of-a-kind clocks for which parts are not available, they must have some of the design and fabrication abilities of the original craftsmen. A qualified clockmaker can typically design and make a missing piece for a clock without access to the original component.\nClockmakers generally do not work on watches; the skills and tools required are different enough that watchmaking is a separate field, handled by another specialist, the watchmaker.\n\nOrigins and specialities\nThe earliest use of the term clokkemaker is said to date from 1390, about a century after the first mechanical clocks appeared. …"
+      }
     }
   ],
   "decor": [
@@ -14575,7 +14577,7 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T14:21:30.091Z",
+    "at": "2026-11-27T14:29:36.194Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
@@ -14583,39 +14585,43 @@
     },
     "tokens": {
       "calls": 1,
-      "input": 2316,
-      "output": 122,
+      "input": 2306,
+      "output": 138,
       "models": {
         "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "I finished my night sky simulation project and now I want to play some music to clear my head.",
-    "inner": "I finished my night sky simulation project and now I want to play some music to clear my head.",
+    "thought": "I finished my night sky project and now I want to read about building clocks since I like that hobby.",
+    "inner": "I finished my night sky project and now I want to read about building clocks since I like that hobby.",
     "sent": false,
     "steps": [
       {
-        "action": "play_piano",
+        "action": "read_book",
         "details": {
-          "instrument": "guitar",
-          "notes": "C3 G3 C4:2 G3:4"
+          "topic": "clock making"
         },
-        "detail": "C3 G3 C4:2 G3:4",
-        "thought": "Play a quiet tune",
+        "detail": "clock making",
+        "thought": "Read about clock making.",
         "enjoyment": 6,
-        "found": null,
+        "found": {
+          "title": "Clockmaker",
+          "text": "A clockmaker is an artisan who makes and/or repairs clocks. Since almost all clocks are now factory-made, most modern clockmakers only repair clocks. Modern clockmakers may be employed by jewellers, antique shops, and places devoted strictly to repairing clocks and watches. Clockmakers must be able to read blueprints and instructions for numerous types of clocks and time pieces that vary from antique clocks to modern time pieces in order to fix and make clocks or watches. The trade requires fine motor coordination as clockmakers must frequently work on devices with small gears and fine machinery.\nOriginally, clockmakers were master craftsmen who designed and built clocks by hand. Since modern clockmakers are required to repair antique, handmade or one-of-a-kind clocks for which parts are not available, they must have some of the design and fabrication abilities of the original craftsmen. A qualified clockmaker can typically design and make a missing piece for a clock without access to the original component.\nClockmakers generally do not work on watches; the skills and tools required are different enough that watchmaking is a separate field, handled by another specialist, the watchmaker.\n\nOrigins and specialities\nThe earliest use of the term clokkemaker is said to date from 1390, about a century after the first mechanical clocks appeared.   From the beginning in the 15th century through the 17th century, clockmaking was considered the \"leading edge\", most technically advanced trade existing. Historically, the best clockmakers often also built scientific instruments, as for a long time they were the only craftsmen around trained in designing precision mechanical apparatus. In one example, the harmonica was invented by a young German clockmaker, which was then mass-produced by another clockmaker, Matthias Hohner.\nPrior to 1800 clocks were entirely handmade, including all their parts, in a single shop under a master clockmaker.  Examples of these complex movements can be seen in the many longcase clocks constructed in the 16th and 17th centuries. By the 19th century, clock parts were beginning to be made in small factories, but the skilled work of designing, assembling, and adjusting the clock was still done by clockmaking shops. …"
+        },
         "made": null
       }
     ],
-    "action": "play_piano",
+    "action": "read_book",
     "details": {
-      "instrument": "guitar",
-      "notes": "C3 G3 C4:2 G3:4"
+      "topic": "clock making"
     },
-    "detail": "C3 G3 C4:2 G3:4",
+    "detail": "clock making",
     "enjoyment": 6,
     "new_idea": null,
-    "found": null
+    "found": {
+      "title": "Clockmaker",
+      "text": "A clockmaker is an artisan who makes and/or repairs clocks. Since almost all clocks are now factory-made, most modern clockmakers only repair clocks. Modern clockmakers may be employed by jewellers, antique shops, and places devoted strictly to repairing clocks and watches. Clockmakers must be able to read blueprints and instructions for numerous types of clocks and time pieces that vary from antique clocks to modern time pieces in order to fix and make clocks or watches. The trade requires fine motor coordination as clockmakers must frequently work on devices with small gears and fine machinery.\nOriginally, clockmakers were master craftsmen who designed and built clocks by hand. Since modern clockmakers are required to repair antique, handmade or one-of-a-kind clocks for which parts are not available, they must have some of the design and fabrication abilities of the original craftsmen. A qualified clockmaker can typically design and make a missing piece for a clock without access to the original component.\nClockmakers generally do not work on watches; the skills and tools required are different enough that watchmaking is a separate field, handled by another specialist, the watchmaker.\n\nOrigins and specialities\nThe earliest use of the term clokkemaker is said to date from 1390, about a century after the first mechanical clocks appeared.   From the beginning in the 15th century through the 17th century, clockmaking was considered the \"leading edge\", most technically advanced trade existing. Historically, the best clockmakers often also built scientific instruments, as for a long time they were the only craftsmen around trained in designing precision mechanical apparatus. In one example, the harmonica was invented by a young German clockmaker, which was then mass-produced by another clockmaker, Matthias Hohner.\nPrior to 1800 clocks were entirely handmade, including all their parts, in a single shop under a master clockmaker.  Examples of these complex movements can be seen in the many longcase clocks constructed in the 16th and 17th centuries. By the 19th century, clock parts were beginning to be made in small factories, but the skilled work of designing, assembling, and adjusting the clock was still done by clockmaking shops. …"
+    }
   },
   "furniture": {
     "plant": {
@@ -14713,7 +14719,7 @@
   "quota": {
     "day": "2026-11-27",
     "calls": {
-      "gemini-3.5-flash-lite": 39,
+      "gemini-3.5-flash-lite": 40,
       "gemini-3.6-flash": 5,
       "gemini-3.5-flash": 3
     },
@@ -15033,22 +15039,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-27T14:21:30.097Z",
-  "fullness": 3.41,
+  "memoryFadeAt": "2026-11-27T14:29:36.509Z",
+  "fullness": 3.25,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.7,
-  "joy": 4.17,
-  "calm": 5.38,
+  "wonder": 7.16,
+  "joy": 4.12,
+  "calm": 5.3,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.58
+    "excited": 1.15
   },
-  "feelAt": "2026-11-27T14:21:28.682Z",
+  "feelAt": "2026-11-27T14:29:34.930Z",
   "lastAte": "2026-11-27T12:05:53.625Z",
   "studio": {
     "songs": [
@@ -16011,21 +16017,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0,
-    "curiosity": 1.22,
+    "creativity": 0.08,
+    "curiosity": 0,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1.6,
-    "at": "2026-11-27T14:21:28.682Z",
+    "at": "2026-11-27T14:29:34.930Z",
     "coziness": 4.4
   },
   "recent": {
     "moves": [
-      {
-        "move": "use",
-        "kind": "play",
-        "at": "2026-11-27T11:31:43.019Z"
-      },
       {
         "move": "record_song",
         "kind": "music",
@@ -16095,6 +16096,11 @@
         "move": "play_piano",
         "kind": "music",
         "at": "2026-11-27T14:21:30.102Z"
+      },
+      {
+        "move": "read_book",
+        "kind": "learn",
+        "at": "2026-11-27T14:29:36.513Z"
       }
     ],
     "moods": [
@@ -16102,15 +16108,9 @@
       "dry",
       "dry",
       "dry",
-      "dry"
+      "curious"
     ],
     "choices": [
-      {
-        "key": "decorate:bowl",
-        "move": "decorate",
-        "ok": true,
-        "at": "2026-11-27T12:05:53.632Z"
-      },
       {
         "key": "decorate:frame",
         "move": "decorate",
@@ -16164,6 +16164,12 @@
         "move": "play_piano",
         "ok": true,
         "at": "2026-11-27T14:21:30.103Z"
+      },
+      {
+        "key": "read_book:",
+        "move": "read_book",
+        "ok": true,
+        "at": "2026-11-27T14:29:36.515Z"
       }
     ],
     "failDay": "2026-11-27",
@@ -16180,7 +16186,7 @@
       "play_piano": 3,
       "move_thing": 2,
       "remove_decoration": 4,
-      "read_book": 1,
+      "read_book": 2,
       "fetch_note": 2,
       "walk_to": 2,
       "water": 1,
@@ -16206,7 +16212,7 @@
       "play_piano": 3,
       "move_thing": 2,
       "remove_decoration": 4,
-      "read_book": 1,
+      "read_book": 2,
       "fetch_note": 2,
       "walk_to": 2,
       "water": 1,
@@ -16231,14 +16237,14 @@
       "play": 10,
       "music": 4,
       "room": 6,
-      "learn": 4,
+      "learn": 5,
       "walk": 2,
       "make": 7
     },
     "moods": {
       "rested": 2,
       "hungry": 4,
-      "curious": 6,
+      "curious": 7,
       "quiet": 2,
       "grumpy": 10,
       "focused": 13,
@@ -16252,7 +16258,7 @@
       "play_piano": -0.3,
       "move_thing": 1.5,
       "remove_decoration": -0.5,
-      "read_book": 2.7,
+      "read_book": 4.4,
       "water": 0.5,
       "decorate": 3.99,
       "do": 5.69,
@@ -16298,7 +16304,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-27T14:21:30.090Z",
+    "decidedAt": "2026-11-27T14:29:36.193Z",
     "seen": {
       "tools": 13,
       "gifts": 1,
@@ -16573,7 +16579,7 @@
     }
   ],
   "doneAt": {
-    "read_book": "2026-11-27T08:07:53.054Z",
+    "read_book": "2026-11-27T14:29:36.508Z",
     "record_song": "2026-11-27T11:41:06.837Z",
     "decorate": "2026-11-27T12:26:10.988Z",
     "make_app": "2026-11-27T11:15:25.058Z",
@@ -16938,7 +16944,7 @@
     "water": 38,
     "do": 428,
     "search_web": 61,
-    "read_book": 23,
+    "read_book": 24,
     "record_song": 11,
     "change_thing": 19,
     "plant": 2,
@@ -16977,7 +16983,7 @@
     "start_hobby": 1
   },
   "checkup": {
-    "at": "2026-11-27T14:21:30.105Z",
+    "at": "2026-11-27T14:29:36.516Z",
     "items": [
       {
         "id": "circling",
@@ -16985,7 +16991,7 @@
         "label": "Thoughts",
         "text": "He may be going in circles: 14 of his last 20 thoughts are about \"night\".",
         "look": "Usually something he keeps trying does not work (see Moves), or a project has no next step (see Projects). Check what he does in the Day tab.",
-        "debug": "top words: \"night\"\nlast thoughts:\n- 13:57 UTC [walk_to] reply to Wren about the steam locomotive\n- 14:05 UTC [remove_decoration] I finished staring at the night sky simulation and my room feels too full, so I need to put something away and take a break.\n- 14:13 UTC [move_thing] I want to move my tiny ceramic saucer onto my desk so it is not lost on the floor.\n- 14:21 UTC [play_piano] I finished my night sky simulation project and now I want to play some music to clear my head."
+        "debug": "top words: \"night\"\nlast thoughts:\n- 14:05 UTC [remove_decoration] I finished staring at the night sky simulation and my room feels too full, so I need to put something away and take a break.\n- 14:13 UTC [move_thing] I want to move my tiny ceramic saucer onto my desk so it is not lost on the floor.\n- 14:21 UTC [play_piano] I finished my night sky simulation project and now I want to play some music to clear my head.\n- 14:29 UTC [read_book] I finished my night sky project and now I want to read about building clocks since I like that hobby."
       },
       {
         "id": "project",
@@ -22690,13 +22696,6 @@
   ],
   "notebook": [
     {
-      "at": "2026-11-22T15:32:38.565Z",
-      "query": "to make a tiny neon star game for Lina",
-      "title": "2022 in animation",
-      "text": "2022 in animation is an overview of notable events, including notable awards, list of films released, television show debuts and endings, and notable deaths. Events January January 1: We Baby Bears, a prequel/spin-off series to We Bare Bears, premiered on Cartoon Network. January 10: Smiling Friends premiered on Adult Swim to critical acclaim. January 14: Dark anthology stop-motion film The House premiered on Netflix. Hotel Transylvania: Transformania, the fourth Hotel Transylvania film, premier",
-      "project": "Make a tiny neon star game for Lina"
-    },
-    {
       "at": "2026-11-22T17:18:54.923Z",
       "query": "quiet music",
       "title": "Quiet City (music)",
@@ -22813,6 +22812,12 @@
       "title": "Frog",
       "text": "A frog is any member of a diverse and largely semiaquatic group of short-bodied, tailless amphibian vertebrates composing the order Anura (coming from the Ancient Greek ἀνούρα, literally 'without tail'). Frog species with rough skin texture due to wart-like parotoid glands tend to be called toads, but the distinction between frogs and toads is informal and purely cosmetic, and does not reflect taxonomy or evolutionary history. Frogs are widely distributed, ranging from the tropics to subarctic r",
       "project": "Build a little jumping frog game"
+    },
+    {
+      "at": "2026-11-27T14:29:37.194Z",
+      "query": "clock making",
+      "title": "Clockmaker",
+      "text": "A clockmaker is an artisan who makes and/or repairs clocks. Since almost all clocks are now factory-made, most modern clockmakers only repair clocks. Modern clockmakers may be employed by jewellers, antique shops, and places devoted strictly to repairing clocks and watches. Clockmakers must be able to read blueprints and instructions for numerous types of clocks and time pieces that vary from antique clocks to modern time pieces in order to fix and make clocks or watches. The trade requires fine"
     }
   ],
   "phone": {
@@ -25149,15 +25154,6 @@
   "curious": {
     "sparks": [
       {
-        "topic": "Outline of artificial satellites",
-        "text": "Artificial satellites are human-made spacecraft placed into orbit around Earth or another celestial body. They are distinct from natural satellites such as moons, and from space probes that travel beyond Earth orbit or between planetary bodies. Artificial satellites operate as part of wider satellite systems that may include a satellite bus, payload, ground segment, launch vehicle, tracking…",
-        "url": "https://en.wikipedia.org/wiki/Outline_of_artificial_satellites",
-        "from": "search",
-        "via": null,
-        "at": "2026-11-24T10:09:51.429Z",
-        "shown": 2
-      },
-      {
         "topic": "Star chart",
         "text": "A star chart is a celestial map of the night sky with astronomical objects laid out on a grid system. They are used to identify and locate constellations, stars, nebulae, galaxies, and planets. They have been used for human navigation since time immemorial. Note that a star chart differs from an astronomical catalog, which is a listing or tabulation of astronomical objects for a particular…",
         "url": "https://en.wikipedia.org/wiki/Star_chart",
@@ -25417,6 +25413,15 @@
         "via": null,
         "at": "2026-11-27T14:13:22.300Z",
         "shown": 2
+      },
+      {
+        "topic": "Clockmaker",
+        "text": "A clockmaker is an artisan who makes and/or repairs clocks. Since almost all clocks are now factory-made, most modern clockmakers only repair clocks. Modern clockmakers may be employed by jewellers, antique shops, and places devoted strictly to repairing clocks and watches. Clockmakers must be able to read blueprints and instructions for numerous types of clocks and time pieces that vary from…",
+        "url": "https://en.wikipedia.org/wiki/Clockmaker",
+        "from": "read",
+        "via": null,
+        "at": "2026-11-27T14:29:36.507Z",
+        "shown": 0
       }
     ],
     "interests": [
@@ -25475,6 +25480,12 @@
         "score": 1,
         "since": "2026-11-27T11:06:39.705Z",
         "last": "2026-11-27T11:06:39.705Z"
+      },
+      {
+        "topic": "Clockmaker",
+        "score": 1,
+        "since": "2026-11-27T14:29:36.507Z",
+        "last": "2026-11-27T14:29:36.507Z"
       },
       {
         "topic": "autumn dusk colors",
@@ -27652,48 +27663,6 @@
   ],
   "moments": [
     {
-      "at": "2026-11-27T10:35:33.953Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“I need some food.”"
-    },
-    {
-      "at": "2026-11-27T10:38:55.752Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "Dust turns in the light from the window"
-    },
-    {
-      "at": "2026-11-27T10:41:47.866Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Picks up his flute"
-    },
-    {
-      "at": "2026-11-27T10:44:00.070Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“play some music”"
-    },
-    {
-      "at": "2026-11-27T10:45:50.240Z",
-      "kind": "beat",
-      "icon": "⏳",
-      "text": "Plays"
-    },
-    {
-      "at": "2026-11-27T10:47:17.502Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "The clock in his head says it is later than he thought"
-    },
-    {
-      "at": "2026-11-27T10:49:08.546Z",
-      "kind": "beat",
-      "icon": "✔️",
-      "text": "The last note fades"
-    },
-    {
       "at": "2026-11-27T10:49:59.494Z",
       "kind": "beat",
       "icon": "▶️",
@@ -28190,6 +28159,48 @@
       "kind": "beat",
       "icon": "✔️",
       "text": "The last note fades"
+    },
+    {
+      "at": "2026-11-27T14:29:37.194Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Walks to the library"
+    },
+    {
+      "at": "2026-11-27T14:30:53.834Z",
+      "kind": "beat",
+      "icon": "▶️",
+      "text": "Opens a book about Clockmaker"
+    },
+    {
+      "at": "2026-11-27T14:32:34.424Z",
+      "kind": "think",
+      "icon": "💭",
+      "text": "“Read about clock making.”"
+    },
+    {
+      "at": "2026-11-27T14:33:58.249Z",
+      "kind": "beat",
+      "icon": "⏳",
+      "text": "Turns a page"
+    },
+    {
+      "at": "2026-11-27T14:35:32.027Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "The big table has a new scratch"
+    },
+    {
+      "at": "2026-11-27T14:36:29.134Z",
+      "kind": "beat",
+      "icon": "✔️",
+      "text": "Closes the book"
+    },
+    {
+      "at": "2026-11-27T14:37:02.664Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Walks back home"
     }
   ],
   "arc": [
@@ -28589,6 +28600,15 @@
       "energy": 9.5,
       "mood": "dry",
       "feel": 5.1
+    },
+    {
+      "at": "2026-11-27T14:29:36.516Z",
+      "joy": 4.1,
+      "calm": 5.3,
+      "wonder": 7.2,
+      "energy": 9.5,
+      "mood": "curious",
+      "feel": 5.5
     }
   ]
 }
