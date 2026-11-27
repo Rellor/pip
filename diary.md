@@ -7466,3 +7466,9 @@ I finished my night sky project, so I want to change things up a bit and try wor
 - change_thing (sculpted clay bird on perch): Let's change a thing to try building clocks.
 - mood: focused
 
+## 27/11/2026, 13:32:52
+I want to fetch the note left for me on the square because I am curious what is on it.
+> I want to fetch the note left for me on the square because I am curious what is on it.
+- go_out: Go to the square.
+- mood: curious
+
