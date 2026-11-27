@@ -11,12 +11,6 @@
   "ideas": [],
   "activities": [
     {
-      "at": "2026-11-27T07:00:42.581Z",
-      "action": "harvest",
-      "detail": "mint",
-      "enjoyment": 6
-    },
-    {
       "at": "2026-11-27T07:08:46.272Z",
       "action": "go_out",
       "detail": "the pond in the park",
@@ -302,6 +296,12 @@
     {
       "at": "2026-11-27T15:11:22.994Z",
       "action": "water",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-27T15:21:30.350Z",
+      "action": "decorate",
+      "detail": "pendulum clock",
       "enjoyment": 6
     }
   ],
@@ -700,7 +700,7 @@
       "text": "Bas gave me the drawing supplies I asked for. Now I can paint my stormy sky.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.542,
+      "weight": 7.54,
       "lastUsed": "2026-11-19T10:48:25.729Z",
       "tier": "long"
     },
@@ -710,7 +710,7 @@
       "text": "Lesson: when I move thing, it often fails (he did not say where to move it. amber reading light is a surface thing. A surface thing stands on something: the desk, the piano,). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.69,
+      "weight": 9.688,
       "lastUsed": "2026-11-26T15:42:24.006Z",
       "tier": "long",
       "uses": 8
@@ -721,7 +721,7 @@
       "text": "I got a phone as a gift! It has a Lights app: I can switch my lamps on and off, give them names, pick colours, dim them and set timers. My own apps are on it too.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.243,
+      "weight": 7.241,
       "lastUsed": "2026-11-21T14:49:17.703Z",
       "tier": "long"
     },
@@ -731,7 +731,7 @@
       "text": "Bas brought me food: bread, apples, eggs, cheese, carrots, potatoes, milk, butter and three bowls of vegetable soup. My pantry is full again. I am so hungry, I eat something now.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.557,
+      "weight": 9.555,
       "lastUsed": "2026-11-26T07:28:38.869Z",
       "tier": "long",
       "uses": 4
@@ -742,7 +742,7 @@
       "text": "Bas gave me the clay I asked for. Now I can shape the base for my desk lamp.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.463,
+      "weight": 8.461,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -753,7 +753,7 @@
       "text": "My project \"Craft a small desk lamp\" is finished: all my steps are done and I made it 2 times. It works. I have enough lamps now, so I can start something new.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.203,
+      "weight": 8.201,
       "lastUsed": "2026-11-21T07:32:11.956Z",
       "tier": "long"
     },
@@ -763,7 +763,7 @@
       "text": "Lesson: when I draw, it often fails (it is in his album, but there is no room left on the walls for it. The picture that has hung longest is \"Stormy sky over the dark ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 7.103,
+      "weight": 7.101,
       "lastUsed": "2026-11-22T10:03:10.780Z",
       "tier": "long"
     },
@@ -773,7 +773,7 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.667,
+      "weight": 9.665,
       "lastUsed": "2026-11-26T14:01:13.589Z",
       "tier": "long",
       "uses": 4
@@ -784,7 +784,7 @@
       "text": "I finished my project \"Sculpt a tiny clay bird\" and I am proud of it: I finished the steps and it is a lovely little first attempt.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.549,
+      "weight": 8.547,
       "lastUsed": "2026-11-22T17:51:23.807Z",
       "tier": "long"
     },
@@ -794,7 +794,7 @@
       "text": "I finished my project \"Shape a clay bowl for my desk\" and I am proud of it: I finished shaping my clay bowl and it looks quite nice for a first try.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.915,
+      "weight": 7.913,
       "lastUsed": "2026-11-25T20:56:41.049Z",
       "tier": "long",
       "uses": 1
@@ -805,7 +805,7 @@
       "text": "Lesson: when I decorate, it often fails (the desk is full: 2 things stand on it already, and nothing else has room. I build something to keep my things on (a shelf within ). I check that first.",
       "importance": 7,
       "kind": "lesson",
-      "weight": 9.673,
+      "weight": 9.671,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 6
@@ -816,7 +816,7 @@
       "text": "My project \"Build a tiny wooden shelf for my bird\" is finished: all my steps are done and I made it 2 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 9.589,
+      "weight": 9.587,
       "lastUsed": "2026-11-26T07:58:04.817Z",
       "tier": "long",
       "uses": 5
@@ -827,7 +827,7 @@
       "text": "Bas gave me a sewing kit: needles, thread and fabric. Now I can make my warm wool blanket, and sew things to wear.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.387,
+      "weight": 7.385,
       "lastUsed": "2026-11-21T14:16:37.978Z",
       "tier": "long"
     },
@@ -837,7 +837,7 @@
       "text": "I finished my project \"Knit a small warm wool blanket\" and I am proud of it: I finished the steps and made a first version that keeps me warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.7,
+      "weight": 8.698,
       "lastUsed": "2026-11-23T08:14:38.999Z",
       "tier": "long"
     },
@@ -847,7 +847,7 @@
       "text": "Bas gave me wool, soft and warm. Now I can knit my blanket.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.526,
+      "weight": 7.524,
       "lastUsed": "2026-11-22T09:08:14.036Z",
       "tier": "long"
     },
@@ -857,7 +857,7 @@
       "text": "I finished my project \"Knit a soft wool blanket\" and I am proud of it: I finished the steps and made a first version that works well.",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.755,
+      "weight": 8.753,
       "lastUsed": "2026-11-23T13:07:12.212Z",
       "tier": "long"
     },
@@ -867,7 +867,7 @@
       "text": "I finished my project \"Stitch a cozy wool blanket\" and I am proud of it: I finished the steps and made a version that is soft and warm.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.597,
+      "weight": 7.595,
       "lastUsed": "2026-11-22T14:20:19.581Z",
       "tier": "long"
     },
@@ -877,7 +877,7 @@
       "text": "Bas put 3 of my reading lamps in my chest (cozy wooden reading lamp, cozy tiny reading lamp, cozy brass reading lamp): they stood on the floor far from my bed, and I have plenty of lamps. I can take one out (take_out) an",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.332,
+      "weight": 7.33,
       "lastUsed": "2026-11-22T18:10:42.623Z",
       "tier": "long"
     },
@@ -887,7 +887,7 @@
       "text": "Bas put away things I had made more than once: cozy brass gas bulb lamp, tiny wooden stand for my tiny clay bird, cozy bed reading lamp, soft wool blanket, cozy wool blanket, cozy wooden reading lamp, cozy tiny reading l",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.337,
+      "weight": 7.335,
       "lastUsed": "2026-11-22T20:00:32.463Z",
       "tier": "long"
     },
@@ -897,7 +897,7 @@
       "text": "Night sky has become something I love. I could make it a hobby.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.963,
+      "weight": 9.961,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 9
@@ -908,7 +908,7 @@
       "text": "I made what Lina wished for (night sky game): Lina is so happy, and gave me 5 coins. I have 9 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 8.248,
+      "weight": 8.246,
       "lastUsed": "2026-11-24T15:56:15.480Z",
       "tier": "long",
       "uses": 2
@@ -919,7 +919,7 @@
       "text": "I finished my project \"Draw quiet music three ways: a series\" and I am proud of it: I finished all three ways and it feels complete.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.594,
+      "weight": 9.592,
       "lastUsed": "2026-11-26T14:09:33.063Z",
       "tier": "long",
       "uses": 5
@@ -930,7 +930,7 @@
       "text": "I finished my project \"Make a tiny neon star game for Lina\" and I am proud of it: It works well and Lina is happy with it.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.865,
+      "weight": 7.863,
       "lastUsed": "2026-11-24T10:50:22.123Z",
       "tier": "long",
       "uses": 1
@@ -941,7 +941,7 @@
       "text": "Across the street from my door there is a field that is mine: my plot. What is too big or too many for my room can stand there, where everyone in the street sees it. I make something for it with decorate and where: \"outs",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.677,
+      "weight": 9.675,
       "lastUsed": "2026-11-26T15:25:36.449Z",
       "tier": "long",
       "uses": 8
@@ -952,7 +952,7 @@
       "text": "Bas told me I can build anywhere in my world now, not only on my plot: in the street, in the park, by the pond, wherever I know the way. I pick the place myself in \"where\", like \"outside by the pond\" or \"outside in the s",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.265,
+      "weight": 8.263,
       "lastUsed": "2026-11-24T07:01:08.095Z",
       "tier": "long",
       "uses": 2
@@ -963,7 +963,7 @@
       "text": "I finished my project \"Learn about the night sky and constellations\" and I am proud of it: It works well as a first version.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.963,
+      "weight": 9.961,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 12
@@ -974,7 +974,7 @@
       "text": "Bas changed my world. There are bare walls out there now that I may paint on, and the back walls of the houses too: with paint_wall I paint something big on a wall, and I need no paper or supplies for it. There is a prin",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.092,
+      "weight": 7.09,
       "lastUsed": "2026-11-23T10:55:30.009Z",
       "tier": "long"
     },
@@ -984,7 +984,7 @@
       "text": "Mo told me there is a library ten minutes from here, with more books than I can count. To go in I need a library card. I can ask Bas for one (ask_for).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.092,
+      "weight": 7.09,
       "lastUsed": "2026-11-23T11:35:53.207Z",
       "tier": "long"
     },
@@ -994,7 +994,7 @@
       "text": "Bas gave me a library card with my name on it. Now I can go into the library and read there (go_out, when it is open: Tuesday to Saturday, 10 to 17).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.105,
+      "weight": 7.103,
       "lastUsed": "2026-11-23T12:06:25.670Z",
       "tier": "long"
     },
@@ -1004,7 +1004,7 @@
       "text": "I have a library card now. The library is open from Tuesday to Saturday, 10 to 17 (go_out).",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.105,
+      "weight": 7.103,
       "lastUsed": "2026-11-23T12:06:26.002Z",
       "tier": "long"
     },
@@ -1014,7 +1014,7 @@
       "text": "Bas changed my world again. The houses of the neighbours are gone: there is a lot of open space now. I can fill it myself (decorate with where: \"outside ...\", as big as I like), or I can ask Bas for a new building or pla",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.675,
+      "weight": 9.673,
       "lastUsed": "2026-11-26T14:34:59.729Z",
       "tier": "long",
       "uses": 8
@@ -1025,7 +1025,7 @@
       "text": "Bas gave me a toolbox: hammer, saw, screws, glue. And he told me something better: I do not need small things like that any more. Whatever I need to draw, build, sew, plant or measure is simply there. The closed shop on ",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.379,
+      "weight": 8.377,
       "lastUsed": "2026-11-25T19:19:29.104Z",
       "tier": "long",
       "uses": 3
@@ -1036,7 +1036,7 @@
       "text": "I finished my project \"Build a little simulation of night sky\" and I am proud of it: It works well and looks neat.",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.963,
+      "weight": 9.961,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 10
@@ -1047,7 +1047,7 @@
       "text": "I finished my project \"Build a small clumsy shelf for the corner\" and I am proud of it: It works well enough and holds things, even if it is a bit clumsy.",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.546,
+      "weight": 7.544,
       "lastUsed": "2026-11-26T08:38:33.416Z",
       "tier": "long",
       "uses": 1
@@ -1058,7 +1058,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.601,
+      "weight": 6.592,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "short",
       "uses": 4
@@ -1069,7 +1069,7 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 8.685,
+      "weight": 8.683,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "long",
       "uses": 3
@@ -1080,7 +1080,7 @@
       "text": "Bas gave me the flute I asked for: a thin silver flute to blow across. It is in my inventory, so I can play it right away (play_piano with instrument \"flute\").",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.482,
+      "weight": 7.48,
       "lastUsed": "2026-11-26T16:32:29.465Z",
       "tier": "long"
     },
@@ -1090,7 +1090,7 @@
       "text": "I made a drawing of a cat, as the note on the notice board asked. I took the note down and got 2 coins. I have 4 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.884,
+      "weight": 5.876,
       "lastUsed": "2026-11-26T18:18:16.497Z",
       "tier": "short"
     },
@@ -1100,38 +1100,8 @@
       "text": "Three new things. There is a small red radio on a crate beside my front door: it plays the songs I recorded, for anyone who walks by. In the library there is a shelf where people who visit my page can leave me a poem, a ",
       "importance": 8,
       "kind": "memory",
-      "weight": 7.554,
+      "weight": 7.543,
       "lastUsed": "2026-11-27T08:32:20.593Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwyu4io560",
-      "at": "2026-11-27T10:24:54.149Z",
-      "text": "I need a change of pace after staring at the night sky simulation for hours.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.737,
-      "lastUsed": "2026-11-27T10:24:54.149Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwyuq83e60",
-      "at": "2026-11-27T10:41:46.873Z",
-      "text": "Playing a quiet tune clears the head after hours of staring at simulations.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.776,
-      "lastUsed": "2026-11-27T10:41:46.873Z",
-      "tier": "short"
-    },
-    {
-      "id": "mmwyv0rfn60",
-      "at": "2026-11-27T10:49:58.499Z",
-      "text": "My room has too much stuff and clearing it out helps.",
-      "importance": 6,
-      "kind": "memory",
-      "weight": 5.78,
-      "lastUsed": "2026-11-27T10:49:58.499Z",
       "tier": "short"
     },
     {
@@ -1140,7 +1110,7 @@
       "text": "Moving my things around wears me down, but making things lifts me.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.792,
+      "weight": 5.784,
       "lastUsed": "2026-11-27T11:06:39.207Z",
       "tier": "short"
     },
@@ -1150,7 +1120,7 @@
       "text": "I am shifting focus from the night sky simulation to the jumping frog game.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.798,
+      "weight": 5.79,
       "lastUsed": "2026-11-27T11:15:25.057Z",
       "tier": "short"
     },
@@ -1160,7 +1130,7 @@
       "text": "I made an app: build a little jumping frog game",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.798,
+      "weight": 5.79,
       "lastUsed": "2026-11-27T11:15:23.243Z",
       "tier": "short"
     },
@@ -1170,7 +1140,7 @@
       "text": "I enjoy playing a quiet tune when my hands are done with code.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.816,
+      "weight": 5.808,
       "lastUsed": "2026-11-27T11:41:06.836Z",
       "tier": "short"
     },
@@ -1180,7 +1150,7 @@
       "text": "I recorded a song: Quiet City for Four Small Things (flute, guitar, drums)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.816,
+      "weight": 5.808,
       "lastUsed": "2026-11-27T11:41:07.828Z",
       "tier": "short"
     },
@@ -1190,7 +1160,7 @@
       "text": "Moving from one interest to another keeps the mind sharp.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.831,
+      "weight": 5.823,
       "lastUsed": "2026-11-27T11:57:29.689Z",
       "tier": "short"
     },
@@ -1200,7 +1170,7 @@
       "text": "I want to try building clocks as a hobby. My own idea. Why: i want to see if tiny gears can drive me crazy",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.805,
+      "weight": 6.796,
       "lastUsed": "2026-11-27T11:57:29.689Z",
       "tier": "short"
     },
@@ -1210,7 +1180,7 @@
       "text": "I started exploring clock building as a new hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.845,
+      "weight": 5.837,
       "lastUsed": "2026-11-27T12:17:00.263Z",
       "tier": "short"
     },
@@ -1220,7 +1190,7 @@
       "text": "I made tiny brass clock gears on a tiny wooden frame (to see if tiny gears can drive me crazy)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.845,
+      "weight": 5.837,
       "lastUsed": "2026-11-27T12:17:01.255Z",
       "tier": "short"
     },
@@ -1230,7 +1200,7 @@
       "text": "I started building clocks as a hobby.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.854,
+      "weight": 5.846,
       "lastUsed": "2026-11-27T12:26:10.987Z",
       "tier": "short"
     },
@@ -1240,7 +1210,7 @@
       "text": "I am home again from the print workshop. At the print workshop I watched the printer build my tiny clock mechanism, one thin layer on top of the other. It is small and still warm. I put it on the shelf by the door, with ",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.862,
+      "weight": 5.854,
       "lastUsed": "2026-11-27T13:14:12.437Z",
       "tier": "short"
     },
@@ -1250,7 +1220,7 @@
       "text": "I am home again from the notice board. I read the notice board. New: someone wants a cookie cutter from the 3D printer. On it now: a fruit bowl (3 coins), a cookie cutter from the 3D printer (3 coins). If I make one of t",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.901,
+      "weight": 5.893,
       "lastUsed": "2026-11-27T13:22:44.233Z",
       "tier": "short"
     },
@@ -1260,7 +1230,7 @@
       "text": "Someone left a note for me on the square.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.909,
+      "weight": 5.901,
       "lastUsed": "2026-11-27T13:32:52.618Z",
       "tier": "short"
     },
@@ -1270,7 +1240,7 @@
       "text": "I am home again from my world. I picked up the note on the square. It is from Wren, a girl on a bicycle, who was passing through: \"The fastest steam locomotive ever was Mallard, in England in 1938: 203 km an hour.\"",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.916,
+      "weight": 5.908,
       "lastUsed": "2026-11-27T13:49:01.785Z",
       "tier": "short"
     },
@@ -1280,7 +1250,7 @@
       "text": "Basil is harvested and Wren likes fast trains.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.916,
+      "weight": 5.908,
       "lastUsed": "2026-11-27T13:49:07.040Z",
       "tier": "short"
     },
@@ -1290,7 +1260,7 @@
       "text": "Putting away old things clears the room and the mind.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.936,
+      "weight": 5.928,
       "lastUsed": "2026-11-27T14:05:17.837Z",
       "tier": "short"
     },
@@ -1300,7 +1270,7 @@
       "text": "Moving my tiny ceramic saucer to the desk keeps it out of the way.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.943,
+      "weight": 5.935,
       "lastUsed": "2026-11-27T14:13:23.703Z",
       "tier": "short"
     },
@@ -1310,8 +1280,38 @@
       "text": "I started a new clock project because I like the challenge.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.978,
+      "weight": 5.97,
       "lastUsed": "2026-11-27T14:54:01.209Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwz4pyb860",
+      "at": "2026-11-27T15:21:30.356Z",
+      "text": "I love building clocks.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.992,
+      "lastUsed": "2026-11-27T15:21:30.356Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwz4pyba60",
+      "at": "2026-11-27T15:21:31.349Z",
+      "text": "I made pendulum clock (to build a clock as is my hobby)",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.992,
+      "lastUsed": "2026-11-27T15:21:31.349Z",
+      "tier": "short"
+    },
+    {
+      "id": "mmwz4pybf60",
+      "at": "2026-11-27T15:21:30.363Z",
+      "text": "My sculpture got better: I am level 6 now.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 6,
+      "lastUsed": "2026-11-27T15:21:30.363Z",
       "tier": "short"
     }
   ],
@@ -1319,14 +1319,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-26T22:05:32.957Z",
   "thoughts": [
-    {
-      "at": "2026-11-27T09:35:38.382Z",
-      "text": "I finished my night sky project and I feel full of energy, so I want to build something outside in my world.",
-      "short": "I finished my night sky project and I feel full of energy, so I want to build something outside in my world.",
-      "mood": "grumpy",
-      "action": "decorate",
-      "detail": "small wooden observatory"
-    },
     {
       "at": "2026-11-27T09:44:24.002Z",
       "text": "I have finished my projects for now and my hands are quiet, so I want to step outside for a bit of fresh air.",
@@ -1556,6 +1548,14 @@
       "mood": "curious",
       "action": "eat",
       "detail": "mint"
+    },
+    {
+      "at": "2026-11-27T15:21:30.356Z",
+      "text": "I finished my night sky simulation project and I want to start the next one.",
+      "short": "I finished my night sky simulation project and I want to start the next one.",
+      "mood": "curious",
+      "action": "decorate",
+      "detail": "pendulum clock"
     }
   ],
   "outbox": [
@@ -1849,16 +1849,6 @@
     }
   ],
   "log": [
-    {
-      "at": "2026-11-27T10:58:14.674Z",
-      "action": "do",
-      "thought": "Start a new project now that the night sky simulation is done.",
-      "as": "start_project",
-      "move": null,
-      "emoji": "",
-      "what": "plan my new project: Build a little jumping frog game",
-      "feeling": null
-    },
     {
       "at": "2026-11-27T11:06:40.202Z",
       "action": "search_web",
@@ -2222,6 +2212,22 @@
       "thought": "My plants look dry.",
       "name": "",
       "result": "I watered basil. The soil stays damp for about 10 hours.",
+      "failed": null
+    },
+    {
+      "at": "2026-11-27T15:21:31.349Z",
+      "action": "decorate",
+      "thought": "Start the pendulum clock project",
+      "uses": [
+        "Listen to the tick-tock",
+        "Watch the pendulum swing"
+      ],
+      "song": null,
+      "project": "",
+      "name": "pendulum clock",
+      "why": "to build a clock as is my hobby",
+      "place": "on the left wall (z -2.4, height 3.3)",
+      "tool": null,
       "failed": null
     }
   ],
@@ -8605,6 +8611,377 @@
       "at": "2026-11-27T12:17:06.255Z",
       "createdAt": "2026-11-27T12:17:00.259Z",
       "roomScaled": true
+    },
+    {
+      "id": "dmwz4pyb423m6",
+      "name": "pendulum clock",
+      "why": "to build a clock as is my hobby",
+      "project": "",
+      "song": null,
+      "uses": [
+        {
+          "label": "Listen to the tick-tock",
+          "text": "The wooden case hollows out the steady click of brass gears. It keeps strict time even if I do not.",
+          "view": null,
+          "song": null,
+          "app": null,
+          "effect": "calm",
+          "does": null,
+          "motion": null,
+          "steps": null
+        },
+        {
+          "label": "Watch the pendulum swing",
+          "text": "The brass bob swings left and right in the quiet room, cutting the night into tiny equal slices.",
+          "view": null,
+          "song": null,
+          "app": null,
+          "effect": "wonder",
+          "does": null,
+          "motion": null,
+          "steps": null
+        }
+      ],
+      "tool": null,
+      "zone": "wall_free",
+      "slot": null,
+      "free": true,
+      "side": "left",
+      "label": "on the left wall (z -2.4, height 3.3)",
+      "kind": "wall",
+      "pos": [
+        -4.97,
+        3.3,
+        -2.4
+      ],
+      "rotY": 1.5707963267948966,
+      "scale": 1,
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            0.407,
+            1.367,
+            0.029
+          ],
+          "pos": [
+            0,
+            0.022,
+            0.131
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#3a2211",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.436,
+            0.175,
+            0.058
+          ],
+          "pos": [
+            0,
+            0.676,
+            0.145
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.029,
+            0.029,
+            1.236
+          ],
+          "pos": [
+            -0.175,
+            -0.007,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.029,
+            0.029,
+            1.236
+          ],
+          "pos": [
+            0.175,
+            -0.007,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.16,
+            0.16,
+            0.029
+          ],
+          "pos": [
+            0,
+            0.385,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#c5a059",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.145,
+            0.145,
+            0.036
+          ],
+          "pos": [
+            0,
+            0.385,
+            0.167
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f4efe6",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.029,
+            0.065,
+            0.029
+          ],
+          "pos": [
+            0,
+            0.407,
+            0.189
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1a1a1a",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.029,
+            0.095,
+            0.029
+          ],
+          "pos": [
+            0.022,
+            0.407,
+            0.189
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1a1a1a",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.029
+          ],
+          "pos": [
+            0,
+            0.385,
+            0.196
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.029,
+            0.029,
+            0.698
+          ],
+          "pos": [
+            0,
+            -0.226,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.065,
+            0.065,
+            0.029
+          ],
+          "pos": [
+            0,
+            -0.517,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.029,
+            0.029,
+            0.524
+          ],
+          "pos": [
+            -0.073,
+            -0.08,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#222222",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.029,
+            0.029,
+            0.145
+          ],
+          "pos": [
+            -0.073,
+            -0.371,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#b8860b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.029,
+            0.029,
+            0.407
+          ],
+          "pos": [
+            0.073,
+            -0.051,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#222222",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.029,
+            0.029,
+            0.145
+          ],
+          "pos": [
+            0.073,
+            -0.284,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#b8860b",
+          "glow": false
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.036,
+            0.116
+          ],
+          "pos": [
+            0,
+            -0.706,
+            0.145
+          ],
+          "rot": [
+            180,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        }
+      ],
+      "stand": [
+        -3.7,
+        -2.4
+      ],
+      "at": "2026-11-27T15:21:36.349Z",
+      "createdAt": "2026-11-27T15:21:30.352Z",
+      "roomScaled": true
     }
   ],
   "projects": [
@@ -8656,7 +9033,7 @@
       "steps": [
         {
           "text": "look up how to build a little pendulum clock that ticks by itself",
-          "done": false
+          "done": true
         },
         {
           "text": "Build a little pendulum clock that ticks by itself: a first version",
@@ -8672,7 +9049,7 @@
       "notes": [],
       "status": "working",
       "since": "2026-11-27T14:54:01.209Z",
-      "updatedAt": "2026-11-27T14:54:01.209Z"
+      "updatedAt": "2026-11-27T15:21:30.364Z"
     },
     {
       "id": "mwnukypn",
@@ -14595,36 +14972,579 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T15:11:22.993Z",
-    "via": "fallback",
-    "model": "gemini-3.5-flash-lite",
+    "at": "2026-11-27T15:21:30.349Z",
+    "via": "brain",
+    "model": "gemini-3.5-flash",
     "models": {
-      "gemini-3.5-flash-lite": 3
+      "gemini-3.5-flash-lite": 2,
+      "gemini-3.5-flash": 1
     },
+    "modelNotes": [
+      "gemini-3.5-flash answered (gemini-3.8-flash was busy or capped)"
+    ],
+    "fallback": true,
     "tokens": {
       "calls": 3,
-      "input": 7287,
-      "output": 7568,
+      "input": 11137,
+      "output": 4183,
       "models": {
-        "gemini-3.5-flash-lite": 3
+        "gemini-3.5-flash-lite": 2,
+        "gemini-3.5-flash": 1
       }
     },
     "intervalMin": 8,
-    "thought": "",
-    "inner": "",
+    "thought": "I finished my night sky simulation project and I want to start the next one.",
+    "inner": "I finished my night sky simulation project and I want to start the next one.",
     "sent": false,
     "steps": [
       {
-        "action": "water",
-        "details": {},
-        "thought": "My plants look dry.",
+        "action": "decorate",
+        "details": {
+          "what": "pendulum clock",
+          "why": "to build a clock as is my hobby",
+          "x": "Build a little pendulum clock that ticks by itself",
+          "name": "pendulum clock",
+          "where": "wall_left",
+          "parts": [
+            {
+              "shape": "box",
+              "size": [
+                0.28,
+                0.94,
+                0.02
+              ],
+              "pos": [
+                0,
+                0.47,
+                0.01
+              ],
+              "color": "#3a2211",
+              "glow": false
+            },
+            {
+              "shape": "roundbox",
+              "size": [
+                0.3,
+                0.12,
+                0.04
+              ],
+              "pos": [
+                0,
+                0.92,
+                0.02
+              ],
+              "color": "#2d1a0d",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.012,
+                0.012,
+                0.85
+              ],
+              "pos": [
+                -0.12,
+                0.45,
+                0.03
+              ],
+              "color": "#2d1a0d",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.012,
+                0.012,
+                0.85
+              ],
+              "pos": [
+                0.12,
+                0.45,
+                0.03
+              ],
+              "color": "#2d1a0d",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.11,
+                0.11,
+                0.02
+              ],
+              "pos": [
+                0,
+                0.72,
+                0.03
+              ],
+              "color": "#c5a059",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.1,
+                0.1,
+                0.025
+              ],
+              "pos": [
+                0,
+                0.72,
+                0.035
+              ],
+              "color": "#f4efe6",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.012,
+                0.045,
+                0.005
+              ],
+              "pos": [
+                0,
+                0.735,
+                0.05
+              ],
+              "color": "#1a1a1a",
+              "glow": false
+            },
+            {
+              "shape": "box",
+              "size": [
+                0.008,
+                0.065,
+                0.005
+              ],
+              "pos": [
+                0.015,
+                0.735,
+                0.05
+              ],
+              "color": "#1a1a1a",
+              "glow": false
+            },
+            {
+              "shape": "sphere",
+              "size": [
+                0.01
+              ],
+              "pos": [
+                0,
+                0.72,
+                0.055
+              ],
+              "color": "#d4af37",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.004,
+                0.004,
+                0.48
+              ],
+              "pos": [
+                0,
+                0.3,
+                0.03
+              ],
+              "color": "#d4af37",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.045,
+                0.045,
+                0.015
+              ],
+              "pos": [
+                0,
+                0.1,
+                0.03
+              ],
+              "color": "#d4af37",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.002,
+                0.002,
+                0.36
+              ],
+              "pos": [
+                -0.05,
+                0.4,
+                0.03
+              ],
+              "color": "#222222",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.018,
+                0.018,
+                0.1
+              ],
+              "pos": [
+                -0.05,
+                0.2,
+                0.03
+              ],
+              "color": "#b8860b",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.002,
+                0.002,
+                0.28
+              ],
+              "pos": [
+                0.05,
+                0.42,
+                0.03
+              ],
+              "color": "#222222",
+              "glow": false
+            },
+            {
+              "shape": "cylinder",
+              "size": [
+                0.018,
+                0.018,
+                0.1
+              ],
+              "pos": [
+                0.05,
+                0.26,
+                0.03
+              ],
+              "color": "#b8860b",
+              "glow": false
+            },
+            {
+              "shape": "cone",
+              "size": [
+                0.025,
+                0.08
+              ],
+              "pos": [
+                0,
+                -0.03,
+                0.02
+              ],
+              "rot": [
+                180,
+                0,
+                0
+              ],
+              "color": "#2d1a0d",
+              "glow": false
+            }
+          ],
+          "uses": [
+            {
+              "label": "Listen to the tick-tock",
+              "text": "The wooden case hollows out the steady click of brass gears. It keeps strict time even if I do not.",
+              "effect": "calm"
+            },
+            {
+              "label": "Watch the pendulum swing",
+              "text": "The brass bob swings left and right in the quiet room, cutting the night into tiny equal slices.",
+              "effect": "wonder"
+            }
+          ]
+        },
+        "detail": "pendulum clock",
+        "thought": "Start the pendulum clock project",
         "enjoyment": 6,
         "found": null,
-        "made": null
+        "made": {
+          "id": "dmwz4pyb423m6",
+          "stand": [
+            -3.7,
+            -2.4
+          ],
+          "pos": [
+            -4.97,
+            3.3,
+            -2.4
+          ]
+        }
       }
     ],
-    "action": "water",
-    "details": {},
+    "action": "decorate",
+    "details": {
+      "what": "pendulum clock",
+      "why": "to build a clock as is my hobby",
+      "x": "Build a little pendulum clock that ticks by itself",
+      "name": "pendulum clock",
+      "where": "wall_left",
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            0.28,
+            0.94,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.47,
+            0.01
+          ],
+          "color": "#3a2211",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.3,
+            0.12,
+            0.04
+          ],
+          "pos": [
+            0,
+            0.92,
+            0.02
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.012,
+            0.012,
+            0.85
+          ],
+          "pos": [
+            -0.12,
+            0.45,
+            0.03
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.012,
+            0.012,
+            0.85
+          ],
+          "pos": [
+            0.12,
+            0.45,
+            0.03
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.11,
+            0.11,
+            0.02
+          ],
+          "pos": [
+            0,
+            0.72,
+            0.03
+          ],
+          "color": "#c5a059",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.1,
+            0.1,
+            0.025
+          ],
+          "pos": [
+            0,
+            0.72,
+            0.035
+          ],
+          "color": "#f4efe6",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.012,
+            0.045,
+            0.005
+          ],
+          "pos": [
+            0,
+            0.735,
+            0.05
+          ],
+          "color": "#1a1a1a",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.008,
+            0.065,
+            0.005
+          ],
+          "pos": [
+            0.015,
+            0.735,
+            0.05
+          ],
+          "color": "#1a1a1a",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.01
+          ],
+          "pos": [
+            0,
+            0.72,
+            0.055
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.004,
+            0.004,
+            0.48
+          ],
+          "pos": [
+            0,
+            0.3,
+            0.03
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.045,
+            0.045,
+            0.015
+          ],
+          "pos": [
+            0,
+            0.1,
+            0.03
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.002,
+            0.002,
+            0.36
+          ],
+          "pos": [
+            -0.05,
+            0.4,
+            0.03
+          ],
+          "color": "#222222",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.018,
+            0.018,
+            0.1
+          ],
+          "pos": [
+            -0.05,
+            0.2,
+            0.03
+          ],
+          "color": "#b8860b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.002,
+            0.002,
+            0.28
+          ],
+          "pos": [
+            0.05,
+            0.42,
+            0.03
+          ],
+          "color": "#222222",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.018,
+            0.018,
+            0.1
+          ],
+          "pos": [
+            0.05,
+            0.26,
+            0.03
+          ],
+          "color": "#b8860b",
+          "glow": false
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.025,
+            0.08
+          ],
+          "pos": [
+            0,
+            -0.03,
+            0.02
+          ],
+          "rot": [
+            180,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        }
+      ],
+      "uses": [
+        {
+          "label": "Listen to the tick-tock",
+          "text": "The wooden case hollows out the steady click of brass gears. It keeps strict time even if I do not.",
+          "effect": "calm"
+        },
+        {
+          "label": "Watch the pendulum swing",
+          "text": "The brass bob swings left and right in the quiet room, cutting the night into tiny equal slices.",
+          "effect": "wonder"
+        }
+      ]
+    },
+    "detail": "pendulum clock",
     "enjoyment": 6,
     "new_idea": null,
     "found": null
@@ -14725,9 +15645,9 @@
   "quota": {
     "day": "2026-11-27",
     "calls": {
-      "gemini-3.5-flash-lite": 47,
+      "gemini-3.5-flash-lite": 49,
       "gemini-3.6-flash": 5,
-      "gemini-3.5-flash": 3
+      "gemini-3.5-flash": 4
     },
     "out": {},
     "history": [
@@ -14850,9 +15770,9 @@
       }
     ],
     "busy": {
-      "gemini-3.8-flash": 8,
+      "gemini-3.8-flash": 9,
       "gemini-3.5-flash-lite": 2,
-      "gemini-3.6-flash": 1
+      "gemini-3.6-flash": 2
     },
     "slow": {
       "gemini-3.6-flash": 1795783005528
@@ -15048,22 +15968,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-27T15:11:22.997Z",
-  "fullness": 4.95,
+  "memoryFadeAt": "2026-11-27T15:21:30.358Z",
+  "fullness": 4.76,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.94,
-  "joy": 4.16,
-  "calm": 5.69,
+  "wonder": 6.65,
+  "joy": 4.67,
+  "calm": 5.54,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.19
+    "excited": 0.11
   },
-  "feelAt": "2026-11-27T15:10:11.798Z",
+  "feelAt": "2026-11-27T15:19:27.606Z",
   "lastAte": "2026-11-27T15:02:07.365Z",
   "studio": {
     "songs": [
@@ -16024,27 +16944,18 @@
       }
     ]
   },
-  "lastError": {
-    "at": "2026-11-27T15:11:22.991Z",
-    "kind": "brain",
-    "message": "Gemini gave an empty or broken answer. Try again."
-  },
+  "lastError": null,
   "body": {
-    "creativity": 0.16,
-    "curiosity": 0.35,
+    "creativity": 0,
+    "curiosity": 0.43,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1.6,
-    "at": "2026-11-27T15:10:11.798Z",
+    "at": "2026-11-27T15:19:27.606Z",
     "coziness": 4.4
   },
   "recent": {
     "moves": [
-      {
-        "move": "print_thing",
-        "kind": "play",
-        "at": "2026-11-27T12:26:10.997Z"
-      },
       {
         "move": "check_board",
         "kind": "play",
@@ -16114,6 +17025,11 @@
         "move": "water",
         "kind": "garden",
         "at": "2026-11-27T15:11:23.000Z"
+      },
+      {
+        "move": "decorate",
+        "kind": "make",
+        "at": "2026-11-27T15:21:30.363Z"
       }
     ],
     "moods": [
@@ -16124,12 +17040,6 @@
       "curious"
     ],
     "choices": [
-      {
-        "key": "change_thing:sculpted clay bird on perch",
-        "move": "change_thing",
-        "ok": true,
-        "at": "2026-11-27T13:24:23.546Z"
-      },
       {
         "key": "fetch_note:",
         "move": "fetch_note",
@@ -16183,6 +17093,12 @@
         "move": "eat",
         "ok": true,
         "at": "2026-11-27T15:02:07.376Z"
+      },
+      {
+        "key": "decorate:clock",
+        "move": "decorate",
+        "ok": true,
+        "at": "2026-11-27T15:21:30.365Z"
       }
     ],
     "failDay": "2026-11-27",
@@ -16214,7 +17130,7 @@
       "record_song": 1,
       "judge_project": 1,
       "start_hobby": 1,
-      "decorate": 1,
+      "decorate": 2,
       "print_thing": 1
     },
     "tried": {
@@ -16229,7 +17145,7 @@
       "fetch_note": 2,
       "walk_to": 2,
       "water": 3,
-      "decorate": 2,
+      "decorate": 3,
       "do": 4,
       "change_thing": 2,
       "build_outside": 1,
@@ -16252,12 +17168,12 @@
       "room": 6,
       "learn": 5,
       "walk": 2,
-      "make": 8
+      "make": 9
     },
     "moods": {
       "rested": 2,
       "hungry": 4,
-      "curious": 12,
+      "curious": 13,
       "quiet": 2,
       "grumpy": 10,
       "focused": 13,
@@ -16273,7 +17189,7 @@
       "remove_decoration": -0.5,
       "read_book": 4.4,
       "water": 0.5,
-      "decorate": 3.99,
+      "decorate": 5.55,
       "do": 6.76,
       "change_thing": 3.1,
       "browse": -0.5,
@@ -16286,7 +17202,7 @@
   "skills": {
     "music": 61.5,
     "painting": 30,
-    "sculpture": 49,
+    "sculpture": 50,
     "woodwork": 43.5,
     "sewing": 6.5,
     "gardening": 70.5,
@@ -16317,7 +17233,7 @@
   },
   "plan": {
     "queue": [],
-    "decidedAt": "2026-11-27T15:11:22.991Z",
+    "decidedAt": "2026-11-27T15:19:29.834Z",
     "seen": {
       "tools": 13,
       "gifts": 1,
@@ -16594,7 +17510,7 @@
   "doneAt": {
     "read_book": "2026-11-27T14:29:36.508Z",
     "record_song": "2026-11-27T11:41:06.837Z",
-    "decorate": "2026-11-27T12:26:10.988Z",
+    "decorate": "2026-11-27T15:21:30.357Z",
     "make_app": "2026-11-27T11:15:25.058Z",
     "cook": "2026-11-26T09:38:02.315Z",
     "take_photo": "2026-11-26T21:57:26.838Z",
@@ -16606,7 +17522,7 @@
     "date": "2026-11-27",
     "n": {
       "fresh": 3,
-      "research": 1
+      "research": 2
     }
   },
   "errors": [
@@ -16617,7 +17533,18 @@
       "count": 1
     }
   ],
-  "forgotten": [],
+  "forgotten": [
+    {
+      "id": "mmwyv0rfn60",
+      "at": "2026-11-27T10:49:58.499Z",
+      "text": "My room has too much stuff and clearing it out helps.",
+      "importance": 6,
+      "kind": "memory",
+      "weight": 5.772,
+      "lastUsed": "2026-11-27T10:49:58.499Z",
+      "tier": "short"
+    }
+  ],
   "days": [
     {
       "day": "2026-11-15",
@@ -16963,7 +17890,7 @@
     "plant": 2,
     "ask_for": 13,
     "play_piano": 40,
-    "decorate": 44,
+    "decorate": 45,
     "cook": 21,
     "use": 20,
     "take_photo": 15,
@@ -16996,7 +17923,7 @@
     "start_hobby": 1
   },
   "checkup": {
-    "at": "2026-11-27T15:11:23.003Z",
+    "at": "2026-11-27T15:21:30.367Z",
     "items": [
       {
         "id": "circling",
@@ -17004,7 +17931,7 @@
         "label": "Thoughts",
         "text": "He may be going in circles: 12 of his last 20 thoughts are about \"night\".",
         "look": "Usually something he keeps trying does not work (see Moves), or a project has no next step (see Projects). Check what he does in the Day tab.",
-        "debug": "top words: \"night\"\nlast thoughts:\n- 14:37 UTC [water] I finished my night sky project, so I want to water my mint and then use my tiny ceramic saucer to sort some small treasures.\n- 14:45 UTC [use] Time to use the tiny ceramic saucer.\n- 14:54 UTC [do] I finished my simulation project, so I want to start a new one about building a clock since I like that hobby.\n- 15:02 UTC [eat] I am hungry and full of energy, so I will eat something tasty before I start my next project."
+        "debug": "top words: \"night\"\nlast thoughts:\n- 14:45 UTC [use] Time to use the tiny ceramic saucer.\n- 14:54 UTC [do] I finished my simulation project, so I want to start a new one about building a clock since I like that hobby.\n- 15:02 UTC [eat] I am hungry and full of energy, so I will eat something tasty before I start my next project.\n- 15:21 UTC [decorate] I finished my night sky simulation project and I want to start the next one."
       },
       {
         "id": "project",
@@ -19216,112 +20143,6 @@
       ],
       "proud": true,
       "at": "2026-11-24T10:32:50.013Z"
-    },
-    {
-      "kind": "decorate",
-      "name": "sulfur reading lamp",
-      "why": "to light up the dark bookshelf with a full-spectrum plasma glow",
-      "parts": [
-        {
-          "shape": "roundbox",
-          "size": [
-            0.18,
-            0.04,
-            0.18
-          ],
-          "pos": [
-            0,
-            0.09,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#333333",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.03,
-            0.03,
-            0.28
-          ],
-          "pos": [
-            0,
-            0.14,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#555555",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.02,
-            0.02,
-            0.2
-          ],
-          "pos": [
-            0,
-            0.38,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#777777",
-          "glow": false
-        },
-        {
-          "shape": "sphere",
-          "size": [
-            0.05
-          ],
-          "pos": [
-            0,
-            0.53,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#fffaed",
-          "glow": true
-        },
-        {
-          "shape": "cone",
-          "size": [
-            0.16,
-            0.14
-          ],
-          "pos": [
-            0,
-            0.47,
-            0
-          ],
-          "rot": [
-            0,
-            0,
-            0
-          ],
-          "color": "#b8860b",
-          "glow": false
-        }
-      ],
-      "proud": false,
-      "at": "2026-11-24T21:33:51.788Z"
     },
     {
       "kind": "decorate",
@@ -22495,6 +23316,332 @@
       ],
       "proud": true,
       "at": "2026-11-27T13:24:23.545Z"
+    },
+    {
+      "kind": "decorate",
+      "name": "pendulum clock",
+      "why": "to build a clock as is my hobby",
+      "parts": [
+        {
+          "shape": "box",
+          "size": [
+            0.41,
+            1.37,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.02,
+            0.13
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#3a2211",
+          "glow": false
+        },
+        {
+          "shape": "roundbox",
+          "size": [
+            0.44,
+            0.18,
+            0.06
+          ],
+          "pos": [
+            0,
+            0.68,
+            0.14
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            1.24
+          ],
+          "pos": [
+            -0.17,
+            -0.01,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            1.24
+          ],
+          "pos": [
+            0.18,
+            -0.01,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.16,
+            0.16,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.39,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#c5a059",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.14,
+            0.14,
+            0.04
+          ],
+          "pos": [
+            0,
+            0.39,
+            0.17
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f4efe6",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.07,
+            0.03
+          ],
+          "pos": [
+            0,
+            0.41,
+            0.19
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1a1a1a",
+          "glow": false
+        },
+        {
+          "shape": "box",
+          "size": [
+            0.03,
+            0.1,
+            0.03
+          ],
+          "pos": [
+            0.02,
+            0.41,
+            0.19
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1a1a1a",
+          "glow": false
+        },
+        {
+          "shape": "sphere",
+          "size": [
+            0.03
+          ],
+          "pos": [
+            0,
+            0.39,
+            0.2
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.7
+          ],
+          "pos": [
+            0,
+            -0.23,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.07,
+            0.07,
+            0.03
+          ],
+          "pos": [
+            0,
+            -0.52,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#d4af37",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.52
+          ],
+          "pos": [
+            -0.07,
+            -0.08,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#222222",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.14
+          ],
+          "pos": [
+            -0.07,
+            -0.37,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#b8860b",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.41
+          ],
+          "pos": [
+            0.07,
+            -0.05,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#222222",
+          "glow": false
+        },
+        {
+          "shape": "cylinder",
+          "size": [
+            0.03,
+            0.03,
+            0.14
+          ],
+          "pos": [
+            0.07,
+            -0.28,
+            0.16
+          ],
+          "rot": [
+            0,
+            0,
+            0
+          ],
+          "color": "#b8860b",
+          "glow": false
+        },
+        {
+          "shape": "cone",
+          "size": [
+            0.04,
+            0.12
+          ],
+          "pos": [
+            0,
+            -0.71,
+            0.14
+          ],
+          "rot": [
+            180,
+            0,
+            0
+          ],
+          "color": "#2d1a0d",
+          "glow": false
+        }
+      ],
+      "proud": false,
+      "at": "2026-11-27T15:21:30.364Z"
     }
   ],
   "cookedAt": [
@@ -25448,12 +26595,12 @@
       },
       {
         "topic": "building clocks",
-        "score": 10.5,
+        "score": 11,
         "since": "2026-11-27T11:57:29.690Z",
         "own": true,
         "why": "i want to see if tiny gears can drive me crazy",
         "ideaAt": "2026-11-27T11:57:29.690Z",
-        "last": "2026-11-27T14:37:42.620Z",
+        "last": "2026-11-27T15:21:30.365Z",
         "moves": [
           "decorate",
           "build_outside",
@@ -25461,8 +26608,8 @@
           "extend_thing",
           "print_thing"
         ],
-        "practice": 3,
-        "practisedAt": "2026-11-27T13:24:23.546Z"
+        "practice": 4,
+        "practisedAt": "2026-11-27T15:21:30.365Z"
       },
       {
         "topic": "Constellation",
@@ -25560,7 +26707,12 @@
     "until": "2026-11-26T22:40:05.153Z",
     "why": "nothing came of it"
   },
-  "lookBack": null,
+  "lookBack": {
+    "kind": "thing",
+    "name": "pendulum clock",
+    "file": null,
+    "at": "2026-11-27T15:21:30.365Z"
+  },
   "street": {
     "day": "2026-11-23",
     "queue": [],
@@ -27676,48 +28828,6 @@
   ],
   "moments": [
     {
-      "at": "2026-11-27T11:19:25.617Z",
-      "kind": "beat",
-      "icon": "⏳",
-      "text": "Runs it to see if it works"
-    },
-    {
-      "at": "2026-11-27T11:21:22.028Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "Frost on the edges of everything"
-    },
-    {
-      "at": "2026-11-27T11:22:43.923Z",
-      "kind": "beat",
-      "icon": "✔️",
-      "text": "“build a little jumping frog game” runs"
-    },
-    {
-      "at": "2026-11-27T11:23:36.339Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Improve the jumping frog game v1"
-    },
-    {
-      "at": "2026-11-27T11:25:48.543Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“Improve the jumping frog game”"
-    },
-    {
-      "at": "2026-11-27T11:28:58.326Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "The floor creaks where it always creaks"
-    },
-    {
-      "at": "2026-11-27T11:31:44.007Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Uses “tiny fabric pouch”"
-    },
-    {
       "at": "2026-11-27T11:33:56.211Z",
       "kind": "think",
       "icon": "💭",
@@ -28214,6 +29324,48 @@
       "kind": "notice",
       "icon": "👀",
       "text": "The basil smells stronger than it should"
+    },
+    {
+      "at": "2026-11-27T15:21:31.349Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Walks to the build workshop"
+    },
+    {
+      "at": "2026-11-27T15:22:47.989Z",
+      "kind": "beat",
+      "icon": "▶️",
+      "text": "Starts building “pendulum clock”"
+    },
+    {
+      "at": "2026-11-27T15:24:28.579Z",
+      "kind": "think",
+      "icon": "💭",
+      "text": "“Start the pendulum clock project”"
+    },
+    {
+      "at": "2026-11-27T15:25:52.404Z",
+      "kind": "beat",
+      "icon": "⏳",
+      "text": "Fits the parts together"
+    },
+    {
+      "at": "2026-11-27T15:27:11.832Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "A screw rolls off the bench and is never seen again"
+    },
+    {
+      "at": "2026-11-27T15:28:23.289Z",
+      "kind": "beat",
+      "icon": "✔️",
+      "text": "“pendulum clock” is done"
+    },
+    {
+      "at": "2026-11-27T15:28:56.819Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Walks back home"
     }
   ],
   "arc": [
@@ -28667,6 +29819,15 @@
       "energy": 9.5,
       "mood": "curious",
       "feel": 5.3
+    },
+    {
+      "at": "2026-11-27T15:21:30.366Z",
+      "joy": 4.7,
+      "calm": 5.5,
+      "wonder": 6.7,
+      "energy": 9.5,
+      "mood": "curious",
+      "feel": 5.6
     }
   ],
   "opinions": [
