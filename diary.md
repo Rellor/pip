@@ -7412,3 +7412,9 @@ I finished the first version of the jumping frog game, so now I want to look at 
 - do (improve the jumping frog game v1): Improve the jumping frog game
 - mood: focused
 
+## 27/11/2026, 11:31:43
+I finished the night sky project and I am shifting focus to my jumping frog game. I want to improve it.
+> I finished the night sky project and I am shifting focus to my jumping frog game. I want to improve it.
+- use (tiny fabric pouch): Let's use one of my things to pass the time.
+- mood: focused
+
