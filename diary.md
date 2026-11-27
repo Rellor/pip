@@ -7298,3 +7298,9 @@ I finished my simulation project, so I want to read a bit more about the night s
 - read_book (constellations): Read about constellations
 - mood: curious
 
+## 27/11/2026, 08:16:08
+I finished my night sky project, so I want to fetch the note left on the square and see what is on it.
+> I finished my night sky project, so I want to fetch the note left on the square and see what is on it.
+- go_out: Go to the square to get the note.
+- mood: curious
+
