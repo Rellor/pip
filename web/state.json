@@ -1,6 +1,6 @@
 {
   "mood": "focused",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -14454,405 +14454,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-27T12:26:10.981Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash",
-    "models": {
-      "gemini-3.5-flash-lite": 1,
-      "gemini-3.5-flash": 1
-    },
-    "modelNotes": [
-      "gemini-3.5-flash answered (gemini-3.8-flash was busy or capped)"
-    ],
-    "fallback": true,
-    "tokens": {
-      "calls": 2,
-      "input": 11969,
-      "output": 2190,
-      "models": {
-        "gemini-3.5-flash-lite": 1,
-        "gemini-3.5-flash": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I finished my little brass clock gears and I want to try printing a clock model as a new hobby.",
-    "inner": "I finished my little brass clock gears and I want to try printing a clock model as a new hobby.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "decorate",
-        "details": {
-          "what": "tiny clock mechanism",
-          "why": "to see if tiny gears can drive me crazy",
-          "name": "tiny clock mechanism",
-          "where": "print",
-          "print": true,
-          "parts": [
-            {
-              "shape": "box",
-              "size": [
-                0.18,
-                0.02,
-                0.12
-              ],
-              "pos": [
-                0,
-                0.01,
-                0
-              ],
-              "color": "#2b2d42",
-              "glow": false
-            },
-            {
-              "shape": "box",
-              "size": [
-                0.16,
-                0.18,
-                0.01
-              ],
-              "pos": [
-                0,
-                0.1,
-                -0.04
-              ],
-              "color": "#2b2d42",
-              "glow": false
-            },
-            {
-              "shape": "box",
-              "size": [
-                0.16,
-                0.18,
-                0.01
-              ],
-              "pos": [
-                0,
-                0.1,
-                0.04
-              ],
-              "color": "#2b2d42",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.008,
-                0.008,
-                0.08
-              ],
-              "pos": [
-                -0.06,
-                0.1,
-                0
-              ],
-              "rot": [
-                90,
-                0,
-                0
-              ],
-              "color": "#8d99ae",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.008,
-                0.008,
-                0.08
-              ],
-              "pos": [
-                0.06,
-                0.1,
-                0
-              ],
-              "rot": [
-                90,
-                0,
-                0
-              ],
-              "color": "#8d99ae",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.05,
-                0.05,
-                0.015
-              ],
-              "pos": [
-                -0.02,
-                0.08,
-                0
-              ],
-              "rot": [
-                90,
-                0,
-                0
-              ],
-              "color": "#ff6b35",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.025,
-                0.025,
-                0.015
-              ],
-              "pos": [
-                0.03,
-                0.11,
-                0
-              ],
-              "rot": [
-                90,
-                0,
-                0
-              ],
-              "color": "#ff6b35",
-              "glow": false
-            },
-            {
-              "shape": "cylinder",
-              "size": [
-                0.035,
-                0.035,
-                0.015
-              ],
-              "pos": [
-                -0.01,
-                0.15,
-                0
-              ],
-              "rot": [
-                90,
-                0,
-                0
-              ],
-              "color": "#ff6b35",
-              "glow": false
-            },
-            {
-              "shape": "torus",
-              "size": [
-                0.015,
-                0.004
-              ],
-              "pos": [
-                0.07,
-                0.08,
-                0
-              ],
-              "rot": [
-                0,
-                90,
-                0
-              ],
-              "color": "#ff6b35",
-              "glow": false
-            }
-          ],
-          "uses": [
-            {
-              "label": "Turn the key",
-              "text": "The little orange teeth fit into each other tightly. One big wheel turns three little ones without jamming.",
-              "effect": "wonder"
-            }
-          ]
-        },
-        "detail": "tiny clock mechanism",
-        "thought": "print a clock model",
-        "enjoyment": 7,
-        "found": null,
-        "made": null
-      }
-    ],
-    "action": "decorate",
+    "at": "2026-11-27T12:34:16.543Z",
+    "via": "outside",
+    "thought": "I am walking to the print workshop.",
+    "action": "go_out",
     "details": {
-      "what": "tiny clock mechanism",
-      "why": "to see if tiny gears can drive me crazy",
-      "name": "tiny clock mechanism",
-      "where": "print",
-      "print": true,
-      "parts": [
-        {
-          "shape": "box",
-          "size": [
-            0.18,
-            0.02,
-            0.12
-          ],
-          "pos": [
-            0,
-            0.01,
-            0
-          ],
-          "color": "#2b2d42",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.16,
-            0.18,
-            0.01
-          ],
-          "pos": [
-            0,
-            0.1,
-            -0.04
-          ],
-          "color": "#2b2d42",
-          "glow": false
-        },
-        {
-          "shape": "box",
-          "size": [
-            0.16,
-            0.18,
-            0.01
-          ],
-          "pos": [
-            0,
-            0.1,
-            0.04
-          ],
-          "color": "#2b2d42",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.008,
-            0.008,
-            0.08
-          ],
-          "pos": [
-            -0.06,
-            0.1,
-            0
-          ],
-          "rot": [
-            90,
-            0,
-            0
-          ],
-          "color": "#8d99ae",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.008,
-            0.008,
-            0.08
-          ],
-          "pos": [
-            0.06,
-            0.1,
-            0
-          ],
-          "rot": [
-            90,
-            0,
-            0
-          ],
-          "color": "#8d99ae",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.05,
-            0.05,
-            0.015
-          ],
-          "pos": [
-            -0.02,
-            0.08,
-            0
-          ],
-          "rot": [
-            90,
-            0,
-            0
-          ],
-          "color": "#ff6b35",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.025,
-            0.025,
-            0.015
-          ],
-          "pos": [
-            0.03,
-            0.11,
-            0
-          ],
-          "rot": [
-            90,
-            0,
-            0
-          ],
-          "color": "#ff6b35",
-          "glow": false
-        },
-        {
-          "shape": "cylinder",
-          "size": [
-            0.035,
-            0.035,
-            0.015
-          ],
-          "pos": [
-            -0.01,
-            0.15,
-            0
-          ],
-          "rot": [
-            90,
-            0,
-            0
-          ],
-          "color": "#ff6b35",
-          "glow": false
-        },
-        {
-          "shape": "torus",
-          "size": [
-            0.015,
-            0.004
-          ],
-          "pos": [
-            0.07,
-            0.08,
-            0
-          ],
-          "rot": [
-            0,
-            90,
-            0
-          ],
-          "color": "#ff6b35",
-          "glow": false
-        }
-      ],
-      "uses": [
-        {
-          "label": "Turn the key",
-          "text": "The little orange teeth fit into each other tightly. One big wheel turns three little ones without jamming.",
-          "effect": "wonder"
-        }
-      ]
+      "place": "workshop"
     },
-    "detail": "tiny clock mechanism",
+    "detail": "I am walking to the print workshop.",
     "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "workshop",
+      "phase": "going",
+      "back": "2026-11-27T13:08:10.981Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -15270,21 +14887,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-27T12:26:10.990Z",
-  "fullness": 5.71,
+  "fullness": 5.53,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.27,
-  "joy": 5.66,
-  "calm": 5.23,
+  "wonder": 6.42,
+  "joy": 5.46,
+  "calm": 5.18,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.38
+    "excited": 0.23
   },
-  "feelAt": "2026-11-27T12:25:09.387Z",
+  "feelAt": "2026-11-27T12:34:16.515Z",
   "lastAte": "2026-11-27T12:05:53.625Z",
   "studio": {
     "songs": [
@@ -16247,12 +15864,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.11,
-    "curiosity": 0.23,
+    "creativity": 0.2,
+    "curiosity": 0.31,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 1,
-    "at": "2026-11-27T12:25:09.387Z",
+    "at": "2026-11-27T12:34:16.515Z",
     "coziness": 4.1
   },
   "recent": {
@@ -28595,6 +28212,16 @@
       "energy": 9.5,
       "mood": "focused",
       "feel": 6.1
+    },
+    {
+      "at": "2026-11-27T12:34:16.543Z",
+      "joy": 5.5,
+      "calm": 5.2,
+      "wonder": 6.4,
+      "energy": 10,
+      "mood": "focused",
+      "out": true,
+      "feel": 5.7
     }
   ]
 }
