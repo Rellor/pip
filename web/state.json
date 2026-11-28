@@ -1,8 +1,8 @@
 {
   "mood": "restless",
-  "energy": 9.5,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 4.84,
+  "loneliness": 4.86,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10691,49 +10691,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-28T10:27:14.202Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2872,
-      "output": 130,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I have been inside for too long and my legs want out. I will go for a walk outside to look at my museum.",
-    "inner": "I have been inside for too long and my legs want out. I will go for a walk outside to look at my museum.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "my museum",
-          "what": "walk past my things and look at them",
-          "name": "walk past my things and look at them"
-        },
-        "detail": "my museum",
-        "thought": "Walking to the museum to check my things.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-28T10:35:18.940Z",
+    "via": "outside",
+    "thought": "I am at my museum: I walk past my things and look at them.",
     "action": "go_out",
     "details": {
-      "place": "my museum",
-      "what": "walk past my things and look at them",
-      "name": "walk past my things and look at them"
+      "place": "museum"
     },
-    "detail": "my museum",
-    "enjoyment": 6,
+    "detail": "I am at my museum: I walk past my things and look at them.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "museum",
+      "phase": "there",
+      "back": "2026-11-28T11:03:14.202Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -11175,21 +11148,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-28T10:27:14.212Z",
-  "fullness": 3.84,
+  "fullness": 3.74,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 5.97,
-  "joy": 4.69,
-  "calm": 5.34,
+  "wonder": 5.38,
+  "joy": 4.78,
+  "calm": 5.27,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 0.13
+    "excited": 0.08
   },
-  "feelAt": "2026-11-28T10:27:12.688Z",
+  "feelAt": "2026-11-28T10:35:18.918Z",
   "lastAte": "2026-11-28T08:33:51.876Z",
   "studio": {
     "songs": [
@@ -12152,12 +12125,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.19,
-    "curiosity": 0.31,
+    "creativity": 0.27,
+    "curiosity": 0.38,
     "boredom": 0,
-    "loneliness": 4.84,
+    "loneliness": 4.86,
     "tidiness": 1,
-    "at": "2026-11-28T10:27:12.688Z",
+    "at": "2026-11-28T10:35:18.918Z",
     "coziness": 4.1
   },
   "recent": {
@@ -25867,6 +25840,17 @@
       "mood": "restless",
       "did": "go_out",
       "feel": 5.3
+    },
+    {
+      "at": "2026-11-28T10:35:18.940Z",
+      "joy": 4.8,
+      "calm": 5.3,
+      "wonder": 5.4,
+      "energy": 10,
+      "mood": "restless",
+      "out": true,
+      "place": "museum",
+      "feel": 5.2
     }
   ],
   "opinions": [
