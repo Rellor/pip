@@ -154,3 +154,22 @@ ok('every thing keeps why he made it and what he thinks of it; he may take it ap
   assert.equal(findMade(s, 'pendulum clock', 'program').kind, 'drawing', 'a kind he has none of: the first one found');
 }
 ok('a drawing and a thing with the same name each keep their own view');
+
+// ---- what he thinks of a thing is there the moment it is made; older things he catches up on
+{
+  const { makerPrompt, applyMade, FORMATS, THINKS_LINE } = await import('../maker.js');
+  const { unviewed, setView } = await import('../views.js');
+  const { brainPrompt } = await import('../brain.js');
+  for (const k of ['decorate', 'draw', 'make_app', 'record_song', 'make_clothes', 'plaything', 'make_site']) assert.match(FORMATS[k], /"thinks"/, k);
+  assert.ok(makerPrompt({ soul: 'I am Pip.', step: { action: 'decorate', details: { what: 'a lamp' } }, rules: '' }).includes(THINKS_LINE));
+  assert.ok(!makerPrompt({ soul: 'I am Pip.', step: { action: 'extend_thing', details: { name: 'a lamp' } }, rules: '' }).includes(THINKS_LINE));
+  assert.equal(applyMade({ action: 'decorate', details: { what: 'a lamp', why: 'my desk is dark' } }, { name: 'desk lamp', parts: [], thinks: 'Crooked. It works.' }).details.thinks, 'Crooked. It works.');
+  const s = { art: [{ id: 'a1', name: 'Clock', at: '2026-11-20T10:00:00Z' }], decor: [{ id: 'd1', name: 'clock', parts: [{}], createdAt: '2026-11-22T10:00:00Z' }, { id: 'd2', name: 'bowl', parts: [{}], createdAt: '2026-11-21T10:00:00Z', thinks: 'Round.' }, { id: 'p', name: 'photo', image: 'x.jpg' }], apps: [], stored: [], museum: [], playthings: [] };
+  assert.deepEqual(unviewed(s).map((u) => [u.kind, u.item.name]), [['thing', 'clock'], ['drawing', 'Clock']], 'newest first, not the one he spoke about, not a photo');
+  setView(s, 'clock', 'It ticks too loud.', now, 'thing');
+  assert.deepEqual(unviewed(s).map((u) => u.kind), ['drawing']);
+  const p = brainPrompt({ soul: 'x', now: 'now', feelings: [], doing: [], events: [], messages: [], memories: [], projects: [], moves: [], unviewed: [{ name: 'Clock', what: 'drawing', why: 'to see the gears' }] });
+  assert.match(p, /THINGS I MADE AND NEVER SAID WHAT I THINK OF\n- my drawing "Clock" \(I made it because: to see the gears\)/);
+  assert.deepEqual(toAnswer({ moves: [{ move: 'quiet', details: {} }], reason: 'r', mood: 'calm', own_views: [{ name: 'Clock', says: 'The gears are wrong. I like it anyway.' }, { name: 'x', says: 'no' }] }).own_views, [{ name: 'Clock', says: 'The gears are wrong. I like it anyway.' }]);
+}
+ok('what he thinks of a thing comes with the making; older things he catches up on, three at a time');

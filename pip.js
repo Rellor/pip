@@ -88,7 +88,7 @@ import { noteArc } from './arc.js';
 import { showInMuseum, markForMuseum, carryToMuseum, museumLines, toMuseum } from './museum.js';
 import { startSittings, buildOn, sittingLines } from './sittings.js';
 import { paceMin } from './pace.js';
-import { findMade, setView, takeApart } from './views.js';
+import { findMade, setView, takeApart, unviewed } from './views.js';
 import { nameDream, dreamStep, endDream, dreamLines } from './dream.js';
 import { makePlaything, findPlaything, playJob, playLines, playGame, noteArrival, nextArrival, arrived, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { askVisitors, closeQuestion, takeAnswer, takeShelf, readShelf, noteReply, visitorLine, guestLines, pieceWords, SHELF_KINDS } from './guests.js';
@@ -647,6 +647,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
+    unviewed: ownWork ? [] : unviewed(s, 3).map((u) => ({ name: u.item.name ?? u.item.title, what: u.kind, why: text(u.item.why, 120) })), // things he made and never said anything about: he catches up, three at a time (views.js)
     tasks: s.tasks.filter((t) => t.status === 'open').map((t) => `[${t.id}] ${text(t.text, 200)}`),
     visitors: (s.visitors ?? []).filter((v) => !v.answer && !v.npc).slice(-2).map(visitorLine),
     notes: noteLines(s),
@@ -1541,6 +1542,7 @@ async function wakeUp() {
   let answer = null;
   let choice = null;
   let via = 'autopilot';
+  let askedOf = []; // the older things he was asked about this time (what he thinks of them)
   const queued = reasons.length && !(wentOn && !unread.length) ? null : nextQueued(state); // (in the middle of a trip he carries on with his plan)
   // (very hungry at home: he eats first, also in the middle of a plan; the rest of the plan follows)
   if (queued) answer = { thought: queued.find((x) => x.thought)?.thought ?? '', inner: '', steps: !state.where && !wentOn && !notHungry(state) ? hungerFirst(state, queued, [{ name: 'eat' }]) : queued, mood_after: state.mood, new_idea: null };
@@ -1548,6 +1550,7 @@ async function wakeUp() {
     try {
       if (process.env.PIP_FAKE_DOWN) throw new Error('the model is busy (pretend, for testing)'); // for tests: a day on which the model never answers
       const ctx = brainContext(state, { soul, offered, reasons, unread, looking, grew, ownWork });
+      askedOf = ctx.unviewed ?? [];
       const prompt = brainPrompt(ctx);
       if (state.street) state.street.happened = []; // told once
       if (process.env.PIP_DUMP) await writeFile(process.env.PIP_DUMP, prompt);
@@ -1566,6 +1569,8 @@ async function wakeUp() {
       answer = { thought: '', inner: '', steps: [], mood_after: state.mood, new_idea: null };
       via = 'fallback';
     }
+    const askedViews = [...askedOf]; // (a drawing and a thing can share a name: each answer goes to the one that was asked, in order)
+    for (const v of answer.own_views ?? []) { const i = askedViews.findIndex((u) => String(u.name).toLowerCase() === v.name.toLowerCase()); const kind = i >= 0 ? askedViews.splice(i, 1)[0].what : null; const hit = setView(state, v.name, v.says, Date.now(), kind); if (hit) console.log(`   💬 what he thinks of his ${hit.kind} "${v.name}": ${v.says}`); } // catching up on older things
     if (ownWork && answer.own_view) { const hit = setView(state, ownWork.name, answer.own_view, Date.now(), ['drawing', 'program', 'thing', 'song'].includes(ownWork.what) ? ownWork.what : null); if (hit) console.log(`   💬 what he thinks of his ${hit.kind} "${ownWork.name}": ${answer.own_view}`); } // kept with the thing itself, for its card (views.js)
     for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
       const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
@@ -2514,6 +2519,16 @@ async function wakeUp() {
     nudge(state, 'joy', 1);
   }
   { const w = planRetry(state, state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000)); if (w) console.log(`⏰ ${w.action} did not work: Pip wakes again at ${w.at.slice(11, 19)} to try another way`); }
+  // What he thinks of what he just made is kept with it at once (it came with the design, maker.js): the card shows it
+  // from the first minute. When he looks at it again later he may think something new.
+  for (const st of steps) {
+    const says = text(st.details?.thinks, 300);
+    if (!says || !st.made || st.made.failed) continue;
+    const name = st.made.entry?.name ?? st.made.drawn ?? st.made.app?.name ?? st.made.song?.name ?? st.made.name ?? st.details?.name;
+    const kind = { draw: 'drawing', make_app: 'program', update_app: 'program', record_song: 'song', make_clothes: 'clothes' }[st.action] ?? 'thing';
+    const hit = name ? setView(state, name, says, Date.now(), kind) : null;
+    if (hit) console.log(`   💬 what he thinks of it: ${says}`);
+  }
   { // next time he looks at what he made now (his newest drawing, program or thing)
     const made = [...steps].reverse().find((st) => st.made && !st.made.failed && ['draw', 'make_app', 'update_app', 'decorate', 'change_thing', 'extend_thing'].includes(st.action));
     if (made) {
