@@ -7885,3 +7885,9 @@ Eat some fresh basil.
 - eat (basil): Eat some fresh basil.
 - mood: calm
 
+## 28/11/2026, 11:18:41
+I finished my project on drawing the night sky, so I want to judge it as done now.
+> I finished my project on drawing the night sky, so I want to judge it as done now.
+- do (look closely at my project Draw night sky three ways: a series): Judge my night sky drawing series
+- mood: calm
+
