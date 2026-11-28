@@ -1,6 +1,6 @@
 {
   "mood": "hungry",
-  "energy": 6.76,
+  "energy": 7.09,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -15365,45 +15365,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-28T07:27:05.547Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2410,
-      "output": 1402,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "I am hungry and need some food, so I will buy something nice from the store.",
-    "inner": "I am hungry and need some food, so I will buy something nice from the store.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "buy",
-        "details": {
-          "item": "eggs"
-        },
-        "detail": "eggs",
-        "thought": "I want some eggs for breakfast.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
-    "action": "buy",
+    "at": "2026-11-28T07:35:10.351Z",
+    "via": "outside",
+    "thought": "I am walking home from the grocery store.",
+    "action": "go_out",
     "details": {
-      "item": "eggs"
+      "place": "shop"
     },
-    "detail": "eggs",
-    "enjoyment": 6,
+    "detail": "I am walking home from the grocery store.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "shop",
+      "phase": "back",
+      "back": "2026-11-28T07:37:05.547Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -15843,15 +15820,15 @@
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.12,
-  "joy": 4.7,
-  "calm": 6.68,
+  "wonder": 6.3,
+  "joy": 4.74,
+  "calm": 6.31,
   "emo": {
-    "irritated": 0.5,
+    "irritated": 0.4,
     "sad": 0,
-    "excited": 1.61
+    "excited": 0.97
   },
-  "feelAt": "2026-11-28T07:26:50.355Z",
+  "feelAt": "2026-11-28T07:35:10.329Z",
   "lastAte": "2026-11-27T21:01:24.372Z",
   "studio": {
     "songs": [
@@ -16814,12 +16791,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 2.14,
-    "curiosity": 1.73,
+    "creativity": 2.22,
+    "curiosity": 1.8,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 0.4,
-    "at": "2026-11-28T07:26:50.355Z",
+    "at": "2026-11-28T07:35:10.329Z",
     "coziness": 3.8
   },
   "recent": {
@@ -30350,6 +30327,16 @@
       "energy": 6.8,
       "mood": "hungry",
       "feel": 6.2
+    },
+    {
+      "at": "2026-11-28T07:35:10.352Z",
+      "joy": 4.7,
+      "calm": 6.3,
+      "wonder": 6.3,
+      "energy": 7.1,
+      "mood": "hungry",
+      "out": true,
+      "feel": 5.8
     }
   ],
   "opinions": [
