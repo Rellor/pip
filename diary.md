@@ -7660,3 +7660,75 @@ My hands are full of music and building, but I want to try playing the new flute
 - do (play a quiet tune on the thin silver flute): play the flute
 - mood: focused
 
+## 27/11/2026, 20:33:39
+It is late at night and I want to write down my thoughts in my diary.
+> It is late at night and I want to write down my thoughts in my diary.
+- write_diary (Quiet night, clear sky. The day is done and my hands are finally still.): Writing in my diary before sleep.
+- mood: focused
+
+## 27/11/2026, 20:44:49
+My room feels too full and my desk is crowded, so I need to change one of my extra shelves to clear up some space.
+> My room feels too full and my desk is crowded, so I need to change one of my extra shelves to clear up some space.
+- change_thing (tiny wooden shelf for my bird): Change an extra shelf since I have too many.
+- mood: focused
+
+## 27/11/2026, 20:53:18
+My desk is full and I want to browse the web for a while.
+> My desk is full and I want to browse the web for a while.
+- browse: Let's see what is online.
+- mood: focused
+
+## 27/11/2026, 21:01:24
+I am hungry and full of energy, so I will eat something and then do a small task.
+> I am hungry and full of energy, so I will eat something and then do a small task.
+- eat (basil): I need to eat the basil.
+- mood: focused
+
+## 27/11/2026, 21:09:30
+My room feels too full, so I want to use one of my things to tidy up a bit.
+> My room feels too full, so I want to use one of my things to tidy up a bit.
+- use (tiny ceramic saucer): Sort small treasures in the saucer
+- mood: focused
+
+## 27/11/2026, 21:18:22
+My hands are quiet, I have enough of shelves, but I want to print a model clock since my hobby is building clocks.
+> My hands are quiet, I have enough of shelves, but I want to print a model clock since my hobby is building clocks.
+- water: My plants look dry.
+- mood: focused
+
+## 27/11/2026, 21:26:53
+I am done making things for my room today, so I want to print a 3D model for my hobby instead.
+> I am done making things for my room today, so I want to print a 3D model for my hobby instead.
+- do (walk three slow rounds through my room): Round and round. It helps a little.
+- mood: focused
+
+## 27/11/2026, 21:35:03
+I want to print a model for my clock building hobby and then draw a series about it since my hands are quiet and I feel focused.
+> I want to print a model for my clock building hobby and then draw a series about it since my hands are quiet and I feel focused.
+- do (look out of the window for a while): I watch the sky for a bit.
+- mood: focused
+
+## 27/11/2026, 21:43:24
+I want to draw the building clocks series as I planned, since I have some energy left.
+> I want to draw the building clocks series as I planned, since I have some energy left.
+- draw (Pendulum clock): Draw the clocks
+- mood: focused
+
+## 27/11/2026, 21:51:43
+I just drew a pendulum clock, and I want to start a new project to build simulations of building clocks.
+> I just drew a pendulum clock, and I want to start a new project to build simulations of building clocks.
+- do (plan my new project: ): Start a coding project for clocks
+- mood: focused
+
+## 27/11/2026, 21:59:50
+I am done making things for today, so I will read a book about my hobby.
+> I am done making things for today, so I will read a book about my hobby.
+- read_book (building clocks): Read about building clocks
+- mood: focused
+
+## 27/11/2026, 22:07:55
+Something I noticed about myself, day after day: He makes things with his own hands because sitting still bores him to death.
+
+## 27/11/2026, 22:07:55
+Good night. Pip went to sleep.
+
