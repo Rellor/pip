@@ -7815,3 +7815,8 @@ The night sky is pulling at me, so I'm starting a series to draw it properly. I 
 - do (plan my new project: Draw night sky three ways: a series): I need a proper project to focus my energy on.
 - mood: energetic
 
+## 28/11/2026, 09:08:55
+I am curious about the note someone left.
+- do (Walk to the art workshop to pick up the note.): I am curious about the note someone left.
+- mood: energetic
+
