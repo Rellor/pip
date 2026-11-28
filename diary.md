@@ -7915,3 +7915,9 @@ My room is full, so I'll move something to the museum.
 - do (carry tiny fabric pouch to my museum): My room is full, so I'll move something to the museum.
 - mood: calm
 
+## 28/11/2026, 12:08:43
+My room is full of energy and I have finished my tasks, so I want to start a project about the night sky since it keeps pulling at me.
+> My room is full of energy and I have finished my tasks, so I want to start a project about the night sky since it keeps pulling at me.
+- do (plan my new project: Build a little simulation of night sky: something that moves by itself): I will start the night sky simulation project.
+- mood: calm
+
