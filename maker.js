@@ -98,7 +98,7 @@ export function finishSong(step, reply, { songs = [], maxBars = 16, allowed = nu
 
 // For tests: small but valid designs without a model.
 export function fakeMade(step) {
-  const name = String(step.details?.name ?? step.details?.what ?? 'little thing').slice(0, 40);
+  const name = String(step.details?.name ?? step.details?.what ?? 'little thing').replace(/_/g, ' ').slice(0, 40); // (no file names: "workshop_stool")
   const box = [{ shape: 'box', size: [0.2, 0.2, 0.2], pos: [0, 0.1, 0], color: '#c08040' }, { shape: 'sphere', size: [0.06], pos: [0, 0.26, 0], color: '#ffd84a', glow: true }];
   if (step.details?.play) return { name, why: '(fake)', verb: '', motion: '', where: '', how: '', parts: [{ shape: 'box', size: [1.2, 0.5, 0.3], pos: [0, 0.45, 0], color: '#c04030' }, { shape: 'cylinder', size: [0.3, 0.06], pos: [-0.5, 0.3, 0], color: '#333333' }, { shape: 'cylinder', size: [0.3, 0.06], pos: [0.5, 0.3, 0], color: '#333333' }] };
   return ({

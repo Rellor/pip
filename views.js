@@ -11,19 +11,22 @@ const bare = (n) => clip(n, 80).toLowerCase().replace(/^(my|the|a|an)\s+/, '');
 const lists = (s) => [['drawing', s.art ?? []], ['program', s.apps ?? []], ['thing', (s.decor ?? []).filter((d) => !d.image)], ['thing', s.stored ?? []], ['thing', s.museum ?? []], ['thing', s.playthings ?? []], ['song', s.studio?.songs ?? []]];
 const nameOf = (x) => x.name ?? x.title ?? '';
 // Something he made, by its name: { item, kind } (the newest one with that name), or null.
-export function findMade(s, name) {
+// (A drawing and a thing can have the same name: "pendulum clock". With `kind` given, that kind is looked at first.)
+export function findMade(s, name, kind = null) {
   const n = bare(name);
   if (n.length < 2) return null;
-  for (const exact of [true, false]) for (const [kind, list] of lists(s)) {
+  const all = lists(s);
+  const ordered = kind ? [...all.filter(([k]) => k === kind), ...all.filter(([k]) => k !== kind)] : all;
+  for (const exact of [true, false]) for (const [kind, list] of ordered) {
     const item = [...list].reverse().find((x) => (exact ? bare(nameOf(x)) === n || bare(x.title) === n : n.length > 3 && (bare(nameOf(x)).includes(n) || n.includes(bare(nameOf(x))))));
     if (item) return { item, kind };
   }
   return null;
 }
 // What he thinks of it now, in his own words. Returns the thing, or null when it is not his or he said nothing.
-export function setView(s, name, text, now = Date.now()) {
+export function setView(s, name, text, now = Date.now(), kind = null) {
   const words = clip(text, 300);
-  const hit = findMade(s, name);
+  const hit = findMade(s, name, kind);
   if (!hit || words.length < 6) return null;
   const at = new Date(now).toISOString();
   hit.item.views = [...(hit.item.views ?? []), { at, text: words }].slice(-VIEWS_KEPT);

@@ -135,3 +135,15 @@ ok('his big dream stays in front of him until he reaches it or lets it go; getti
   assert.equal(takeable(fresh({ decor: [{ id: 'p', name: 'photo', image: 'photos/p.jpg' }, { id: 'o', name: 'tower', kind: 'outside', parts: part }] })).length, 0, 'not a picture, and not what stands outside');
 }
 ok('every thing keeps why he made it and what he thinks of it; he may take it apart, and a record stays');
+
+// ---- a drawing and a thing with the same name: what he says about the thing stays with the thing
+{
+  const { setView, findMade } = await import('../views.js');
+  const s = { art: [{ id: 'a1', name: 'Pendulum clock', file: 'made/a1.svg' }], decor: [{ id: 'd1', name: 'pendulum clock', parts: [{}] }] };
+  assert.equal(setView(s, 'pendulum clock', 'It runs slow. I like that.', now, 'thing').kind, 'thing');
+  assert.equal(s.decor[0].thinks, 'It runs slow. I like that.');
+  assert.equal(s.art[0].thinks, undefined);
+  assert.equal(setView(s, 'pendulum clock', 'The lines are too thick.', now, 'drawing').kind, 'drawing');
+  assert.equal(findMade(s, 'pendulum clock', 'program').kind, 'drawing', 'a kind he has none of: the first one found');
+}
+ok('a drawing and a thing with the same name each keep their own view');

@@ -1499,12 +1499,12 @@ async function wakeUp() {
   state.lookBack = null;
   let ownWork = null;
   if (lb?.again && Date.now() - Date.parse(lb.at) < 3 * 3_600_000 && !state.last?.sleeping) { // he saw one of his things again (in his museum): what does he think of it now?
-    const hit = findMade(state, lb.name);
+    const hit = findMade(state, lb.name, 'thing'); // (what stands in his museum is a thing)
     if (hit) ownWork = { name: nameOfMade(hit.item), what: hit.kind, again: lb.again, why: hit.item.why ?? '', thought: hit.item.thinks ?? '' };
   } else if (lb && Date.now() - Date.parse(lb.at) < 3 * 3_600_000 && !process.env.PIP_NO_PHOTO && !state.last?.sleeping) {
     try {
       const shot = lb.file ? await renderFile(lb.file, 'web', lb.kind === 'app' ? { width: 900, height: 640, wait: 1500 } : {}) : await takePhoto(lb.name, new Date().toISOString(), state, 'web', [], 'close');
-      if (shot.bytes) { images.push({ mime: 'image/jpeg', data: Buffer.from(shot.bytes).toString('base64') }); ownWork = { name: lb.name, why: findMade(state, lb.name)?.item.why ?? '', what: { drawing: 'drawing', app: 'program', thing: 'thing' }[lb.kind] ?? 'work', how: { drawing: 'draw a new version', app: 'update_app: one new thing or a fix', thing: 'change_thing' }[lb.kind] ?? 'change it' }; console.log(`👀 Pip looks at his ${ownWork.what}: ${lb.name}`); }
+      if (shot.bytes) { images.push({ mime: 'image/jpeg', data: Buffer.from(shot.bytes).toString('base64') }); ownWork = { name: lb.name, why: findMade(state, lb.name, { drawing: 'drawing', app: 'program', thing: 'thing' }[lb.kind] ?? null)?.item.why ?? '', what: { drawing: 'drawing', app: 'program', thing: 'thing' }[lb.kind] ?? 'work', how: { drawing: 'draw a new version', app: 'update_app: one new thing or a fix', thing: 'change_thing' }[lb.kind] ?? 'change it' }; console.log(`👀 Pip looks at his ${ownWork.what}: ${lb.name}`); }
     } catch (e) { console.error('⚠️  look back:', e.message); }
   }
   for (const p of looking) {
@@ -1565,7 +1565,7 @@ async function wakeUp() {
       answer = { thought: '', inner: '', steps: [], mood_after: state.mood, new_idea: null };
       via = 'fallback';
     }
-    if (ownWork && answer.own_view) { const hit = setView(state, ownWork.name, answer.own_view); if (hit) console.log(`   💬 what he thinks of his ${hit.kind} "${ownWork.name}": ${answer.own_view}`); } // kept with the thing itself, for its card (views.js)
+    if (ownWork && answer.own_view) { const hit = setView(state, ownWork.name, answer.own_view, Date.now(), ['drawing', 'program', 'thing', 'song'].includes(ownWork.what) ? ownWork.what : null); if (hit) console.log(`   💬 what he thinks of his ${hit.kind} "${ownWork.name}": ${answer.own_view}`); } // kept with the thing itself, for its card (views.js)
     for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
       const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
       if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); noteReply(state, v); const learned = learnFrom(state, v, a.keep !== false); if (learned) addMemory(state, learned, 6, 'memory', new Date().toISOString()); } // yes to a wish is a promise (neighbours.js), and what he keeps of a traveller's note he has learned (strangers.js)
@@ -2573,7 +2573,7 @@ async function wakeUp() {
     const fresh = addMoments(state, mine, startedAt, INTERVAL_MIN * 60_000, { quiet: privateTick });
     console.log(`🎞️  ${fresh.length} small moments for the live feed`);
   }
-  noteArc(state, Date.now(), privateTick ? {} : { did: String(steps[0].as ?? steps[0].action ?? '').slice(0, 24) }); // his mood over the day, and what he had just done, for the chart on the Today tab (arc.js)
+  noteArc(state, Date.now(), privateTick ? {} : { did: String(((x) => (x.action === 'walk_to' ? (answer.tell ? 'tell' : answer.visitor_answers?.length ? 'answer_visitor' : 'walk_to') : x.as ?? x.action ?? ''))(steps.find((x) => x.action !== 'walk_to') ?? steps[0])).slice(0, 24) }); // his mood over the day, and what he had just done, for the chart on the Today tab (arc.js)
   if (!state.where) state.pace = { min: INTERVAL_MIN, nextAt: new Date(startedAt + INTERVAL_MIN * 60_000).toISOString() }; // when he wants to think again (loop.js)
   for (const name of markForMuseum(state, startedAt - 1000)) console.log(`🏛️  his room is full: ${name} goes to his museum at the next wake-up`);
   // Curiosity: what caught him (his "spark" answer) grows into interests and hobbies; old interests fade (curiosity.js).

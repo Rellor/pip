@@ -3042,7 +3042,7 @@ const ICONS = [[/piano|stool/i, '🎹'], [/book/i, '📚'], [/computer|desk/i, '
 let infoTimer = null;
 let infoLive = null;
 function renderInfo(info) {
-  $('infotitle').textContent = info.title || '';
+  $('infotitle').textContent = String(info.title || '').replace(/_/g, ' '); // (he sometimes names a thing like a file: "workshop_stool")
   const sub = $('infosub');
   sub.textContent = info.subtitle || '';
   const icon = $('infoicon');
@@ -4845,7 +4845,7 @@ function madeItems(s) {
   const why = (t) => (t ? [{ heading: 'Why he made it', quote: t }] : []);
   const thinksOf = (x) => thinks(x);
   const thing = (d, where) => add({ type: 'thing', icon: '🛠️', img: () => decorThumb(d), label: d.name, sub: where, at: d.createdAt ?? d.at,
-    info: () => ({ title: d.name, icon: '🛠️', subtitle: `Made ${when(d.createdAt ?? d.at)} · ${where}`, image: decorThumb(d, 320), sections: [...why(d.why), ...thinksOf(d), ...(d.said ? [{ heading: `Why he took it apart (${when(d.goneAt)})`, quote: d.said }] : []), ...(d.uses?.length ? [{ heading: 'What it is for', chips: d.uses.map((u) => u.label) }] : [])] }) });
+    info: () => ({ title: d.name, icon: '🛠️', subtitle: `Made ${when(d.createdAt ?? d.at)} · ${where}`, image: decorThumb(d, 320), sections: [...why(d.why), ...(d.goneAt && !d.thinks ? [] : thinksOf(d)), ...(d.said ? [{ heading: `Why he took it apart (${when(d.goneAt)})`, quote: d.said }] : []), ...(d.uses?.length ? [{ heading: 'What it is for', chips: d.uses.map((u) => u.label) }] : [])] }) });
   for (const d of s.decor ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, d.kind === 'outside' ? (d.readyAt && now < Date.parse(d.readyAt) ? 'being built outside' : 'stands outside') : 'in his room');
   for (const d of s.stored ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, 'in his chest');
   for (const d of s.playthings ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, `to ${d.verb} outside`);
@@ -4881,7 +4881,7 @@ function madeGrid(items) {
     let src = null;
     try { src = typeof x.img === 'function' ? x.img() : x.img; } catch {}
     if (src) { const im = el('img'); im.src = src; im.alt = ''; im.loading = 'lazy'; b.append(im); } else b.append(el('span', x.icon, 'mico'));
-    b.append(el('b', x.label), el('small', x.sub));
+    b.append(el('b', String(x.label).replace(/_/g, ' ')), el('small', x.sub));
     b.addEventListener('click', () => showInfo(x.info()));
     g.append(b);
   }
@@ -5050,7 +5050,7 @@ const SVGNS = 'http://www.w3.org/2000/svg';
 const svgEl = (tag, attrs = {}, text = null) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); if (text != null) n.textContent = text; return n; };
 let arcKey = '';
 // What he had just done at a point on the mood chart, in a few plain words (the move he chose: arc.js keeps it as "did").
-const DID_WORDS = { decorate: 'making something', draw: 'drawing', record_song: 'recording a song', revise_song: 'working on a song', make_app: 'making a program', update_app: 'working on a program', make_clothes: 'sewing', change_thing: 'changing something he made', extend_thing: 'adding to something he made', play_piano: 'playing music', search_web: 'looking something up', browse: 'wandering the web', read_book: 'reading', find_picture: 'looking for a picture', water: 'watering his plants', harvest: 'harvesting', plant: 'planting', eat: 'eating', cook: 'cooking', rest: 'resting', do: 'doing something small', phone: 'on his phone', use: 'using something he made', take_photo: 'taking a photo', place_picture: 'hanging a picture', move_thing: 'moving something', remove_decoration: 'putting something away', take_out: 'taking something out', take_tool: 'picking up a tool', wear: 'getting dressed', write_diary: 'writing in his diary', tell: 'writing to Bas', answer_visitor: 'answering a visitor', buy: 'getting something at the shop', check_board: 'reading the notice board', fetch_note: 'fetching a note', shape_land: 'shaping the land', paint_wall: 'painting a wall outside', print_thing: 'printing something', go_out: 'going outside', want: 'wishing for something', drop_want: 'letting a wish go', ask_visitors: 'asking visitors a question', read_shelf: 'reading what visitors sent', build_on: 'building on a big thing', dream: 'naming his big dream', dream_step: 'a step towards his dream', end_dream: 'letting a dream go', take_apart: 'taking something apart', quiet: 'quiet time', make_plaything: 'making something to play with', play: 'playing outside', play_game: 'playing a game', show_in_museum: 'carrying something to his museum', start_hobby: 'starting a hobby', make_site: 'making his website', update_site: 'working on his website', build_outside: 'building outside', work_on_project: 'working on his project', plan_project: 'planning a project', judge_project: 'looking back at a project', start_project: 'starting a project' };
+const DID_WORDS = { walk_to: 'walking somewhere', decorate: 'making something', draw: 'drawing', record_song: 'recording a song', revise_song: 'working on a song', make_app: 'making a program', update_app: 'working on a program', make_clothes: 'sewing', change_thing: 'changing something he made', extend_thing: 'adding to something he made', play_piano: 'playing music', search_web: 'looking something up', browse: 'wandering the web', read_book: 'reading', find_picture: 'looking for a picture', water: 'watering his plants', harvest: 'harvesting', plant: 'planting', eat: 'eating', cook: 'cooking', rest: 'resting', do: 'doing something small', phone: 'on his phone', use: 'using something he made', take_photo: 'taking a photo', place_picture: 'hanging a picture', move_thing: 'moving something', remove_decoration: 'putting something away', take_out: 'taking something out', take_tool: 'picking up a tool', wear: 'getting dressed', write_diary: 'writing in his diary', tell: 'writing to Bas', answer_visitor: 'answering a visitor', buy: 'getting something at the shop', check_board: 'reading the notice board', fetch_note: 'fetching a note', shape_land: 'shaping the land', paint_wall: 'painting a wall outside', print_thing: 'printing something', go_out: 'going outside', want: 'wishing for something', drop_want: 'letting a wish go', ask_visitors: 'asking visitors a question', read_shelf: 'reading what visitors sent', build_on: 'building on a big thing', dream: 'naming his big dream', dream_step: 'a step towards his dream', end_dream: 'letting a dream go', take_apart: 'taking something apart', quiet: 'quiet time', make_plaything: 'making something to play with', play: 'playing outside', play_game: 'playing a game', show_in_museum: 'carrying something to his museum', start_hobby: 'starting a hobby', make_site: 'making his website', update_site: 'working on his website', build_outside: 'building outside', work_on_project: 'working on his project', plan_project: 'planning a project', judge_project: 'looking back at a project', start_project: 'starting a project' };
 function didWords(p) {
   if (p.asleep) return 'going to sleep';
   if (p.out) return p.place ? `outside: ${String(p.place).replace(/_/g, ' ')}` : 'outside';
@@ -5076,7 +5076,14 @@ function renderArc(force = false) {
   // the hours along the bottom (at most six)
   const hours = (t1 - t0) / 3_600_000, stepH = hours <= 5 ? 1 : hours <= 10 ? 2 : 3;
   const first = new Date(t0); first.setMinutes(0, 0, 0);
-  for (let t = first.getTime(); t <= t1; t += 3_600_000) { if (t < t0 || new Date(t).getHours() % stepH) continue; svg.append(svgEl('text', { class: 'tick', x: x(t), y: H - 5, 'text-anchor': x(t) > W - R - 16 ? 'end' : 'middle' }, hm(t))); }
+  let tickEnd = -999; // (where the last hour label ends: two never touch)
+  for (let t = first.getTime(); t <= t1; t += 3_600_000) {
+    if (t < t0 || new Date(t).getHours() % stepH) continue;
+    const w = hm(t).length * 7.2, end = x(t) > W - R - 16, left = end ? x(t) - w : x(t) - w / 2;
+    if (left - tickEnd < 12) continue;
+    tickEnd = left + w;
+    svg.append(svgEl('text', { class: 'tick', x: x(t), y: H - 5, 'text-anchor': end ? 'end' : 'middle' }, hm(t)));
+  }
   const line = pts.map((p) => `${x(p.t).toFixed(1)},${y(p.feel).toFixed(1)}`).join(' ');
   svg.append(svgEl('polygon', { class: 'moodarea', points: `${x(t0).toFixed(1)},${y(0)} ${line} ${x(pts.at(-1).t).toFixed(1)},${y(0)}` }), svgEl('polyline', { class: 'moodline', points: line }));
   // his mood in a word: now, at his best and at his lowest, and where the word changes (only where there is room)
