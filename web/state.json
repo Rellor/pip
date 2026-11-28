@@ -1,6 +1,6 @@
 {
-  "mood": "hungry",
-  "energy": 8,
+  "mood": "restless",
+  "energy": 7.59,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -10,12 +10,6 @@
   ],
   "ideas": [],
   "activities": [
-    {
-      "at": "2026-11-27T12:26:10.982Z",
-      "action": "decorate",
-      "detail": "tiny clock mechanism",
-      "enjoyment": 7
-    },
     {
       "at": "2026-11-27T13:14:38.749Z",
       "action": "go_out",
@@ -303,6 +297,12 @@
       "at": "2026-11-28T07:00:13.626Z",
       "action": "do",
       "detail": "stomp around the room once, then laugh at myself",
+      "enjoyment": 6
+    },
+    {
+      "at": "2026-11-28T07:02:18.937Z",
+      "action": "go_out",
+      "detail": "the pond in the park",
       "enjoyment": 6
     }
   ],
@@ -774,10 +774,10 @@
       "text": "I should work on step 2 of my clay bird project next.",
       "importance": 6,
       "kind": "memory",
-      "weight": 9.826,
-      "lastUsed": "2026-11-27T17:33:02.123Z",
+      "weight": 10,
+      "lastUsed": "2026-11-28T07:02:16.720Z",
       "tier": "long",
-      "uses": 5
+      "uses": 6
     },
     {
       "id": "mmwmivs8360",
@@ -1039,7 +1039,7 @@
       "text": "My project \"Build a little simulation of night sky: something that moves by itself\" is finished: all my steps are done and I made it 3 times. It works, and I can start something new.",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.793,
+      "weight": 5.791,
       "lastUsed": "2026-11-27T13:14:36.828Z",
       "tier": "short",
       "uses": 4
@@ -1050,10 +1050,10 @@
       "text": "I kept trying to make one more of something I have enough of: \"Build a plain wooden shelf\" (I have 3 shelves). That can never work, so I let it go. Three of a kind is the rule. I make something else, or I change one I ha",
       "importance": 8,
       "kind": "memory",
-      "weight": 9.003,
-      "lastUsed": "2026-11-27T20:33:37.989Z",
+      "weight": 9.503,
+      "lastUsed": "2026-11-28T07:02:16.720Z",
       "tier": "long",
-      "uses": 4
+      "uses": 5
     },
     {
       "id": "mmwxrtdzt60",
@@ -1082,7 +1082,7 @@
       "text": "I want to try building clocks as a hobby. My own idea. Why: i want to see if tiny gears can drive me crazy",
       "importance": 7,
       "kind": "memory",
-      "weight": 5.973,
+      "weight": 5.971,
       "lastUsed": "2026-11-27T11:57:29.689Z",
       "tier": "short"
     },
@@ -1092,7 +1092,7 @@
       "text": "Idris told me: Somebody called your drawings \"nice\". I think nice is the worst word there is. What would you want them to be called?",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.33,
+      "weight": 5.328,
       "lastUsed": "2026-11-27T16:57:03.635Z",
       "tier": "short"
     },
@@ -1102,7 +1102,7 @@
       "text": "Idris hates the word nice just like I do.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.33,
+      "weight": 5.328,
       "lastUsed": "2026-11-27T16:57:03.640Z",
       "tier": "short"
     },
@@ -1112,7 +1112,7 @@
       "text": "I am working on the night sky simulation step by step.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.34,
+      "weight": 5.338,
       "lastUsed": "2026-11-27T17:08:18.976Z",
       "tier": "short"
     },
@@ -1122,7 +1122,7 @@
       "text": "The night sky simulation turned out just right.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.348,
+      "weight": 5.346,
       "lastUsed": "2026-11-27T17:16:46.992Z",
       "tier": "short"
     },
@@ -1132,7 +1132,7 @@
       "text": "I am home again from my doorstep. I sat on my doorstep. A traveller crossed the square with a rattling suitcase, looked at my house for a moment, and went on. I brought home a chestnut.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.267,
+      "weight": 6.265,
       "lastUsed": "2026-11-27T18:05:21.725Z",
       "tier": "short"
     },
@@ -1142,7 +1142,7 @@
       "text": "I found a horse chestnut at my doorstep today.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.371,
+      "weight": 5.369,
       "lastUsed": "2026-11-27T18:05:23.179Z",
       "tier": "short"
     },
@@ -1152,7 +1152,7 @@
       "text": "I should check the notice board for new requests.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.388,
+      "weight": 5.386,
       "lastUsed": "2026-11-27T18:13:29.576Z",
       "tier": "short"
     },
@@ -1162,7 +1162,7 @@
       "text": "I read about how to make a model lighthouse.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.859,
+      "weight": 5.857,
       "lastUsed": "2026-11-28T07:00:06.574Z",
       "tier": "short",
       "uses": 1
@@ -1173,7 +1173,7 @@
       "text": "I started a new project about building clocks.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.4,
+      "weight": 5.398,
       "lastUsed": "2026-11-27T18:31:03.793Z",
       "tier": "short"
     },
@@ -1183,7 +1183,7 @@
       "text": "I should keep an eye on my coin count and finish requests when I can.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.408,
+      "weight": 5.406,
       "lastUsed": "2026-11-27T18:39:37.665Z",
       "tier": "short"
     },
@@ -1193,7 +1193,7 @@
       "text": "I made fruit bowl (someone on the notice board asked for it and I want to try making it)",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.408,
+      "weight": 5.406,
       "lastUsed": "2026-11-27T18:39:38.658Z",
       "tier": "short"
     },
@@ -1203,7 +1203,7 @@
       "text": "I made a fruit bowl, as the note on the notice board asked. I took the note down and got 3 coins. I have 13 coins now.",
       "importance": 7,
       "kind": "memory",
-      "weight": 6.318,
+      "weight": 6.316,
       "lastUsed": "2026-11-27T18:39:37.674Z",
       "tier": "short"
     },
@@ -1213,7 +1213,7 @@
       "text": "I need to clear some space on my desk soon.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.414,
+      "weight": 5.412,
       "lastUsed": "2026-11-27T18:45:46.795Z",
       "tier": "short"
     },
@@ -1223,7 +1223,7 @@
       "text": "I am home again from the library. At the library I found a book about building clocks and read it at the big table by the window. It was so quiet I could hear the pages.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.898,
+      "weight": 5.896,
       "lastUsed": "2026-11-28T07:00:06.574Z",
       "tier": "short",
       "uses": 1
@@ -1234,7 +1234,7 @@
       "text": "Reading at the library makes the pages sound so clear.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.434,
+      "weight": 5.432,
       "lastUsed": "2026-11-27T20:17:27.913Z",
       "tier": "short"
     },
@@ -1244,7 +1244,7 @@
       "text": "I write in my diary late at night.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.496,
+      "weight": 5.494,
       "lastUsed": "2026-11-27T20:33:39.223Z",
       "tier": "short"
     },
@@ -1254,7 +1254,7 @@
       "text": "Moving things around wears me down, but changing things is better.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.503,
+      "weight": 5.501,
       "lastUsed": "2026-11-27T20:44:49.814Z",
       "tier": "short"
     },
@@ -1264,7 +1264,7 @@
       "text": "Moving my things around wears me down, but sorting is quiet work.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.524,
+      "weight": 5.522,
       "lastUsed": "2026-11-27T21:09:30.167Z",
       "tier": "short"
     },
@@ -1274,7 +1274,7 @@
       "text": "I drew Pendulum clock",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.55,
+      "weight": 5.548,
       "lastUsed": "2026-11-27T21:43:25.684Z",
       "tier": "short"
     },
@@ -1284,7 +1284,7 @@
       "text": "I read about building clocks to learn more for tomorrow.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.563,
+      "weight": 5.561,
       "lastUsed": "2026-11-27T21:59:49.696Z",
       "tier": "short"
     },
@@ -1304,7 +1304,7 @@
       "text": "I harvested fresh basil and mint from my garden.",
       "importance": 6,
       "kind": "memory",
-      "weight": 5.569,
+      "weight": 5.567,
       "lastUsed": "2026-11-28T07:00:13.627Z",
       "tier": "short"
     }
@@ -1313,14 +1313,6 @@
   "lastReflectAt": null,
   "storyAt": "2026-11-27T22:07:55.267Z",
   "thoughts": [
-    {
-      "at": "2026-11-27T16:32:24.091Z",
-      "text": "I want to work on my clock hobby by changing something I made, since building clocks is what I am into lately.",
-      "short": "I want to work on my clock hobby by changing something I made, since building clocks is what I am into lately.",
-      "mood": "curious",
-      "action": "change_thing",
-      "detail": "tiny ceramic saucer"
-    },
     {
       "at": "2026-11-27T16:40:52.217Z",
       "text": "I finished the saucer and now I want to fetch the note someone left for me.",
@@ -1549,6 +1541,14 @@
       "mood": "hungry",
       "action": "harvest",
       "detail": "basil"
+    },
+    {
+      "at": "2026-11-28T07:02:18.941Z",
+      "text": "My legs want out after being inside for 11 hours, so I am going for a walk to the pond in the park.",
+      "short": "My legs want out after being inside for 11 hours, so I am going for a walk to the pond in the park.",
+      "mood": "restless",
+      "action": "go_out",
+      "detail": "the pond in the park"
     }
   ],
   "outbox": [
@@ -2175,14 +2175,14 @@
       "failed": "my basil is still young, not ready to harvest yet"
     },
     {
-      "at": "2026-11-28T07:04:14.622Z",
-      "action": "do",
-      "thought": "That did not work out. I shake it off and stomp around the room once, then laugh at myself.",
-      "fallback": true,
-      "move": null,
-      "emoji": "🐾",
-      "what": "stomp around the room once, then laugh at myself",
-      "feeling": "joy"
+      "at": "2026-11-28T07:02:19.936Z",
+      "action": "go_out",
+      "thought": "I need some fresh air.",
+      "place": "pond",
+      "placeName": "the pond in the park",
+      "what": "watch the ducks",
+      "back": "2026-11-28T07:51:18.936Z",
+      "failed": null
     }
   ],
   "decor": [
@@ -15330,60 +15330,47 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-28T07:00:13.622Z",
+    "at": "2026-11-28T07:02:18.936Z",
     "via": "brain",
     "model": "gemini-3.5-flash-lite",
     "models": {
-      "gemini-3.5-flash-lite": 2
+      "gemini-3.5-flash-lite": 1
     },
-    "modelNotes": [
-      "gemini-3.5-flash-lite answered (gemini-3.8-flash is out of quota)"
-    ],
-    "fallback": true,
     "tokens": {
-      "calls": 2,
-      "input": 3477,
-      "output": 1858,
+      "calls": 1,
+      "input": 2670,
+      "output": 557,
       "models": {
-        "gemini-3.5-flash-lite": 2
+        "gemini-3.5-flash-lite": 1
       }
     },
     "intervalMin": 8,
-    "thought": "My basil and mint are ready to harvest, so I will gather them first.",
-    "inner": "My basil and mint are ready to harvest, so I will gather them first.",
+    "thought": "My legs want out after being inside for 11 hours, so I am going for a walk to the pond in the park.",
+    "inner": "My legs want out after being inside for 11 hours, so I am going for a walk to the pond in the park.",
     "sent": false,
     "steps": [
       {
-        "action": "harvest",
+        "action": "go_out",
         "details": {
-          "plant": "basil"
+          "place": "the pond in the park",
+          "what": "watch the ducks",
+          "name": "watch the ducks"
         },
-        "detail": "basil",
-        "thought": "Harvesting the basil",
-        "enjoyment": 0,
-        "found": null,
-        "made": null
-      },
-      {
-        "action": "do",
-        "details": {
-          "what": "stomp around the room once, then laugh at myself",
-          "feeling": "joy",
-          "emoji": "🐾"
-        },
-        "detail": "stomp around the room once, then laugh at myself",
-        "thought": "That did not work out. I shake it off and stomp around the room once, then laugh at myself.",
+        "detail": "the pond in the park",
+        "thought": "I need some fresh air.",
         "enjoyment": 6,
         "found": null,
         "made": null
       }
     ],
-    "action": "harvest",
+    "action": "go_out",
     "details": {
-      "plant": "basil"
+      "place": "the pond in the park",
+      "what": "watch the ducks",
+      "name": "watch the ducks"
     },
-    "detail": "basil",
-    "enjoyment": 0,
+    "detail": "the pond in the park",
+    "enjoyment": 6,
     "new_idea": null,
     "found": null
   },
@@ -15483,7 +15470,7 @@
   "quota": {
     "day": "2026-11-27",
     "calls": {
-      "gemini-3.5-flash-lite": 95,
+      "gemini-3.5-flash-lite": 96,
       "gemini-3.6-flash": 11,
       "gemini-3.5-flash": 6,
       "gemini-3.8-flash": 3
@@ -15817,22 +15804,22 @@
       "start"
     ]
   },
-  "memoryFadeAt": "2026-11-28T07:00:13.630Z",
+  "memoryFadeAt": "2026-11-28T07:02:18.943Z",
   "fullness": 1,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 8.3,
-  "joy": 3.43,
-  "calm": 7,
+  "wonder": 7.74,
+  "joy": 3.89,
+  "calm": 6.56,
   "emo": {
-    "irritated": 1.2,
+    "irritated": 0.96,
     "sad": 0,
-    "excited": 1.2
+    "excited": 1.52
   },
-  "feelAt": "2026-11-28T07:00:03.061Z",
+  "feelAt": "2026-11-28T07:02:16.646Z",
   "lastAte": "2026-11-27T21:01:24.372Z",
   "studio": {
     "songs": [
@@ -16795,21 +16782,16 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 1.88,
-    "curiosity": 1.5,
+    "creativity": 1.9,
+    "curiosity": 1.52,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 0.4,
-    "at": "2026-11-28T07:00:03.061Z",
+    "at": "2026-11-28T07:02:16.646Z",
     "coziness": 3.8
   },
   "recent": {
     "moves": [
-      {
-        "move": "do",
-        "kind": "play",
-        "at": "2026-11-27T20:17:27.921Z"
-      },
       {
         "move": "do",
         "kind": "play",
@@ -16880,22 +16862,21 @@
         "move": "do",
         "kind": "play",
         "at": "2026-11-28T07:00:13.637Z"
+      },
+      {
+        "move": "go_out",
+        "kind": "outside",
+        "at": "2026-11-28T07:02:18.954Z"
       }
     ],
     "moods": [
       "focused",
       "focused",
       "focused",
-      "focused",
-      "hungry"
+      "hungry",
+      "restless"
     ],
     "choices": [
-      {
-        "key": "browse:",
-        "move": "browse",
-        "ok": true,
-        "at": "2026-11-27T20:53:18.569Z"
-      },
       {
         "key": "eat:",
         "move": "eat",
@@ -16950,6 +16931,12 @@
         "ok": false,
         "failed": true,
         "at": "2026-11-28T07:00:13.640Z"
+      },
+      {
+        "key": "go_out:watch the ducks",
+        "move": "go_out",
+        "ok": true,
+        "at": "2026-11-28T07:02:18.956Z"
       }
     ],
     "failDay": "2026-11-28",
@@ -16964,21 +16951,26 @@
   "today": {
     "day": "2026-11-28",
     "done": {
-      "do": 1
+      "do": 1,
+      "go_out": 1
     },
     "tried": {
       "harvest": 1,
-      "do": 1
+      "do": 1,
+      "go_out": 1
     },
     "kinds": {
-      "play": 1
+      "play": 1,
+      "outside": 1
     },
     "moods": {
-      "hungry": 1
+      "hungry": 1,
+      "restless": 1
     },
     "lift": {
       "harvest": 0.25,
-      "do": 0.25
+      "do": 0.25,
+      "go_out": 0.5
     }
   },
   "skills": {
@@ -16998,7 +16990,7 @@
       {
         "cat": "outside",
         "text": "Go for a long walk to the green stone and watch the shadows stretch across the grass.",
-        "done": false
+        "done": true
       },
       {
         "cat": "tend",
@@ -17014,29 +17006,8 @@
     "by": "pip"
   },
   "plan": {
-    "queue": [
-      {
-        "action": "harvest",
-        "details": {
-          "plant": "mint"
-        },
-        "thought": "Harvesting the mint",
-        "enjoyment": 6,
-        "needs": ""
-      },
-      {
-        "action": "go_out",
-        "details": {
-          "place": "the pond in the park",
-          "what": "watch the ducks",
-          "name": "watch the ducks"
-        },
-        "thought": "Going outside for a walk since I have been inside for 11 hours",
-        "enjoyment": 6,
-        "needs": ""
-      }
-    ],
-    "decidedAt": "2026-11-28T07:00:13.620Z",
+    "queue": [],
+    "decidedAt": "2026-11-28T07:02:18.933Z",
     "seen": {
       "tools": 13,
       "gifts": 1,
@@ -17046,10 +17017,7 @@
       "seeds": 9,
       "visitors": 21
     },
-    "lastFail": {
-      "at": "2026-11-28T07:00:13.639Z",
-      "why": "harvest: my basil is still young, not ready to harvest yet"
-    },
+    "lastFail": null,
     "unread": 0
   },
   "fixedAt": {
@@ -17749,7 +17717,7 @@
     "make_clothes": 3,
     "walk_to": 21,
     "update_app": 3,
-    "go_out": 16,
+    "go_out": 17,
     "check_board": 10,
     "fetch_note": 13,
     "extend_thing": 6,
@@ -17760,7 +17728,7 @@
     "start_hobby": 1
   },
   "checkup": {
-    "at": "2026-11-28T07:00:13.643Z",
+    "at": "2026-11-28T07:02:18.959Z",
     "items": [
       {
         "id": "circling",
@@ -26270,7 +26238,7 @@
         "from": "read",
         "via": null,
         "at": "2026-11-27T21:59:50.047Z",
-        "shown": 1
+        "shown": 2
       }
     ],
     "interests": [
@@ -26359,14 +26327,21 @@
     "hobbyIdeaAt": "2026-11-27T11:57:29.690Z"
   },
   "reportDay": "2026-11-27",
-  "retryNow": null,
+  "retryNow": {
+    "at": "2026-11-28T07:01:24.622Z",
+    "key": "harvest:basil",
+    "action": "harvest",
+    "name": "basil",
+    "why": "my basil is still young, not ready to harvest yet",
+    "guide": ""
+  },
   "retries": [
     "2026-11-27T08:56:43.807Z",
     "2026-11-28T07:00:13.639Z"
   ],
   "retried": {
-    "key": "decorate:",
-    "at": "2026-11-27T08:58:47.075Z"
+    "key": "harvest:basil",
+    "at": "2026-11-28T07:02:16.718Z"
   },
   "tired": {
     "kind": "play",
@@ -26439,8 +26414,8 @@
       "street:traveller": "2026-11-27T09:09:40.160Z",
       "street:printer": "2026-11-27T14:13:22.300Z"
     },
-    "day": "2026-11-27",
-    "smallToday": 2,
+    "day": "2026-11-28",
+    "smallToday": 0,
     "lastAt": "2026-11-27T14:13:22.300Z",
     "log": [
       {
@@ -26725,7 +26700,16 @@
     },
     "count": 43
   },
-  "where": null,
+  "where": {
+    "id": "otp7a7u",
+    "place": "pond",
+    "thing": "ducks",
+    "words": "watch the ducks",
+    "leftAt": "2026-11-28T07:02:18.936Z",
+    "arriveAt": "2026-11-28T07:10:18.936Z",
+    "leaveAt": "2026-11-28T07:43:18.936Z",
+    "homeAt": "2026-11-28T07:51:18.936Z"
+  },
   "finds": [
     {
       "name": "a blue marble someone lost",
@@ -28801,36 +28785,6 @@
   ],
   "moments": [
     {
-      "at": "2026-11-27T18:53:08.471Z",
-      "kind": "beat",
-      "icon": "✔️",
-      "text": "The last note fades"
-    },
-    {
-      "at": "2026-11-27T18:54:00.765Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Eats basil"
-    },
-    {
-      "at": "2026-11-27T18:56:12.969Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“I need to eat.”"
-    },
-    {
-      "at": "2026-11-27T19:00:02.694Z",
-      "kind": "notice",
-      "icon": "👀",
-      "text": "The floor creaks where it always creaks"
-    },
-    {
-      "at": "2026-11-27T19:04:23.626Z",
-      "kind": "beat",
-      "icon": "🚪",
-      "text": "Sets off for the library"
-    },
-    {
       "at": "2026-11-27T19:09:23.626Z",
       "kind": "notice",
       "icon": "👀",
@@ -29329,34 +29283,71 @@
       "text": "“I wanted to, but my basil is still young, not ready to harvest yet. (Harvesting the basil)”"
     },
     {
-      "at": "2026-11-28T07:03:14.962Z",
+      "at": "2026-11-28T07:02:18.936Z",
+      "kind": "beat",
+      "icon": "🚪",
+      "text": "Sets off for the pond in the park"
+    },
+    {
+      "at": "2026-11-28T07:06:18.936Z",
       "kind": "notice",
       "icon": "👀",
-      "text": "His chair is not where he left it. It is exactly where he left it"
+      "text": "Thin ice on every puddle"
     },
     {
-      "at": "2026-11-28T07:03:55.422Z",
+      "at": "2026-11-28T07:10:18.936Z",
       "kind": "beat",
-      "icon": "✖️",
-      "text": "That did not work"
+      "icon": "🦆",
+      "text": "Arrives at the pond in the park, to watch the ducks"
     },
     {
-      "at": "2026-11-28T07:04:14.622Z",
-      "kind": "beat",
-      "icon": "▶️",
-      "text": "Stomp around the room once, then laugh at myself"
-    },
-    {
-      "at": "2026-11-28T07:05:20.586Z",
-      "kind": "think",
-      "icon": "💭",
-      "text": "“That did not work out. I shake it off and stomp around the room once, then laugh at myself.”"
-    },
-    {
-      "at": "2026-11-28T07:07:06.804Z",
+      "at": "2026-11-28T07:14:08.379Z",
       "kind": "notice",
       "icon": "👀",
-      "text": "Dew on everything"
+      "text": "The willow touches the water and lets go again",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T07:19:23.555Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "Frost on the edges of everything",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T07:27:38.168Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "A duck lands with far too much noise",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T07:32:40.761Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "Rings on the water from something he did not see",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T07:39:30.114Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "The bench is cold through and through",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T07:43:18.936Z",
+      "kind": "beat",
+      "icon": "🚶",
+      "text": "Starts walking home",
+      "far": true
+    },
+    {
+      "at": "2026-11-28T07:47:18.936Z",
+      "kind": "notice",
+      "icon": "👀",
+      "text": "His own footsteps sound loud out here",
+      "far": true
     }
   ],
   "arc": [
@@ -30277,6 +30268,15 @@
       "energy": 8,
       "mood": "hungry",
       "feel": 6.2
+    },
+    {
+      "at": "2026-11-28T07:02:18.959Z",
+      "joy": 3.9,
+      "calm": 6.6,
+      "wonder": 7.7,
+      "energy": 7.6,
+      "mood": "restless",
+      "feel": 6.1
     }
   ],
   "opinions": [
@@ -30292,13 +30292,5 @@
       "says": "Stars moving by themselves are much better than static pictures.",
       "at": "2026-11-27T17:16:47.006Z"
     }
-  ],
-  "wakeSoon": {
-    "at": "2026-11-28T07:01:24.622Z",
-    "key": "harvest:basil",
-    "action": "harvest",
-    "name": "basil",
-    "why": "my basil is still young, not ready to harvest yet",
-    "guide": ""
-  }
+  ]
 }
