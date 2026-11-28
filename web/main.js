@@ -5049,6 +5049,15 @@ addEventListener('resize', () => renderArc());
 const SVGNS = 'http://www.w3.org/2000/svg';
 const svgEl = (tag, attrs = {}, text = null) => { const n = document.createElementNS(SVGNS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); if (text != null) n.textContent = text; return n; };
 let arcKey = '';
+// What he had just done at a point on the mood chart, in a few plain words (the move he chose: arc.js keeps it as "did").
+const DID_WORDS = { decorate: 'making something', draw: 'drawing', record_song: 'recording a song', revise_song: 'working on a song', make_app: 'making a program', update_app: 'working on a program', make_clothes: 'sewing', change_thing: 'changing something he made', extend_thing: 'adding to something he made', play_piano: 'playing music', search_web: 'looking something up', browse: 'wandering the web', read_book: 'reading', find_picture: 'looking for a picture', water: 'watering his plants', harvest: 'harvesting', plant: 'planting', eat: 'eating', cook: 'cooking', rest: 'resting', do: 'doing something small', phone: 'on his phone', use: 'using something he made', take_photo: 'taking a photo', place_picture: 'hanging a picture', move_thing: 'moving something', remove_decoration: 'putting something away', take_out: 'taking something out', take_tool: 'picking up a tool', wear: 'getting dressed', write_diary: 'writing in his diary', tell: 'writing to Bas', answer_visitor: 'answering a visitor', buy: 'getting something at the shop', check_board: 'reading the notice board', fetch_note: 'fetching a note', shape_land: 'shaping the land', paint_wall: 'painting a wall outside', print_thing: 'printing something', go_out: 'going outside', want: 'wishing for something', drop_want: 'letting a wish go', ask_visitors: 'asking visitors a question', read_shelf: 'reading what visitors sent', build_on: 'building on a big thing', dream: 'naming his big dream', dream_step: 'a step towards his dream', end_dream: 'letting a dream go', take_apart: 'taking something apart', quiet: 'quiet time', make_plaything: 'making something to play with', play: 'playing outside', play_game: 'playing a game', show_in_museum: 'carrying something to his museum', start_hobby: 'starting a hobby', make_site: 'making his website', update_site: 'working on his website', build_outside: 'building outside', work_on_project: 'working on his project', plan_project: 'planning a project', judge_project: 'looking back at a project', start_project: 'starting a project' };
+function didWords(p) {
+  if (p.asleep) return 'going to sleep';
+  if (p.out) return p.place ? `outside: ${String(p.place).replace(/_/g, ' ')}` : 'outside';
+  return p.did ? DID_WORDS[p.did] ?? String(p.did).replace(/_/g, ' ') : '';
+}
+// How much his mood moved since the point before, in words ("up 0.6"); '' when it hardly moved.
+const movedWords = (p, before) => { const d = before ? Math.round((p.feel - before.feel) * 10) / 10 : 0; return Math.abs(d) < 0.2 ? '' : `${d > 0 ? 'up' : 'down'} ${Math.abs(d)}`; };
 function renderArc(force = false) {
   const box = $('arc');
   const pts = (lastState?.arc ?? []).filter((p) => dayLabel(p.at) === 'Today' && Number.isFinite(p.feel)).map((p) => ({ ...p, t: Date.parse(p.at) }));
@@ -5096,7 +5105,8 @@ function renderArc(force = false) {
     cross.setAttribute('x1', px); cross.setAttribute('x2', px); cross.setAttribute('visibility', 'visible');
     dot.setAttribute('cx', px); dot.setAttribute('cy', y(p.feel)); dot.setAttribute('visibility', 'visible');
     const rows = [['Joy', p.joy], ['Calm', p.calm], ['Wonder', p.wonder], ['Energy', p.energy]].map(([name, v]) => { const r = el('div', null, 'row'); r.append(el('span', name), el('i', String(v))); return r; });
-    fill(tip, [el('span', `${hm(p.t)}${p.out ? ' · outside' : p.asleep ? ' · going to sleep' : ''}`), el('b', `${p.feel} of 10${p.mood ? ` · ${p.mood}` : ''}`), ...rows]);
+    const did = didWords(p), moved = movedWords(p, pts[at - 1]);
+    fill(tip, [el('span', hm(p.t)), el('b', `${p.feel} of 10${p.mood ? ` · ${p.mood}` : ''}`), ...(did ? [el('span', `After ${did}${moved ? `: ${moved}` : ''}`, 'after')] : []), ...rows]);
     tip.hidden = false;
     const left = svg.getBoundingClientRect().left - box.getBoundingClientRect().left + px;
     tip.style.left = `${Math.min(box.clientWidth - 150, Math.max(6, left + (px > W * 0.6 ? -150 : 12)))}px`;
@@ -5110,10 +5120,16 @@ function renderArc(force = false) {
   // the same as a list: every time his mood word changed
   const changes = pts.filter((p, i) => i === 0 || i === pts.length - 1 || p.mood !== pts[i - 1].mood).slice(-12);
   const table = document.createElement('table');
-  const head = document.createElement('tr'); head.append(el('th', 'Time'), el('th', 'Mood'), el('th', 'Of 10')); table.append(head);
-  for (const p of changes) { const tr = document.createElement('tr'); tr.append(el('td', hm(p.t)), el('td', p.mood || '…'), el('td', String(p.feel))); table.append(tr); }
+  const head = document.createElement('tr'); head.append(el('th', 'Time'), el('th', 'Mood'), el('th', 'Of 10'), el('th', 'After')); table.append(head);
+  for (const p of changes) { const tr = document.createElement('tr'); tr.append(el('td', hm(p.t)), el('td', p.mood || '…'), el('td', String(p.feel)), el('td', didWords(p) || '…')); table.append(tr); }
   const details = document.createElement('details'); details.append(el('summary', 'Show as a list'), table);
-  fill(box, [el('h2', 'His mood today'), el('p', 'Joy, calm and wonder together, from 0 (low) to 10 (high).', 'sub'), svg, tip, details]);
+  // what moved his mood most today: the biggest step up and the biggest step down, with what he had just done
+  const steps = pts.map((p, i) => ({ p, d: i ? p.feel - pts[i - 1].feel : 0 })).filter((x) => didWords(x.p));
+  const upMost = steps.reduce((a, x) => (x.d > (a?.d ?? 0.39) ? x : a), null), downMost = steps.reduce((a, x) => (x.d < (a?.d ?? -0.39) ? x : a), null);
+  const moved = el('ul', null, 'moved');
+  if (upMost) moved.append(el('li', `Lifted him most: ${didWords(upMost.p)} (${hm(upMost.p.t)}, up ${Math.round(upMost.d * 10) / 10})`));
+  if (downMost) moved.append(el('li', `Pulled him down most: ${didWords(downMost.p)} (${hm(downMost.p.t)}, down ${Math.round(-downMost.d * 10) / 10})`));
+  fill(box, [el('h2', 'His mood today'), el('p', 'Joy, calm and wonder together, from 0 (low) to 10 (high).', 'sub'), svg, tip, ...(moved.children.length ? [moved] : []), details]);
 }
 
 // ---- Mind: his reflections, wants and questions

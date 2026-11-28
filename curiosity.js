@@ -7,6 +7,7 @@
 // 4. Interests fade slowly when he leaves them alone, so new ones get room.
 // Plain code; the only model call is his own answer in the normal brain call.
 import { isHeavy } from './news.js';
+import { dullPage } from './research.js';
 
 export const MAX_SPARKS = 30;
 export const INTEREST_AT = 3; // a topic with this score is an interest
@@ -123,11 +124,19 @@ export async function browse(s, { wiki, read, random = Math.random, now = Date.n
   if (!title && route.kind === 'news') title = route.item.topic;
   if (!title) {
     const r = await wiki('action=query&list=random&rnnamespace=0&rnlimit=5');
-    title = (r.query?.random ?? []).map((x) => x.title).find((t) => !isHeavy(t) && !/^(list of|\d{4} in)/i.test(t)) ?? null;
+    const titles = (r.query?.random ?? []).map((x) => x.title).filter((t) => !isHeavy(t) && !/^(list of|\d{4} in)/i.test(t));
+    title = titles.find((t) => t.split(' ').filter((w) => /^[A-Z]/.test(w)).length < 2 && !/\b\d{4}\b/.test(t)) ?? titles[0] ?? null; // (a title of one capital is mostly a thing; two or more is mostly somebody's name)
   }
   if (!title) return { failed: 'the pages did not load' };
-  const page = await read(title);
+  let page = await read(title);
   if (!page) return { failed: `I could not open the page about ${title}` };
+  // A stranger's biography, a village, a sports season: not what he wanders the web for. He clicks on (twice at most).
+  for (let i = 0; i < 2 && route.kind === 'random' && dullPage(page); i++) {
+    const r = await wiki('action=query&list=random&rnnamespace=0&rnlimit=8');
+    const next = (r.query?.random ?? []).map((x) => x.title).find((t) => !isHeavy(t) && !/^(list of|\d{4} in)/i.test(t) && !/\b\d{4}\b/.test(t) && t.split(' ').filter((w) => /^[A-Z]/.test(w)).length < 2);
+    const other = next ? await read(next) : null;
+    if (other) page = other;
+  }
   const spark = noteSpark(s, { topic: page.title, text: page.text, url: page.url, from: route.kind === 'news' ? 'news' : 'browse', via }, now);
   return { title: page.title, text: clip(page.text, 300), url: page.url, via, from: route.kind, spark };
 }

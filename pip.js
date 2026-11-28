@@ -40,7 +40,7 @@ import { planLand, landLine } from './land.js';
 import { sketchPrompt, sketchSchema, fakeSketch, dryRun, budgetNote, keepWithin } from './sketch.js';
 import { postDrop, sweepDrops, dropLines, fetchJob, learnFrom, takeDeed, findDeed } from './strangers.js';
 import { placeOf } from './web/world.js';
-import { bestHits } from './research.js';
+import { bestHits, searchTerms } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
@@ -910,9 +910,20 @@ async function readArticle(title) {
   if (!page || !page.extract) return null;
   return { title: page.title, url: pageUrl(page.title), text: clip(page.extract, 2400) };
 }
+// Two searches, one list: for the main word alone ("shelf") and for the thing as he described it ("wooden corner
+// shelf"). The whole question ("how to build a small wooden corner shelf") finds pages that only share a word with it.
+async function searchHits(query) {
+  const { core, head } = searchTerms(query);
+  const asks = [...new Set([head, core, String(query ?? '').trim()].filter((q) => q && q.length >= 2))].slice(0, 3);
+  const seen = new Set();
+  const all = [];
+  for (const q of asks) {
+    try { for (const h of (await wikiGet(`action=query&list=search&srlimit=6&srsearch=${encodeURIComponent(q)}`)).query?.search ?? []) if (!seen.has(h.title)) { seen.add(h.title); all.push(h); } } catch (e) { if (!all.length && q === asks.at(-1)) throw e; }
+  }
+  return bestHits(query, all);
+}
 async function lookUp(query) {
-  const found = await wikiGet(`action=query&list=search&srlimit=8&srsearch=${encodeURIComponent(query)}`);
-  const hits = bestHits(query, found.query?.search ?? []); // the best fit first, not just Wikipedia's first
+  const hits = await searchHits(query); // the thing he means first, not just Wikipedia's first for the whole sentence
   if (!hits.length) return null;
   return {
     results: hits.slice(0, 3).map((h) => ({ title: h.title, snippet: clip(plain(h.snippet), 160), url: pageUrl(h.title) })),
@@ -920,8 +931,7 @@ async function lookUp(query) {
   };
 }
 async function readAbout(topic) {
-  const found = await wikiGet(`action=query&list=search&srlimit=6&srsearch=${encodeURIComponent(topic)}`);
-  const hit = bestHits(topic, found.query?.search ?? [])[0];
+  const hit = (await searchHits(topic))[0];
   return hit ? readArticle(hit.title) : null;
 }
 
@@ -1451,7 +1461,7 @@ async function wakeUp() {
     const at = new Date().toISOString();
     state.last = { at, via: 'outside', thought: outing.line, action: 'go_out', details: { place: outing.place }, detail: outing.line, enjoyment: 7, new_idea: null, found: null, away: { place: outing.place, phase: outing.phase, back: outing.back } };
     state.emotion = emotionWord(state);
-    noteArc(state, Date.now(), { out: true });
+    noteArc(state, Date.now(), { out: true, place: String(outing.place ?? '').slice(0, 24) });
     await saveState(state);
     await clearInbox(inbox.names);
     await clearTasks(taskFiles.names);
@@ -2563,7 +2573,7 @@ async function wakeUp() {
     const fresh = addMoments(state, mine, startedAt, INTERVAL_MIN * 60_000, { quiet: privateTick });
     console.log(`🎞️  ${fresh.length} small moments for the live feed`);
   }
-  noteArc(state); // his mood over the day, for the chart on the Today tab (arc.js)
+  noteArc(state, Date.now(), privateTick ? {} : { did: String(steps[0].as ?? steps[0].action ?? '').slice(0, 24) }); // his mood over the day, and what he had just done, for the chart on the Today tab (arc.js)
   if (!state.where) state.pace = { min: INTERVAL_MIN, nextAt: new Date(startedAt + INTERVAL_MIN * 60_000).toISOString() }; // when he wants to think again (loop.js)
   for (const name of markForMuseum(state, startedAt - 1000)) console.log(`🏛️  his room is full: ${name} goes to his museum at the next wake-up`);
   // Curiosity: what caught him (his "spark" answer) grows into interests and hobbies; old interests fade (curiosity.js).
