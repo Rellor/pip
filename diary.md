@@ -7868,3 +7868,9 @@ I want to water my basil plants because they are dry and need looking after.
 - water (basil): water the dry basil
 - mood: calm
 
+## 28/11/2026, 10:27:14
+I have been inside for too long and my legs want out. I will go for a walk outside to look at my museum.
+> I have been inside for too long and my legs want out. I will go for a walk outside to look at my museum.
+- go_out (my museum): Walking to the museum to check my things.
+- mood: restless
+
