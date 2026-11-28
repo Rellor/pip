@@ -1,8 +1,8 @@
 {
   "mood": "calm",
-  "energy": 9.26,
+  "energy": 10,
   "boredom": 0,
-  "loneliness": 1.41,
+  "loneliness": 1.43,
   "interests": [
     "autumn dusk colors",
     "Night sky",
@@ -10489,57 +10489,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-28T12:59:31.370Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 2
-    },
-    "tokens": {
-      "calls": 2,
-      "input": 8316,
-      "output": 171,
-      "models": {
-        "gemini-3.5-flash-lite": 2
-      }
-    },
-    "intervalMin": 8,
-    "thought": "The pond has frozen and my ice skates are ready, so I am going outside to test them.",
-    "inner": "The pond has frozen and my ice skates are ready, so I am going outside to test them.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "play": {
-            "id": "plmx0er1bv",
-            "name": "pair of ice skates",
-            "verb": "skate",
-            "motion": "ride",
-            "place": "pond",
-            "words": "skate my pair of ice skates"
-          }
-        },
-        "thought": "Go try out the ice skates.",
-        "enjoyment": 9,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-28T13:07:36.723Z",
+    "via": "outside",
+    "thought": "I am at the pond in the park: I skate my pair of ice skates.",
     "action": "go_out",
     "details": {
-      "play": {
-        "id": "plmx0er1bv",
-        "name": "pair of ice skates",
-        "verb": "skate",
-        "motion": "ride",
-        "place": "pond",
-        "words": "skate my pair of ice skates"
-      }
+      "place": "pond"
     },
-    "enjoyment": 9,
+    "detail": "I am at the pond in the park: I skate my pair of ice skates.",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "pond",
+      "phase": "there",
+      "back": "2026-11-28T13:45:31.370Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -10981,21 +10946,21 @@
     ]
   },
   "memoryFadeAt": "2026-11-28T12:59:31.378Z",
-  "fullness": 4.5,
+  "fullness": 4.39,
   "freshStartAt": "2026-11-15T09:26:36.400Z",
   "wallPhoto": false,
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 6.04,
-  "joy": 5.63,
-  "calm": 5.65,
+  "wonder": 5.43,
+  "joy": 5.44,
+  "calm": 5.51,
   "emo": {
     "irritated": 0,
     "sad": 0,
-    "excited": 1.2
+    "excited": 0.72
   },
-  "feelAt": "2026-11-28T12:58:08.664Z",
+  "feelAt": "2026-11-28T13:07:36.702Z",
   "lastAte": "2026-11-28T11:16:01.727Z",
   "studio": {
     "songs": [
@@ -11958,12 +11923,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 0.09,
-    "curiosity": 1.59,
+    "creativity": 0.18,
+    "curiosity": 1.67,
     "boredom": 0,
-    "loneliness": 1.41,
+    "loneliness": 1.43,
     "tidiness": 1.6,
-    "at": "2026-11-28T12:58:08.664Z",
+    "at": "2026-11-28T13:07:36.702Z",
     "coziness": 4.4
   },
   "recent": {
@@ -24619,15 +24584,6 @@
   ],
   "arc": [
     {
-      "at": "2026-11-27T08:56:43.810Z",
-      "joy": 4.4,
-      "calm": 5.4,
-      "wonder": 7.4,
-      "energy": 9,
-      "mood": "focused",
-      "feel": 5.7
-    },
-    {
       "at": "2026-11-27T09:01:18.846Z",
       "joy": 5.3,
       "calm": 5.3,
@@ -25946,6 +25902,17 @@
       "mood": "calm",
       "did": "play",
       "feel": 5.8
+    },
+    {
+      "at": "2026-11-28T13:07:36.723Z",
+      "joy": 5.4,
+      "calm": 5.5,
+      "wonder": 5.4,
+      "energy": 10,
+      "mood": "calm",
+      "out": true,
+      "place": "pond",
+      "feel": 5.4
     }
   ],
   "opinions": [
