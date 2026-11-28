@@ -7987,3 +7987,9 @@ My room is full and I am calm, so I want to build a small night sky automaton to
 - decorate (tiny night sky automaton): Build a little simulation of night sky
 - mood: calm
 
+## 28/11/2026, 14:36:51
+I finished my simulation and now I want to fetch the note left outside.
+> I finished my simulation and now I want to fetch the note left outside.
+- go_out: Get the note
+- mood: calm
+
