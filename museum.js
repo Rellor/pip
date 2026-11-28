@@ -15,7 +15,7 @@ const same = (a, b) => clip(a, 80).toLowerCase().replace(/^(my|the|a|an) /, '') 
 
 // One piece on a plinth: what the page needs to show it (its shapes), and what a visitor reads on its card.
 function piece(d, now, from, why) {
-  return { id: d.id, name: d.name, why: clip(d.why, 200), shown: clip(why, 200), parts: d.parts, roomScaled: Boolean(d.roomScaled), uses: (d.uses ?? []).map((u) => ({ label: u.label })).slice(0, 4), createdAt: d.createdAt ?? d.at, shownAt: new Date(now).toISOString(), from };
+  return { id: d.id, name: d.name, why: clip(d.why, 200), shown: clip(why, 200), parts: d.parts, roomScaled: Boolean(d.roomScaled), uses: (d.uses ?? []).map((u) => ({ label: u.label })).slice(0, 4), createdAt: d.createdAt ?? d.at, shownAt: new Date(now).toISOString(), from, ...(d.thinks ? { thinks: d.thinks, thinksAt: d.thinksAt, views: d.views } : {}) };
 }
 // Puts a piece in the museum. When every plinth is taken, the oldest piece goes to the depot.
 function hang(s, p) {

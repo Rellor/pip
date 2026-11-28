@@ -21,6 +21,7 @@ import { canAskVisitors, unreadShelf, pieceWords } from './guests.js';
 import { showable, carriedToday } from './museum.js';
 import { canBuildOn } from './sittings.js';
 import { bigDream } from './dream.js';
+import { takeable } from './views.js';
 import { playthings, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { shopLine, shopOpen, wantsToBuy, canTake } from './shop.js';
 import { goOptions, goLine, wantsOut, gearWish, canGo } from './world.js';
@@ -35,7 +36,7 @@ import { headRests as resting } from './models.js';
 import { canStartHobby, hobbyIdeas } from './curiosity.js';
 
 export const MIN_MOVES = 6;
-export const MAX_MOVES = 10;
+export const MAX_MOVES = 12; // (he has more ways to spend a day now: a wider menu, so looking things up and reading do not fall off it)
 export const ASKS_PER_DAY = 2;
 export const WANTS_MAX = 5; // wants on his list at one time
 const openWants = (s) => (s.asks ?? []).filter((a) => a.status === 'open');
@@ -178,6 +179,8 @@ export const MOVES = [
   { name: 'dream', line: () => 'name my one big dream: something I really want to reach, have or do, that will take me a long time. It stays in front of me from now on. I say why it matters: {what, why}', when: (s) => !bigDream(s), score: (s) => 0.5 + ((s.curious?.interests ?? []).some((i) => i.score >= 6) ? 0.7 : 0) + ((s.pastDreams ?? []).length ? 0 : 0.3) },
   { name: 'dream_step', line: (s) => `do one small thing for my big dream ("${bigDream(s)?.text.slice(0, 60)}") and say what: {what}`, when: (s) => Boolean(bigDream(s)) && !isToday((bigDream(s).steps ?? []).at(-1)?.at, Date.now()), score: () => 1.3 },
   { name: 'end_dream', line: (s) => `my big dream ("${bigDream(s)?.text.slice(0, 60)}") is over: I reached it, or I let it go. I say which and why: {how: "reached" or "let go", why}`, when: (s, n) => Boolean(bigDream(s)) && n - Date.parse(bigDream(s).since) > 2 * 86_400_000, score: () => 0.15 },
+  // He may take apart, throw away or destroy what he made (views.js). It is really gone; a record stays on his Made tab.
+  { name: 'take_apart', line: (s) => `take one of my own things apart for good, because it is not right, or I am done with it, or it makes me laugh to (${names(takeable(s).slice(-5).map((d) => d.name.slice(0, 28)), 5)}). I say why: {name, why}`, when: (s) => takeable(s).length > 0, score: (s) => 0.2 + (roomIsFull(s.decor) ? 0.3 : 0) + ((s.emo?.irritated ?? 0) >= 3.5 ? 0.5 : 0) },
   // Quiet time: doing nothing much, on purpose. It is a real part of his day, not a filler.
   { name: 'quiet', line: () => 'have a quiet moment and do nothing much: sit by the window, lie on the floor and look at the ceiling, listen to the house. I say where and what I notice: {where, what}', when: () => true, score: (s) => 0.9 + ((s.calm ?? 5) < 4.5 ? 0.8 : 0) + ((s.energy ?? 5) < 5 ? 0.6 : 0) + ((s.recent?.moves ?? []).slice(-4).every((m) => m.kind !== 'quiet') ? 0.5 : -0.4) },
   // Things to do that leave nothing behind (play.js): he builds anything he can use outside and says how it is used,

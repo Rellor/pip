@@ -98,3 +98,40 @@ ok('no money: he takes what he needs at the store, a full belly lasts, and he ca
   assert.match(runs[2].did, /I am getting the hang of it now\. I can tell\./);
 }
 ok('his big dream stays in front of him until he reaches it or lets it go; getting better is a joy of its own');
+
+// ---- why he made it, what he thinks of it, and taking things apart
+{
+  const { findMade, setView, takeApart, takeable } = await import('../views.js');
+  const { applyMade } = await import('../maker.js');
+  const { brainPrompt } = await import('../brain.js');
+  const { showInMuseum } = await import('../museum.js');
+  const part = [{ shape: 'box', size: [0.3, 0.3, 0.3], pos: [0, 0.15, 0], rot: [0, 0, 0], color: '#a67' }];
+  // his real reason stays; what the maker wrote about the making is a note beside it
+  const made = applyMade({ action: 'draw', details: { what: 'a map of the night sky', why: 'I want to see where Orion stands above my field.' } }, { name: 'night map', why: 'I added more shapes because the check said it was too empty.', svg: '<svg/>' });
+  assert.deepEqual([made.details.why, made.details.madeNote], ['I want to see where Orion stands above my field.', 'I added more shapes because the check said it was too empty.']);
+  assert.equal(applyMade({ action: 'draw', details: { what: 'x' } }, { name: 'x', why: 'the maker knew why' }).details.why, 'the maker knew why', 'no reason of his own: the maker\'s is used');
+  // what he thinks of it is kept with the thing, and he may change his mind
+  const s = fresh({ art: [{ id: 'a1', name: 'night map', why: 'to see Orion', file: 'made/a1.svg' }], apps: [{ name: 'jumping_frog', title: 'Jumping Frog' }], decor: [{ id: 'd1', name: 'pendulum clock', why: 'for my hobby', parts: part, createdAt: new Date(now).toISOString() }], stored: [], museum: [], playthings: [] });
+  assert.deepEqual([findMade(s, 'the night map').kind, findMade(s, 'Jumping Frog').kind, findMade(s, 'my pendulum clock').kind, findMade(s, 'a boat')], ['drawing', 'program', 'thing', null]);
+  assert.equal(setView(s, 'night map', 'ok', now), null, 'a real sentence, or nothing');
+  setView(s, 'night map', 'Orion came out lopsided. I like him better that way.', now);
+  setView(s, 'night map', 'Seen again: the sky is too tidy. Real skies are messier.', now + 86_400_000);
+  assert.deepEqual([s.art[0].thinks, s.art[0].views.length], ['Seen again: the sky is too tidy. Real skies are messier.', 2]);
+  setView(s, 'pendulum clock', 'It ticks unevenly, which is the only honest thing about it.', now);
+  showInMuseum(s, 'pendulum clock', 'It is my first clock.', now);
+  assert.equal(s.museum[0].thinks, 'It ticks unevenly, which is the only honest thing about it.', 'what he thought goes with it to his museum');
+  // his prompt asks him: right after making it, and when he sees it again
+  const ctx = { soul: 'x', now: 'noon', doing: [], events: [], moves: [{ name: 'do', line: 'x' }], feelings: [], memories: [], projects: [], goals: [], room: [], fresh: [], lessons: [], messages: [], skills: '' };
+  assert.match(brainPrompt({ ...ctx, ownWork: { name: 'night map', what: 'drawing', how: 'draw a new version', why: 'to see Orion' } }), /HOW MY DRAWING TURNED OUT.*I made it because: to see Orion\..*honestly think of it in own_view/s);
+  assert.match(brainPrompt({ ...ctx, ownWork: { name: 'pendulum clock', what: 'thing', again: 'in my museum', why: 'for my hobby', thought: 'It ticks unevenly.' } }), /I SAW MY THING AGAIN \(in my museum\): "pendulum clock"\. I made it because: for my hobby\. What I thought of it before: "It ticks unevenly\."\s+What do I think of it now\?/);
+  assert.equal(toAnswer({ moves: [{ move: 'quiet', details: {} }], reason: 'r', mood: 'calm', own_view: 'Too tidy. I would smudge it.' }).own_view, 'Too tidy. I would smudge it.');
+  // taking apart: with a reason, really gone, and a record stays
+  assert.match(takeApart(s, 'pendulum clock', '', now).failed, /without a reason/);
+  assert.match(takeApart(s, 'a golden throne', 'it annoys me', now).failed, /no thing called/);
+  const g = takeApart(s, 'pendulum clock', 'It never kept time and I am tired of pretending it does.', now).gone;
+  assert.deepEqual([g.name, g.from, g.why, g.thinks, s.museum.length, s.gone.length], ['pendulum clock', 'museum', 'for my hobby', 'It ticks unevenly, which is the only honest thing about it.', 0, 1]);
+  assert.ok(g.parts.length && g.said.startsWith('It never kept time'));
+  assert.equal(Boolean(byName('take_apart').when(fresh({ decor: [{ id: 'x', name: 'stool', parts: part }] }), now)), true);
+  assert.equal(takeable(fresh({ decor: [{ id: 'p', name: 'photo', image: 'photos/p.jpg' }, { id: 'o', name: 'tower', kind: 'outside', parts: part }] })).length, 0, 'not a picture, and not what stands outside');
+}
+ok('every thing keeps why he made it and what he thinks of it; he may take it apart, and a record stays');

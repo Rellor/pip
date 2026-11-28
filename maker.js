@@ -53,7 +53,12 @@ export function applyMade(step, reply, limits = {}) {
   // He chose a place outside when he picked the move ("a lighthouse outside by the pond"): the design goes there, whatever
   // spot the maker wrote down (decided here, because the step is tidied afterwards and only its details stay).
   const where = outsideChoice(step.details?.where ?? outsideIn(step.details?.what), d.where ?? step.details?.where);
-  return { ...step, details: { ...step.details, ...d, ...(where ? { where } : {}), name: d.name ?? step.details?.name ?? step.details?.what }, make: false, made_by_maker: true };
+  // Why he makes it is what HE said when he chose to (his real reason). What the maker wrote about it (often about how
+  // the making went: "I added more shapes because the check said it was too empty") is kept beside it as a note.
+  const own = String(step.details?.why ?? '').trim();
+  const said = String(d.why ?? '').trim();
+  const why = own.length >= 8 ? own : said || own;
+  return { ...step, details: { ...step.details, ...d, ...(where ? { where } : {}), ...(why ? { why } : {}), ...(said && said !== why ? { madeNote: said } : {}), name: d.name ?? step.details?.name ?? step.details?.what }, make: false, made_by_maker: true };
 }
 
 // Songs only use what he has. An instrument he does not own becomes his voice (drums stay drums), and names are matched

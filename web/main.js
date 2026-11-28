@@ -2710,6 +2710,7 @@ function playInfo(p) {
     { heading: 'What he does with it', quote: p.how },
     { heading: 'So far', lines: [p.goes ? `He went out with it ${p.goes} time${p.goes === 1 ? '' : 's'}${p.lastAt ? `, last ${when(p.lastAt)}` : ''}.` : 'It still waits for its first go.', `By now he is ${PLAY_LEVEL(p)}.`], chips: [`${p.verb} it ${PLAY_AT[p.where] ?? 'outside'}`] },
     ...(p.why ? [{ heading: 'Why he wanted it', quote: p.why }] : []),
+    ...thinks(p),
   ] };
 }
 function syncPlay(s) {
@@ -2801,6 +2802,7 @@ town.group.add(museumModels);
 function pieceInfo(p) {
   return { title: p.name, icon: '🏛️', subtitle: `In his museum · made ${when(p.createdAt)}`, image: decorThumb(p, 320), sections: [
     ...(p.why ? [{ heading: 'Why he made it', quote: p.why }] : []),
+    ...thinks(p),
     ...(p.shown ? [{ heading: 'Why it stands here', quote: p.shown }] : []),
     ...(p.uses?.length ? [{ heading: 'What it is for', chips: p.uses.map((u) => u.label) }] : []),
     { lines: [p.from === 'chest' ? `It lay in his chest. Since ${when(p.shownAt)} it stands here for everyone to see.` : p.from === 'room' ? `He carried it here from his room, ${when(p.shownAt)}.` : `His room was full, so it came straight here, ${when(p.shownAt)}.`] },
@@ -2991,7 +2993,7 @@ function decorInfo(d) {
     return { title: d.name, icon: '🔨', subtitle: `Pip is building this · ${d.label}`, sections: [{ lines: [`It is ${Math.round(sitePart(d) * 100)}% built. It grows while he works on it, and stands around ${ready}.`] }, ...(d.why ? [{ heading: 'Why he builds it', quote: `“${d.why}”` }] : [])], refresh: () => decorInfo(d) };
   }
   if (d.stages > 1 && (d.stage ?? d.stages) < d.stages) return { title: d.name, icon: '🔨', subtitle: `Pip is still building this · ${d.label}`, sections: [{ lines: [`Sitting ${d.stage} of ${d.stages} is done: ${d.stage === 1 ? 'only the frame stands' : 'it is getting there'}. He goes on with it when he feels like it.`] }, ...(d.why ? [{ heading: 'Why he builds it', quote: `“${d.why}”` }] : [])] };
-  if (d.art) return { title: d.name, icon: '🎨', subtitle: `A drawing by Pip · ${d.label}`, image: d.image, sections: d.why ? [{ heading: 'Why he drew it', quote: `“${d.why}”` }] : [] };
+  if (d.art) { const art = (lastState?.art ?? []).find((a) => a.id === d.art) ?? d; return { title: d.name, icon: '🎨', subtitle: `A drawing by Pip · ${d.label}`, image: d.image, sections: [...(d.why ? [{ heading: 'Why he drew it', quote: `“${d.why}”` }] : []), ...thinks(art)] }; }
   if (d.print) return { title: d.name, icon: '🖨️', subtitle: `A print from Pip's photo printer · ${d.label}`, image: d.image };
   const pic = (lastState?.pictures || []).find((p) => p.id === d.picture);
   if (d.image) {
@@ -3006,6 +3008,7 @@ function decorInfo(d) {
   const house = isGreenhouse(d);
   const sections = [];
   if (d.why) sections.push({ heading: 'Why he made it', quote: `“${d.why}”` });
+  sections.push(...thinks(d));
   const proj = (lastState?.projects || []).find((p) => (p.versions || []).some((v) => v.ref === d.id));
   const ver = proj?.versions.find((v) => v.ref === d.id);
   const facts = [d.label, proj ? `🧩 ${proj.title} · v${ver.v}${proj.status === 'done' && proj.proud ? ' · he is proud of it' : ''}` : d.project ? `Project: ${d.project}` : '', d.usedAt ? `👆 last used ${when(d.usedAt)}` : ''].filter(Boolean);
@@ -3790,6 +3793,8 @@ function el(tag, text, cls) {
 function fill(node, children) {
   node.replaceChildren(...children);
 }
+// What he thinks of something he made, for its card: his newest view, and when he said it.
+function thinks(x) { return x?.thinks ? [{ heading: `What he thinks of it${x.thinksAt ? ` (${when(x.thinksAt)})` : ''}`, quote: x.thinks }, ...((x.views ?? []).length > 1 ? [{ heading: 'What he thought before', lines: x.views.slice(0, -1).reverse().map((v) => `${when(v.at)}: “${v.text}”`) }] : [])] : [{ heading: 'What he thinks of it', lines: ['He has not said yet. He looks at it again when he sees it.'] }]; }
 function when(iso) {
   const d = new Date(iso);
   const hm = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -4838,21 +4843,23 @@ function madeItems(s) {
   const now = Date.now();
   const add = (x) => { if (x.label && !(Date.parse(x.at) > now)) out.push(x); };
   const why = (t) => (t ? [{ heading: 'Why he made it', quote: t }] : []);
+  const thinksOf = (x) => thinks(x);
   const thing = (d, where) => add({ type: 'thing', icon: '🛠️', img: () => decorThumb(d), label: d.name, sub: where, at: d.createdAt ?? d.at,
-    info: () => ({ title: d.name, icon: '🛠️', subtitle: `Made ${when(d.createdAt ?? d.at)} · ${where}`, image: decorThumb(d, 320), sections: [...why(d.why), ...(d.uses?.length ? [{ heading: 'What it is for', chips: d.uses.map((u) => u.label) }] : [])] }) });
+    info: () => ({ title: d.name, icon: '🛠️', subtitle: `Made ${when(d.createdAt ?? d.at)} · ${where}`, image: decorThumb(d, 320), sections: [...why(d.why), ...thinksOf(d), ...(d.said ? [{ heading: `Why he took it apart (${when(d.goneAt)})`, quote: d.said }] : []), ...(d.uses?.length ? [{ heading: 'What it is for', chips: d.uses.map((u) => u.label) }] : [])] }) });
   for (const d of s.decor ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, d.kind === 'outside' ? (d.readyAt && now < Date.parse(d.readyAt) ? 'being built outside' : 'stands outside') : 'in his room');
   for (const d of s.stored ?? []) if (!d.image && Array.isArray(d.parts) && d.parts.length) thing(d, 'in his chest');
   for (const d of s.playthings ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, `to ${d.verb} outside`);
+  for (const d of s.gone ?? []) if (Array.isArray(d.parts) && d.parts.length) thing({ ...d, createdAt: d.goneAt }, 'taken apart');
   for (const d of s.museum ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'in his museum');
   for (const d of s.depot ?? []) if (Array.isArray(d.parts) && d.parts.length) thing(d, 'in the depot of his museum');
   for (const a of s.gallery ?? s.art ?? []) if (a.file) add({ type: 'drawing', icon: '🎨', img: a.file, label: a.name, sub: a.wall ? 'painted on a wall' : 'a drawing', at: a.at ?? a.createdAt,
-    info: () => ({ title: a.name, icon: '🎨', subtitle: `${a.wall ? 'Painted on a wall' : 'Drawn'} ${when(a.at ?? a.createdAt)}`, image: a.file, sections: why(a.why) }) });
+    info: () => ({ title: a.name, icon: '🎨', subtitle: `${a.wall ? 'Painted on a wall' : 'Drawn'} ${when(a.at ?? a.createdAt)}`, image: a.file, sections: [...why(a.why), ...thinksOf(a)] }) });
   if (s.site?.file) add({ type: 'website', icon: '🌐', label: s.site.title, sub: `his website · version ${s.site.v}`, at: s.site.updatedAt,
     info: () => ({ title: s.site.title, icon: '🌐', subtitle: `His own website · started ${when(s.site.createdAt)} · version ${s.site.v}`, sections: [...why(s.site.why), { heading: 'What he changed last', lines: (s.site.changes ?? []).slice(-4).reverse().map((c) => `Version ${c.v}: ${c.change}`) }, { buttons: [{ label: '🌐 Open his website', run: () => { hideInfo(); openSite(); } }] }] }) });
   for (const a of s.apps ?? []) add({ type: 'program', icon: '💻', label: a.name, sub: a.v > 1 ? `version ${a.v}` : 'a program', at: a.createdAt,
-    info: () => ({ title: a.name, icon: '💻', subtitle: `Written ${when(a.createdAt)}${a.updatedAt && a.updatedAt !== a.createdAt ? ` · changed ${when(a.updatedAt)}` : ''}`, sections: [...why(a.why), { buttons: [{ label: '▶ Open the program', run: () => openApp(a) }] }] }) });
+    info: () => ({ title: a.name, icon: '💻', subtitle: `Written ${when(a.createdAt)}${a.updatedAt && a.updatedAt !== a.createdAt ? ` · changed ${when(a.updatedAt)}` : ''}`, sections: [...why(a.why), ...thinksOf(a), { buttons: [{ label: '▶ Open the program', run: () => openApp(a) }] }] }) });
   for (const r of s.studio?.songs ?? []) add({ type: 'song', icon: '🎵', label: r.name, sub: `${(r.tracks ?? []).length || 1} part${(r.tracks ?? []).length === 1 ? '' : 's'}`, at: r.createdAt,
-    info: () => ({ title: r.name, icon: '🎵', subtitle: `Recorded ${when(r.createdAt)}`, sections: [...why(r.why), { buttons: [{ label: '▶ Listen', run: () => { const song = trackSong({ tempo: r.tempo, tracks: r.tracks }); if (song) playSong(song); } }] }] }) });
+    info: () => ({ title: r.name, icon: '🎵', subtitle: `Recorded ${when(r.createdAt)}`, sections: [...why(r.why), ...thinksOf(r), { buttons: [{ label: '▶ Listen', run: () => { const song = trackSong({ tempo: r.tempo, tracks: r.tracks }); if (song) playSong(song); } }] }] }) });
   for (const p of s.prints ?? []) if (Array.isArray(p.parts) && p.parts.length) { const d = { id: `print-${p.id}`, name: p.name, parts: p.parts, at: p.at }; add({ type: 'print', icon: '🖨️', img: () => decorThumb(d), label: p.name, sub: 'on the shelf of prints', at: p.at,
     info: () => ({ title: p.name, icon: '🖨️', subtitle: `Printed ${when(p.at)} · on the shelf at the print workshop`, image: decorThumb(d, 320), sections: why(p.why) }) }); }
   for (const c of s.wardrobe ?? []) add({ type: 'clothes', icon: '👕', img: () => clothesThumb(c), label: c.name, sub: c.worn ? 'wearing it now' : 'in his wardrobe', at: c.madeAt || c.createdAt,

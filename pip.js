@@ -88,6 +88,7 @@ import { noteArc } from './arc.js';
 import { showInMuseum, markForMuseum, carryToMuseum, museumLines, toMuseum } from './museum.js';
 import { startSittings, buildOn, sittingLines } from './sittings.js';
 import { paceMin } from './pace.js';
+import { findMade, setView, takeApart } from './views.js';
 import { nameDream, dreamStep, endDream, dreamLines } from './dream.js';
 import { makePlaything, findPlaything, playJob, playLines, playGame, noteArrival, nextArrival, arrived, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { askVisitors, closeQuestion, takeAnswer, takeShelf, readShelf, noteReply, visitorLine, guestLines, pieceWords, SHELF_KINDS } from './guests.js';
@@ -214,6 +215,7 @@ const sameText = (a, b) => a.toLowerCase().includes(b.toLowerCase()) || b.toLowe
 // His wants (the list in state.asks). A want needs a reason: at least a few words, and not just the thing again.
 const reasoned = (c) => { const w = String(c?.why ?? '').trim(); return w.length >= 12 && w.split(/\s+/).length >= 3 && w.toLowerCase() !== String(c?.item ?? '').trim().toLowerCase(); };
 // He got something on his wants list by himself (he bought it, or made it): that want has come true.
+const nameOfMade = (x) => x.name ?? x.title ?? '';
 function gotWant(s, name, how, at = new Date().toISOString()) {
   const n = String(name ?? '').trim();
   if (n.length < 3) return null;
@@ -722,6 +724,7 @@ async function cameHome(s, o) {
     const piece = readShelf(s, Date.parse(o.homeAt));
     if (piece) { o.did += ` On the shelf by the door lay a ${pieceWords(piece)}, left there for me. I read it twice.`; o.piece = { id: piece.id, kind: piece.kind, title: piece.title, name: piece.name }; console.log(`📚 read from the shelf: ${pieceWords(piece)}`); }
   }
+  if (o.sawAgain?.name) s.lookBack = { kind: 'thing', name: o.sawAgain.name, again: o.sawAgain.where, at: o.homeAt }; // he stopped at one of his things: at his next thought he says what he thinks of it now (views.js)
   const line = o.wentOn ? `${o.did.trim()} From ${p?.name ?? 'there'} I went straight on, without going home first.` : homeLine(o);
   s.log.push({ at: o.homeAt, action: 'came_home', place: o.place, placeName: p?.name ?? o.place, thought: '', did: o.did, found: o.found.map((f) => ({ name: f.name, emoji: f.emoji })), met: o.met, gift: o.gift, book: o.book ?? null, piece: o.piece ?? null, ...(o.wentOn ? { on: true } : {}), ...(o.played ? { played: o.played } : {}), errand: o.errand ?? null, cut: o.cut, card: o.errand ? null : { place: o.place, at: o.homeAt, weather: o.weather, found: o.found.map((f) => ({ emoji: f.emoji })) } });
   if (!o.errand) { addMemory(s, line, o.found.length || o.met ? 7 : 6, 'memory', o.homeAt); happened(s, line); }
@@ -1181,6 +1184,11 @@ function applyInnerLife(s, r, detail, replying = false) {
     if (d.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `end_dream: ${d.failed}` }; }
     else { const said = d.dream.ended === 'reached' ? `I reached my big dream: ${d.dream.text}. ${d.dream.words}` : `I let my big dream go: ${d.dream.text}. ${d.dream.words}`; addMemory(s, said, 9, 'memory', at); happened(s, said); nudge(s, 'joy', d.dream.ended === 'reached' ? 2.5 : -0.3); console.log(`   🌠 ${said}`); }
   }
+  if (r.action === 'do' && r.as === 'take_apart') { // he takes one of his own things apart: it is gone, a record stays (views.js)
+    const g = takeApart(s, r.details?.name, r.details?.why);
+    if (g.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `take_apart: ${g.failed}` }; console.log(`   ✋ not taken apart: ${g.failed}`); }
+    else { addMemory(s, `I took my ${g.gone.name} apart. ${g.gone.said}`, 6, 'memory', at); console.log(`   🧨 took apart: ${g.gone.name} (${g.gone.said})`); }
+  }
   if (r.action === 'do' && r.as === 'quiet') { nudge(s, 'calm', 0.8); s.energy = Math.min(10, (s.energy ?? 5) + 1); } // quiet time settles him and gives a little energy back
   if (r.action === 'do' && r.as === 'play_game') { // he plays one of the games he wrote (play.js): plain code, no model
     const g = playGame(s, r.details?.name);
@@ -1480,10 +1488,13 @@ async function wakeUp() {
   const lb = state.lookBack;
   state.lookBack = null;
   let ownWork = null;
-  if (lb && Date.now() - Date.parse(lb.at) < 3 * 3_600_000 && !process.env.PIP_NO_PHOTO && !state.last?.sleeping) {
+  if (lb?.again && Date.now() - Date.parse(lb.at) < 3 * 3_600_000 && !state.last?.sleeping) { // he saw one of his things again (in his museum): what does he think of it now?
+    const hit = findMade(state, lb.name);
+    if (hit) ownWork = { name: nameOfMade(hit.item), what: hit.kind, again: lb.again, why: hit.item.why ?? '', thought: hit.item.thinks ?? '' };
+  } else if (lb && Date.now() - Date.parse(lb.at) < 3 * 3_600_000 && !process.env.PIP_NO_PHOTO && !state.last?.sleeping) {
     try {
       const shot = lb.file ? await renderFile(lb.file, 'web', lb.kind === 'app' ? { width: 900, height: 640, wait: 1500 } : {}) : await takePhoto(lb.name, new Date().toISOString(), state, 'web', [], 'close');
-      if (shot.bytes) { images.push({ mime: 'image/jpeg', data: Buffer.from(shot.bytes).toString('base64') }); ownWork = { name: lb.name, what: { drawing: 'drawing', app: 'program', thing: 'thing' }[lb.kind] ?? 'work', how: { drawing: 'draw a new version', app: 'update_app: one new thing or a fix', thing: 'change_thing' }[lb.kind] ?? 'change it' }; console.log(`👀 Pip looks at his ${ownWork.what}: ${lb.name}`); }
+      if (shot.bytes) { images.push({ mime: 'image/jpeg', data: Buffer.from(shot.bytes).toString('base64') }); ownWork = { name: lb.name, why: findMade(state, lb.name)?.item.why ?? '', what: { drawing: 'drawing', app: 'program', thing: 'thing' }[lb.kind] ?? 'work', how: { drawing: 'draw a new version', app: 'update_app: one new thing or a fix', thing: 'change_thing' }[lb.kind] ?? 'change it' }; console.log(`👀 Pip looks at his ${ownWork.what}: ${lb.name}`); }
     } catch (e) { console.error('⚠️  look back:', e.message); }
   }
   for (const p of looking) {
@@ -1544,6 +1555,7 @@ async function wakeUp() {
       answer = { thought: '', inner: '', steps: [], mood_after: state.mood, new_idea: null };
       via = 'fallback';
     }
+    if (ownWork && answer.own_view) { const hit = setView(state, ownWork.name, answer.own_view); if (hit) console.log(`   💬 what he thinks of his ${hit.kind} "${ownWork.name}": ${answer.own_view}`); } // kept with the thing itself, for its card (views.js)
     for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
       const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
       if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); noteReply(state, v); const learned = learnFrom(state, v, a.keep !== false); if (learned) addMemory(state, learned, 6, 'memory', new Date().toISOString()); } // yes to a wish is a promise (neighbours.js), and what he keeps of a traveller's note he has learned (strangers.js)

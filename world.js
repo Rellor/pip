@@ -224,6 +224,7 @@ export function finishOuting(s, now = Date.now()) {
     if (!one) { o.did = 'I walked through my museum. Forty plinths and nothing on them. It echoes. It is waiting for me.'; o.saw = 'my empty museum'; up(s, 'wonder', 0.6); }
     else if (w.thing === 'dust') { o.did = `I dusted the plinths in my museum and set ${one.name} straight. ${pieces.length} thing${pieces.length === 1 ? '' : 's'} of mine stand${pieces.length === 1 ? 's' : ''} there now. Somebody has to look after them, and it is me.`; o.saw = 'my museum, dusted'; up(s, 'calm', 0.8); }
     else { o.did = pick(rnd, [`I walked past my things in my museum and stopped at ${one.name}. I remember making it. I would do one thing differently now, and I am not telling which.`, `I walked through my museum. ${pieces.length} thing${pieces.length === 1 ? '' : 's'} I made, each on its own plinth. I stood longest at ${one.name}.`, `In my museum I looked at ${one.name} as if somebody else had made it. Not bad. Whoever made it had patience.`]); o.saw = `${one.name} in my museum`; up(s, 'joy', 0.9); }
+    if (one) o.sawAgain = { name: one.name, where: 'in my museum' }; // he may think something new of it (views.js)
     find(false);
     up(s, 'calm', 0.6); up(s, 'joy', 0.5); up(s, 'boredom', -1.5); up(s, 'energy', -0.5);
   } else if (p.key === 'stone') { // the green stone, far out in the grass
