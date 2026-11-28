@@ -51,25 +51,27 @@ ok('nobody is angry: a wish he does not take just fades');
 
 // ---- the shop
 assert.ok(shopOpen(noon) && shopOpen(noon + 9 * 3_600_000), 'the grocery store is always open');
-assert.match(buy(s, 'toolbox', noon).failed, /costs 8 coins and I have 3\. I earn coins when I make what a note on the notice board asks for \(check_board\), and on market day/);
 const b = buy(s, 'clay', noon);
-assert.deepEqual([b.bought, b.price, b.left], ['clay', 3, 0]);
+assert.deepEqual([b.bought, b.price], ['clay', undefined], 'nothing costs anything');
 assert.ok(s.tools.some((t) => /clay/.test(t.name)));
 assert.match(buy(s, 'a flying carpet', noon).failed, /does not have/);
-s.coins = 20;
 assert.ok(buy(s, 'tomato seeds', noon).bought && s.garden.seeds.some((x) => /tomato/.test(x.name)));
-assert.ok(buy(s, 'kalimba', noon).bought && s.tools.some((t) => /kalimba/.test(`${t.name} ${t.kind}`)), 'after saving up: an instrument of his own');
+assert.ok(buy(s, 'kalimba', noon).bought && s.tools.some((t) => /kalimba/.test(`${t.name} ${t.kind}`)), 'an instrument of his own');
 assert.ok(!shopList(s).some((c) => c.item === 'kalimba'), 'what he owns is not offered again');
-assert.ok(shopLine(s).length < 120 && CATALOGUE.length > 20);
-ok('the grocery store: prices, and real things in his bag');
+assert.ok(buy(s, 'bread', noon).bought);
+assert.match(buy(s, 'eggs', noon).failed, /took 4 things from the store today already/, 'a few things a day: it stays something he goes and does');
+assert.ok(buy(s, 'eggs', noon + 30 * 3_600_000).bought, 'the next day he can fetch things again');
+assert.ok(shopLine(s).length < 120 && !/\d/.test(shopLine(s)) && CATALOGUE.length > 20, 'no prices on the list');
+assert.equal(s.coins === undefined || s.coins === 3, true, 'the store never touches coins');
+ok('the grocery store: no money, a few things a day, and real things in his bag');
 
 const live = JSON.parse(fs.readFileSync(new URL('../web/state.json', import.meta.url), 'utf8'));
 delete live.body; delete live.recent; delete live.today; delete live.tired; delete live.resting;
 tickBody(live);
 live.coins = 5;
 const line = availableMoves(live, { now: noon, random: () => 0.99 }).find((m) => m.name === 'buy')?.line ?? '';
-assert.ok(line === '' || (/I have 5/.test(line) && line.length < 240), line);
-ok('the buy move is short and says what he has');
+assert.ok(line === '' || (!/coin|I have 5|\bcosts? \d/.test(line) && line.length < 240), line);
+ok('the buy move is short and has no money in it');
 
 // ---- the storyteller
 const t = fresh();
@@ -81,7 +83,8 @@ assert.deepEqual(storyTick(t, noon + 3_600_000), [], 'not again within hours');
 const second = storyTick(t, noon + 6 * 3_600_000);
 assert.equal(second.length, 1);
 assert.notEqual(second[0].key, first[0].key, 'not the same scene twice');
-assert.deepEqual(storyTick(t, noon + 12 * 3_600_000 - 60_000 * 61), [], 'at most two small things a day');
+for (let i = 0; i < 12; i++) storyTick(t, noon + 6 * 3_600_000 + (i + 1) * 31 * 60_000); // (the rest of that evening)
+assert.ok(t.teller.smallToday <= 5, `a handful of small things a day at most: ${t.teller.smallToday}`);
 ok('small things happen with a rhythm: hours apart, two a day at most, never the same');
 
 const m = fresh();
@@ -89,8 +92,8 @@ m.art = [{ name: 'a', createdAt: new Date(noon).toISOString() }, { name: 'b', cr
 const saturday = Date.parse('2026-11-28T11:00:00Z');
 const market = storyTick(m, saturday);
 assert.equal(market[0].key, 'market');
-assert.match(market[0].text, /^It is market day on the square\. .* I sold 2 small prints: 2 coins\. I have 2 coins now\.$/);
-assert.equal(m.coins, 2);
+assert.match(market[0].text, /^It is market day on the square\. .* people stopped to look.*Nothing is sold here: nothing costs anything\./);
+assert.equal(m.coins, undefined, 'market day pays nothing: there is no money');
 assert.equal(storyTick(m, saturday + 3 * 3_600_000).filter((e) => e.big).length, 0, 'after something big comes rest');
 // the things that needed a neighbour do not happen any more: no puzzle of the week, no parcel from a friend
 const k = fresh();
@@ -112,7 +115,7 @@ ok('big things: market day on the square, with rest after it; no puzzle and no p
     for (const e of storyTick(y, t)) seen.set(e.key, e.text);
   }
   const all = [...seen.values()].join('\n');
-  assert.ok(seen.size >= 14 && seen.has('market') && [...seen.keys()].filter((key) => key.startsWith('street:')).length === 10, [...seen.keys()].join(', '));
+  assert.ok(seen.size >= 14 && seen.has('market') && [...seen.keys()].filter((key) => key.startsWith('street:')).length === 25, [...seen.keys()].join(', '));
   assert.ok(!FIVE.test(all) && !/neighbou?r|bakery|my street|the street|\broad\b|pavement|parcel|puzzle of the week/i.test(all), all);
   assert.ok(y.teller.log.every((e) => !FIVE.test(e.text)) && y.curious.sparks.every((x) => !FIVE.test(`${x.topic} ${x.text}`)));
   assert.ok((y.wishes ?? []).length === 0, 'the storyteller pins no wishes');

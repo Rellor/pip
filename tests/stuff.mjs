@@ -1,4 +1,4 @@
-// Not a room full of small things, but no limits either: he may make what he likes. The game only steers. His urge to
+// Not a room full of small things. The game steers (this file); when his room is full, what he makes goes to his museum (tests/full.mjs). His urge to
 // make (body.js: it grows by the hour and drops when he has made something) decides how inviting making is, a room with
 // plenty of things pulls a little less, and using or improving what he has, his hobby and going out pull more.
 import assert from 'node:assert/strict';
@@ -18,19 +18,19 @@ const part = [{ shape: 'box', size: [0.3, 0.3, 0.3], pos: [0, 0.15, 0], rot: [0,
 const thing = (i, more = {}) => ({ id: `d${i}`, name: `thing number ${i}`, parts: part, pos: [(i % 6) - 3, 0, Math.floor(i / 6) - 2], zone: 'floor', kind: 'floor', createdAt: iso(now - (5 + i) * DAY), uses: [{ label: 'look at it', text: 'x' }], ...more });
 const fresh = (n, urge = 5, more = {}) => ({ energy: 8, fullness: 8, joy: 5, calm: 5, wonder: 5, boredom: 4, body: { creativity: urge, curiosity: 5, boredom: 4, loneliness: 3, tidiness: 5, coziness: 6 }, decor: Array.from({ length: n }, (_, i) => thing(i)), stored: [], tools: [], pantry: [], garden: { plots: [], seeds: [] }, projects: [], log: [], studio: { songs: [] }, art: [], apps: [], wardrobe: [], pictures: [], found: [], moves: [], cookedAt: [], asks: [], outings: [{ id: 'o1', place: 'pond', leftAt: iso(now - 2 * HOUR), homeAt: iso(now - HOUR) }], today: { done: {} }, curious: { sparks: [], interests: [] }, ...more });
 
-// ---- nothing is forbidden
+// ---- his room: plenty is a nudge; full means the museum (tests/full.mjs)
 {
-  assert.equal(MAX_PER_DAY, 3, 'three new things a day, as before');
+  assert.equal(MAX_PER_DAY, 12);
   assert.equal(MAX_OUTSIDE, 40);
-  const full = fresh(ROOM_PLENTY + 4, 8, { decor: [...Array.from({ length: ROOM_PLENTY + 4 }, (_, i) => thing(i)), { id: 'p1', name: 'a photo', image: 'photos/p1.jpg' }, thing(90, { kind: 'outside', name: 'tower outside' })] });
-  assert.equal(roomThings(full.decor).length, ROOM_PLENTY + 4, 'pictures and what stands outside are not things in his room');
-  assert.ok(roomHasPlenty(full.decor) && !roomHasPlenty(fresh(5).decor));
-  assert.equal(Boolean(byName('decorate').when(full, now)), true, 'he may still make a new thing for a full room');
-  assert.deepEqual(preflight(full, [{ action: 'decorate', details: { what: 'a small stool' } }], now), []);
-  assert.equal(dayLimits(full, now).decorate.max, 3);
+  const many = fresh(ROOM_PLENTY + 4, 8, { decor: [...Array.from({ length: ROOM_PLENTY + 4 }, (_, i) => thing(i)), { id: 'p1', name: 'a photo', image: 'photos/p1.jpg' }, thing(90, { kind: 'outside', name: 'tower outside' })] });
+  assert.equal(roomThings(many.decor).length, ROOM_PLENTY + 4, 'pictures and what stands outside are not things in his room');
+  assert.ok(roomHasPlenty(many.decor) && !roomHasPlenty(fresh(5).decor));
+  assert.equal(Boolean(byName('decorate').when(many, now)), true, 'with plenty, but not full, he may still make a new thing');
+  assert.deepEqual(preflight(many, [{ action: 'decorate', details: { what: 'a small stool' } }], now), []);
+  assert.equal(dayLimits(many, now).decorate.max, 12);
   assert.equal(Boolean(byName('build_outside').when(fresh(3, 5, { decor: [thing(1, { kind: 'outside', createdAt: iso(now - 20 * HOUR) })] }), now)), true, 'and build outside the day after he built there');
 }
-ok('no limits on making: three things a day, also in a full room');
+ok('a room with plenty still takes a new thing; in a full room it goes to his museum (tests/full.mjs)');
 
 // ---- his urge to make steers
 {

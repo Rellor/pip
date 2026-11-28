@@ -4,7 +4,7 @@
 
 export const MAX_APP_BYTES = 120_000; // room for a game that grows ticket by ticket (with small edits it never has to be written in one go)
 export const MAX_APPS = 12;
-export const MAX_APPS_PER_DAY = 2;
+export const MAX_APPS_PER_DAY = 6;
 
 // Returns the cleaned html or null.
 export function cleanApp(raw) {

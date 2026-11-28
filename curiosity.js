@@ -7,6 +7,7 @@
 // 4. Interests fade slowly when he leaves them alone, so new ones get room.
 // Plain code; the only model call is his own answer in the normal brain call.
 import { isHeavy } from './news.js';
+import { dullPage } from './research.js';
 
 export const MAX_SPARKS = 30;
 export const INTEREST_AT = 3; // a topic with this score is an interest
@@ -15,6 +16,7 @@ export const MASTER_AFTER = 12; // a hobby he has done this many times is someth
 export const MAX_BROWSE_PER_DAY = 8;
 const FADE_PER_DAY = 0.3;
 const DAY = 86_400_000;
+const dayKey = (when) => new Date(when).toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }); // his calendar day
 const LOVE = { love: 3, like: 1.5, meh: -0.5, dislike: -1.5, doubt: -0.3 };
 const clip = (t, n) => { const x = String(t ?? '').replace(/\s+/g, ' ').trim(); return x.length <= n ? x : `${x.slice(0, n).replace(/\s+\S*$/, '')}…`; };
 const key = (t) => String(t ?? '').toLowerCase().replace(/\([^)]*\)/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -122,11 +124,19 @@ export async function browse(s, { wiki, read, random = Math.random, now = Date.n
   if (!title && route.kind === 'news') title = route.item.topic;
   if (!title) {
     const r = await wiki('action=query&list=random&rnnamespace=0&rnlimit=5');
-    title = (r.query?.random ?? []).map((x) => x.title).find((t) => !isHeavy(t) && !/^(list of|\d{4} in)/i.test(t)) ?? null;
+    const titles = (r.query?.random ?? []).map((x) => x.title).filter((t) => !isHeavy(t) && !/^(list of|\d{4} in)/i.test(t));
+    title = titles.find((t) => t.split(' ').filter((w) => /^[A-Z]/.test(w)).length < 2 && !/\b\d{4}\b/.test(t)) ?? titles[0] ?? null; // (a title of one capital is mostly a thing; two or more is mostly somebody's name)
   }
   if (!title) return { failed: 'the pages did not load' };
-  const page = await read(title);
+  let page = await read(title);
   if (!page) return { failed: `I could not open the page about ${title}` };
+  // A stranger's biography, a village, a sports season: not what he wanders the web for. He clicks on (twice at most).
+  for (let i = 0; i < 2 && route.kind === 'random' && dullPage(page); i++) {
+    const r = await wiki('action=query&list=random&rnnamespace=0&rnlimit=8');
+    const next = (r.query?.random ?? []).map((x) => x.title).find((t) => !isHeavy(t) && !/^(list of|\d{4} in)/i.test(t) && !/\b\d{4}\b/.test(t) && t.split(' ').filter((w) => /^[A-Z]/.test(w)).length < 2);
+    const other = next ? await read(next) : null;
+    if (other) page = other;
+  }
   const spark = noteSpark(s, { topic: page.title, text: page.text, url: page.url, from: route.kind === 'news' ? 'news' : 'browse', via }, now);
   return { title: page.title, text: clip(page.text, 300), url: page.url, via, from: route.kind, spark };
 }
@@ -151,21 +161,24 @@ export function curiosityLines(s, projects = [], now = Date.now()) {
 // ---- A hobby of his own idea. Until now a hobby could only grow out of something he happened to read. Now he can also
 // simply think: "I want to start graffiti" (the start_hobby move). He has to say why. From then on it is a hobby he is
 // trying: he hears it when he thinks, with the move that would be a way to do it, and every time he really does
-// something for it, that counts (practice). Three times and it is a hobby for real; often enough and he has mastered it.
+// something for it, that counts (practice): once a day at most, because coming back to it on another day is what makes a
+// hobby. Six days and it is a hobby for real; often enough and he has mastered it.
 // An idea he never tries is let go after a few days, like anyone's.
-export const HOBBY_IDEA_EVERY_DAYS = 3; // a new idea at most this often
+export const HOBBY_IDEA_EVERY_DAYS = 3; // a new idea at most this often (many small things catch him, few become a hobby)
 export const HOBBIES_TRYING_MAX = 2; // ideas he has not made real yet, at one time
-export const HOBBY_REAL_AFTER = 3; // tried this many times: it is a real hobby
+export const HOBBY_REAL_AFTER = 6; // done on this many different days: it is a real hobby (it grows over weeks, like a person's)
+export const HOBBY_STALE_DAYS = 10; // a real hobby he has not touched for this long: he notices, and says he is done with it
 export const HOBBY_DROP_DAYS = 4; // never tried in this many days: he lets the idea go
 // Which of his moves are a way to do a hobby, by the words in it.
 const HOBBY_MOVES = [
+  [/bik(e|ing)|cycl|kite|plane|aircraft|glider|balloon|sail|boat|skat|scooter|sled|juggl|unicycle|swing|fishing|\bball\b|football|frisbee|disc\b|kart|stilts|hoop|yo-?yo|skipping|camp|tent|chess|marbles|card games|hammock|drumming outside/, ['play', 'make_plaything']],
   [/graffiti|mural|street art|spray|tag(ging)?s?\b|wall paint/, ['paint_wall']],
   [/garden|plant|grow(ing)?|herb|vegetable|tomato|flower|botan/, ['plant', 'water', 'harvest']],
   [/music|song|sing|flute|guitar|piano|violin|melod|compos|drum|band/, ['play_piano', 'record_song', 'compose']],
   [/draw|sketch|paint|watercolou?r|illustrat|comic|cartoon|portrait/, ['draw', 'paint_wall']],
   [/cook|bak(e|ing)|recipe|soup|bread|kitchen|food/, ['cook']],
   [/cod(e|ing)|program|game|app\b|software|website|web ?design|pixel/, ['make_app', 'update_app', 'make_site', 'update_site']],
-  [/build|carpent|wood|sculpt|potter|clay|ceramic|craft|furniture|architect|model|invent|machine|clock|whittl|carv/, ['decorate', 'build_outside', 'change_thing', 'extend_thing', 'print_thing']],
+  [/build|carpent|wood|sculpt|potter|clay|ceramic|craft|furniture|architect|model|invent|machine|clock|whittl|carv/, ['extend_thing', 'change_thing', 'build_outside', 'print_thing', 'decorate']], // (adding to a piece he has comes first; a new piece is the last way, and it can go to his museum)
   [/sew|knit|cloth|fashion|costume|hat\b|tailor|weav/, ['make_clothes']],
   [/danc|ballet|gymnast|juggl|acrobat/, ['make_move']],
   [/photo|camera|film/, ['take_photo']],
@@ -175,13 +188,13 @@ const HOBBY_MOVES = [
   [/\bread(ing)?\b|\bbooks?\b|poe(m|try)|\bwrit|stor(y|ies)|diary|journal|histor|philosoph|language/, ['read_book', 'write_diary', 'search_web']],
 ];
 export const hobbyMoves = (topic) => { const t = key(topic); const out = HOBBY_MOVES.filter(([re]) => re.test(t)).flatMap(([, m]) => m); return [...new Set(out.length ? out : ['search_web', 'read_book'])]; }; // nothing fits: he starts by finding out about it
-const MOVE_WORDS = { paint_wall: 'paint a wall', plant: 'plant something', water: 'water my plants', harvest: 'harvest', play_piano: 'play music', record_song: 'record a song', compose: 'compose', draw: 'draw', cook: 'cook', make_app: 'write a program', update_app: 'work on a program', make_site: 'make my website', update_site: 'work on my website', decorate: 'make a thing', build_outside: 'build outside', change_thing: 'change a thing', extend_thing: 'add to a thing', print_thing: 'print a model', make_clothes: 'make clothes', make_move: 'design a move', take_photo: 'take a photo', shape_land: 'shape the land', go_out: 'go outside', read_book: 'read about it', write_diary: 'write', search_web: 'look it up' };
+const MOVE_WORDS = { paint_wall: 'paint a wall', plant: 'plant something', water: 'water my plants', harvest: 'harvest', play_piano: 'play music', record_song: 'record a song', compose: 'compose', draw: 'draw', cook: 'cook', make_app: 'write a program', update_app: 'work on a program', make_site: 'make my website', update_site: 'work on my website', decorate: 'make a thing', play: 'go out and do it', make_plaything: 'build what I need for it', build_outside: 'build outside', change_thing: 'make a piece of mine better', extend_thing: 'add to a piece of mine', print_thing: 'print a model', make_clothes: 'make clothes', make_move: 'design a move', take_photo: 'take a photo', shape_land: 'shape the land', go_out: 'go outside', read_book: 'read about it', write_diary: 'write', search_web: 'look it up' };
 const ownHobbies = (s) => ensureCurious(s).interests.filter((i) => i.own);
 export const tryingHobbies = (s) => ownHobbies(s).filter((i) => (i.practice ?? 0) < HOBBY_REAL_AFTER);
 // May he think of a new hobby now? (not too often, and not while two ideas are still waiting to be tried)
 export const canStartHobby = (s, now = Date.now()) => tryingHobbies(s).length < HOBBIES_TRYING_MAX && (!s.curious?.hobbyIdeaAt || now - Date.parse(s.curious.hobbyIdeaAt) >= HOBBY_IDEA_EVERY_DAYS * DAY);
 // A few ideas that fit his world, different every day (he can also think of anything else).
-const HOBBY_IDEAS = ['graffiti on the bare walls', 'growing tomatoes', 'bird watching at the pond', 'stargazing by the green stone', 'building big things on my field', 'writing songs for my flute', 'baking bread', 'carving wood', 'making kites', 'collecting stones', 'drawing a map of my village', 'writing poems', 'land art with hills and holes', 'photography', 'making small games', 'pottery', 'making hats', 'inventing dances', 'building clocks', 'drawing comics'];
+const HOBBY_IDEAS = ['graffiti on the bare walls', 'growing tomatoes', 'bird watching at the pond', 'stargazing by the green stone', 'building big things on my field', 'writing songs for my flute', 'baking bread', 'carving wood', 'making kites', 'collecting stones', 'drawing a map of my village', 'writing poems', 'land art with hills and holes', 'photography', 'making small games', 'pottery', 'making hats', 'inventing dances', 'building clocks', 'drawing comics', 'writing a book, a page a day', 'keeping a weather diary', 'cooking soups', 'making masks', 'drawing flags for my village', 'star maps', 'making beats', 'building bridges', 'shadow puppets', 'collecting words I like', 'painting stones', 'whistling tunes', 'making model trains', 'a museum guide for my own museum', 'sewing a coat', 'growing herbs for tea'];
 export function hobbyIdeas(s, now = Date.now(), n = 3) {
   const have = ensureCurious(s).interests.map((i) => key(i.topic));
   const free = HOBBY_IDEAS.filter((h) => !have.some((k) => k && key(h).split(' ').some((w) => w.length > 4 && k.includes(w))));
@@ -214,6 +227,8 @@ export function practiseHobby(s, entries, now = Date.now()) {
     const words = key(h.topic).split(' ').filter((w) => w.length > 3);
     const did = (entries ?? []).find((e) => !e.failed && !e.fallback && e.as !== 'start_hobby' && ((h.moves ?? []).includes(e.as ?? e.action) || (h.moves ?? []).includes(e.action) || words.some((w) => key(`${e.name ?? ''} ${e.what ?? ''} ${e.query ?? ''} ${e.topic ?? ''}`).includes(w))));
     if (!did) continue;
+    h.goes = (h.goes ?? h.practice ?? 0) + 1; // every time he did it
+    if (h.practisedAt && dayKey(h.practisedAt) === dayKey(now)) { h.last = new Date(now).toISOString(); continue; } // he did it today already: a hobby grows by the days he comes back to it
     const was = h.practice ?? 0;
     h.practice = was + 1;
     h.practisedAt = new Date(now).toISOString();
@@ -222,6 +237,14 @@ export function practiseHobby(s, entries, now = Date.now()) {
     out.push({ hobby: h, became: was < HOBBY_REAL_AFTER && h.practice >= HOBBY_REAL_AFTER ? 'real' : was < MASTER_AFTER && h.practice >= MASTER_AFTER ? 'mastered' : null });
   }
   return out;
+}
+// A hobby of his own that he did, and then did not touch for a long time: he notices it himself, and lets it go. Returns the ones that went
+// (he says so: pip.js writes it into his day and his memory).
+export function letGoStale(s, now = Date.now()) {
+  const c = ensureCurious(s);
+  const gone = c.interests.filter((i) => i.own && (i.practice ?? 0) > 0 && now - Date.parse(i.practisedAt ?? i.last ?? i.since) >= HOBBY_STALE_DAYS * DAY);
+  if (gone.length) { c.interests = c.interests.filter((i) => !gone.includes(i)); c.pastHobbies = [...(c.pastHobbies ?? []), ...gone.map((i) => ({ topic: i.topic, days: i.practice, since: i.ideaAt ?? i.since, goneAt: new Date(now).toISOString() }))].slice(-12); }
+  return gone;
 }
 // An idea he never tried is let go. Returns the hobbies that went (for a memory).
 export function dropUntriedHobbies(s, now = Date.now()) {
@@ -236,6 +259,7 @@ export function hobbyLines(s, offered = [], now = Date.now()) {
     const n = h.practice ?? 0;
     const ways = (h.moves ?? []).filter((m) => !offered.length || offered.includes(m)).slice(0, 3).map((m) => `${MOVE_WORDS[m] ?? m.replace(/_/g, ' ')} (${m})`);
     const days = Math.max(0, Math.floor((now - Date.parse(h.ideaAt ?? h.since)) / DAY));
-    return `${n >= HOBBY_REAL_AFTER ? `My hobby: ${h.topic} (I did it ${n} times)` : `My own idea: I want to try ${h.topic} as a hobby${h.why ? ` (${h.why})` : ''}. ${n ? `I tried it ${n} time${n === 1 ? '' : 's'}` : `I have not tried it yet${days ? `, and it has been ${days} day${days === 1 ? '' : 's'}` : ''}`}`}.${ways.length ? ` A way to do it now: ${ways.join(', ')}.` : ' I can find out how it is done first (search_web).'}`;
+    const onePiece = (h.moves ?? []).includes('extend_thing') ? ' For this hobby I like to keep working on one piece (I add to it, I make it better) or build big outside, more than a new small thing every time.' : '';
+    return `${n >= HOBBY_REAL_AFTER ? `My hobby: ${h.topic} (I did it on ${n} different days)` : `My own idea: I want to try ${h.topic} as a hobby${h.why ? ` (${h.why})` : ''}. ${n ? `I did it on ${n} day${n === 1 ? '' : 's'} so far (a hobby is something I come back to on other days)` : `I have not tried it yet${days ? `, and it has been ${days} day${days === 1 ? '' : 's'}` : ''}`}`}.${ways.length ? ` A way to do it now: ${ways.join(', ')}.` : ' I can find out how it is done first (search_web).'}${onePiece}`;
   });
 }

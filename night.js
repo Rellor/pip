@@ -12,13 +12,26 @@ const top = (obj, n = 3, sign = 1) => Object.entries(obj ?? {}).filter(([, v]) =
 const NOT_MUCH = ['walk_to', 'rest', 'eat'];
 
 // During the day: how much each move lifted (or lowered) joy + wonder + calm.
-export function noteLift(s, actions, before, after) {
+// `by` (when given): how much each feeling moved, { joy, wonder, calm }. It is kept per move (s.feels), so a belief can
+// say what a thing does to him ("settles me", "makes me glad", "wakes me up"), not only that it lifts him.
+export function noteLift(s, actions, before, after, by = null) {
   const real = actions.filter((a) => a !== 'walk_to');
   if (!real.length || !s.today) return;
   const d = (after - before) / real.length;
   s.today.lift ??= {};
   for (const a of real) s.today.lift[a] = Math.round(((s.today.lift[a] ?? 0) + d) * 100) / 100;
+  if (!by) return;
+  s.feels ??= {};
+  for (const a of real) {
+    const f = (s.feels[a] ??= { joy: 0, wonder: 0, calm: 0 });
+    for (const k of ['joy', 'wonder', 'calm']) f[k] = Math.round((f[k] * 0.92 + (Number(by[k]) || 0) / real.length) * 100) / 100; // old days fade slowly
+  }
 }
+export const feelParts = (s) => ({ joy: s.joy ?? 5, wonder: s.wonder ?? 5, calm: s.calm ?? 5 });
+export const feelDiff = (a, b) => ({ joy: b.joy - a.joy, wonder: b.wonder - a.wonder, calm: b.calm - a.calm });
+// In his words: what a thing that lifts him does to him most.
+const DOES = { joy: 'makes me glad', calm: 'settles me', wonder: 'wakes me up' };
+const doesWhat = (s, action) => { const f = s.feels?.[action]; if (!f) return 'lifts me'; const [k, v] = Object.entries(f).sort((x, y) => y[1] - x[1])[0]; return v > 0.15 ? DOES[k] : 'lifts me'; };
 export const feelSum = (s) => (s.joy ?? 5) + (s.wonder ?? 5) + (s.calm ?? 5);
 
 // The day in a few lists. Each entry becomes a "sign" key like lifted:play_piano or mood:peaceful.
@@ -110,7 +123,7 @@ export function applySleep(s, reply, now = Date.now()) {
 // ---- Beliefs: what he has learned about himself, counted by the game from his days (no model). Each day says which
 // kinds of things made him feel better or worse (daySummary); something that did so on three days or more, and nearly
 // always the same way, is a belief, with the number of days as its evidence.
-const DOING = { play_piano: 'Playing music', record_song: 'Recording a song', compose: 'Writing music', draw: 'Drawing', decorate: 'Making things', go_out: 'Going outside', search_web: 'Looking things up', read_book: 'Reading', browse: 'Browsing the web', cook: 'Cooking', eat: 'Eating', write_diary: 'Writing in my diary', rest: 'Resting', take_photo: 'Taking photos', make_app: 'Making programs', update_app: 'Working on my programs', water: 'Looking after my plants', plant: 'Planting', harvest: 'Harvesting', move_thing: 'Moving my things around', do: 'Small things around the house', buy: 'Shopping', answer_visitor: 'Writing back to people', make_clothes: 'Making clothes', blueprint: 'Planning how to make something' };
+const DOING = { play_piano: 'Playing music', record_song: 'Recording a song', compose: 'Writing music', draw: 'Drawing', decorate: 'Making things', go_out: 'Going outside', search_web: 'Looking things up', read_book: 'Reading', browse: 'Browsing the web', cook: 'Cooking', eat: 'Eating', write_diary: 'Writing in my diary', rest: 'Resting', take_photo: 'Taking photos', make_app: 'Making programs', update_app: 'Working on my programs', water: 'Looking after my plants', plant: 'Planting', harvest: 'Harvesting', move_thing: 'Moving my things around', do: 'Small things around the house', buy: 'Shopping', answer_visitor: 'Writing back to people', make_clothes: 'Making clothes', blueprint: 'Planning how to make something', change_thing: 'Changing something I made', extend_thing: 'Adding to something I made', revise_song: 'Working on a song', play: 'Playing outside', play_game: 'Playing a game', quiet: 'Quiet time', build_on: 'Building on a big thing', build_outside: 'Building outside', paint_wall: 'Painting a wall outside', print_thing: 'Printing things', check_board: 'Reading the notice board', show_in_museum: 'Carrying things to my museum', take_apart: 'Taking things apart', make_plaything: 'Making something to play with', dream_step: 'Working on my dream', use: 'Using what I made', phone: 'Being on my phone', tell: 'Writing to Bas', make_site: 'Making my website', update_site: 'Working on my website', remove_decoration: 'Putting things away', shape_land: 'Shaping the land', read_shelf: 'Reading what visitors sent' };
 export const BELIEF_DAYS = 3;
 export function beliefs(s) {
   const tally = {};
@@ -123,7 +136,7 @@ export function beliefs(s) {
     .filter((b) => b.days >= BELIEF_DAYS && b.days / b.of >= 0.7)
     .sort((a, b) => b.days - a.days)
     .slice(0, 8)
-    .map((b) => ({ ...b, text: `${DOING[b.action] ?? `${b.action.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())}`} ${b.lifts ? 'lifts me' : 'wears me down'}` }));
+    .map((b) => ({ ...b, text: `${DOING[b.action] ?? `${b.action.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase())}`} ${b.lifts ? doesWhat(s, b.action) : 'wears me down'}` }));
 }
 // For the brain: the two he is surest of.
 export const beliefLines = (s) => (s.beliefs ?? []).slice(0, 2).map((b) => `Something I know about myself by now: ${b.text.charAt(0).toLowerCase()}${b.text.slice(1)} (it did on ${b.days} of my days).`);

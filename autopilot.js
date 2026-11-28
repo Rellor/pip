@@ -2,6 +2,7 @@
 // The brain is woken only when: his queued plan is done, Bas wrote, something new happened
 // (a gift, a finished project, a new task, a failed move), he just woke up, or 30 minutes passed without a decision.
 export const DECIDE_EVERY_MIN = 30;
+export const PLAN_LASTS_MIN = 150; // a plan with steps left is kept this long
 import { goOptions, hoursInside, CURFEW } from './world.js';
 import { lying } from './strangers.js';
 import { hourNL } from './web/street.js';
@@ -41,7 +42,8 @@ export function wakeReasons(s, { unread = 0, woke = false, now = Date.now() } = 
   const is = snapshot(s);
   if (was) for (const k of Object.keys(GOT)) if ((is[k] ?? 0) > (was[k] ?? 0)) why.push(GOT[k]);
   if (s.plan.lastFail && Date.parse(s.plan.lastFail.at) >= Date.parse(s.plan.decidedAt ?? 0)) why.push(`something did not work: ${s.plan.lastFail.why}`);
-  if (!s.plan.decidedAt || now - Date.parse(s.plan.decidedAt) >= DECIDE_EVERY_MIN * 60_000) why.push(`${DECIDE_EVERY_MIN} minutes passed`);
+  const limit = s.plan.queue.length ? PLAN_LASTS_MIN : DECIDE_EVERY_MIN; // while steps of his plan still wait, he carries it out (a trip outside takes a while)
+  if (!s.plan.decidedAt || now - Date.parse(s.plan.decidedAt) >= limit * 60_000) why.push(`${limit} minutes passed`);
   return [...new Set(why)];
 }
 
@@ -70,26 +72,22 @@ export function nextQueued(s) {
   return out;
 }
 
-// When there is no model at all (quota used up): plain needs first, then a quiet habit. No model call.
-export const OUT_AGAIN_H = 0.75; // by himself he goes out again when he has been home this long
+// When there is no model at all (quota used up), or nothing he planned can work: plain needs first, then a quiet
+// moment. No model call.
+export const OUT_AGAIN_H = 0.75; // (kept for older code that reads it)
 export function fallbackSteps(s, moves, now = Date.now()) {
   const has = (n) => moves.some((m) => m.name === n);
   const food = (s.pantry ?? []).find((p) => p.qty > 0);
   if (s.fullness <= 4 && has('harvest')) return [{ action: 'harvest', details: {}, thought: 'I am hungry. Let me pick something.', enjoyment: 6 }];
-  if (s.fullness <= 4 && has('eat') && food) return [{ action: 'eat', details: { food: food.name }, thought: 'I am hungry.', enjoyment: 6 }];
+  if (s.fullness <= 4 && has('eat')) return [{ action: 'eat', details: { food: food?.name ?? '' }, thought: 'I am hungry. I eat something.', enjoyment: 6 }]; // (no name: he takes what there is, food.js)
   if (s.energy <= 3) return [{ action: 'rest', details: {}, thought: 'I am tired. I rest a while.', enjoyment: 6 }];
   if (has('water')) return [{ action: 'water', details: {}, thought: 'My plants look dry.', enjoyment: 6 }];
-  // Nothing to decide with: he goes outside. A walk needs no model, and it beats staring out of the window. (By day,
-  // rested, and not when he has only just come home.)
-  const hour = hourNL(now);
-  if (!s.where && hour >= 8 && hour < CURFEW - 1.5 && (s.energy ?? 10) > 3 && hoursInside(s, now) >= OUT_AGAIN_H) {
-    if (lying(s).length) return [{ action: 'go_out', as: 'fetch_note', details: {}, thought: 'A note lies waiting for me out there. I go and get it.', enjoyment: 6 }];
-    const to = goOptions(s, now)[0];
-    if (to) return [{ action: 'go_out', details: { place: to.name, what: to.words[0] ?? '' }, thought: `My head is empty. I go outside: ${to.name}.`, enjoyment: 6 }];
-  }
+  // Nothing to decide with (no model, or what he planned cannot work): he has a quiet moment. He is never sent on a
+  // walk as a filler: going outside is always his own choice.
   const quiet = [
     { action: 'play_piano', details: { notes: 'C4 E4 G4 E4 C4:2', instrument: 'voice' }, thought: 'I hum a little tune while I think.' },
-    { action: 'do', details: { what: 'look out of the window for a while' }, thought: 'I watch the sky for a bit.' },
+    { action: 'do', as: 'quiet', details: { what: 'sit by the window and watch the square' }, thought: 'I watch the square for a bit.' },
+    { action: 'do', as: 'quiet', details: { what: 'lie on the floor and look at the ceiling' }, thought: 'The ceiling has a crack shaped like a river.' },
     { action: 'do', details: { what: 'say hello to my plants through the glass' }, thought: 'Hello, little plants.' },
     { action: 'do', details: { what: 'put my desk in order, one thing at a time' }, thought: 'Everything back where it belongs.' },
     { action: 'do', details: { what: 'sit on my bed and listen to the house' }, thought: 'The house makes small noises. I count them.' },
@@ -99,3 +97,10 @@ export function fallbackSteps(s, moves, now = Date.now()) {
   const can = quiet.filter((q) => (q.action !== 'play_piano' || has('play_piano')) && q.details.what !== last);
   return [{ ...can[Math.floor(Math.random() * can.length)], enjoyment: 5 }];
 }
+
+// ---- A trip: from one place straight on to the next. When his time at a place is over and the next step of his plan
+// is outside too, he does not walk home first. At most this many places in a row; then he goes home.
+export const TRIP_MAX = 3;
+const OUTSIDE_STEP = (st) => st && (st.action === 'go_out' || ['paint_wall', 'print_thing', 'shape_land'].includes(st.as));
+// The next step of his plan when it is one he does outside (a walk before it does not count), or null.
+export const nextOutside = (s) => { ensurePlan(s); const st = s.plan.queue.find((x) => x.action !== 'walk_to'); return OUTSIDE_STEP(st) ? st : null; };

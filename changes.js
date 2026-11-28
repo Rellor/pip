@@ -10,7 +10,9 @@ import { roomFactors, scaleParts, nameMax, ROOM_SCALE } from './scale.js';
 import { handsOn, PIP } from './sizes.js';
 import { noteResearch } from './growth.js';
 import { addIngredient } from './food.js';
-import { wantsOneMore, kindsWord } from './decor.js';
+import { wantsOneMore, kindsWord, roomThings, ROOM_FULL } from './decor.js';
+import { hobbyMoves } from './curiosity.js';
+import { showInMuseum } from './museum.js';
 import { letGoGoals } from './intent.js';
 
 export const CHANGES = [
@@ -486,6 +488,43 @@ export const CHANGES = [
       const m = 'gemini-3.8-flash';
       if (s.quota?.calls?.[m] && !s.quota.out?.[m]) s.quota.calls[m] = Math.min(s.quota.calls[m], 2);
       return null;
+    },
+  },
+  {
+    id: '2026-11-28 no money, and my house is my workshop',
+    run(s) { // money is gone from his world, food is easy to get, and his house is his workshop (the plan Bas and Pip agreed on)
+      delete s.coins;
+      for (const b of s.bought ?? []) delete b.price;
+      return 'Money is gone from my world. Nothing costs anything: when I need food, seeds or something to make with, I walk to the grocery store and take it home. Nobody pays me for anything either, and that suits me. My house is my workshop now: small things I make at home, at my own bench. The build workshop in the village is for what I use outside and for big things. I can rest anywhere I like: a nap on the bench by the pond or in the grass of my field is as good as my bed. And how much I make, and how much I am outside, is my own business.';
+    },
+  },
+  {
+    id: '2026-11-28 nobody orders anything',
+    run(s) { // the notice board no longer asks him to make things for coins: it shows what people in the village do (board.js)
+      for (const w of s.wishes ?? []) if (w.board && w.status === 'open') w.status = 'gone';
+      s.board = [];
+      return 'The orders are gone from the notice board. Nobody asks me to make things for coins any more. What hangs there now is what people in the village are up to: a kite day, somebody on a unicycle, a chess board left on a bench. I read it when I like. If something pulls at me I can build it, ask for it, or try it. If not, not.';
+    },
+  },
+  {
+    id: '2026-11-28 what things do to me',
+    run(s) { // "going outside wears me down" was a measuring mistake: only the cost of setting off was counted, never what the place gave him. Those wrong marks go, and his loneliness starts again from a fair place
+      for (const d of s.days ?? []) d.lowered = (d.lowered ?? []).filter((a) => !['go_out', 'rest', 'browse'].includes(a));
+      if (s.today?.lift) for (const a of ['go_out', 'rest', 'browse']) if (s.today.lift[a] < 0) delete s.today.lift[a];
+      s.beliefs = (s.beliefs ?? []).filter((b) => b.lifts || !['go_out', 'rest', 'browse'].includes(b.action));
+      if (s.body) s.body.loneliness = Math.min(s.body.loneliness ?? 5, 5);
+      s.loneliness = s.body?.loneliness ?? 5;
+      return 'I thought going outside wore me down. That was wrong: I only ever counted how tired I was when I set off, never how I felt at the pond or on my field. I count it properly now. I also noticed: I am less alone than I thought. At the library, the café, the shop and on the square there are people around me.';
+    },
+  },
+  {
+    id: '2026-11-27 a museum',
+    run(s, at) { // his room filled up with small things. Nothing is forbidden: he gets a museum for them (museum.js). What lay unseen in his chest is the first to go on the plinths
+      for (const h of (s.curious?.interests ?? []).filter((i) => i.own)) h.moves = hobbyMoves(h.topic);
+      const first = [];
+      for (const d of [...(s.stored ?? [])]) { const r = showInMuseum(s, d.name, '', Date.parse(at), { opening: true }); if (r.piece) first.push(r.piece.name); }
+      const n = roomThings(s.decor).length;
+      return `I have a museum now: an open hall with forty plinths, south of the pond, with my name on the sign. ${first.length ? `The ${first.length} things that lay in my chest where nobody saw them stand there already. ` : ''}My room holds ${n} things, and it is full at ${ROOM_FULL}: what I make from now on goes to my museum by itself, and I can carry things there from my room too (show_in_museum), so my room keeps what I really use. I can walk through my museum whenever I like.`;
     },
   },
   {

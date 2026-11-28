@@ -97,9 +97,27 @@ export function topicLoop(s, now = Date.now()) {
   const [w, n] = Object.entries(count).sort((a, b) => b[1] - a[1])[0] ?? [];
   return n >= recent.length * 0.6 ? w : null;
 }
+// What kind of making a thing in his day is, in his words (null: not something he made).
+const MADE_KIND = { decorate: 'things from the build workshop', draw: 'drawings', make_app: 'programs', update_app: 'programs', record_song: 'songs', compose: 'songs', make_clothes: 'clothes', cook: 'dishes', make_site: 'pages for my website', update_site: 'pages for my website', shape_land: 'hills and holes', make_move: 'dance moves', take_photo: 'photos' };
+const MADE_AS = { build_outside: 'big things outside', print_thing: 'prints', paint_wall: 'paintings on a wall' };
+export const madeKind = (e) => (e && !e.failed && !e.fallback ? MADE_AS[e.as] ?? MADE_KIND[e.action] ?? null : null);
+const ONE_OF = { 'things from the build workshop': 'something big outside', drawings: 'a drawing', programs: 'a program', songs: 'a song', clothes: 'something to wear', dishes: 'a dish', 'pages for my website': 'my website', 'hills and holes': 'a hill or a hole', 'dance moves': 'a dance move', photos: 'a photo', 'big things outside': 'something big outside', prints: 'a print', 'paintings on a wall': 'a painting on a wall' };
+// He notices it himself when most of what he made lately is one kind of thing, and what he has not made for days.
+export function repeatLines(s, now = Date.now()) {
+  const DAYS = 3 * 86_400_000;
+  const made = (s.log ?? []).filter((e) => madeKind(e) && now - Date.parse(e.at) < DAYS && Date.parse(e.at) <= now).slice(-8);
+  if (made.length < 6) return [];
+  const count = {};
+  for (const e of made) count[madeKind(e)] = (count[madeKind(e)] ?? 0) + 1;
+  const [kind, n] = Object.entries(count).sort((a, b) => b[1] - a[1])[0];
+  if (n < Math.ceil(made.length * 0.6)) return [];
+  const other = [...new Set(Object.values(ONE_OF))].filter((one) => !Object.keys(count).some((k) => ONE_OF[k] === one)).slice(0, 4);
+  return [`I notice it myself: ${n} of the last ${made.length} things I made were ${kind}. I do not want to become predictable. What I did not make in these days: ${other.join(', ')}. The strange option before the sensible one.`];
+}
 // Lines for the brain: the topic he keeps circling, and something on the list he has never tried.
 export function freshLines(s, offered = [], now = Date.now()) {
   const out = [];
+  out.push(...repeatLines(s, now));
   const loop = topicLoop(s, now);
   if (loop) out.push(`I have been thinking about "${loop}" for hours now. Something different would feel fresh, and I can come back to it later.`);
   const never = offered.filter((m) => !SKIP.includes(m) && !(s.ever?.[m] ?? 0) && MOVE_WORDS[m]);

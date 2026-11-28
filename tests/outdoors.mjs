@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { isToday } from '../days.js';
 import { dayLimits } from '../limits.js';
-import { fallbackSteps, OUT_AGAIN_H } from '../autopilot.js';
+import { fallbackSteps } from '../autopilot.js';
 import { startOuting, outingTick, wantsOut, hoursInside, outLines, goOptions, INSIDE_LONG_H } from '../world.js';
 import { storeAway } from '../decor.js';
 import { ensureIntentions, markIntentions } from '../intent.js';
@@ -38,28 +38,26 @@ assert.equal(isToday(noon - HOUR, noon), true, 'milliseconds work too');
 }
 ok('a day is his own day: three things made yesterday do not keep him from making one this morning');
 
-// ---- no model, or nothing he planned can work: by day he goes outside
+// ---- no model, or nothing he planned can work: a quiet moment. He is never sent on a walk as a filler
 {
+  for (let i = 0; i < 30; i++) {
+    const step = fallbackSteps(fresh(), [], noon)[0];
+    assert.notEqual(step.action, 'go_out', 'a walk is always his own choice');
+    assert.ok(['do', 'play_piano'].includes(step.action), JSON.stringify(step));
+  }
+  assert.ok(Array.from({ length: 40 }, () => fallbackSteps(fresh(), [], noon)[0]).some((x) => x.as === 'quiet'), 'quiet time is among it');
+  assert.equal(fallbackSteps(fresh({ energy: 2.5 }), [], noon)[0].action, 'rest');
+  assert.equal(fallbackSteps(fresh({ fullness: 3, pantry: [{ name: 'mint', qty: 1 }] }), [{ name: 'eat' }], noon)[0].action, 'eat', 'food still comes first');
+  // he does not do the same quiet thing twice in a row
+  const quiet = fresh({ log: [{ at: iso(night - 8 * MIN), action: 'do', what: 'sit by the window and watch the square' }] });
+  for (let i = 0; i < 40; i++) assert.notEqual(fallbackSteps(quiet, [], night)[0].details.what, 'sit by the window and watch the square');
+  // going out himself still works as before
   const s = fresh();
-  const step = fallbackSteps(s, [], noon)[0];
-  assert.ok(step.action === 'go_out' && step.details.place && /outside/.test(step.thought), JSON.stringify(step));
-  const went = startOuting(s, step.details, noon);
-  assert.ok(went.ok, JSON.stringify(went));
+  assert.ok(startOuting(s, { place: 'the pond in the park', what: 'watch the ducks' }, noon).ok);
   const back = outingTick(s, Date.parse(s.where.homeAt) + MIN);
   assert.ok(back.home && back.outing.did.length > 20);
-  const home = Date.parse(back.outing.homeAt);
-  assert.notEqual(fallbackSteps(s, [], home + 20 * MIN)[0].action, 'go_out', 'not straight out again when he has only just come home');
-  assert.equal(fallbackSteps(s, [], home + (OUT_AGAIN_H + 0.2) * HOUR)[0].action, 'go_out', 'a while later he goes again');
-  assert.notEqual(fallbackSteps(fresh(), [], night)[0].action, 'go_out', 'not at night');
-  assert.notEqual(fallbackSteps(fresh({ energy: 2.5 }), [], noon)[0].action, 'go_out', 'not when he is worn out');
-  assert.equal(fallbackSteps(fresh({ fullness: 3, pantry: [{ name: 'mint', qty: 1 }] }), [{ name: 'eat' }], noon)[0].action, 'eat', 'food still comes first');
-  const note = fresh({ drops: [{ id: 't1', status: 'lying', spot: 'drop_square', from: 'Wren', who: 'a girl on a bicycle', text: 'x', at: iso(noon - HOUR) }] });
-  assert.deepEqual([fallbackSteps(note, [], noon)[0].action, fallbackSteps(note, [], noon)[0].as], ['go_out', 'fetch_note'], 'a note that lies waiting is fetched first');
-  // at home he does not do the same quiet thing twice in a row
-  const quiet = fresh({ log: [{ at: iso(night - 8 * MIN), action: 'do', what: 'look out of the window for a while' }] });
-  for (let i = 0; i < 40; i++) assert.notEqual(fallbackSteps(quiet, [], night)[0].details.what, 'look out of the window for a while');
 }
-ok('with no model he goes outside by day (a note first), and never does the same quiet thing twice in a row');
+ok('with no model he has a quiet moment and never the same one twice in a row; a walk is only ever his own choice');
 
 // ---- the wish to go out grows with every hour inside, and he hears it
 {

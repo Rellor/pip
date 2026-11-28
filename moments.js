@@ -19,7 +19,6 @@ const dice = (seed) => { let h = 2166136261; for (const ch of String(seed)) h = 
 const STEP_AT = {
   search_web: ['the internet café', 'cafe'], browse: ['the internet café', 'cafe'], make_site: ['the internet café', 'cafe'], update_site: ['the internet café', 'cafe'],
   read_book: ['the library', 'library'], draw: ['the art workshop', 'studio'], write_diary: ['the pond', 'pond'],
-  decorate: ['the build workshop', 'build'], extend_thing: ['the build workshop', 'build'], make_clothes: ['the build workshop', 'build'], blueprint: ['the build workshop', 'build'],
 };
 // What he is seen doing in a step: [how it starts, what he is doing halfway (or null), how it ends when it worked (or null)].
 function stepWords(e) {
@@ -30,7 +29,7 @@ function stepWords(e) {
     case 'harvest': return [`Picks ${clip(e.name ?? 'what is ripe', 30)} in his garden`, null, null];
     case 'water': return ['Waters his plants', null, null];
     case 'plant': return [`Plants ${clip(e.seed ?? e.name ?? 'seeds', 30)}`, 'Presses the earth down with one finger', null];
-    case 'decorate': return [e.as === 'build_outside' ? `Starts building ${name} outside` : e.as === 'print_thing' ? `Designs ${name} for the printer` : `Starts building ${name}`, 'Fits the parts together', `${cap(name)} is done`];
+    case 'decorate': return [e.as === 'build_outside' ? `Starts building ${name} outside` : e.as === 'print_thing' ? `Designs ${name} for the printer` : e.as === 'make_plaything' ? `Starts building ${name}, to use outside` : `Starts building ${name} at his workbench`, 'Fits the parts together', `${cap(name)} is done`];
     case 'change_thing': case 'extend_thing': return [`Works on ${name}`, 'Steps back to look at it', `${cap(name)} is better now`];
     case 'draw': return [e.as === 'paint_wall' ? `Sketches ${name} for a wall` : `Starts drawing ${name}`, 'Rubs out a line and draws it again', 'Puts his pencil down'];
     case 'make_app': case 'update_app': return ['Starts typing code', 'Runs it to see if it works', `${cap(name)} runs`];
@@ -51,7 +50,7 @@ function stepWords(e) {
     case 'ask_for': return [`Writes ${clip(e.item ?? 'something', 40)} on his wants list`, null, null];
     case 'take_photo': return ['Looks for the right angle', null, 'Click'];
     case 'walk_to': return [`Walks to the ${clip(e.object ?? 'other side of his room', 30)}`, null, null];
-    case 'buy': return [`Counts his coins for ${clip(e.item ?? 'something', 30)}`, null, null];
+    case 'buy': return [`Fetches ${clip(e.item ?? 'something', 30)} at the grocery store`, null, null];
     case 'happened': return [clip(e.what, 140), null, null];
     case 'do': return [e.as === 'start_hobby' ? `Decides to try ${clip(String(e.what ?? '').replace(/^decide to try /, '').replace(/ as a hobby$/, ''), 40)} as a hobby` : cap(clip(String(e.what ?? 'Does something small').replace(/_/g, ' '), 90)), null, null];
     default: return [cap(String(e.action ?? 'does something').replace(/_/g, ' ')), null, null];
@@ -108,7 +107,7 @@ export function momentsFor(s, entries = [], startMs = Date.now(), intervalMs = 8
   const taken = new Set((s.moments ?? []).filter((m) => m.kind === 'notice').slice(-8).map((m) => m.text)); // not what he noticed a little while ago
   const put = (at, kind, icon, text) => { if (text) out.push({ at: new Date(Math.round(at)).toISOString(), kind, icon, text: clip(text, 160) }); };
   const real = entries.filter((e) => e?.at && e.action !== 'came_home' && !(e.action === 'happened')).sort((a, b) => Date.parse(a.at) - Date.parse(b.at));
-  for (const e of entries.filter((x) => x?.action === 'came_home')) put(Date.parse(e.at), 'beat', '🏠', `Comes home from ${his(e.placeName ?? 'outside')}`);
+  for (const e of entries.filter((x) => x?.action === 'came_home')) put(Date.parse(e.at), 'beat', '🏠', e.on ? `Goes straight on from ${his(e.placeName ?? 'there')}` : `Comes home from ${his(e.placeName ?? 'outside')}`);
   for (const e of entries.filter((x) => x?.action === 'happened')) put(Date.parse(e.at) + 20_000, 'notice', e.emoji ?? '🌤️', e.what);
   real.forEach((e, i) => {
     const t0 = Math.max(startMs, Date.parse(e.at));
@@ -130,7 +129,7 @@ export function momentsFor(s, entries = [], startMs = Date.now(), intervalMs = 8
       return;
     }
     const [start, mid, done] = stepWords(e);
-    const at = STEP_AT[e.action] && !e.failed && !e.planFail && len > 2 * MIN && e.as !== 'build_outside' ? STEP_AT[e.action] : null; // he walks to a place in the village for it
+    const at = !e.failed && !e.planFail && len > 2 * MIN ? (e.as === 'make_plaything' ? ['the build workshop', 'build'] : e.as === 'build_outside' ? null : STEP_AT[e.action] ?? null) : null; // (small things he makes at home, in his own workshop; what he uses outside is built at the build workshop) // he walks to a place in the village for it
     const where = at ? at[1] : 'room';
     const a = at ? t0 + len * 0.16 : t0; // when the work itself starts
     const z = at ? t0 + len * 0.86 : t0 + len * 0.92; // and when it ends

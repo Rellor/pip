@@ -18,7 +18,10 @@ console.log('ok  pretending to do a project step becomes the real step');
 const h = { fullness: 1, pantry: [{ name: 'bread', kind: 'ingredient', qty: 2 }, { name: 'soup', kind: 'dish', qty: 1 }] };
 assert.deepEqual(hungerFirst(h, [{ action: 'draw' }], [{ name: 'eat' }]).map((x) => [x.action, x.details?.food]), [['eat', 'soup'], ['draw', undefined]]);
 assert.equal(hungerFirst({ ...h, fullness: 5 }, [{ action: 'draw' }], [{ name: 'eat' }]).length, 1);
-console.log('ok  very hungry with food: he eats first');
+const e = { fullness: 1, pantry: [] };
+assert.equal(hungerFirst(e, [{ action: 'draw' }], [{ name: 'eat' }])[0].action, 'eat', 'also with an empty pantry: there is always food');
+assert.ok(hungerFirst(e, [{ action: 'draw' }], [{ name: 'eat' }])[0].details.food.length > 2);
+console.log('ok  very hungry: he eats first, from his pantry or just something');
 
 const t = fresh();
 const now = Date.now();

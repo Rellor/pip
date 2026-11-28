@@ -57,7 +57,7 @@ ok('skills grow with practice and research; the level limits the maker', () => {
   assert.equal(made.details.parts.length, 10);
 });
 
-ok('asks: a project that needs a tool, after research; hunger with no food', () => {
+ok('asks: a project that needs a tool, after research; hunger is no reason to ask (there is always food)', () => {
   const s = base();
   s.projects.push({ title: 'Build a bird house', status: 'working', since: '2026-11-15T10:00:00Z', needs: ['saw'], steps: [] });
   assert.equal(missingForProject(s, () => false), null, 'no research yet');
@@ -66,7 +66,7 @@ ok('asks: a project that needs a tool, after research; hunger with no food', () 
   assert.match(askReason(s, now), /needs saw/);
   const h = base();
   h.fullness = 2;
-  assert.match(askReason(h, now), /hungry/);
+  assert.doesNotMatch(String(askReason(h, now) ?? ''), /hungry/);
 });
 
 ok('dreams become big asks; judging a project is passed on', () => {

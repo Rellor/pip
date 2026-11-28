@@ -4,14 +4,15 @@
 //   big    market day on the square. At most one about every 20 hours.
 //   small  something to notice: the real moon and meteor showers, the first frost or snow, life on the square.
 //          At most two a day, hours apart. Each can spark his curiosity.
-// Everything that happens is true in his world: coins are really earned, the moon is the real moon.
+// Everything that happens is true in his world: the moon is the real moon.
 // (Nobody in these scenes has a name: his neighbours moved away, and the people he sees now are passing through.)
 import { noteSpark } from './curiosity.js';
 import { moonPhase } from './web/street.js'; // the real moon (shared with world.js)
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
-const SMALL_GAP_H = 5;
+const SMALL_GAP_H = 2; // (his world moves: something small to notice every few hours)
+export const SMALL_PER_DAY = 5;
 const BIG_GAP_H = 20;
 const nl = (now, o) => new Date(now).toLocaleString('en-GB', { timeZone: 'Europe/Amsterdam', ...o });
 const hourNL = (now) => Number(nl(now, { hour: '2-digit', hour12: false }));
@@ -45,6 +46,22 @@ const STREET = [
   ['kite', (h) => h >= 11 && h < 17, 'Someone flies a red kite over the roofs. It dives and climbs.', 'Kite'],
   ['accordion', (h) => h >= 17 && h < 21, 'Someone passing through plays an accordion on the square, slow and a little off. Then it stops.', 'Accordion'],
   ['geese', (h) => h >= 7 && h < 18, 'A long V of geese goes over, calling.', 'Bird migration'],
+  // (what people in the village do: he sees it happen, and it may give him an idea of his own)
+  ['bike', (h) => h >= 8 && h < 19, 'Somebody rides a bike across the square with no hands, eating an apple.', 'Cycling'],
+  ['plane', (h) => h >= 11 && h < 17, 'A small model plane goes round and round over the big field, buzzing like a slow fat bee.', 'Model aircraft'],
+  ['ball', (h) => h >= 14 && h < 19, 'Two children kick a ball against the wall by the flats. It makes a hollow sound each time.', 'Football'],
+  ['boat', (h) => h >= 10 && h < 17, 'A paper boat crosses the pond all by itself. The ducks let it pass.', 'Paper boat'],
+  ['skater', (h) => h >= 16 && h < 21, 'Somebody rattles over the square on a skateboard and is gone before I can see who.', 'Skateboarding'],
+  ['juggler', (h) => h >= 11 && h < 18, 'A juggler practises by the notice board: three balls, then four, then all of them on the ground.', 'Juggling'],
+  ['chess', (h) => h >= 10 && h < 18, 'Two old men play chess on the bench by the pond. Neither has moved for a long time.', 'Chess'],
+  ['runner', (h) => h >= 7 && h < 10, 'A runner goes round the pond three times, and each time nods at the heron.', 'Running'],
+  ['easel', (h) => h >= 10 && h < 16, 'Somebody stands on the square behind an easel and paints my house. They made it a little too yellow.', 'Painting outdoors'],
+  ['stilts', (h) => h >= 12 && h < 17, 'Someone crosses the square on stilts and looks over every wall on the way.', 'Stilts'],
+  ['balloon', (h) => h >= 9 && h < 17, 'A hot air balloon drifts over the village, very high, with a sound like a long breath.', 'Hot air balloon'],
+  ['drummer', (h) => h >= 17 && h < 21, 'Behind the workshops somebody practises the drums. The same four beats, again and again, each time a little better.', 'Drum kit'],
+  ['fisher', (h) => h >= 7 && h < 12, 'A man with a fishing rod sits by the pond. He has caught nothing and looks pleased.', 'Fishing'],
+  ['hopscotch', (h) => h >= 13 && h < 18, 'Children hop across a chalk hopscotch on the square and shout the numbers.', 'Hopscotch'],
+  ['stargazer', (h) => h >= 20 && h < 23, 'Out by the green stone someone has set up a telescope. A small red light moves about in the dark.', 'Amateur astronomy'],
 ];
 
 const seenAgo = (s, key, now) => (now - (Date.parse(s.teller?.seen?.[key] ?? 0) || 0)) / DAY;
@@ -72,14 +89,14 @@ export function storyTick(s, now = Date.now()) {
   if (sinceBig >= BIG_GAP_H && sinceAny >= 2) {
     const madeThisWeek = (s.art ?? []).filter((a) => now - Date.parse(a.createdAt) < 7 * DAY).length + (s.decor ?? []).filter((d) => !d.image && now - Date.parse(d.createdAt) < 7 * DAY).length;
     if (weekdayNL(now) === 'Saturday' && h >= 10 && h < 16 && seenAgo(s, 'market', now) > 5 && madeThisWeek >= 1) {
-      const sold = Math.min(6, 1 + Math.floor(madeThisWeek / 3));
-      s.coins = (s.coins ?? 0) + sold;
-      return happen('market', `It is market day on the square. I put my week's work on a little table by the notice board, and people passing through stopped to look. I sold ${sold} small print${sold > 1 ? 's' : ''}: ${sold} coin${sold > 1 ? 's' : ''}. I have ${s.coins} coins now.`, { big: true, emoji: '🧺' });
+      const looked = Math.min(9, 2 + madeThisWeek);
+      s.joy = Math.min(10, (s.joy ?? 5) + 0.8);
+      return happen('market', `It is market day on the square. I put my week's work on a little table by the notice board. ${looked} people stopped to look, and one of them looked for a very long time. Nothing is sold here: nothing costs anything. They just looked, and that was enough.`, { big: true, emoji: '🧺' });
     }
   }
 
-  // ---- small things to notice (at most two a day, hours apart)
-  if ((st.smallToday ?? 0) < 2 && sinceAny >= SMALL_GAP_H) {
+  // ---- small things to notice (a handful a day, hours apart)
+  if ((st.smallToday ?? 0) < SMALL_PER_DAY && sinceAny >= SMALL_GAP_H) {
     const d = new Date(now);
     const [mo, dd] = [Number(nl(now, { month: 'numeric' })), Number(nl(now, { day: 'numeric' }))];
     const evening = h >= 17 && h <= 23;
@@ -93,7 +110,7 @@ export function storyTick(s, now = Date.now()) {
     if (Number.isFinite(w.temp) && w.temp <= 0 && h < 11 && seenAgo(s, 'frost', now) > 30) return happen('frost', 'There are frost flowers on my window this morning: little ferns of ice.', { emoji: '🧊', spark: 'Frost' });
     if (w.kind === 'storm' && seenAgo(s, 'storm', now) > 7) return happen('storm', 'A storm is rolling over the square. I count the seconds between the flash and the thunder.', { emoji: '⛈️', spark: 'Thunder' });
     const turn = Math.floor(now / DAY) + d.getUTCHours(); // which scene of the square is next: they take turns
-    const scene = STREET.map((x, i) => STREET[(i + turn) % STREET.length]).find(([key, when]) => when(h) && seenAgo(s, `street:${key}`, now) > 6);
+    const scene = STREET.map((x, i) => STREET[(i + turn) % STREET.length]).find(([key, when]) => when(h) && seenAgo(s, `street:${key}`, now) > 3.5);
     if (scene) return happen(`street:${scene[0]}`, scene[2], { emoji: '🏘️', spark: scene[3] });
   }
   return [];

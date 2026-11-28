@@ -17,7 +17,7 @@ import { giveForAsk } from './gifts.js';
 import { needsFresh, freshStart } from './fresh.js';
 import { ensureQuota, candidates, count, markOut, read429, MAX_RETRY_WAIT_MS, countBusy, bigPace, headRests, retryBusy, groups } from './models.js';
 import { goalPrompt, goalSchema, setGoals, fakeGoals } from './goals.js';
-import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone, realProjectWork, growGames, addFixTicket } from './projects.js';
+import { ensureProjects, projectLines, addVersion, judgeProject, findProject, workStep, finishDone, realProjectWork, growGames, addFixTicket, projectThing } from './projects.js';
 import { checkup, markSent, PUSH_GAP_H, words, dayReport } from './checkup.js';
 import { roomScale, placeKind, sizeWords } from './scale.js';
 import { settle, fixWords, partsNow } from './build.js';
@@ -28,23 +28,25 @@ import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLett
 import { noteLines, noteAnswer, keepWishes, wishLines } from './neighbours.js';
 import { buy } from './shop.js';
 import { storyTick } from './story.js';
-import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines, startHobby, practiseHobby, dropUntriedHobbies, hobbyLines } from './curiosity.js';
+import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines, startHobby, practiseHobby, dropUntriedHobbies, letGoStale, hobbyLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
+import { goOn } from './world.js';
+import { nextOutside, TRIP_MAX } from './autopilot.js';
 import { outingTick, startOuting, hurryHome, homeLine, checkUnlocks, unlockedKeys, knownKeys, canGo, outLines } from './world.js';
-import { postOrders, boardLines } from './board.js';
+import { postNote, boardLines } from './board.js';
 import { paintTarget, setLand } from './web/town.js';
 import { planLand, landLine } from './land.js';
 import { sketchPrompt, sketchSchema, fakeSketch, dryRun, budgetNote, keepWithin } from './sketch.js';
 import { postDrop, sweepDrops, dropLines, fetchJob, learnFrom, takeDeed, findDeed } from './strangers.js';
 import { placeOf } from './web/world.js';
-import { bestHits } from './research.js';
+import { bestHits, searchTerms } from './research.js';
 import { noteLesson, noteWorked, lessonsFor, lessonLines, saveRecipe, markProud, recipesFor, freshLines, darkLines, storageLines, placeLines, roomLines, noteResearch, notesFor, habitCap, habitLines } from './growth.js';
 import { warn } from './warn.js';
 import { ensureSkills, practise, skillOf, level, skillLine, maxParts, maxBars } from './skills.js';
 import { ensureIntentions, markIntentions, letGoGoals } from './intent.js';
 import { ensureBody, tickBody, noteMove, noteMood, heardFrom, bodyText, dayOf, kindOf } from './body.js';
-import { noteLift, feelSum, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep, beliefs, beliefLines } from './night.js';
+import { noteLift, feelSum, feelParts, feelDiff, daySummary, patterns, sleepPrompt, sleepSchema, applySleep, saveSoul, fakeSleep, beliefs, beliefLines } from './night.js';
 import { availableMoves, instruments, workable } from './moves.js';
 import { brainPrompt, brainSchema, toAnswer, fakeReply, cookDetails } from './brain.js';
 import { ensurePlan, wakeReasons, decided, nextQueued, fallbackSteps } from './autopilot.js';
@@ -55,7 +57,7 @@ const THINK_ROOM = 3000; // these models think before they answer, and the think
 import { ensureBehaviors, behaviorProblem } from './behaviors.js';
 import { preflight, MAX_SONGS_PER_DAY } from './limits.js';
 import { ensureBlueprints, makeBlueprint, markBuilt, capabilityGuide, blueprintGaps, requestAbility } from './blueprints.js';
-import { settleRoom, isOutside, purposeProblem, purposeHint, setFronts, rehangPictures, enoughOf, fullKinds, kindsWord, wantsOneMore, roomThings, roomHasPlenty, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
+import { settleRoom, isOutside, purposeProblem, purposeHint, setFronts, rehangPictures, enoughOf, fullKinds, kindsWord, wantsOneMore, roomThings, roomHasPlenty, roomIsFull, ROOM_FULL, makeDecor, updateDecor, storeAway, MAX_STORED, takeOut, squareUp, cleanParts, placeTool, takeTool, composeSong, extendThing, sizeOf, placePicture, printPhoto, removePicture, moveThing, setChest, setFurniture, accessProblem, ART_MAX, MAX_PER_DAY } from './decor.js';
 import { cleanSvg, sketchStyle, MAX_ART_PER_DAY } from './art.js';
 import { cleanApp, applyEdits, MAX_APPS, MAX_APPS_PER_DAY } from './apps.js';
 import { lessonsFrom, themeFatigue } from './mirror.js';
@@ -71,18 +73,24 @@ import { TIMBRES, cleanTracks } from './songs.js';
 import { grantInstruments, instrumentNeeds } from './instruments.js';
 import { moveMusicToStudio, moveMusicBack, keepWindowsClear, HAS_STUDIO } from './web/house.js';
 import { findPicture } from './found.js';
-import { cook, addIngredient, eatFromPantry, mealGain, hungerFirst } from './food.js';
+import { cook, addIngredient, eatFromPantry, mealGain, hungerFirst, anyFood, PLAIN_GAIN } from './food.js';
 import { makeClothes, wear, takeOff, SLOTS } from './clothes.js';
 const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
 import { refreshNews } from './news.js';
 import { tooSimilar } from './repeat.js';
-import { ensureFeelings, stepFeelings, felt, nudge, eatNow, emotionWord, failStep } from './feelings.js';
+import { ensureFeelings, stepFeelings, felt, nudge, eatNow, emotionWord, failStep, notHungry } from './feelings.js';
 import { cleanUses, findUse, addUse, stepsProblem } from './uses.js';
 import { isToday } from './days.js';
 import { SITE_FILE, buildSite, siteMaterial, siteWords } from './site.js';
 import { addMoments, sleepMoments, wakeMoments } from './moments.js';
 import { noteArc } from './arc.js';
+import { showInMuseum, markForMuseum, carryToMuseum, museumLines, toMuseum } from './museum.js';
+import { startSittings, buildOn, sittingLines } from './sittings.js';
+import { paceMin } from './pace.js';
+import { findMade, setView, takeApart } from './views.js';
+import { nameDream, dreamStep, endDream, dreamLines } from './dream.js';
+import { makePlaything, findPlaything, playJob, playLines, playGame, noteArrival, nextArrival, arrived, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { askVisitors, closeQuestion, takeAnswer, takeShelf, readShelf, noteReply, visitorLine, guestLines, pieceWords, SHELF_KINDS } from './guests.js';
 
 const STATE_FILE = 'web/state.json';
@@ -207,6 +215,7 @@ const sameText = (a, b) => a.toLowerCase().includes(b.toLowerCase()) || b.toLowe
 // His wants (the list in state.asks). A want needs a reason: at least a few words, and not just the thing again.
 const reasoned = (c) => { const w = String(c?.why ?? '').trim(); return w.length >= 12 && w.split(/\s+/).length >= 3 && w.toLowerCase() !== String(c?.item ?? '').trim().toLowerCase(); };
 // He got something on his wants list by himself (he bought it, or made it): that want has come true.
+const nameOfMade = (x) => x.name ?? x.title ?? '';
 function gotWant(s, name, how, at = new Date().toISOString()) {
   const n = String(name ?? '').trim();
   if (n.length < 3) return null;
@@ -224,7 +233,8 @@ const withWarn = (place, made) => (place && made?.warn ? `${place} (careful: ${m
 const MIN_GAP_MINUTES = 180;
 // One wake-up is one plan for this many minutes. The loop passes in its real interval.
 const MAX_PRINTS_PER_DAY = 6; // photo printer
-const INTERVAL_MIN = Number(process.env.PIP_INTERVAL_MIN || 8);
+const BASE_INTERVAL_MIN = Number(process.env.PIP_INTERVAL_MIN || 8);
+let INTERVAL_MIN = BASE_INTERVAL_MIN; // (his pace follows his mood: set at the start of each wake-up, pace.js)
 
 const clamp = (n) => Math.max(0, Math.min(10, n));
 
@@ -606,8 +616,8 @@ function paceLines(s, now = Date.now()) {
   const at = new Date(p.backAt).toLocaleTimeString('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit' });
   return [p.out ? `I have designed all I can for today: making new things, drawings, programs and songs comes back tomorrow around ${at}. ${NO_DESIGN}` : `I have designed a lot already. My head for making new things, drawings, programs and songs is fresh again around ${at}. ${NO_DESIGN}`];
 }
-// For his prompt: his room has plenty of things. Nothing is forbidden: it is a reminder that there is more to do than make.
-const stuffLines = (s) => (roomHasPlenty(s.decor) ? [`My room has ${roomThings(s.decor).length} things${(s.stored ?? []).length ? ` and my chest ${s.stored.length} more` : ''}, and I hardly use them. I can still make whatever I like. But there is more to a day than making: using what I have, making one thing really good, my hobby, music, a walk, something to read, my website, a painting on a wall.`] : []);
+// For his prompt: his room has plenty of things (a nudge). When it is full, what he makes goes to his museum (museumLines).
+const stuffLines = (s) => (roomHasPlenty(s.decor) && !roomIsFull(s.decor) ? [`My room has ${roomThings(s.decor).length} things already, and I hardly use them. One good thing I really use beats ten small ones standing around. And there is more to a day than making.`] : []);
 // For his prompt: the kinds of things he has enough of (decor.js), so he does not plan one more.
 const enoughLines = (s) => { const full = fullKinds(s.decor); return full.length ? [`I have enough of these in my room, so I make no more of them: ${full.map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', ')}. I change one (change_thing), put one in my chest, or make something else.`] : []; };
 function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWork = null }) {
@@ -633,7 +643,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...dreamLines(s), ...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...sittingLines(s), ...museumLines(s), ...playLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -667,7 +677,7 @@ const PHOTO_SCHEMA = { type: 'OBJECT', properties: { shows_it: { type: 'BOOLEAN'
 async function morningGoals(s, soul, system) {
   const day = dayOf();
   try {
-    const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [], enough: fullKinds(s.decor).map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', ') });
+    const prompt = goalPrompt({ soul, feelings: bodyText(s), projects: projectLines(s), skills: skillLine(s), interests: s.interests ?? [], enough: fullKinds(s.decor).map(({ kind, n }) => `${n} ${kindsWord(kind)}`).join(', '), full: roomIsFull(s.decor) ? `My room is full (${roomThings(s.decor).length} things). What I make now goes to my museum. A goal does not have to be a new thing: I can make one thing I have really good, build something big outside, try something I never did, or carry my best things to my museum.` : '' });
     const reply = process.env.PIP_FAKE ? fakeGoals() : await askGemini(system, prompt, 1, [], { schema: goalSchema, maxTokens: THINK_ROOM + 400, group: 'big' });
     if (setGoals(s, reply, day)) { console.log(`🌅 goals for today: ${s.intent.items.map((i) => i.text).join(' | ')}`); return; }
   } catch (e) {
@@ -714,11 +724,12 @@ async function cameHome(s, o) {
     const piece = readShelf(s, Date.parse(o.homeAt));
     if (piece) { o.did += ` On the shelf by the door lay a ${pieceWords(piece)}, left there for me. I read it twice.`; o.piece = { id: piece.id, kind: piece.kind, title: piece.title, name: piece.name }; console.log(`📚 read from the shelf: ${pieceWords(piece)}`); }
   }
-  const line = homeLine(o);
-  s.log.push({ at: o.homeAt, action: 'came_home', place: o.place, placeName: p?.name ?? o.place, thought: '', did: o.did, found: o.found.map((f) => ({ name: f.name, emoji: f.emoji })), met: o.met, gift: o.gift, book: o.book ?? null, piece: o.piece ?? null, errand: o.errand ?? null, cut: o.cut, card: o.errand ? null : { place: o.place, at: o.homeAt, weather: o.weather, found: o.found.map((f) => ({ emoji: f.emoji })) } });
+  if (o.sawAgain?.name) s.lookBack = { kind: 'thing', name: o.sawAgain.name, again: o.sawAgain.where, at: o.homeAt }; // he stopped at one of his things: at his next thought he says what he thinks of it now (views.js)
+  const line = o.wentOn ? `${o.did.trim()} From ${p?.name ?? 'there'} I went straight on, without going home first.` : homeLine(o);
+  s.log.push({ at: o.homeAt, action: 'came_home', place: o.place, placeName: p?.name ?? o.place, thought: '', did: o.did, found: o.found.map((f) => ({ name: f.name, emoji: f.emoji })), met: o.met, gift: o.gift, book: o.book ?? null, piece: o.piece ?? null, ...(o.wentOn ? { on: true } : {}), ...(o.played ? { played: o.played } : {}), errand: o.errand ?? null, cut: o.cut, card: o.errand ? null : { place: o.place, at: o.homeAt, weather: o.weather, found: o.found.map((f) => ({ emoji: f.emoji })) } });
   if (!o.errand) { addMemory(s, line, o.found.length || o.met ? 7 : 6, 'memory', o.homeAt); happened(s, line); }
   for (const said of checkUnlocks(s)) { happened(s, said); addMemory(s, said, 8, 'memory', o.homeAt); s.log.push({ at: new Date(Date.parse(o.homeAt) + 1000).toISOString(), action: 'happened', what: said, emoji: '🗺️' }); }
-  console.log(`🏠 home from ${p?.name ?? o.place}: ${o.did}${o.found.length ? ` (found: ${o.found.map((f) => f.name).join(', ')})` : ''}`);
+  console.log(`${o.wentOn ? '➡️  on from' : '🏠 home from'} ${p?.name ?? o.place}: ${o.did}${o.found.length ? ` (found: ${o.found.map((f) => f.name).join(', ')})` : ''}`);
 }
 // Something that happened in his world (a wish come true, a parcel, the full moon): he hears it once, at his next thought.
 function happened(s, line) { s.street ??= {}; s.street.happened = [...(s.street.happened ?? []), String(line)].slice(-4); }
@@ -738,7 +749,7 @@ async function makeIt(s, soul, system, st) {
     // Plan first (sketch.js): the small model guesses its size, the game tries that size in the real place. Nothing fits:
     // he hears why now, and the smart model is not asked. Something fits: that size is the budget for the design.
     let planned = null;
-    if (st.action === 'decorate' && !st.details?.print && !toolFor(st.details)) {
+    if (st.action === 'decorate' && !st.details?.print && !st.details?.play && !toolFor(st.details)) {
       try {
         const sketch = process.env.PIP_FAKE ? fakeSketch(st.details) : await askGemini('I am Pip. I answer only in JSON.', sketchPrompt(st.details), 1, [], { schema: sketchSchema, maxTokens: THINK_ROOM + 200 });
         planned = dryRun(s, st.details, sketch);
@@ -899,9 +910,20 @@ async function readArticle(title) {
   if (!page || !page.extract) return null;
   return { title: page.title, url: pageUrl(page.title), text: clip(page.extract, 2400) };
 }
+// Two searches, one list: for the main word alone ("shelf") and for the thing as he described it ("wooden corner
+// shelf"). The whole question ("how to build a small wooden corner shelf") finds pages that only share a word with it.
+async function searchHits(query) {
+  const { core, head } = searchTerms(query);
+  const asks = [...new Set([head, core, String(query ?? '').trim()].filter((q) => q && q.length >= 2))].slice(0, 3);
+  const seen = new Set();
+  const all = [];
+  for (const q of asks) {
+    try { for (const h of (await wikiGet(`action=query&list=search&srlimit=6&srsearch=${encodeURIComponent(q)}`)).query?.search ?? []) if (!seen.has(h.title)) { seen.add(h.title); all.push(h); } } catch (e) { if (!all.length && q === asks.at(-1)) throw e; }
+  }
+  return bestHits(query, all);
+}
 async function lookUp(query) {
-  const found = await wikiGet(`action=query&list=search&srlimit=8&srsearch=${encodeURIComponent(query)}`);
-  const hits = bestHits(query, found.query?.search ?? []); // the best fit first, not just Wikipedia's first
+  const hits = await searchHits(query); // the thing he means first, not just Wikipedia's first for the whole sentence
   if (!hits.length) return null;
   return {
     results: hits.slice(0, 3).map((h) => ({ title: h.title, snippet: clip(plain(h.snippet), 160), url: pageUrl(h.title) })),
@@ -909,8 +931,7 @@ async function lookUp(query) {
   };
 }
 async function readAbout(topic) {
-  const found = await wikiGet(`action=query&list=search&srlimit=6&srsearch=${encodeURIComponent(topic)}`);
-  const hit = bestHits(topic, found.query?.search ?? [])[0];
+  const hit = (await searchHits(topic))[0];
   return hit ? readArticle(hit.title) : null;
 }
 
@@ -1157,6 +1178,38 @@ function applyInnerLife(s, r, detail, replying = false) {
     wanted.push({ item: text(d.item, 140), why: text(d.reason, 200) });
   }
   const fresh = [];
+  if (r.action === 'do' && r.as === 'build_on') { // the next sitting of a thing he started (sittings.js): plain code, no model
+    const b = buildOn(s, r.details?.name);
+    if (b.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `build_on: ${b.failed}` }; }
+    else { nudge(s, 'joy', b.done ? 0.9 : 0.3); if (b.done) { addMemory(s, `My ${b.thing.name} is finished. It took me ${b.stages} days.`, 6, 'memory', at); happened(s, `My ${b.thing.name} is finished.`); } console.log(`   🔨 ${b.thing.name}: sitting ${b.stage} of ${b.stages}${b.done ? ', finished' : ''}`); }
+  }
+  if (r.action === 'do' && r.as === 'dream') { // he names his one big dream (dream.js)
+    const d = nameDream(s, r.details?.dream, r.details?.why);
+    if (d.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `dream: ${d.failed}` }; console.log(`   ✋ no dream: ${d.failed}`); }
+    else { addMemory(s, `I have a big dream now: ${d.dream.text}. Because: ${d.dream.why}`, 9, 'memory', at); happened(s, `I named my big dream: ${d.dream.text}.`); console.log(`   🌠 his big dream: ${d.dream.text} (${d.dream.why})`); }
+  }
+  if (r.action === 'do' && r.as === 'dream_step') { const d = dreamStep(s, r.details?.what); if (d) { nudge(s, 'joy', 0.5); console.log(`   🌠 for his dream: ${r.details?.what}`); } }
+  if (r.action === 'do' && r.as === 'end_dream') {
+    const d = endDream(s, r.details?.how, r.details?.why);
+    if (d.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `end_dream: ${d.failed}` }; }
+    else { const said = d.dream.ended === 'reached' ? `I reached my big dream: ${d.dream.text}. ${d.dream.words}` : `I let my big dream go: ${d.dream.text}. ${d.dream.words}`; addMemory(s, said, 9, 'memory', at); happened(s, said); nudge(s, 'joy', d.dream.ended === 'reached' ? 2.5 : -0.3); console.log(`   🌠 ${said}`); }
+  }
+  if (r.action === 'do' && r.as === 'take_apart') { // he takes one of his own things apart: it is gone, a record stays (views.js)
+    const g = takeApart(s, r.details?.name, r.details?.why);
+    if (g.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `take_apart: ${g.failed}` }; console.log(`   ✋ not taken apart: ${g.failed}`); }
+    else { addMemory(s, `I took my ${g.gone.name} apart. ${g.gone.said}`, 6, 'memory', at); console.log(`   🧨 took apart: ${g.gone.name} (${g.gone.said})`); }
+  }
+  if (r.action === 'do' && r.as === 'quiet') { nudge(s, 'calm', 0.8); s.energy = Math.min(10, (s.energy ?? 5) + 1); } // quiet time settles him and gives a little energy back
+  if (r.action === 'do' && r.as === 'play_game') { // he plays one of the games he wrote (play.js): plain code, no model
+    const g = playGame(s, r.details?.name);
+    if (g.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `play_game: ${g.failed}` }; }
+    else { nudge(s, 'joy', g.record ? 1 : 0.5); happened(s, g.said); if (g.record || g.plays === 1) addMemory(s, g.said, 5, 'memory', at); console.log(`   🎮 ${g.said}`); }
+  }
+  if (r.action === 'do' && r.as === 'show_in_museum') { // he carries a thing to his museum (museum.js)
+    const shown = showInMuseum(s, r.details?.name, r.details?.why);
+    if (shown.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `show_in_museum: ${shown.failed}` }; console.log(`   ✋ not to the museum: ${shown.failed}`); }
+    else { addMemory(s, `I carried ${shown.piece.name} from my ${shown.from} to my museum.${shown.piece.shown ? ` Why this one: ${shown.piece.shown}` : ''}`, 6, 'memory', at); nudge(s, 'joy', 0.6); console.log(`   🏛️  to the museum: ${shown.piece.name} (from his ${shown.from})`); }
+  }
   if (r.action === 'do' && r.as === 'ask_visitors') { // one question for everyone who visits his page (guests.js)
     const asked = askVisitors(s, r.details?.question, r.details?.why);
     if (asked.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `ask_visitors: ${asked.failed}` }; console.log(`   ✋ no question: ${asked.failed}`); }
@@ -1384,6 +1437,9 @@ async function wakeUp() {
   state.lastError = null;
   const wokeNow = Boolean(state.last?.sleeping);
   if (wokeNow) wakeMoments(state);
+  INTERVAL_MIN = process.env.PIP_STEADY ? BASE_INTERVAL_MIN : paceMin(state, BASE_INTERVAL_MIN); // quicker when excited or mid-plan, slower when tired or quiet
+  state.pace = null; // (set again at the end of this wake-up; asleep or out, the loop keeps its steady pace)
+  for (const name of carryToMuseum(state)) { const said = `I carried ${name} to my museum and put it on a plinth. Everyone can see it there.`; console.log(`🏛️  ${said}`); happened(state, said); }
   { const q = closeQuestion(state); if (q) { const said = q.answers.length ? `My question "${q.text}" is closed now. ${q.answers.length} ${q.answers.length === 1 ? 'person' : 'people'} answered.` : `Nobody answered my question "${q.text}". I let it go.`; addMemory(state, said, 5, 'memory', new Date().toISOString()); console.log(`❓ ${said}`); } }
   tickBody(state); // needs and feelings, no model call (it also passes time for the bars)
   // No free food any more: what he eats he grows, cooks, or asks for (the pantry he has is what is left).
@@ -1391,13 +1447,21 @@ async function wakeUp() {
   ensureSkills(state);
   // His world outside (world.js). While he is out nothing else happens: no model is asked, and the game brings him home.
   for (const said of checkUnlocks(state)) { happened(state, said); addMemory(state, said, 8, 'memory', new Date().toISOString()); state.log.push({ at: new Date().toISOString(), action: 'happened', what: said, emoji: '🗺️' }); }
+  const feltBeforeHome = { sum: feelSum(state), parts: feelParts(state) };
+  // A trip: his time at this place is over, and the next step of his plan is outside too. He goes straight on (autopilot.js).
+  let wentOn = null;
+  if (state.where && !state.last?.sleeping && nextOutside(state) && (state.where.trip ?? 1) < TRIP_MAX && (state.energy ?? 5) > 3 && (state.fullness ?? 5) > 3) {
+    wentOn = goOn(state);
+    if (wentOn) { await cameHome(state, wentOn); noteLift(state, ['go_out'], feltBeforeHome.sum, feelSum(state), feelDiff(feltBeforeHome.parts, feelParts(state))); console.log(`➡️  he goes straight on (place ${state.tripN} of his trip)`); }
+  }
   const outing = outingTick(state);
   if (outing?.home) await cameHome(state, outing.outing);
+  if (outing?.home && !outing.outing.errand) noteLift(state, ['go_out'], feltBeforeHome.sum, feelSum(state), feelDiff(feltBeforeHome.parts, feelParts(state))); // what the place did to him counts for "going outside" (it used to count for nothing: only the cost of setting off was seen)
   if (outing?.away) {
     const at = new Date().toISOString();
     state.last = { at, via: 'outside', thought: outing.line, action: 'go_out', details: { place: outing.place }, detail: outing.line, enjoyment: 7, new_idea: null, found: null, away: { place: outing.place, phase: outing.phase, back: outing.back } };
     state.emotion = emotionWord(state);
-    noteArc(state, Date.now(), { out: true });
+    noteArc(state, Date.now(), { out: true, place: String(outing.place ?? '').slice(0, 24) });
     await saveState(state);
     await clearInbox(inbox.names);
     await clearTasks(taskFiles.names);
@@ -1423,6 +1487,7 @@ async function wakeUp() {
       Object.assign(ask, { status: 'done', doneAt: new Date().toISOString() });
       const given = giveForAsk(state, ask.item); // the real thing, in code (gifts.js)
       if (given.length) { ask.given = given; addMemory(state, `Bas gave me what I asked for: ${given.join(', ')}.`, 8, 'memory', new Date().toISOString()); console.log(`🎁 given: ${given.join(', ')}`); }
+      else if (!/\b(card|friend|pet|cat|dog|answer|letter|visit|help|window|door|room|house|time)\b/i.test(ask.item)) { const what = noteArrival(state, ask.item); if (what) { ask.given = [what]; addMemory(state, `Bas gave me the ${what} I asked for. It stands by my door, still in its box: I set it up as soon as I can.`, 8, 'memory', new Date().toISOString()); console.log(`🎁 arrived: ${what}`); } } // anything else he asked for: he sets it up himself, and says how it is used (play.js)
     }
   }
   const unread = state.inbox.filter((m) => !m.read);
@@ -1433,10 +1498,13 @@ async function wakeUp() {
   const lb = state.lookBack;
   state.lookBack = null;
   let ownWork = null;
-  if (lb && Date.now() - Date.parse(lb.at) < 3 * 3_600_000 && !process.env.PIP_NO_PHOTO && !state.last?.sleeping) {
+  if (lb?.again && Date.now() - Date.parse(lb.at) < 3 * 3_600_000 && !state.last?.sleeping) { // he saw one of his things again (in his museum): what does he think of it now?
+    const hit = findMade(state, lb.name, 'thing'); // (what stands in his museum is a thing)
+    if (hit) ownWork = { name: nameOfMade(hit.item), what: hit.kind, again: lb.again, why: hit.item.why ?? '', thought: hit.item.thinks ?? '' };
+  } else if (lb && Date.now() - Date.parse(lb.at) < 3 * 3_600_000 && !process.env.PIP_NO_PHOTO && !state.last?.sleeping) {
     try {
       const shot = lb.file ? await renderFile(lb.file, 'web', lb.kind === 'app' ? { width: 900, height: 640, wait: 1500 } : {}) : await takePhoto(lb.name, new Date().toISOString(), state, 'web', [], 'close');
-      if (shot.bytes) { images.push({ mime: 'image/jpeg', data: Buffer.from(shot.bytes).toString('base64') }); ownWork = { name: lb.name, what: { drawing: 'drawing', app: 'program', thing: 'thing' }[lb.kind] ?? 'work', how: { drawing: 'draw a new version', app: 'update_app: one new thing or a fix', thing: 'change_thing' }[lb.kind] ?? 'change it' }; console.log(`👀 Pip looks at his ${ownWork.what}: ${lb.name}`); }
+      if (shot.bytes) { images.push({ mime: 'image/jpeg', data: Buffer.from(shot.bytes).toString('base64') }); ownWork = { name: lb.name, why: findMade(state, lb.name, { drawing: 'drawing', app: 'program', thing: 'thing' }[lb.kind] ?? null)?.item.why ?? '', what: { drawing: 'drawing', app: 'program', thing: 'thing' }[lb.kind] ?? 'work', how: { drawing: 'draw a new version', app: 'update_app: one new thing or a fix', thing: 'change_thing' }[lb.kind] ?? 'change it' }; console.log(`👀 Pip looks at his ${ownWork.what}: ${lb.name}`); }
     } catch (e) { console.error('⚠️  look back:', e.message); }
   }
   for (const p of looking) {
@@ -1460,7 +1528,7 @@ async function wakeUp() {
   { const drop = postDrop(state); if (drop) console.log(`💌 ${drop.from} (${drop.who}) left a note ${drop.where}: ${drop.text.slice(0, 70)}`); } // travellers leave notes in his world (strangers.js)
   for (const line of sweepDrops(state)) { console.log(`💌 ${line.slice(0, 90)}`); addMemory(state, line, 5, 'memory', new Date().toISOString()); }
   { const found = state.last?.sleeping ? null : findDeed(state); if (found) { console.log(`🌼 ${found}`); addMemory(state, found, 6, 'memory', new Date().toISOString()); happened(state, found); } } // a small thing a visitor did in his world
-  { const note = postOrders(state); if (note) console.log(`📌 a new note on the notice board: ${note.topic} (${note.reward} coins)`); } // people pin what they would like made (board.js)
+  { const note = postNote(state); if (note) console.log(`📌 a new note on the notice board: ${note.text}`); } // people pin what they would like made (board.js)
   // The storyteller (story.js): now and then something happens on his square or in his sky. He hears it once, and it is in his day.
   if (!process.env.PIP_NO_STORY) for (const ev of storyTick(state)) {
     console.log(`${ev.emoji} ${ev.big ? 'something happened' : 'he notices'}: ${ev.text}`);
@@ -1473,8 +1541,9 @@ async function wakeUp() {
   let answer = null;
   let choice = null;
   let via = 'autopilot';
-  const queued = reasons.length ? null : nextQueued(state);
-  if (queued) answer = { thought: queued.find((x) => x.thought)?.thought ?? '', inner: '', steps: queued, mood_after: state.mood, new_idea: null };
+  const queued = reasons.length && !(wentOn && !unread.length) ? null : nextQueued(state); // (in the middle of a trip he carries on with his plan)
+  // (very hungry at home: he eats first, also in the middle of a plan; the rest of the plan follows)
+  if (queued) answer = { thought: queued.find((x) => x.thought)?.thought ?? '', inner: '', steps: !state.where && !wentOn && !notHungry(state) ? hungerFirst(state, queued, [{ name: 'eat' }]) : queued, mood_after: state.mood, new_idea: null };
   else {
     try {
       if (process.env.PIP_FAKE_DOWN) throw new Error('the model is busy (pretend, for testing)'); // for tests: a day on which the model never answers
@@ -1497,6 +1566,7 @@ async function wakeUp() {
       answer = { thought: '', inner: '', steps: [], mood_after: state.mood, new_idea: null };
       via = 'fallback';
     }
+    if (ownWork && answer.own_view) { const hit = setView(state, ownWork.name, answer.own_view, Date.now(), ['drawing', 'program', 'thing', 'song'].includes(ownWork.what) ? ownWork.what : null); if (hit) console.log(`   💬 what he thinks of his ${hit.kind} "${ownWork.name}": ${answer.own_view}`); } // kept with the thing itself, for its card (views.js)
     for (const a of answer.visitor_answers ?? []) { // his public answer to a visitor
       const v = state.visitors?.find((x) => x.id === a.id && !x.answer);
       if (v && text(a.text, 400)) { Object.assign(v, { answer: text(a.text, 400), answeredAt: new Date().toISOString() }); noteAnswer(state, v); noteReply(state, v); const learned = learnFrom(state, v, a.keep !== false); if (learned) addMemory(state, learned, 6, 'memory', new Date().toISOString()); } // yes to a wish is a promise (neighbours.js), and what he keeps of a traveller's note he has learned (strangers.js)
@@ -1504,6 +1574,10 @@ async function wakeUp() {
     if (!answer.steps.length) answer.steps = fallbackSteps(state, offered);
     answer.steps = decided(state, answer.steps);
     console.log(`🧠 ${via}: ${reasons.join('; ')}`);
+  }
+  { // something he asked for was given and stands by his door in its box: he sets it up first (one design; play.js)
+    const a = nextArrival(state);
+    if (a && !headRests(state.quota)) { answer.steps = [{ action: 'decorate', as: 'make_plaything', details: { what: a.what, why: 'I asked for it, and it was given to me.', play: true, given: true }, thought: `My ${a.what} is here. I set it up.`, enjoyment: 9, needs: '', make: true }, ...answer.steps.filter((x) => !x.make && x.action !== 'go_out')].slice(0, 2); console.log(`📦 unpacking: ${a.what}`); }
   }
   // Before any model is asked to design something: what failed three times today is off until tomorrow (loops.js), and
   // one more of a kind he has enough of cannot work (decor.js). Both are settled here, at no cost.
@@ -1524,8 +1598,16 @@ async function wakeUp() {
     answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
   }
   for (const [i, st] of answer.steps.entries()) {
-    const full = st.make && st.action === 'decorate' && !st.details?.print ? enoughOf(state.decor, st.details?.what) ?? enoughOf(state.decor, st.details?.name) : null; // (what he said he wants to make, or the name he gave it)
+    const full = st.make && st.action === 'decorate' && !st.details?.print && !st.details?.play ? enoughOf(state.decor, st.details?.what) ?? enoughOf(state.decor, st.details?.name) : null; // (what he said he wants to make, or the name he gave it)
     if (full) { answer.steps[i] = { ...st, make: false, planFail: full.why, planned: { ok: false } }; console.log(`   ⛔ not designed: he has ${full.n} ${kindsWord(full.kind)} already`); }
+  }
+  for (const [i, st] of answer.steps.entries()) { // a project makes one thing: every next build step adds to it
+    if (!st.make || st.action !== 'decorate' || st.details?.print || st.details?.play || st.as === 'print_thing') continue;
+    const d = st.details ?? {};
+    if (st.as === 'build_outside' || isOutside(d.where)) continue; // big, outside: always welcome
+    const proj = d.project ? findProject(state, d.project) : null;
+    const piece = proj ? projectThing(state, proj) : null;
+    if (piece) { answer.steps[i] = { ...st, action: 'extend_thing', details: { name: piece, add: text(d.what, 200), project: d.project } }; console.log(`   🧩 one project, one thing: he adds to "${piece}" instead of making another`); continue; }
   }
   // Things he designs: the maker makes them now (one model call each).
   for (const [i, st] of answer.steps.entries()) if (st.make) answer.steps[i] = await makeIt(state, soul, system, st);
@@ -1543,6 +1625,7 @@ async function wakeUp() {
     answer.steps = keep.some((x) => x.action !== 'walk_to') ? keep : fallbackSteps(state, offered);
   }
   const feelBefore = feelSum(state);
+  const partsBefore = feelParts(state);
   const startedAt = Date.now();
   setChest(state.chest ?? null);
   // A new plan replaces the old one: thoughts of steps that never happened are dropped.
@@ -1599,6 +1682,17 @@ async function wakeUp() {
         st.made = craftTool(state, st.details, kind, parts);
         return;
       }
+      if (st.as === 'make_plaything') { // something to do things with outside (play.js): it does not go in his room
+        const parts = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: 'floor' }).parts.slice(0, 30);
+        const r = !st.details.given && madeToday(state, isToday, stepStart) >= PLAYTHINGS_PER_DAY ? { failed: 'I built two things to play with today already' } : makePlaything(state, { ...st.details, parts }, stepStart, st.details.given ? 'given' : 'built');
+        if (st.details.given) { const a = nextArrival(state); if (a && (!r.failed || (a.tries = (a.tries ?? 0) + 1) >= 3)) arrived(state, a.what); } // (three failed tries: it stays in its box for good)
+        if (r.failed) { st.made = { failed: r.failed }; return; }
+        if (r.gone) { toMuseum(state, r.gone, stepStart, 'I do not use it any more, and it is too good to throw away.'); addMemory(state, `My ${r.gone.name} made room for my new ${r.thing.name}: it stands in my museum now.`, 5, 'memory', new Date(stepStart).toISOString()); }
+        st.made = { plaything: { id: r.thing.id, name: r.thing.name, verb: r.thing.verb, where: r.thing.where }, name: r.thing.name, hint: `${st.details.given ? 'It arrived, and I set it up' : 'I built it'}: my ${r.thing.name}. ${r.thing.how} I can go out with it whenever I like (play).` };
+        addMemory(state, `${st.details.given ? `My ${r.thing.name} arrived: I asked for it and it was given to me.` : `I built a ${r.thing.name}, to ${r.thing.verb}.`} ${r.thing.how}`, 7, 'memory', new Date(stepStart).toISOString());
+        console.log(`   🚲 a new thing to go out with: ${r.thing.name} (${r.thing.verb}, ${r.thing.motion}, ${r.thing.where})`);
+        return;
+      }
       if (st.as === 'print_thing') { // a small model for the print workshop: he walks there with his design, and it stays on the shelf there
         const may = canGo(state, 'workshop', stepStart);
         const parts = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: 'surface' }).parts.slice(0, 24);
@@ -1618,6 +1712,7 @@ async function wakeUp() {
       const built = settle(sizeWords(cleanParts(st.details.parts) ?? [], st.details.name), { kind: placeKind({ ...st.details, ...placed }) }); // the builder makes it hold together (build.js); a "tiny" thing is tiny
       const sized = keepWithin(out && Number(st.details.metres) > 0 ? built.parts : roomScale(built.parts, st.details), st.planned?.fit); // (never bigger than what the dry run showed to fit)
       st.made = makeDecor(state.decor, { ...st.details, ...placed, parts: sized, uses: st.uses }, stepStart); // built at the size of his room (outside: as big as he said)
+      if (st.made?.entry && !out && !st.made.entry.readyAt && !st.made.entry.image) { const n = startSittings(st.made.entry, stepStart); if (n > 1) st.made.hint = `${st.made.hint ? `${st.made.hint} ` : ''}It is a big thing, so it takes ${n} days: today only the frame stands. I go on with it tomorrow (build_on).`; } // a thing takes a few sittings (sittings.js)
       if (st.made?.entry?.readyAt) { const hours = Math.round((Date.parse(st.made.entry.readyAt) - Date.parse(st.made.entry.at)) / 360_000) / 10; addMemory(state, `I started building my ${st.made.entry.name} ${st.made.entry.label}. It is big: it will take me about ${hours} hours of work before it stands.`, 6, 'memory', new Date(stepStart).toISOString()); }
       const oldCloth = /^(.+) already lies over /.exec(st.made.failed ?? '')?.[1];
       if (oldCloth && state.stored.length < MAX_STORED && storeAway(state.decor, state.stored, oldCloth).stored) { // a new blanket: the old one is folded into his chest, like anyone would
@@ -1764,8 +1859,9 @@ async function wakeUp() {
     if (st.action === 'make_move') st.made = makeMove(state, st.details, stepStart);
     if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
     if (st.action === 'buy') st.made = buy(state, st.details.item ?? st.details.name ?? st.details.what);
-    if (st.action === 'buy' && st.made?.bought) gotWant(state, st.made.bought, 'bought it myself');
+    if (st.action === 'buy' && st.made?.bought) gotWant(state, st.made.bought, 'got it myself at the store');
     if (st.action === 'buy' && st.made?.bought && i === steps.length - 1) startOuting(state, { errand: st.made.bought }, stepStart); // a quick walk to the corner shop and back (when nothing else is planned after it)
+    if (st.action === 'go_out' && st.as === 'play') { const p = findPlaything(state, st.details?.plaything) ?? (state.playthings ?? []).at(-1); if (p) st.details = { play: playJob(p) }; else st.made = { failed: 'I have nothing to go out with yet: I can build something (make_plaything) or put it on my wants list' }; } // out with something of his (play.js)
     if (st.action === 'go_out' && st.as === 'fetch_note') { const job = fetchJob(state); if (job) st.details = { ...st.details, job }; else st.made = { failed: 'no note lies there for me right now' }; } // he goes to get what someone left for him
     if (st.action === 'go_out' && st.as === 'shape_land') { const plan = planLand(state, st.details.land, stepStart); if (plan.failed) st.made = plan; else st.details = { ...st.details, job: plan.job }; } // he shapes the land: first see if it fits there
     if (st.action === 'go_out' && !st.made?.failed) st.made = startOuting(state, st.details, stepStart);
@@ -2090,10 +2186,11 @@ async function wakeUp() {
   // Eating fills him up a little (not more than once every half hour).
   for (const st of steps) {
     if (st.action !== 'eat') continue;
-    const gain = mealGain(state.pantry, st.details.food)?.gain;
-    // Food never appears by itself: he can only eat what is really in his pantry (grown, cooked, found or given).
-    st.ate = gain ? eatNow(state, Date.now(), gain) : { failed: `I have no ${text(st.details.food, 40) || 'food'}. Food does not appear by itself: I grow it, cook it, or ask Bas for some` };
-    if (st.ate.ok) eatFromPantry(state, st.details.food);
+    // He eats what he feels like: there is always food. Something from his own pantry (grown, cooked) fills him more, and is used up.
+    if (!text(st.details.food, 80)) st.details.food = anyFood(state);
+    const own = mealGain(state.pantry, st.details.food);
+    st.ate = eatNow(state, Date.now(), own?.gain ?? PLAIN_GAIN);
+    if (st.ate.ok && own) eatFromPantry(state, st.details.food);
   }
 
   // A step that did not work leaves a gap. Right after it comes one small thing he can always do (no extra Gemini call, so it costs no tokens).
@@ -2285,7 +2382,7 @@ async function wakeUp() {
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, change: text(d.change, 160) || null, v: state.apps.find((a) => a.id === st.made?.app?.id)?.v ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'go_out') Object.assign(entry, { place: st.made?.place ?? null, placeName: st.made?.name ?? text(d.place, 40), what: st.made?.words ?? null, back: st.made?.back ?? null, failed: st.made?.failed ?? null });
-    if (st.action === 'buy') Object.assign(entry, { item: st.made?.bought ?? text(d.item ?? d.name, 40), price: st.made?.price != null ? `${st.made.price} coin${st.made.price === 1 ? '' : 's'}, ${st.made.left} left` : null, failed: st.made?.failed ?? null });
+    if (st.action === 'buy') Object.assign(entry, { item: st.made?.bought ?? text(d.item ?? d.name, 40), failed: st.made?.failed ?? null });
     if (st.action === 'cook') Object.assign(entry, { dish: text(d.dish ?? d.name, 60), ingredients: (Array.isArray(d.ingredients) ? d.ingredients : []).slice(0, 4).map((x) => text(x, 40)), failed: st.made?.failed ?? null });
     if (st.action === 'take_photo') Object.assign(entry, { target: text(d.target, 60), caption: text(d.caption, 300), image: st.made?.picture?.image ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'find_picture') Object.assign(entry, { query: text(d.query, 80), caption: text(d.caption, 200), picture: st.made?.found?.image ?? null, title: st.made?.found?.title ?? null, failed: st.made?.failed ?? null });
@@ -2406,7 +2503,7 @@ async function wakeUp() {
   }
   if ((answer.asks_add ?? []).some((a) => a?.big)) state.bigDreamAt = new Date().toISOString();
   noteMood(state, state.mood);
-  noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state));
+  noteLift(state, steps.map((x) => x.action), feelBefore, feelSum(state), feelDiff(partsBefore, feelParts(state)));
   const failedNow = state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000 && x.failed).at(-1);
   if (failedNow) state.plan.lastFail = { at: new Date().toISOString(), why: `${failedNow.action}: ${failedNow.failed}` };
   for (const line of keepWishes(state, state.log.filter((x) => Date.parse(x.at) >= startedAt - 1000))) { // he made what a note on the notice board asked for
@@ -2433,8 +2530,14 @@ async function wakeUp() {
     for (const off of noteFailures(state, mine)) console.log(`🛑 off for today: ${off.key} failed 3 times (${off.why.slice(0, 80)})`);
     for (const { hobby, became } of practiseHobby(state, mine)) {
       console.log(`   🌱 for his hobby ${hobby.topic}: ${hobby.practice} time${hobby.practice === 1 ? '' : 's'}${became ? ` (${became})` : ''}`);
-      if (became === 'real') addMemory(state, `${hobby.topic} is a real hobby of mine now: I did it ${hobby.practice} times, and it started as my own idea.`, 7, 'memory', new Date().toISOString());
+      if (became === 'real') addMemory(state, `${hobby.topic} is a real hobby of mine now: I came back to it on ${hobby.practice} different days, and it started as my own idea.`, 7, 'memory', new Date().toISOString());
       if (became === 'mastered') addMemory(state, `I have done ${hobby.topic} so often that I am good at it now.`, 8, 'memory', new Date().toISOString());
+    }
+    for (const gone of letGoStale(state)) { // a hobby he has not touched for ten days: he notices, and says so
+      const said = `I have not done anything with ${gone.topic} for ten days. I think I am done with it. It was good while it lasted: ${gone.practice} day${gone.practice === 1 ? '' : 's'} of it.`;
+      addMemory(state, said, 6, 'memory', new Date().toISOString()); happened(state, said);
+      state.log.push({ at: new Date().toISOString(), action: 'happened', what: said, emoji: '🍂' });
+      console.log(`   🍂 ${said}`);
     }
     for (const gone of dropUntriedHobbies(state)) { addMemory(state, `I wanted to try ${gone.topic} as a hobby. I never did. I let the idea go.`, 4, 'memory', new Date().toISOString()); console.log(`   🍂 let go of the hobby idea: ${gone.topic}`); }
   }
@@ -2472,7 +2575,9 @@ async function wakeUp() {
     const fresh = addMoments(state, mine, startedAt, INTERVAL_MIN * 60_000, { quiet: privateTick });
     console.log(`🎞️  ${fresh.length} small moments for the live feed`);
   }
-  noteArc(state); // his mood over the day, for the chart on the Today tab (arc.js)
+  noteArc(state, Date.now(), privateTick ? {} : { did: String(((x) => (x.action === 'walk_to' ? (answer.tell ? 'tell' : answer.visitor_answers?.length ? 'answer_visitor' : 'walk_to') : x.as ?? x.action ?? ''))(steps.find((x) => x.action !== 'walk_to') ?? steps[0])).slice(0, 24) }); // his mood over the day, and what he had just done, for the chart on the Today tab (arc.js)
+  if (!state.where) state.pace = { min: INTERVAL_MIN, nextAt: new Date(startedAt + INTERVAL_MIN * 60_000).toISOString() }; // when he wants to think again (loop.js)
+  for (const name of markForMuseum(state, startedAt - 1000)) console.log(`🏛️  his room is full: ${name} goes to his museum at the next wake-up`);
   // Curiosity: what caught him (his "spark" answer) grows into interests and hobbies; old interests fade (curiosity.js).
   fadeInterests(state);
   if (answer.spark?.topic) {

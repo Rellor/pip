@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>Pip's Room</title>
 <link rel="icon" href="data:,">
 <style>
@@ -253,6 +253,9 @@
   #arc .sub { margin:1px 0 6px; color:var(--muted); font-size:13.5px; }
   #arc svg { display:block; width:100%; height:auto; overflow:visible; touch-action:pan-y; outline:none; }
   #arc svg:focus-visible { outline:2px solid var(--accent); outline-offset:4px; border-radius:6px; }
+  #arc .moved { margin:6px 0 2px; padding-left:18px; font-size:14px; line-height:1.45; }
+  #arctip { max-width:200px; }
+  #arctip .after { display:block; color:var(--ink); font-size:13px; margin:2px 0 3px; }
   #arc .grid { stroke:var(--line); stroke-width:1; }
   #arc .tick { fill:var(--muted); font-size:12px; font-variant-numeric:tabular-nums; }
   #arc .word { fill:var(--ink); font-size:12.5px; font-weight:600; paint-order:stroke; stroke:var(--card); stroke-width:3px; stroke-linejoin:round; }
@@ -654,13 +657,67 @@
   .donelist li:first-child { border-top:0; }
   .donelist li span { color:var(--muted); font-size:13.5px; }
   /* his hobbies, on the front of the Pip tab */
+  /* his one big dream */
+  .dreamcard { border:2px solid var(--accent); border-radius:16px; background:var(--card); padding:14px; margin:14px 0 6px; }
+  .dreamcard[hidden] { display:none; }
+  .dreamcard .lab { font-size:13.5px; font-weight:700; color:var(--accent-ink); }
+  .dreamcard .txt { font-size:19px; font-weight:700; line-height:1.3; margin:4px 0 6px; }
+  .dreamcard .why { color:var(--muted); font-size:15px; margin:0 0 6px; }
+  .dreamcard ul { margin:6px 0 0; padding-left:18px; font-size:15px; }
   .hobbylist { display:flex; flex-direction:column; gap:8px; }
+  /* what he practises: how often he did each kind of thing (one row each, the bar is how often) */
+  .practlist { display:grid; grid-template-columns:max-content 1fr max-content; gap:7px 10px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:12px 14px; font-size:15px; }
+  .practlist[hidden] { display:none; }
+  .practlist .bar { height:8px; border-radius:4px; background:var(--chip); overflow:hidden; }
+  .practlist .bar i { display:block; height:100%; border-radius:0 4px 4px 0; background:var(--mood); }
+  .practlist .n { color:var(--muted); font-size:13.5px; font-variant-numeric:tabular-nums; text-align:right; }
+  #practnever { margin-top:8px; font-size:14.5px; }
   .hobbylist[hidden] { display:none; }
   .hobby { display:flex; gap:10px; align-items:flex-start; padding:10px 14px; border:1px solid var(--line); border-radius:14px; background:var(--card); }
   .hobby .hi { font-size:22px; line-height:1.3; }
   .hobby b { display:block; font-size:16px; }
   .hobby small { display:block; color:var(--muted); font-size:13.5px; }
   .hobby p { margin-top:6px; font-size:15px; font-style:italic; }
+
+  /* ================= A phone in your hand =================
+     - the page never slides, bounces or reloads when you drag (the browser's "pull down to reload" is off)
+     - every button is big enough for a thumb (40px or more), every letter 13px or more
+     - the top of the text drawer is slimmer, so more of what Pip does fits under the picture
+     - a box you type in has 16px letters (a phone zooms the whole page in on anything smaller) */
+  html, body { overscroll-behavior:none; }
+  .pane, #infoscroll, .ph-screen { overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+  button, a, summary, label, input, select, textarea { touch-action:manipulation; }
+  #stage, #stage *, #tabs, .head, #grip { -webkit-tap-highlight-color:transparent; -webkit-touch-callout:none; }
+  @media (hover:none), (pointer:coarse) {
+    html, body { position:fixed; inset:0 auto auto 0; width:100%; height:var(--app-h, 100%); overflow:hidden; }
+    input, textarea, select { font-size:16px !important; }
+    body.typing #app { grid-template-rows:minmax(0, 18%) minmax(0, 82%) !important; } /* while you type: the text gets the room */
+  }
+  @media (max-width:600px) {
+    .head { padding:2px 12px 4px; gap:8px; flex-wrap:nowrap; }
+    .head h1 { font-size:21px; }
+    .head .mood { font-size:14px; padding:3px 11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+    .head button.small { min-height:40px; padding:0 12px; font-size:14px; white-space:nowrap; flex:none; }
+    .head #settingsbtn { min-width:40px; padding:0; font-size:17px; }
+    #grip { height:26px; margin-bottom:-4px; }
+    #tabs { gap:5px; padding:4px 8px 8px; }
+    .tab { flex-direction:row; gap:4px; min-height:40px; padding:0 2px; font-size:13px; border-radius:12px; white-space:nowrap; }
+    .tab .tabi { font-size:16px; }
+    .tab .count { top:-5px; right:-1px; }
+    .pane { padding:12px 12px 32px; }
+    .filter { min-height:40px; padding:0 13px; }
+    #interact { top:auto; bottom:160px; min-height:38px; max-width:calc(100% - 24px); } /* above the round stick, never on it */
+    #interact.far { min-height:32px; }
+    #phonebtn, #walk { min-height:42px; }
+    #phclose { min-width:42px; min-height:42px; }
+    .ph-app { font-size:13px; }
+    #visit .small, .steps li { font-size:13.5px; }
+    .kindrow button { min-height:40px; padding:0 13px; }
+    #live h2 { flex-wrap:wrap; row-gap:0; } #live h2 small { flex-basis:100%; padding-left:16px; } /* the small words under the heading, not squeezed next to it */
+    #nowtext { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.25; } /* two lines: "Walking to the comp…" was cut off */
+    #nowleft { align-self:start; }
+  }
+  @media (max-width:359px) { .tab { flex-direction:column; gap:1px; font-size:13px; min-height:46px; } } /* a very narrow phone: the picture above the word again */
 </style>
 </head>
 <body>
@@ -866,8 +923,12 @@
         <div class="tile feel"><div id="bars"></div></div>
         <h2>What he wants today</h2>
         <div class="tile pipnow"><div id="nowproject"></div><ul id="goals" class="goals"></ul><small id="coziness" class="muted"></small></div>
+        <div id="dreamcard" class="dreamcard" hidden></div>
         <h2 id="hobbyhead" hidden>His hobbies</h2>
         <ul id="hobbylist" class="hobbylist" hidden></ul>
+        <h2 id="practhead" hidden>What he practises</h2>
+        <div id="practlist" class="practlist" hidden></div>
+        <p id="practnever" class="muted" hidden></p>
         <h2>What he is good at</h2>
         <div class="chips" id="skills"></div>
         <div class="tiles" id="tiles"></div>

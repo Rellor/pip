@@ -4,7 +4,7 @@ import { cleanParts } from './decor.js';
 import { isToday } from './days.js';
 
 export const MAX_CLOTHES = 12;
-export const MAX_CLOTHES_PER_DAY = 3;
+export const MAX_CLOTHES_PER_DAY = 6;
 // Where on his body (x sideways, y up, z toward the front). `at` is where the middle of the clothes sits; a hat sits with its bottom there.
 export const SLOTS = {
   head: { label: 'on his head (a hat, a crown, a bow)', at: [0, 1.05, 0], bottom: true, lim: { w: 0.8, h: 0.7, d: 0.8 } },

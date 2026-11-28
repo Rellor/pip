@@ -9,7 +9,7 @@
 import { dayLimits } from './limits.js';
 import { missingTool, NEEDS } from './tools.js';
 import { kitchenIn } from './food.js';
-import { supportsInfo, onDeskGear, roomThings, roomHasPlenty } from './decor.js';
+import { supportsInfo, onDeskGear, roomThings, roomHasPlenty, roomIsFull } from './decor.js';
 import { allMisplaced } from './placement.js';
 import { notHungry as notHungryReason } from './feelings.js';
 import { plantState, WATER_AGAIN_H, SLOTS_PER_GREENHOUSE, isGreenhouse } from './web/gardening.js';
@@ -18,7 +18,12 @@ import { noveltyBoost, roomIsDark, needLampSpots, storageFull, darkLampOff } fro
 import { restingMove, tiredOf } from './loops.js';
 import { canBrowse, interests, HOBBY_AT } from './curiosity.js';
 import { canAskVisitors, unreadShelf, pieceWords } from './guests.js';
-import { shopLine, shopOpen, wantsToBuy } from './shop.js';
+import { showable, carriedToday } from './museum.js';
+import { canBuildOn } from './sittings.js';
+import { bigDream } from './dream.js';
+import { takeable } from './views.js';
+import { playthings, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
+import { shopLine, shopOpen, wantsToBuy, canTake } from './shop.js';
 import { goOptions, goLine, wantsOut, gearWish, canGo } from './world.js';
 import { boardNotes, boardCalls } from './board.js';
 import { landToday, LAND_PER_DAY } from './land.js';
@@ -31,7 +36,7 @@ import { headRests as resting } from './models.js';
 import { canStartHobby, hobbyIdeas } from './curiosity.js';
 
 export const MIN_MOVES = 6;
-export const MAX_MOVES = 10;
+export const MAX_MOVES = 12; // (he has more ways to spend a day now: a wider menu, so looking things up and reading do not fall off it)
 export const ASKS_PER_DAY = 2;
 export const WANTS_MAX = 5; // wants on his list at one time
 const openWants = (s) => (s.asks ?? []).filter((a) => a.status === 'open');
@@ -98,7 +103,7 @@ export function askReason(s, now = Date.now()) {
   if (asked >= ASKS_PER_DAY) return null;
   const askedForMusic = (s.asks ?? []).some((a) => a.status === 'open' && /piano|guitar|violin|flute|clarinet|kalimba|harp|instrument|ukulele|drum/i.test(a.item));
   if (instruments(s).length === 1 && !askedForMusic && (s.today?.done?.play_piano ?? 0) >= 2) return 'I can only hum and sing, and I would like an instrument'; // he sang today and wants more
-  if (s.fullness <= 3 && !food(s).length && !ripe(s, now).length) return 'I am hungry and I have nothing left to eat or harvest (seeds would help)';
+  // (hungry is no reason to ask for anything any more: there is always food, he just eats)
   const need = missingForProject(s, (n) => hasTool(s, n) || (s.tools ?? []).some((t) => String(t.name).toLowerCase().includes(String(n).toLowerCase())));
   if (need) return `my project "${need.project}" needs ${need.tool}, and I looked into how it is done`;
   const gear = gearWish(s, now); // the rain, the frost or a missing library card keeps him in (world.js)
@@ -114,7 +119,7 @@ export function askReason(s, now = Date.now()) {
 
 export const MOVES = [
   // --- making (a maker fills in the design) ---
-  { name: 'decorate', maker: true, line: (s, n) => `make a sculpture, a piece of furniture or a thing for my room from simple shapes${needsKitchen(s) ? ' (I have no kitchen yet: a small stove or oven would let me cook)' : storageFull(s) ? ' (my desk is full: a shelf within reach, a small table or a stand would give my things a place)' : roomIsDark(s, n) ? ` (no lamp of mine reaches the ${needLampSpots(s, n)[0].name}: a lamp there would help)` : ' (a big thing, even bigger than a house, can stand outside at a place I pick: where "outside by the pond")'}: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s, n) => (itch(s, 0.2, 2.6) + (roomThings(s.decor).length < 8 ? 0.9 : 0) + (needsKitchen(s) ? 1.5 : 0) + (roomIsDark(s, n) ? 0.6 : 0) + (storageFull(s) ? 0.6 : 0)) * (roomHasPlenty(s.decor) ? 0.7 : 1) }, // his urge to make decides (body.js): right after making it is quiet, hours later it pulls. A full room pulls a little less
+  { name: 'decorate', maker: true, line: (s, n) => roomIsFull(s.decor) ? `make a sculpture, a machine, a model or another thing from simple shapes. My room is full, so it goes on a plinth in my museum for everyone to see: {what, why${working(s).length ? ', project' : ''}}` : `make a sculpture, a piece of furniture or a thing for my room from simple shapes${needsKitchen(s) ? ' (I have no kitchen yet: a small stove or oven would let me cook)' : storageFull(s) ? ' (my desk is full: a shelf within reach, a small table or a stand would give my things a place)' : roomIsDark(s, n) ? ` (no lamp of mine reaches the ${needLampSpots(s, n)[0].name}: a lamp there would help)` : ' (a big thing, even bigger than a house, can stand outside at a place I pick: where "outside by the pond")'}: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'decorate', n), score: (s, n) => (itch(s, 0.2, 2.6) + (roomThings(s.decor).length < 8 ? 0.9 : 0) + (needsKitchen(s) ? 1.5 : 0) + (roomHasPlenty(s.decor) ? 0 : (roomIsDark(s, n) ? 0.6 : 0) + (storageFull(s) ? 0.6 : 0))) * (roomHasPlenty(s.decor) ? 0.5 : 1) }, // (a full room: what he makes goes to his museum, museum.js) // his urge to make decides (body.js): right after making it is quiet, hours later it pulls. A full room pulls a little less
   { name: 'draw', maker: true, line: (s) => `draw a picture: {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'draw', n), score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'record_song', maker: true, line: (s) => `write and record a song (with ${instruments(s).join(', ')}${instruments(s).length ? ' and drums' : ''}): {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'record_song', n) && instruments(s).length > 0, score: (s) => 0.8 + s.body.creativity / 4 },
   { name: 'make_app', maker: true, line: (s) => `write a little program or game on my computer (start small: a game I can grow a bit every day as a project): {what, why${working(s).length ? ', project' : ''}}`, when: (s, n) => can(s, 'make_app', n), score: (s) => 0.4 + s.body.creativity / 6 },
@@ -134,7 +139,8 @@ export const MOVES = [
   { name: 'water', line: (s, n) => `water my plants (${names([...new Set(thirsty(s, n).map((p) => p.plant))])} are dry): {plant}`, when: (s, n) => thirsty(s, n).length > 0 && !missingTool(s, 'water'), score: () => 3 },
   { name: 'harvest', line: (s, n) => `harvest what is ripe (${names([...new Set(ripe(s, n).map((p) => p.plant))])}): {plant}`, when: (s, n) => ripe(s, n).length > 0, score: (s) => 2 + (10 - s.fullness) / 3 },
   { name: 'plant', line: (s) => `plant seeds (${names(seeds(s).map((x) => x.name))}): {seed}`, when: (s) => seeds(s).length > 0 && greenhouse(s) && plots(s).length < SLOTS_PER_GREENHOUSE && !missingTool(s, 'plant'), score: () => 1.5 },
-  { name: 'eat', line: (s) => `eat something (${names(food(s).map((p) => p.name), 4)}): {food}`, when: (s, n) => food(s).length > 0 && !notHungryReason(s, n), score: (s) => 1 + (10 - s.fullness) / 2 },
+  // He just eats: whatever he feels like, whenever he is hungry. There is always food (Bas: "just let him eat"). What he grew or cooked himself fills him more.
+  { name: 'eat', line: (s) => `eat something, whatever I feel like: there is always food${food(s).length ? ` (my own, which fills me more: ${names(food(s).map((p) => p.name), 4)})` : ''}: {food}`, when: (s, n) => !notHungryReason(s, n), score: (s) => 1 + (10 - s.fullness) / 2 },
   { name: 'cook', line: (s) => `cook a dish with only what is in my pantry now (${food(s).filter((p) => p.kind === 'ingredient').slice(0, 6).map((p) => p.name).join(', ')}): {dish, ingredients: [1 to 4 of these]}`, when: (s, n) => food(s).length > 0 && kitchenIn(s.decor) && can(s, 'cook', n) && s.fullness < 7, score: (s) => 1 + (10 - s.fullness) / 3 },
   // --- body ---
   { name: 'rest', line: () => 'rest for a while: {}', when: () => true, score: (s) => 0.2 + (10 - s.energy) / 2 },
@@ -154,8 +160,8 @@ export const MOVES = [
   { name: 'write_diary', line: () => 'write in my diary: {text}', when: () => true, score: (s, n) => 0.3 + (new Date(n).getHours() >= 20 ? 1 : 0) },
   { name: 'tell', line: () => 'write a message to Bas: {text}', when: (s, n) => s.plan?.unread > 0 || (s.body.loneliness >= 7 && daysSince(s.outbox?.filter((m) => m.kind === 'tell').at(-1)?.at, n) >= 1), score: (s) => (s.plan?.unread ? 5 : 1) },
   { name: 'answer_visitor', line: (s) => `answer a note from a visitor or a traveller (${names((s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => v.id))}): {id, text, keep: true or false}`, when: (s) => (s.visitors ?? []).some((v) => !v.answer), score: () => 2 },
-  { name: 'buy', line: (s) => `buy something at the grocery store with my coins (I have ${s.coins ?? 0}): ${shopLine(s)}: {item}`, when: (s, n) => (s.coins ?? 0) >= 1 && shopOpen(n), score: (s) => 0.4 + (wantsToBuy(s) ? 1.2 : 0) + ((s.fullness ?? 10) <= 4 && !(s.pantry ?? []).some((p) => p.qty > 0) ? 3 : 0) },
-  { name: 'check_board', line: (s, n) => `walk to the notice board on the square and read what people ask for${boardNotes(s, n).some((w) => !w.seen) ? ' (there is something new on it)' : ''}: I earn coins by making it: {}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'board', n).ok) && boardCalls(s, n), score: (s, n) => (boardNotes(s, n).some((w) => !w.seen) ? 1.6 : 0.7) },
+  { name: 'buy', line: (s) => `walk to the grocery store and take something home (nothing costs anything in my world: I take what I need): ${shopLine(s)}: {item}`, when: (s, n) => shopOpen(n) && canTake(s, n) && wantsToBuy(s), score: (s) => 0.5 + ((s.fullness ?? 10) <= 5 && !(s.pantry ?? []).some((p) => p.qty > 0) ? 3.5 : 0) + ((s.projects ?? []).some((p) => p.status === 'working' && (p.needs ?? []).length) ? 0.8 : 0) },
+  { name: 'check_board', line: (s, n) => `walk to the notice board on the square and read what people in the village are up to${boardNotes(s, n).some((w) => !w.seen) ? ' (there is something new on it)' : ''}. Nobody asks me for anything there: {}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'board', n).ok) && boardCalls(s, n), score: (s, n) => (boardNotes(s, n).some((w) => !w.seen) ? 1.4 : 0.5) },
   { name: 'fetch_note', line: (s) => `walk to where someone left a note for me (${lying(s)[0]?.where ?? 'in my world'}) and pick it up: {}`, when: (s, n) => !process.env.PIP_NO_OUT && lying(s).length > 0 && Boolean(canGo(s, 'drops', n).ok), score: () => 1.7 },
   { name: 'shape_land', line: (s) => `take the land tool from the land workshop and shape the ground of my world${(s.land ?? []).length ? '' : ' (it is all flat now)'}: {kind: "hill", "hole", or "flat" to undo one, where: "on my land" or a place like "by the pond", size: "small", "medium" or "big", name}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'land', n).ok) && landToday(s, n) < LAND_PER_DAY && (s.energy ?? 10) > 3, score: (s) => 0.55 + s.body.creativity / 5 + ((s.land ?? []).length ? 0 : 0.5) },
   { name: 'paint_wall', line: () => 'paint something big on a wall outside in my world, for everyone to see (no paper or supplies needed): {what, why, wall: "any wall", or one I pick like "the wall by the flats" or "the back wall of the library"}', when: (s, n) => !process.env.PIP_NO_OUT && left(s, 'draw', n) > 0 && Boolean(canGo(s, 'walls', n).ok), score: (s) => 0.9 + s.body.creativity / 4 + ((s.gallery ?? s.art ?? []).some((a) => a.wall) ? 0 : 0.7) },
@@ -168,6 +174,23 @@ export const MOVES = [
   // His visitors (guests.js): one question he puts to everyone who comes by, and what they left for him on the library shelf.
   { name: 'ask_visitors', line: () => 'ask the people who visit my page one question I really want an answer to (they answer on my page, and I read it later). I say why I want to know: {question, why}', when: (s, n) => canAskVisitors(s, n), score: (s) => 0.5 + (s.body?.loneliness ?? 0) / 6 + (s.pastQuestions?.length || s.openQuestion ? 0 : 0.5) },
   { name: 'read_shelf', line: (s) => `walk to the library and read the ${pieceWords(unreadShelf(s)[0])} that was left for me on the shelf there: {}`, when: (s, n) => !process.env.PIP_NO_OUT && unreadShelf(s).length > 0 && Boolean(canGo(s, 'library', n).ok), score: () => 2.6 },
+  // A big thing takes days (sittings.js): he goes on with what he started, one sitting a day. No model is asked.
+  { name: 'build_on', line: (s, n) => `go on building the big thing I started (${canBuildOn(s, n).map((d) => `"${d.name}": day ${d.stage} of ${d.stages} done`).join('; ')}): {name}`, when: (s, n) => canBuildOn(s, n).length > 0, score: (s) => 1.6 + itch(s, 0, 5) },
+  // His one big dream (dream.js): he names it himself, and it stays in front of him until he reaches it or lets it go.
+  { name: 'dream', line: () => 'name my one big dream: something I really want to reach, have or do, that will take me a long time. It stays in front of me from now on. I say why it matters: {what, why}', when: (s) => !bigDream(s), score: (s) => 0.5 + ((s.curious?.interests ?? []).some((i) => i.score >= 6) ? 0.7 : 0) + ((s.pastDreams ?? []).length ? 0 : 0.3) },
+  { name: 'dream_step', line: (s) => `do one small thing for my big dream ("${bigDream(s)?.text.slice(0, 60)}") and say what: {what}`, when: (s) => Boolean(bigDream(s)) && !isToday((bigDream(s).steps ?? []).at(-1)?.at, Date.now()), score: () => 1.3 },
+  { name: 'end_dream', line: (s) => `my big dream ("${bigDream(s)?.text.slice(0, 60)}") is over: I reached it, or I let it go. I say which and why: {how: "reached" or "let go", why}`, when: (s, n) => Boolean(bigDream(s)) && n - Date.parse(bigDream(s).since) > 2 * 86_400_000, score: () => 0.15 },
+  // He may take apart, throw away or destroy what he made (views.js). It is really gone; a record stays on his Made tab.
+  { name: 'take_apart', line: (s) => `take one of my own things apart for good, because it is not right, or I am done with it, or it makes me laugh to (${names(takeable(s).slice(-5).map((d) => d.name.slice(0, 28)), 5)}). I say why: {name, why}`, when: (s) => takeable(s).length > 0, score: (s) => 0.2 + (roomIsFull(s.decor) ? 0.3 : 0) + ((s.emo?.irritated ?? 0) >= 3.5 ? 0.5 : 0) },
+  // Quiet time: doing nothing much, on purpose. It is a real part of his day, not a filler.
+  { name: 'quiet', line: () => 'have a quiet moment and do nothing much: sit by the window, lie on the floor and look at the ceiling, listen to the house. I say where and what I notice: {where, what}', when: () => true, score: (s) => 0.9 + ((s.calm ?? 5) < 4.5 ? 0.8 : 0) + ((s.energy ?? 5) < 5 ? 0.6 : 0) + ((s.recent?.moves ?? []).slice(-4).every((m) => m.kind !== 'quiet') ? 0.5 : -0.4) },
+  // Things to do that leave nothing behind (play.js): he builds anything he can use outside and says how it is used,
+  // takes it out whenever he likes, and plays the games he wrote.
+  { name: 'make_plaything', maker: true, line: () => 'build something I can really USE outside, life-size, and say how I use it: a bike, a kite, a model plane, a boat for the pond, a ball, a swing, a go-kart, anything I can think of. It does not go in my room: {what, why}', when: (s, n) => !process.env.PIP_NO_OUT && madeToday(s, isToday, n) < PLAYTHINGS_PER_DAY, score: (s) => itch(s, 0.3, 4) + (playthings(s).length ? 0 : 1.3) + (s.body?.boredom ?? 0) / 8 },
+  { name: 'play', line: (s) => `go out with something of mine and really do it (${playthings(s).slice(-4).map((p) => `"${p.name}": ${p.verb} it, ${p.goes ? `${p.goes} time${p.goes === 1 ? '' : 's'} so far` : 'never tried yet'}`).join('; ')}): {name}`, when: (s, n) => !process.env.PIP_NO_OUT && playthings(s).some((p) => Boolean(canGo(s, p.where, n).ok)), score: (s, n) => 1.2 + wantsOut(s, n) * 0.5 + (s.body?.boredom ?? 0) / 5 + ((s.joy ?? 5) < 4.5 ? 0.6 : 0) + (playthings(s).some((p) => !p.goes) ? 0.9 : 0) },
+  { name: 'play_game', line: (s) => `play one of the games I wrote myself, just for fun (${names((s.apps ?? []).slice(-3).map((a) => a.title ?? a.name))}): {name}`, when: (s) => (s.apps ?? []).length > 0 && (s.today?.done?.play_game ?? 0) < 3, score: (s) => 0.7 + (s.body?.boredom ?? 0) / 6 + ((s.joy ?? 5) < 4.5 ? 0.4 : 0) },
+  // His museum (museum.js): he carries a thing there from his room or his chest, so everyone can see it.
+  { name: 'show_in_museum', line: (s) => `carry one of my things to my museum, where everyone can see it (${names(showable(s).map((d) => d.name.slice(0, 30)), 3)}${showable(s).length > 3 ? ', or another' : ''}): {name, why}`, when: (s, n) => !process.env.PIP_NO_OUT && showable(s).length > 0 && carriedToday(s, isToday, n) < 3, score: (s) => 0.4 + (roomIsFull(s.decor) ? 1.9 : roomHasPlenty(s.decor) ? 0.5 : 0) + ((s.stored ?? []).length >= 3 ? 0.4 : 0) + ((s.museum ?? []).length ? 0 : 0.6) },
   // A hobby he thinks up himself (curiosity.js): "I want to start graffiti". He says why, and then he really tries it.
   { name: 'start_hobby', line: (s, n) => `think of something new I would like to try as a hobby, and say why (ideas: ${hobbyIdeas(s, n).join(', ')}, or anything else): {what, why}`, when: (s, n) => canStartHobby(s, n), score: (s) => 0.7 + (s.body?.boredom ?? 0) / 8 },
   // His own website (site.js). He makes it at the internet café, and works on it there: a little at a time, with what he
@@ -198,20 +221,25 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
   for (const m of MOVES) {
     let ok = false;
     try { ok = Boolean(m.when(s, now)) && !((m.maker || m.name === 'paint_wall' || m.name === 'print_thing') && headRests(s, now)) && m.name !== restingMove(s, now) && !(tired && kindOf(m.name) === tired && !['do', 'tell', 'ask_for'].includes(m.name)); } catch { ok = false; } // a move he looped on rests for a while (loops.js)
+    // Hungry: eating is a need, not a habit. It is never held back because he ate a few times lately (he ate a little basil
+    // three times, and then "eat" was hidden as a repeated move while he was still very hungry).
+    const need = m.name === 'eat' && s.fullness <= 4;
+    if (need) { try { ok = Boolean(m.when(s, now)); } catch { ok = false; } }
     if (!ok) continue;
     let score = m.score(s, now);
+    if (need) { scored.push({ m, score: score + 3 }); continue; }
     if (process.env.PIP_FAKE_MOVE === m.name) score = 99; // tests: the move a test wants is always among the offered ones
     score *= 0.5 ** recent.filter((x) => x === m.name).length;
     if ((s.today?.done?.[m.name] ?? 0) >= 4 && !['eat', 'rest', 'water', 'harvest'].includes(m.name)) score *= 0.2;
     score *= 0.8 ** recentKinds.filter((k) => k === kindOf(m.name)).length;
     score *= noveltyBoost(s, m.name); // something he has never (or hardly) done is more inviting
     if ((s.curious?.interests ?? []).some((i) => i.own && (i.moves ?? []).includes(m.name))) score *= 1.5; // a way to do a hobby of his own idea
-    if (['decorate', 'draw', 'place_picture', 'move_thing'].includes(m.name)) score += Math.max(0, 5 - (s.body?.coziness ?? 5)) * 0.15; // a bare room: a small push to make it his
+    if (['decorate', 'draw', 'place_picture', 'move_thing'].includes(m.name) && !(m.name === 'decorate' && roomThings(s.decor).length >= 8)) score += Math.max(0, 5 - (s.body?.coziness ?? 5)) * 0.15; // a bare room: a small push to make it his (a new thing only while it really is bare)
     scored.push({ m, score: score * (0.75 + random() * 0.5) });
   }
   scored.sort((a, b) => b.score - a.score);
   const pick = scored.slice(0, MAX_MOVES);
-  const MUST = ['do', 'tell', 'want']; // always a free move; and when someone wrote or something is missing, a way to say so
+  const MUST = ['do', 'tell', 'want', ...(s.fullness <= 4 ? ['eat'] : [])]; // always a free move; when someone wrote or something is missing, a way to say so; and food when he is hungry
   for (const must of MUST) {
     const hit = scored.find((x) => x.m.name === must);
     if (!hit || pick.includes(hit)) continue;

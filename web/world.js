@@ -12,13 +12,18 @@ export const PLACES = [
   {
     key: 'doorstep', name: 'my doorstep', title: 'His doorstep', emoji: '🚪', walk: 1, stay: [15, 25], hours: [8, 21], at: [330, 292],
     blurb: 'Sitting in front of his door, watching the square.',
-    things: [{ key: 'watch', words: 'sit and watch the square', match: /watch|sit|street|square|look/ }],
+    things: [{ key: 'watch', words: 'sit and watch the square', match: /watch|sit|street|square|look/ }, { key: 'nap', words: 'doze on my doorstep', match: /nap|doze|sleep|rest|snooze/ }],
+  },
+  {
+    key: 'square', name: 'the square', title: 'The square', emoji: '⛲', walk: 2, stay: [10, 18], hours: [7, 22], at: [300, 300],
+    blurb: 'The middle of the village. Everyone crosses it, and there is room to ride, kick and roll.',
+    things: [{ key: 'walk', words: 'walk round the square', match: /walk|round|cross|stroll|look|people/ }],
   },
   { key: 'shop', name: 'the grocery store', title: 'The grocery store', emoji: '🛒', walk: 3, stay: [4, 6], hours: [9, 18], at: [452, 262], errand: true, blurb: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.' },
   {
     key: 'pond', name: 'the pond in the park', title: 'The pond', emoji: '🦆', walk: 8, stay: [30, 50], hours: 'light', at: [150, 118],
     blurb: 'Ducks, reeds and a bench under the willow. It freezes in real frost.',
-    things: [{ key: 'ducks', words: 'watch the ducks', match: /duck|watch|water|bench|sit/ }, { key: 'find', words: 'look for something to bring home', match: /find|look for|collect|bring|search|feather|stone|pebble|leaf|leaves/ }, { key: 'sketch', words: 'sketch what I see', match: /sketch|draw|paint/ }, { key: 'ice', words: 'slide on the ice', match: /ice|slide|skate/, when: 'frozen' }],
+    things: [{ key: 'ducks', words: 'watch the ducks', match: /duck|watch|water|bench|sit/ }, { key: 'nap', words: 'take a nap on the bench', match: /nap|doze|sleep|rest|snooze/ }, { key: 'find', words: 'look for something to bring home', match: /find|look for|collect|bring|search|feather|stone|pebble|leaf|leaves/ }, { key: 'sketch', words: 'sketch what I see', match: /sketch|draw|paint/ }, { key: 'ice', words: 'slide on the ice', match: /ice|slide|skate/, when: 'frozen' }],
   },
   {
     key: 'library', name: 'the library', title: 'The library', emoji: '📚', walk: 10, stay: [30, 45], hours: [10, 17], days: [2, 3, 4, 5, 6], at: [478, 118],
@@ -29,12 +34,17 @@ export const PLACES = [
   {
     key: 'field', name: 'my field', title: 'His field', emoji: '🌱', walk: 5, stay: [20, 35], hours: 'light', at: [540, 210],
     blurb: 'His own land beside the square. It is his to fill.',
-    things: [{ key: 'plan', words: 'walk around my field and pick a spot to build on', match: /plan|walk|build|spot|pace|measure|look/ }, { key: 'clouds', words: 'lie in the grass and watch the clouds', match: /cloud|lie|grass|sky|nothing|rest/ }],
+    things: [{ key: 'plan', words: 'walk around my field and pick a spot to build on', match: /plan|walk|build|spot|pace|measure|look/ }, { key: 'clouds', words: 'lie in the grass and watch the clouds', match: /cloud|lie|grass|sky|nothing/ }, { key: 'nap', words: 'take a nap in the grass', match: /nap|doze|sleep|rest|snooze/ }],
   },
   {
     key: 'stone', name: 'the green stone', title: 'The green stone', emoji: '💎', walk: 12, stay: [20, 30], hours: 'light', at: [70, 70],
     blurb: 'It stands far out in the grass and glows a little at night. Nobody knows who put it there.',
     things: [{ key: 'sit', words: 'sit by the green stone', match: /sit|rest|look|watch|view/ }, { key: 'listen', words: 'listen if it hums', match: /listen|hum|ear|hear|sound/ }],
+  },
+  {
+    key: 'museum', name: 'my museum', title: 'His museum', emoji: '🏛️', walk: 7, stay: [15, 25], hours: 'light', at: [150, 200],
+    blurb: 'An open hall with plinths, south of the pond. The things he made stand here for everyone to see.',
+    things: [{ key: 'walk', words: 'walk past my things and look at them', match: /walk|look|see|visit|round|past/ }, { key: 'dust', words: 'dust the plinths and set things straight', match: /dust|clean|straight|tidy|polish|care/ }],
   },
   // Places he only goes to with something to do there (job): he designs it first, then walks there and it is made.
   { key: 'board', name: 'the notice board', title: 'The notice board', emoji: '📌', walk: 1, stay: [3, 5], hours: [0, 24], at: [270, 292], job: true, blurb: 'People of the town pin notes on it: things they would like made. He reads it, makes one, and earns coins.' },
