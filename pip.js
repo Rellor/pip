@@ -28,7 +28,7 @@ import { letterDue, weekDigest, letterPrompt, letterSchema, fakeLetter, sendLett
 import { noteLines, noteAnswer, keepWishes, wishLines } from './neighbours.js';
 import { buy } from './shop.js';
 import { storyTick } from './story.js';
-import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines, startHobby, practiseHobby, dropUntriedHobbies, hobbyLines } from './curiosity.js';
+import { browse, noteSpark, feel, noteOpinion, practiseInterest, fade as fadeInterests, curiosityLines, startHobby, practiseHobby, dropUntriedHobbies, letGoStale, hobbyLines } from './curiosity.js';
 import { applyLight } from './web/lights.js';
 import { designate, spotNote, forHint, fitFact, floorSpot } from './placement.js';
 import { goOn } from './world.js';
@@ -88,6 +88,7 @@ import { noteArc } from './arc.js';
 import { showInMuseum, markForMuseum, carryToMuseum, museumLines, toMuseum } from './museum.js';
 import { startSittings, buildOn, sittingLines } from './sittings.js';
 import { paceMin } from './pace.js';
+import { nameDream, dreamStep, endDream, dreamLines } from './dream.js';
 import { makePlaything, findPlaything, playJob, playLines, playGame, noteArrival, nextArrival, arrived, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { askVisitors, closeQuestion, takeAnswer, takeShelf, readShelf, noteReply, visitorLine, guestLines, pieceWords, SHELF_KINDS } from './guests.js';
 
@@ -640,7 +641,7 @@ function brainContext(s, { soul, offered, reasons, unread, looking, grew, ownWor
     skills: skillLine(s),
     moves: offered,
     room: roomLines(s),
-    fresh: [...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...sittingLines(s), ...museumLines(s), ...playLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
+    fresh: [...dreamLines(s), ...retryLines(s), ...hobbyLines(s, offered.map((m) => m.name)), ...wantLines(s), ...guestLines(s), ...paceLines(s), ...offLines(s), ...stuffLines(s), ...sittingLines(s), ...museumLines(s), ...playLines(s), ...enoughLines(s), ...outLines(s), ...wishLines(s), ...boardLines(s), ...dropLines(s), ...beliefLines(s), ...[landLine(s)].filter(Boolean), ...challengeLines(s), ...habitLines(s, offered.map((m) => m.name)), ...curiosityLines(s, s.projects), ...restingLines(s), ...tiredLines(s), ...placeLines(s), ...storageLines(s), ...darkLines(s), ...freshLines(s, offered.map((m) => m.name))],
     lessons: lessonLines(s, offered.map((m) => m.name)),
     pictures: looking.map((p) => p.id),
     ownWork,
@@ -1168,6 +1169,17 @@ function applyInnerLife(s, r, detail, replying = false) {
     const b = buildOn(s, r.details?.name);
     if (b.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `build_on: ${b.failed}` }; }
     else { nudge(s, 'joy', b.done ? 0.9 : 0.3); if (b.done) { addMemory(s, `My ${b.thing.name} is finished. It took me ${b.stages} days.`, 6, 'memory', at); happened(s, `My ${b.thing.name} is finished.`); } console.log(`   🔨 ${b.thing.name}: sitting ${b.stage} of ${b.stages}${b.done ? ', finished' : ''}`); }
+  }
+  if (r.action === 'do' && r.as === 'dream') { // he names his one big dream (dream.js)
+    const d = nameDream(s, r.details?.dream, r.details?.why);
+    if (d.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `dream: ${d.failed}` }; console.log(`   ✋ no dream: ${d.failed}`); }
+    else { addMemory(s, `I have a big dream now: ${d.dream.text}. Because: ${d.dream.why}`, 9, 'memory', at); happened(s, `I named my big dream: ${d.dream.text}.`); console.log(`   🌠 his big dream: ${d.dream.text} (${d.dream.why})`); }
+  }
+  if (r.action === 'do' && r.as === 'dream_step') { const d = dreamStep(s, r.details?.what); if (d) { nudge(s, 'joy', 0.5); console.log(`   🌠 for his dream: ${r.details?.what}`); } }
+  if (r.action === 'do' && r.as === 'end_dream') {
+    const d = endDream(s, r.details?.how, r.details?.why);
+    if (d.failed) { ensurePlan(s); s.plan.lastFail = { at, why: `end_dream: ${d.failed}` }; }
+    else { const said = d.dream.ended === 'reached' ? `I reached my big dream: ${d.dream.text}. ${d.dream.words}` : `I let my big dream go: ${d.dream.text}. ${d.dream.words}`; addMemory(s, said, 9, 'memory', at); happened(s, said); nudge(s, 'joy', d.dream.ended === 'reached' ? 2.5 : -0.3); console.log(`   🌠 ${said}`); }
   }
   if (r.action === 'do' && r.as === 'quiet') { nudge(s, 'calm', 0.8); s.energy = Math.min(10, (s.energy ?? 5) + 1); } // quiet time settles him and gives a little energy back
   if (r.action === 'do' && r.as === 'play_game') { // he plays one of the games he wrote (play.js): plain code, no model
@@ -2494,8 +2506,14 @@ async function wakeUp() {
     for (const off of noteFailures(state, mine)) console.log(`🛑 off for today: ${off.key} failed 3 times (${off.why.slice(0, 80)})`);
     for (const { hobby, became } of practiseHobby(state, mine)) {
       console.log(`   🌱 for his hobby ${hobby.topic}: ${hobby.practice} time${hobby.practice === 1 ? '' : 's'}${became ? ` (${became})` : ''}`);
-      if (became === 'real') addMemory(state, `${hobby.topic} is a real hobby of mine now: I did it ${hobby.practice} times, and it started as my own idea.`, 7, 'memory', new Date().toISOString());
+      if (became === 'real') addMemory(state, `${hobby.topic} is a real hobby of mine now: I came back to it on ${hobby.practice} different days, and it started as my own idea.`, 7, 'memory', new Date().toISOString());
       if (became === 'mastered') addMemory(state, `I have done ${hobby.topic} so often that I am good at it now.`, 8, 'memory', new Date().toISOString());
+    }
+    for (const gone of letGoStale(state)) { // a hobby he has not touched for ten days: he notices, and says so
+      const said = `I have not done anything with ${gone.topic} for ten days. I think I am done with it. It was good while it lasted: ${gone.practice} day${gone.practice === 1 ? '' : 's'} of it.`;
+      addMemory(state, said, 6, 'memory', new Date().toISOString()); happened(state, said);
+      state.log.push({ at: new Date().toISOString(), action: 'happened', what: said, emoji: '🍂' });
+      console.log(`   🍂 ${said}`);
     }
     for (const gone of dropUntriedHobbies(state)) { addMemory(state, `I wanted to try ${gone.topic} as a hobby. I never did. I let the idea go.`, 4, 'memory', new Date().toISOString()); console.log(`   🍂 let go of the hobby idea: ${gone.topic}`); }
   }

@@ -5139,7 +5139,7 @@ function renderMemory(s) {
   fill($('opinions'), (s.opinions || []).length ? s.opinions.slice(-6).reverse().map((o) => el('li', `${face[o.how] ?? '💭'} ${o.topic}: “${o.says}”`)) : [el('li', 'He has not said what he thinks of anything yet.', 'muted')]);
   const ints = (s.curious?.interests || []).filter((i) => i.score >= 3).sort((a, b) => b.score - a.score);
   const times = (n) => `${n} time${n === 1 ? '' : 's'}`;
-  const hobbyLevel = (i) => (i.score >= 6 && (i.practice ?? 0) >= 12 ? ['🏅', 'mastered'] : i.own && (i.practice ?? 0) < 3 ? ['🌱', 'wants to try it'] : i.score >= 6 ? ['💛', 'hobby'] : ['✨', 'interest']);
+  const hobbyLevel = (i) => (i.score >= 6 && (i.practice ?? 0) >= 12 ? ['🏅', 'mastered'] : i.own && !(i.practice > 0) ? ['🌱', 'wants to try it'] : i.own && (i.practice ?? 0) < 6 ? ['🌱', 'trying it'] : i.score >= 6 ? ['💛', 'hobby'] : ['✨', 'interest']);
   fill($('hobbies'), ints.length ? ints.slice(0, 8).map((i) => { const [icon, lvl] = hobbyLevel(i); return el('li', `${icon} ${lvl}: ${i.topic} (${i.own ? 'his own idea, ' : ''}did it ${times(i.practice ?? 0)})${i.own && i.why ? ` — “${i.why}”` : ''}`); }) : [el('li', 'No interests yet. Browsing is how he finds them, or he thinks of one himself.', 'muted')]);
   { // what he practises: how often he did each kind of thing in his whole life (his body counts every move), and what he never tried
     const ever = s.ever || {};
@@ -5152,15 +5152,25 @@ function renderMemory(s) {
     $('practnever').hidden = !never.length || !done.length;
     $('practnever').textContent = never.length ? `Never tried yet: ${never.map((r) => r.name).join(', ')}.` : '';
   }
+  { // his one big dream (dream.js): what it is, why, and what he did for it
+    const d = s.bigDream ?? null, past = (s.pastDreams ?? []).at(-1) ?? null;
+    $('dreamcard').hidden = !d && !past;
+    if (d) {
+      const days = Math.floor((Date.now() - Date.parse(d.since)) / 86_400_000);
+      const steps = (d.steps ?? []).slice(-3).reverse();
+      const ul = el('ul'); ul.append(...steps.map((x) => el('li', `${when(x.at)}: ${x.what}`)));
+      fill($('dreamcard'), [el('div', `🌠 His big dream · ${days ? `for ${days} day${days === 1 ? '' : 's'} now` : 'since today'}`, 'lab'), el('p', d.text, 'txt'), el('p', `Why: ${d.why}`, 'why'), ...(steps.length ? [el('div', 'What he did for it', 'lab'), ul] : [el('p', 'He has not done anything for it yet.', 'muted')])]);
+    } else if (past) fill($('dreamcard'), [el('div', past.ended === 'reached' ? '🌠 He reached his big dream' : '🌠 A dream he let go', 'lab'), el('p', past.text, 'txt'), el('p', past.words, 'why'), el('p', 'He has no big dream right now. He names the next one himself.', 'muted')]);
+  }
   { // on the front of the Pip tab: his hobbies, the ones he wants to try first
-    const mine = ints.filter((i) => i.own || i.score >= 6).sort((x, y) => Number(Boolean(y.own && (y.practice ?? 0) < 3)) - Number(Boolean(x.own && (x.practice ?? 0) < 3)));
+    const mine = ints.filter((i) => i.own || i.score >= 6).sort((x, y) => Number(Boolean(y.own && (y.practice ?? 0) < 6)) - Number(Boolean(x.own && (x.practice ?? 0) < 6)));
     $('hobbyhead').hidden = $('hobbylist').hidden = !mine.length;
     fill($('hobbylist'), mine.slice(0, 5).map((i) => {
       const [icon, lvl] = hobbyLevel(i);
       const li = el('li', null, 'hobby');
       li.append(el('span', icon, 'hi'));
       const body = el('div');
-      body.append(el('b', i.topic.replace(/^./, (c) => c.toUpperCase())), el('small', `${lvl}${i.own ? ' · his own idea' : ''} · did it ${times(i.practice ?? 0)}`));
+      body.append(el('b', i.topic.replace(/^./, (c) => c.toUpperCase())), el('small', `${lvl}${i.own ? ' · his own idea' : ''} · ${i.own ? `on ${i.practice ?? 0} day${i.practice === 1 ? '' : 's'} so far` : `did it ${times(i.practice ?? 0)}`}`));
       if (i.own && i.why) body.append(el('p', `“${i.why}”`));
       li.append(body);
       return li;

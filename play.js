@@ -105,7 +105,9 @@ export function playDone(s, job, rnd = Math.random, { wet = false, frozen = fals
   if (job?.motion === 'float' && frozen) did = `The pond was frozen, so my ${job.name} did not float: it slid. I pushed it over the ice and ran after it. That works too.`;
   else if (wet) did += ' It rained the whole time. I did it anyway.';
   if (p) { p.goes = goes + 1; p.lastAt = new Date().toISOString(); }
-  return { did, first: goes === 0, goes: goes + 1, saw: `${PLACE_WORDS[job?.place] ?? 'outside'} with my ${job?.name ?? 'thing'}` };
+  const better = p && levelOf({ goes }) !== levelOf(p) && goes > 0 ? levelOf(p) : null; // he crossed into a new level: he notices that he got better
+  if (better) did += better === 'a master' ? ' I think I have it now. Really have it.' : ` I am ${better} now. I can tell.`;
+  return { did, first: goes === 0, goes: goes + 1, better, saw: `${PLACE_WORDS[job?.place] ?? 'outside'} with my ${job?.name ?? 'thing'}` };
 }
 
 // For his prompt: what he has to play with, and what has stood unused for long.

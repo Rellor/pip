@@ -15,6 +15,7 @@ export const MASTER_AFTER = 12; // a hobby he has done this many times is someth
 export const MAX_BROWSE_PER_DAY = 8;
 const FADE_PER_DAY = 0.3;
 const DAY = 86_400_000;
+const dayKey = (when) => new Date(when).toLocaleDateString('en-CA', { timeZone: 'Europe/Amsterdam' }); // his calendar day
 const LOVE = { love: 3, like: 1.5, meh: -0.5, dislike: -1.5, doubt: -0.3 };
 const clip = (t, n) => { const x = String(t ?? '').replace(/\s+/g, ' ').trim(); return x.length <= n ? x : `${x.slice(0, n).replace(/\s+\S*$/, '')}…`; };
 const key = (t) => String(t ?? '').toLowerCase().replace(/\([^)]*\)/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -151,11 +152,13 @@ export function curiosityLines(s, projects = [], now = Date.now()) {
 // ---- A hobby of his own idea. Until now a hobby could only grow out of something he happened to read. Now he can also
 // simply think: "I want to start graffiti" (the start_hobby move). He has to say why. From then on it is a hobby he is
 // trying: he hears it when he thinks, with the move that would be a way to do it, and every time he really does
-// something for it, that counts (practice). Three times and it is a hobby for real; often enough and he has mastered it.
+// something for it, that counts (practice): once a day at most, because coming back to it on another day is what makes a
+// hobby. Six days and it is a hobby for real; often enough and he has mastered it.
 // An idea he never tries is let go after a few days, like anyone's.
-export const HOBBY_IDEA_EVERY_DAYS = 1; // a new idea at most this often
-export const HOBBIES_TRYING_MAX = 3; // ideas he has not made real yet, at one time
-export const HOBBY_REAL_AFTER = 3; // tried this many times: it is a real hobby
+export const HOBBY_IDEA_EVERY_DAYS = 3; // a new idea at most this often (many small things catch him, few become a hobby)
+export const HOBBIES_TRYING_MAX = 2; // ideas he has not made real yet, at one time
+export const HOBBY_REAL_AFTER = 6; // done on this many different days: it is a real hobby (it grows over weeks, like a person's)
+export const HOBBY_STALE_DAYS = 10; // a real hobby he has not touched for this long: he notices, and says he is done with it
 export const HOBBY_DROP_DAYS = 4; // never tried in this many days: he lets the idea go
 // Which of his moves are a way to do a hobby, by the words in it.
 const HOBBY_MOVES = [
@@ -215,6 +218,8 @@ export function practiseHobby(s, entries, now = Date.now()) {
     const words = key(h.topic).split(' ').filter((w) => w.length > 3);
     const did = (entries ?? []).find((e) => !e.failed && !e.fallback && e.as !== 'start_hobby' && ((h.moves ?? []).includes(e.as ?? e.action) || (h.moves ?? []).includes(e.action) || words.some((w) => key(`${e.name ?? ''} ${e.what ?? ''} ${e.query ?? ''} ${e.topic ?? ''}`).includes(w))));
     if (!did) continue;
+    h.goes = (h.goes ?? h.practice ?? 0) + 1; // every time he did it
+    if (h.practisedAt && dayKey(h.practisedAt) === dayKey(now)) { h.last = new Date(now).toISOString(); continue; } // he did it today already: a hobby grows by the days he comes back to it
     const was = h.practice ?? 0;
     h.practice = was + 1;
     h.practisedAt = new Date(now).toISOString();
@@ -223,6 +228,14 @@ export function practiseHobby(s, entries, now = Date.now()) {
     out.push({ hobby: h, became: was < HOBBY_REAL_AFTER && h.practice >= HOBBY_REAL_AFTER ? 'real' : was < MASTER_AFTER && h.practice >= MASTER_AFTER ? 'mastered' : null });
   }
   return out;
+}
+// A hobby of his own that he did, and then did not touch for a long time: he notices it himself, and lets it go. Returns the ones that went
+// (he says so: pip.js writes it into his day and his memory).
+export function letGoStale(s, now = Date.now()) {
+  const c = ensureCurious(s);
+  const gone = c.interests.filter((i) => i.own && (i.practice ?? 0) > 0 && now - Date.parse(i.practisedAt ?? i.last ?? i.since) >= HOBBY_STALE_DAYS * DAY);
+  if (gone.length) { c.interests = c.interests.filter((i) => !gone.includes(i)); c.pastHobbies = [...(c.pastHobbies ?? []), ...gone.map((i) => ({ topic: i.topic, days: i.practice, since: i.ideaAt ?? i.since, goneAt: new Date(now).toISOString() }))].slice(-12); }
+  return gone;
 }
 // An idea he never tried is let go. Returns the hobbies that went (for a memory).
 export function dropUntriedHobbies(s, now = Date.now()) {
@@ -238,6 +251,6 @@ export function hobbyLines(s, offered = [], now = Date.now()) {
     const ways = (h.moves ?? []).filter((m) => !offered.length || offered.includes(m)).slice(0, 3).map((m) => `${MOVE_WORDS[m] ?? m.replace(/_/g, ' ')} (${m})`);
     const days = Math.max(0, Math.floor((now - Date.parse(h.ideaAt ?? h.since)) / DAY));
     const onePiece = (h.moves ?? []).includes('extend_thing') ? ' For this hobby I like to keep working on one piece (I add to it, I make it better) or build big outside, more than a new small thing every time.' : '';
-    return `${n >= HOBBY_REAL_AFTER ? `My hobby: ${h.topic} (I did it ${n} times)` : `My own idea: I want to try ${h.topic} as a hobby${h.why ? ` (${h.why})` : ''}. ${n ? `I tried it ${n} time${n === 1 ? '' : 's'}` : `I have not tried it yet${days ? `, and it has been ${days} day${days === 1 ? '' : 's'}` : ''}`}`}.${ways.length ? ` A way to do it now: ${ways.join(', ')}.` : ' I can find out how it is done first (search_web).'}${onePiece}`;
+    return `${n >= HOBBY_REAL_AFTER ? `My hobby: ${h.topic} (I did it on ${n} different days)` : `My own idea: I want to try ${h.topic} as a hobby${h.why ? ` (${h.why})` : ''}. ${n ? `I did it on ${n} day${n === 1 ? '' : 's'} so far (a hobby is something I come back to on other days)` : `I have not tried it yet${days ? `, and it has been ${days} day${days === 1 ? '' : 's'}` : ''}`}`}.${ways.length ? ` A way to do it now: ${ways.join(', ')}.` : ' I can find out how it is done first (search_web).'}${onePiece}`;
   });
 }

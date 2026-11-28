@@ -20,6 +20,7 @@ import { canBrowse, interests, HOBBY_AT } from './curiosity.js';
 import { canAskVisitors, unreadShelf, pieceWords } from './guests.js';
 import { showable, carriedToday } from './museum.js';
 import { canBuildOn } from './sittings.js';
+import { bigDream } from './dream.js';
 import { playthings, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
 import { shopLine, shopOpen, wantsToBuy, canTake } from './shop.js';
 import { goOptions, goLine, wantsOut, gearWish, canGo } from './world.js';
@@ -173,6 +174,10 @@ export const MOVES = [
   { name: 'read_shelf', line: (s) => `walk to the library and read the ${pieceWords(unreadShelf(s)[0])} that was left for me on the shelf there: {}`, when: (s, n) => !process.env.PIP_NO_OUT && unreadShelf(s).length > 0 && Boolean(canGo(s, 'library', n).ok), score: () => 2.6 },
   // A big thing takes days (sittings.js): he goes on with what he started, one sitting a day. No model is asked.
   { name: 'build_on', line: (s, n) => `go on building the big thing I started (${canBuildOn(s, n).map((d) => `"${d.name}": day ${d.stage} of ${d.stages} done`).join('; ')}): {name}`, when: (s, n) => canBuildOn(s, n).length > 0, score: (s) => 1.6 + itch(s, 0, 5) },
+  // His one big dream (dream.js): he names it himself, and it stays in front of him until he reaches it or lets it go.
+  { name: 'dream', line: () => 'name my one big dream: something I really want to reach, have or do, that will take me a long time. It stays in front of me from now on. I say why it matters: {what, why}', when: (s) => !bigDream(s), score: (s) => 0.5 + ((s.curious?.interests ?? []).some((i) => i.score >= 6) ? 0.7 : 0) + ((s.pastDreams ?? []).length ? 0 : 0.3) },
+  { name: 'dream_step', line: (s) => `do one small thing for my big dream ("${bigDream(s)?.text.slice(0, 60)}") and say what: {what}`, when: (s) => Boolean(bigDream(s)) && !isToday((bigDream(s).steps ?? []).at(-1)?.at, Date.now()), score: () => 1.3 },
+  { name: 'end_dream', line: (s) => `my big dream ("${bigDream(s)?.text.slice(0, 60)}") is over: I reached it, or I let it go. I say which and why: {how: "reached" or "let go", why}`, when: (s, n) => Boolean(bigDream(s)) && n - Date.parse(bigDream(s).since) > 2 * 86_400_000, score: () => 0.15 },
   // Quiet time: doing nothing much, on purpose. It is a real part of his day, not a filler.
   { name: 'quiet', line: () => 'have a quiet moment and do nothing much: sit by the window, lie on the floor and look at the ceiling, listen to the house. I say where and what I notice: {where, what}', when: () => true, score: (s) => 0.9 + ((s.calm ?? 5) < 4.5 ? 0.8 : 0) + ((s.energy ?? 5) < 5 ? 0.6 : 0) + ((s.recent?.moves ?? []).slice(-4).every((m) => m.kind !== 'quiet') ? 0.5 : -0.4) },
   // Things to do that leave nothing behind (play.js): he builds anything he can use outside and says how it is used,

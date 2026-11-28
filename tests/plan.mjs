@@ -69,3 +69,32 @@ ok('his pace follows his mood: sooner when excited or mid-plan, later when tired
   assert.match(said, /Money is gone from my world.*My house is my workshop now.*rest anywhere/s);
 }
 ok('no money: he takes what he needs at the store, a full belly lasts, and he can nap anywhere');
+
+// ---- his one big dream, and joy in getting better
+{
+  const { nameDream, dreamStep, endDream, dreamLines, bigDream } = await import('../dream.js');
+  const { makePlaything, playJob, playDone } = await import('../play.js');
+  const s = fresh();
+  assert.equal(Boolean(byName('dream').when(s, now)), true);
+  assert.match(nameDream(s, 'a real telescope on my own tower', 'yes', now).failed, /needs a why/);
+  const d = nameDream(s, 'a real telescope on my own tower', 'The night sky keeps pulling at me and I want to see it properly.', now).dream;
+  assert.ok(d && bigDream(s) === d);
+  assert.match(nameDream(s, 'a boat as big as the pond', 'because it would be funny to try', now).failed, /One at a time/);
+  assert.equal(Boolean(byName('dream').when(s, now)), false);
+  assert.match(dreamLines(s, now)[0], /^MY BIG DREAM \(since today\): a real telescope on my own tower\. Because: The night sky.*I have not done anything for it yet\. It stays in front of me/);
+  assert.equal(Boolean(byName('dream_step').when(s, now)), true);
+  dreamStep(s, 'paced out where the tower could stand on my field', now);
+  assert.match(dreamLines(s, now + 3 * 86_400_000)[0], /\(for 3 days now\).*The last thing I did for it: paced out where the tower could stand/);
+  const a = toAnswer({ moves: [{ move: 'end_dream', details: { how: 'reached', why: 'The tower stands and I saw the rings of Saturn.' } }], reason: 'r', mood: 'happy' });
+  assert.deepEqual([a.steps[0].as, a.steps[0].details.how], ['end_dream', 'reached']);
+  const e = endDream(s, 'reached', 'The tower stands and I saw the rings of Saturn.', now + 30 * 86_400_000).dream;
+  assert.ok(e.ended === 'reached' && s.bigDream === null && s.pastDreams.length === 1);
+  assert.equal(Boolean(byName('dream').when(s, now)), true, 'after it he may name a new one, himself');
+  // getting better at something feels good
+  const t = fresh();
+  const bike = makePlaything(t, { name: 'bike', parts: [{ shape: 'box', size: [1, 0.5, 0.3], pos: [0, 0.4, 0], rot: [0, 0, 0], color: '#c04030' }] }, now).thing;
+  const runs = Array.from({ length: 8 }, () => playDone(t, playJob(bike), () => 0.2));
+  assert.deepEqual(runs.map((r) => r.better ?? '-'), ['-', '-', 'getting the hang of it', '-', '-', '-', '-', 'good at it']);
+  assert.match(runs[2].did, /I am getting the hang of it now\. I can tell\./);
+}
+ok('his big dream stays in front of him until he reaches it or lets it go; getting better is a joy of its own');

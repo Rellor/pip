@@ -185,7 +185,8 @@ export function finishOuting(s, now = Date.now()) {
     up(s, 'energy', wet ? 2 : 3.5); up(s, 'calm', 1); up(s, 'boredom', -0.5);
   } else if (w.play) { // he was out with something of his (play.js tells how it went: it depends on how often he has done it)
     const r = playDone(s, w.play, rnd, { wet, frozen });
-    o.did = r.did; o.saw = r.saw; o.played = { name: w.play.name, verb: w.play.verb, goes: r.goes, first: r.first };
+    o.did = r.did; o.saw = r.saw; o.played = { name: w.play.name, verb: w.play.verb, goes: r.goes, first: r.first, ...(r.better ? { better: r.better } : {}) };
+    if (r.better) { up(s, 'joy', 1); up(s, 'wonder', 0.5); } // getting better at something is a joy of its own
     up(s, 'joy', r.first ? 1.6 : 1.2); up(s, 'calm', 0.4); up(s, 'wonder', r.first ? 1 : 0.3); up(s, 'boredom', -3); up(s, 'energy', -1.2); up(s, 'creativity', -1.5); // (it lets something out, like making does, and nothing is left standing)
     if (p.key === 'square') up(s, 'loneliness', -1);
   } else if (p.key === 'square') { // the middle of the village: people cross it all day
