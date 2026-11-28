@@ -7809,3 +7809,9 @@ I finished my morning walk and want to sit by the autumn window as dusk falls to
 - do (sit by the autumn window at dusk and play a quiet tune on the old instrument): I will sit by the window with my instrument.
 - mood: calm
 
+## 28/11/2026, 09:00:42
+The night sky is pulling at me, so I'm starting a series to draw it properly. I also want to see what that note by the art workshop is about.
+> The night sky is pulling at me, so I'm starting a series to draw it properly. I also want to see what that note by the art workshop is about.
+- do (plan my new project: Draw night sky three ways: a series): I need a proper project to focus my energy on.
+- mood: energetic
+
