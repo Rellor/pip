@@ -136,8 +136,29 @@ function fitCamera() {
     fitRoom();
     applyOrbit();
   }
+  // A new size empties the picture until the next frame is drawn: the view flashed while you dragged the text drawer,
+  // turned the phone or opened the keyboard. So it is drawn again at once.
+  if (drawing) try { renderer.render(scene, camera); } catch {}
 }
+let drawing = false; // true once the first frame was drawn
 new ResizeObserver(fitCamera).observe(stage);
+// A phone's keyboard covers the lower half of the screen. The page then shrinks to what is left above the keyboard, so
+// the box you type in stays in sight; and the page is put back in place when the keyboard goes (phones leave it shifted).
+if (window.visualViewport && matchMedia('(hover:none), (pointer:coarse)').matches) {
+  const vv = window.visualViewport;
+  let typing = false;
+  const fit = () => {
+    const keyboard = typing && innerHeight - vv.height > 120;
+    if (keyboard) document.documentElement.style.setProperty('--app-h', `${Math.round(vv.height)}px`);
+    else document.documentElement.style.removeProperty('--app-h');
+    document.body.classList.toggle('typing', keyboard);
+    if (window.scrollY || vv.offsetTop) window.scrollTo(0, 0);
+  };
+  vv.addEventListener('resize', fit);
+  vv.addEventListener('scroll', fit);
+  document.addEventListener('focusin', (e) => { typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName); fit(); if (typing) setTimeout(() => { fit(); e.target.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 350); });
+  document.addEventListener('focusout', () => { typing = false; setTimeout(fit, 120); });
+}
 // On a phone the text is a drawer under the picture. Its handle makes it bigger or smaller: drag it up for more room to
 // read, down for more picture; a tap goes small, half, big. The page remembers the size.
 {
@@ -3616,6 +3637,8 @@ const SHARP = Math.min(devicePixelRatio, 1.5);
 let pixels = SHARP;
 let slowSum = 0;
 let slowN = 0;
+let tooSharp = Infinity; // a sharpness that was too slow on this device
+let fastRuns = 0; // how many times in a row it was fast
 let prev = performance.now();
 let fx = null; // a different look for the room (see look.js), chosen with ?fx=
 // ---- The greenhouse garden: plants grow in real time, drawn from the saved planting dates (see gardening.js)
@@ -3717,6 +3740,64 @@ function refreshGarden() {
   }
   for (const [id, v] of plantViews) if (!alive.has(id)) { v.group.parent?.remove(v.group); plantViews.delete(id); }
 }
+// ---- Only the lamps near you are worked out.
+// Every lamp he makes used to be counted for every pixel of every frame, wherever it stood: 27 lamps while you stood on
+// the square, and one more for each glowing thing he builds. A phone cannot draw that smoothly. Now a fixed number of
+// lamps is lit at a time: the ones that light the place where you are. The others still glow (their bulb is lit), they
+// only stop throwing light on things far from you. The number never changes, so nothing has to be built again when you walk.
+const LITE = matchMedia('(hover:none), (pointer:coarse)').matches || Math.min(screen.width, screen.height) < 700; // a phone or tablet
+const LAMPS_AT_ONCE = Number(lookParams.get('lamps')) || (LITE ? 8 : 14);
+const OFF_LAYER = 31; // a layer no camera looks at: a lamp there is skipped
+let lampsAt = 0;
+const lampSeen = new THREE.Vector3();
+// The lamps that are left out are not lost: one lamp stands in for all of them together (in the middle of them, with
+// their light and their colour added up), so the room is as bright as it was.
+const restLamp = new THREE.PointLight(0xffffff, 0, 14, 1.3);
+restLamp.userData.rest = true;
+scene.add(restLamp);
+const REST_SHARE = Number(lookParams.get('rest') ?? 0.25); // one lamp in the middle lights more than the same light spread over a room
+const restGoal = { pos: new THREE.Vector3(), color: new THREE.Color(), power: 0, reach: 14, set: false };
+function lampBudget(now, dt = 0.35) {
+  // (the stand-in lamp glides to its new place and strength: no jumps)
+  const k = Math.min(1, dt * 4);
+  if (restGoal.set) { restLamp.position.lerp(restGoal.pos, restLamp.intensity < 0.01 ? 1 : k); restLamp.color.lerp(restGoal.color, k); restLamp.intensity += (restGoal.power - restLamp.intensity) * k; restLamp.distance += (restGoal.reach - restLamp.distance) * k; }
+  if (now < lampsAt) return;
+  lampsAt = now + 350;
+  const all = [];
+  scene.traverse((o) => { if (o.isPointLight && !o.userData.rest) all.push(o); });
+  if (all.length < LAMPS_AT_ONCE) { for (const l of all) l.layers.set(0); restGoal.power = 0; restGoal.set = true; return; }
+  for (const l of all) {
+    let shown = l.intensity > 0.005;
+    for (let p = l; shown && p; p = p.parent) if (!p.visible) shown = false;
+    const d = l.getWorldPosition(lampSeen).distanceTo(camera.position);
+    const reach = l.distance || 200;
+    l.userData.near = shown && d < reach * 1.5;
+    // a light that fills a whole place (no fall-off) always counts while you are in it; a lamp counts by how much of it reaches you
+    l.userData.rank = !shown ? -1 : d < reach ? (l.decay === 0 ? 1e6 : (l.intensity * (1 - d / reach)) / (1 + 0.15 * d) + 1) : l.intensity / (d * d + 1);
+    if (shown && l.layers.mask === 1) l.userData.rank *= 1.3; // the ones that are lit stay lit a little longer: no flicker at the edge
+  }
+  all.sort((a, b) => b.userData.rank - a.userData.rank);
+  const keep = LAMPS_AT_ONCE - 1; // one place is for the stand-in
+  let sum = 0, reach = 0;
+  const pos = new THREE.Vector3(), col = new THREE.Color(0, 0, 0);
+  all.forEach((l, i) => {
+    l.layers.set(i < keep ? 0 : OFF_LAYER);
+    if (i < keep || !l.userData.near || l.decay === 0) return;
+    l.getWorldPosition(lampSeen);
+    sum += l.intensity; pos.addScaledVector(lampSeen, l.intensity); reach = Math.max(reach, l.distance || 14);
+    col.r += l.color.r * l.intensity; col.g += l.color.g * l.intensity; col.b += l.color.b * l.intensity;
+  });
+  restGoal.set = true;
+  restGoal.power = sum * REST_SHARE;
+  if (sum > 0) { restGoal.pos.copy(pos.multiplyScalar(1 / sum)); restGoal.color.setRGB(col.r / sum, col.g / sum, col.b / sum); restGoal.reach = reach + 2; }
+}
+// Shadows are drawn again for every frame. On a phone: at most 15 times a second (nobody sees the difference, and it saves a whole second drawing of the world).
+let shadowAt = 0;
+function shadowBudget(now) {
+  if (!LITE) return;
+  renderer.shadowMap.autoUpdate = false;
+  if (now >= shadowAt) { shadowAt = now + 66; renderer.shadowMap.needsUpdate = true; }
+}
 let gardenAt = 0;
 let autoAt = 0;
 function loop(now) {
@@ -3724,7 +3805,12 @@ function loop(now) {
   if (!document.hidden && dt < 0.25 && ++slowN > 5) slowSum += dt; // the first frames and long pauses do not count
   if (slowN >= 95) {
     const avg = slowSum / 90;
-    const want = avg > 0.026 ? Math.max(0.75, pixels - 0.25) : avg < 0.015 ? Math.min(SHARP, pixels + 0.25) : pixels;
+    // Slow: a step less sharp. Fast again: a step sharper, but only after it stayed fast for a while, and never back to a
+    // sharpness that was too slow before (it used to go down, up, down, up: the picture pulsed every few seconds).
+    let want = pixels;
+    if (avg > 0.026) { want = Math.max(0.75, pixels - 0.25); tooSharp = Math.min(tooSharp, pixels); fastRuns = 0; }
+    else if (avg < 0.015) { if (++fastRuns >= 6 && pixels + 0.25 < tooSharp) { want = Math.min(SHARP, pixels + 0.25); fastRuns = 0; } }
+    else fastRuns = 0;
     if (want !== pixels) {
       pixels = want;
       if (!pixelNow) renderer.setPixelRatio(pixels);
@@ -3774,8 +3860,11 @@ function loop(now) {
   const printing = plan && stepNow >= 0 && plan.steps[stepNow]?.action === 'print_photo';
   printLight.material.color.set(printing && Math.floor(now / 250) % 2 ? 0x6dff8a : 0x2f6b3a);
   updateWalk(dt);
+  lampBudget(now, dt);
+  shadowBudget(now);
   if (fx) fx.render();
   else renderer.render(scene, camera);
+  drawing = !fx;
   requestAnimationFrame(loop);
 }
 fitCamera();
@@ -6336,6 +6425,13 @@ window.pipRadio = () => showInfo(radioSet.userData.info());
 window.pipCard = (kind, key) => showInfo(worldCard(kind, key)); // for testing: the card of a place in his world
 window.pipPlaying = () => (playingId ? { id: playingId, at: playGroups.get(playingId).g.position.toArray().map((n) => Math.round(n * 10) / 10), pip: pip.group.position.toArray().map((n) => Math.round(n * 10) / 10) } : null); // for testing: where his plaything is right now
 window.pipLook = () => { const f = lookingAt(); return f ? { kind: f.kind, label: f.label, far: f.hit ? Math.round(howFar(f.hit) * 10) / 10 : null } : null; }; // for testing: what the F prompt would say right now
+window.pipInfo = () => {
+  lampsAt = 0; lampBudget(performance.now(), 10); // for testing: what one frame costs (draw calls, triangles, lights that are on)
+  const lights = {}; let meshes = 0, shadowCasters = 0;
+  scene.traverseVisible((o) => { if (o.isLight && o.layers.mask === 1) lights[o.type] = (lights[o.type] ?? 0) + 1; if (o.isMesh) { meshes++; if (o.castShadow) shadowCasters++; } });
+  return { calls: renderer.info.render.calls, triangles: renderer.info.render.triangles, programs: renderer.info.programs?.length, geometries: renderer.info.memory.geometries, textures: renderer.info.memory.textures, lights, meshes, shadowCasters, pixelRatio: renderer.getPixelRatio(), size: [renderer.domElement.width, renderer.domElement.height], shadows: renderer.shadowMap.enabled };
+};
+window.pipLights = () => { const out = []; scene.traverse((o) => { if (!o.isLight) return; let vis = true; for (let p = o; p; p = p.parent) if (!p.visible) vis = false; const w = o.getWorldPosition(new THREE.Vector3()); out.push({ type: o.type.replace('Light', ''), vis, i: +o.intensity.toFixed(2), dist: o.distance, at: w.toArray().map((n) => Math.round(n)), shadow: o.castShadow, map: o.shadow?.mapSize?.x, name: o.name || o.parent?.name || o.parent?.userData?.name || '' }); }); return out; };
 window.pipEye = () => camera.position.toArray(); // for testing: where the eye is (the bobbing of the view)
 window.pipAt = () => ({ x: Math.round((pip.group.position.x - (inTown(pip.group.position.x) ? TOWN_X : 0)) * 10) / 10, z: Math.round(pip.group.position.z * 10) / 10, out: inTown(pip.group.position.x), shown: pip.group.visible }); // for testing: where Pip is
 window.pipCam = () => ({ fit: orbit.fit, goal: fitGoal, zoom: orbit.zoom, px: orbit.px, pz: orbit.pz, focusX, name: focusName(), aspect: camera.aspect, pos: camera.position.toArray().map((v) => Math.round(v)) }); // for testing: how the overview looks at things

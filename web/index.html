@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <title>Pip's Room</title>
 <link rel="icon" href="data:,">
 <style>
@@ -678,6 +678,46 @@
   .hobby b { display:block; font-size:16px; }
   .hobby small { display:block; color:var(--muted); font-size:13.5px; }
   .hobby p { margin-top:6px; font-size:15px; font-style:italic; }
+
+  /* ================= A phone in your hand =================
+     - the page never slides, bounces or reloads when you drag (the browser's "pull down to reload" is off)
+     - every button is big enough for a thumb (40px or more), every letter 13px or more
+     - the top of the text drawer is slimmer, so more of what Pip does fits under the picture
+     - a box you type in has 16px letters (a phone zooms the whole page in on anything smaller) */
+  html, body { overscroll-behavior:none; }
+  .pane, #infoscroll, .ph-screen { overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+  button, a, summary, label, input, select, textarea { touch-action:manipulation; }
+  #stage, #stage *, #tabs, .head, #grip { -webkit-tap-highlight-color:transparent; -webkit-touch-callout:none; }
+  @media (hover:none), (pointer:coarse) {
+    html, body { position:fixed; inset:0 auto auto 0; width:100%; height:var(--app-h, 100%); overflow:hidden; }
+    input, textarea, select { font-size:16px !important; }
+    body.typing #app { grid-template-rows:minmax(0, 18%) minmax(0, 82%) !important; } /* while you type: the text gets the room */
+  }
+  @media (max-width:600px) {
+    .head { padding:2px 12px 4px; gap:8px; flex-wrap:nowrap; }
+    .head h1 { font-size:21px; }
+    .head .mood { font-size:14px; padding:3px 11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+    .head button.small { min-height:40px; padding:0 12px; font-size:14px; white-space:nowrap; flex:none; }
+    .head #settingsbtn { min-width:40px; padding:0; font-size:17px; }
+    #grip { height:26px; margin-bottom:-4px; }
+    #tabs { gap:5px; padding:4px 8px 8px; }
+    .tab { flex-direction:row; gap:4px; min-height:40px; padding:0 2px; font-size:13px; border-radius:12px; white-space:nowrap; }
+    .tab .tabi { font-size:16px; }
+    .tab .count { top:-5px; right:-1px; }
+    .pane { padding:12px 12px 32px; }
+    .filter { min-height:40px; padding:0 13px; }
+    #interact { top:auto; bottom:160px; min-height:38px; max-width:calc(100% - 24px); } /* above the round stick, never on it */
+    #interact.far { min-height:32px; }
+    #phonebtn, #walk { min-height:42px; }
+    #phclose { min-width:42px; min-height:42px; }
+    .ph-app { font-size:13px; }
+    #visit .small, .steps li { font-size:13.5px; }
+    .kindrow button { min-height:40px; padding:0 13px; }
+    #live h2 { flex-wrap:wrap; row-gap:0; } #live h2 small { flex-basis:100%; padding-left:16px; } /* the small words under the heading, not squeezed next to it */
+    #nowtext { white-space:normal; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.25; } /* two lines: "Walking to the comp…" was cut off */
+    #nowleft { align-self:start; }
+  }
+  @media (max-width:359px) { .tab { flex-direction:column; gap:1px; font-size:13px; min-height:46px; } } /* a very narrow phone: the picture above the word again */
 </style>
 </head>
 <body>
