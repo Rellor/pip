@@ -7874,3 +7874,9 @@ I have been inside for too long and my legs want out. I will go for a walk outsi
 - go_out (my museum): Walking to the museum to check my things.
 - mood: restless
 
+## 28/11/2026, 11:07:47
+My basil is ready to pick, so I will harvest it first before it goes over.
+> My basil is ready to pick, so I will harvest it first before it goes over.
+- harvest (basil): Harvest the basil.
+- mood: calm
+
