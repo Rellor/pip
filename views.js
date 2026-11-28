@@ -8,7 +8,7 @@ export const VIEWS_KEPT = 4;
 export const GONE_KEPT = 60;
 const clip = (v, n) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
 const bare = (n) => clip(n, 80).toLowerCase().replace(/^(my|the|a|an)\s+/, '');
-const lists = (s) => [['drawing', s.art ?? []], ['program', s.apps ?? []], ['thing', (s.decor ?? []).filter((d) => !d.image)], ['thing', s.stored ?? []], ['thing', s.museum ?? []], ['thing', s.playthings ?? []], ['song', s.studio?.songs ?? []]];
+const lists = (s) => [['drawing', s.art ?? []], ['program', s.apps ?? []], ['thing', (s.decor ?? []).filter((d) => !d.image)], ['thing', s.stored ?? []], ['thing', s.museum ?? []], ['thing', s.playthings ?? []], ['song', s.studio?.songs ?? []], ['clothes', s.wardrobe ?? []]];
 const nameOf = (x) => x.name ?? x.title ?? '';
 // Something he made, by its name: { item, kind } (the newest one with that name), or null.
 // (A drawing and a thing can have the same name: "pendulum clock". With `kind` given, that kind is looked at first.)
@@ -22,6 +22,12 @@ export function findMade(s, name, kind = null) {
     if (item) return { item, kind };
   }
   return null;
+}
+// The things he made and never said anything about, newest first (at most n): he catches up, a few each time he thinks.
+export function unviewed(s, n = 3) {
+  const out = [];
+  for (const [kind, list] of lists(s)) for (const item of list) if (!item.thinks && nameOf(item) && !item.gift && item.source !== 'gift') out.push({ item, kind, at: Date.parse(item.createdAt ?? item.at ?? 0) || 0 });
+  return out.sort((a, b) => b.at - a.at).slice(0, n);
 }
 // What he thinks of it now, in his own words. Returns the thing, or null when it is not his or he said nothing.
 export function setView(s, name, text, now = Date.now(), kind = null) {

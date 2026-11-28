@@ -3883,7 +3883,7 @@ function fill(node, children) {
   node.replaceChildren(...children);
 }
 // What he thinks of something he made, for its card: his newest view, and when he said it.
-function thinks(x) { return x?.thinks ? [{ heading: `What he thinks of it${x.thinksAt ? ` (${when(x.thinksAt)})` : ''}`, quote: x.thinks }, ...((x.views ?? []).length > 1 ? [{ heading: 'What he thought before', lines: x.views.slice(0, -1).reverse().map((v) => `${when(v.at)}: “${v.text}”`) }] : [])] : [{ heading: 'What he thinks of it', lines: ['He has not said yet. He looks at it again when he sees it.'] }]; }
+function thinks(x) { return x?.thinks ? [{ heading: `What he thinks of it${x.thinksAt ? ` (${when(x.thinksAt)})` : ''}`, quote: x.thinks }, ...((x.views ?? []).length > 1 ? [{ heading: 'What he thought before', lines: x.views.slice(0, -1).reverse().map((v) => `${when(v.at)}: “${v.text}”`) }] : [])] : [{ heading: 'What he thinks of it', lines: ['He has not said yet. He made this before he started saying it right away. He is catching up, a few things each time he thinks.'] }]; }
 function when(iso) {
   const d = new Date(iso);
   const hm = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });

@@ -2,19 +2,19 @@
 // Phase 4 uses the old design rules (parts, svg, tracks) for each kind of thing. Phase 6 gives each a better maker.
 import { SITE_CHECKLIST } from './site.js';
 export const FORMATS = {
-  plaything: '{"name": "...", "why": "...", "verb": "one word for what I do with it: ride, fly, sail, kick, swing, juggle, ...", "motion": "how it moves when I use it, one of: ride (I sit on it and go round), fly (it goes round in the air above me), float (it drifts on the pond), roll (it goes over the ground and I go after it), stay (it stands where it is and I am on it or at it), hold (I hold it and do it on the spot)", "where": "square | pond | field | stone | doorstep", "how": "one sentence in my own words: what I do with it", "parts": [...]}',
-  decorate: '{"name": "...", "where": "(optional: leave it out and the game puts it where this kind of thing belongs; or floor, on the desk, wall_left, ceiling...)", "why": "...", "parts": [...], "uses": [{"label": "...", "text": "...", "effect": "joy"}]}',
-  change_thing: '{"name": "the exact name of the thing", "parts": [...all its parts, changed], "why": "..."}',
+  plaything: '{"name": "...", "why": "...", "verb": "one word for what I do with it: ride, fly, sail, kick, swing, juggle, ...", "motion": "how it moves when I use it, one of: ride (I sit on it and go round), fly (it goes round in the air above me), float (it drifts on the pond), roll (it goes over the ground and I go after it), stay (it stands where it is and I am on it or at it), hold (I hold it and do it on the spot)", "where": "square | pond | field | stone | doorstep", "how": "one sentence in my own words: what I do with it", "parts": [...], "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
+  decorate: '{"name": "...", "where": "(optional: leave it out and the game puts it where this kind of thing belongs; or floor, on the desk, wall_left, ceiling...)", "why": "...", "parts": [...], "uses": [{"label": "...", "text": "...", "effect": "joy"}], "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
+  change_thing: '{"name": "the exact name of the thing", "parts": [...all its parts, changed], "why": "...", "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
   extend_thing: '{"name": "the exact name of the thing", "parts": [...up to 40 new parts]}',
-  draw: '{"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\\"0 0 400 300\\">...</svg>"}',
-  make_app: '{"name": "...", "title": "a short, nice name for the phone (1 to 3 words)", "icon": "one emoji for its icon", "why": "...", "html": "<!doctype html>... (it must also work small, on a phone screen)"}',
+  draw: '{"name": "...", "where": "wall_left", "why": "...", "svg": "<svg viewBox=\\"0 0 400 300\\">...</svg>", "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
+  make_app: '{"name": "...", "title": "a short, nice name for the phone (1 to 3 words)", "icon": "one emoji for its icon", "why": "...", "html": "<!doctype html>... (it must also work small, on a phone screen)", "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
   update_app: '{"name": "the exact name of the app", "change": "the one thing I did, in a few words", "edits": [{"find": "a piece of the file copied exactly (a few whole lines, so it is found only once)", "replace": "what comes there instead"}]}  (small edits: only what changes; or, for a tiny program, "html": the whole new file instead of edits)',
-  make_site: '{"title": "the name of my website (a few words)", "why": "...", "html": "<!doctype html>... (HTML and CSS only, it also reads well on a phone)"}',
+  make_site: '{"title": "the name of my website (a few words)", "why": "...", "html": "<!doctype html>... (HTML and CSS only, it also reads well on a phone)", "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
   update_site: '{"change": "the one thing I did, in a few words", "edits": [{"find": "a piece of my page copied exactly (a few whole lines, so it is found only once)", "replace": "what comes there instead"}]}  (small edits: only what changes; or "html": the whole new page when I redo it)',
-  record_song: '{"name": "...", "tempo": 90, "instruments": ["one of my instruments", "drums"], "form": ["A", "A", "B", "A"], "sections": [{"name": "A", "bars": [{"piano": "C4 E4 G4 E4", "guitar": "C3+E3+G3:4", "drums": "kick hat snare hat"}]}, {"name": "B", "bars": [...]}]}',
+  record_song: '{"name": "...", "tempo": 90, "instruments": ["one of my instruments", "drums"], "form": ["A", "A", "B", "A"], "sections": [{"name": "A", "bars": [{"piano": "C4 E4 G4 E4", "guitar": "C3+E3+G3:4", "drums": "kick hat snare hat"}]}, {"name": "B", "bars": [...]}], "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
   revise_song: '{"section": "the name of the ONE section I rewrite", "bars": [{"<instrument>": "..."}], "why": "what I changed and why"}',
-  make_clothes: '{"name": "...", "slot": "head, face, neck, body or back", "why": "...", "parts": [...]}',
-  make_move: '{"name": "...", "why": "...", "duration": 2, "frames": [{"at": 0, ...}, {"at": 0.5, ...}]}',
+  make_clothes: '{"name": "...", "slot": "head, face, neck, body or back", "why": "...", "parts": [...], "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
+  make_move: '{"name": "...", "why": "...", "duration": 2, "frames": [{"at": 0, ...}, {"at": 0.5, ...}], "thinks": "what I honestly think of it now that it is made, in my own words (1 or 2 short sentences)"}',
   blueprint: '{"name": "...", "goal": "...", "research": "...", "mechanisms": [{"part": "...", "how": "...", "uses": "..."}], "tools": [...]}',
   add_use: '{"name": "the exact name of the thing", "use": {"label": "...", "text": "...", "effect": "joy"}}',
 };
@@ -31,6 +31,9 @@ The game runs my program after I write it (it clicks, presses keys, and looks fo
 
 // ctx: { soul, step: {action, details: {what, why, name, change, add}}, rules: text, room: [lines], skill: text }
 export function makerPrompt(ctx) {
+  return `${makerPromptBody(ctx)}${String(FORMATS[ctx.step.details?.play ? 'plaything' : ctx.step.as === 'revise' || ctx.step.details?.revise ? 'revise_song' : ctx.step.action] ?? '').includes('"thinks"') ? `\n\n${THINKS_LINE}` : ''}`;
+}
+function makerPromptBody(ctx) {
   const d = ctx.step.details ?? {};
   const asked = [d.what, d.name && `(${d.name})`, d.change && `change: ${d.change}`, d.add && `add: ${d.add}`].filter(Boolean).join(' ');
   return `${ctx.soul}
@@ -45,6 +48,8 @@ ${ctx.step.action === 'decorate' ? 'I design it in everyday sizes, the way it wo
 ${ctx.current ? `THE SONG AS IT IS NOW\n${ctx.current}\nI rewrite ONE section of it, and keep the rest.\n\n` : ''}${ctx.step.details?.play ? 'This is NOT a thing for my room. It is something to DO things with outside: I build it life-size, the way it really is (a bike about 1.7 m long with two wheels of 0.65 m, a kite about 1 m across with a tail, a small sailing boat about 0.8 m long), from simple shapes, so that anyone sees from far what it is. Then I say how I use it: what I do with it (verb), how it moves (motion), where (where) and one sentence about it (how). I can invent anything: it only has to be something I can really do.\n\n' : ''}Answer in JSON with exactly this shape: ${FORMATS[ctx.current ? 'revise_song' : ctx.step.details?.play ? 'plaything' : ctx.step.action] ?? '{}'}`;
 }
 
+// Every thing he makes gets his own view on it the moment it is made (Bas: "I want this to happen when it's created").
+export const THINKS_LINE = 'Last, in "thinks": what I honestly think of it now that I made it. Not what it is or how I made it: what it is to me, what works, what does not. Dry and short, 1 or 2 sentences, also when I am not pleased with it.';
 // The maker's answer becomes the step's details. What the brain said (what, why) stays as a fallback.
 export function applyMade(step, reply, limits = {}) {
   const d = reply && typeof reply === 'object' ? { ...reply } : {};
@@ -102,11 +107,11 @@ export function fakeMade(step) {
   const box = [{ shape: 'box', size: [0.2, 0.2, 0.2], pos: [0, 0.1, 0], color: '#c08040' }, { shape: 'sphere', size: [0.06], pos: [0, 0.26, 0], color: '#ffd84a', glow: true }];
   if (step.details?.play) return { name, why: '(fake)', verb: '', motion: '', where: '', how: '', parts: [{ shape: 'box', size: [1.2, 0.5, 0.3], pos: [0, 0.45, 0], color: '#c04030' }, { shape: 'cylinder', size: [0.3, 0.06], pos: [-0.5, 0.3, 0], color: '#333333' }, { shape: 'cylinder', size: [0.3, 0.06], pos: [0.5, 0.3, 0], color: '#333333' }] };
   return ({
-    decorate: { name, where: 'on the desk', why: '(fake)', parts: box, uses: [{ label: 'Look at it', text: 'It glows a little.', effect: 'joy' }] },
+    decorate: { name, where: 'on the desk', why: '(fake)', thinks: '(fake) It is a box with a light on it. I like the light.', parts: box, uses: [{ label: 'Look at it', text: 'It glows a little.', effect: 'joy' }] },
     change_thing: { name: step.details?.name, parts: box, why: '(fake)' },
     extend_thing: { name: step.details?.name, parts: box.slice(0, 1) },
-    draw: { name, where: 'wall_left', why: '(fake)', svg: '<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#223"/><circle cx="200" cy="150" r="40" fill="#fd4"/></svg>' },
-    make_app: { name, why: '(fake)', html: '<!doctype html><title>x</title><p>Hello</p>' },
+    draw: { name, where: 'wall_left', why: '(fake)', thinks: '(fake) One circle. It is enough.', svg: '<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#223"/><circle cx="200" cy="150" r="40" fill="#fd4"/></svg>' },
+    make_app: { name, why: '(fake)', thinks: '(fake) It says hello. That is all it does.', html: '<!doctype html><title>x</title><p>Hello</p>' },
     make_site: { title: '(fake) Pip was here', why: '(fake)', html: '<!doctype html><html><head><title>Pip</title><style>body{max-width:40rem;margin:auto;font:18px/1.5 Georgia;background:#f6efe6;color:#3b2f2a}</style></head><body><h1>Pip was here</h1><p>I am Pip. I live in a small village with a pond, a library and an internet café, where I am writing this page right now. I make things, I draw, and I say what I think.</p><h2>What I made lately</h2><p>A lamp that is too tall, a shelf that is a bit crooked, and a hill on my field. I like the hill best.</p><script>alert(1)</script></body></html>' },
     update_site: { change: '(fake) a new line about today', edits: [{ find: '<h2>What I made lately</h2>', replace: '<p>Today I went outside. It was fine.</p><h2>What I made lately</h2>' }] },
     update_app: { name: step.details?.name, change: '(fake) a new button', html: '<!doctype html><title>x</title><p>Hello again</p><button>new</button>' },
