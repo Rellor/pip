@@ -70,8 +70,8 @@ delete live.body; delete live.recent; delete live.today; delete live.tired; dele
 tickBody(live);
 live.coins = 5;
 const line = availableMoves(live, { now: noon, random: () => 0.99 }).find((m) => m.name === 'buy')?.line ?? '';
-assert.ok(line === '' || (/I have 5/.test(line) && line.length < 240), line);
-ok('the buy move is short and says what he has');
+assert.ok(line === '' || (!/coin|I have 5|\bcosts? \d/.test(line) && line.length < 240), line);
+ok('the buy move is short and has no money in it');
 
 // ---- the storyteller
 const t = fresh();
