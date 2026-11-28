@@ -1,6 +1,6 @@
 {
   "mood": "restless",
-  "energy": 7.59,
+  "energy": 7.91,
   "boredom": 0,
   "loneliness": 10,
   "interests": [
@@ -15330,49 +15330,22 @@
   "draft": "",
   "repeatNote": "",
   "last": {
-    "at": "2026-11-28T07:02:18.936Z",
-    "via": "brain",
-    "model": "gemini-3.5-flash-lite",
-    "models": {
-      "gemini-3.5-flash-lite": 1
-    },
-    "tokens": {
-      "calls": 1,
-      "input": 2670,
-      "output": 557,
-      "models": {
-        "gemini-3.5-flash-lite": 1
-      }
-    },
-    "intervalMin": 8,
-    "thought": "My legs want out after being inside for 11 hours, so I am going for a walk to the pond in the park.",
-    "inner": "My legs want out after being inside for 11 hours, so I am going for a walk to the pond in the park.",
-    "sent": false,
-    "steps": [
-      {
-        "action": "go_out",
-        "details": {
-          "place": "the pond in the park",
-          "what": "watch the ducks",
-          "name": "watch the ducks"
-        },
-        "detail": "the pond in the park",
-        "thought": "I need some fresh air.",
-        "enjoyment": 6,
-        "found": null,
-        "made": null
-      }
-    ],
+    "at": "2026-11-28T07:10:23.985Z",
+    "via": "outside",
+    "thought": "I am walking home from the pond in the park (I got very hungry).",
     "action": "go_out",
     "details": {
-      "place": "the pond in the park",
-      "what": "watch the ducks",
-      "name": "watch the ducks"
+      "place": "pond"
     },
-    "detail": "the pond in the park",
-    "enjoyment": 6,
+    "detail": "I am walking home from the pond in the park (I got very hungry).",
+    "enjoyment": 7,
     "new_idea": null,
-    "found": null
+    "found": null,
+    "away": {
+      "place": "pond",
+      "phase": "back",
+      "back": "2026-11-28T07:18:23.984Z"
+    }
   },
   "furniture": {
     "plant": {
@@ -15811,15 +15784,15 @@
   "moves": [],
   "blueprints": [],
   "hungV": 2,
-  "wonder": 7.74,
-  "joy": 3.89,
-  "calm": 6.56,
+  "wonder": 6.79,
+  "joy": 4.17,
+  "calm": 6.22,
   "emo": {
-    "irritated": 0.96,
+    "irritated": 0.77,
     "sad": 0,
-    "excited": 1.52
+    "excited": 0.91
   },
-  "feelAt": "2026-11-28T07:02:16.646Z",
+  "feelAt": "2026-11-28T07:10:23.961Z",
   "lastAte": "2026-11-27T21:01:24.372Z",
   "studio": {
     "songs": [
@@ -16782,12 +16755,12 @@
   },
   "lastError": null,
   "body": {
-    "creativity": 1.9,
-    "curiosity": 1.52,
+    "creativity": 1.98,
+    "curiosity": 1.59,
     "boredom": 0,
     "loneliness": 10,
     "tidiness": 0.4,
-    "at": "2026-11-28T07:02:16.646Z",
+    "at": "2026-11-28T07:10:23.961Z",
     "coziness": 3.8
   },
   "recent": {
@@ -26707,8 +26680,10 @@
     "words": "watch the ducks",
     "leftAt": "2026-11-28T07:02:18.936Z",
     "arriveAt": "2026-11-28T07:10:18.936Z",
-    "leaveAt": "2026-11-28T07:43:18.936Z",
-    "homeAt": "2026-11-28T07:51:18.936Z"
+    "leaveAt": "2026-11-28T07:10:23.984Z",
+    "homeAt": "2026-11-28T07:18:23.984Z",
+    "cut": "I got very hungry",
+    "reached": true
   },
   "finds": [
     {
@@ -30277,6 +30252,16 @@
       "energy": 7.6,
       "mood": "restless",
       "feel": 6.1
+    },
+    {
+      "at": "2026-11-28T07:10:23.985Z",
+      "joy": 4.2,
+      "calm": 6.2,
+      "wonder": 6.8,
+      "energy": 7.9,
+      "mood": "restless",
+      "out": true,
+      "feel": 5.7
     }
   ],
   "opinions": [
