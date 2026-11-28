@@ -1824,7 +1824,7 @@ async function wakeUp() {
     if (st.action === 'make_move') st.made = makeMove(state, st.details, stepStart);
     if (st.action === 'blueprint') st.made = makeBlueprint(state, st.details, new Date(stepStart).toISOString(), Date.now(), steps.slice(0, i).filter((x) => ['search_web', 'read_book'].includes(x.action)).map((x) => `${x.details?.query ?? ''} ${x.details?.topic ?? ''} ${x.found?.title ?? ''}`));
     if (st.action === 'buy') st.made = buy(state, st.details.item ?? st.details.name ?? st.details.what);
-    if (st.action === 'buy' && st.made?.bought) gotWant(state, st.made.bought, 'bought it myself');
+    if (st.action === 'buy' && st.made?.bought) gotWant(state, st.made.bought, 'got it myself at the store');
     if (st.action === 'buy' && st.made?.bought && i === steps.length - 1) startOuting(state, { errand: st.made.bought }, stepStart); // a quick walk to the corner shop and back (when nothing else is planned after it)
     if (st.action === 'go_out' && st.as === 'play') { const p = findPlaything(state, st.details?.plaything) ?? (state.playthings ?? []).at(-1); if (p) st.details = { play: playJob(p) }; else st.made = { failed: 'I have nothing to go out with yet: I can build something (make_plaything) or put it on my wants list' }; } // out with something of his (play.js)
     if (st.action === 'go_out' && st.as === 'fetch_note') { const job = fetchJob(state); if (job) st.details = { ...st.details, job }; else st.made = { failed: 'no note lies there for me right now' }; } // he goes to get what someone left for him
@@ -2346,7 +2346,7 @@ async function wakeUp() {
     if (st.action === 'update_app') Object.assign(entry, { name: text(d.name, 60), file: st.made?.app?.file ?? null, change: text(d.change, 160) || null, v: state.apps.find((a) => a.id === st.made?.app?.id)?.v ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'make_clothes' || st.action === 'wear' || st.action === 'take_off') Object.assign(entry, { name: st.made?.entry?.name ?? st.made?.name ?? text(d.name, 60), slot: st.made?.entry?.slot ?? st.made?.slot ?? null, why: text(d.why, 200), failed: st.made?.failed ?? null });
     if (st.action === 'go_out') Object.assign(entry, { place: st.made?.place ?? null, placeName: st.made?.name ?? text(d.place, 40), what: st.made?.words ?? null, back: st.made?.back ?? null, failed: st.made?.failed ?? null });
-    if (st.action === 'buy') Object.assign(entry, { item: st.made?.bought ?? text(d.item ?? d.name, 40), price: st.made?.price != null ? `${st.made.price} coin${st.made.price === 1 ? '' : 's'}, ${st.made.left} left` : null, failed: st.made?.failed ?? null });
+    if (st.action === 'buy') Object.assign(entry, { item: st.made?.bought ?? text(d.item ?? d.name, 40), failed: st.made?.failed ?? null });
     if (st.action === 'cook') Object.assign(entry, { dish: text(d.dish ?? d.name, 60), ingredients: (Array.isArray(d.ingredients) ? d.ingredients : []).slice(0, 4).map((x) => text(x, 40)), failed: st.made?.failed ?? null });
     if (st.action === 'take_photo') Object.assign(entry, { target: text(d.target, 60), caption: text(d.caption, 300), image: st.made?.picture?.image ?? null, failed: st.made?.failed ?? null });
     if (st.action === 'find_picture') Object.assign(entry, { query: text(d.query, 80), caption: text(d.caption, 200), picture: st.made?.found?.image ?? null, title: st.made?.found?.title ?? null, failed: st.made?.failed ?? null });

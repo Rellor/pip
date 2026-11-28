@@ -3843,11 +3843,12 @@ let lastState = null;
 // he is doing now, the place in his world where that kind of thing is done: he reads at the library, draws at the art
 // workshop, writes by the pond. The page walks him there for that step and home again (like Pino, who walks to
 // whatever he does). Nothing changes in what he did: it only shows where.
-const STEP_PLACE = { ...Object.fromEntries(['decorate', 'extend_thing', 'make_clothes', 'blueprint'].map((a) => [a, { place: 'build', spot: 'build', name: 'the build workshop', emoji: '🔨' }])), search_web: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, make_site: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '🌐' }, update_site: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '🌐' }, browse: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
+const AT_BUILD = { place: 'build', spot: 'build', name: 'the build workshop', emoji: '🔨' }; // (only for what he builds to use outside: small things he makes at home, in his own workshop)
+const STEP_PLACE = { search_web: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, make_site: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '🌐' }, update_site: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '🌐' }, browse: { place: 'cafe', spot: 'cafe', name: 'the internet café', emoji: '💻' }, read_book: { place: 'library', spot: 'library', name: 'the library', emoji: '📚' }, draw: { place: 'studio', spot: 'studio', name: 'the art workshop', emoji: '🎨' }, write_diary: { place: 'pond', spot: 'pond', name: 'the pond', emoji: '🦆' } };
 function stepOuting() {
   if (!plan || stepNow < 0 || lastState?.last?.sleeping) return null;
   const st = plan.steps[stepNow];
-  const hit = st && !st.as && !st.failed && !st.made?.failed ? (st.action === 'do' && /^carry .+ to my museum$/.test(st.details?.what ?? '') ? { place: 'museum', spot: 'museum', name: 'his museum', emoji: '🏛️' } : st.action === 'do' && /^go on building /.test(st.details?.what ?? '') ? STEP_PLACE.decorate : STEP_PLACE[st.action]) : null;
+  const hit = st && !st.as && !st.failed && !st.made?.failed ? (st.action === 'do' && /^carry .+ to my museum$/.test(st.details?.what ?? '') ? { place: 'museum', spot: 'museum', name: 'his museum', emoji: '🏛️' } : st.action === 'decorate' && st.details?.play ? AT_BUILD : STEP_PLACE[st.action]) : null;
   if (!hit) return null;
   const t0 = plan.at + plan.starts[stepNow], len = plan.lengths[stepNow];
   if (Date.now() < t0 || Date.now() > t0 + len) return null;
@@ -4348,7 +4349,7 @@ function headlineBase(st) {
     case 'do': return [d.emoji || st.emoji || '✨', d.what || st.what || 'Doing something'];
     case 'walk_to': return ['🚶', `Walking to the ${d.object || st.object || 'room'}`];
     case 'eat': return ['🍽️', `Eating ${d.food || st.food || 'a snack'}`];
-    case 'decorate': return ['🛠️', `Making ${d.name || st.name || 'something'} for his room`];
+    case 'decorate': return ['🛠️', d.play ? `Building ${d.name || st.name || 'something'} to use outside` : `Making ${d.name || st.name || 'something'} in his workshop`];
     case 'use': return ['✨', `Using ${d.name || st.name || 'something'}${d.label || st.label ? `: ${d.label || st.label}` : ''}`];
     case 'add_use': return ['🔧', `Deciding what ${d.name || st.name || 'it'} is for`];
     case 'compose': return ['🎵', `Composing a song for ${d.name || st.name || 'something'}`];
@@ -4499,7 +4500,7 @@ function dayCard(e) {
     if (e.book?.title) card.append(el('p', `📖 He read: ${e.book.title}`, 'muted'));
   } else if (kind === 'shop') {
     card.append(el('h3', e.item || '', 'title'));
-    card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : `He bought it with his own coins${e.price ? ` (${e.price})` : ''}.`, 'muted'));
+    card.append(el('p', e.failed ? `It did not work out: ${humanFail(e.failed)}.` : 'He fetched it at the grocery store. Nothing costs anything in his world.', 'muted'));
   } else if (kind === 'ask') {
     card.append(el('h3', e.item || '', 'title'));
     if (e.reason) card.append(el('p', e.reason, 'muted'));
@@ -5234,7 +5235,7 @@ function renderMind(s) {
   fill($('questions'), qs.length ? qs.map((q) => entry([`since ${when(q.since)}`], q.text)) : empty('nothing yet'));
   const done = (s.fulfilled || []).slice().reverse();
   fill($('fulfilled'), done.length ? done.map((w) => entry([when(w.at)], w.text)) : empty('nothing yet'));
-  { const c = s.body?.coziness; $('coziness').textContent = [Number.isFinite(c) ? `🏠 cozy ${Math.round(c)}/10` : '', Number.isFinite(s.coins) ? `🪙 ${s.coins} coin${s.coins === 1 ? '' : 's'}` : ''].filter(Boolean).join(' · '); }
+  { const c = s.body?.coziness; $('coziness').textContent = Number.isFinite(c) ? `🏠 cozy ${Math.round(c)}/10` : ''; }
   // Right now: the project he is on (one line and a bar) and today's goals as a small checklist.
   const cur = projects.find((p) => p.status === 'working');
   const np = $('nowproject');
@@ -6005,11 +6006,11 @@ function drawMini() {
 // he did there so far. The words come from the places of his world (web/world.js) and from his state.
 const WORLD_CARDS = {
   museum: { title: 'Pip’s museum', icon: '🏛️', what: 'An open hall with forty plinths. The things he made stand here, so everyone can walk up to them. Tap a thing to read what it is and why he made it.', place: 'museum', can: ['carry a thing here from his room or his chest', 'walk past his things and look at them', 'dust the plinths'] },
-  home: { title: 'Pip’s home', icon: '🏠', what: 'He lives here. Walk in through the red door.', can: ['sleep', 'eat and cook', 'work at his computer', 'keep the things he makes'] },
-  shop: { title: 'The grocery store', icon: '🛒', what: 'Where he spends his coins. He cooks and bakes himself, with what he buys here.', place: 'shop', can: ['buy food to cook and bake with', 'buy seeds, things to make with, tools and instruments'] },
+  home: { title: 'Pip’s home', icon: '🏠', what: 'He lives here, and it is his workshop too: small things he makes at home. Walk in through the red door.', can: ['make things at his own bench', 'sleep, eat and cook', 'work at his computer', 'play his instruments'] },
+  shop: { title: 'The grocery store', icon: '🛒', what: 'There is no money in his world. He walks here and takes home what he needs: food, seeds, things to make with.', place: 'shop', can: ['fetch food to cook and bake with', 'fetch seeds, things to make with, a tool'] },
   flats: { title: 'The flats', icon: '🏢', what: 'People of the town live here. Downstairs a shop stands empty.', can: [], none: 'Nothing yet. Pip could wish for something to move in.' },
   cafe: { title: 'The internet café', icon: '💻', what: 'Where he goes to look things up and read on the web. The screen in the window shows the last thing he read, and what he thought of it.', can: ['search the web', 'browse until he stumbles on something', 'say what he really thinks of what he read'] },
-  build: { title: 'The build workshop', icon: '🔨', what: 'Where he builds the things he thinks up: furniture, machines, toys, towers. Everything he needs for it is here, so he needs no tools of his own.', can: ['build something he invented', 'make a thing bigger or better', 'sew clothes'] },
+  build: { title: 'The build workshop', icon: '🔨', what: 'For what does not fit in his own workshop at home: the things he builds to use outside (a bike, a kite, a boat) and the big things for his field.', can: ['build something to ride, fly or sail', 'build something big for outside'] },
   land: { title: 'The land workshop', icon: '⛰️', what: 'The land tools are kept here. With them he shapes the ground of his world.', place: 'land', can: ['make a hill', 'dig a hole', 'make the ground flat again'] },
   library: { title: 'The library', icon: '📚', place: 'library' },
   workshop: { title: 'The print workshop', icon: '🖨️', place: 'workshop', can: ['design a small 3D model and have it printed'] },
@@ -6061,7 +6062,7 @@ function worldCard(kind, key) {
   const so = [];
   const visits = p ? (s.outings ?? []).filter((o) => o.place === p.key && !o.errand) : [];
   if (key === 'home') so.push(awayNow() ? 'He is out right now.' : 'He is home right now.');
-  if (key === 'shop') { so.push(`He has ${s.coins ?? 0} coin${(s.coins ?? 0) === 1 ? '' : 's'}.`); const b = (s.bought ?? []).slice(-3).map((x) => x.item); if (b.length) so.push(`Bought lately: ${b.join(', ')}.`); }
+  if (key === 'shop') { const b = (s.bought ?? []).slice(-3).map((x) => x.item); so.push(b.length ? `Taken home lately: ${b.join(', ')}.` : 'He has not fetched anything here yet.'); }
   if (key === 'workshop' || key === 'shelf') { const pr = (s.prints ?? []); so.push(pr.length ? `He printed ${pr.length} thing${pr.length === 1 ? '' : 's'}: ${pr.slice(-5).map((x) => x.name).join(', ')}.` : 'He has not printed anything yet.'); }
   if (key === 'studio') { const n = (s.gallery ?? s.art ?? []).length; so.push(`${n} drawing${n === 1 ? '' : 's'} so far.`); }
   if (wall) { const on = (s.gallery ?? []).filter((a) => a.wall === wall.key); so.push(on.length ? `On it: ${on.slice(-4).map((a) => `“${a.name}”`).join(', ')}.` : 'Nothing is painted on it yet.'); }

@@ -35,7 +35,7 @@ export function passTime(s, now = Date.now()) {
   if (!Number.isFinite(now)) now = Date.now();
   const gone = (now - Date.parse(s.feelAt || now)) / 60_000;
   const minutes = Number.isFinite(gone) ? Math.min(180, Math.max(0, gone)) : 0;
-  s.fullness = Math.max(1, clamp(s.fullness - minutes / 50)); // never below 1: hunger never harms him for good
+  s.fullness = Math.max(1, clamp(s.fullness - minutes / 85)); // hunger comes slowly (a full belly lasts most of a day) and never below 1: it never harms him for good
   const starving = s.fullness <= 2;
   s.energy = clamp(s.energy + minutes * (starving ? 0.04 : 0.12)); // he slowly gets his energy back between wake-ups too; very hungry, much slower
   if (starving) s.joy = clamp(s.joy - minutes / 120);

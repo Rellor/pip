@@ -32,7 +32,7 @@ assert.equal(findPlace('the grocery store')?.key, 'shop');
 assert.equal(findPlace('my doorstep')?.key, 'doorstep');
 assert.equal(findPlace('the moon'), null);
 assert.equal(hisWords('pond', 'sketch what I see'), 'sketch what he sees');
-assert.deepEqual(placeOf('doorstep').things.map((t) => t.key), ['watch'], 'on his doorstep he watches the square: there is nobody to wait for');
+assert.deepEqual(placeOf('doorstep').things.map((t) => t.key), ['watch', 'nap'], 'on his doorstep he watches the square, or dozes: there is nobody to wait for');
 ok('a small world of named places; he can say a place in his own words');
 
 // ---- where he may go: anywhere, any time (there are no opening hours, no locked places, no weather rules, no limits)
@@ -108,7 +108,7 @@ assert.equal(canGo(s, 'doorstep', noon + 70 * MIN).ok, true, 'and right after he
 startOuting(s, { place: 'doorstep' }, noon + 3 * 60 * MIN);
 outingTick(s, noon + 4 * 60 * MIN);
 assert.ok(goOptions(s, noon + 6 * 60 * MIN).length >= 3, 'there is no limit to how often he goes out in a day');
-for (const [why, change] of [['very tired', { energy: 1.5 }], ['very hungry', { fullness: 1.5 }]]) {
+for (const [why, change] of [['very tired', { energy: 1.5 }], ['very hungry', { fullness: 1.2 }]]) {
   const x = fresh();
   startOuting(x, { place: 'pond' }, noon);
   Object.assign(x, change);

@@ -21,7 +21,7 @@ import { canAskVisitors, unreadShelf, pieceWords } from './guests.js';
 import { showable, carriedToday } from './museum.js';
 import { canBuildOn } from './sittings.js';
 import { playthings, madeToday, PLAYTHINGS_PER_DAY } from './play.js';
-import { shopLine, shopOpen, wantsToBuy } from './shop.js';
+import { shopLine, shopOpen, wantsToBuy, canTake } from './shop.js';
 import { goOptions, goLine, wantsOut, gearWish, canGo } from './world.js';
 import { boardNotes, boardCalls } from './board.js';
 import { landToday, LAND_PER_DAY } from './land.js';
@@ -157,7 +157,7 @@ export const MOVES = [
   { name: 'write_diary', line: () => 'write in my diary: {text}', when: () => true, score: (s, n) => 0.3 + (new Date(n).getHours() >= 20 ? 1 : 0) },
   { name: 'tell', line: () => 'write a message to Bas: {text}', when: (s, n) => s.plan?.unread > 0 || (s.body.loneliness >= 7 && daysSince(s.outbox?.filter((m) => m.kind === 'tell').at(-1)?.at, n) >= 1), score: (s) => (s.plan?.unread ? 5 : 1) },
   { name: 'answer_visitor', line: (s) => `answer a note from a visitor or a traveller (${names((s.visitors ?? []).filter((v) => !v.answer).slice(-2).map((v) => v.id))}): {id, text, keep: true or false}`, when: (s) => (s.visitors ?? []).some((v) => !v.answer), score: () => 2 },
-  { name: 'buy', line: (s) => `buy something at the grocery store with my coins (I have ${s.coins ?? 0}): ${shopLine(s)}: {item}`, when: (s, n) => (s.coins ?? 0) >= 1 && shopOpen(n), score: (s) => 0.4 + (wantsToBuy(s) ? 1.2 : 0) + ((s.fullness ?? 10) <= 4 && !(s.pantry ?? []).some((p) => p.qty > 0) ? 3 : 0) },
+  { name: 'buy', line: (s) => `walk to the grocery store and take something home (nothing costs anything in my world: I take what I need): ${shopLine(s)}: {item}`, when: (s, n) => shopOpen(n) && canTake(s, n) && wantsToBuy(s), score: (s) => 0.5 + ((s.fullness ?? 10) <= 5 && !(s.pantry ?? []).some((p) => p.qty > 0) ? 3.5 : 0) + ((s.projects ?? []).some((p) => p.status === 'working' && (p.needs ?? []).length) ? 0.8 : 0) },
   { name: 'check_board', line: (s, n) => `walk to the notice board on the square and read what people in the village are up to${boardNotes(s, n).some((w) => !w.seen) ? ' (there is something new on it)' : ''}. Nobody asks me for anything there: {}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'board', n).ok) && boardCalls(s, n), score: (s, n) => (boardNotes(s, n).some((w) => !w.seen) ? 1.4 : 0.5) },
   { name: 'fetch_note', line: (s) => `walk to where someone left a note for me (${lying(s)[0]?.where ?? 'in my world'}) and pick it up: {}`, when: (s, n) => !process.env.PIP_NO_OUT && lying(s).length > 0 && Boolean(canGo(s, 'drops', n).ok), score: () => 1.7 },
   { name: 'shape_land', line: (s) => `take the land tool from the land workshop and shape the ground of my world${(s.land ?? []).length ? '' : ' (it is all flat now)'}: {kind: "hill", "hole", or "flat" to undo one, where: "on my land" or a place like "by the pond", size: "small", "medium" or "big", name}`, when: (s, n) => !process.env.PIP_NO_OUT && Boolean(canGo(s, 'land', n).ok) && landToday(s, n) < LAND_PER_DAY && (s.energy ?? 10) > 3, score: (s) => 0.55 + s.body.creativity / 5 + ((s.land ?? []).length ? 0 : 0.5) },

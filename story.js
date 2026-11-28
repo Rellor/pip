@@ -4,7 +4,7 @@
 //   big    market day on the square. At most one about every 20 hours.
 //   small  something to notice: the real moon and meteor showers, the first frost or snow, life on the square.
 //          At most two a day, hours apart. Each can spark his curiosity.
-// Everything that happens is true in his world: coins are really earned, the moon is the real moon.
+// Everything that happens is true in his world: the moon is the real moon.
 // (Nobody in these scenes has a name: his neighbours moved away, and the people he sees now are passing through.)
 import { noteSpark } from './curiosity.js';
 import { moonPhase } from './web/street.js'; // the real moon (shared with world.js)
@@ -89,9 +89,9 @@ export function storyTick(s, now = Date.now()) {
   if (sinceBig >= BIG_GAP_H && sinceAny >= 2) {
     const madeThisWeek = (s.art ?? []).filter((a) => now - Date.parse(a.createdAt) < 7 * DAY).length + (s.decor ?? []).filter((d) => !d.image && now - Date.parse(d.createdAt) < 7 * DAY).length;
     if (weekdayNL(now) === 'Saturday' && h >= 10 && h < 16 && seenAgo(s, 'market', now) > 5 && madeThisWeek >= 1) {
-      const sold = Math.min(6, 1 + Math.floor(madeThisWeek / 3));
-      s.coins = (s.coins ?? 0) + sold;
-      return happen('market', `It is market day on the square. I put my week's work on a little table by the notice board, and people passing through stopped to look. I sold ${sold} small print${sold > 1 ? 's' : ''}: ${sold} coin${sold > 1 ? 's' : ''}. I have ${s.coins} coins now.`, { big: true, emoji: '🧺' });
+      const looked = Math.min(9, 2 + madeThisWeek);
+      s.joy = Math.min(10, (s.joy ?? 5) + 0.8);
+      return happen('market', `It is market day on the square. I put my week's work on a little table by the notice board. ${looked} people stopped to look, and one of them looked for a very long time. Nothing is sold here: nothing costs anything. They just looked, and that was enough.`, { big: true, emoji: '🧺' });
     }
   }
 

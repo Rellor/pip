@@ -36,3 +36,36 @@ ok('quiet time is a real move: it pulls when he is restless or tired, and not tw
   assert.equal(paceMin(fresh(), 16), 16, 'a slower loop slows all of it');
 }
 ok('his pace follows his mood: sooner when excited or mid-plan, later when tired or quiet');
+
+// ---- no money, easy food, a nap anywhere
+{
+  const { buy, canTake, shopLine } = await import('../shop.js');
+  const { fallbackSteps } = await import('../autopilot.js');
+  const { startOuting, outingTick } = await import('../world.js');
+  const { passTime } = await import('../feelings.js');
+  const { CHANGES } = await import('../changes.js');
+  const s = fresh({ pantry: [], tools: [], garden: { seeds: [], beds: [] }, weather: { kind: 'clear', temp: 8 } });
+  assert.equal(Boolean(byName('buy').when(s, now)), true, 'no coins needed to go to the store');
+  assert.match(byName('buy').line(s, now), /nothing costs anything/);
+  assert.ok(buy(s, 'bread', now).bought && canTake(s, now) && !/coin/.test(JSON.stringify(s)));
+  // hungry with an empty house: he fetches food (a need, not a filler)
+  const hungry = fresh({ fullness: 3, pantry: [] });
+  assert.deepEqual([fallbackSteps(hungry, [{ name: 'buy' }], now)[0].action, fallbackSteps(hungry, [{ name: 'buy' }], now)[0].details.item], ['buy', 'bread']);
+  assert.ok(byName('buy').score(hungry, now) > 3.5, 'and with a model he chooses it himself');
+  // a full belly lasts most of a day
+  const t = fresh({ fullness: 9, feelAt: new Date(now - 6 * 3_600_000).toISOString() });
+  passTime(t, now);
+  assert.ok(t.fullness > 4.5, `six hours later: ${t.fullness}`);
+  // a nap outside gives him his energy back
+  const n = fresh({ energy: 4, weather: { kind: 'clear', temp: 8 } });
+  assert.ok(startOuting(n, { place: 'the pond in the park', what: 'take a nap on the bench' }, now).ok);
+  assert.equal(n.where.thing, 'nap');
+  const back = outingTick(n, Date.parse(n.where.homeAt) + 60_000);
+  assert.ok(back.home && /nap|slept/i.test(back.outing.did) && n.energy >= 6.5, `${back.outing.did} (${n.energy})`);
+  // the one-time change takes the coins away
+  const old = fresh({ coins: 13, bought: [{ item: 'clay', price: 3, at: new Date(now).toISOString() }] });
+  const said = CHANGES.find((c) => c.id === '2026-11-28 no money, and my house is my workshop').run(old, new Date(now).toISOString());
+  assert.ok(old.coins === undefined && old.bought[0].price === undefined);
+  assert.match(said, /Money is gone from my world.*My house is my workshop now.*rest anywhere/s);
+}
+ok('no money: he takes what he needs at the store, a full belly lasts, and he can nap anywhere');

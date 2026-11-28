@@ -54,7 +54,7 @@ MY WEEK, IN FACTS
 - Things that happened on the square: ${list(d.happenings ?? [])}
 - Where I went outside: ${list(d.outings ?? [])}
 - What I found and brought home: ${list(d.finds ?? [])}
-- What I bought at the grocery store: ${list(d.bought ?? [])}${d.coins != null ? ` (I have ${d.coins} coins)` : ''}
+- What I took home from the grocery store: ${list(d.bought ?? [])}
 - What I remember most: ${list(d.memories)}
 
 I write a warm, honest letter to Bas, like a real letter from a small friend: 8 to 14 short sentences, plain words, my own voice. Not a list. I pick the two or three moments that mattered most, say one thing that was hard or went wrong and what I learned, say what I am proud of, and what I want to try next week. I end with my name and one short P.S. I also choose my favourite drawing of the week (its exact name from the list, or null).

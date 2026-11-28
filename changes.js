@@ -491,6 +491,14 @@ export const CHANGES = [
     },
   },
   {
+    id: '2026-11-28 no money, and my house is my workshop',
+    run(s) { // money is gone from his world, food is easy to get, and his house is his workshop (the plan Bas and Pip agreed on)
+      delete s.coins;
+      for (const b of s.bought ?? []) delete b.price;
+      return 'Money is gone from my world. Nothing costs anything: when I need food, seeds or something to make with, I walk to the grocery store and take it home. Nobody pays me for anything either, and that suits me. My house is my workshop now: small things I make at home, at my own bench. The build workshop in the village is for what I use outside and for big things. I can rest anywhere I like: a nap on the bench by the pond or in the grass of my field is as good as my bed. And how much I make, and how much I am outside, is my own business.';
+    },
+  },
+  {
     id: '2026-11-28 nobody orders anything',
     run(s) { // the notice board no longer asks him to make things for coins: it shows what people in the village do (board.js)
       for (const w of s.wishes ?? []) if (w.board && w.status === 'open') w.status = 'gone';

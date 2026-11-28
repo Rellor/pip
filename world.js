@@ -111,7 +111,7 @@ export function startOuting(s, details = {}, now = Date.now()) {
   const things = thingsNow(s, p, now);
   const said = String(d.what ?? '').toLowerCase();
   const before = (s.outings ?? []).filter((o) => o.place === p.key).map((o) => o.thing);
-  const thing = p.errand || job || play ? null : things.find((t) => said && t.match.test(said)) ?? [...things].sort((a, b) => before.filter((k) => k === a.key).length - before.filter((k) => k === b.key).length)[0] ?? null;
+  const thing = p.errand || job || play ? null : things.find((t) => said && t.key === 'nap' && t.match.test(said)) ?? things.find((t) => said && t.key !== 'nap' && t.match.test(said)) ?? [...things].filter((t) => t.key !== 'nap' || (s.energy ?? 10) <= 4).sort((a, b) => before.filter((k) => k === a.key).length - before.filter((k) => k === b.key).length)[0] ?? null; // (a nap only when he says so, or when he is tired)
   const rnd = dice(`${p.key}${Math.floor(now / MIN)}`);
   const [a, b] = p.stay ?? [5, 5];
   let stay = Math.round(a + rnd() * (b - a));
@@ -136,7 +136,7 @@ export function outingTick(s, now = Date.now()) {
   const p = placeOf(w.place);
   const t = (k) => Date.parse(w[k]);
   if (now < t('leaveAt') && !w.cut) { // homing: something sends him home early
-    const why = (s.energy ?? 10) <= 2 ? 'I got very tired' : (s.fullness ?? 10) <= 2 ? 'I got very hungry' : hourNL(now) >= CURFEW - p.walk / 60 ? 'it got late' : null; // (rain and storms no longer send him home)
+    const why = (s.energy ?? 10) <= 2 ? 'I got very tired' : (s.fullness ?? 10) <= 1.3 ? 'I got very hungry' : hourNL(now) >= CURFEW - p.walk / 60 ? 'it got late' : null; // (rain and storms no longer send him home)
     if (why) {
       const walked = Math.min(p.walk * MIN, Math.max(0, now - t('leftAt'))); // he walks back the way he came
       Object.assign(w, { cut: why, reached: now >= t('arriveAt'), leaveAt: new Date(now).toISOString(), homeAt: new Date(now + walked).toISOString() });
@@ -179,7 +179,11 @@ export function finishOuting(s, now = Date.now()) {
   };
   if (w.errand) o.did = `I walked to the grocery store and came home with ${w.errand}.`;
   else if (!reached) o.did = `I was on my way to ${p.name}, but ${w.cut}, so I turned around.`;
-  else if (w.play) { // he was out with something of his (play.js tells how it went: it depends on how often he has done it)
+  else if (w.thing === 'nap') { // he can rest anywhere: a nap outside gives him his energy back like one at home
+    o.did = wet ? `I tried to nap at ${p.name}. It rained on my face. I slept anyway, a little.` : pick(rnd, [`I took a nap at ${p.name}. I woke up because a sparrow was looking at me from very close.`, `I slept at ${p.name} for a while, with the sun on my eyelids. I dreamt nothing at all, which was perfect.`, `A nap at ${p.name}. When I woke, the light had moved and I had a line of grass printed on my arm.`]);
+    o.saw = `${p.name}, with my eyes closed`;
+    up(s, 'energy', wet ? 2 : 3.5); up(s, 'calm', 1); up(s, 'boredom', -0.5);
+  } else if (w.play) { // he was out with something of his (play.js tells how it went: it depends on how often he has done it)
     const r = playDone(s, w.play, rnd, { wet, frozen });
     o.did = r.did; o.saw = r.saw; o.played = { name: w.play.name, verb: w.play.verb, goes: r.goes, first: r.first };
     up(s, 'joy', r.first ? 1.6 : 1.2); up(s, 'calm', 0.4); up(s, 'wonder', r.first ? 1 : 0.3); up(s, 'boredom', -3); up(s, 'energy', -1.2); up(s, 'creativity', -1.5); // (it lets something out, like making does, and nothing is left standing)
