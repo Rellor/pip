@@ -7862,3 +7862,9 @@ I finished my project and want to continue my series on the night sky by doing t
 - draw (tiny night sky next to basil): draw night sky tiny, with something next to it for size
 - mood: calm
 
+## 28/11/2026, 10:19:07
+I want to water my basil plants because they are dry and need looking after.
+> I want to water my basil plants because they are dry and need looking after.
+- water (basil): water the dry basil
+- mood: calm
+
