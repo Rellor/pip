@@ -75,10 +75,10 @@ export function checkup(s, health = {}, now = Date.now()) {
 
   // 5. Needs: hungry with nothing to eat, or an ask waiting for days.
   const food = (s.pantry ?? []).some((p) => p.qty > 0);
-  const hungry = Number.isFinite(s.fullness) && s.fullness <= 2 && !food;
-  const notEating = Number.isFinite(s.fullness) && s.fullness <= 1.5 && food; // food there, but he does not eat
+  const hungry = false; // (there is always food now)
+  const notEating = Number.isFinite(s.fullness) && s.fullness <= 1.5; // food is always there, but he does not eat
   const oldAsk = (s.asks ?? []).find((a) => a.status === 'open' && now - Date.parse(a.since ?? a.at ?? now) > 2 * DAY);
-  add('needs', !hungry && !notEating && !oldAsk, 'Needs', hungry ? 'He is hungry and has nothing to eat.' : notEating ? 'He is very hungry, but does not eat (there is food in his pantry).' : oldAsk ? `He asked for "${oldAsk.item}" more than 2 days ago.` : 'He has food, and no ask is waiting long.', {
+  add('needs', !hungry && !notEating && !oldAsk, 'Needs', hungry ? 'He is hungry and has nothing to eat.' : notEating ? 'He is very hungry, but does not eat.' : oldAsk ? `He asked for "${oldAsk.item}" more than 2 days ago.` : 'He has food, and no ask is waiting long.', {
     look: hungry ? 'He needs seeds and a place to grow, or food from you. Check his garden and pantry in the Pip tab.' : 'Answer the ask in the Asks tab (give it, or say no).',
     debug: `fullness: ${s.fullness}\npantry: ${JSON.stringify(s.pantry ?? [])}\nplots: ${(s.garden?.plots ?? []).length}, seeds: ${JSON.stringify(s.garden?.seeds ?? [])}${oldAsk ? `\nask: ${JSON.stringify(oldAsk)}` : ''}`,
   });

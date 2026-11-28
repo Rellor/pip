@@ -79,8 +79,7 @@ export function fallbackSteps(s, moves, now = Date.now()) {
   const has = (n) => moves.some((m) => m.name === n);
   const food = (s.pantry ?? []).find((p) => p.qty > 0);
   if (s.fullness <= 4 && has('harvest')) return [{ action: 'harvest', details: {}, thought: 'I am hungry. Let me pick something.', enjoyment: 6 }];
-  if (s.fullness <= 4 && has('eat') && food) return [{ action: 'eat', details: { food: food.name }, thought: 'I am hungry.', enjoyment: 6 }];
-  if (s.fullness <= 4 && !food && has('buy')) return [{ action: 'buy', details: { item: 'bread' }, thought: 'I am hungry and there is nothing in the house. I fetch bread.', enjoyment: 6 }];
+  if (s.fullness <= 4 && has('eat')) return [{ action: 'eat', details: { food: food?.name ?? '' }, thought: 'I am hungry. I eat something.', enjoyment: 6 }]; // (no name: he takes what there is, food.js)
   if (s.energy <= 3) return [{ action: 'rest', details: {}, thought: 'I am tired. I rest a while.', enjoyment: 6 }];
   if (has('water')) return [{ action: 'water', details: {}, thought: 'My plants look dry.', enjoyment: 6 }];
   // Nothing to decide with (no model, or what he planned cannot work): he has a quiet moment. He is never sent on a

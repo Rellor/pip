@@ -103,7 +103,7 @@ export function askReason(s, now = Date.now()) {
   if (asked >= ASKS_PER_DAY) return null;
   const askedForMusic = (s.asks ?? []).some((a) => a.status === 'open' && /piano|guitar|violin|flute|clarinet|kalimba|harp|instrument|ukulele|drum/i.test(a.item));
   if (instruments(s).length === 1 && !askedForMusic && (s.today?.done?.play_piano ?? 0) >= 2) return 'I can only hum and sing, and I would like an instrument'; // he sang today and wants more
-  if (s.fullness <= 3 && !food(s).length && !ripe(s, now).length) return 'I am hungry and I have nothing left to eat or harvest (seeds would help)';
+  // (hungry is no reason to ask for anything any more: there is always food, he just eats)
   const need = missingForProject(s, (n) => hasTool(s, n) || (s.tools ?? []).some((t) => String(t.name).toLowerCase().includes(String(n).toLowerCase())));
   if (need) return `my project "${need.project}" needs ${need.tool}, and I looked into how it is done`;
   const gear = gearWish(s, now); // the rain, the frost or a missing library card keeps him in (world.js)
@@ -139,7 +139,8 @@ export const MOVES = [
   { name: 'water', line: (s, n) => `water my plants (${names([...new Set(thirsty(s, n).map((p) => p.plant))])} are dry): {plant}`, when: (s, n) => thirsty(s, n).length > 0 && !missingTool(s, 'water'), score: () => 3 },
   { name: 'harvest', line: (s, n) => `harvest what is ripe (${names([...new Set(ripe(s, n).map((p) => p.plant))])}): {plant}`, when: (s, n) => ripe(s, n).length > 0, score: (s) => 2 + (10 - s.fullness) / 3 },
   { name: 'plant', line: (s) => `plant seeds (${names(seeds(s).map((x) => x.name))}): {seed}`, when: (s) => seeds(s).length > 0 && greenhouse(s) && plots(s).length < SLOTS_PER_GREENHOUSE && !missingTool(s, 'plant'), score: () => 1.5 },
-  { name: 'eat', line: (s) => `eat something (${names(food(s).map((p) => p.name), 4)}): {food}`, when: (s, n) => food(s).length > 0 && !notHungryReason(s, n), score: (s) => 1 + (10 - s.fullness) / 2 },
+  // He just eats: whatever he feels like, whenever he is hungry. There is always food (Bas: "just let him eat"). What he grew or cooked himself fills him more.
+  { name: 'eat', line: (s) => `eat something, whatever I feel like: there is always food${food(s).length ? ` (my own, which fills me more: ${names(food(s).map((p) => p.name), 4)})` : ''}: {food}`, when: (s, n) => !notHungryReason(s, n), score: (s) => 1 + (10 - s.fullness) / 2 },
   { name: 'cook', line: (s) => `cook a dish with only what is in my pantry now (${food(s).filter((p) => p.kind === 'ingredient').slice(0, 6).map((p) => p.name).join(', ')}): {dish, ingredients: [1 to 4 of these]}`, when: (s, n) => food(s).length > 0 && kitchenIn(s.decor) && can(s, 'cook', n) && s.fullness < 7, score: (s) => 1 + (10 - s.fullness) / 3 },
   // --- body ---
   { name: 'rest', line: () => 'rest for a while: {}', when: () => true, score: (s) => 0.2 + (10 - s.energy) / 2 },
@@ -220,8 +221,13 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
   for (const m of MOVES) {
     let ok = false;
     try { ok = Boolean(m.when(s, now)) && !((m.maker || m.name === 'paint_wall' || m.name === 'print_thing') && headRests(s, now)) && m.name !== restingMove(s, now) && !(tired && kindOf(m.name) === tired && !['do', 'tell', 'ask_for'].includes(m.name)); } catch { ok = false; } // a move he looped on rests for a while (loops.js)
+    // Hungry: eating is a need, not a habit. It is never held back because he ate a few times lately (he ate a little basil
+    // three times, and then "eat" was hidden as a repeated move while he was still very hungry).
+    const need = m.name === 'eat' && s.fullness <= 4;
+    if (need) { try { ok = Boolean(m.when(s, now)); } catch { ok = false; } }
     if (!ok) continue;
     let score = m.score(s, now);
+    if (need) { scored.push({ m, score: score + 3 }); continue; }
     if (process.env.PIP_FAKE_MOVE === m.name) score = 99; // tests: the move a test wants is always among the offered ones
     score *= 0.5 ** recent.filter((x) => x === m.name).length;
     if ((s.today?.done?.[m.name] ?? 0) >= 4 && !['eat', 'rest', 'water', 'harvest'].includes(m.name)) score *= 0.2;
@@ -233,7 +239,7 @@ export function availableMoves(s, { now = Date.now(), random = Math.random } = {
   }
   scored.sort((a, b) => b.score - a.score);
   const pick = scored.slice(0, MAX_MOVES);
-  const MUST = ['do', 'tell', 'want']; // always a free move; and when someone wrote or something is missing, a way to say so
+  const MUST = ['do', 'tell', 'want', ...(s.fullness <= 4 ? ['eat'] : [])]; // always a free move; when someone wrote or something is missing, a way to say so; and food when he is hungry
   for (const must of MUST) {
     const hit = scored.find((x) => x.m.name === must);
     if (!hit || pick.includes(hit)) continue;

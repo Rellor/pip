@@ -73,13 +73,13 @@ import { TIMBRES, cleanTracks } from './songs.js';
 import { grantInstruments, instrumentNeeds } from './instruments.js';
 import { moveMusicToStudio, moveMusicBack, keepWindowsClear, HAS_STUDIO } from './web/house.js';
 import { findPicture } from './found.js';
-import { cook, addIngredient, eatFromPantry, mealGain, hungerFirst } from './food.js';
+import { cook, addIngredient, eatFromPantry, mealGain, hungerFirst, anyFood, PLAIN_GAIN } from './food.js';
 import { makeClothes, wear, takeOff, SLOTS } from './clothes.js';
 const MAX_APP_UPDATES_PER_DAY = 4;
 import { pictureType, pictureSize, ntfyPoll, isFromBas, ntfyText, downloadAttachment } from './inbox.js';
 import { refreshNews } from './news.js';
 import { tooSimilar } from './repeat.js';
-import { ensureFeelings, stepFeelings, felt, nudge, eatNow, emotionWord, failStep } from './feelings.js';
+import { ensureFeelings, stepFeelings, felt, nudge, eatNow, emotionWord, failStep, notHungry } from './feelings.js';
 import { cleanUses, findUse, addUse, stepsProblem } from './uses.js';
 import { isToday } from './days.js';
 import { SITE_FILE, buildSite, siteMaterial, siteWords } from './site.js';
@@ -1542,7 +1542,8 @@ async function wakeUp() {
   let choice = null;
   let via = 'autopilot';
   const queued = reasons.length && !(wentOn && !unread.length) ? null : nextQueued(state); // (in the middle of a trip he carries on with his plan)
-  if (queued) answer = { thought: queued.find((x) => x.thought)?.thought ?? '', inner: '', steps: queued, mood_after: state.mood, new_idea: null };
+  // (very hungry at home: he eats first, also in the middle of a plan; the rest of the plan follows)
+  if (queued) answer = { thought: queued.find((x) => x.thought)?.thought ?? '', inner: '', steps: !state.where && !wentOn && !notHungry(state) ? hungerFirst(state, queued, [{ name: 'eat' }]) : queued, mood_after: state.mood, new_idea: null };
   else {
     try {
       if (process.env.PIP_FAKE_DOWN) throw new Error('the model is busy (pretend, for testing)'); // for tests: a day on which the model never answers
@@ -2185,10 +2186,11 @@ async function wakeUp() {
   // Eating fills him up a little (not more than once every half hour).
   for (const st of steps) {
     if (st.action !== 'eat') continue;
-    const gain = mealGain(state.pantry, st.details.food)?.gain;
-    // Food never appears by itself: he can only eat what is really in his pantry (grown, cooked, found or given).
-    st.ate = gain ? eatNow(state, Date.now(), gain) : { failed: `I have no ${text(st.details.food, 40) || 'food'}. Food does not appear by itself: I grow it, cook it, or ask Bas for some` };
-    if (st.ate.ok) eatFromPantry(state, st.details.food);
+    // He eats what he feels like: there is always food. Something from his own pantry (grown, cooked) fills him more, and is used up.
+    if (!text(st.details.food, 80)) st.details.food = anyFood(state);
+    const own = mealGain(state.pantry, st.details.food);
+    st.ate = eatNow(state, Date.now(), own?.gain ?? PLAIN_GAIN);
+    if (st.ate.ok && own) eatFromPantry(state, st.details.food);
   }
 
   // A step that did not work leaves a gap. Right after it comes one small thing he can always do (no extra Gemini call, so it costs no tokens).

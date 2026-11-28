@@ -160,7 +160,7 @@ export function bodyText(s) {
   const b = s.body;
   const lines = [
     level(s.energy, 'I am tired', 'I am full of energy'),
-    s.fullness <= 2 ? 'I am very hungry, and food does not appear by itself: I grow it, cook it, or ask for it' : level(s.fullness, 'I am hungry', null),
+    s.fullness <= 2 ? 'I am very hungry: I eat something now (there is always food)' : level(s.fullness, 'I am hungry', null),
     level(b.creativity, 'I have made enough for now: my hands are quiet, something else can have its turn', 'my hands itch to make something'),
     level(b.curiosity, null, 'I want to find something out'),
     level(b.boredom, null, 'I am bored of doing the same things'),

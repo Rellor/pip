@@ -7,6 +7,13 @@ export const MAX_PANTRY = 24;
 export const MAX_COOKS_PER_DAY = 4;
 export const DISH_GAIN = 5;
 export const INGREDIENT_GAIN = 2.5;
+export const PLAIN_GAIN = 3; // something he just eats, not from his own pantry
+// Something to eat when he did not say what: from his own pantry first, else something plain that is always in the house.
+const ALWAYS = ['bread with cheese', 'an apple', 'a bowl of soup', 'porridge', 'a boiled egg', 'toast with jam', 'a pear', 'rice with vegetables', 'pancakes', 'a handful of nuts'];
+export function anyFood(s, random = Math.random) {
+  const own = (s.pantry ?? []).filter((p) => p.qty > 0).sort((a, b) => (b.kind === 'dish') - (a.kind === 'dish'))[0];
+  return own ? own.name : ALWAYS[Math.floor(random() * ALWAYS.length)];
+}
 
 const clean = (t, n) => String(t ?? '').replace(/\s+/g, ' ').trim().slice(0, n);
 const same = (a, b) => {
@@ -97,9 +104,8 @@ export function eatFromPantry(s, food) {
   return m.gain;
 }
 
-// Very hungry with food in the pantry: his body takes over and he eats first (like anyone who forgot to eat all day).
+// Very hungry: his body takes over and he eats first (like anyone who forgot to eat all day).
 export function hungerFirst(s, steps, offered) {
-  const food = (s.pantry ?? []).filter((p) => p.qty > 0).sort((a, b) => (b.kind === 'dish') - (a.kind === 'dish'))[0];
-  if (!(s.fullness <= 2) || !food || steps.some((x) => x.action === 'eat') || !offered.some((m) => m.name === 'eat')) return steps;
-  return [{ action: 'eat', details: { food: food.name }, thought: 'My tummy is rumbling. I eat something first.', enjoyment: 7 }, ...steps];
+  if (!(s.fullness <= 2) || steps.some((x) => x.action === 'eat') || !offered.some((m) => m.name === 'eat')) return steps;
+  return [{ action: 'eat', details: { food: anyFood(s) }, thought: 'My tummy is rumbling. I eat something first.', enjoyment: 7 }, ...steps];
 }

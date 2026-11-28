@@ -48,10 +48,17 @@ ok('his pace follows his mood: sooner when excited or mid-plan, later when tired
   assert.equal(Boolean(byName('buy').when(s, now)), true, 'no coins needed to go to the store');
   assert.match(byName('buy').line(s, now), /nothing costs anything/);
   assert.ok(buy(s, 'bread', now).bought && canTake(s, now) && !/coin/.test(JSON.stringify(s)));
-  // hungry with an empty house: he fetches food (a need, not a filler)
+  // hungry: he just eats. There is always food, also with an empty pantry (Bas: "just let him eat")
   const hungry = fresh({ fullness: 3, pantry: [] });
-  assert.deepEqual([fallbackSteps(hungry, [{ name: 'buy' }], now)[0].action, fallbackSteps(hungry, [{ name: 'buy' }], now)[0].details.item], ['buy', 'bread']);
-  assert.ok(byName('buy').score(hungry, now) > 3.5, 'and with a model he chooses it himself');
+  assert.equal(Boolean(byName('eat').when(hungry, now)), true, 'eating is offered with an empty pantry');
+  assert.match(byName('eat').line(hungry, now), /whatever I feel like/);
+  assert.equal(fallbackSteps(hungry, [{ name: 'eat' }, { name: 'buy' }], now)[0].action, 'eat');
+  assert.equal(Boolean(byName('eat').when(fresh({ fullness: 9, pantry: [] }), now)), false, 'not with a full belly');
+  { // he ate a few small things in a row and is still hungry: eating is still offered (it was hidden as a repeated move)
+    const { availableMoves } = await import('../moves.js');
+    const again = fresh({ fullness: 1.5, pantry: [], recent: { moves: Array.from({ length: 8 }, () => ({ move: 'eat', kind: 'body' })), moods: [] } });
+    for (let i = 0; i < 20; i++) assert.ok(availableMoves(again, { now: now + i }).some((m) => m.name === 'eat'), 'eat is offered when hungry');
+  }
   // a full belly lasts most of a day
   const t = fresh({ fullness: 9, feelAt: new Date(now - 6 * 3_600_000).toISOString() });
   passTime(t, now);
