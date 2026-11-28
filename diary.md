@@ -7897,3 +7897,10 @@ I finished what I planned and now I want to fetch the note someone left by the w
 - go_out: Let us see what is in that note.
 - mood: calm
 
+## 28/11/2026, 11:43:00
+I want to answer Sam's note about wombats because it is an odd and amusing fact, then sit quietly by the window as planned.
+> I want to answer Sam's note about wombats because it is an odd and amusing fact, then sit quietly by the window as planned.
+- walk_to (computer): Answer Sam about square wombat droppings
+- do (by the autumn window): Sit by the autumn window at dusk
+- mood: calm
+
