@@ -7780,3 +7780,9 @@ I have been indoors long enough, and it is time to sit by the autumn window at d
 - do (sit by the autumn window and play a quiet tune on my instrument): Play a tune by the window
 - mood: quiet
 
+## 28/11/2026, 08:17:21
+My room is full, so I want to send one of my creations to the museum to free up space.
+> My room is full, so I want to send one of my creations to the museum to free up space.
+- do (carry tiny ceramic saucer to my museum): I will place the tiny ceramic saucer in my museum.
+- mood: calm
+
