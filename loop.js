@@ -26,6 +26,9 @@ function wakeAndSave() {
   console.error(`[${stamp()}] could not push Pip's state`);
 }
 
+// His pace follows his mood (pace.js): his state says when he wants to wake next. Never sooner than 3 minutes after the
+// last wake-up, never later than twice the steady pace.
+const paceAt = () => { try { return Date.parse(JSON.parse(readFileSync('web/state.json', 'utf8')).pace?.nextAt ?? '') || null; } catch { return null; } };
 const wakeSoonAt = () => { try { return Date.parse(JSON.parse(readFileSync('web/state.json', 'utf8')).wakeSoon?.at ?? '') || null; } catch { return null; } };
 console.log(`[${stamp()}] Pip's loop starts: a wake-up every ${EVERY_MIN} min for ${LOOP_MIN} min`);
 const start = Date.now();
@@ -33,7 +36,10 @@ let lastWake = 0;
 while ((Date.now() - start) / 60_000 < LOOP_MIN) {
   if (!git('pull', '--rebase', '--autostash', '-q')) git('rebase', '--abort');
   const soon = wakeSoonAt(); // something did not work: he wakes early to try another way (retry.js)
-  if ((Date.now() - lastWake) / 60_000 >= EVERY_MIN || (soon && Date.now() >= soon)) {
+  const pace = paceAt();
+  const since = (Date.now() - lastWake) / 60_000;
+  const due = pace ? (Date.now() >= pace && since >= 3) || since >= EVERY_MIN * 2 : since >= EVERY_MIN;
+  if (due || (soon && Date.now() >= soon)) {
     console.log(`[${stamp()}] waking Pip${soon && Date.now() >= soon ? ' early (a second try)' : ''}`);
     wakeAndSave();
     lastWake = Date.now();

@@ -49,7 +49,7 @@ ok('he builds anything he can use outside and says how; what he does not say, th
   const a = toAnswer({ moves: [{ move: 'make_plaything', details: { what: 'a bike', why: 'to go fast' }, thought: 't' }], reason: 'r', mood: 'calm' });
   assert.deepEqual([a.steps[0].action, a.steps[0].as, a.steps[0].details.play, a.steps[0].make], ['decorate', 'make_plaything', true, true]);
   assert.deepEqual(preflight(s, a.steps, now), [], 'it takes no room, so a full room does not stop it');
-  assert.equal(dayLimits(s, now).make_plaything.max, 2);
+  assert.equal(dayLimits(s, now).make_plaything.max, 6);
   const prompt = makerPrompt({ soul: 'x', step: a.steps[0], rules: '', room: [] });
   assert.match(prompt, /NOT a thing for my room.*life-size.*"motion": "how it moves when I use it/s);
   assert.ok(fakeMade(a.steps[0]).parts.length >= 2);

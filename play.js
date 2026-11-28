@@ -9,7 +9,7 @@
 export const MOTIONS = ['ride', 'fly', 'float', 'roll', 'stay', 'hold'];
 export const PLAY_PLACES = ['square', 'pond', 'field', 'stone', 'doorstep'];
 export const PLAYTHINGS_MAX = 12; // what he keeps to play with; the one he used least makes room
-export const PLAYTHINGS_PER_DAY = 2;
+export const PLAYTHINGS_PER_DAY = 6; // (he decides: this only stops a runaway day)
 const DEFAULT_WHERE = { ride: 'square', fly: 'field', float: 'pond', roll: 'square', stay: 'field', hold: 'doorstep' };
 const DEFAULT_VERB = { ride: 'ride', fly: 'fly', float: 'sail', roll: 'roll', stay: 'use', hold: 'play with' };
 const clip = (v, n) => String(v ?? '').replace(/\s+/g, ' ').trim().slice(0, n);

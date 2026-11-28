@@ -24,13 +24,13 @@ const note = (topic, more = {}) => ({ id: `b${topic.length}`, board: true, from:
 
 // ---- a full room: nothing is refused, what he makes goes to his museum
 {
-  assert.deepEqual([MAX_PER_DAY, ROOM_PLENTY, ROOM_FULL, MUSEUM_MAX, MUSEUM_SLOTS.length], [3, 12, 18, 40, 40]);
+  assert.deepEqual([MAX_PER_DAY, ROOM_PLENTY, ROOM_FULL, MUSEUM_MAX, MUSEUM_SLOTS.length], [12, 12, 18, 40, 40]);
   const full = fresh(ROOM_FULL + 2), some = fresh(ROOM_PLENTY + 1), few = fresh(4);
   assert.ok(roomIsFull(full.decor) && !roomIsFull(some.decor) && roomHasPlenty(some.decor) && !roomHasPlenty(few.decor));
   assert.equal(Boolean(byName('decorate').when(full, now)), true, 'he may make a thing in a full room');
   assert.match(byName('decorate').line(full, now), /My room is full, so it goes on a plinth in my museum for everyone to see/);
   assert.match(museumLines(full)[0], /My room is full \(20 things\), and that is fine.*museum.*show_in_museum/);
-  assert.equal(dayLimits(few, now).decorate.max, 3);
+  assert.equal(dayLimits(few, now).decorate.max, 12, 'he decides how much he makes');
   // he makes one: at the end of that wake-up it is marked, and at the next one it stands in his museum
   full.decor.push(thing(90, { name: 'a small brass orrery', createdAt: iso(now), why: 'to see the planets go round' }));
   assert.deepEqual(markForMuseum(full, now - 1000), ['a small brass orrery']);

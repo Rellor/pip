@@ -52,8 +52,8 @@ export function wantsOneMore(decor, text) {
   if (!/\b(build|make|craft|carve|construct|put together)\b/.test(t)) return null;
   return fullKinds(decor).find(({ kind }) => new RegExp(`\\b(${kind}|${kindsWord(kind)})\\b`).test(t)) ?? null;
 }
-export const MAX_PER_DAY = Number(process.env.PIP_MAKES_PER_DAY) || 3; // new things a day (changing what he has is not counted here)
-export const MAX_OUTSIDE_PER_DAY = 1; // and one more out in his world: it has its own count, so three small things for his room never leave him unable to build outside
+export const MAX_PER_DAY = Number(process.env.PIP_MAKES_PER_DAY) || 12; // he decides how much he makes: this only stops a runaway day (the free model allows about 15 designs a day anyway)
+export const MAX_OUTSIDE_PER_DAY = 4; // and one more out in his world: it has its own count, so three small things for his room never leave him unable to build outside
 export const ROOM_PLENTY = Number(process.env.PIP_ROOM_ENOUGH) || 12; // with this many things his room has plenty: from here the game nudges him toward using and improving what he has
 export const ROOM_FULL = Number(process.env.PIP_ROOM_ENOUGH) || 18; // and with this many it is full: what he makes from here on goes to his museum (museum.js)
 // The things in his room (not the pictures on his walls, not what stands outside).

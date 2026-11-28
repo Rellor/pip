@@ -2,7 +2,7 @@
 // sees it happen.
 import assert from 'node:assert/strict';
 delete process.env.PIP_ONE_SITTING; delete process.env.PIP_NO_OUT; delete process.env.PIP_ROOM_ENOUGH; delete process.env.PIP_MAKES_PER_DAY;
-const { sittingsFor, startSittings, buildOn, unfinished, sittingLines, IN_PROGRESS_MAX } = await import('../sittings.js');
+const { sittingsFor, startSittings, buildOn, unfinished, sittingLines } = await import('../sittings.js');
 const { byName } = await import('../moves.js');
 const { toAnswer } = await import('../brain.js');
 const { storyTick, SMALL_PER_DAY } = await import('../story.js');
@@ -17,36 +17,34 @@ const part = (y) => ({ shape: 'box', size: [0.3, 0.1, 0.3], pos: [0, y, 0], rot:
 const thing = (name, n, more = {}) => ({ id: `d${name}`, name, parts: Array.from({ length: n }, (_, i) => part(i * 0.1)), kind: 'floor', createdAt: iso(now - DAY), ...more });
 const fresh = (more = {}) => { const s = { energy: 8, fullness: 8, joy: 5, calm: 5, wonder: 5, boredom: 4, loneliness: 4, weather: { kind: 'clear', temp: 8 }, tools: [], pantry: [], decor: [], stored: [], log: [], outings: [], visitors: [], pictures: [], found: [], art: [], apps: [], wardrobe: [], moves: [], cookedAt: [], asks: [], projects: [], wishes: [], curious: { sparks: [], interests: [] }, ...more }; ensureBody(s, now); s.body.creativity = 7; return s; };
 
-// ---- a thing takes two or three sittings, and at most two are in progress
+// ---- a small thing is built in one go; a big thing takes three days, one sitting a day
 {
-  assert.deepEqual([2, 3, 4, 6, 7, 20].map(sittingsFor), [1, 1, 2, 2, 3, 3]);
+  assert.deepEqual([2, 5, 7, 8, 20].map(sittingsFor), [1, 1, 1, 3, 3]);
   const s = fresh();
-  const lamp = thing('lamp', 3), shelf = thing('shelf', 5), clock = thing('clock', 9);
-  assert.deepEqual([startSittings(lamp), startSittings(shelf), startSittings(clock)], [1, 2, 3]);
-  assert.ok(lamp.stages === undefined && shelf.stage === 1 && clock.stages === 3);
-  s.decor.push(lamp, shelf);
-  assert.deepEqual(unfinished(s).map((d) => d.name), ['shelf']);
-  assert.equal(Boolean(byName('decorate').when(s, now)), true, 'one thing in progress: he may start another');
-  assert.match(byName('build_on').line(s, now), /"shelf": sitting 1 of 2 done/);
-  assert.match(sittingLines(s)[0], /Half built in my room: shelf \(sitting 1 of 2 done\)\. I can go on with it/);
-  s.decor.push(clock);
-  assert.equal(unfinished(s).length, IN_PROGRESS_MAX);
-  assert.equal(Boolean(byName('decorate').when(s, now)), false, 'two things in progress: first he finishes one');
-  assert.match(sittingLines(s)[0], /Two things in progress is enough: I finish one/);
-  assert.ok(byName('build_on').score(s, now) > byName('change_thing').score(s, now), 'finishing what he started pulls');
+  const lamp = thing('lamp', 5), clock = thing('clock', 9, { createdAt: iso(now) });
+  assert.deepEqual([startSittings(lamp, now), startSittings(clock, now)], [1, 3]);
+  assert.ok(lamp.stages === undefined && clock.stage === 1 && clock.stages === 3);
+  s.decor.push(lamp, clock);
+  assert.deepEqual(unfinished(s).map((d) => d.name), ['clock']);
+  assert.equal(Boolean(byName('decorate').when(s, now)), true, 'a big thing in progress never stops him from starting something else');
+  assert.equal(Boolean(byName('build_on').when(s, now + HOUR)), false, 'not twice on one day');
+  assert.match(buildOn(s, 'clock', now + HOUR).failed, /today already.*takes days/);
+  assert.match(sittingLines(s, now + HOUR)[0], /clock \(day 1 of 3 done\).*tomorrow I go on/);
+  const day2 = now + DAY + HOUR;
+  assert.equal(Boolean(byName('build_on').when(s, day2)), true);
+  assert.match(byName('build_on').line(s, day2), /"clock": day 1 of 3 done/);
+  assert.match(sittingLines(s, day2)[0], /I can go on with it today/);
   const a = toAnswer({ moves: [{ move: 'build_on', details: { name: 'clock' } }], reason: 'r', mood: 'calm' });
   assert.deepEqual([a.steps[0].action, a.steps[0].as, a.steps[0].details.what], ['do', 'build_on', 'go on building clock']);
-  const b1 = buildOn(s, 'my clock', now);
+  const b1 = buildOn(s, 'my clock', day2);
   assert.deepEqual([b1.thing.name, b1.stage, b1.stages, b1.done], ['clock', 2, 3, false]);
   assert.ok(clock.updatedAt, 'the page builds it again, with more of its parts');
-  const b2 = buildOn(s, 'clock', now);
-  assert.ok(b2.done && clock.finishedAt && unfinished(s).length === 1);
-  assert.equal(Boolean(byName('decorate').when(s, now)), true);
-  assert.equal(buildOn(s, 'something else', now).thing.name, 'shelf', 'no name that fits: he goes on with what is there');
-  assert.match(buildOn(s, 'x', now).failed, /nothing half built/);
-  assert.equal(Boolean(byName('build_on').when(s, now)), false);
+  assert.match(buildOn(s, 'clock', day2 + HOUR).failed, /today already/);
+  const b2 = buildOn(s, 'clock', day2 + DAY);
+  assert.ok(b2.done && clock.finishedAt && unfinished(s).length === 0);
+  assert.match(buildOn(s, 'x', day2 + 2 * DAY).failed, /nothing half built/);
 }
-ok('a thing is built over two or three sittings; with two in progress he finishes one first');
+ok('a small thing is built in one go; a big thing takes three days, and nothing else has to wait for it');
 
 // ---- his world moves: a handful of small things a day, many of them people doing something
 {
