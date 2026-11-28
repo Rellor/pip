@@ -7732,3 +7732,10 @@ Something I noticed about myself, day after day: He makes things with his own ha
 ## 27/11/2026, 22:07:55
 Good night. Pip went to sleep.
 
+## 28/11/2026, 07:00:13
+My basil and mint are ready to harvest, so I will gather them first.
+> My basil and mint are ready to harvest, so I will gather them first.
+- harvest (basil): Harvesting the basil
+- do (stomp around the room once, then laugh at myself): That did not work out. I shake it off and stomp around the room once, then laugh at myself.
+- mood: hungry
+
